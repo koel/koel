@@ -93,14 +93,21 @@ class PodcastService
         $parser = $this->createParser($podcast->url);
         $channel = $parser->getChannel();
 
-        $pubDate = $parser->xmlReader->value('rss.channel.pubDate')->first() ?? $parser
-            ->xmlReader
-            ->value('rss.channel.lastBuildDate')
-            ->first();
+        // Some feeds have a stale pubDate (set once at creation) but an updated lastBuildDate.
+        // We use the most recent of the two to determine if new content is available.
+        $pubDate = rescue(static fn () => Carbon::createFromFormat(
+            Carbon::RFC1123,
+            $parser->xmlReader->value('rss.channel.pubDate')->first(),
+        ));
 
-        if ($pubDate && Carbon::createFromFormat(Carbon::RFC1123, $pubDate)?->isBefore($podcast->last_synced_at)) {
-            // The pubDate/lastBuildDate value indicates that there's been no new content since the last check.
-            // We'll simply return the podcast.
+        $lastBuildDate = rescue(static fn () => Carbon::createFromFormat(
+            Carbon::RFC1123,
+            $parser->xmlReader->value('rss.channel.lastBuildDate')->first(),
+        ));
+
+        $feedDate = collect([$pubDate, $lastBuildDate])->filter()->sortDesc()->first();
+
+        if ($feedDate?->isBefore($podcast->last_synced_at)) {
             return $podcast;
         }
 
