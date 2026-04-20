@@ -78,7 +78,7 @@
             <itunes:image
                 href="http://example.com/podcasts/everything/AllAboutEverything/Episode2.jpg"
             />
-            <link>href="http://example.com/podcasts/everything/</link>
+            <link>http://example.com/podcasts/everything/</link>
             <enclosure
                 length="5650889"
                 type="video/mp4"
