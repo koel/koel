@@ -8,6 +8,7 @@
         <title>Podcast Feed Parser</title>
         <link>https://github.com/phanan/podcast-feed-parser</link>
         <description><![CDATA[Parse podcast feeds with PHP following PSP-1 Podcast RSS Standard]]></description>
+        <pubDate>Tue, 31 Aug 2021 12:03:00 +0000</pubDate>
         <lastBuildDate>Thu, 02 May 2024 06:44:38 +0000</lastBuildDate>
 
         <image>
