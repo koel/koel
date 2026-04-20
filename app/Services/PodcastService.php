@@ -95,15 +95,10 @@ class PodcastService
 
         // Some feeds have a stale pubDate (set once at creation) but an updated lastBuildDate.
         // We use the most recent of the two to determine if new content is available.
-        $pubDate = rescue(static fn () => Carbon::createFromFormat(
-            Carbon::RFC1123,
-            $parser->xmlReader->value('rss.channel.pubDate')->first(),
-        ));
-
-        $lastBuildDate = rescue(static fn () => Carbon::createFromFormat(
-            Carbon::RFC1123,
-            $parser->xmlReader->value('rss.channel.lastBuildDate')->first(),
-        ));
+        // Carbon::parse() is used instead of createFromFormat(RFC1123) because RSS feeds use
+        // varied timezone formats (GMT, EST, +0000) that strict RFC1123 parsing would reject.
+        $pubDate = self::parseFeedDate($parser->xmlReader->value('rss.channel.pubDate')->first());
+        $lastBuildDate = self::parseFeedDate($parser->xmlReader->value('rss.channel.lastBuildDate')->first());
 
         $feedDate = collect([$pubDate, $lastBuildDate])->filter()->sortDesc()->first();
 
@@ -264,6 +259,15 @@ class PodcastService
     public function deletePodcast(Podcast $podcast): void
     {
         $podcast->delete();
+    }
+
+    private static function parseFeedDate(?string $date): ?Carbon
+    {
+        if (!$date) {
+            return null;
+        }
+
+        return rescue(static fn (): Carbon => Carbon::parse($date));
     }
 
     private function createParser(string $url): Poddle
