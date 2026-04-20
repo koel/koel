@@ -132,10 +132,20 @@ class PlaylistServiceTest extends TestCase
     {
         $playlist = create_playlist(['name' => 'foo']);
 
-        $this->service->updatePlaylist($playlist, PlaylistUpdateData::make(name: 'bar', description: 'baz'));
+        $this->service->updatePlaylist($playlist, PlaylistUpdateData::make(
+            name: 'bar',
+            description: 'baz',
+            isLocked: true,
+        ));
 
         self::assertSame('bar', $playlist->name);
         self::assertSame('baz', $playlist->description);
+        self::assertTrue($playlist->is_locked);
+
+        $this->service->updatePlaylist($playlist, PlaylistUpdateData::make(name: 'qux', isLocked: false));
+
+        self::assertSame('qux', $playlist->name);
+        self::assertFalse($playlist->is_locked);
     }
 
     #[Test]

@@ -68,6 +68,13 @@ class RemoveFromPlaylist implements Tool
             );
         }
 
+        if ($playlist->is_locked) {
+            return sprintf(
+                'Cannot remove songs from "%s" because editing is disabled for this playlist via configuration',
+                $playlist->name,
+            );
+        }
+
         $songs = $this->songResolver->resolveSongs($request, $this->context);
 
         if ($songs->isEmpty()) {

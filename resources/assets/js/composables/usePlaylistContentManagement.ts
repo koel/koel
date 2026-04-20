@@ -20,7 +20,7 @@ export const usePlaylistContentManagement = () => {
   }
 
   const addToPlaylist = async (playlist: Playlist, playables: Playable[]) => {
-    if (playlist.is_smart || playables.length === 0) {
+    if (playlist.is_smart || playables.length === 0 || playlist.is_locked) {
       return
     }
 
@@ -34,7 +34,7 @@ export const usePlaylistContentManagement = () => {
   }
 
   const removeFromPlaylist = async (playlist: Playlist, playables: Playable[]) => {
-    if (playlist.is_smart) {
+    if (playlist.is_smart || playlist.is_locked) {
       return
     }
 

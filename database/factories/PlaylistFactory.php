@@ -21,6 +21,7 @@ class PlaylistFactory extends Factory
             'name' => $this->faker->name,
             'rules' => null,
             'description' => $this->faker->realText(),
+            'is_locked' => false,
             'cover' => Ulid::generate() . '.webp',
         ];
     }

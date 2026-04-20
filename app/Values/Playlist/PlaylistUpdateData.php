@@ -14,6 +14,7 @@ final readonly class PlaylistUpdateData implements Arrayable
         public ?string $folderName,
         public ?string $cover,
         public ?SmartPlaylistRuleGroupCollection $ruleGroups,
+        public ?bool $isLocked = null,
     ) {}
 
     public static function make(
@@ -23,6 +24,7 @@ final readonly class PlaylistUpdateData implements Arrayable
         ?string $folderName = null,
         ?string $cover = null,
         ?SmartPlaylistRuleGroupCollection $ruleGroups = null,
+        ?bool $isLocked = null,
     ): self {
         return new self(
             name: $name,
@@ -31,6 +33,7 @@ final readonly class PlaylistUpdateData implements Arrayable
             folderName: $folderName,
             cover: $cover,
             ruleGroups: $ruleGroups,
+            isLocked: $isLocked,
         );
     }
 
@@ -43,6 +46,7 @@ final readonly class PlaylistUpdateData implements Arrayable
             'folder_id' => $this->folderId,
             'cover' => $this->cover,
             'rule_groups' => $this->ruleGroups,
+            'is_locked' => $this->isLocked,
         ];
     }
 }

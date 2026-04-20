@@ -28,6 +28,7 @@ export type CreatePlaylistData = Pick<Playlist, 'name' | 'description' | 'folder
 export interface UpdatePlaylistData {
   name: Playlist['name']
   description: Playlist['description']
+  is_locked?: boolean
   folder_id?: PlaylistFolder['id'] | null
   folder_name?: string | null
   cover?: string | null

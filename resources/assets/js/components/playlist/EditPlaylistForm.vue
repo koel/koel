@@ -19,6 +19,10 @@
           <TextArea v-model="data.description" class="h-28" name="description" />
         </FormRow>
         <ArtworkField v-model="data.cover">Pick or paste a cover (optional)</ArtworkField>
+        <FormRow class="col-span-2">
+          <CheckBox v-model="data.is_locked" name="is_locked" />
+          <span class="ml-1">Disable Editing</span>
+        </FormRow>
       </div>
     </main>
 
@@ -43,6 +47,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 import FolderSelect from '@/components/ui/form/FolderSelect.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import ArtworkField from '@/components/ui/form/ArtworkField.vue'
+import CheckBox from '@/components/ui/form/CheckBox.vue'
 
 const props = defineProps<{ playlist: Playlist }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
@@ -55,7 +60,7 @@ const { showConfirmDialog } = useDialogBox()
 const close = () => emit('close')
 
 const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
-  initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
+  initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover', 'is_locked'), folder_name: null },
   onSubmit: async data => {
     const formData = cloneDeep(data)
 

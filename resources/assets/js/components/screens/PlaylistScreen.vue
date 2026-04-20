@@ -226,6 +226,10 @@ const fetchDetails = async (refresh = false) => {
 }
 
 const onReorder = (target: Playable, placement: Placement) => {
+  if (playlist.value?.is_locked) {
+    return
+  }
+
   playlistStore.moveItemsInPlaylist(playlist.value!, selectedPlayables.value, target, placement)
 }
 
@@ -255,7 +259,7 @@ watch(playlistId, async id => {
 
   await fetchDetails()
 
-  listConfig.reorderable = currentState.sortField === 'position'
+  listConfig.reorderable = currentState.sortField === 'position' && !playlist.value.is_locked
   listConfig.collaborative = playlist.value.is_collaborative
   listConfig.hasCustomOrderSort = !playlist.value.is_smart
 

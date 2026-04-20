@@ -29,6 +29,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $name
  * @property string $description
  * @property bool $is_smart
+ * @property bool $is_locked
  * @property User $owner
  * @property ?SmartPlaylistRuleGroupCollection $rule_groups
  * @property ?SmartPlaylistRuleGroupCollection $rules
@@ -56,10 +57,15 @@ class Playlist extends Model implements AuditableContract, Embeddable
     protected $hidden = ['created_at', 'updated_at'];
     protected $guarded = [];
 
+    protected $attributes = [
+        'is_locked' => false,
+    ];
+
     protected function casts(): array
     {
         return [
             'rules' => SmartPlaylistRulesCast::class,
+            'is_locked' => 'boolean',
         ];
     }
 

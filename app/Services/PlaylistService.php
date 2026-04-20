@@ -63,6 +63,7 @@ class PlaylistService
             'name' => $dto->name,
             'description' => $dto->description,
             'rules' => $dto->ruleGroups,
+            'is_locked' => $dto->isLocked ?? $playlist->is_locked ?? false,
         ];
 
         if (is_string($dto->cover)) {

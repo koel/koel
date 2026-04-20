@@ -18,6 +18,7 @@ class PlaylistResource extends JsonResource
         'folder_id',
         'user_id',
         'is_smart',
+        'is_locked',
         'rules',
         'created_at',
     ];
@@ -49,6 +50,7 @@ class PlaylistResource extends JsonResource
             'user_id' => $this->unless($embedding, $this->playlist->owner->public_id), // backwards compatibility
             'owner_id' => $this->unless($embedding, $this->playlist->owner->public_id),
             'is_smart' => $this->unless($embedding, $this->playlist->is_smart),
+            'is_locked' => $this->unless($embedding, $this->playlist->is_locked),
             'is_collaborative' => $this->unless($embedding, $playlistService->isPlaylistCollaborative($this->playlist)),
             'rules' => $this->unless($embedding, $this->playlist->rules),
             'cover' => image_storage_url($this->playlist->cover),

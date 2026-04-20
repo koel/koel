@@ -109,4 +109,21 @@ describe('editPlaylistForm.vue', () => {
       })
     })
   })
+
+  it('locks the playlist', async () => {
+    const updateMock = h.mock(playlistStore, 'update')
+    const { playlist, container } = renderComponent(h.factory('playlist', { is_locked: false }))
+
+    await h.user.click(container.querySelector('input[name="is_locked"]')!)
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => {
+      expect(updateMock).toHaveBeenCalledWith(
+        playlist,
+        expect.objectContaining({
+          is_locked: true,
+        }),
+      )
+    })
+  })
 })

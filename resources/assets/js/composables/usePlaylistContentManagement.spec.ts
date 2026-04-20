@@ -44,6 +44,17 @@ describe('usePlaylistContentManagement', () => {
     expect(playlistStore.addContent).not.toHaveBeenCalled()
   })
 
+  it('does not add to locked playlists', async () => {
+    const playlist = h.factory('playlist', { is_locked: true })
+    const songs = [h.factory('song')]
+    h.mock(playlistStore, 'addContent')
+
+    const { addToPlaylist } = usePlaylistContentManagement()
+    await addToPlaylist(playlist, songs)
+
+    expect(playlistStore.addContent).not.toHaveBeenCalled()
+  })
+
   it('removes content from a playlist', async () => {
     const playlist = h.factory('playlist', { is_smart: false })
     const songs = [h.factory('song')]
@@ -55,5 +66,18 @@ describe('usePlaylistContentManagement', () => {
 
     expect(playlistStore.removeContent).toHaveBeenCalledWith(playlist, songs)
     expect(emitMock).toHaveBeenCalledWith('PLAYLIST_CONTENT_REMOVED', playlist, songs)
+  })
+
+  it('does not remove from locked playlists', async () => {
+    const playlist = h.factory('playlist', { is_locked: true })
+    const songs = [h.factory('song')]
+    const emitMock = h.mock(eventBus, 'emit')
+    h.mock(playlistStore, 'removeContent').mockResolvedValue(undefined)
+
+    const { removeFromPlaylist } = usePlaylistContentManagement()
+    await removeFromPlaylist(playlist, songs)
+
+    expect(playlistStore.removeContent).not.toHaveBeenCalledWith(playlist, songs)
+    expect(emitMock).not.toHaveBeenCalledWith('PLAYLIST_CONTENT_REMOVED', playlist, songs)
   })
 })

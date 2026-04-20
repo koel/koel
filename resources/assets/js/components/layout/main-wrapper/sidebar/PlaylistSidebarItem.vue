@@ -16,6 +16,7 @@
     <template #icon>
       <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" fixed-width />
       <Icon v-else-if="isFavoriteList(list)" :icon="faStar" fixed-width />
+      <Icon v-else-if="isPlaylist(list) && list.is_locked" :icon="faLock" />
       <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
       <Icon v-else-if="list.is_collaborative" :icon="faUsers" fixed-width />
       <ListMusicIcon v-else :size="16" />
@@ -25,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faClockRotateLeft, faStar, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import { faClockRotateLeft, faLock, faStar, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
@@ -88,6 +89,9 @@ const contentEditable = computed(() => {
   }
   if (isFavoriteList(list.value)) {
     return true
+  }
+  if (isPlaylist(list.value) && list.value.is_locked) {
+    return false
   }
 
   return !list.value.is_smart

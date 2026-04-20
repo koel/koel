@@ -42,6 +42,7 @@ class PlaylistSongController extends Controller
     public function store(Playlist $playlist, AddSongsToPlaylistRequest $request)
     {
         abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN, 'Smart playlist content is automatically generated');
+        abort_if($playlist->is_locked, Response::HTTP_FORBIDDEN, 'Editing is disabled for this playlist.');
 
         $this->authorize('collaborate', $playlist);
 
@@ -62,6 +63,7 @@ class PlaylistSongController extends Controller
     public function destroy(Playlist $playlist, RemoveSongsFromPlaylistRequest $request)
     {
         abort_if($playlist->is_smart, Response::HTTP_FORBIDDEN, 'Smart playlist content is automatically generated');
+        abort_if($playlist->is_locked, Response::HTTP_FORBIDDEN, 'Editing is disabled for this playlist.');
 
         $this->authorize('collaborate', $playlist);
         $this->playlistService->removePlayablesFromPlaylist($playlist, $request->songs);

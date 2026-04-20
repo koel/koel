@@ -273,6 +273,15 @@ describe('playableContextMenu.vue', () => {
     expect(screen.queryByText('My Smart Playlist')).toBeNull()
   })
 
+  it('does not list locked playlists', async () => {
+    playlistStore.state.playlists = h.factory('playlist', 3)
+    playlistStore.state.playlists.push(h.factory('playlist', { name: 'My locked Playlist', is_locked: true }))
+
+    await renderComponent()
+
+    expect(screen.queryByText('My locked Playlist')).toBeNull()
+  })
+
   it('removes from playlist', async () => {
     const playlist = h.factory('playlist')
     playlistStore.state.playlists.push(playlist)
@@ -289,6 +298,16 @@ describe('playableContextMenu.vue', () => {
       expect(removeContentMock).toHaveBeenCalledWith(playlist, playables)
       expect(emitMock).toHaveBeenCalledWith('PLAYLIST_CONTENT_REMOVED', playlist, playables)
     })
+  })
+
+  it('does not have an option to remove from playlist if playlist is locked', async () => {
+    const playlist = h.factory('playlist', { is_locked: true })
+    playlistStore.state.playlists.push(playlist)
+
+    h.visit(`/playlists/${playlist.id}`)
+    await renderComponent()
+
+    expect(screen.queryByText('Remove from Playlist')).toBeNull()
   })
 
   it('does not have an option to remove from playlist if not on Playlist screen', async () => {

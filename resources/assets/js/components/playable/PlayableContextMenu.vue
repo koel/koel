@@ -59,10 +59,10 @@
           <Separator />
           <MenuItem @click="addToFavorites">Favorites</MenuItem>
         </template>
-        <Separator v-if="normalPlaylists.length" />
+        <Separator v-if="editablePlaylists.length" />
         <template class="block">
-          <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="relative max-h-48 overflow-y-auto">
-            <MenuItem v-for="p in normalPlaylists" :key="p.id" @click="addToExistingPlaylist(p)">
+          <ul v-if="editablePlaylists.length" v-koel-overflow-fade class="relative max-h-48 overflow-y-auto">
+            <MenuItem v-for="p in editablePlaylists" :key="p.id" @click="addToExistingPlaylist(p)">
               {{ p.name }}
             </MenuItem>
           </ul>
@@ -206,7 +206,7 @@ const onlyOneSelected = computed(() => playables.value.length === 1)
 const firstSongPlaying = computed(() =>
   playables.value.length ? playables.value[0].playback_state === 'Playing' : false,
 )
-const normalPlaylists = computed(() => playlists.value.filter(({ is_smart }) => !is_smart))
+const editablePlaylists = computed(() => playlists.value.filter(({ is_smart, is_locked }) => !is_smart && !is_locked))
 const canBeShared = computed(() => !isPlus.value || (isSong(playables.value[0]) && playables.value[0].is_public))
 
 const makePublic = () =>
@@ -276,7 +276,7 @@ const canBeRemovedFromPlaylist = computed(() => {
     return false
   }
   const playlist = playlistStore.byId(getRouteParam('id')!)
-  return playlist && !playlist.is_smart
+  return playlist && !playlist.is_smart && !playlist.is_locked
 })
 
 const isQueueScreen = computed(() => isCurrentScreen('Queue'))

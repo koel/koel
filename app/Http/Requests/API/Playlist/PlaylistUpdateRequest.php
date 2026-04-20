@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
  * @property-read string $name
  * @property-read ?string $description
  * @property-read ?string $folder_id
+ * @property-read bool $is_locked
  * @property-read array $rules
  * @property-read ?string $cover
  */
@@ -26,6 +27,7 @@ class PlaylistUpdateRequest extends Request
         return [
             'name' => 'required',
             'description' => 'string|sometimes|nullable',
+            'is_locked' => 'boolean|sometimes',
             'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
             'folder_id' => [
                 'nullable',
@@ -47,6 +49,7 @@ class PlaylistUpdateRequest extends Request
             folderName: $this->folder_name,
             cover: $this->has('cover') ? $this->string('cover') : null,
             ruleGroups: $this->rules ? SmartPlaylistRuleGroupCollection::create(Arr::wrap($this->rules)) : null,
+            isLocked: $this->has('is_locked') ? $this->boolean('is_locked') : null,
         );
     }
 }

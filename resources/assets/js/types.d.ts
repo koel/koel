@@ -320,6 +320,7 @@ interface Playlist {
   description: string
   folder_id: PlaylistFolder['id'] | null
   is_smart: boolean
+  is_locked: boolean
   is_collaborative: boolean
   rules: SmartPlaylistRuleGroup[]
   cover: string | null
