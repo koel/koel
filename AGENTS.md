@@ -269,6 +269,18 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Never mention Claude Code in commits, PR descriptions, or any generated content. No "Generated with Claude Code" footers, no Co-Authored-By lines referencing Claude.
 - When the implementation of a PR changes (e.g. during code review), always update the PR title and description to reflect the current state of the changes.
 
+## Releasing
+- To release a new version, run `php artisan koel:release` (interactive) or `php artisan koel:release {patch|minor|major|vX.Y.Z}`. The command handles the version bump, commit, tag, `latest` tag move, and `release` branch sync.
+- Do not bump `.version`, create release tags, or move the `latest` tag manually — always use `php artisan koel:release`.
+- After the command finishes, the draft release is **not** immediately available on https://github.com/koel/koel/releases. The tag push triggers the `Upload Release Assets` GitHub Action (`.github/workflows/release.yml`), which sets up PHP/Node, builds assets, packages the zip/tarball, and only then creates the draft release. This typically takes several minutes.
+- Wait for the workflow to finish before opening the releases page. Poll with `gh run list --workflow=release.yml --limit 1` or block on it with `gh run watch` (pick the most recent run). Once it's `completed/success`, the draft release exists and can be edited/published on GitHub.
+- For minor/patch releases, you may be asked to write the release notes. Follow the convention of prior releases (e.g. v9.1.1, v9.1.0, v8.3.1):
+    - Title: `vX.Y.Z` (no codename — codenames are reserved for major versions like "Beethoven" in v9.0.0, "Tchaikovsky" in v8.0.0).
+    - Body matches GitHub's auto-generated format. Easiest way: `gh api repos/koel/koel/releases/generate-notes -F tag_name=vX.Y.Z -F previous_tag_name=vPREV --jq .body` to fetch the auto-generated body, then apply it with `gh release edit vX.Y.Z --repo koel/koel --notes-file -`.
+    - Required structure: a `## What's Changed` section with bullets in the form `* <full conventional-commit subject> by @<author> in <PR or commit URL>`, optionally a `## New Contributors` section, and a trailing `**Full Changelog**: https://github.com/koel/koel/compare/vPREV...vX.Y.Z` line.
+    - Do not rewrite or summarize commit subjects — keep them verbatim. Direct-to-master commits without PRs link to the commit SHA URL instead of a PR URL.
+    - Leave the release as a draft after editing notes; do not publish unless explicitly told to.
+
 ## AI Assistant Tools
 - When AI assistant tool capabilities change (added, removed, or updated), always update the sample prompts in `AiSamplePrompts.vue` to reflect the current abilities.
 
