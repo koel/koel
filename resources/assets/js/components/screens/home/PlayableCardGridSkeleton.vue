@@ -1,5 +1,11 @@
 <template>
-  <ol class="skeleton grid grid-cols-1 md:grid-cols-2" data-testid="playable-card-grid-skeleton">
+  <ol
+    class="skeleton grid grid-cols-1 md:grid-cols-2"
+    data-testid="playable-card-grid-skeleton"
+    role="status"
+    aria-busy="true"
+    aria-label="Loading"
+  >
     <li v-for="key in 6" :key class="flex items-center gap-4 px-6 py-4">
       <div class="w-14 aspect-square rounded pulse flex-shrink-0" />
       <span class="flex-1 space-y-2">

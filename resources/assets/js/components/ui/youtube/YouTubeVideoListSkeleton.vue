@@ -1,5 +1,5 @@
 <template>
-  <div class="skeleton space-y-5">
+  <div class="skeleton space-y-5" role="status" aria-busy="true" aria-label="Loading">
     <YouTubeVideoItemSkeleton v-for="i in 4" :key="i" />
   </div>
 </template>

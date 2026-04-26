@@ -49,9 +49,9 @@
     </ScreenEmptyState>
 
     <div v-else v-koel-overflow-fade class="-m-6 p-6 flex-1 overflow-auto space-y-3">
-      <template v-if="loading">
+      <div v-if="loading" role="status" aria-busy="true" aria-label="Loading" class="contents">
         <PodcastItemSkeleton v-for="i in 5" :key="i" />
-      </template>
+      </div>
       <template v-else>
         <PodcastItem v-for="podcast in podcasts" :key="podcast.id" :podcast />
       </template>
