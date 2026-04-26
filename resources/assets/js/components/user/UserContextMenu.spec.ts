@@ -47,7 +47,7 @@ describe('userContextMenu.vue', () => {
 
   it('revokes invite for prospects', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(true)
-    const prospect = factory.states('prospect')('user', { permissions: { edit: true, delete: true } })
+    const prospect = factory.states('prospect')('user', { permissions: { edit: false, delete: true } })
     await renderComponent(prospect)
     const revokeMock = h.mock(invitationService, 'revoke')
 
@@ -58,7 +58,7 @@ describe('userContextMenu.vue', () => {
 
   it('does not revoke invite for prospects if not confirmed', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(false)
-    await renderComponent(factory.states('prospect')('user', { permissions: { edit: true, delete: true } }))
+    await renderComponent(factory.states('prospect')('user', { permissions: { edit: false, delete: true } }))
     await h.user.click(screen.getByText('Revoke Invitation'))
     const revokeMock = h.mock(invitationService, 'revoke')
 
