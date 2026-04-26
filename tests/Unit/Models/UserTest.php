@@ -37,6 +37,6 @@ class UserTest extends TestCase
     {
         $user = create_user();
 
-        self::assertTrue($user->getAssignableRoles()->isEmpty());
+        self::assertSame([], $user->getAssignableRoles()->all());
     }
 }
