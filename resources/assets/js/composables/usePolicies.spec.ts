@@ -9,7 +9,7 @@ describe('usePolicies', () => {
   it('allows admin to edit any song', () => {
     h.actingAsUser({
       ...h.factory('user'),
-      permissions: ['manage songs'],
+      abilities: ['manage songs'],
     } as CurrentUser)
 
     const { currentUserCan } = usePolicies()
@@ -19,7 +19,7 @@ describe('usePolicies', () => {
   })
 
   it('allows Plus user to edit their own songs', async () => {
-    const user = h.factory('user', { permissions: [] }) as CurrentUser
+    const user = h.factory('user', { abilities: [] }) as CurrentUser
     h.actingAsUser(user)
 
     await h.withPlusEdition(async () => {
@@ -31,7 +31,7 @@ describe('usePolicies', () => {
   })
 
   it('denies Plus user editing others songs', async () => {
-    const user = h.factory('user', { permissions: [] }) as CurrentUser
+    const user = h.factory('user', { abilities: [] }) as CurrentUser
     h.actingAsUser(user)
 
     await h.withPlusEdition(async () => {
@@ -45,7 +45,7 @@ describe('usePolicies', () => {
   it('denies non-Plus non-admin editing songs', () => {
     h.actingAsUser({
       ...h.factory('user'),
-      permissions: [],
+      abilities: [],
     } as CurrentUser)
 
     commonStore.state.koel_plus.active = false
@@ -93,7 +93,7 @@ describe('usePolicies', () => {
   it('checks manageSettings permission', () => {
     h.actingAsUser({
       ...h.factory('user'),
-      permissions: ['manage settings'],
+      abilities: ['manage settings'],
     } as CurrentUser)
 
     const { currentUserCan } = usePolicies()
@@ -103,7 +103,7 @@ describe('usePolicies', () => {
   it('checks manageUsers permission', () => {
     h.actingAsUser({
       ...h.factory('user'),
-      permissions: [],
+      abilities: [],
     } as CurrentUser)
 
     const { currentUserCan } = usePolicies()
@@ -111,7 +111,7 @@ describe('usePolicies', () => {
   })
 
   it('allows upload for Plus users', async () => {
-    const user = h.factory('user', { permissions: [] }) as CurrentUser
+    const user = h.factory('user', { abilities: [] }) as CurrentUser
     h.actingAsUser(user)
 
     await h.withPlusEdition(async () => {
@@ -123,11 +123,29 @@ describe('usePolicies', () => {
   it('allows upload for users with manage songs permission', () => {
     h.actingAsUser({
       ...h.factory('user'),
-      permissions: ['manage songs'],
+      abilities: ['manage songs'],
     } as CurrentUser)
 
     const { currentUserCan } = usePolicies()
     expect(currentUserCan.uploadSongs()).toBe(true)
+  })
+
+  it('reads the edit permission embedded in the user', () => {
+    const { currentUserCan } = usePolicies()
+    const editable = h.factory('user', { permissions: { edit: true, delete: false } })
+    const readonly = h.factory('user', { permissions: { edit: false, delete: false } })
+
+    expect(currentUserCan.editUser(editable)).toBe(true)
+    expect(currentUserCan.editUser(readonly)).toBe(false)
+  })
+
+  it('reads the delete permission embedded in the user', () => {
+    const { currentUserCan } = usePolicies()
+    const deletable = h.factory('user', { permissions: { edit: false, delete: true } })
+    const readonly = h.factory('user', { permissions: { edit: false, delete: false } })
+
+    expect(currentUserCan.deleteUser(deletable)).toBe(true)
+    expect(currentUserCan.deleteUser(readonly)).toBe(false)
   })
 
   it('reads the edit permission embedded in the radio station', () => {

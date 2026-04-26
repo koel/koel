@@ -415,7 +415,7 @@ interface UserPreferences extends Record<string, any> {
   lastfm_session_key?: string
 }
 
-type Permission = 'manage settings' | 'manage users' | 'manage songs' | 'manage podcasts' | 'manage radio stations'
+type Ability = 'manage settings' | 'manage users' | 'manage songs' | 'manage podcasts' | 'manage radio stations'
 type Role = ('admin' | 'manager' | 'user') & string
 
 interface User {
@@ -430,12 +430,28 @@ interface User {
   sso_provider: SSOProvider | null
   sso_id: string | null
   preferences?: UserPreferences
-  permissions?: Permission[]
+  /**
+   * Capabilities this user has been granted (via their role) — i.e. "what *I*
+   * have the ability to do globally". Things like "manage settings" or
+   * "manage songs". Only populated for the current user (the one making the
+   * request); undefined for other users in a list.
+   */
+  abilities?: Ability[]
+  /**
+   * What the *current user* (the one making the request) is permitted to do
+   * *to this user* — the result of running UserPolicy from their perspective.
+   * Distinct from `abilities` above, which is the user's own globally-granted
+   * capabilities. Always populated, regardless of who is being looked at.
+   */
+  permissions: {
+    edit: boolean
+    delete: boolean
+  }
 }
 
 type CurrentUser = User & {
   preferences: UserPreferences
-  permissions: Permission[]
+  abilities: Ability[]
 }
 
 interface Settings {

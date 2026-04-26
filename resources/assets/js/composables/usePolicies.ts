@@ -1,7 +1,6 @@
 import { arrayify } from '@/utils/helpers'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useKoelPlus } from '@/composables/useKoelPlus'
-import { acl } from '@/services/acl'
 
 export const usePolicies = () => {
   const { currentUser } = useAuthorization()
@@ -9,7 +8,7 @@ export const usePolicies = () => {
 
   const currentUserCan = {
     editSong: (songs: MaybeArray<Song>) => {
-      if (currentUser.value.permissions.includes('manage songs')) {
+      if (currentUser.value.abilities.includes('manage songs')) {
         return true
       }
 
@@ -24,18 +23,18 @@ export const usePolicies = () => {
     deletePlaylist: (playlist: Playlist) => playlist.permissions.delete,
     editAlbum: (album: Album) => album.permissions.edit,
     editArtist: (artist: Artist) => artist.permissions.edit,
-    editUser: async (user: User) => await acl.checkResourcePermission('user', user.id, 'edit'),
-    deleteUser: async (user: User) => await acl.checkResourcePermission('user', user.id, 'delete'),
+    editUser: (user: User) => user.permissions.edit,
+    deleteUser: (user: User) => user.permissions.delete,
 
     editRadioStation: (station: RadioStation) => station.permissions.edit,
     deleteRadioStation: (station: RadioStation) => station.permissions.delete,
 
     // If the user has the permission, they can always add a radio station, even in demo mode.
-    addRadioStation: () => !window.IS_DEMO || currentUser.value.permissions.includes('manage radio stations'),
+    addRadioStation: () => !window.IS_DEMO || currentUser.value.abilities.includes('manage radio stations'),
 
-    manageSettings: () => currentUser.value.permissions.includes('manage settings'),
-    manageUsers: () => currentUser.value.permissions.includes('manage users'),
-    uploadSongs: () => isPlus.value || currentUser.value.permissions.includes('manage songs'),
+    manageSettings: () => currentUser.value.abilities.includes('manage settings'),
+    manageUsers: () => currentUser.value.abilities.includes('manage users'),
+    uploadSongs: () => isPlus.value || currentUser.value.abilities.includes('manage songs'),
   }
 
   return {

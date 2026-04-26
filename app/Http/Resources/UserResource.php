@@ -21,7 +21,11 @@ class UserResource extends JsonResource
         'sso_id',
         'is_admin',
         'role',
-        'permissions',
+        'abilities',
+        'permissions' => [
+            'edit',
+            'delete',
+        ],
     ];
 
     public function __construct(
@@ -33,7 +37,8 @@ class UserResource extends JsonResource
     /** @inheritdoc */
     public function toArray(Request $request): array
     {
-        $isCurrentUser = $this->user->is($request->user());
+        $currentUser = $request->user();
+        $isCurrentUser = $this->user->is($currentUser);
 
         return [
             'type' => 'users',
@@ -47,10 +52,14 @@ class UserResource extends JsonResource
             'sso_id' => $this->user->sso_id,
             'is_admin' => $this->user->role === Role::ADMIN, // @todo remove this backward-compatibility field
             'role' => $this->user->role,
-            'permissions' => $this->when($isCurrentUser, fn () => $this->user
+            'abilities' => $this->when($isCurrentUser, fn () => $this->user
                 ->getPermissionsViaRoles()
                 ->pluck('name')
                 ->toArray()),
+            'permissions' => [
+                'edit' => $currentUser->can('update', $this->user),
+                'delete' => $currentUser->can('destroy', $this->user),
+            ],
         ];
     }
 }
