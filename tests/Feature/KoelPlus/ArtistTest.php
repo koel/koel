@@ -63,4 +63,12 @@ class ArtistTest extends PlusTestCase
             $randomDude,
         )->assertForbidden();
     }
+
+    #[Test]
+    public function showIncludesEditPermissionForOwner(): void
+    {
+        $artist = Artist::factory()->createOne();
+
+        $this->getAs("api/artists/{$artist->id}", $artist->user)->assertJsonPath('permissions.edit', true);
+    }
 }

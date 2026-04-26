@@ -129,4 +129,36 @@ class ArtistTest extends TestCase
             create_user(),
         )->assertForbidden();
     }
+
+    #[Test]
+    public function showIncludesEditPermissionForAdmin(): void
+    {
+        $artist = Artist::factory()->createOne();
+
+        $this->getAs("api/artists/{$artist->id}", create_admin())->assertJsonPath('permissions.edit', true);
+    }
+
+    #[Test]
+    public function showIncludesEditPermissionForRegularUser(): void
+    {
+        $artist = Artist::factory()->createOne();
+
+        $this->getAs("api/artists/{$artist->id}", create_user())->assertJsonPath('permissions.edit', false);
+    }
+
+    #[Test]
+    public function showIncludesEditPermissionFalseForUnknownArtist(): void
+    {
+        $artist = Artist::factory()->createOne(['name' => Artist::UNKNOWN_NAME]);
+
+        $this->getAs("api/artists/{$artist->id}", create_admin())->assertJsonPath('permissions.edit', false);
+    }
+
+    #[Test]
+    public function showIncludesEditPermissionFalseForVariousArtists(): void
+    {
+        $artist = Artist::factory()->createOne(['name' => Artist::VARIOUS_NAME]);
+
+        $this->getAs("api/artists/{$artist->id}", create_admin())->assertJsonPath('permissions.edit', false);
+    }
 }

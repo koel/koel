@@ -7,7 +7,6 @@ import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { acl } from '@/services/acl'
 import CreateEmbedForm from '@/components/embed/CreateEmbedForm.vue'
 
 const openModalMock = vi.fn()
@@ -26,13 +25,12 @@ describe('artistContextMenu.vue', () => {
   })
 
   const renderComponent = async (artist?: Artist) => {
-    h.mock(acl, 'checkResourcePermission').mockReturnValue(true)
-
     artist =
       artist ||
       h.factory('artist', {
         name: 'Accept',
         favorite: false,
+        permissions: { edit: true },
       })
 
     const rendered = h.render(Component, {
