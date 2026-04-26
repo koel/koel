@@ -27,21 +27,27 @@ describe('userCard.vue', () => {
     }
   }
 
-  it('has different behaviors for current user', () => {
+  it('shows profile link only for the current user', () => {
     const user = h.factory.states('current')('user') as CurrentUser
     h.actingAsUser(user)
     renderComponent(user)
 
     screen.getByTitle('This is you!')
     expect(screen.getByText('Your Profile').getAttribute('href')).toBe('/#/profile')
-    expect(screen.queryByRole('button', { name: 'More Actions' })).toBeNull()
   })
 
-  it('requests the context menu', async () => {
+  it('does not show profile link for other users', () => {
+    h.actingAsUser(h.factory.states('current')('user') as CurrentUser)
+    renderComponent(h.factory('user'))
+
+    expect(screen.queryByText('Your Profile')).toBeNull()
+  })
+
+  it('requests the context menu on right-click', async () => {
     const { openContextMenu } = useContextMenu()
     const { user } = renderComponent()
 
-    await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+    await h.trigger(screen.getByTestId('user-card'), 'contextMenu')
     await assertOpenContextMenu(openContextMenu as Mock, UserContextMenu, { user })
   })
 })
