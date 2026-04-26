@@ -11,7 +11,7 @@ describe('userContextMenu.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (user?: User) => {
-    user = user || h.factory('user', { permissions: { edit: true, delete: true } })
+    user = user || h.factory('user')
 
     const rendered = h.render(Component, {
       props: {
@@ -27,7 +27,7 @@ describe('userContextMenu.vue', () => {
 
   it('deletes user if confirmed', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(true)
-    const { user } = await renderComponent()
+    const { user } = await renderComponent(h.factory('user', { permissions: { edit: true, delete: true } }))
     const destroyMock = h.mock(userStore, 'destroy')
 
     await h.user.click(screen.getByText('Delete'))
@@ -37,7 +37,7 @@ describe('userContextMenu.vue', () => {
 
   it('does not delete user if not confirmed', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(false)
-    await renderComponent()
+    await renderComponent(h.factory('user', { permissions: { edit: true, delete: true } }))
     const destroyMock = h.mock(userStore, 'destroy')
 
     await h.user.click(screen.getByText('Delete'))
