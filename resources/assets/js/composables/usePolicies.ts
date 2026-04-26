@@ -20,7 +20,8 @@ export const usePolicies = () => {
       return arrayify(songs).every(song => song.owner_id === currentUser.value.id)
     },
 
-    editPlaylist: (playlist: Playlist) => playlist.owner_id === currentUser.value.id,
+    editPlaylist: (playlist: Playlist) => playlist.permissions.edit,
+    deletePlaylist: (playlist: Playlist) => playlist.permissions.delete,
     editAlbum: (album: Album) => album.permissions.edit,
     editArtist: (artist: Artist) => artist.permissions.edit,
     editUser: async (user: User) => await acl.checkResourcePermission('user', user.id, 'edit'),

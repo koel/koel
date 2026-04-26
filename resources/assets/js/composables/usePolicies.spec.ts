@@ -54,23 +54,22 @@ describe('usePolicies', () => {
     expect(currentUserCan.editSong(h.factory('song'))).toBe(false)
   })
 
-  it('allows editing own playlist', () => {
-    const user = h.factory('user') as CurrentUser
-    h.actingAsUser(user)
-
+  it('reads the edit permission embedded in the playlist', () => {
     const { currentUserCan } = usePolicies()
-    const playlist = h.factory('playlist', { owner_id: user.id })
+    const editable = h.factory('playlist', { permissions: { edit: true, delete: false } })
+    const readonly = h.factory('playlist', { permissions: { edit: false, delete: false } })
 
-    expect(currentUserCan.editPlaylist(playlist)).toBe(true)
+    expect(currentUserCan.editPlaylist(editable)).toBe(true)
+    expect(currentUserCan.editPlaylist(readonly)).toBe(false)
   })
 
-  it('denies editing others playlist', () => {
-    h.actingAsUser(h.factory('user') as CurrentUser)
-
+  it('reads the delete permission embedded in the playlist', () => {
     const { currentUserCan } = usePolicies()
-    const playlist = h.factory('playlist', { owner_id: '999' })
+    const deletable = h.factory('playlist', { permissions: { edit: false, delete: true } })
+    const readonly = h.factory('playlist', { permissions: { edit: false, delete: false } })
 
-    expect(currentUserCan.editPlaylist(playlist)).toBe(false)
+    expect(currentUserCan.deletePlaylist(deletable)).toBe(true)
+    expect(currentUserCan.deletePlaylist(readonly)).toBe(false)
   })
 
   it('reads the edit permission embedded in the album', () => {

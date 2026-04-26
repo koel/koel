@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
+use LogicException;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
@@ -82,7 +83,11 @@ class Playlist extends Model implements AuditableContract, Embeddable
 
     protected function owner(): Attribute
     {
-        return Attribute::get(fn () => $this->users()->wherePivot('role', 'owner')->sole())->shouldCache();
+        return Attribute::get(
+            fn (): User => (
+                $this->users->firstWhere('pivot.role', 'owner') ?? throw new LogicException('Playlist has no owner')
+            ),
+        )->shouldCache();
     }
 
     public function collaborators(): BelongsToMany

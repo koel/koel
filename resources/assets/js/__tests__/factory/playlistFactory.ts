@@ -12,6 +12,10 @@ export default (): Playlist => ({
   rules: [],
   is_collaborative: false,
   cover: faker.image.url(),
+  permissions: {
+    edit: faker.datatype.boolean(),
+    delete: faker.datatype.boolean(),
+  },
 })
 
 export const states: Record<string, () => Omit<Partial<Playlist>, 'type'>> = {

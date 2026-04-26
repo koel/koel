@@ -4,9 +4,11 @@ namespace Tests\Feature;
 
 use App\Helpers\Ulid;
 use App\Http\Resources\PlaylistResource;
+use App\Models\Embed;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Services\PlaylistFolderService;
+use App\Values\EmbedOptions;
 use App\Values\SmartPlaylist\SmartPlaylistRule;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -392,5 +394,38 @@ class PlaylistTest extends TestCase
         $this->deleteAs("api/playlists/{$playlist->id}")->assertForbidden();
 
         $this->assertModelExists($playlist);
+    }
+
+    #[Test]
+    public function listingIncludesEditPermissionForOwner(): void
+    {
+        $user = create_user();
+        create_playlists(count: 1, owner: $user);
+
+        $this->getAs('api/playlists', $user)->assertJsonPath('0.permissions.edit', true);
+    }
+
+    #[Test]
+    public function listingIncludesDeletePermissionForOwner(): void
+    {
+        $user = create_user();
+        create_playlists(count: 1, owner: $user);
+
+        $this->getAs('api/playlists', $user)->assertJsonPath('0.permissions.delete', true);
+    }
+
+    #[Test]
+    public function embedPayloadOmitsPermissions(): void
+    {
+        $playlist = create_playlist();
+        $embed = Embed::factory()->createOne([
+            'embeddable_type' => 'playlist',
+            'embeddable_id' => $playlist->id,
+        ]);
+
+        $this
+            ->getJson("api/embeds/{$embed->id}/" . EmbedOptions::make())
+            ->assertSuccessful()
+            ->assertJsonMissingPath('embed.embeddable.permissions');
     }
 }
