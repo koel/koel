@@ -142,6 +142,9 @@ interface Album {
   year: number | null
   is_external: boolean
   favorite: boolean
+  permissions: {
+    edit: boolean
+  }
 }
 
 interface IStreamable {

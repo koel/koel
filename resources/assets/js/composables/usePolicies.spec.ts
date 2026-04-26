@@ -74,13 +74,13 @@ describe('usePolicies', () => {
     expect(currentUserCan.editPlaylist(playlist)).toBe(false)
   })
 
-  it('delegates album editing to ACL', async () => {
-    const checkMock = h.mock(acl, 'checkResourcePermission').mockResolvedValue(true)
+  it('reads the edit permission embedded in the album', () => {
     const { currentUserCan } = usePolicies()
-    const album = h.factory('album')
+    const editable = h.factory('album', { permissions: { edit: true } })
+    const readonly = h.factory('album', { permissions: { edit: false } })
 
-    await expect(currentUserCan.editAlbum(album)).resolves.toBe(true)
-    expect(checkMock).toHaveBeenCalledWith('album', album.id, 'edit')
+    expect(currentUserCan.editAlbum(editable)).toBe(true)
+    expect(currentUserCan.editAlbum(readonly)).toBe(false)
   })
 
   it('delegates artist editing to ACL', async () => {

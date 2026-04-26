@@ -67,4 +67,12 @@ class AlbumTest extends PlusTestCase
             $randomDude,
         )->assertForbidden();
     }
+
+    #[Test]
+    public function showIncludesEditPermissionForOwner(): void
+    {
+        $album = Album::factory()->createOne();
+
+        $this->getAs("api/albums/{$album->id}", $album->user)->assertJsonPath('permissions.edit', true);
+    }
 }

@@ -19,6 +19,9 @@ class AlbumResource extends JsonResource
         'cover',
         'created_at',
         'year',
+        'permissions' => [
+            'edit',
+        ],
     ];
 
     public const array PAGINATION_JSON_STRUCTURE = [
@@ -74,6 +77,9 @@ class AlbumResource extends JsonResource
             'year' => $this->album->year,
             'is_external' => $this->unless($embedding, fn () => $isPlus && $this->album->user_id !== $user->id),
             'favorite' => $this->unless($embedding, $this->album->favorite),
+            'permissions' => $this->unless($embedding, fn () => [
+                'edit' => $user->can('edit', $this->album),
+            ]),
         ];
     }
 }

@@ -196,7 +196,7 @@ const fetchScreenData = async () => {
     const restoredOrder = lsGet<SortOrder>('album-sort-order', 'asc')!
     sort(restoredField, restoredOrder)
 
-    editable.value = await currentUserCan.editAlbum(album.value!)
+    editable.value = currentUserCan.editAlbum(album.value!)
   } catch (error: unknown) {
     if ((error as any)?.status === 404) {
       triggerNotFound()
