@@ -38,13 +38,18 @@
       </main>
 
       <Btn v-if="isCurrentUser" :href="url('profile')" highlight small tag="a">Your Profile</Btn>
+
+      <Btn v-else gray @click="requestContextMenu">
+        <Icon :icon="faEllipsis" fixed-width />
+        <span class="sr-only">More Actions</span>
+      </Btn>
     </article>
   </WithGradientBorder>
 </template>
 
 <script lang="ts" setup>
 import googleLogo from '@/../img/logos/google.svg'
-import { faCircleCheck, faShield } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faEllipsis, faShield } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { useRouter } from '@/composables/useRouter'
 import { useAuthorization } from '@/composables/useAuthorization'

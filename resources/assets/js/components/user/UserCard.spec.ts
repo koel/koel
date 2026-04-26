@@ -10,7 +10,9 @@ import UserContextMenu from '@/components/user/UserContextMenu.vue'
 vi.mock('@/composables/useContextMenu')
 
 describe('userCard.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => (useContextMenu().openContextMenu as Mock).mockClear(),
+  })
 
   const renderComponent = (user?: User) => {
     user = user ?? h.factory('user')
@@ -49,5 +51,21 @@ describe('userCard.vue', () => {
 
     await h.trigger(screen.getByTestId('user-card'), 'contextMenu')
     await assertOpenContextMenu(openContextMenu as Mock, UserContextMenu, { user })
+  })
+
+  it('requests the context menu via the More Actions button', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { user } = renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+    await assertOpenContextMenu(openContextMenu as Mock, UserContextMenu, { user })
+  })
+
+  it('does not show the More Actions button for the current user', () => {
+    const user = h.factory.states('current')('user') as CurrentUser
+    h.actingAsUser(user)
+    renderComponent(user)
+
+    expect(screen.queryByRole('button', { name: 'More Actions' })).toBeNull()
   })
 })
