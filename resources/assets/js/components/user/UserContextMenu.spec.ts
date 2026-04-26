@@ -10,8 +10,8 @@ import Component from './UserContextMenu.vue'
 describe('userContextMenu.vue', () => {
   const h = createHarness()
 
-  const renderComponent = async (user?: User, editable = true, deletable = true) => {
-    user = user || h.factory('user', { permissions: { edit: editable, delete: deletable } })
+  const renderComponent = async (user?: User) => {
+    user = user || h.factory('user', { permissions: { edit: true, delete: true } })
 
     const rendered = h.render(Component, {
       props: {
@@ -68,7 +68,7 @@ describe('userContextMenu.vue', () => {
   })
 
   it('respects the permissions', async () => {
-    await renderComponent(undefined, false, false)
+    await renderComponent(h.factory('user', { permissions: { edit: false, delete: false } }))
     expect(screen.queryByText('Edit')).toBeNull()
     expect(screen.queryByText('Delete')).toBeNull()
   })
