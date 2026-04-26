@@ -6,7 +6,7 @@
       <ArtistThumbnail :entity="artist" class="group" />
     </template>
 
-    <ParagraphSkeleton v-if="loading" />
+    <ParagraphSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
 
     <div v-if="!loading && info?.bio" v-html="info.bio.full" />
 
