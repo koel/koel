@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Helpers\Ulid;
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
+use App\Models\Embed;
+use App\Values\EmbedOptions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -160,5 +162,20 @@ class ArtistTest extends TestCase
         $artist = Artist::factory()->createOne(['name' => Artist::VARIOUS_NAME]);
 
         $this->getAs("api/artists/{$artist->id}", create_admin())->assertJsonPath('permissions.edit', false);
+    }
+
+    #[Test]
+    public function embedPayloadOmitsPermissions(): void
+    {
+        $artist = Artist::factory()->createOne();
+        $embed = Embed::factory()->createOne([
+            'embeddable_type' => 'artist',
+            'embeddable_id' => $artist->id,
+        ]);
+
+        $this
+            ->getJson("api/embeds/{$embed->id}/" . EmbedOptions::make())
+            ->assertSuccessful()
+            ->assertJsonMissingPath('embed.embeddable.permissions');
     }
 }
