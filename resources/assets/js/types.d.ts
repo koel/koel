@@ -330,6 +330,9 @@ interface Playlist {
   rules: SmartPlaylistRuleGroup[]
   cover: string | null
   playables?: Playable[]
+  permissions: {
+    edit: boolean
+  }
 }
 
 type PlaylistLike = Playlist | FavoriteList | RecentlyPlayedList

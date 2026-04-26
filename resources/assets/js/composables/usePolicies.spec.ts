@@ -54,23 +54,13 @@ describe('usePolicies', () => {
     expect(currentUserCan.editSong(h.factory('song'))).toBe(false)
   })
 
-  it('allows editing own playlist', () => {
-    const user = h.factory('user') as CurrentUser
-    h.actingAsUser(user)
-
+  it('reads the edit permission embedded in the playlist', () => {
     const { currentUserCan } = usePolicies()
-    const playlist = h.factory('playlist', { owner_id: user.id })
+    const editable = h.factory('playlist', { permissions: { edit: true } })
+    const readonly = h.factory('playlist', { permissions: { edit: false } })
 
-    expect(currentUserCan.editPlaylist(playlist)).toBe(true)
-  })
-
-  it('denies editing others playlist', () => {
-    h.actingAsUser(h.factory('user') as CurrentUser)
-
-    const { currentUserCan } = usePolicies()
-    const playlist = h.factory('playlist', { owner_id: '999' })
-
-    expect(currentUserCan.editPlaylist(playlist)).toBe(false)
+    expect(currentUserCan.editPlaylist(editable)).toBe(true)
+    expect(currentUserCan.editPlaylist(readonly)).toBe(false)
   })
 
   it('reads the edit permission embedded in the album', () => {

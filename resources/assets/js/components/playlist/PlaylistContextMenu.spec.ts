@@ -38,11 +38,7 @@ describe('playlistContextMenu.vue', () => {
       h.mock(playableStore, 'fetchForPlaylist').mockResolvedValue([])
     }
 
-    user =
-      user ||
-      (h.factory.states('current')('user', {
-        id: playlist.owner_id,
-      }) as CurrentUser)
+    user = user || (h.factory.states('current')('user') as CurrentUser)
 
     userStore.state.current = user
 
@@ -61,8 +57,11 @@ describe('playlistContextMenu.vue', () => {
     }
   }
 
+  const makeEditablePlaylist = (overrides: Partial<Playlist> = {}) =>
+    h.factory('playlist', { permissions: { edit: true }, ...overrides })
+
   it('edits a standard playlist', async () => {
-    const { playlist } = await renderComponent(h.factory('playlist'))
+    const { playlist } = await renderComponent(makeEditablePlaylist())
 
     await h.user.click(screen.getByText('Edit…'))
 
@@ -70,7 +69,7 @@ describe('playlistContextMenu.vue', () => {
   })
 
   it('edits a smart playlist', async () => {
-    const { playlist } = await renderComponent(factory.states('smart')('playlist'))
+    const { playlist } = await renderComponent(factory.states('smart')('playlist', { permissions: { edit: true } }))
 
     await h.user.click(screen.getByText('Edit…'))
 
@@ -79,7 +78,7 @@ describe('playlistContextMenu.vue', () => {
 
   it('deletes a playlist', async () => {
     const deleteMock = h.mock(playlistStore, 'delete')
-    const { playlist } = await renderComponent(h.factory('playlist'))
+    const { playlist } = await renderComponent(makeEditablePlaylist())
 
     await h.user.click(screen.getByText('Delete'))
 
@@ -181,7 +180,8 @@ describe('playlistContextMenu.vue', () => {
   })
 
   it('does not have an option to edit or delete if the playlist is not owned by the current user', async () => {
-    await renderComponent(h.factory('playlist'), h.factory.states('current')('user') as CurrentUser)
+    const playlist = h.factory('playlist', { permissions: { edit: false } })
+    await renderComponent(playlist, h.factory.states('current')('user') as CurrentUser)
 
     expect(screen.queryByText('Edit…')).toBeNull()
     expect(screen.queryByText('Delete')).toBeNull()

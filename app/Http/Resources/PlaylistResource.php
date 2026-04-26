@@ -20,6 +20,9 @@ class PlaylistResource extends JsonResource
         'is_smart',
         'rules',
         'created_at',
+        'permissions' => [
+            'edit',
+        ],
     ];
 
     public function __construct(
@@ -53,6 +56,9 @@ class PlaylistResource extends JsonResource
             'rules' => $this->unless($embedding, $this->playlist->rules),
             'cover' => image_storage_url($this->playlist->cover),
             'created_at' => $this->unless($embedding, $this->playlist->created_at),
+            'permissions' => $this->unless($embedding, fn () => [
+                'edit' => $user->can('own', $this->playlist),
+            ]),
         ];
     }
 }

@@ -113,7 +113,7 @@ class Playlist extends Model implements AuditableContract, Embeddable
 
     public function ownedBy(User $user): bool
     {
-        return $this->owner->is($user);
+        return $this->users->contains(static fn (User $u): bool => $u->id === $user->id && $u->pivot->role === 'owner');
     }
 
     /** @inheritdoc */

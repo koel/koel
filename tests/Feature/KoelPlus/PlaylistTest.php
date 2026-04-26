@@ -26,4 +26,14 @@ class PlaylistTest extends PlusTestCase
             $collaborator,
         )->assertForbidden();
     }
+
+    #[Test]
+    public function listingDeniesEditPermissionForCollaborator(): void
+    {
+        $playlist = create_playlist();
+        $collaborator = create_user();
+        $playlist->addCollaborator($collaborator);
+
+        $this->getAs('api/playlists', $collaborator)->assertJsonPath('0.permissions.edit', false);
+    }
 }
