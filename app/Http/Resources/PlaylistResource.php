@@ -58,7 +58,7 @@ class PlaylistResource extends JsonResource
             'cover' => image_storage_url($this->playlist->cover),
             'created_at' => $this->unless($embedding, $this->playlist->created_at),
             'permissions' => $this->unless($embedding, fn () => [
-                'edit' => $user->can('own', $this->playlist),
+                'edit' => $user->can('edit', $this->playlist),
                 'delete' => $user->can('delete', $this->playlist),
             ]),
         ];

@@ -36,6 +36,7 @@ class PlaylistTest extends PlusTestCase
 
         $this
             ->getAs('api/playlists', $collaborator)
+            ->assertJsonCount(1)
             ->assertJsonPath('0.permissions.edit', false)
             ->assertJsonPath('0.permissions.delete', false);
     }

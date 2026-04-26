@@ -18,6 +18,11 @@ class PlaylistPolicy
         return $playlist->ownedBy($user);
     }
 
+    public function edit(User $user, Playlist $playlist): bool
+    {
+        return $this->own($user, $playlist);
+    }
+
     public function delete(User $user, Playlist $playlist): bool
     {
         return $this->own($user, $playlist);
