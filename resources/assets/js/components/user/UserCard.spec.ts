@@ -29,20 +29,20 @@ describe('userCard.vue', () => {
     }
   }
 
-  it('shows profile link only for the current user', () => {
+  it('shows the profile link for the current user', () => {
     const user = h.factory.states('current')('user') as CurrentUser
     h.actingAsUser(user)
     renderComponent(user)
 
     screen.getByTitle('This is you!')
-    expect(screen.getByText('Your Profile').getAttribute('href')).toBe('/#/profile')
+    expect(screen.getByRole('link', { name: 'Your Profile' }).getAttribute('href')).toBe('/#/profile')
   })
 
   it('does not show profile link for other users', () => {
     h.actingAsUser(h.factory.states('current')('user') as CurrentUser)
     renderComponent(h.factory('user'))
 
-    expect(screen.queryByText('Your Profile')).toBeNull()
+    expect(screen.queryByRole('link', { name: 'Your Profile' })).toBeNull()
   })
 
   it('requests the context menu on right-click', async () => {
