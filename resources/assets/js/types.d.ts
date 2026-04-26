@@ -438,10 +438,10 @@ interface User {
    */
   abilities?: Ability[]
   /**
-   * What the *current viewer* is permitted to do *to this user* — the result
-   * of running UserPolicy from the viewer's perspective. Distinct from
-   * `abilities` above, which is the user's own globally-granted capabilities.
-   * Always populated, regardless of whether this is the current user.
+   * What the *current user* (the one making the request) is permitted to do
+   * *to this user* — the result of running UserPolicy from their perspective.
+   * Distinct from `abilities` above, which is the user's own globally-granted
+   * capabilities. Always populated, regardless of who is being looked at.
    */
   permissions: {
     edit: boolean

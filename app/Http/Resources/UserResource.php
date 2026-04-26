@@ -37,8 +37,8 @@ class UserResource extends JsonResource
     /** @inheritdoc */
     public function toArray(Request $request): array
     {
-        $viewer = $request->user();
-        $isCurrentUser = $this->user->is($viewer);
+        $currentUser = $request->user();
+        $isCurrentUser = $this->user->is($currentUser);
 
         return [
             'type' => 'users',
@@ -57,8 +57,8 @@ class UserResource extends JsonResource
                 ->pluck('name')
                 ->toArray()),
             'permissions' => [
-                'edit' => $viewer->can('update', $this->user),
-                'delete' => $viewer->can('destroy', $this->user),
+                'edit' => $currentUser->can('update', $this->user),
+                'delete' => $currentUser->can('destroy', $this->user),
             ],
         ];
     }
