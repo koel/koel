@@ -7,7 +7,6 @@ import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { acl } from '@/services/acl'
 import EditAlbumForm from '@/components/album/EditAlbumForm.vue'
 import CreateEmbedForm from '@/components/embed/CreateEmbedForm.vue'
 
@@ -27,8 +26,6 @@ describe('albumContextMenu.vue', () => {
   })
 
   const renderComponent = async (album?: Album) => {
-    h.mock(acl, 'checkResourcePermission').mockReturnValue(true)
-
     if (!vi.isMockFunction(playableStore.fetchSongsForAlbum)) {
       h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue([])
     }
@@ -38,6 +35,7 @@ describe('albumContextMenu.vue', () => {
       h.factory('album', {
         name: 'IV',
         favorite: false,
+        permissions: { edit: true },
       })
 
     const rendered = h.actingAsAdmin().render(Component, {
@@ -110,9 +108,6 @@ describe('albumContextMenu.vue', () => {
 
   it('requests edit form', async () => {
     const { album } = await renderComponent()
-
-    // for the "Edit…" menu item to show up
-    await h.tick(2)
 
     await h.user.click(screen.getByText('Edit…'))
 

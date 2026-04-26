@@ -48,7 +48,7 @@ const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
-const allowEdit = ref(false)
+const allowEdit = computed(() => currentUserCan.editAlbum(album.value))
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))
 
@@ -90,7 +90,6 @@ const toggleOffline = () =>
   })
 
 onMounted(async () => {
-  allowEdit.value = await currentUserCan.editAlbum(album.value)
   albumSongs.value = await playableStore.fetchSongsForAlbum(album.value)
 })
 </script>

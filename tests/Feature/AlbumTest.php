@@ -141,4 +141,28 @@ class AlbumTest extends TestCase
             create_user(),
         )->assertForbidden();
     }
+
+    #[Test]
+    public function showIncludesEditPermissionForAdmin(): void
+    {
+        $album = Album::factory()->createOne();
+
+        $this->getAs("api/albums/{$album->id}", create_admin())->assertJsonPath('permissions.edit', true);
+    }
+
+    #[Test]
+    public function showIncludesEditPermissionForRegularUser(): void
+    {
+        $album = Album::factory()->createOne();
+
+        $this->getAs("api/albums/{$album->id}", create_user())->assertJsonPath('permissions.edit', false);
+    }
+
+    #[Test]
+    public function showIncludesEditPermissionFalseForUnknownAlbum(): void
+    {
+        $album = Album::factory()->createOne(['name' => Album::UNKNOWN_NAME]);
+
+        $this->getAs("api/albums/{$album->id}", create_admin())->assertJsonPath('permissions.edit', false);
+    }
 }
