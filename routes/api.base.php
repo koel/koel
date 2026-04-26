@@ -2,7 +2,6 @@
 
 use App\Facades\YouTube;
 use App\Helpers\Uuid;
-use App\Http\Controllers\API\Acl\CheckResourcePermissionController;
 use App\Http\Controllers\API\Acl\FetchAssignableRolesController;
 use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AiController;
@@ -277,7 +276,6 @@ Route::prefix('api')
 
             // ACL routes
             Route::group(['prefix' => 'acl'], static function (): void {
-                Route::get('permissions/{type}/{id}/{action}', CheckResourcePermissionController::class);
                 Route::get('assignable-roles', FetchAssignableRolesController::class);
             });
         });

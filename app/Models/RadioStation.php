@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Builders\RadioStationBuilder;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Contracts\Favoriteable;
-use App\Models\Contracts\Permissionable;
 use App\Observers\RadioStationObserver;
 use Carbon\Carbon;
 use Database\Factories\RadioStationFactory;
@@ -35,7 +34,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  */
 #[ObservedBy(RadioStationObserver::class)]
 #[UseEloquentBuilder(RadioStationBuilder::class)]
-class RadioStation extends Model implements AuditableContract, Favoriteable, Permissionable
+class RadioStation extends Model implements AuditableContract, Favoriteable
 {
     use Auditable;
     use HasFactory;
@@ -79,10 +78,5 @@ class RadioStation extends Model implements AuditableContract, Favoriteable, Per
             'description' => $this->description,
             'user_id' => $this->user_id,
         ];
-    }
-
-    public static function getPermissionableIdentifier(): string
-    {
-        return 'id';
     }
 }

@@ -7,7 +7,6 @@ use App\Casts\UserPreferencesCast;
 use App\Enums\Acl\Role as RoleEnum;
 use App\Models\Concerns\Users\HasUserAttributes;
 use App\Models\Concerns\Users\HasUserRelationships;
-use App\Models\Contracts\Permissionable;
 use App\Observers\UserObserver;
 use App\Values\User\UserPreferences;
 use Carbon\Carbon;
@@ -58,7 +57,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 #[ObservedBy(UserObserver::class)]
 #[UseEloquentBuilder(UserBuilder::class)]
-class User extends Authenticatable implements AuditableContract, Permissionable
+class User extends Authenticatable implements AuditableContract
 {
     use Auditable;
     use HasApiTokens;
@@ -120,10 +119,5 @@ class User extends Authenticatable implements AuditableContract, Permissionable
     public function subscribedToPodcast(Podcast $podcast): bool
     {
         return $this->podcasts()->whereKey($podcast)->exists();
-    }
-
-    public static function getPermissionableIdentifier(): string
-    {
-        return 'public_id';
     }
 }

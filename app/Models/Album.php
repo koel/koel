@@ -9,7 +9,6 @@ use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
-use App\Models\Contracts\Permissionable;
 use App\Observers\AlbumObserver;
 use Carbon\Carbon;
 use Database\Factories\AlbumFactory;
@@ -45,7 +44,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  */
 #[ObservedBy(AlbumObserver::class)]
 #[UseEloquentBuilder(AlbumBuilder::class)]
-class Album extends Model implements AuditableContract, Embeddable, Favoriteable, Permissionable
+class Album extends Model implements AuditableContract, Embeddable, Favoriteable
 {
     use Auditable;
     use HasAlbumAttributes;
@@ -125,10 +124,5 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
         }
 
         return $array;
-    }
-
-    public static function getPermissionableIdentifier(): string
-    {
-        return 'id';
     }
 }
