@@ -7,14 +7,12 @@
       <MenuItem v-if="user.is_prospect" @click="revokeInvite">Revoke Invitation</MenuItem>
       <MenuItem v-else @click="destroy">Delete</MenuItem>
     </template>
-    <MenuItem v-if="allowEdit === false && allowDelete === false" class="italic pointer-events-none">
-      No available actions
-    </MenuItem>
+    <MenuItem v-if="!allowEdit && !allowDelete" class="italic pointer-events-none"> No available actions </MenuItem>
   </ul>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { userStore } from '@/stores/userStore'
 import { usePolicies } from '@/composables/usePolicies'
@@ -28,9 +26,6 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 const props = defineProps<{ user: User }>()
 const { user } = toRefs(props)
 
-const allowEdit = ref<boolean | null>(null)
-const allowDelete = ref<boolean | null>(null)
-
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const EditUserForm = defineAsyncComponent(() => import('@/components/user/EditUserForm.vue'))
@@ -38,6 +33,9 @@ const EditUserForm = defineAsyncComponent(() => import('@/components/user/EditUs
 const { MenuItem, trigger } = useContextMenu()
 const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
+
+const allowEdit = computed(() => !user.value.is_prospect && currentUserCan.editUser(user.value))
+const allowDelete = computed(() => currentUserCan.deleteUser(user.value))
 
 const edit = () => trigger(() => openModal<'EDIT_USER_FORM'>(EditUserForm, { user: user.value }))
 
@@ -65,9 +63,4 @@ const revokeInvite = async () => {
     })
   }
 }
-
-onMounted(async () => {
-  allowEdit.value = user.value.is_prospect ? false : await currentUserCan.editUser(user.value)
-  allowDelete.value = await currentUserCan.deleteUser(user.value)
-})
 </script>

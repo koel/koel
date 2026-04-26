@@ -1,37 +1,22 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { DialogBoxStub } from '@/__tests__/stubs'
 import { userStore } from '@/stores/userStore'
-import { screen, waitFor } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import factory from '@/__tests__/factory'
 import { invitationService } from '@/services/invitationService'
 import { createHarness } from '@/__tests__/TestHarness'
-import { acl } from '@/services/acl'
 import Component from './UserContextMenu.vue'
 
 describe('userContextMenu.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (user?: User, editable = true, deletable = true) => {
-    user = user || h.factory('user')
-
-    const permissionMock = h.mock(acl, 'checkResourcePermission').mockImplementation((_, __, action) => {
-      if (action === 'edit') {
-        return editable
-      }
-      if (action === 'delete') {
-        return deletable
-      }
-    })
+    user = user || h.factory('user', { permissions: { edit: editable, delete: deletable } })
 
     const rendered = h.render(Component, {
       props: {
         user,
       },
-    })
-
-    await waitFor(() => {
-      screen.getByRole('listitem')
-      expect(permissionMock).toHaveBeenCalledTimes(user.is_prospect ? 1 : 2)
     })
 
     return {
@@ -62,7 +47,7 @@ describe('userContextMenu.vue', () => {
 
   it('revokes invite for prospects', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(true)
-    const prospect = factory.states('prospect')('user')
+    const prospect = factory.states('prospect')('user', { permissions: { edit: true, delete: true } })
     await renderComponent(prospect)
     const revokeMock = h.mock(invitationService, 'revoke')
 
@@ -73,7 +58,7 @@ describe('userContextMenu.vue', () => {
 
   it('does not revoke invite for prospects if not confirmed', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(false)
-    await renderComponent(factory.states('prospect')('user'))
+    await renderComponent(factory.states('prospect')('user', { permissions: { edit: true, delete: true } }))
     await h.user.click(screen.getByText('Revoke Invitation'))
     const revokeMock = h.mock(invitationService, 'revoke')
 

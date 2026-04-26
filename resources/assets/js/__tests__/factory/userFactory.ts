@@ -50,13 +50,17 @@ export default (): User => ({
   avatar: 'https://gravatar.com/foo',
   sso_provider: null,
   sso_id: null,
+  permissions: {
+    edit: faker.datatype.boolean(),
+    delete: faker.datatype.boolean(),
+  },
 })
 
 export const states: Record<string, Omit<Partial<User>, 'type'>> = {
   admin: {
     role: 'admin',
     preferences,
-    permissions: ['manage settings', 'manage users', 'manage songs', 'manage podcasts', 'manage radio stations'],
+    abilities: ['manage settings', 'manage users', 'manage songs', 'manage podcasts', 'manage radio stations'],
   },
   manager: {
     role: 'manager',
@@ -66,6 +70,6 @@ export const states: Record<string, Omit<Partial<User>, 'type'>> = {
   },
   current: {
     preferences,
-    permissions: [],
+    abilities: [],
   },
 }

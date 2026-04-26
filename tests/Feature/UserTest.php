@@ -242,4 +242,30 @@ class UserTest extends TestCase
 
         $this->assertModelExists($user);
     }
+
+    #[Test]
+    public function listingIncludesEditAndDeletePermissionsForAdminViewingLowerRoleUser(): void
+    {
+        $admin = create_admin();
+        $regular = create_user();
+
+        $response = $this->getAs('api/users', $admin)->json();
+        $regularRow = collect($response)->firstWhere('id', $regular->public_id);
+
+        self::assertTrue($regularRow['permissions']['edit']);
+        self::assertTrue($regularRow['permissions']['delete']);
+    }
+
+    #[Test]
+    public function listingDeniesDeletePermissionForSelfButAllowsEdit(): void
+    {
+        $admin = create_admin();
+
+        $response = $this->getAs('api/users', $admin)->json();
+        $selfRow = collect($response)->firstWhere('id', $admin->public_id);
+
+        // Admin can edit themselves but cannot self-destroy.
+        self::assertTrue($selfRow['permissions']['edit']);
+        self::assertFalse($selfRow['permissions']['delete']);
+    }
 }
