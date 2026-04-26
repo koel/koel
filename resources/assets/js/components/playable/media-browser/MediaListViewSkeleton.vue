@@ -1,5 +1,5 @@
 <template>
-  <div class="skeleton" role="status" aria-busy="true" aria-label="Loading">
+  <div class="skeleton">
     <div v-for="i in 10" :key="i" class="h-[40px] px-6 py-4 border-b border-b-k-fg-5">
       <div class="h-full rounded-full pulse" :style="{ width: randomWidth() }" />
     </div>

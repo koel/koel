@@ -21,7 +21,7 @@
       </ScreenHeader>
     </template>
 
-    <SongListSkeleton v-if="showSkeletons" class="-m-6" />
+    <SongListSkeleton v-if="showSkeletons" class="-m-6" role="status" aria-busy="true" aria-label="Loading" />
     <template v-else>
       <SongList
         v-if="songs?.length > 0"

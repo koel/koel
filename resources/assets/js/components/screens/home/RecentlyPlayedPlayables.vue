@@ -4,7 +4,7 @@
       Recently Played
       <ViewAllRecentlyPlayedPlayablesButton v-if="playables.length" class="float-right" />
     </template>
-    <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
+    <PlayableCardGridSkeleton v-if="loading" class="-mx-6" role="status" aria-busy="true" aria-label="Loading" />
     <template v-else>
       <PlayableCardGrid v-if="playables.length" class="-mx-6" :playables />
       <p v-else>Nothing played as of late.</p>

@@ -8,7 +8,7 @@
       </ul>
     </template>
 
-    <YouTubeVideoListSkeleton v-if="loading" />
+    <YouTubeVideoListSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
 
     <div v-if="hasMore && !loading" ref="sentinelRef" class="h-px" />
 

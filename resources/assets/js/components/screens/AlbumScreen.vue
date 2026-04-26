@@ -1,7 +1,7 @@
 <template>
   <ScreenBase :background-image="album?.cover">
     <template #header>
-      <ScreenHeaderSkeleton v-if="loading && !album" />
+      <ScreenHeaderSkeleton v-if="loading && !album" role="status" aria-busy="true" aria-label="Loading" />
 
       <ScreenHeader v-if="album" :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
         {{ album.name }}
@@ -62,7 +62,7 @@
       </template>
 
       <div v-show="activeTab === 'songs'" class="songs-pane">
-        <SongListSkeleton v-if="loading" />
+        <SongListSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
         <SongList v-if="!loading && album" ref="songList" @sort="onSort" @press:enter="onPressEnter" @swipe="onSwipe" />
       </div>
 

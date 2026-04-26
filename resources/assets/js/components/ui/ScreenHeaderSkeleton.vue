@@ -1,10 +1,5 @@
 <template>
-  <header
-    class="skeleton screen-header expanded flex items-end relative content-stretch p-8"
-    role="status"
-    aria-busy="true"
-    aria-label="Loading"
-  >
+  <header class="skeleton screen-header expanded flex items-end relative content-stretch p-8">
     <aside class="w-[192px] aspect-square rounded-lg block mr-5 pulse" />
 
     <main class="flex flex-col items-start flex-1 gap-5">

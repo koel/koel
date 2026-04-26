@@ -1,5 +1,5 @@
 <template>
-  <div class="skeleton" role="status" aria-busy="true" aria-label="Loading">
+  <div class="skeleton">
     <div class="song-list-header h-[35px] flex bg-k-fg-5 gap-4 px-4">
       <span class="title">
         <span class="text" />

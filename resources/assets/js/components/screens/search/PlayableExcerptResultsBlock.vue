@@ -15,7 +15,13 @@
       </Btn>
     </template>
 
-    <PlayableListSkeleton v-if="searching" class="border border-k-fg-5 rounded-lg" />
+    <PlayableListSkeleton
+      v-if="searching"
+      class="border border-k-fg-5 rounded-lg"
+      role="status"
+      aria-busy="true"
+      aria-label="Loading"
+    />
     <template v-else>
       <PlayableList
         v-if="displayedPlayables.length"

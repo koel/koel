@@ -25,7 +25,7 @@
       </ScreenHeader>
     </template>
 
-    <PlayableListSkeleton v-if="loading" class="-m-6" />
+    <PlayableListSkeleton v-if="loading" class="-m-6" role="status" aria-busy="true" aria-label="Loading" />
     <PlayableList v-else ref="playableList" class="-m-6" @press:enter="onPressEnter" @swipe="onSwipe" />
   </ScreenBase>
 </template>

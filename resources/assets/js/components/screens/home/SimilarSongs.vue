@@ -1,7 +1,7 @@
 <template>
   <HomeScreenBlock v-if="loading || playables.length">
     <template #header>You Might Also Like</template>
-    <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
+    <PlayableCardGridSkeleton v-if="loading" class="-mx-6" role="status" aria-busy="true" aria-label="Loading" />
     <PlayableCardGrid v-else class="-mx-6" :playables />
   </HomeScreenBlock>
 </template>

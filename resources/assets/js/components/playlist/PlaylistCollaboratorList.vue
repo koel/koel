@@ -1,5 +1,5 @@
 <template>
-  <ListSkeleton v-if="loading" />
+  <ListSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
   <ul v-else class="w-full space-y-3">
     <ListItem
       v-for="collaborator in collaborators"

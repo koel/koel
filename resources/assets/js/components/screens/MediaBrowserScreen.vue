@@ -29,7 +29,7 @@
         @scrolled-to-end="onScrolledToEnd"
       />
 
-      <MediaListViewSkeleton v-if="shouldShowSkeleton" />
+      <MediaListViewSkeleton v-if="shouldShowSkeleton" role="status" aria-busy="true" aria-label="Loading" />
 
       <ScreenEmptyState v-if="noContent">
         <template #icon>
