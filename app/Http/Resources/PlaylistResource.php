@@ -22,6 +22,7 @@ class PlaylistResource extends JsonResource
         'created_at',
         'permissions' => [
             'edit',
+            'delete',
         ],
     ];
 
@@ -58,6 +59,7 @@ class PlaylistResource extends JsonResource
             'created_at' => $this->unless($embedding, $this->playlist->created_at),
             'permissions' => $this->unless($embedding, fn () => [
                 'edit' => $user->can('own', $this->playlist),
+                'delete' => $user->can('delete', $this->playlist),
             ]),
         ];
     }

@@ -332,6 +332,7 @@ interface Playlist {
   playables?: Playable[]
   permissions: {
     edit: boolean
+    delete: boolean
   }
 }
 

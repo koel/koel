@@ -18,10 +18,10 @@
       <Separator />
       <MenuItem @click="toggleOffline">{{ allCached ? 'Remove Offline Versions' : 'Make Available Offline' }}</MenuItem>
     </template>
-    <template v-if="canEditPlaylist">
+    <template v-if="canEditPlaylist || canDeletePlaylist">
       <Separator />
-      <MenuItem @click="edit">Edit…</MenuItem>
-      <MenuItem @click="destroy">Delete</MenuItem>
+      <MenuItem v-if="canEditPlaylist" @click="edit">Edit…</MenuItem>
+      <MenuItem v-if="canDeletePlaylist" @click="destroy">Delete</MenuItem>
     </template>
   </ul>
 </template>
@@ -69,6 +69,7 @@ const { showConfirmDialog } = useDialogBox()
 const allowDownload = toRef(commonStore.state, 'allows_download')
 
 const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value))
+const canDeletePlaylist = computed(() => currentUserCan.deletePlaylist(playlist.value))
 const canShowCollaboration = computed(() => isPlus.value && !playlist.value?.is_smart)
 
 const edit = () =>

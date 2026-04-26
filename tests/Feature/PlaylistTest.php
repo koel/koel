@@ -406,6 +406,15 @@ class PlaylistTest extends TestCase
     }
 
     #[Test]
+    public function listingIncludesDeletePermissionForOwner(): void
+    {
+        $user = create_user();
+        create_playlists(count: 1, owner: $user);
+
+        $this->getAs('api/playlists', $user)->assertJsonPath('0.permissions.delete', true);
+    }
+
+    #[Test]
     public function embedPayloadOmitsPermissions(): void
     {
         $playlist = create_playlist();

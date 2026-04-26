@@ -58,7 +58,10 @@ describe('playlistContextMenu.vue', () => {
   }
 
   const makeEditablePlaylist = (overrides: Partial<Playlist> = {}) =>
-    h.factory('playlist', { permissions: { edit: true }, ...overrides })
+    h.factory('playlist', { permissions: { edit: true, delete: false }, ...overrides })
+
+  const makeDeletablePlaylist = (overrides: Partial<Playlist> = {}) =>
+    h.factory('playlist', { permissions: { edit: false, delete: true }, ...overrides })
 
   it('edits a standard playlist', async () => {
     const { playlist } = await renderComponent(makeEditablePlaylist())
@@ -69,7 +72,9 @@ describe('playlistContextMenu.vue', () => {
   })
 
   it('edits a smart playlist', async () => {
-    const { playlist } = await renderComponent(factory.states('smart')('playlist', { permissions: { edit: true } }))
+    const { playlist } = await renderComponent(
+      factory.states('smart')('playlist', { permissions: { edit: true, delete: false } }),
+    )
 
     await h.user.click(screen.getByText('Edit…'))
 
@@ -78,11 +83,23 @@ describe('playlistContextMenu.vue', () => {
 
   it('deletes a playlist', async () => {
     const deleteMock = h.mock(playlistStore, 'delete')
-    const { playlist } = await renderComponent(makeEditablePlaylist())
+    const { playlist } = await renderComponent(makeDeletablePlaylist())
 
     await h.user.click(screen.getByText('Delete'))
 
     expect(deleteMock).toHaveBeenCalledWith(playlist)
+  })
+
+  it('hides Edit when only delete is permitted', async () => {
+    await renderComponent(makeDeletablePlaylist())
+
+    expect(screen.queryByText('Edit…')).toBeNull()
+  })
+
+  it('hides Delete when only edit is permitted', async () => {
+    await renderComponent(makeEditablePlaylist())
+
+    expect(screen.queryByText('Delete')).toBeNull()
   })
 
   it('plays', async () => {
@@ -180,7 +197,7 @@ describe('playlistContextMenu.vue', () => {
   })
 
   it('does not have an option to edit or delete if the playlist is not owned by the current user', async () => {
-    const playlist = h.factory('playlist', { permissions: { edit: false } })
+    const playlist = h.factory('playlist', { permissions: { edit: false, delete: false } })
     await renderComponent(playlist, h.factory.states('current')('user') as CurrentUser)
 
     expect(screen.queryByText('Edit…')).toBeNull()

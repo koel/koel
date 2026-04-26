@@ -56,11 +56,20 @@ describe('usePolicies', () => {
 
   it('reads the edit permission embedded in the playlist', () => {
     const { currentUserCan } = usePolicies()
-    const editable = h.factory('playlist', { permissions: { edit: true } })
-    const readonly = h.factory('playlist', { permissions: { edit: false } })
+    const editable = h.factory('playlist', { permissions: { edit: true, delete: false } })
+    const readonly = h.factory('playlist', { permissions: { edit: false, delete: false } })
 
     expect(currentUserCan.editPlaylist(editable)).toBe(true)
     expect(currentUserCan.editPlaylist(readonly)).toBe(false)
+  })
+
+  it('reads the delete permission embedded in the playlist', () => {
+    const { currentUserCan } = usePolicies()
+    const deletable = h.factory('playlist', { permissions: { edit: false, delete: true } })
+    const readonly = h.factory('playlist', { permissions: { edit: false, delete: false } })
+
+    expect(currentUserCan.deletePlaylist(deletable)).toBe(true)
+    expect(currentUserCan.deletePlaylist(readonly)).toBe(false)
   })
 
   it('reads the edit permission embedded in the album', () => {

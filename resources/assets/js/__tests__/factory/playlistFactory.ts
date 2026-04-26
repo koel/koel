@@ -14,6 +14,7 @@ export default (): Playlist => ({
   cover: faker.image.url(),
   permissions: {
     edit: faker.datatype.boolean(),
+    delete: faker.datatype.boolean(),
   },
 })
 
