@@ -109,9 +109,6 @@ describe('albumContextMenu.vue', () => {
   it('requests edit form', async () => {
     const { album } = await renderComponent()
 
-    // for the "Edit…" menu item to show up
-    await h.tick(2)
-
     await h.user.click(screen.getByText('Edit…'))
 
     await assertOpenModal(openModalMock, EditAlbumForm, { album })
