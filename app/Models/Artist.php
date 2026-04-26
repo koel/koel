@@ -11,7 +11,6 @@ use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
-use App\Models\Contracts\Permissionable;
 use App\Observers\ArtistObserver;
 use Carbon\Carbon;
 use Database\Factories\ArtistFactory;
@@ -43,7 +42,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  */
 #[ObservedBy(ArtistObserver::class)]
 #[UseEloquentBuilder(ArtistBuilder::class)]
-class Artist extends Model implements AuditableContract, Embeddable, Favoriteable, Permissionable
+class Artist extends Model implements AuditableContract, Embeddable, Favoriteable
 {
     use Auditable;
     use HasArtistAttributes;
@@ -128,10 +127,5 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
             'user_id' => $this->user_id,
             'name' => $this->name,
         ];
-    }
-
-    public static function getPermissionableIdentifier(): string
-    {
-        return 'id';
     }
 }

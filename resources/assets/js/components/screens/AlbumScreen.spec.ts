@@ -5,7 +5,6 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { acl } from '@/services/acl'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -16,11 +15,7 @@ import Component from './AlbumScreen.vue'
 vi.mock('@/composables/useContextMenu')
 
 describe('albumScreen.vue', () => {
-  const h = createHarness({
-    beforeEach: () => {
-      h.mock(acl, 'checkResourcePermission').mockResolvedValue(true)
-    },
-  })
+  const h = createHarness()
 
   const renderComponent = async (tab: 'songs' | 'other-albums' | 'information' = 'songs', album?: Album) => {
     commonStore.state.uses_last_fm = true
