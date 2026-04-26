@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
@@ -33,8 +33,8 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { currentUserCan } = usePolicies()
 
-const allowEdit = ref(false)
-const allowDelete = ref(false)
+const allowEdit = computed(() => currentUserCan.editRadioStation(station.value))
+const allowDelete = computed(() => currentUserCan.deleteRadioStation(station.value))
 
 const togglePlayback = () =>
   trigger(async () => {
@@ -59,9 +59,4 @@ const maybeDelete = () =>
       toastSuccess(`Radio station deleted.`)
     }
   })
-
-onMounted(async () => {
-  allowEdit.value = await currentUserCan.editRadioStation(station.value)
-  allowDelete.value = await currentUserCan.deleteRadioStation(station.value)
-})
 </script>

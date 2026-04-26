@@ -129,4 +129,22 @@ describe('usePolicies', () => {
     const { currentUserCan } = usePolicies()
     expect(currentUserCan.uploadSongs()).toBe(true)
   })
+
+  it('reads the edit permission embedded in the radio station', () => {
+    const { currentUserCan } = usePolicies()
+    const editable = h.factory('radio-station', { permissions: { edit: true, delete: false } })
+    const readonly = h.factory('radio-station', { permissions: { edit: false, delete: false } })
+
+    expect(currentUserCan.editRadioStation(editable)).toBe(true)
+    expect(currentUserCan.editRadioStation(readonly)).toBe(false)
+  })
+
+  it('reads the delete permission embedded in the radio station', () => {
+    const { currentUserCan } = usePolicies()
+    const deletable = h.factory('radio-station', { permissions: { edit: false, delete: true } })
+    const readonly = h.factory('radio-station', { permissions: { edit: false, delete: false } })
+
+    expect(currentUserCan.deleteRadioStation(deletable)).toBe(true)
+    expect(currentUserCan.deleteRadioStation(readonly)).toBe(false)
+  })
 })

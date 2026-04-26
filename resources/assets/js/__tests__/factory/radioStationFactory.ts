@@ -12,5 +12,9 @@ export default (): RadioStation => {
     is_public: faker.datatype.boolean(),
     favorite: faker.datatype.boolean(),
     playback_state: 'Stopped',
+    permissions: {
+      edit: faker.datatype.boolean(),
+      delete: faker.datatype.boolean(),
+    },
   }
 }

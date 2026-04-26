@@ -240,4 +240,41 @@ class RadioStationTest extends TestCase
 
         $this->assertModelMissing($station);
     }
+
+    #[Test]
+    public function listingIncludesEditAndDeletePermissionsForOwner(): void
+    {
+        $user = create_user();
+        RadioStation::factory()->for($user)->createOne();
+
+        $this
+            ->getAs('/api/radio/stations', $user)
+            ->assertJsonCount(1, '*')
+            ->assertJsonPath('0.permissions.edit', true)
+            ->assertJsonPath('0.permissions.delete', true);
+    }
+
+    #[Test]
+    public function listingIncludesEditAndDeletePermissionsForAdminInSameOrg(): void
+    {
+        RadioStation::factory()->createOne(['is_public' => true]);
+
+        $this
+            ->getAs('/api/radio/stations', create_admin())
+            ->assertJsonCount(1, '*')
+            ->assertJsonPath('0.permissions.edit', true)
+            ->assertJsonPath('0.permissions.delete', true);
+    }
+
+    #[Test]
+    public function listingDeniesEditAndDeletePermissionsForRandomUser(): void
+    {
+        RadioStation::factory()->createOne(['is_public' => true]);
+
+        $this
+            ->getAs('/api/radio/stations', create_user())
+            ->assertJsonCount(1, '*')
+            ->assertJsonPath('0.permissions.edit', false)
+            ->assertJsonPath('0.permissions.delete', false);
+    }
 }
