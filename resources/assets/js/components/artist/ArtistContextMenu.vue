@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRef, toRefs } from 'vue'
+import { computed, toRef, toRefs } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -39,7 +39,7 @@ const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
-const allowEdit = ref(false)
+const allowEdit = computed(() => currentUserCan.editArtist(artist.value))
 
 const isStandardArtist = computed(() => !artistStore.isUnknown(artist.value) && !artistStore.isVarious(artist.value))
 
@@ -61,8 +61,4 @@ const toggleFavorite = () => trigger(() => artistStore.toggleFavorite(artist.val
 const requestEditForm = () => trigger(() => openModal<'EDIT_ARTIST_FORM'>(EditArtistForm, { artist: artist.value }))
 const showEmbedModal = () =>
   trigger(() => openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, { embeddable: artist.value }))
-
-onMounted(async () => {
-  allowEdit.value = await currentUserCan.editArtist(artist.value)
-})
 </script>

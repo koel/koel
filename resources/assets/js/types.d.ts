@@ -128,6 +128,9 @@ interface Artist {
   created_at: string
   is_external: boolean
   favorite: boolean
+  permissions: {
+    edit: boolean
+  }
 }
 
 interface Album {

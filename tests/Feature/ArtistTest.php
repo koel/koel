@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Helpers\Ulid;
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
+use App\Models\Embed;
+use App\Values\EmbedOptions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -128,5 +130,52 @@ class ArtistTest extends TestCase
             ],
             create_user(),
         )->assertForbidden();
+    }
+
+    #[Test]
+    public function showIncludesEditPermissionForAdmin(): void
+    {
+        $artist = Artist::factory()->createOne();
+
+        $this->getAs("api/artists/{$artist->id}", create_admin())->assertJsonPath('permissions.edit', true);
+    }
+
+    #[Test]
+    public function showIncludesEditPermissionForRegularUser(): void
+    {
+        $artist = Artist::factory()->createOne();
+
+        $this->getAs("api/artists/{$artist->id}", create_user())->assertJsonPath('permissions.edit', false);
+    }
+
+    #[Test]
+    public function showIncludesEditPermissionFalseForUnknownArtist(): void
+    {
+        $artist = Artist::factory()->createOne(['name' => Artist::UNKNOWN_NAME]);
+
+        $this->getAs("api/artists/{$artist->id}", create_admin())->assertJsonPath('permissions.edit', false);
+    }
+
+    #[Test]
+    public function showIncludesEditPermissionFalseForVariousArtists(): void
+    {
+        $artist = Artist::factory()->createOne(['name' => Artist::VARIOUS_NAME]);
+
+        $this->getAs("api/artists/{$artist->id}", create_admin())->assertJsonPath('permissions.edit', false);
+    }
+
+    #[Test]
+    public function embedPayloadOmitsPermissions(): void
+    {
+        $artist = Artist::factory()->createOne();
+        $embed = Embed::factory()->createOne([
+            'embeddable_type' => 'artist',
+            'embeddable_id' => $artist->id,
+        ]);
+
+        $this
+            ->getJson("api/embeds/{$embed->id}/" . EmbedOptions::make())
+            ->assertSuccessful()
+            ->assertJsonMissingPath('embed.embeddable.permissions');
     }
 }

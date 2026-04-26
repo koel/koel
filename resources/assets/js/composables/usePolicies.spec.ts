@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
-import { acl } from '@/services/acl'
 import { usePolicies } from './usePolicies'
 
 describe('usePolicies', () => {
@@ -83,13 +82,13 @@ describe('usePolicies', () => {
     expect(currentUserCan.editAlbum(readonly)).toBe(false)
   })
 
-  it('delegates artist editing to ACL', async () => {
-    const checkMock = h.mock(acl, 'checkResourcePermission').mockResolvedValue(false)
+  it('reads the edit permission embedded in the artist', () => {
     const { currentUserCan } = usePolicies()
-    const artist = h.factory('artist')
+    const editable = h.factory('artist', { permissions: { edit: true } })
+    const readonly = h.factory('artist', { permissions: { edit: false } })
 
-    await expect(currentUserCan.editArtist(artist)).resolves.toBe(false)
-    expect(checkMock).toHaveBeenCalledWith('artist', artist.id, 'edit')
+    expect(currentUserCan.editArtist(editable)).toBe(true)
+    expect(currentUserCan.editArtist(readonly)).toBe(false)
   })
 
   it('checks manageSettings permission', () => {
