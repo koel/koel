@@ -9,8 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { acl } from '@/services/acl'
+import { computed, toRef } from 'vue'
+import { commonStore } from '@/stores/commonStore'
 
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
@@ -18,7 +18,7 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 const props = withDefaults(defineProps<{ modelValue?: Role }>(), { modelValue: 'user' })
 const emit = defineEmits<{ (e: 'update:modelValue', value: Role): void }>()
 
-const assignableRoles = ref<{ id: Role; label: string; description: string }[]>([])
+const assignableRoles = toRef(commonStore.state, 'assignable_roles')
 
 const value = computed({
   get: () => props.modelValue,
@@ -29,6 +29,4 @@ const selectedRoleDescription = computed(() => {
   const selectedRole = assignableRoles.value.find(({ id }) => id === value.value)
   return selectedRole?.description || ''
 })
-
-onMounted(async () => (assignableRoles.value = await acl.fetchAssignableRoles()))
 </script>

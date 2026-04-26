@@ -54,6 +54,7 @@ class FetchInitialDataController extends Controller
             'playlists' => PlaylistResource::collection($playlistRepository->getAllAccessibleByUser($user)),
             'playlist_folders' => PlaylistFolderResource::collection($user->playlistFolders),
             'current_user' => UserResource::make($user),
+            'assignable_roles' => $user->getAssignableRoles()->toArray(),
             'uses_musicbrainz' => MusicBrainzService::enabled(),
             'uses_last_fm' => LastfmService::used(),
             'uses_spotify' => SpotifyService::enabled(),

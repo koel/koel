@@ -11,6 +11,7 @@ import { userStore } from '@/stores/userStore'
 
 const initialState = {
   allows_download: false,
+  assignable_roles: [] as Array<{ id: Role; label: string; description: string }>,
   download_limit: 0,
   cdn_url: '',
   current_user: null! as CurrentUser,

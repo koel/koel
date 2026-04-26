@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection as BaseCollection;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 use OwenIt\Auditing\Auditable;
@@ -119,5 +120,18 @@ class User extends Authenticatable implements AuditableContract
     public function subscribedToPodcast(Podcast $podcast): bool
     {
         return $this->podcasts()->whereKey($podcast)->exists();
+    }
+
+    /** @return BaseCollection<RoleEnum> */
+    public function getAssignableRoles(): BaseCollection
+    {
+        if (!$this->can('manage', self::class)) {
+            return collect();
+        }
+
+        return RoleEnum::allAvailable()
+            ->filter(fn (RoleEnum $role) => $this->role->canManage($role))
+            ->sortBy(static fn (RoleEnum $role) => $role->level())
+            ->values();
     }
 }

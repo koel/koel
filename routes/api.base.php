@@ -2,7 +2,6 @@
 
 use App\Facades\YouTube;
 use App\Helpers\Uuid;
-use App\Http\Controllers\API\Acl\FetchAssignableRolesController;
 use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AiController;
 use App\Http\Controllers\API\AlbumController;
@@ -273,11 +272,6 @@ Route::prefix('api')
 
             // Embed routes
             Route::post('embeds/resolve', [EmbedController::class, 'resolveForEmbeddable']);
-
-            // ACL routes
-            Route::group(['prefix' => 'acl'], static function (): void {
-                Route::get('assignable-roles', FetchAssignableRolesController::class);
-            });
         });
 
         // Object-storage (S3) routes
