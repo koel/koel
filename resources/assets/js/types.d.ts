@@ -214,6 +214,10 @@ interface RadioStation extends IStreamable {
   logo: string | null
   description: string
   is_public: boolean
+  permissions: {
+    edit: boolean
+    delete: boolean
+  }
 }
 
 type Playable = Song | Episode

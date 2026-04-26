@@ -27,13 +27,8 @@ export const usePolicies = () => {
     editUser: async (user: User) => await acl.checkResourcePermission('user', user.id, 'edit'),
     deleteUser: async (user: User) => await acl.checkResourcePermission('user', user.id, 'delete'),
 
-    editRadioStation: async (station: RadioStation) => {
-      return await acl.checkResourcePermission('radio-station', station.id, 'edit')
-    },
-
-    deleteRadioStation: async (station: RadioStation) => {
-      return await acl.checkResourcePermission('radio-station', station.id, 'delete')
-    },
+    editRadioStation: (station: RadioStation) => station.permissions.edit,
+    deleteRadioStation: (station: RadioStation) => station.permissions.delete,
 
     // If the user has the permission, they can always add a radio station, even in demo mode.
     addRadioStation: () => !window.IS_DEMO || currentUser.value.permissions.includes('manage radio stations'),

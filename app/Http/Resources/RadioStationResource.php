@@ -17,6 +17,10 @@ class RadioStationResource extends JsonResource
         'description',
         'is_public',
         'created_at',
+        'permissions' => [
+            'edit',
+            'delete',
+        ],
     ];
 
     public function __construct(
@@ -28,6 +32,8 @@ class RadioStationResource extends JsonResource
     /** @inheritdoc */
     public function toArray(Request $request): array
     {
+        $user = $request->user();
+
         return [
             'type' => 'radio-stations',
             'name' => $this->station->name,
@@ -38,6 +44,10 @@ class RadioStationResource extends JsonResource
             'is_public' => $this->station->is_public,
             'created_at' => $this->station->created_at,
             'favorite' => $this->station->favorite,
+            'permissions' => [
+                'edit' => $user->can('edit', $this->station),
+                'delete' => $user->can('delete', $this->station),
+            ],
         ];
     }
 }

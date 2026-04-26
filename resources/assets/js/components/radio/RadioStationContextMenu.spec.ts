@@ -3,7 +3,6 @@ import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import { playbackService } from '@/services/RadioPlaybackService'
-import { acl } from '@/services/acl'
 import { radioStationStore } from '@/stores/radioStationStore'
 import EditRadioStationForm from '@/components/radio/EditRadioStationForm.vue'
 
@@ -23,12 +22,11 @@ describe('radioStationContextMenu.vue', () => {
   })
 
   const renderComponent = async (station?: RadioStation, manageable = true) => {
-    h.mock(acl, 'checkResourcePermission').mockReturnValue(manageable)
-
     station =
       station ||
       h.factory('radio-station', {
         favorite: false,
+        permissions: { edit: manageable, delete: manageable },
       })
 
     const rendered = h.render(Component, {
@@ -36,9 +34,6 @@ describe('radioStationContextMenu.vue', () => {
         station,
       },
     })
-
-    // For all menu items (including Delete and Edit, which require permission checks) to be rendered
-    await h.tick(7)
 
     return {
       ...rendered,
@@ -62,6 +57,20 @@ describe('radioStationContextMenu.vue', () => {
     expect(screen.queryByText('Delete')).toBeNull()
     screen.getByText('Play')
     screen.getByText('Favorite')
+  })
+
+  it('hides Edit when only delete is permitted', async () => {
+    await renderComponent(h.factory('radio-station', { permissions: { edit: false, delete: true } }))
+
+    expect(screen.queryByText('Edit…')).toBeNull()
+    screen.getByText('Delete')
+  })
+
+  it('hides Delete when only edit is permitted', async () => {
+    await renderComponent(h.factory('radio-station', { permissions: { edit: true, delete: false } }))
+
+    expect(screen.queryByText('Delete')).toBeNull()
+    screen.getByText('Edit…')
   })
 
   it('plays', async () => {
