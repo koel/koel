@@ -12,23 +12,29 @@ use function Tests\create_user;
 
 class UserTest extends TestCase
 {
+    /**
+     * In CE, MANAGER is filtered out by Role::available() (Plus-only). The admin can manage
+     * USER and ADMIN via canManage(), and getAssignableRoles() returns them ordered by level()
+     * ascending — hence [USER, ADMIN].
+     */
     #[Test]
     public function adminCanAssignAvailableRolesOrderedByLevel(): void
     {
         $admin = create_admin();
 
-        // In CE, MANAGER is not available (Plus-only); the admin can manage USER and ADMIN,
-        // ordered by level() ascending.
         self::assertSame([Role::USER, Role::ADMIN], $admin->getAssignableRoles()->all());
     }
 
+    /**
+     * Two filters apply for a manager (created via create_manager()): canManage() excludes
+     * ADMIN (level 3 > manager's level 2), and Role::available() also filters out MANAGER
+     * itself in CE. Net result of getAssignableRoles() is [USER] only.
+     */
     #[Test]
     public function managerCannotAssignRolesAboveTheirLevel(): void
     {
         $manager = create_manager();
 
-        // canManage() filter excludes ADMIN (level 3 > manager's level 2); MANAGER itself is
-        // also filtered out by Role::available() in CE. Net result: only USER.
         self::assertSame([Role::USER], $manager->getAssignableRoles()->all());
     }
 
