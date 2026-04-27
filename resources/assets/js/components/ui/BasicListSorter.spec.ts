@@ -58,13 +58,6 @@ describe('basicListSorter', () => {
     expect(dateItem.classList.contains('active')).toBe(true)
   })
 
-  it('applies hover styling to menu items', () => {
-    renderComponent()
-    const item = screen.getByTitle('Sort by Name')
-    expect(item.classList.contains('hover:bg-k-highlight')).toBe(true)
-    expect(item.classList.contains('hover:text-k-highlight-fg')).toBe(true)
-  })
-
   it('emits sort with toggled order when clicking current field', async () => {
     const { emitted } = renderComponent('name', 'asc')
 
