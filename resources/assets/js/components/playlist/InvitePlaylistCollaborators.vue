@@ -1,6 +1,6 @@
 <template>
   <span>
-    <Btn variant="success" v-if="shouldShowInviteButton" small @click.prevent="inviteCollaborators">Invite</Btn>
+    <Btn size="small" variant="success" v-if="shouldShowInviteButton" @click.prevent="inviteCollaborators">Invite</Btn>
     <Icon v-if="creatingInviteLink" :icon="faCircleNotch" class="text-k-success" spin />
   </span>
 </template>

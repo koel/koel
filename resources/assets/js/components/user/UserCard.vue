@@ -37,7 +37,7 @@
         <p>{{ user.email }}</p>
       </main>
 
-      <Btn variant="highlight" v-if="isCurrentUser" :href="url('profile')" small tag="a">Your Profile</Btn>
+      <Btn size="small" variant="highlight" v-if="isCurrentUser" :href="url('profile')" tag="a">Your Profile</Btn>
 
       <Btn variant="ghost" v-else @click="requestContextMenu">
         <Icon :icon="faEllipsis" fixed-width />

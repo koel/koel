@@ -64,9 +64,9 @@
                 @input="onGroupChanged"
               />
               <Btn
+                size="small"
                 variant="success"
                 class="btn-add-group"
-                small
                 title="Add a new group"
                 uppercase
                 @click.prevent="addGroup"

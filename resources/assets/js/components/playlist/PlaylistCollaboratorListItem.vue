@@ -19,7 +19,7 @@
       <span v-else class="contributor">Contributor</span>
     </span>
     <span v-if="manageable" class="actions flex-[0_0_72px] text-right">
-      <Btn variant="destructive" v-if="removable" small @click.prevent="emit('remove')">Remove</Btn>
+      <Btn size="small" variant="destructive" v-if="removable" @click.prevent="emit('remove')">Remove</Btn>
     </span>
   </li>
 </template>

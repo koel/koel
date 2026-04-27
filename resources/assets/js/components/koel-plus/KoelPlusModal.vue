@@ -15,8 +15,8 @@
       </div>
 
       <div v-show="!showingActivateLicenseForm" class="space-x-3" data-testid="buttons">
-        <Btn variant="destructive" big @click.prevent="openPurchaseOverlay">Purchase Koel Plus</Btn>
-        <Btn variant="success" big @click.prevent="showActivateLicenseForm">I have a license key</Btn>
+        <Btn size="large" variant="destructive" @click.prevent="openPurchaseOverlay">Purchase Koel Plus</Btn>
+        <Btn size="large" variant="success" @click.prevent="showActivateLicenseForm">I have a license key</Btn>
       </div>
 
       <div v-if="showingActivateLicenseForm" class="flex gap-3" data-testid="activateForm">

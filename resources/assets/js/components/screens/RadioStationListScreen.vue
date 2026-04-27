@@ -7,11 +7,11 @@
         <template #controls>
           <div class="flex gap-2">
             <Btn
+              size="small"
               v-koel-tooltip
               :title="preferences.radio_stations_favorites_only ? 'Show all' : 'Show favorites only'"
               variant="ghost"
               class="border border-k-fg-10"
-              small
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
@@ -30,10 +30,10 @@
             <ListFilter />
 
             <Btn
+              size="small"
               v-if="canAdd"
               v-koel-tooltip
               variant="highlight"
-              small
               title="Add a new station"
               @click.prevent="requestAddStationForm"
             >

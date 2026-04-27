@@ -6,11 +6,11 @@
         <template #controls>
           <div class="flex gap-2">
             <Btn
+              size="small"
               variant="ghost"
               v-koel-tooltip
               :title="preferences.podcasts_favorites_only ? 'Show all' : 'Show favorites only'"
               class="border border-k-fg-10"
-              small
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
