@@ -6,8 +6,8 @@
           <Btn
             v-if="selectedPlayables.length < 2 && filteredPlayables.length"
             v-koel-tooltip
+            variant="highlight"
             class="btn-play-all"
-            highlight
             title="Play all. Press Alt/⌥ to change mode."
             @click.prevent="playAll"
           >
@@ -18,8 +18,8 @@
           <Btn
             v-if="selectedPlayables.length > 1"
             v-koel-tooltip
+            variant="highlight"
             class="btn-play-selected"
-            highlight
             title="Play selected. Press Alt/⌥ to change mode."
             @click.prevent="playSelected"
           >
@@ -32,9 +32,9 @@
           <Btn
             v-if="selectedPlayables.length < 2 && filteredPlayables.length"
             v-koel-tooltip
+            variant="highlight"
             class="btn-shuffle-all"
             data-testid="btn-shuffle-all"
-            highlight
             title="Shuffle all. Press Alt/⌥ to change mode."
             @click.prevent="shuffle"
           >
@@ -45,9 +45,9 @@
           <Btn
             v-if="selectedPlayables.length > 1"
             v-koel-tooltip
+            variant="highlight"
             class="btn-shuffle-selected"
             data-testid="btn-shuffle-selected"
-            highlight
             title="Shuffle selected. Press Alt/⌥ to change mode."
             @click.prevent="shuffleSelected"
           >
@@ -56,15 +56,17 @@
           </Btn>
         </template>
 
-        <Btn v-if="showAddToButton" ref="addToButton" success @click.prevent.stop="toggleAddToMenu">
+        <Btn variant="success" v-if="showAddToButton" ref="addToButton" @click.prevent.stop="toggleAddToMenu">
           {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
         </Btn>
 
-        <Btn v-if="config.clearQueue" danger title="Clear current queue" @click.prevent="clearQueue">Clear</Btn>
+        <Btn variant="destructive" v-if="config.clearQueue" title="Clear current queue" @click.prevent="clearQueue"
+          >Clear</Btn
+        >
       </BtnGroup>
 
       <BtnGroup v-if="config.refresh">
-        <Btn v-if="config.refresh" v-koel-tooltip success title="Refresh" @click.prevent="refresh">
+        <Btn variant="success" v-if="config.refresh" v-koel-tooltip title="Refresh" @click.prevent="refresh">
           <Icon :icon="faRotateRight" fixed-width />
         </Btn>
       </BtnGroup>

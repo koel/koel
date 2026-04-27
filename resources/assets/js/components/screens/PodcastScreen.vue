@@ -30,12 +30,12 @@
 
         <template #controls>
           <div class="flex gap-2 flex-wrap">
-            <Btn v-if="episodes?.length" highlight uppercase @click.prevent="playOrPause">
+            <Btn variant="highlight" v-if="episodes?.length" uppercase @click.prevent="playOrPause">
               <Icon :icon="podcastPlaying ? faPause : faPlay" fixed-width />
               {{ playButtonLabel }}
             </Btn>
             <BtnGroup uppercase>
-              <Btn v-if="episodes" v-koel-tooltip="'Refresh'" success @click.prevent="refresh">
+              <Btn variant="success" v-if="episodes" v-koel-tooltip="'Refresh'" @click.prevent="refresh">
                 <Icon :icon="faRotateRight" fixed-width />
                 <span class="sr-only">Refresh Podcast</span>
               </Btn>
@@ -50,7 +50,7 @@
               @toggle="toggleFavorite"
             />
 
-            <Btn gray @click="requestContextMenu">
+            <Btn variant="ghost" @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
               <span class="sr-only">More Actions</span>
             </Btn>

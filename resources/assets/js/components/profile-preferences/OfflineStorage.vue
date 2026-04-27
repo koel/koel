@@ -19,7 +19,7 @@
       </section>
 
       <section v-if="cachedSongCount" class="space-y-3">
-        <Btn danger small @click.prevent="clearAll">Clear All</Btn>
+        <Btn size="small" variant="destructive" @click.prevent="clearAll">Clear All</Btn>
       </section>
     </template>
   </div>

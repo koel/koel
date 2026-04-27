@@ -63,7 +63,14 @@
                 :is-first-group="index === 0"
                 @input="onGroupChanged"
               />
-              <Btn class="btn-add-group" small success title="Add a new group" uppercase @click.prevent="addGroup">
+              <Btn
+                size="small"
+                variant="success"
+                class="btn-add-group"
+                title="Add a new group"
+                uppercase
+                @click.prevent="addGroup"
+              >
                 <Icon :icon="faPlus" />
                 Group
               </Btn>
@@ -75,7 +82,7 @@
 
     <footer>
       <Btn type="submit">Save</Btn>
-      <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+      <Btn variant="ghost" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>

@@ -23,7 +23,7 @@
 
     <footer>
       <Btn class="btn-add" type="submit">Invite</Btn>
-      <Btn class="btn-cancel" white @click.prevent="maybeClose">Cancel</Btn>
+      <Btn variant="ghost" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>

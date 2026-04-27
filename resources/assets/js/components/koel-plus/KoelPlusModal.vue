@@ -15,13 +15,13 @@
       </div>
 
       <div v-show="!showingActivateLicenseForm" class="space-x-3" data-testid="buttons">
-        <Btn big danger @click.prevent="openPurchaseOverlay">Purchase Koel Plus</Btn>
-        <Btn big success @click.prevent="showActivateLicenseForm">I have a license key</Btn>
+        <Btn size="large" variant="destructive" @click.prevent="openPurchaseOverlay">Purchase Koel Plus</Btn>
+        <Btn size="large" variant="success" @click.prevent="showActivateLicenseForm">I have a license key</Btn>
       </div>
 
       <div v-if="showingActivateLicenseForm" class="flex gap-3" data-testid="activateForm">
         <ActivateLicenseForm v-if="showingActivateLicenseForm" class="flex-1" />
-        <Btn class="cancel" transparent @click.prevent="hideActivateLicenseForm">Cancel</Btn>
+        <Btn variant="ghost" class="cancel" @click.prevent="hideActivateLicenseForm">Cancel</Btn>
       </div>
 
       <div class="text-[0.9rem] text-k-fg-70">
@@ -30,7 +30,7 @@
     </main>
 
     <footer class="w-full text-center bg-black/20">
-      <Btn danger data-testid="close-modal-btn" rounded @click.prevent="close">Close</Btn>
+      <Btn variant="destructive" data-testid="close-modal-btn" rounded @click.prevent="close">Close</Btn>
     </footer>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <Btn highlight rounded small @click.prevent="goToRecentlyPlayedScreen"> View All </Btn>
+  <Btn size="small" variant="highlight" rounded @click.prevent="goToRecentlyPlayedScreen"> View All </Btn>
 </template>
 
 <script lang="ts" setup>

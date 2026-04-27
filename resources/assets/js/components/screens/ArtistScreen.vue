@@ -30,7 +30,7 @@
               class="px-3.5 py-2"
               @toggle="toggleFavorite"
             />
-            <Btn gray @click="requestContextMenu">
+            <Btn variant="ghost" @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
               <span class="sr-only">More Actions</span>
             </Btn>

@@ -7,7 +7,7 @@
         <template #meta>
           <div class="flex items-center gap-2 mt-2">
             <Breadcrumbs :path class="flex-1" />
-            <Btn transparent small title="Reload" @click.prevent="refresh">
+            <Btn size="small" variant="ghost" title="Reload" @click.prevent="refresh">
               <Icon :icon="faRotateRight" />
             </Btn>
           </div>

@@ -8,8 +8,8 @@
         Uploaded {{ new Date(upload.created_at).toLocaleDateString() }}
       </span>
     </span>
-    <Btn small bordered highlight @click="confirmDiscard">Discard</Btn>
-    <Btn small bordered success @click="keep">Keep</Btn>
+    <Btn size="small" variant="highlight" bordered @click="confirmDiscard">Discard</Btn>
+    <Btn size="small" variant="success" bordered @click="keep">Keep</Btn>
   </div>
 </template>
 

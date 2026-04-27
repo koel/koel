@@ -4,11 +4,11 @@
       {{ headingText }}
 
       <Btn
+        size="small"
         v-if="playables.length && !searching"
+        variant="highlight"
         data-testid="view-all-songs-btn"
-        highlight
         rounded
-        small
         @click.prevent="goToSongResults"
       >
         View All
