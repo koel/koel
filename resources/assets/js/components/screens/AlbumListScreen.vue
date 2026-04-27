@@ -46,11 +46,16 @@
     </ScreenEmptyState>
 
     <template v-else>
-      <template v-if="showSkeletons">
-        <div class="grid gap-5 p-6" :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }">
-          <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
-        </div>
-      </template>
+      <div
+        v-if="showSkeletons"
+        class="grid gap-5 p-6"
+        :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }"
+        role="status"
+        aria-busy="true"
+        aria-label="Loading"
+      >
+        <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
+      </div>
       <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
         <VirtualGridScroller
           ref="grid"

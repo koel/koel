@@ -1,7 +1,7 @@
 <template>
   <ScreenBase :background-image="podcast?.image">
     <template #header>
-      <ScreenHeaderSkeleton v-if="loading && !podcast" />
+      <ScreenHeaderSkeleton v-if="loading && !podcast" role="status" aria-busy="true" aria-label="Loading" />
       <ScreenHeader v-if="podcast" :layout="headerLayout">
         <span :title="podcast.title">{{ podcast.title }}</span>
 

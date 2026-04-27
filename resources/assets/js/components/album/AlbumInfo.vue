@@ -6,7 +6,7 @@
       <AlbumThumbnail :entity="album" class="group" />
     </template>
 
-    <ParagraphSkeleton v-if="loading" />
+    <ParagraphSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
 
     <template v-if="!loading && info?.wiki">
       <div v-html="info.wiki.full" />

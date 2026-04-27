@@ -26,10 +26,10 @@
           </SongListControls>
         </template>
       </ScreenHeader>
-      <ScreenHeaderSkeleton v-else />
+      <ScreenHeaderSkeleton v-else role="status" aria-busy="true" aria-label="Loading" />
     </template>
 
-    <PlayableListSkeleton v-if="showSkeletons" class="-m-6" />
+    <PlayableListSkeleton v-if="showSkeletons" class="-m-6" role="status" aria-busy="true" aria-label="Loading" />
     <SongList
       v-else
       ref="songList"

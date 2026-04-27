@@ -33,10 +33,10 @@
           </PlayableListControls>
         </template>
       </ScreenHeader>
-      <ScreenHeaderSkeleton v-else />
+      <ScreenHeaderSkeleton v-else role="status" aria-busy="true" aria-label="Loading" />
     </template>
 
-    <PlayableListSkeleton v-if="loading" class="-m-6" />
+    <PlayableListSkeleton v-if="loading" class="-m-6" role="status" aria-busy="true" aria-label="Loading" />
     <template v-else>
       <PlayableList
         v-if="filteredPlayables.length"

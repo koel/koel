@@ -7,7 +7,7 @@
         <span class="sr-only">Refresh</span>
       </Btn>
     </template>
-    <PlayableCardGridSkeleton v-if="loading" class="-mx-6" />
+    <PlayableCardGridSkeleton v-if="loading" class="-mx-6" role="status" aria-busy="true" aria-label="Loading" />
     <template v-else>
       <PlayableCardGrid v-if="playables.length" :aria-busy="refreshing" class="-mx-6" :playables />
       <p v-else>No songs available.</p>

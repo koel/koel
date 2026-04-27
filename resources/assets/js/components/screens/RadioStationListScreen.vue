@@ -60,9 +60,9 @@
 
     <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 flex-1 overflow-auto">
       <GridListView ref="grid" :view-mode="preferences.radio_stations_view_mode" data-testid="radio-station-grid">
-        <template v-if="showSkeletons">
+        <div v-if="showSkeletons" role="status" aria-busy="true" aria-label="Loading" class="contents">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
-        </template>
+        </div>
         <template v-else>
           <RadioStationCard v-for="station in stations" :key="station.id" :station :layout="itemLayout" />
           <BtnScrollToTop />

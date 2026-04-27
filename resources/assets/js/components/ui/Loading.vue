@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div role="status" aria-busy="true" aria-label="Loading">
     <div class="w-full pointer-events-none h-0.5 fixed z-50 top-0 left-0">
       <div class="bg-k-highlight marquee absolute h-full w-1/3" />
     </div>

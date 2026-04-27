@@ -1,7 +1,7 @@
 <template>
   <ScreenBase :background-image="artist?.image || undefined">
     <template #header>
-      <ScreenHeaderSkeleton v-if="loading && !artist" />
+      <ScreenHeaderSkeleton v-if="loading && !artist" role="status" aria-busy="true" aria-label="Loading" />
 
       <ScreenHeader v-if="artist" :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
         {{ artist.name }}
@@ -60,7 +60,7 @@
       </template>
 
       <div v-show="activeTab === 'songs'" class="songs-pane">
-        <SongListSkeleton v-if="loading" />
+        <SongListSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
         <SongList
           v-if="!loading && artist"
           ref="songList"

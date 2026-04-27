@@ -1,7 +1,7 @@
 <template>
   <ScreenBase :background-image="episode?.episode_image">
     <template #header>
-      <ScreenHeaderSkeleton v-if="loading && !episode" />
+      <ScreenHeaderSkeleton v-if="loading && !episode" role="status" aria-busy="true" aria-label="Loading" />
       <ScreenHeader v-if="episode">
         <p class="text-base font-normal">Episode</p>
         <h1 class="overflow-hidden" :title="episode.title">

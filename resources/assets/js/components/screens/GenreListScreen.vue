@@ -31,7 +31,13 @@
         <GenreCard v-for="genre in displayedGenres" :key="genre.id" :genre />
       </ul>
 
-      <ul v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-3">
+      <ul
+        v-else
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-3"
+        role="status"
+        aria-busy="true"
+        aria-label="Loading"
+      >
         <GenreCardSkeleton v-for="key in 11" :key />
       </ul>
     </template>

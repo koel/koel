@@ -38,7 +38,13 @@
         aria-labelledby="extraTabArtist"
       >
         <ArtistInfo v-if="artist && !loadingArtist" :artist class="px-6 py-8" mode="aside" />
-        <SideSheetArtistAlbumInfoSkeleton v-else class="px-6 py-8" />
+        <SideSheetArtistAlbumInfoSkeleton
+          v-else
+          class="px-6 py-8"
+          role="status"
+          aria-busy="true"
+          aria-label="Loading"
+        />
       </SideSheetPanelLazyWrapper>
 
       <SideSheetPanelLazyWrapper
@@ -49,7 +55,13 @@
         aria-labelledby="extraTabAlbum"
       >
         <AlbumInfo v-if="album && !loadingAlbum" :album class="px-6 py-8" mode="aside" />
-        <SideSheetArtistAlbumInfoSkeleton v-else class="px-6 py-8" />
+        <SideSheetArtistAlbumInfoSkeleton
+          v-else
+          class="px-6 py-8"
+          role="status"
+          aria-busy="true"
+          aria-label="Loading"
+        />
       </SideSheetPanelLazyWrapper>
 
       <SideSheetPanelLazyWrapper
