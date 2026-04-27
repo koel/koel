@@ -28,7 +28,7 @@
     </main>
     <footer class="flex items-center">
       <div class="flex-1">
-        <Btn primary type="submit" @click.prevent="copyCode">Copy Code</Btn>
+        <Btn type="submit" @click.prevent="copyCode">Copy Code</Btn>
         <Btn variant="ghost" @click="emit('close')">Close</Btn>
       </div>
       <label>

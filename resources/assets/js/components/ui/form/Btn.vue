@@ -30,7 +30,7 @@ withDefaults(defineProps<{ tag?: 'button' | 'a'; variant?: Variant; size?: Size 
   tag: 'button',
 })
 
-const button = ref<HTMLButtonElement>()
+const button = ref<HTMLButtonElement | HTMLAnchorElement>()
 
 defineExpose({
   button,
