@@ -16,7 +16,7 @@
           :key="item.label"
           :class="isCurrentField(item.field) && 'active'"
           :title="`Sort by ${item.label}`"
-          class="cursor-pointer group flex justify-between"
+          class="cursor-pointer group flex justify-between hover:bg-k-highlight hover:text-k-highlight-fg"
           @click="sort(item.field)"
         >
           <span>{{ item.label }}</span>
