@@ -71,8 +71,8 @@
 
     <footer>
       <Btn type="submit">Save</Btn>
-      <Btn bordered transparent @click.prevent="previewing = true">Preview</Btn>
-      <Btn transparent @click.prevent="maybeClose">Cancel</Btn>
+      <Btn variant="ghost" bordered @click.prevent="previewing = true">Preview</Btn>
+      <Btn variant="ghost" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
 
     <Btn v-if="previewing" class="btn-exit-preview fixed right-4 top-3" @click.prevent="previewing = false">

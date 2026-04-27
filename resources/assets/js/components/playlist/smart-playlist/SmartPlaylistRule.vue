@@ -24,8 +24,8 @@
       </span>
 
       <Btn
+        variant="destructive"
         class="absolute -right-[14px] aspect-square top-1 scale-[60%] hover:scale-75 active:scale-[60%]"
-        danger
         rounded
         small
         title="Remove this rule"

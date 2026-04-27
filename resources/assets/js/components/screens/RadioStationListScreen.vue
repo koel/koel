@@ -9,9 +9,9 @@
             <Btn
               v-koel-tooltip
               :title="preferences.radio_stations_favorites_only ? 'Show all' : 'Show favorites only'"
+              variant="ghost"
               class="border border-k-fg-10"
               small
-              transparent
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
@@ -32,7 +32,7 @@
             <Btn
               v-if="canAdd"
               v-koel-tooltip
-              highlight
+              variant="highlight"
               small
               title="Add a new station"
               @click.prevent="requestAddStationForm"

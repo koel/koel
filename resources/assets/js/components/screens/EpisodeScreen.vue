@@ -23,16 +23,16 @@
 
         <template #controls>
           <div class="flex gap-2">
-            <Btn v-koel-tooltip="playing ? 'Pause' : 'Play'" highlight @click.prevent="playOrPause">
+            <Btn variant="highlight" v-koel-tooltip="playing ? 'Pause' : 'Play'" @click.prevent="playOrPause">
               <Icon v-if="playing" :icon="faPause" fixed-width />
               <Icon v-else :icon="faPlay" fixed-width />
             </Btn>
 
             <Btn
+              variant="ghost"
               v-if="episode.episode_link"
               v-koel-tooltip="'Visit episode webpage'"
               :href="episode.episode_link"
-              gray
               tag="a"
               target="_blank"
             >
@@ -46,7 +46,7 @@
               @toggle="toggleFavorite"
             />
 
-            <Btn gray @click="requestContextMenu">
+            <Btn variant="ghost" @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
               <span class="sr-only">More Actions</span>
             </Btn>

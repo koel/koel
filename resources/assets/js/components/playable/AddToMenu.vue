@@ -44,7 +44,7 @@
       </ul>
     </section>
 
-    <Btn class="!w-full !border !border-solid !border-white/20" transparent @click.prevent="addToNewPlaylist">
+    <Btn variant="ghost" class="!w-full !border !border-solid !border-white/20" @click.prevent="addToNewPlaylist">
       New Playlist…
     </Btn>
   </div>

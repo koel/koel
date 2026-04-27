@@ -8,8 +8,8 @@
             <Btn
               v-koel-tooltip
               :title="preferences.albums_favorites_only ? 'Show all' : 'Show favorites only'"
+              variant="ghost"
               class="border border-k-fg-10"
-              transparent
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon

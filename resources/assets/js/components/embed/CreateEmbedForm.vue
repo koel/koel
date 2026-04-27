@@ -29,7 +29,7 @@
     <footer class="flex items-center">
       <div class="flex-1">
         <Btn primary type="submit" @click.prevent="copyCode">Copy Code</Btn>
-        <Btn white @click="emit('close')">Close</Btn>
+        <Btn variant="ghost" @click="emit('close')">Close</Btn>
       </div>
       <label>
         <CheckBox v-model="showCode" />

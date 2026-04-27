@@ -35,7 +35,7 @@
               @toggle="toggleFavorite"
             />
 
-            <Btn gray @click="requestContextMenu">
+            <Btn variant="ghost" @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
               <span class="sr-only">More Actions</span>
             </Btn>

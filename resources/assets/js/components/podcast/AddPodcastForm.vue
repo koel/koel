@@ -21,7 +21,7 @@
 
     <footer>
       <Btn type="submit">Save</Btn>
-      <Btn :disabled="loading" white @click.prevent="maybeClose">Cancel</Btn>
+      <Btn variant="ghost" :disabled="loading" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>

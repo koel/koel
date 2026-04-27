@@ -16,7 +16,7 @@
           type="email"
         />
         <Btn :disabled="loading" class="sm:rounded-l-none sm:rounded-r" type="submit">Reset Password</Btn>
-        <Btn :disabled="loading" transparent @click="cancel">Cancel</Btn>
+        <Btn variant="ghost" :disabled="loading" @click="cancel">Cancel</Btn>
       </div>
     </FormRow>
   </form>

@@ -22,7 +22,7 @@
     </div>
 
     <footer class="flex justify-end gap-2 px-6 py-4 bg-k-fg-3">
-      <Btn v-if="showCancelButton" gray name="cancel" @click.prevent="cancel">Cancel</Btn>
+      <Btn variant="ghost" v-if="showCancelButton" name="cancel" @click.prevent="cancel">Cancel</Btn>
       <Btn name="ok">OK</Btn>
     </footer>
   </dialog>

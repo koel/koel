@@ -6,7 +6,7 @@
     <template v-if="isPlus">
       <h4 class="text-xl mt-8 mb-5 text-k-fg">Custom Themes</h4>
       <ThemeList v-if="customThemes.length" :themes="customThemes" class="mb-4" data-testid="custom-themes" />
-      <Btn transparent bordered @click="requestCreateThemeForm">New Theme</Btn>
+      <Btn variant="ghost" bordered @click="requestCreateThemeForm">New Theme</Btn>
     </template>
   </section>
 </template>

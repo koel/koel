@@ -6,11 +6,11 @@
 
         <template #controls>
           <BtnGroup v-if="hasUploadFailures" uppercase>
-            <Btn data-testid="upload-retry-all-btn" success @click="retryAll">
+            <Btn variant="success" data-testid="upload-retry-all-btn" @click="retryAll">
               <Icon :icon="faRotateRight" />
               Retry All
             </Btn>
-            <Btn data-testid="upload-remove-all-btn" highlight @click="removeFailedEntries">
+            <Btn variant="highlight" data-testid="upload-remove-all-btn" @click="removeFailedEntries">
               <Icon :icon="faTrashCan" />
               Remove Failed
             </Btn>
