@@ -1,7 +1,7 @@
 <template>
   <button
     :style="{ backgroundImage: `url(${defaultCover})` }"
-    class="thumbnail group relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-md active:scale-95"
+    class="thumbnail group relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden rounded-xl active:scale-95"
     data-testid="album-artist-thumbnail"
     @click.prevent="playOrQueue"
   >
