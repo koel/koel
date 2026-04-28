@@ -3,13 +3,12 @@
 namespace App\Services;
 
 use App\Enums\DownloadableType;
-use App\Enums\SongStorageType;
 use App\Exceptions\DownloadLimitExceededException;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
-use App\Services\SongStorages\CloudStorageFactory;
-use App\Services\SongStorages\SftpStorage;
+use App\Services\SongStorages\CloudStorage;
+use App\Services\SongStorages\SongStorageFactory;
 use App\Values\Downloadable;
 use App\Values\Podcast\EpisodePlayable;
 use App\Values\SongZipArchive;
@@ -78,7 +77,6 @@ class DownloadService
         );
     }
 
-    // @mago-ignore lint:halstead
     public function getLocalPathOrDownloadableUrl(Song $song): ?string
     {
         if (!$song->storage->supported()) {
@@ -90,15 +88,11 @@ class DownloadService
             return $song->path;
         }
 
-        if ($song->storage === SongStorageType::LOCAL) {
-            return $song->path;
-        }
+        $storage = SongStorageFactory::make($song->storage);
 
-        if ($song->storage === SongStorageType::SFTP) {
-            return app(SftpStorage::class)->copyToLocal($song);
-        }
-
-        return CloudStorageFactory::make($song->storage)->getPresignedUrl($song->storage_metadata->getPath());
+        return $storage instanceof CloudStorage
+            ? $storage->getPresignedUrl($song->storage_metadata->getPath())
+            : $storage->getLocalPath($song->path);
     }
 
     public function getLocalPath(Song $song): ?string
@@ -111,19 +105,8 @@ class DownloadService
             return EpisodePlayable::getForEpisode($song)->path;
         }
 
-        $location = $song->storage_metadata->getPath();
+        $localPath = SongStorageFactory::make($song->storage)->getLocalPath($song->path);
 
-        if ($song->storage === SongStorageType::LOCAL) {
-            return File::exists($location) ? $location : null;
-        }
-
-        if ($song->storage === SongStorageType::SFTP) {
-            /** @var SftpStorage $storage */
-            $storage = app(SftpStorage::class);
-
-            return $storage->copyToLocal($location);
-        }
-
-        return CloudStorageFactory::make($song->storage)->copyToLocal($location);
+        return File::exists($localPath) ? $localPath : null;
     }
 }
