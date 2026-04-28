@@ -26,8 +26,8 @@ export const useVault = <T extends object & { id: PropertyKey }>(options: UseVau
         }
 
         const local = reactive(item)
-        options.onItemAdded?.(local)
         vault.set(item.id, local)
+        options.onItemAdded?.(local)
 
         return local
       }),
