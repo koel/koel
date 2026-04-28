@@ -1,32 +1,35 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import Popover from './Popover.vue'
+import Component from './Popover.vue'
 
 const mount = (popoverProps: Record<string, unknown> = {}) => {
   const harness = createHarness()
   const events: boolean[] = []
+
   const Host = defineComponent({
     setup() {
       const trigger = ref<HTMLButtonElement>()
-      const popover = ref<InstanceType<typeof Popover>>()
-      return () =>
-        h('div', [
+      const popover = ref<InstanceType<typeof Component>>()
+
+      return () => {
+        const componentProps = {
+          ref: popover,
+          anchor: trigger.value,
+          onToggle: (open: boolean) => events.push(open),
+          ...popoverProps,
+        }
+
+        return h('div', [
           h('button', { ref: trigger, type: 'button' }, 'Open'),
-          h(
-            Popover,
-            {
-              ref: popover,
-              anchor: trigger.value,
-              onToggle: (open: boolean) => events.push(open),
-              ...popoverProps,
-            },
-            () => 'panel content',
-          ),
+          h(Component, componentProps, () => 'panel content'),
         ])
+      }
     },
   })
+
   const rendered = harness.render(Host)
+
   return {
     container: rendered.container,
     events,
