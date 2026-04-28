@@ -6,7 +6,7 @@
     "strict": true,
     "noImplicitAny": false,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowJs": true,
