@@ -11,7 +11,6 @@ use Illuminate\Support\Collection;
 /** @extends Repository<Playlist> */
 class PlaylistRepository extends Repository
 {
-    /** @return Collection<Playlist>|array<array-key, Playlist> */
     public function getAllAccessibleByUser(User $user): Collection
     {
         return $this
@@ -23,7 +22,10 @@ class PlaylistRepository extends Repository
 
     public function searchAccessibleByName(string $name, User $user): ?Playlist
     {
-        return $this->accessibleByUser($user)->where('playlists.name', 'like', "%{$name}%")->first();
+        /** @var ?Playlist $playlist */
+        $playlist = $this->accessibleByUser($user)->where('playlists.name', 'like', "%{$name}%")->first();
+
+        return $playlist;
     }
 
     private static function accessibleByUser(User $user): BelongsToMany

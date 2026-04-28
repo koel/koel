@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class ThemeRepository extends Repository
 {
-    /** @return Collection<Theme>|array<array-key, Theme> */
     public function getAllByUser(User $user): Collection
     {
         return $user->themes->sortByDesc('created_at');

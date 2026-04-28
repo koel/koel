@@ -7,7 +7,10 @@ use App\Models\User;
 use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Database\Eloquent\Collection;
 
-/** @extends Repository<Podcast> */
+/**
+ * @extends Repository<Podcast>
+ * @implements ScoutableRepository<Podcast>
+ */
 class PodcastRepository extends Repository implements ScoutableRepository
 {
     public function findOneByUrl(string $url): ?Podcast
@@ -15,7 +18,6 @@ class PodcastRepository extends Repository implements ScoutableRepository
         return $this->findOneBy(['url' => $url]);
     }
 
-    /** @return Collection<Podcast>|array<array-key, Podcast> */
     public function getAllSubscribedByUser(bool $favoritesOnly, ?User $user = null): Collection
     {
         $user ??= $this->auth->user();
@@ -28,7 +30,6 @@ class PodcastRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection<Podcast>|array<array-key, Podcast> */
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $user ??= $this->auth->user();
@@ -44,7 +45,6 @@ class PodcastRepository extends Repository implements ScoutableRepository
         return $preserveOrder ? $podcasts->orderByArray($ids) : $podcasts;
     }
 
-    /** @return Collection<Podcast>|array<array-key, Podcast> */
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(

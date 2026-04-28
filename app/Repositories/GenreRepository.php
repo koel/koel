@@ -18,7 +18,6 @@ class GenreRepository extends Repository
         return Genre::query()->where('name', 'like', "%{$name}%")->first();
     }
 
-    /** @return Collection<GenreSummary>|array<array-key, GenreSummary> */
     public function getAllSummaries(?User $scopedUser = null): Collection
     {
         $genres = Genre::query()
