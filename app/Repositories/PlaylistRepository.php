@@ -25,7 +25,7 @@ class PlaylistRepository extends Repository
         return $this->accessibleByUser($user)->where('playlists.name', 'like', "%{$name}%")->first();
     }
 
-    private static function accessibleByUser(User $user): BelongsToMany
+    private function accessibleByUser(User $user): BelongsToMany
     {
         return License::isCommunity() ? $user->ownedPlaylists() : $user->playlists();
     }
