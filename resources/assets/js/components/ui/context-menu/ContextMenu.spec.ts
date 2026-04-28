@@ -45,15 +45,22 @@ describe('contextMenu', () => {
   })
 
   it('closes when options.component is cleared', async () => {
+    const showSpy = vi.spyOn(HTMLElement.prototype, 'showPopover')
     const hideSpy = vi.spyOn(HTMLElement.prototype, 'hidePopover')
     const options = shallowRef<any>({
-      component: { template: '<div>Menu</div>' },
-      position: { top: 100, left: 200 },
+      component: null,
+      position: { top: 0, left: 0 },
     })
 
     h.render(Component, provide(options))
 
-    await h.tick()
+    // Open the menu first so that close can transition from open → closed.
+    options.value = {
+      component: { template: '<div>Menu</div>' },
+      position: { top: 100, left: 200 },
+    }
+
+    await h.tick(2)
 
     options.value = {
       component: null,
@@ -63,6 +70,7 @@ describe('contextMenu', () => {
     await h.tick()
 
     expect(hideSpy).toHaveBeenCalled()
+    showSpy.mockRestore()
     hideSpy.mockRestore()
   })
 

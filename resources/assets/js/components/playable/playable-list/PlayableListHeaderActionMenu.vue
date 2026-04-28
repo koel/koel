@@ -5,17 +5,13 @@
       <Icon v-else :icon="faEllipsis" />
     </button>
     <Popover ref="popover" :anchor="button" placement="bottom-end" class="context-menu normal-case tracking-normal">
-      <menu role="menu">
+      <menu>
         <li
           v-for="item in menuItems"
           :key="item.label"
           :class="currentlySortedBy(item.field) && 'active'"
-          role="menuitem"
-          tabindex="0"
           class="cursor-pointer group flex justify-between !pl-3 hover:!bg-k-highlight hover:!text-k-highlight-fg"
           @click="sortable && sort(item.field)"
-          @keydown.enter.prevent="sortable && sort(item.field)"
-          @keydown.space.prevent="sortable && sort(item.field)"
         >
           <label
             v-if="shouldShowColumnVisibilityCheckboxes()"

@@ -9,18 +9,14 @@
       <Icon :icon="order === 'asc' ? faArrowUp : faArrowDown" />
     </button>
     <Popover ref="popover" :anchor="button" placement="bottom-end" class="context-menu normal-case tracking-normal">
-      <menu role="menu">
+      <menu>
         <li
           v-for="item in items"
           :key="item.label"
           :class="isCurrentField(item.field) && 'active'"
           :title="`Sort by ${item.label}`"
-          role="menuitem"
-          tabindex="0"
           class="cursor-pointer group flex justify-between hover:bg-k-highlight hover:text-k-highlight-fg"
           @click="sort(item.field)"
-          @keydown.enter.prevent="sort(item.field)"
-          @keydown.space.prevent="sort(item.field)"
         >
           <span>{{ item.label }}</span>
           <span v-if="isCurrentField(item.field)" class="text-k-fg group-hover:text-k-highlight-fg">

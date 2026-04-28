@@ -93,7 +93,7 @@
 <script lang="ts" setup>
 import { faPlay, faRandom, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, toRef } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/config/symbols'
 import { requireInjection } from '@/utils/helpers'
 
@@ -124,6 +124,16 @@ const showingAddToMenu = ref(false)
 const altPressed = ref(false)
 
 const showAddToButton = computed(() => Boolean(selectedPlayables.value.length))
+
+// When the AddTo trigger button disappears (no items selected), the Popover
+// is unmounted via v-if without firing @toggle(false), so we reset the menu
+// open-state flag explicitly. Otherwise the trigger's "Cancel" / "Add To…"
+// label could be stuck on "Cancel" if items are reselected later.
+watch(showAddToButton, visible => {
+  if (!visible) {
+    showingAddToMenu.value = false
+  }
+})
 
 const shuffle = () => emit('play-all', true)
 const shuffleSelected = () => emit('play-selected', true)

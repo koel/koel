@@ -106,8 +106,19 @@ onBeforeUnmount(() => {
   props.anchor && unwireAnchor(props.anchor)
 })
 
-const show = () => panel.value?.showPopover()
-const hide = () => panel.value?.hidePopover()
+// Guard against calls in the wrong state — the native popover API throws
+// InvalidStateError on already-open / not-showing, but consumers expect
+// these to be no-ops so they can call hide() defensively.
+const show = () => {
+  if (panel.value && !isOpen.value) {
+    panel.value.showPopover()
+  }
+}
+const hide = () => {
+  if (panel.value && isOpen.value) {
+    panel.value.hidePopover()
+  }
+}
 const toggle = () => panel.value?.togglePopover()
 
 defineExpose({ show, hide, toggle, isOpen, panel })

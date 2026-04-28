@@ -28,6 +28,8 @@ const { extraClass } = toRefs(props)
 const options = requireInjection(ContextMenuKey)
 
 const el = ref<HTMLElement>()
+const isOpen = ref(false)
+let deferredListenerTimer: ReturnType<typeof setTimeout> | undefined
 
 const positionAt = async (clientX: number, clientY: number) => {
   if (!el.value) {
@@ -267,7 +269,9 @@ const onKeyDown = (event: KeyboardEvent) => {
 
     case 'Escape':
       event.preventDefault()
-      close()
+      // Reset injected state so the watcher path matches outside-click dismissal,
+      // ensuring options.value.component is cleared for any consumers that observe it.
+      options.value = { component: null, position: { top: 0, left: 0 } }
       break
   }
 }
@@ -343,7 +347,7 @@ const onPointerDownOutside = (event: PointerEvent) => {
 }
 
 const open = async (top = 0, left = 0) => {
-  if (!el.value) {
+  if (!el.value || isOpen.value) {
     return
   }
 
@@ -351,6 +355,7 @@ const open = async (top = 0, left = 0) => {
   el.value.style.left = `${left}px`
   el.value.style.top = `${top}px`
   el.value.showPopover()
+  isOpen.value = true
   el.value.focus()
 
   await nextTick()
@@ -362,16 +367,28 @@ const open = async (top = 0, left = 0) => {
   }
 
   // Defer attaching the outside-click listener so the gesture that opened the menu
-  // (the right-click or button click) doesn't immediately dismiss it.
-  setTimeout(() => document.addEventListener('pointerdown', onPointerDownOutside), 0)
+  // (the right-click or button click) doesn't immediately dismiss it. Tracked so we
+  // can clear it if the menu closes/unmounts before the timer fires.
+  clearTimeout(deferredListenerTimer)
+  deferredListenerTimer = setTimeout(() => {
+    deferredListenerTimer = undefined
+    document.addEventListener('pointerdown', onPointerDownOutside)
+  }, 0)
 
   startObservingSubmenus()
 }
 
 const close = () => {
   stopObservingSubmenus()
+  clearTimeout(deferredListenerTimer)
+  deferredListenerTimer = undefined
   document.removeEventListener('pointerdown', onPointerDownOutside)
-  el.value?.hidePopover()
+
+  if (isOpen.value) {
+    el.value?.hidePopover()
+    isOpen.value = false
+  }
+
   if (el.value) {
     el.value.style.left = '-9999px'
     el.value.style.top = '-9999px'
