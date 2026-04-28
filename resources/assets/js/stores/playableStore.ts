@@ -1,7 +1,7 @@
 import isMobile from 'ismobilejs'
 import { differenceBy, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
 import { Reactive, reactive, watch } from 'vue'
-import { arrayify, moveItemsInList, use } from '@/utils/helpers'
+import { arrayify, flattenParams, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
 import { md5 } from '@/utils/crypto'
@@ -267,7 +267,7 @@ export const playableStore = {
     const id = typeof genre === 'string' ? genre : genre.id
 
     const resource = await http.get<PaginatorResource<Song>>(
-      `genres/${id}/songs?${new URLSearchParams(params).toString()}`,
+      `genres/${id}/songs?${new URLSearchParams(flattenParams(params))}`,
     )
 
     const songs = this.syncWithVault(resource.data) as Song[]
@@ -290,7 +290,7 @@ export const playableStore = {
   },
 
   async paginateSongs(params: SongListPaginateParams) {
-    const resource = await http.get<PaginatorResource<Playable>>(`songs?${new URLSearchParams(params).toString()}`)
+    const resource = await http.get<PaginatorResource<Playable>>(`songs?${new URLSearchParams(flattenParams(params))}`)
     this.state.playables = unionBy(this.state.playables, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null
