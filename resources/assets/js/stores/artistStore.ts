@@ -3,6 +3,7 @@ import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
+import { flattenParams } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
 import { useVault } from '@/composables/useVault'
 import { playableStore as songStore } from '@/stores/playableStore'
@@ -68,7 +69,7 @@ export const artistStore = {
   },
 
   async paginate(params: ArtistListPaginateParams) {
-    const resource = await http.get<PaginatorResource<Artist>>(`artists?${new URLSearchParams(params).toString()}`)
+    const resource = await http.get<PaginatorResource<Artist>>(`artists?${new URLSearchParams(flattenParams(params))}`)
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(resource.data), 'id')
 
     return resource.links.next ? ++resource.meta.current_page : null

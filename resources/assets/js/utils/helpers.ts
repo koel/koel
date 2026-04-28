@@ -147,7 +147,7 @@ export const defineAsyncComponent = (
   })
 }
 
-export const flattenParams = (params: Record<string, unknown>): Record<string, string> => {
+export const flattenParams = <T extends object>(params: T): Record<string, string> => {
   const result: Record<string, string> = {}
 
   for (const [key, value] of Object.entries(params)) {
