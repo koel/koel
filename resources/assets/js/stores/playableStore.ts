@@ -1,6 +1,5 @@
 import isMobile from 'ismobilejs'
-import { differenceBy, merge, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
-import type { Reactive } from 'vue'
+import { differenceBy, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
 import { reactive, watch } from 'vue'
 import { arrayify, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
@@ -10,6 +9,7 @@ import { normalizeForComparison, secondsToHumanReadable } from '@/utils/formatte
 import { authService } from '@/services/authService'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
+import { useVault } from '@/composables/useVault'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { commonStore } from '@/stores/commonStore'
 import { albumStore } from '@/stores/albumStore'
@@ -42,8 +42,20 @@ export interface SongUpdateResult {
 
 export type SongListPaginateParams = PaginateParams<PlayableListSortField>
 
+const watchPlayCount = (playable: Playable) => {
+  watch(
+    () => playable.play_count,
+    () => overviewStore.refreshPlayStats(),
+  )
+}
+
 export const playableStore = {
-  vault: new Map<Playable['id'], Reactive<Playable>>(),
+  ...useVault<Playable>({
+    onItemAdded: playable => {
+      playable.playback_state = 'Stopped'
+      watchPlayCount(playable)
+    },
+  }),
 
   state: reactive<{ playables: Playable[]; favorites: Playable[] }>({
     playables: [],
@@ -184,30 +196,6 @@ export const playableStore = {
   },
 
   getShareableUrl: (song: Playable) => `${window.BASE_URL}#/songs/${song.id}`,
-
-  syncWithVault(playables: MaybeArray<Playable>) {
-    return arrayify(playables).map(playable => {
-      let local = this.byId(playable.id)
-
-      if (local) {
-        merge(local, playable)
-      } else {
-        local = reactive(playable)
-        local.playback_state = 'Stopped'
-        this.watchPlayCount(local)
-        this.vault.set(local.id, local)
-      }
-
-      return local
-    })
-  },
-
-  watchPlayCount: (playable: Playable) => {
-    watch(
-      () => playable.play_count,
-      () => overviewStore.refreshPlayStats(),
-    )
-  },
 
   ensureNotDeleted: (songs: MaybeArray<Song>) => arrayify(songs).filter(({ deleted }) => !deleted),
 

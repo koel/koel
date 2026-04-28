@@ -2,7 +2,12 @@ import { merge } from 'lodash'
 import { reactive } from 'vue'
 import { arrayify } from '@/utils/helpers'
 
-export const useVault = <T extends { id: PropertyKey }>() => {
+interface UseVaultOptions<T> {
+  /** Invoked once for every item newly added to the vault, after it's wrapped reactive. */
+  onItemAdded?: (item: T) => void
+}
+
+export const useVault = <T extends { id: PropertyKey }>(options: UseVaultOptions<T> = {}) => {
   const vault = new Map<T['id'], T>()
 
   return {
@@ -13,7 +18,14 @@ export const useVault = <T extends { id: PropertyKey }>() => {
     syncWithVault: (items: MaybeArray<T>): T[] =>
       arrayify(items).map(item => {
         const existing = vault.get(item.id)
-        const local = reactive(existing ? merge(existing, item) : item) as T
+
+        if (existing) {
+          merge(existing, item)
+          return existing
+        }
+
+        const local = reactive(item) as T
+        options.onItemAdded?.(local)
         vault.set(item.id, local)
 
         return local

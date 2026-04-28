@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { useVault } from './useVault'
 
@@ -73,5 +73,18 @@ describe('useVault', () => {
 
     expect(a.byId('x')?.name).toBe('in A')
     expect(b.byId('x')).toBeUndefined()
+  })
+
+  it('runs onItemAdded exactly once for newly added entries and not for updates', () => {
+    const onItemAdded = vi.fn()
+    const vault = useVault<Item>({ onItemAdded })
+
+    vault.syncWithVault({ id: 'a', name: 'Alpha' })
+    vault.syncWithVault({ id: 'a', name: 'Alpha v2' })
+    vault.syncWithVault({ id: 'b', name: 'Bravo' })
+
+    expect(onItemAdded).toHaveBeenCalledTimes(2)
+    expect(onItemAdded.mock.calls[0][0].id).toBe('a')
+    expect(onItemAdded.mock.calls[1][0].id).toBe('b')
   })
 })
