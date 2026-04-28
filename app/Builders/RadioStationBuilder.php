@@ -3,9 +3,13 @@
 namespace App\Builders;
 
 use App\Builders\Concerns\CanScopeByUser;
+use App\Models\RadioStation;
 use App\Models\User;
 use LogicException;
 
+/**
+ * @extends FavoriteableBuilder<RadioStation>
+ */
 class RadioStationBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;

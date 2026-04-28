@@ -3,9 +3,13 @@
 namespace App\Builders;
 
 use App\Builders\Concerns\CanScopeByUser;
+use App\Models\Podcast;
 use Illuminate\Database\Query\JoinClause;
 use LogicException;
 
+/**
+ * @extends FavoriteableBuilder<Podcast>
+ */
 class PodcastBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;
