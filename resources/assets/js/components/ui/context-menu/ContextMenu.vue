@@ -396,6 +396,11 @@ const close = () => {
 }
 
 onBeforeUnmount(() => {
+  // Cancel the deferred-listener timer first so it can't fire after unmount
+  // and re-register a document handler that would never be cleaned up.
+  clearTimeout(deferredListenerTimer)
+  deferredListenerTimer = undefined
+
   stopObservingSubmenus()
   document.removeEventListener('pointerdown', onPointerDownOutside)
   el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
