@@ -1,21 +1,23 @@
 <template>
-  <dialog
+  <div
     ref="el"
     v-koel-focus
     :class="extraClass"
-    :style="{ top, left, bottom, right }"
-    class="menu context-menu select-none shadow overflow-visible backdrop:opacity-0"
+    class="menu context-menu select-none shadow overflow-visible fixed inset-auto m-0"
+    popover="manual"
+    role="menu"
     tabindex="0"
-    @mousedown="onMouseDown"
+    style="left: -9999px; top: -9999px"
     @contextmenu.prevent
     @keydown="onKeyDown"
   >
     <component :is="options.component" v-if="options.component" v-bind="options.props" />
-  </dialog>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { nextTick, onBeforeUnmount, ref, toRefs, watch } from 'vue'
+import { computePosition, flip, shift } from '@floating-ui/dom'
 import { logger } from '@/utils/logger'
 import { requireInjection } from '@/utils/helpers'
 import { ContextMenuKey } from '@/config/symbols'
@@ -25,27 +27,51 @@ const { extraClass } = toRefs(props)
 
 const options = requireInjection(ContextMenuKey)
 
-const el = ref<HTMLDialogElement>()
-const top = ref('0')
-const left = ref('0')
-const bottom = ref('auto')
-const right = ref('auto')
+const el = ref<HTMLElement>()
+const isOpen = ref(false)
+let deferredListenerTimer: ReturnType<typeof setTimeout> | undefined
 
-const preventOffScreen = async (element: HTMLElement, isSubmenu = false) => {
-  const { bottom, right } = element.getBoundingClientRect()
-
-  if (bottom > window.innerHeight) {
-    element.style.top = 'auto'
-    element.style.bottom = '0'
-  } else {
-    element.style.bottom = 'auto'
+const positionAt = async (clientX: number, clientY: number) => {
+  if (!el.value) {
+    return
   }
+  const virtualAnchor = {
+    getBoundingClientRect: () => ({
+      x: clientX,
+      y: clientY,
+      width: 0,
+      height: 0,
+      top: clientY,
+      bottom: clientY,
+      left: clientX,
+      right: clientX,
+    }),
+  }
+  const { x, y } = await computePosition(virtualAnchor, el.value, {
+    placement: 'bottom-start',
+    middleware: [flip(), shift({ padding: 8 })],
+    strategy: 'fixed',
+  })
+  el.value.style.left = `${x}px`
+  el.value.style.top = `${y}px`
+}
 
-  if (right > window.innerWidth) {
-    element.style.right = isSubmenu ? `${el.value?.getBoundingClientRect().width}px` : '0'
-    element.style.left = 'auto'
+const positionSubmenu = async (parent: HTMLElement, submenu: HTMLElement) => {
+  const { x, y } = await computePosition(parent, submenu, {
+    placement: 'right-start',
+    middleware: [flip(), shift({ padding: 8 })],
+    strategy: 'absolute',
+  })
+  // Resolve coords relative to the offset parent (the parent <li>).
+  const offsetParent = submenu.offsetParent as HTMLElement | null
+  if (offsetParent) {
+    const parentRect = parent.getBoundingClientRect()
+    const offsetRect = offsetParent.getBoundingClientRect()
+    submenu.style.left = `${x - (parentRect.left - offsetRect.left)}px`
+    submenu.style.top = `${y - (parentRect.top - offsetRect.top)}px`
   } else {
-    element.style.right = 'auto'
+    submenu.style.left = `${x}px`
+    submenu.style.top = `${y}px`
   }
 }
 
@@ -100,7 +126,7 @@ const showSubmenu = async (item: MenuItem, submenu: HTMLElement) => {
   submenu.setAttribute('data-open', '')
 
   await nextTick()
-  await preventOffScreen(submenu, true)
+  await positionSubmenu(item, submenu)
 }
 
 const getMenuItems = (container: HTMLElement): HTMLElement[] =>
@@ -243,7 +269,9 @@ const onKeyDown = (event: KeyboardEvent) => {
 
     case 'Escape':
       event.preventDefault()
-      close()
+      // Reset injected state so the watcher path matches outside-click dismissal,
+      // ensuring options.value.component is cleared for any consumers that observe it.
+      options.value = { component: null, position: { top: 0, left: 0 } }
       break
   }
 }
@@ -308,34 +336,73 @@ const stopObservingSubmenus = () => {
   observer = undefined
 }
 
-const open = async (t = 0, l = 0) => {
-  top.value = `${t}px`
-  left.value = `${l}px`
-  bottom.value = 'auto'
-  right.value = 'auto'
-  el.value?.showModal()
-  el.value?.focus()
+const onPointerDownOutside = (event: PointerEvent) => {
+  if (!el.value || !options.value.component) {
+    return
+  }
+  const target = event.target as Node | null
+  if (target && !el.value.contains(target)) {
+    options.value = { component: null, position: { top: 0, left: 0 } }
+  }
+}
+
+const open = async (top = 0, left = 0) => {
+  if (!el.value || isOpen.value) {
+    return
+  }
+
+  // Position BEFORE showing so the menu never flashes at the user-agent default location.
+  el.value.style.left = `${left}px`
+  el.value.style.top = `${top}px`
+  el.value.showPopover()
+  isOpen.value = true
+  el.value.focus()
 
   await nextTick()
 
   try {
-    await preventOffScreen(el.value!)
+    await positionAt(left, top)
   } catch (error: unknown) {
     logger.error(error)
   }
+
+  // Defer attaching the outside-click listener so the gesture that opened the menu
+  // (the right-click or button click) doesn't immediately dismiss it. Tracked so we
+  // can clear it if the menu closes/unmounts before the timer fires.
+  clearTimeout(deferredListenerTimer)
+  deferredListenerTimer = setTimeout(() => {
+    deferredListenerTimer = undefined
+    document.addEventListener('pointerdown', onPointerDownOutside)
+  }, 0)
 
   startObservingSubmenus()
 }
 
 const close = () => {
   stopObservingSubmenus()
-  el.value?.close()
+  clearTimeout(deferredListenerTimer)
+  deferredListenerTimer = undefined
+  document.removeEventListener('pointerdown', onPointerDownOutside)
+
+  if (isOpen.value) {
+    el.value?.hidePopover()
+    isOpen.value = false
+  }
+
+  if (el.value) {
+    el.value.style.left = '-9999px'
+    el.value.style.top = '-9999px'
+  }
 }
 
-const onMouseDown = (e: MouseEvent) => e.target === el.value && close()
-
 onBeforeUnmount(() => {
+  // Cancel the deferred-listener timer first so it can't fire after unmount
+  // and re-register a document handler that would never be cleaned up.
+  clearTimeout(deferredListenerTimer)
+  deferredListenerTimer = undefined
+
   stopObservingSubmenus()
+  document.removeEventListener('pointerdown', onPointerDownOutside)
   el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
     clearTimeout(item.hideTimeout)
     item.hideTimeout = undefined

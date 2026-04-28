@@ -1,11 +1,11 @@
 <template>
   <article>
-    <button ref="button" class="w-full focus:text-k-highlight" title="Sort" @click.stop="trigger">
+    <button ref="button" class="w-full focus:text-k-highlight" title="Sort">
       <Icon v-if="sortable" :icon="faSort" />
       <Icon v-else :icon="faEllipsis" />
     </button>
-    <OnClickOutside @trigger="hide">
-      <menu ref="menu" class="context-menu normal-case tracking-normal">
+    <Popover ref="popover" :anchor="button" placement="bottom-end" class="context-menu normal-case tracking-normal">
+      <menu>
         <li
           v-for="item in menuItems"
           :key="item.label"
@@ -34,19 +34,19 @@
           </span>
         </li>
       </menu>
-    </OnClickOutside>
+    </Popover>
   </article>
 </template>
 
 <script lang="ts" setup>
 import { isEqual } from 'lodash'
 import { faArrowDown, faArrowUp, faCheck, faEllipsis, faSort } from '@fortawesome/free-solid-svg-icons'
-import { OnClickOutside } from '@vueuse/components'
-import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
-import { useFloatingUi } from '@/composables/useFloatingUi'
+import { computed, ref, toRefs } from 'vue'
 import { arrayify } from '@/utils/helpers'
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
+
+import Popover from '@/components/ui/Popover.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -85,7 +85,7 @@ const {
 const { field, order, hasCustomOrderSort, contentType, collaborative } = toRefs(props)
 
 const button = ref<HTMLButtonElement>()
-const menu = ref<HTMLDivElement>()
+const popover = ref<InstanceType<typeof Popover>>()
 
 const menuItems = computed(() => {
   const title: MenuItem = { column: 'title', label: 'Title', field: 'title', visibilityToggleable: false }
@@ -154,21 +154,12 @@ const menuItems = computed(() => {
   return items
 })
 
-const { setup, teardown, trigger, hide } = useFloatingUi(button, menu, {
-  placement: 'bottom-end',
-  useArrow: false,
-  autoTrigger: false,
-})
-
 const sort = (field: MaybeArray<PlayableListSortField>) => {
   emit('sort', field)
-  hide()
+  popover.value?.hide()
 }
 
 const currentlySortedBy = (field: MaybeArray<PlayableListSortField>) => isEqual(arrayify(field), arrayify(props.field))
-
-onMounted(() => menu.value && setup())
-onBeforeUnmount(() => teardown())
 </script>
 
 <style lang="postcss" scoped>

@@ -4,13 +4,12 @@
       ref="button"
       :title="title"
       class="border px-3 rounded-md h-full border-k-fg-10 w-full focus:text-k-fg hover:text-k-fg active:text-k-fg"
-      @click.stop="triggerDropdown"
     >
       <span class="mr-2">{{ currentLabel }}</span>
       <Icon :icon="order === 'asc' ? faArrowUp : faArrowDown" />
     </button>
-    <OnClickOutside @trigger="hideDropdown">
-      <menu ref="menu" class="context-menu normal-case tracking-normal">
+    <Popover ref="popover" :anchor="button" placement="bottom-end" class="context-menu normal-case tracking-normal">
+      <menu>
         <li
           v-for="item in items"
           :key="item.label"
@@ -26,15 +25,15 @@
           </span>
         </li>
       </menu>
-    </OnClickOutside>
+    </Popover>
   </article>
 </template>
 
 <script generic="T extends SortField" lang="ts" setup>
 import { faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons'
-import { OnClickOutside } from '@vueuse/components'
-import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
-import { useFloatingUi } from '@/composables/useFloatingUi'
+import { computed, ref, toRefs } from 'vue'
+
+import Popover from '@/components/ui/Popover.vue'
 
 const props = defineProps<{
   items: BasicListSorterDropDownItem<T>[]
@@ -47,18 +46,7 @@ const emit = defineEmits<{ (e: 'sort', field: T, order: SortOrder): void }>()
 const { field: currentField, order: currentOrder, items } = toRefs(props)
 
 const button = ref<HTMLButtonElement>()
-const menu = ref<HTMLDivElement>()
-
-const {
-  setup: setupDropdown,
-  teardown: teardownDropdown,
-  trigger: triggerDropdown,
-  hide: hideDropdown,
-} = useFloatingUi(button, menu, {
-  placement: 'bottom-end',
-  useArrow: false,
-  autoTrigger: false,
-})
+const popover = ref<InstanceType<typeof Popover>>()
 
 const currentLabel = computed(() => {
   return items.value.find((item: BasicListSorterDropDownItem<T>) => item.field === currentField.value)?.label
@@ -73,7 +61,7 @@ const sort = (field: T) => {
     emit('sort', field, 'asc')
   }
 
-  hideDropdown()
+  popover.value?.hide()
 }
 
 const isCurrentField = (field: T) => field === currentField.value
@@ -81,7 +69,4 @@ const isCurrentField = (field: T) => field === currentField.value
 const title = computed(
   () => `Sorting by ${currentLabel.value}, ${currentOrder.value === 'asc' ? 'ascending' : 'descending'}`,
 )
-
-onMounted(() => menu.value && setupDropdown())
-onBeforeUnmount(() => teardownDropdown())
 </script>

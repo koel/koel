@@ -1,16 +1,7 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './BasicListSorter.vue'
-
-vi.mock('@/composables/useFloatingUi', () => ({
-  useFloatingUi: () => ({
-    setup: vi.fn(),
-    teardown: vi.fn(),
-    trigger: vi.fn(),
-    hide: vi.fn(),
-  }),
-}))
 
 describe('basicListSorter', () => {
   const h = createHarness()
