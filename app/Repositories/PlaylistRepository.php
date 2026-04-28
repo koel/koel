@@ -22,10 +22,7 @@ class PlaylistRepository extends Repository
 
     public function searchAccessibleByName(string $name, User $user): ?Playlist
     {
-        /** @var ?Playlist $playlist */
-        $playlist = $this->accessibleByUser($user)->where('playlists.name', 'like', "%{$name}%")->first();
-
-        return $playlist;
+        return $this->accessibleByUser($user)->where('playlists.name', 'like', "%{$name}%")->first();
     }
 
     private static function accessibleByUser(User $user): BelongsToMany

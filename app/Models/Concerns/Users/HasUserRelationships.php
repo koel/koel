@@ -27,19 +27,16 @@ trait HasUserRelationships
         return $this->belongsTo(User::class, 'invited_by_id');
     }
 
-    /** @return BelongsToMany<Playlist, $this> */
     public function playlists(): BelongsToMany
     {
         return $this->belongsToMany(Playlist::class)->withPivot('role', 'position')->withTimestamps();
     }
 
-    /** @return BelongsToMany<Playlist, $this> */
     public function ownedPlaylists(): BelongsToMany
     {
         return $this->playlists()->wherePivot('role', 'owner');
     }
 
-    /** @return BelongsToMany<Playlist, $this> */
     public function collaboratedPlaylists(): BelongsToMany
     {
         return $this->playlists()->wherePivot('role', 'collaborator');
