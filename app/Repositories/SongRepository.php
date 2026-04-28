@@ -58,13 +58,13 @@ class SongRepository extends Repository implements ScoutableRepository
             ->first();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getAllStoredOnCloud(): Collection
     {
         return Song::query()->storedOnCloud()->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getRecentlyAdded(int $count = 8, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
@@ -74,7 +74,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getMostPlayed(int $count = 8, ?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
         return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
@@ -85,7 +85,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getLeastPlayed(int $count = 50, ?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
         return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
@@ -95,7 +95,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getRecentlyPlayed(int $count = 8, ?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
         return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
@@ -139,7 +139,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->simplePaginate($perPage);
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getForQueue(
         array $sortColumns,
         string $sortDirection,
@@ -153,7 +153,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getFavorites(?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
         return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
@@ -162,7 +162,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getByAlbum(Album|string $album, ?User $scopedUser = null): Collection
     {
         $album = $this->albumRepository->resolveOne($album);
@@ -187,7 +187,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->simplePaginate(50);
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getByArtist(Artist|string $artist, ?User $scopedUser = null): Collection
     {
         $artist = $this->artistRepository->resolveOne($artist);
@@ -205,7 +205,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getByPlaylist(Playlist|string $playlist, ?User $scopedUser = null): Collection
     {
         $playlist = $this->playlistRepository->resolveOne($playlist);
@@ -217,7 +217,7 @@ class SongRepository extends Repository implements ScoutableRepository
         }
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     private function getByStandardPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
     {
         throw_if($playlist->is_smart, new LogicException('Not a standard playlist.'));
@@ -245,7 +245,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     private function getBySmartPlaylist(Playlist $playlist, ?User $scopedUser = null): Collection
     {
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
@@ -269,7 +269,7 @@ class SongRepository extends Repository implements ScoutableRepository
         return $query->orderBy('songs.title')->limit(self::LIST_SIZE_LIMIT)->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getRandom(int $limit, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
@@ -279,7 +279,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Song> */
+    /** @return Collection<int, Song> */
     public function getMany(array $ids, bool $preserveOrder = false, ?User $scopedUser = null): Collection
     {
         $songs = Song::query(user: $scopedUser ?? $this->auth->user())
@@ -302,7 +302,7 @@ class SongRepository extends Repository implements ScoutableRepository
     /**
      * Gets several songs, but also includes collaborative information.
      *
-     * @return Collection|array<array-key, Song>
+     * @return Collection<int, Song>
      */
     public function getManyInCollaborativeContext(array $ids, ?User $scopedUser = null): Collection
     {
@@ -351,7 +351,7 @@ class SongRepository extends Repository implements ScoutableRepository
     /**
      * @param Genre|null $genre If null, query songs that have no genre.
      *
-     * @return Collection|array<array-key, Song>
+     * @return Collection<int, Song>
      */
     public function getByGenre(?Genre $genre, int $limit, $random = false, ?User $scopedUser = null): Collection
     {

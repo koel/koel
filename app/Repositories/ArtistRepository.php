@@ -22,7 +22,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
         return Artist::query()->withUserContext(user: $user ?? $this->auth->user())->findOrFail($id);
     }
 
-    /** @return Collection|array<array-key, Artist> */
+    /** @return Collection<int, Artist> */
     public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
     {
         return Artist::query()
@@ -33,7 +33,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Artist> */
+    /** @return Collection<int, Artist> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
         return Artist::query()
@@ -44,7 +44,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Artist> */
+    /** @return Collection<int, Artist> */
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $artists = Artist::query()

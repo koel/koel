@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 use LogicException;
 use Webmozart\Assert\Assert;
 
+/**
+ * @extends FavoriteableBuilder<Artist>
+ */
 class ArtistBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;

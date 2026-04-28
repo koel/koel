@@ -26,7 +26,7 @@ class FolderRepository extends Repository
         return simple_hash($path ? trim($path, DIRECTORY_SEPARATOR) : $path);
     }
 
-    /** @return Collection|array<array-key, Folder> */
+    /** @return Collection<int, Folder> */
     public function getSubfolders(?Folder $folder = null, ?User $scopedUser = null): Collection
     {
         if ($folder) {
@@ -41,7 +41,7 @@ class FolderRepository extends Repository
         return $this->findOneBy(['hash' => self::pathToHash($path)]);
     }
 
-    /** @return Collection|array<array-key, Folder> */
+    /** @return Collection<int, Folder> */
     public function getByPaths(array $paths, ?User $scopedUser = null): Collection
     {
         $hashes = array_map(self::pathToHash(...), $paths);
