@@ -1,10 +1,10 @@
 import type { Reactive } from 'vue'
 import { reactive } from 'vue'
-import { differenceBy, merge, unionBy } from 'lodash'
+import { differenceBy, unionBy } from 'lodash'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
-import { arrayify } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
+import { useVault } from '@/composables/useVault'
 import { playableStore as songStore } from '@/stores/playableStore'
 
 const UNKNOWN_ALBUM_NAME = 'Unknown Album'
@@ -20,15 +20,11 @@ interface AlbumListPaginateParams extends PaginateParams<AlbumListSortField> {
 }
 
 export const albumStore = {
-  vault: new Map<Album['id'], Album>(),
+  ...useVault<Album>(),
 
   state: reactive({
     albums: [] as Album[],
   }),
-
-  byId(id: Album['id']) {
-    return this.vault.get(id)
-  },
 
   removeByIds(ids: Album['id'][]) {
     this.state.albums = differenceBy(
@@ -48,16 +44,6 @@ export const albumStore = {
     }
 
     return album.name === UNKNOWN_ALBUM_NAME
-  },
-
-  syncWithVault(albums: MaybeArray<Album>) {
-    return arrayify(albums).map(album => {
-      let local = this.vault.get(album.id)
-      local = reactive(local ? merge(local, album) : album)
-      this.vault.set(album.id, local)
-
-      return local
-    })
   },
 
   async update(album: Album, data: AlbumUpdateData) {

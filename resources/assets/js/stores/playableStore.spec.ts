@@ -159,38 +159,36 @@ describe('playableStore', () => {
     expect(playableStore.getShareableUrl(song)).toBe(`http://test/#/songs/${song.id}`)
   })
 
-  it('syncs with the vault', () => {
+  it('syncs new songs into the vault and applies playback state defaults', () => {
     const song = h.factory('song', {
       playback_state: null,
     })
 
-    const watchPlayCountMock = h.mock(playableStore, 'watchPlayCount')
+    const [synced] = playableStore.syncWithVault(song)
 
-    expect(playableStore.syncWithVault(song)).toEqual([reactive(song)])
     expect(playableStore.vault.has(song.id)).toBe(true)
-    expect(watchPlayCountMock).toHaveBeenCalledOnce()
+    expect(synced.playback_state).toBe('Stopped')
 
-    expect(playableStore.syncWithVault(song)).toEqual([reactive(song)])
-    expect(playableStore.vault.has(song.id)).toBe(true)
-    // second call shouldn't set up play count tracking again
-    expect(watchPlayCountMock).toHaveBeenCalledOnce()
+    // re-syncing the same song reuses the existing reactive entry
+    const [resynced] = playableStore.syncWithVault(song)
+    expect(resynced).toBe(synced)
   })
 
-  it('watches play count tracking', async () => {
+  it('refreshes play stats when a vaulted song play count changes', async () => {
     const refreshMock = h.mock(overviewStore, 'refreshPlayStats')
 
-    const song = reactive(
-      h.factory('song', {
-        play_count: 98,
-      }),
-    )
-
-    playableStore.watchPlayCount(song)
-    song.play_count = 100
+    const [synced] = playableStore.syncWithVault(h.factory('song', { play_count: 98 }))
+    synced.play_count = 100
 
     await h.tick()
+    expect(refreshMock).toHaveBeenCalledTimes(1)
 
-    expect(refreshMock).toHaveBeenCalled()
+    // re-syncing the same song does not double up the watcher
+    playableStore.syncWithVault({ ...synced, play_count: 101 } as Song)
+    synced.play_count = 102
+
+    await h.tick()
+    expect(refreshMock).toHaveBeenCalledTimes(2)
   })
 
   it('fetches for album', async () => {
