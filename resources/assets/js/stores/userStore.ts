@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
-import { differenceBy, merge } from 'lodash'
+import { differenceBy } from 'lodash'
 import { http } from '@/services/http'
-import { arrayify } from '@/utils/helpers'
+import { useVault } from '@/composables/useVault'
 
 type UserFormData = Pick<User, 'name' | 'email' | 'role'>
 
@@ -14,22 +14,12 @@ export interface UpdateUserData extends UserFormData {
 }
 
 export const userStore = {
-  vault: new Map<User['id'], User>(),
+  ...useVault<User>(),
 
   state: reactive({
     users: [] as User[],
     current: null! as CurrentUser,
   }),
-
-  syncWithVault(users: MaybeArray<User>) {
-    return arrayify(users).map(user => {
-      let local = this.byId(user.id)
-      local = reactive(local ? merge(local, user) : user)
-      this.vault.set(user.id, local)
-
-      return local
-    })
-  },
 
   init(currentUser: CurrentUser) {
     this.state.users = this.syncWithVault(currentUser)
@@ -38,10 +28,6 @@ export const userStore = {
 
   async fetch() {
     this.state.users = this.syncWithVault(await http.get<User[]>('users'))
-  },
-
-  byId(id: User['id']) {
-    return this.vault.get(id)
   },
 
   get current() {
