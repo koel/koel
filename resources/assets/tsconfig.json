@@ -6,7 +6,7 @@
     "strict": true,
     "noImplicitAny": false,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowJs": true,
@@ -15,5 +15,5 @@
     }
   },
   "include": ["js/**/*", "../../node_modules/vitest/globals.d.ts"],
-  "exclude": ["js/__tests__/**/*"]
+  "exclude": []
 }
