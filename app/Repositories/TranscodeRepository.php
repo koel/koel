@@ -13,7 +13,6 @@ class TranscodeRepository extends Repository
     /**
      * @param array<string> $songIds
      *
-     * @return Collection<Transcode>|array<array-key, Transcode>
      */
     public function findBySongIds(array $songIds): Collection
     {

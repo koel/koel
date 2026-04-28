@@ -7,10 +7,12 @@ use App\Models\User;
 use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Database\Eloquent\Collection;
 
-/** @extends Repository<RadioStation> */
+/**
+ * @extends Repository<RadioStation>
+ * @implements ScoutableRepository<RadioStation>
+ */
 class RadioStationRepository extends Repository implements ScoutableRepository
 {
-    /** @return Collection<RadioStation>|array<array-key, RadioStation> */
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $stations = RadioStation::query()
@@ -21,7 +23,6 @@ class RadioStationRepository extends Repository implements ScoutableRepository
         return $preserveOrder ? $stations->orderByArray($ids) : $stations;
     }
 
-    /** @return Collection<RadioStation>|array<array-key, RadioStation> */
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
@@ -34,7 +35,6 @@ class RadioStationRepository extends Repository implements ScoutableRepository
         );
     }
 
-    /** @return Collection<RadioStation>|array<array-key, RadioStation> */
     public function getAllForUser(User $user): Collection
     {
         return RadioStation::query()->withUserContext(user: $user)->get();

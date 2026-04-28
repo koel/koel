@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
 /** @extends Repository<Folder> */
 class FolderRepository extends Repository
 {
-    /** @return Collection<Folder>|array<array-key, Folder> */
     private function getOnlyBrowsable(Collection|Folder $folders, ?User $user = null): Collection
     {
         $user ??= $this->auth->user();
@@ -26,7 +25,6 @@ class FolderRepository extends Repository
         return simple_hash($path ? trim($path, DIRECTORY_SEPARATOR) : $path);
     }
 
-    /** @return Collection|array<array-key, Folder> */
     public function getSubfolders(?Folder $folder = null, ?User $scopedUser = null): Collection
     {
         if ($folder) {
@@ -41,7 +39,6 @@ class FolderRepository extends Repository
         return $this->findOneBy(['hash' => self::pathToHash($path)]);
     }
 
-    /** @return Collection|array<array-key, Folder> */
     public function getByPaths(array $paths, ?User $scopedUser = null): Collection
     {
         $hashes = array_map(self::pathToHash(...), $paths);

@@ -4,10 +4,15 @@ namespace App\Builders;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 /**
+ * @template TModel of Model
+ *
+ * @extends Builder<TModel>
+ *
  * @property ?User $user
  */
 abstract class FavoriteableBuilder extends Builder

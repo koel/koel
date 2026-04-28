@@ -24,7 +24,6 @@ class AlbumRepository extends Repository implements ScoutableRepository
         return Album::query()->withUserContext(user: $user ?? $this->auth->user())->findOrFail($id);
     }
 
-    /** @return Collection|array<array-key, Album> */
     public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
     {
         return Album::query()
@@ -35,7 +34,6 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Album> */
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
         return Album::query()
@@ -46,7 +44,6 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /** @return Collection|array<array-key, Album> */
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $albums = Album::query()
@@ -58,7 +55,6 @@ class AlbumRepository extends Repository implements ScoutableRepository
         return $preserveOrder ? $albums->orderByArray($ids) : $albums;
     }
 
-    /** @return Collection|array<array-key, Album> */
     public function getByArtist(Artist $artist, ?User $user = null): Collection
     {
         return Album::query()
@@ -87,7 +83,6 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->simplePaginate(21);
     }
 
-    /** @return Collection<Album>|array<array-key, Album> */
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(

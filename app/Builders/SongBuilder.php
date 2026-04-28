@@ -4,6 +4,7 @@ namespace App\Builders;
 
 use App\Builders\Concerns\CanScopeByUser;
 use App\Facades\License;
+use App\Models\Song;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,9 @@ use Illuminate\Support\Str;
 use LogicException;
 use Webmozart\Assert\Assert;
 
+/**
+ * @extends FavoriteableBuilder<Song>
+ */
 class SongBuilder extends FavoriteableBuilder
 {
     use CanScopeByUser;

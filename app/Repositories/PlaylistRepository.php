@@ -11,7 +11,6 @@ use Illuminate\Support\Collection;
 /** @extends Repository<Playlist> */
 class PlaylistRepository extends Repository
 {
-    /** @return Collection<Playlist>|array<array-key, Playlist> */
     public function getAllAccessibleByUser(User $user): Collection
     {
         return $this
