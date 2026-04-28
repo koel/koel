@@ -15,5 +15,5 @@
     }
   },
   "include": ["js/**/*", "../../node_modules/vitest/globals.d.ts"],
-  "exclude": ["js/__tests__/**/*"]
+  "exclude": []
 }
