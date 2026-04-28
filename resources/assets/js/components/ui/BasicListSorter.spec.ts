@@ -72,4 +72,113 @@ describe('basicListSorter', () => {
     const button = screen.getByRole('button')
     expect(button.getAttribute('title')).toBe('Sorting by Size, descending')
   })
+
+  describe('keyboard navigation', () => {
+    const openMenu = async (field: string = 'name', order: SortOrder = 'asc') => {
+      const rendered = renderComponent(field, order)
+      const panel = rendered.container.querySelector<HTMLElement>('[popover]')!
+
+      panel.showPopover()
+      await h.tick(2)
+
+      return rendered
+    }
+
+    it('focuses the active sort field when the menu opens', async () => {
+      await openMenu('date', 'asc')
+
+      expect(document.activeElement).toBe(screen.getByTitle('Sort by Date'))
+    })
+
+    it('falls back to the first item when no field matches', async () => {
+      await openMenu('unknown' as any, 'asc')
+
+      expect(document.activeElement).toBe(screen.getByTitle('Sort by Name'))
+    })
+
+    it('moves focus to the next item on ArrowDown', async () => {
+      await openMenu('name', 'asc')
+
+      await h.user.keyboard('{ArrowDown}')
+
+      expect(document.activeElement).toBe(screen.getByTitle('Sort by Date'))
+    })
+
+    it('wraps focus to the first item past the end', async () => {
+      await openMenu('size', 'asc')
+
+      await h.user.keyboard('{ArrowDown}')
+
+      expect(document.activeElement).toBe(screen.getByTitle('Sort by Name'))
+    })
+
+    it('moves focus to the previous item on ArrowUp', async () => {
+      await openMenu('date', 'asc')
+
+      await h.user.keyboard('{ArrowUp}')
+
+      expect(document.activeElement).toBe(screen.getByTitle('Sort by Name'))
+    })
+
+    it('wraps focus to the last item past the start', async () => {
+      await openMenu('name', 'asc')
+
+      await h.user.keyboard('{ArrowUp}')
+
+      expect(document.activeElement).toBe(screen.getByTitle('Sort by Size'))
+    })
+
+    it('jumps to the first item on Home', async () => {
+      await openMenu('size', 'asc')
+
+      await h.user.keyboard('{Home}')
+
+      expect(document.activeElement).toBe(screen.getByTitle('Sort by Name'))
+    })
+
+    it('jumps to the last item on End', async () => {
+      await openMenu('name', 'asc')
+
+      await h.user.keyboard('{End}')
+
+      expect(document.activeElement).toBe(screen.getByTitle('Sort by Size'))
+    })
+
+    it('activates the focused item on Enter', async () => {
+      const { emitted } = await openMenu('name', 'asc')
+
+      await h.user.keyboard('{ArrowDown}')
+      await h.user.keyboard('{Enter}')
+
+      expect(emitted().sort).toBeTruthy()
+      expect(emitted().sort[0]).toEqual(['date', 'asc'])
+    })
+
+    it('activates the focused item on Space', async () => {
+      const { emitted } = await openMenu('name', 'asc')
+
+      await h.user.keyboard('{ArrowDown}{ArrowDown}')
+      await h.user.keyboard(' ')
+
+      expect(emitted().sort).toBeTruthy()
+      expect(emitted().sort[0]).toEqual(['size', 'asc'])
+    })
+
+    it('uses roving tabindex on menu items', async () => {
+      await openMenu('date', 'asc')
+
+      const dateItem = screen.getByTitle('Sort by Date')
+      const nameItem = screen.getByTitle('Sort by Name')
+      const sizeItem = screen.getByTitle('Sort by Size')
+
+      expect(dateItem.getAttribute('tabindex')).toBe('0')
+      expect(nameItem.getAttribute('tabindex')).toBe('-1')
+      expect(sizeItem.getAttribute('tabindex')).toBe('-1')
+
+      await h.user.keyboard('{ArrowDown}')
+
+      expect(dateItem.getAttribute('tabindex')).toBe('-1')
+      expect(sizeItem.getAttribute('tabindex')).toBe('0')
+    })
+  })
 })
