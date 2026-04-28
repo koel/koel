@@ -1,6 +1,6 @@
 import vueSnapshotSerializer from 'jest-serializer-vue'
 import { expect, vi } from 'vite-plus/test'
-import './popover-shim'
+import './shims/popover'
 
 declare global {
   interface Window {
