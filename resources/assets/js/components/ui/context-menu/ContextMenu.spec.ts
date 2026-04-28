@@ -5,41 +5,33 @@ import { ContextMenuKey } from '@/config/symbols'
 import Component from './ContextMenu.vue'
 
 describe('contextMenu', () => {
-  const h = createHarness({
-    beforeEach: () => {
-      HTMLDialogElement.prototype.showModal = vi.fn()
-      HTMLDialogElement.prototype.close = vi.fn()
+  const h = createHarness()
+
+  const provide = (options: ReturnType<typeof shallowRef>) => ({
+    global: {
+      provide: {
+        [ContextMenuKey as symbol]: options,
+      },
     },
   })
 
-  it('renders a dialog element', () => {
-    h.render(Component, {
-      global: {
-        provide: {
-          [ContextMenuKey as symbol]: shallowRef({
-            component: null,
-            position: { top: 0, left: 0 },
-          }),
-        },
-      },
-    })
+  it('renders the popover root', () => {
+    const { container } = h.render(Component, provide(shallowRef({ component: null, position: { top: 0, left: 0 } })))
 
-    expect(document.querySelector('dialog.context-menu')).toBeTruthy()
+    const root = container.querySelector<HTMLElement>('.context-menu[popover]')!
+    expect(root).toBeTruthy()
+    expect(root.getAttribute('popover')).toBe('manual')
+    expect(root.getAttribute('role')).toBe('menu')
   })
 
   it('opens when options.component is set', async () => {
+    const showSpy = vi.spyOn(HTMLElement.prototype, 'showPopover')
     const options = shallowRef<any>({
       component: null,
       position: { top: 0, left: 0 },
     })
 
-    h.render(Component, {
-      global: {
-        provide: {
-          [ContextMenuKey as symbol]: options,
-        },
-      },
-    })
+    h.render(Component, provide(options))
 
     options.value = {
       component: { template: '<div>Menu Content</div>' },
@@ -48,22 +40,18 @@ describe('contextMenu', () => {
 
     await h.tick(2)
 
-    expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalled()
+    expect(showSpy).toHaveBeenCalled()
+    showSpy.mockRestore()
   })
 
   it('closes when options.component is cleared', async () => {
+    const hideSpy = vi.spyOn(HTMLElement.prototype, 'hidePopover')
     const options = shallowRef<any>({
       component: { template: '<div>Menu</div>' },
       position: { top: 100, left: 200 },
     })
 
-    h.render(Component, {
-      global: {
-        provide: {
-          [ContextMenuKey as symbol]: options,
-        },
-      },
-    })
+    h.render(Component, provide(options))
 
     await h.tick()
 
@@ -74,22 +62,16 @@ describe('contextMenu', () => {
 
     await h.tick()
 
-    expect(HTMLDialogElement.prototype.close).toHaveBeenCalled()
+    expect(hideSpy).toHaveBeenCalled()
+    hideSpy.mockRestore()
   })
 
   it('applies extra class', () => {
-    h.render(Component, {
+    const { container } = h.render(Component, {
       props: { extraClass: 'my-custom-class' },
-      global: {
-        provide: {
-          [ContextMenuKey as symbol]: shallowRef({
-            component: null,
-            position: { top: 0, left: 0 },
-          }),
-        },
-      },
+      ...provide(shallowRef({ component: null, position: { top: 0, left: 0 } })),
     })
 
-    expect(document.querySelector('dialog.my-custom-class')).toBeTruthy()
+    expect(container.querySelector('.my-custom-class[popover]')).toBeTruthy()
   })
 })
