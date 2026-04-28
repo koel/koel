@@ -93,13 +93,14 @@
 <script lang="ts" setup>
 import { faPlay, faRandom, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import type { Ref } from 'vue'
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { FilteredPlayablesKey, PlayablesKey, SelectedPlayablesKey } from '@/config/symbols'
 import { requireInjection } from '@/utils/helpers'
 
 import AddToMenu from '@/components/playable/AddToMenu.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
+import ListFilter from '@/components/ui/ListFilter.vue'
 import Popover from '@/components/ui/Popover.vue'
 
 const props = defineProps<{ config: PlayableListControlsConfig }>()
@@ -109,8 +110,6 @@ const emit = defineEmits<{
   (e: 'filter', keywords: string): void
   (e: 'clear-queue' | 'delete-playlist' | 'refresh'): void
 }>()
-
-const ListFilter = defineAsyncComponent(() => import('@/components/ui/ListFilter.vue'))
 
 const config = toRef(props, 'config')
 
