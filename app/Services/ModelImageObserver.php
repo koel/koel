@@ -21,13 +21,13 @@ class ModelImageObserver
     public function onModelUpdating(Model $model): void
     {
         if ($model->isDirty($this->fieldName)) {
-            $this->delete($model->getOriginal($this->fieldName));
+            $this->delete($model->getRawOriginal($this->fieldName));
         }
     }
 
     public function onModelDeleted(Model $model): void
     {
-        $this->delete($model->{$this->fieldName});
+        $this->delete($model->getRawOriginal($this->fieldName));
     }
 
     private function delete(?string $filename): void
