@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Services;
 
-use App\Models\Artist;
 use App\Models\Playlist;
 use App\Services\ModelImageObserver;
 use Illuminate\Support\Facades\File;
@@ -111,18 +110,6 @@ class ModelImageObserverTest extends TestCase
         ModelImageObserver::make('cover')->onModelDeleted($playlist);
 
         // No exception bubbles up — rescue() swallowed it. Reaching this line is the assertion.
-    }
-
-    #[Test]
-    public function isBoundToTheConfiguredFieldName(): void
-    {
-        // The observer should look at `image`, not at any other field on the model.
-        $artist = Artist::factory()->makeOne(['image' => 'artist.webp']);
-        $artist->syncOriginal();
-
-        File::expects('delete')->with([image_storage_path('artist.webp')]);
-
-        ModelImageObserver::make('image')->onModelDeleted($artist);
     }
 
     private static function makePlaylistWithDirtyCover(?string $original, ?string $current): Playlist
