@@ -1,0 +1,144 @@
+<?php
+
+namespace Tests\Unit\Services;
+
+use App\Models\Artist;
+use App\Models\Playlist;
+use App\Services\ModelImageObserver;
+use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
+use Tests\TestCase;
+
+class ModelImageObserverTest extends TestCase
+{
+    #[Test]
+    public function onModelUpdatingDeletesTheOriginalImageWhenTheFieldIsDirty(): void
+    {
+        $playlist = $this->playlistWithDirtyCover(original: 'old.webp', current: 'new.webp');
+
+        File::expects('delete')->with([image_storage_path('old.webp')]);
+
+        ModelImageObserver::make('cover')->onModelUpdating($playlist);
+    }
+
+    #[Test]
+    public function onModelUpdatingNoOpsWhenTheFieldIsNotDirty(): void
+    {
+        $playlist = $this->playlistWithCleanCover('cover.webp');
+
+        File::expects('delete')->never();
+
+        ModelImageObserver::make('cover')->onModelUpdating($playlist);
+    }
+
+    #[Test]
+    public function onModelDeletedDeletesTheCurrentImage(): void
+    {
+        $playlist = $this->playlistWithCleanCover('cover.webp');
+
+        File::expects('delete')->with([image_storage_path('cover.webp')]);
+
+        ModelImageObserver::make('cover')->onModelDeleted($playlist);
+    }
+
+    #[Test]
+    public function deletesTheThumbnailWhenConfigured(): void
+    {
+        $playlist = $this->playlistWithCleanCover('cover.webp');
+
+        File::expects('delete')->with([
+            image_storage_path('cover.webp'),
+            image_storage_path('cover_thumb.webp'),
+        ]);
+
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
+    }
+
+    #[Test]
+    public function thumbnailIsAlsoDeletedOnUpdate(): void
+    {
+        $playlist = $this->playlistWithDirtyCover(original: 'old.webp', current: 'new.webp');
+
+        File::expects('delete')->with([
+            image_storage_path('old.webp'),
+            image_storage_path('old_thumb.webp'),
+        ]);
+
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelUpdating($playlist);
+    }
+
+    #[Test]
+    public function noOpsWhenTheFieldIsNull(): void
+    {
+        $playlist = $this->playlistWithCleanCover(null);
+
+        File::expects('delete')->never();
+
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
+    }
+
+    #[Test]
+    public function noOpsWhenTheFieldIsAnEmptyString(): void
+    {
+        $playlist = $this->playlistWithCleanCover('');
+
+        File::expects('delete')->never();
+
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
+    }
+
+    #[Test]
+    public function thumbnailDerivationPreservesTheExtension(): void
+    {
+        $playlist = $this->playlistWithCleanCover('cover.with.dots.png');
+
+        File::expects('delete')->with([
+            image_storage_path('cover.with.dots.png'),
+            image_storage_path('cover.with.dots_thumb.png'),
+        ]);
+
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
+    }
+
+    #[Test]
+    public function fileSystemErrorsAreRescued(): void
+    {
+        $playlist = $this->playlistWithCleanCover('cover.webp');
+
+        File::expects('delete')->andThrow(new RuntimeException('disk gone'));
+
+        ModelImageObserver::make('cover')->onModelDeleted($playlist);
+
+        // No exception bubbles up — rescue() swallowed it. Reaching this line is the assertion.
+    }
+
+    #[Test]
+    public function isBoundToTheConfiguredFieldName(): void
+    {
+        // The observer should look at `image`, not at any other field on the model.
+        $artist = Artist::factory()->makeOne(['image' => 'artist.webp']);
+        $artist->syncOriginal();
+
+        File::expects('delete')->with([image_storage_path('artist.webp')]);
+
+        ModelImageObserver::make('image')->onModelDeleted($artist);
+    }
+
+    private function playlistWithDirtyCover(?string $original, ?string $current): Playlist
+    {
+        $playlist = Playlist::factory()->makeOne(['cover' => $original]);
+        $playlist->syncOriginal();
+        $playlist->cover = $current;
+
+        return $playlist;
+    }
+
+    private function playlistWithCleanCover(?string $value): Playlist
+    {
+        $playlist = Playlist::factory()->makeOne(['cover' => $value]);
+        $playlist->syncOriginal();
+
+        return $playlist;
+    }
+}

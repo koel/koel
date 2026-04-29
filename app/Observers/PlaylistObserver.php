@@ -3,23 +3,24 @@
 namespace App\Observers;
 
 use App\Models\Playlist;
-use App\Services\ModelImageCleaner;
+use App\Services\ModelImageObserver;
 
 class PlaylistObserver
 {
-    public function __construct(
-        private readonly ModelImageCleaner $cleaner,
-    ) {}
+    private ModelImageObserver $coverObserver;
+
+    public function __construct()
+    {
+        $this->coverObserver = ModelImageObserver::make('cover');
+    }
 
     public function updating(Playlist $playlist): void
     {
-        if ($playlist->isDirty('cover')) {
-            $this->cleaner->delete($playlist->getRawOriginal('cover'));
-        }
+        $this->coverObserver->onModelUpdating($playlist);
     }
 
     public function deleted(Playlist $playlist): void
     {
-        $this->cleaner->delete($playlist->cover);
+        $this->coverObserver->onModelDeleted($playlist);
     }
 }

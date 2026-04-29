@@ -3,19 +3,20 @@
 namespace App\Observers;
 
 use App\Models\Artist;
-use App\Services\ModelImageCleaner;
+use App\Services\ModelImageObserver;
 
 class ArtistObserver
 {
-    public function __construct(
-        private readonly ModelImageCleaner $cleaner,
-    ) {}
+    private ModelImageObserver $imageObserver;
+
+    public function __construct()
+    {
+        $this->imageObserver = ModelImageObserver::make('image');
+    }
 
     public function updating(Artist $artist): void
     {
-        if ($artist->isDirty('image')) {
-            $this->cleaner->delete($artist->getRawOriginal('image'));
-        }
+        $this->imageObserver->onModelUpdating($artist);
     }
 
     public function updated(Artist $artist): void
@@ -31,6 +32,6 @@ class ArtistObserver
 
     public function deleted(Artist $artist): void
     {
-        $this->cleaner->delete($artist->image);
+        $this->imageObserver->onModelDeleted($artist);
     }
 }
