@@ -7,9 +7,9 @@ use App\Helpers\Ulid;
 use App\Helpers\Uuid;
 use App\Models\Album;
 use App\Observers\AlbumObserver;
-use App\Services\ImageLifecycle;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
+use App\Services\ModelImageCleaner;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -42,7 +42,7 @@ abstract class TestCase extends BaseTestCase
         // Replace the AlbumObserver with a partial that skips the `saved` event (which dispatches
         // thumbnail generation jobs). All other observer methods are preserved.
         // Tests that verify the `saved` behavior can re-bind the real observer.
-        $this->app->instance(AlbumObserver::class, new class($this->app->make(ImageLifecycle::class)) extends
+        $this->app->instance(AlbumObserver::class, new class($this->app->make(ModelImageCleaner::class)) extends
             AlbumObserver {
             public function saved(Album $album): void
             {

@@ -5,13 +5,13 @@ namespace App\Observers;
 use App\Facades\Dispatcher;
 use App\Jobs\GenerateAlbumThumbnailJob;
 use App\Models\Album;
-use App\Services\ImageLifecycle;
+use App\Services\ModelImageCleaner;
 use Illuminate\Support\Facades\File;
 
 class AlbumObserver
 {
     public function __construct(
-        private readonly ImageLifecycle $lifecycle,
+        private readonly ModelImageCleaner $cleaner,
     ) {}
 
     public function saved(Album $album): void
@@ -24,7 +24,7 @@ class AlbumObserver
     public function updating(Album $album): void
     {
         if ($album->isDirty('cover')) {
-            $this->lifecycle->onReplaced($album->getRawOriginal('cover'), hasThumbnail: true);
+            $this->cleaner->delete($album->getRawOriginal('cover'), hasThumbnail: true);
         }
     }
 
@@ -40,6 +40,6 @@ class AlbumObserver
 
     public function deleted(Album $album): void
     {
-        $this->lifecycle->onRemoved($album->cover, hasThumbnail: true);
+        $this->cleaner->delete($album->cover, hasThumbnail: true);
     }
 }

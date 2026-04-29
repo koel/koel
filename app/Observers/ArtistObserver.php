@@ -3,18 +3,18 @@
 namespace App\Observers;
 
 use App\Models\Artist;
-use App\Services\ImageLifecycle;
+use App\Services\ModelImageCleaner;
 
 class ArtistObserver
 {
     public function __construct(
-        private readonly ImageLifecycle $lifecycle,
+        private readonly ModelImageCleaner $cleaner,
     ) {}
 
     public function updating(Artist $artist): void
     {
         if ($artist->isDirty('image')) {
-            $this->lifecycle->onReplaced($artist->getRawOriginal('image'));
+            $this->cleaner->delete($artist->getRawOriginal('image'));
         }
     }
 
@@ -31,6 +31,6 @@ class ArtistObserver
 
     public function deleted(Artist $artist): void
     {
-        $this->lifecycle->onRemoved($artist->image);
+        $this->cleaner->delete($artist->image);
     }
 }

@@ -5,19 +5,9 @@ namespace App\Services;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class ImageLifecycle
+class ModelImageCleaner
 {
-    public function onReplaced(?string $oldFilename, bool $hasThumbnail = false): void
-    {
-        $this->deleteFiles($oldFilename, $hasThumbnail);
-    }
-
-    public function onRemoved(?string $filename, bool $hasThumbnail = false): void
-    {
-        $this->deleteFiles($filename, $hasThumbnail);
-    }
-
-    private function deleteFiles(?string $filename, bool $hasThumbnail): void
+    public function delete(?string $filename, bool $hasThumbnail = false): void
     {
         if (!$filename) {
             return;

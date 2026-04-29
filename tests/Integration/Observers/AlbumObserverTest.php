@@ -6,7 +6,7 @@ use App\Facades\Dispatcher;
 use App\Jobs\GenerateAlbumThumbnailJob;
 use App\Models\Album;
 use App\Observers\AlbumObserver;
-use App\Services\ImageLifecycle;
+use App\Services\ModelImageCleaner;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -18,7 +18,7 @@ class AlbumObserverTest extends TestCase
         parent::setUp();
 
         // Re-bind the real AlbumObserver (TestCase replaces `saved` with a no-op).
-        $this->app->instance(AlbumObserver::class, new AlbumObserver($this->app->make(ImageLifecycle::class)));
+        $this->app->instance(AlbumObserver::class, new AlbumObserver($this->app->make(ModelImageCleaner::class)));
     }
 
     #[Test]
