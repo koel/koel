@@ -5,10 +5,15 @@ namespace App\Observers;
 use App\Facades\Dispatcher;
 use App\Jobs\GenerateAlbumThumbnailJob;
 use App\Models\Album;
+use App\Services\ImageLifecycle;
 use Illuminate\Support\Facades\File;
 
 class AlbumObserver
 {
+    public function __construct(
+        private readonly ImageLifecycle $lifecycle,
+    ) {}
+
     public function saved(Album $album): void
     {
         if ($album->cover && !File::exists(image_storage_path($album->thumbnail))) {
@@ -18,20 +23,9 @@ class AlbumObserver
 
     public function updating(Album $album): void
     {
-        if (!$album->isDirty('cover')) {
-            return;
+        if ($album->isDirty('cover')) {
+            $this->lifecycle->onReplaced($album->getRawOriginal('cover'), hasThumbnail: true);
         }
-
-        $oldCover = $album->getRawOriginal('cover');
-
-        // If the cover is being updated, delete the old cover and thumbnail files
-        rescue_if($oldCover, static function () use ($oldCover): void {
-            $oldCoverPath = image_storage_path($oldCover);
-            $parts = pathinfo($oldCoverPath);
-
-            $oldThumbnail = sprintf('%s_thumb.%s', $parts['filename'], $parts['extension']);
-            File::delete([$oldCoverPath, image_storage_path($oldThumbnail)]);
-        });
     }
 
     public function updated(Album $album): void
@@ -46,9 +40,6 @@ class AlbumObserver
 
     public function deleted(Album $album): void
     {
-        $coverPath = image_storage_path($album->cover);
-        $thumbnailPath = image_storage_path($album->thumbnail);
-
-        rescue_if($coverPath || $thumbnailPath, static fn () => File::delete([$coverPath, $thumbnailPath]));
+        $this->lifecycle->onRemoved($album->cover, hasThumbnail: true);
     }
 }

@@ -3,24 +3,23 @@
 namespace App\Observers;
 
 use App\Models\Playlist;
-use Illuminate\Support\Facades\File;
+use App\Services\ImageLifecycle;
 
 class PlaylistObserver
 {
+    public function __construct(
+        private readonly ImageLifecycle $lifecycle,
+    ) {}
+
     public function updating(Playlist $playlist): void
     {
-        if (!$playlist->isDirty('cover')) {
-            return;
+        if ($playlist->isDirty('cover')) {
+            $this->lifecycle->onReplaced($playlist->getRawOriginal('cover'));
         }
-
-        $oldCover = $playlist->getRawOriginal('cover');
-
-        // If the cover is being updated, delete the old cover
-        rescue_if($oldCover, static fn () => File::delete(image_storage_path($oldCover)));
     }
 
     public function deleted(Playlist $playlist): void
     {
-        rescue_if($playlist->cover, static fn () => File::delete(image_storage_path($playlist->cover)));
+        $this->lifecycle->onRemoved($playlist->cover);
     }
 }

@@ -3,19 +3,19 @@
 namespace App\Observers;
 
 use App\Models\Artist;
-use Illuminate\Support\Facades\File;
+use App\Services\ImageLifecycle;
 
 class ArtistObserver
 {
+    public function __construct(
+        private readonly ImageLifecycle $lifecycle,
+    ) {}
+
     public function updating(Artist $artist): void
     {
-        if (!$artist->isDirty('image')) {
-            return;
+        if ($artist->isDirty('image')) {
+            $this->lifecycle->onReplaced($artist->getRawOriginal('image'));
         }
-
-        $oldImage = $artist->getRawOriginal('image');
-
-        rescue_if($oldImage, static fn () => File::delete(image_storage_path($oldImage)));
     }
 
     public function updated(Artist $artist): void
@@ -31,6 +31,6 @@ class ArtistObserver
 
     public function deleted(Artist $artist): void
     {
-        rescue_if($artist->image, static fn () => File::delete(image_storage_url($artist->image)));
+        $this->lifecycle->onRemoved($artist->image);
     }
 }
