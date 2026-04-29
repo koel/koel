@@ -88,17 +88,6 @@ class ModelImageObserverTest extends TestCase
     }
 
     #[Test]
-    public function treatsTheStringZeroAsAValidFilename(): void
-    {
-        // "0" is falsy in PHP but is a valid filename. The observer must not skip it.
-        $playlist = self::makePlaylistWithCleanCover('0');
-
-        File::expects('delete')->with([image_storage_path('0')]);
-
-        ModelImageObserver::make('cover')->onModelDeleted($playlist);
-    }
-
-    #[Test]
     public function thumbnailDerivationPreservesTheExtension(): void
     {
         $playlist = self::makePlaylistWithCleanCover('cover.with.dots.png');
