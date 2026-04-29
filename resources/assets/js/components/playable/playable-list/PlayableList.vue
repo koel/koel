@@ -3,7 +3,6 @@
     ref="wrapper"
     class="playable-list-wrap relative flex flex-col flex-1 overflow-auto py-0"
     data-testid="song-list"
-    tabindex="0"
     @keydown.delete.prevent.stop="handleDelete"
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="selectAllWithKeyboard"

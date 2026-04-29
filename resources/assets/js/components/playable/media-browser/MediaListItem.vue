@@ -1,5 +1,5 @@
 <template>
-  <article class="h-[40px] overflow-hidden border-b border-k-fg-10" :class="{ playing }">
+  <article class="h-[40px] overflow-hidden border-b border-k-fg-10" :class="{ playing }" tabindex="0">
     <div
       :class="item.type === 'folders' && 'items-center'"
       class="flex gap-2 px-6 py-3 cursor-default user-select-none"
@@ -20,7 +20,7 @@
       <Icon v-else :icon="faFolder" class="text-k-fg" fixed-width />
       <span class="flex-1 truncate user-select-none">{{ label }}</span>
 
-      <!-- on a mobile device, show an Open button for a beter UX -->
+      <!-- on a mobile device, show an Open button for a better UX -->
       <button
         v-if="item.type === 'folders'"
         class="sm:hidden border border-k-fg-10 rounded px-1.5 py-px"

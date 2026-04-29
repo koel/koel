@@ -1,5 +1,5 @@
 <template>
-  <div v-if="shouldMount" v-show="active" class="h-full" role="tabpanel" tabindex="0">
+  <div v-if="shouldMount" v-show="active" class="h-full" role="tabpanel">
     <slot />
   </div>
 </template>
