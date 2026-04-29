@@ -32,7 +32,7 @@ class ModelImageObserver
 
     private function delete(?string $filename): void
     {
-        if (!$filename) {
+        if ($filename === null || $filename === '') {
             return;
         }
 
@@ -42,7 +42,7 @@ class ModelImageObserver
             $paths[] = image_storage_path(self::deriveThumbnailFilename($filename));
         }
 
-        rescue(static fn () => File::delete($paths));
+        rescue(static fn () => File::delete($paths), report: false);
     }
 
     private static function deriveThumbnailFilename(string $filename): string
