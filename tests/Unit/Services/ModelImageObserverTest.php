@@ -15,7 +15,7 @@ class ModelImageObserverTest extends TestCase
     #[Test]
     public function onModelUpdatingDeletesTheOriginalImageWhenTheFieldIsDirty(): void
     {
-        $playlist = $this->playlistWithDirtyCover(original: 'old.webp', current: 'new.webp');
+        $playlist = self::makePlaylistWithDirtyCover(original: 'old.webp', current: 'new.webp');
 
         File::expects('delete')->with([image_storage_path('old.webp')]);
 
@@ -25,7 +25,7 @@ class ModelImageObserverTest extends TestCase
     #[Test]
     public function onModelUpdatingNoOpsWhenTheFieldIsNotDirty(): void
     {
-        $playlist = $this->playlistWithCleanCover('cover.webp');
+        $playlist = self::makePlaylistWithCleanCover('cover.webp');
 
         File::expects('delete')->never();
 
@@ -35,7 +35,7 @@ class ModelImageObserverTest extends TestCase
     #[Test]
     public function onModelDeletedDeletesTheCurrentImage(): void
     {
-        $playlist = $this->playlistWithCleanCover('cover.webp');
+        $playlist = self::makePlaylistWithCleanCover('cover.webp');
 
         File::expects('delete')->with([image_storage_path('cover.webp')]);
 
@@ -45,7 +45,7 @@ class ModelImageObserverTest extends TestCase
     #[Test]
     public function deletesTheThumbnailWhenConfigured(): void
     {
-        $playlist = $this->playlistWithCleanCover('cover.webp');
+        $playlist = self::makePlaylistWithCleanCover('cover.webp');
 
         File::expects('delete')->with([
             image_storage_path('cover.webp'),
@@ -58,7 +58,7 @@ class ModelImageObserverTest extends TestCase
     #[Test]
     public function thumbnailIsAlsoDeletedOnUpdate(): void
     {
-        $playlist = $this->playlistWithDirtyCover(original: 'old.webp', current: 'new.webp');
+        $playlist = self::makePlaylistWithDirtyCover(original: 'old.webp', current: 'new.webp');
 
         File::expects('delete')->with([
             image_storage_path('old.webp'),
@@ -71,7 +71,7 @@ class ModelImageObserverTest extends TestCase
     #[Test]
     public function noOpsWhenTheFieldIsNull(): void
     {
-        $playlist = $this->playlistWithCleanCover(null);
+        $playlist = self::makePlaylistWithCleanCover(null);
 
         File::expects('delete')->never();
 
@@ -81,7 +81,7 @@ class ModelImageObserverTest extends TestCase
     #[Test]
     public function noOpsWhenTheFieldIsAnEmptyString(): void
     {
-        $playlist = $this->playlistWithCleanCover('');
+        $playlist = self::makePlaylistWithCleanCover('');
 
         File::expects('delete')->never();
 
@@ -91,7 +91,7 @@ class ModelImageObserverTest extends TestCase
     #[Test]
     public function thumbnailDerivationPreservesTheExtension(): void
     {
-        $playlist = $this->playlistWithCleanCover('cover.with.dots.png');
+        $playlist = self::makePlaylistWithCleanCover('cover.with.dots.png');
 
         File::expects('delete')->with([
             image_storage_path('cover.with.dots.png'),
@@ -104,7 +104,7 @@ class ModelImageObserverTest extends TestCase
     #[Test]
     public function fileSystemErrorsAreRescued(): void
     {
-        $playlist = $this->playlistWithCleanCover('cover.webp');
+        $playlist = self::makePlaylistWithCleanCover('cover.webp');
 
         File::expects('delete')->andThrow(new RuntimeException('disk gone'));
 
@@ -125,7 +125,7 @@ class ModelImageObserverTest extends TestCase
         ModelImageObserver::make('image')->onModelDeleted($artist);
     }
 
-    private function playlistWithDirtyCover(?string $original, ?string $current): Playlist
+    private static function makePlaylistWithDirtyCover(?string $original, ?string $current): Playlist
     {
         $playlist = Playlist::factory()->makeOne(['cover' => $original]);
         $playlist->syncOriginal();
@@ -134,7 +134,7 @@ class ModelImageObserverTest extends TestCase
         return $playlist;
     }
 
-    private function playlistWithCleanCover(?string $value): Playlist
+    private static function makePlaylistWithCleanCover(?string $value): Playlist
     {
         $playlist = Playlist::factory()->makeOne(['cover' => $value]);
         $playlist->syncOriginal();
