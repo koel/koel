@@ -4,10 +4,17 @@ namespace App\Observers;
 
 use App\Helpers\Uuid;
 use App\Models\User;
-use Illuminate\Support\Facades\File;
+use App\Services\ModelImageObserver;
 
 class UserObserver
 {
+    private ModelImageObserver $avatarObserver;
+
+    public function __construct()
+    {
+        $this->avatarObserver = ModelImageObserver::make('avatar');
+    }
+
     public function creating(User $user): void
     {
         $user->public_id ??= Uuid::generate();
@@ -15,20 +22,11 @@ class UserObserver
 
     public function updating(User $user): void
     {
-        if (!$user->isDirty('avatar')) {
-            return;
-        }
-
-        $oldAvatar = $user->getRawOriginal('avatar');
-
-        // If the avatar is being updated, delete the old avatar
-        rescue_if($oldAvatar, static fn () => File::delete(image_storage_path($oldAvatar)));
+        $this->avatarObserver->onModelUpdating($user);
     }
 
     public function deleted(User $user): void
     {
-        rescue_if($user->has_custom_avatar, static fn () => File::delete(image_storage_path($user->getRawOriginal(
-            'avatar',
-        ))));
+        $this->avatarObserver->onModelDeleted($user);
     }
 }

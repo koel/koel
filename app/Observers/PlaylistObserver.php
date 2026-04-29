@@ -3,24 +3,24 @@
 namespace App\Observers;
 
 use App\Models\Playlist;
-use Illuminate\Support\Facades\File;
+use App\Services\ModelImageObserver;
 
 class PlaylistObserver
 {
+    private ModelImageObserver $coverObserver;
+
+    public function __construct()
+    {
+        $this->coverObserver = ModelImageObserver::make('cover');
+    }
+
     public function updating(Playlist $playlist): void
     {
-        if (!$playlist->isDirty('cover')) {
-            return;
-        }
-
-        $oldCover = $playlist->getRawOriginal('cover');
-
-        // If the cover is being updated, delete the old cover
-        rescue_if($oldCover, static fn () => File::delete(image_storage_path($oldCover)));
+        $this->coverObserver->onModelUpdating($playlist);
     }
 
     public function deleted(Playlist $playlist): void
     {
-        rescue_if($playlist->cover, static fn () => File::delete(image_storage_path($playlist->cover)));
+        $this->coverObserver->onModelDeleted($playlist);
     }
 }
