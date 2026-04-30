@@ -19,6 +19,7 @@ See the [Development Guide](https://docs.koel.dev/development).
 
 ## Koel Player
 
+
 ![Koel Player screenshots](https://user-images.githubusercontent.com/8056274/126907318-f3e1e09d-556e-4696-8277-29fd5332aaa1.jpg)
 
 [Koel Player](https://github.com/koel/player) is the official mobile app for Koel, which supports both iOS and Android
@@ -26,6 +27,7 @@ without the limitations of the mobile web version. For more information on the p
 visit [its repository](https://github.com/koel/player).
 
 ## Sponsors and Backers
+* Contributed by: Esma Cobanoglu (escobann)
 
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/whatthediff.svg" height="32" alt="What The Diff logo" title="What The Diff — AI assistant for your pull requests">](https://whatthediff.ai/)
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/do.svg" height="32" alt="DigitalOcean logo" title="DigitalOcean">](https://www.digitalocean.com)
