@@ -32,6 +32,7 @@ visit [its repository](https://github.com/koel/player).
 * Contributed by: Abdullah Onur Dogan (onurdogann1)
 * Contributed by: M.Yavuz Saraç (yavuzsarac)
 * Contributed by: S.Mirahmadi (Harmaaw)
+* Contributed by: Batuhan Taha Atasoy (batuhanatasoy)
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/whatthediff.svg" height="32" alt="What The Diff logo" title="What The Diff — AI assistant for your pull requests">](https://whatthediff.ai/)
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/do.svg" height="32" alt="DigitalOcean logo" title="DigitalOcean">](https://www.digitalocean.com)
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/ray.svg" height="32" alt="Ray logo" title="Understand and fix bugs faster using Ray">](https://myray.app/)
