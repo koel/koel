@@ -22,7 +22,7 @@ describe('albumListScreen.vue', () => {
 
   const renderComponent = async () => {
     const paginator: PaginatorResource<Album> = {
-      data: h.factory('album', 9),
+      data: h.factory('album').make(9),
       links: {
         next: '?page=1',
       },
@@ -32,7 +32,7 @@ describe('albumListScreen.vue', () => {
     }
 
     const paginateMock = h.mock(albumStore, 'paginate').mockResolvedValueOnce(paginator)
-    albumStore.state.albums = h.factory('album', 9)
+    albumStore.state.albums = h.factory('album').make(9)
 
     const rendered = h.render(Component, {
       global: {
@@ -115,7 +115,7 @@ describe('albumListScreen.vue', () => {
   })
 
   it('filters out unfavorited albums in favorites mode', async () => {
-    const albums = h.factory('album', 5, { favorite: true })
+    const albums = h.factory('album').make({ favorite: true }, 5)
     albumStore.state.albums = albums
 
     h.mock(albumStore, 'paginate').mockResolvedValue(null)

@@ -15,7 +15,7 @@ describe('commonStore', () => {
   const h = createHarness()
 
   const createApiResponse = (overrides = {}) => ({
-    current_user: h.factory('user'),
+    current_user: h.factory('user').make(),
     playlists: [],
     playlist_folders: [],
     settings: {},

@@ -8,7 +8,7 @@ describe('similarSongs.vue', () => {
   const h = createHarness()
 
   it('displays the songs', async () => {
-    overviewStore.state.similarSongs = h.factory('song', 6)
+    overviewStore.state.similarSongs = h.factory('song').make(6)
     h.render(Component)
     await waitFor(() => expect(screen.getAllByTestId('song-card')).toHaveLength(6))
   })

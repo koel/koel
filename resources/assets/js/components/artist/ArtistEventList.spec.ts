@@ -8,8 +8,8 @@ describe('artistEventList.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (artist?: Artist, events?: LiveEvent[]) => {
-    events = events ?? h.factory('live-event', 5)
-    artist = artist ?? h.factory('artist')
+    events = events ?? h.factory('live-event').make(5)
+    artist = artist ?? h.factory('artist').make()
 
     const fetchEventsMock = h.mock(artistStore, 'fetchEvents').mockResolvedValueOnce(events)
 

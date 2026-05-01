@@ -21,7 +21,7 @@ export default (): Playlist => ({
 export const states: Record<string, () => Omit<Partial<Playlist>, 'type'>> = {
   smart: () => ({
     is_smart: true,
-    rules: [factory('smart-playlist-rule-group') as SmartPlaylistRuleGroup],
+    rules: [factory('smart-playlist-rule-group').make() as SmartPlaylistRuleGroup],
   }),
   orphan: () => ({
     folder_id: null,

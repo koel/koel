@@ -6,7 +6,7 @@ describe('embedAudioPlayerProgressBar.vue', () => {
   const h = createHarness()
 
   it('renders with progress', () => {
-    const playable = h.factory('song', { playback_state: 'Playing' })
+    const playable = h.factory('song').make({ playback_state: 'Playing' })
 
     const { container } = h.render(Component, {
       props: { playable, progress: 50 },

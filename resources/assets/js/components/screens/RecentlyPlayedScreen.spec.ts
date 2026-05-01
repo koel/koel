@@ -25,7 +25,7 @@ describe('recentlyPlayedScreen.vue', () => {
   }
 
   it('displays the songs', async () => {
-    await renderComponent(h.factory('song', 3))
+    await renderComponent(h.factory('song').make(3))
 
     screen.getByTestId('song-list')
     expect(screen.queryByTestId('screen-empty-state')).toBeNull()

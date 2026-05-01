@@ -29,11 +29,11 @@ describe('searchStore', () => {
 
   it('performs an excerpt search', async () => {
     const result: ExcerptSearchResult = {
-      songs: h.factory('song', 3),
-      albums: h.factory('album', 3),
-      artists: h.factory('artist', 3),
-      podcasts: h.factory('podcast', 3),
-      radio_stations: h.factory('radio-station', 3),
+      songs: h.factory('song').make(3),
+      albums: h.factory('album').make(3),
+      artists: h.factory('artist').make(3),
+      podcasts: h.factory('podcast').make(3),
+      radio_stations: h.factory('radio-station').make(3),
     }
 
     const getMock = h.mock(http, 'get').mockResolvedValue(result)
@@ -54,7 +54,7 @@ describe('searchStore', () => {
   })
 
   it('performs a song search', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
 
     const getMock = h.mock(http, 'get').mockResolvedValue(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
@@ -68,7 +68,7 @@ describe('searchStore', () => {
   })
 
   it('resets the song result state', () => {
-    searchStore.state.playables = h.factory('song', 3)
+    searchStore.state.playables = h.factory('song').make(3)
     searchStore.resetPlayableResultState()
     expect(searchStore.state.playables).toEqual([])
   })

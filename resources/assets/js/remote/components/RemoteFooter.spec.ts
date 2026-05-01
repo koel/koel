@@ -8,7 +8,7 @@ describe('remoteFooter.vue', () => {
   const h = createHarness()
 
   const renderComponent = (streamable?: Streamable) => {
-    streamable = streamable || h.factory('song')
+    streamable = streamable || h.factory('song').make()
 
     h.render(Component, {
       props: {
@@ -31,7 +31,7 @@ describe('remoteFooter.vue', () => {
 
   it('toggles like', async () => {
     const broadcastMock = h.mock(socketService, 'broadcast')
-    const playable = h.factory('song', { favorite: false })
+    const playable = h.factory('song').make({ favorite: false })
     renderComponent(playable)
 
     await h.user.click(screen.getByTestId('btn-toggle-favorite'))
@@ -61,7 +61,7 @@ describe('remoteFooter.vue', () => {
     ['starts', 'Stopped', 'Playing'],
   ])('%s playback', async (_, currentState, newState) => {
     const broadcastMock = h.mock(socketService, 'broadcast')
-    const playable = h.factory('episode', { playback_state: currentState })
+    const playable = h.factory('episode').make({ playback_state: currentState })
     renderComponent(playable)
 
     await h.user.click(screen.getByTestId('btn-toggle-playback'))

@@ -24,13 +24,13 @@ describe('playlistCollaboratorList.vue', () => {
   }
 
   it('renders', async () => {
-    const playlist = h.factory('playlist', {
+    const playlist = h.factory('playlist').make({
       is_collaborative: true,
     })
 
     const fetchMock = h
       .mock(playlistCollaborationService, 'fetchCollaborators')
-      .mockResolvedValue(h.factory('playlist-collaborator', 5))
+      .mockResolvedValue(h.factory('playlist-collaborator').make(5))
 
     h.actingAsUser()
     const { html } = await renderComponent(playlist)

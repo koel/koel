@@ -8,7 +8,7 @@ describe('themeContextMenu.vue', () => {
   const h = createHarness()
 
   const renderComponent = (theme?: Theme) => {
-    theme = theme || h.factory('theme')
+    theme = theme || h.factory('theme').make()
 
     const rendered = h.actingAsAdmin().render(Component, {
       props: {
@@ -41,7 +41,7 @@ describe('themeContextMenu.vue', () => {
   })
 
   it('does not have an option to delete built-in theme', async () => {
-    renderComponent(h.factory('theme', { is_custom: false }))
+    renderComponent(h.factory('theme').make({ is_custom: false }))
     expect(screen.queryByText('Delete')).toBeNull()
   })
 })

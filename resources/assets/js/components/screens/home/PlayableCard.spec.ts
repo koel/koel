@@ -33,7 +33,7 @@ describe('playableCard.vue', () => {
   })
 
   const renderCard = (overrides: Partial<Song> = {}) => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       title: 'Test Song',
       artist_name: 'Test Artist',
       length: 195,

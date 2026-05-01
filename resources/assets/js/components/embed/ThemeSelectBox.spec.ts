@@ -8,7 +8,7 @@ describe('themeSelectBox.vue', () => {
   const h = createHarness()
 
   it('fetches and renders the options', async () => {
-    const theme = h.factory('theme', {
+    const theme = h.factory('theme').make({
       id: 'frodo',
       name: 'One Theme to Rule Them All',
     })

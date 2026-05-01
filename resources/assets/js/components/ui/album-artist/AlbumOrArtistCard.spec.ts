@@ -9,7 +9,7 @@ describe('albumOrArtistCard.vue', () => {
   it('emits events on user actions', async () => {
     const { emitted } = h.render(Component, {
       props: {
-        entity: h.factory('album'),
+        entity: h.factory('album').make(),
       },
     })
 

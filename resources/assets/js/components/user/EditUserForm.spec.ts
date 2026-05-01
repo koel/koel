@@ -9,7 +9,7 @@ describe('editUserForm.vue', () => {
   const h = createHarness()
 
   const renderComponent = (user?: User) => {
-    user = user ?? h.factory('user')
+    user = user ?? h.factory('user').make()
 
     const rendered = h.render(Component, {
       props: {

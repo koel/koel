@@ -7,7 +7,7 @@ describe('playableCardGrid.vue', () => {
   const h = createHarness()
 
   it('renders a grid of playable cards', () => {
-    const songs = h.factory('song', 4)
+    const songs = h.factory('song').make(4)
     h.render(Component, { props: { playables: songs } })
     expect(screen.getAllByTestId('song-card')).toHaveLength(4)
   })

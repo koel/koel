@@ -25,7 +25,7 @@ describe('radioStationListScreen.vue', () => {
   })
 
   const renderComponent = async (stations?: RadioStation[]) => {
-    radioStationStore.state.stations = stations || h.factory('radio-station', 9)
+    radioStationStore.state.stations = stations || h.factory('radio-station').make(9)
 
     const rendered = h.render(Component, {
       global: {
@@ -100,8 +100,8 @@ describe('radioStationListScreen.vue', () => {
 
   it('shows all or only favorites upon toggling the button', async () => {
     await renderComponent([
-      ...h.factory('radio-station', 3, { favorite: true }),
-      ...h.factory('radio-station', 6, { favorite: false }),
+      ...h.factory('radio-station').make({ favorite: true }, 3),
+      ...h.factory('radio-station').make({ favorite: false }, 6),
     ])
 
     expect(screen.getAllByTestId('radio-station-card')).toHaveLength(9)
@@ -114,7 +114,7 @@ describe('radioStationListScreen.vue', () => {
   })
 
   it('shows contextual empty state when no favorite stations', async () => {
-    await renderComponent(h.factory('radio-station', 3, { favorite: false }))
+    await renderComponent(h.factory('radio-station').make({ favorite: false }, 3))
 
     await h.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
 

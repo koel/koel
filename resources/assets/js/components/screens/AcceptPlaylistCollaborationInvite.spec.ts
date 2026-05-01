@@ -21,7 +21,7 @@ describe('acceptPlaylistCollaborationInvite.vue', () => {
   const h = createHarness()
 
   it('accepts invite and redirects on mount', async () => {
-    const playlist = h.factory('playlist')
+    const playlist = h.factory('playlist').make()
     h.mock(playlistCollaborationService, 'acceptInvite').mockResolvedValue(playlist)
 
     h.render(Component)

@@ -9,7 +9,7 @@ describe('themeList.vue', () => {
   it('renders a list of themes', async () => {
     h.render(Component, {
       props: {
-        themes: h.factory('theme', 9),
+        themes: h.factory('theme').make(9),
       },
       global: {
         stubs: {

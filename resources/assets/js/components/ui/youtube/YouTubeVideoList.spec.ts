@@ -23,17 +23,17 @@ describe('youTubeVideoList', () => {
       }),
     )
 
-    const song = h.factory('song')
+    const song = h.factory('song').make()
 
     const searchMock = h
       .mock(youTubeService, 'searchVideosBySong')
       .mockResolvedValueOnce({
         nextPageToken: 'foo',
-        items: h.factory('you-tube-video', 5),
+        items: h.factory('you-tube-video').make(5),
       })
       .mockResolvedValueOnce({
         nextPageToken: '',
-        items: h.factory('you-tube-video', 3),
+        items: h.factory('you-tube-video').make(3),
       })
 
     h.render(Component, {

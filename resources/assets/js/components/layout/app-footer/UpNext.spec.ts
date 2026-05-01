@@ -7,7 +7,7 @@ describe('upNext.vue', () => {
   const h = createHarness()
 
   it('renders playable title and author', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
 
     h.render(Component, {
       props: { playable: song },

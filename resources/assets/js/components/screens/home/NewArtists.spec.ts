@@ -8,7 +8,7 @@ describe('newArtists.vue', () => {
   const h = createHarness()
 
   it('displays the artists', async () => {
-    overviewStore.state.recentlyAddedArtists = h.factory('artist', 4)
+    overviewStore.state.recentlyAddedArtists = h.factory('artist').make(4)
     h.render(Component)
     await waitFor(() => expect(screen.getAllByTestId('artist-album-card')).toHaveLength(4))
   })

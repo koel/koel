@@ -8,7 +8,7 @@ describe('addPodcastForm.vue', () => {
   const h = createHarness()
 
   it('adds a new podcast', async () => {
-    const storeMock = h.mock(podcastStore, 'store').mockResolvedValue(h.factory('podcast'))
+    const storeMock = h.mock(podcastStore, 'store').mockResolvedValue(h.factory('podcast').make())
     h.render(Component)
     await h.type(screen.getByPlaceholderText('https://example.com/feed.xml'), 'https://foo.bar/feed.xml')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))

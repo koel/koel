@@ -24,7 +24,7 @@ describe('podcastListScreen.vue', () => {
 
   it('renders', async () => {
     const fetchMock = h.mock(podcastStore, 'fetchAll')
-    podcastStore.state.podcasts = h.factory('podcast', 9)
+    podcastStore.state.podcasts = h.factory('podcast').make(9)
 
     await renderComponent()
 
@@ -42,8 +42,8 @@ describe('podcastListScreen.vue', () => {
 
   it('shows all or only favorites upon toggling the button', async () => {
     podcastStore.state.podcasts = [
-      ...h.factory('podcast', 3, { favorite: true }),
-      ...h.factory('podcast', 6, { favorite: false }),
+      ...h.factory('podcast').make({ favorite: true }, 3),
+      ...h.factory('podcast').make({ favorite: false }, 6),
     ]
 
     h.mock(podcastStore, 'fetchAll')
@@ -59,7 +59,7 @@ describe('podcastListScreen.vue', () => {
   })
 
   it('shows contextual empty state when no favorite podcasts', async () => {
-    podcastStore.state.podcasts = h.factory('podcast', 3, { favorite: false })
+    podcastStore.state.podcasts = h.factory('podcast').make({ favorite: false }, 3)
     h.mock(podcastStore, 'fetchAll')
 
     await renderComponent()

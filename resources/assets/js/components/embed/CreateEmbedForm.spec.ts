@@ -9,11 +9,11 @@ describe('createEmbedForm.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (embeddable?: Embeddable, embed?: Embed) => {
-    embeddable = embeddable ?? h.factory('playlist')
+    embeddable = embeddable ?? h.factory('playlist').make()
 
     embed =
       embed ??
-      h.factory('embed', {
+      h.factory('embed').make({
         embeddable_id: embeddable.id,
         embeddable_type: embeddable.type.slice(0, -1) as Embed['embeddable_type'],
       })

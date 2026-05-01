@@ -172,8 +172,8 @@ importers:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.8)
       factoria:
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^5.0.0
+        version: 5.0.0(@faker-js/faker@9.8.0)
       fake-indexeddb:
         specifier: ^6.2.5
         version: 6.2.5
@@ -2208,8 +2208,10 @@ packages:
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
-  factoria@4.0.1:
-    resolution: {integrity: sha512-YlWKnX6wTQm2xAU2RpbLddQb6WWNAOFw/Kv9C2MuuKFR4O+UuYUtESw7B6r+nxp6r3PSmmwpLN+XKrDsv3xpDA==}
+  factoria@5.0.0:
+    resolution: {integrity: sha512-8nOQLjTvxINt+4cVqW9VG9jpYgFKDMnL8i1Ecm70NBj3ICIp/bX2KFeQqezVfe5cy+x5Jpvui9/ESLoU7CcQqA==}
+    peerDependencies:
+      '@faker-js/faker': '>=6.0.0'
 
   fake-indexeddb@6.2.5:
     resolution: {integrity: sha512-CGnyrvbhPlWYMngksqrSSUT1BAVP49dZocrHuK0SvtR0D5TMs5wP0o3j7jexDJW01KSadjBp1M/71o/KR3nD1w==}
@@ -5537,7 +5539,9 @@ snapshots:
 
   extend@3.0.2: {}
 
-  factoria@4.0.1: {}
+  factoria@5.0.0(@faker-js/faker@9.8.0):
+    dependencies:
+      '@faker-js/faker': 9.8.0
 
   fake-indexeddb@6.2.5: {}
 

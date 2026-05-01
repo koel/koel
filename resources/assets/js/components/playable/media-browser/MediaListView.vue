@@ -124,7 +124,7 @@ const onDragStart = async (row: MediaRow, event: DragEvent) => {
 }
 
 const onClick = (row: MediaRow, event: MouseEvent) => {
-  // If we're on a touch device, or if Ctrl/Cmd key is pressed, just toggle selection.
+  // If we're on a touch device, or if the Ctrl/Cmd key is pressed, just toggle selection.
   if (isMobile.any) {
     toggleSelected(row)
     return

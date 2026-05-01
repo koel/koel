@@ -18,7 +18,7 @@ describe('artistCard.vue', () => {
   const h = createHarness()
 
   const createArtist = (overrides: Partial<Artist> = {}): Artist => {
-    return h.factory('artist', {
+    return h.factory('artist').make({
       id: 'led-zeppelin',
       name: 'Led Zeppelin',
       favorite: false,
@@ -69,7 +69,7 @@ describe('artistCard.vue', () => {
   it('shuffles', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 16)
+    const songs = h.factory('song').make(16)
     const fetchMock = h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 

@@ -29,7 +29,7 @@ describe('playbackService', () => {
 
   const setCurrentSong = (song?: Playable) => {
     const playbackState = song?.playback_state ?? 'Playing'
-    const [synced] = playableStore.syncWithVault(song || h.factory('song'))
+    const [synced] = playableStore.syncWithVault(song || h.factory('song').make())
     synced.playback_state = playbackState
     queueStore.state.playables = reactive([synced])
     return synced
@@ -49,7 +49,7 @@ describe('playbackService', () => {
   ])(
     'when playCountRegistered is %s, current media time is %d, media duration is %d, then registerPlay() should be call %d times',
     (playCountRegistered, currentTime, duration, numberOfCalls) => {
-      const song = h.factory('song', {
+      const song = h.factory('song').make({
         play_count_registered: playCountRegistered,
         playback_state: 'Playing',
       })
@@ -127,7 +127,7 @@ describe('playbackService', () => {
     (preloaded, currentTime, duration, numberOfCalls) => {
       setCurrentSong()
       h.mock(playbackService, 'registerPlay')
-      h.setReadOnlyProperty(queueStore, 'next', h.factory('song', { preloaded }))
+      h.setReadOnlyProperty(queueStore, 'next', h.factory('song').make({ preloaded }))
 
       const mediaElement = playbackService.media
 
@@ -146,7 +146,7 @@ describe('playbackService', () => {
   it('registers play', () => {
     const recentlyPlayedStoreAddMock = h.mock(recentlyPlayedStore, 'add')
     const registerPlayMock = h.mock(playableStore, 'registerPlay')
-    const song = h.factory('song')
+    const song = h.factory('song').make()
 
     playbackService.registerPlay(song)
 
@@ -163,7 +163,7 @@ describe('playbackService', () => {
 
     const createElementMock = h.mock(document, 'createElement', audioElement)
     h.mock(playableStore, 'getSourceUrl').mockReturnValue('/foo?token=o5afd')
-    const song = h.factory('song')
+    const song = h.factory('song').make()
 
     playbackService.preload(song)
 
@@ -230,7 +230,7 @@ describe('playbackService', () => {
   })
 
   it('plays the previous playable', async () => {
-    const previousSong = h.factory('song')
+    const previousSong = h.factory('song').make()
     h.setReadOnlyProperty(playbackService.media, 'currentTime', 4)
     h.setReadOnlyProperty(playbackService, 'previous', previousSong)
     const playMock = h.mock(playbackService, 'play')
@@ -251,7 +251,7 @@ describe('playbackService', () => {
   })
 
   it('plays the next playable', async () => {
-    const nextSong = h.factory('song')
+    const nextSong = h.factory('song').make()
     h.setReadOnlyProperty(playbackService, 'next', nextSong)
     const playMock = h.mock(playbackService, 'play')
 
@@ -287,7 +287,7 @@ describe('playbackService', () => {
 
   it('resumes playback', async () => {
     const song = setCurrentSong(
-      h.factory('song', {
+      h.factory('song').make({
         playback_state: 'Paused',
       }),
     )
@@ -316,7 +316,7 @@ describe('playbackService', () => {
     ['resume', 'Paused'],
     ['pause', 'Playing'],
   ])('%ss playback if toggled when current playable playback state is %s', async (action, playbackState) => {
-    setCurrentSong(h.factory('song', { playback_state: playbackState }))
+    setCurrentSong(h.factory('song').make({ playback_state: playbackState }))
     const actionMock = h.mock(playbackService, action)
     await playbackService.toggle()
 
@@ -324,7 +324,7 @@ describe('playbackService', () => {
   })
 
   it('queues and plays songs without shuffling', async () => {
-    const songs = h.factory('song', 5)
+    const songs = h.factory('song').make(5)
     const replaceQueueMock = h.mock(queueStore, 'replaceQueueWith')
     const playMock = h.mock(playbackService, 'play')
     const firstSongInQueue = songs[0]
@@ -339,8 +339,8 @@ describe('playbackService', () => {
   })
 
   it('queues and plays songs with shuffling', async () => {
-    const songs = h.factory('song', 5)
-    const shuffledSongs = h.factory('song', 5)
+    const songs = h.factory('song').make(5)
+    const shuffledSongs = h.factory('song').make(5)
     const replaceQueueMock = h.mock(queueStore, 'replaceQueueWith')
     const playMock = h.mock(playbackService, 'play')
     const firstSongInQueue = songs[0]
@@ -356,7 +356,7 @@ describe('playbackService', () => {
   })
 
   it('plays first playable in queue', async () => {
-    const songs = h.factory('song', 5)
+    const songs = h.factory('song').make(5)
     queueStore.state.playables = songs
     h.setReadOnlyProperty(queueStore, 'first', songs[0])
     const playMock = h.mock(playbackService, 'play')

@@ -10,7 +10,7 @@ describe('playableListControls.vue', () => {
   const h = createHarness()
 
   const renderComponent = (selectedCount = 1, configOverrides: Partial<PlayableListControlsConfig> = {}) => {
-    const songs = h.factory('song', 5)
+    const songs = h.factory('song').make(5)
     const config: PlayableListControlsConfig = merge(
       {
         addTo: {
