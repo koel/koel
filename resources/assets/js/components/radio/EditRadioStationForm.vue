@@ -26,7 +26,7 @@
       <FormRow>
         <label>
           <CheckBox v-model="data.is_public" name="is_public" />
-          <span class="ml-2">Make this station public</span>
+          <span class="ml-2">Accessible to all users</span>
         </label>
       </FormRow>
     </main>
