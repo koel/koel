@@ -170,7 +170,7 @@ importers:
         version: 13.4.0(axios@1.13.5)(focus-trap@7.6.5)(fuse.js@7.1.0)(nprogress@0.2.0)(qrcode@1.5.4)(vue@3.5.29(typescript@5.8.3))
       autoprefixer:
         specifier: ^10.4.21
-        version: 10.4.21(postcss@8.5.8)
+        version: 10.4.21(postcss@8.5.10)
       factoria:
         specifier: ^5.0.0
         version: 5.0.0(@faker-js/faker@9.8.0)
@@ -190,14 +190,14 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(@voidzero-dev/vite-plus-core@0.1.11(@types/node@24.0.7)(esbuild@0.27.3)(jiti@2.4.2)(typescript@5.8.3)(yaml@2.8.0))
       postcss:
-        specifier: ^8.5.8
-        version: 8.5.8
+        specifier: ^8.5.10
+        version: 8.5.10
       postcss-mixins:
         specifier: ^10.0.1
-        version: 10.0.1(postcss@8.5.8)
+        version: 10.0.1(postcss@8.5.10)
       postcss-nested:
         specifier: ^6.2.0
-        version: 6.2.0(postcss@8.5.8)
+        version: 6.2.0(postcss@8.5.10)
       pusher-js:
         specifier: ^4.4.0
         version: 4.4.0
@@ -218,7 +218,7 @@ importers:
         version: 0.1.11(@types/node@24.0.7)(@voidzero-dev/vite-plus-core@0.1.11(@types/node@24.0.7)(esbuild@0.27.3)(jiti@2.4.2)(typescript@5.8.3)(yaml@2.8.0))(esbuild@0.27.3)(jiti@2.4.2)(jsdom@26.1.0)(typescript@5.8.3)(yaml@2.8.0)
       vitepress:
         specifier: ^1.6.3
-        version: 1.6.3(@algolia/client-search@5.29.0)(@types/node@24.0.7)(axios@1.13.5)(esbuild@0.27.3)(fuse.js@7.1.0)(jiti@2.4.2)(nprogress@0.2.0)(postcss@8.5.8)(qrcode@1.5.4)(search-insights@2.17.3)(typescript@5.8.3)(yaml@2.8.0)
+        version: 1.6.3(@algolia/client-search@5.29.0)(@types/node@24.0.7)(axios@1.13.5)(esbuild@0.27.3)(fuse.js@7.1.0)(jiti@2.4.2)(nprogress@0.2.0)(postcss@8.5.10)(qrcode@1.5.4)(search-insights@2.17.3)(typescript@5.8.3)(yaml@2.8.0)
       vitepress-plugin-llms:
         specifier: ^1.11.0
         version: 1.11.0
@@ -2370,6 +2370,10 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
+  hasown@2.0.3:
+    resolution: {integrity: sha512-ej4AhfhfL2Q2zpMmLo7U1Uv9+PyhIZpgQLGT1F9miIGmiCJIoCgSmczFdrc97mWT4kVY72KA+WnnhJ5pghSvSg==}
+    engines: {node: '>= 0.4'}
+
   hast-util-to-html@9.0.5:
     resolution: {integrity: sha512-OguPdidb+fbHQSU4Q4ZiLKnzWo8Wwsf5bZfbvu7//a9oTYoqD/fWpe96NuHkoS9h0ccGOTe0C4NGXdtS0iObOw==}
 
@@ -2957,8 +2961,8 @@ packages:
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
 
-  nanoid@3.3.11:
-    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
+  nanoid@3.3.12:
+    resolution: {integrity: sha512-ZB9RH/39qpq5Vu6Y+NmUaFhQR6pp+M2Xt76XBnEwDaGcVAqhlvxrl3B2bKS5D3NH3QR76v3aSrKaF/Kiy7lEtQ==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -3190,8 +3194,8 @@ packages:
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
-  postcss@8.5.8:
-    resolution: {integrity: sha512-OW/rX8O/jXnm82Ey1k44pObPtdblfiuWnrd8X7GJ7emImCOstunGbXUpp7HdBrFQX6rJzn3sPT397Wp5aCwCHg==}
+  postcss@8.5.10:
+    resolution: {integrity: sha512-pMMHxBOZKFU6HgAZ4eyGnwXF/EvPGGqUr0MnZ5+99485wwW41kW91A4LOGxSHhgugZmSChL5AlElNdwlNgcnLQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   preact@10.26.9:
@@ -4757,7 +4761,7 @@ snapshots:
       '@oxc-project/runtime': 0.115.0
       '@oxc-project/types': 0.115.0
       lightningcss: 1.32.0
-      postcss: 8.5.8
+      postcss: 8.5.10
     optionalDependencies:
       '@types/node': 24.0.7
       esbuild: 0.27.3
@@ -4871,7 +4875,7 @@ snapshots:
       '@vue/shared': 3.5.29
       estree-walker: 2.0.2
       magic-string: 0.30.21
-      postcss: 8.5.8
+      postcss: 8.5.10
       source-map-js: 1.2.1
 
   '@vue/compiler-ssr@3.5.29':
@@ -5077,14 +5081,14 @@ snapshots:
   asynckit@0.4.0:
     optional: true
 
-  autoprefixer@10.4.21(postcss@8.5.8):
+  autoprefixer@10.4.21(postcss@8.5.10):
     dependencies:
       browserslist: 4.25.1
       caniuse-lite: 1.0.30001777
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.1.1
-      postcss: 8.5.8
+      postcss: 8.5.10
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.7:
@@ -5490,7 +5494,7 @@ snapshots:
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
       has-tostringtag: 1.0.2
-      hasown: 2.0.2
+      hasown: 2.0.3
     optional: true
 
   esbuild@0.27.3:
@@ -5609,7 +5613,7 @@ snapshots:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       es-set-tostringtag: 2.1.0
-      hasown: 2.0.2
+      hasown: 2.0.3
       mime-types: 2.1.35
     optional: true
 
@@ -5699,6 +5703,11 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  hasown@2.0.3:
+    dependencies:
+      function-bind: 1.1.2
+    optional: true
 
   hast-util-to-html@9.0.5:
     dependencies:
@@ -6351,7 +6360,7 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  nanoid@3.3.11: {}
+  nanoid@3.3.12: {}
 
   node-releases@2.0.19: {}
 
@@ -6537,36 +6546,36 @@ snapshots:
 
   possible-typed-array-names@1.1.0: {}
 
-  postcss-import@15.1.0(postcss@8.5.8):
+  postcss-import@15.1.0(postcss@8.5.10):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.10
 
-  postcss-js@4.0.1(postcss@8.5.8):
+  postcss-js@4.0.1(postcss@8.5.10):
     dependencies:
       camelcase-css: 2.0.1
-      postcss: 8.5.8
+      postcss: 8.5.10
 
-  postcss-load-config@4.0.2(postcss@8.5.8):
+  postcss-load-config@4.0.2(postcss@8.5.10):
     dependencies:
       lilconfig: 3.1.3
       yaml: 2.8.0
     optionalDependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
 
-  postcss-mixins@10.0.1(postcss@8.5.8):
+  postcss-mixins@10.0.1(postcss@8.5.10):
     dependencies:
       fast-glob: 3.3.3
-      postcss: 8.5.8
-      postcss-js: 4.0.1(postcss@8.5.8)
-      postcss-simple-vars: 7.0.1(postcss@8.5.8)
-      sugarss: 4.0.1(postcss@8.5.8)
+      postcss: 8.5.10
+      postcss-js: 4.0.1(postcss@8.5.10)
+      postcss-simple-vars: 7.0.1(postcss@8.5.10)
+      sugarss: 4.0.1(postcss@8.5.10)
 
-  postcss-nested@6.2.0(postcss@8.5.8):
+  postcss-nested@6.2.0(postcss@8.5.10):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
       postcss-selector-parser: 6.1.2
 
   postcss-selector-parser@6.1.2:
@@ -6574,15 +6583,15 @@ snapshots:
       cssesc: 3.0.0
       util-deprecate: 1.0.2
 
-  postcss-simple-vars@7.0.1(postcss@8.5.8):
+  postcss-simple-vars@7.0.1(postcss@8.5.10):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
 
   postcss-value-parser@4.2.0: {}
 
-  postcss@8.5.8:
+  postcss@8.5.10:
     dependencies:
-      nanoid: 3.3.11
+      nanoid: 3.3.12
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -6961,9 +6970,9 @@ snapshots:
       pirates: 4.0.7
       ts-interface-checker: 0.1.13
 
-  sugarss@4.0.1(postcss@8.5.8):
+  sugarss@4.0.1(postcss@8.5.10):
     dependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
 
   superjson@2.2.2:
     dependencies:
@@ -6995,11 +7004,11 @@ snapshots:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.1.1
-      postcss: 8.5.8
-      postcss-import: 15.1.0(postcss@8.5.8)
-      postcss-js: 4.0.1(postcss@8.5.8)
-      postcss-load-config: 4.0.2(postcss@8.5.8)
-      postcss-nested: 6.2.0(postcss@8.5.8)
+      postcss: 8.5.10
+      postcss-import: 15.1.0(postcss@8.5.10)
+      postcss-js: 4.0.1(postcss@8.5.10)
+      postcss-load-config: 4.0.2(postcss@8.5.10)
+      postcss-nested: 6.2.0(postcss@8.5.10)
       postcss-selector-parser: 6.1.2
       resolve: 1.22.10
       sucrase: 3.35.0
@@ -7205,7 +7214,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vitepress@1.6.3(@algolia/client-search@5.29.0)(@types/node@24.0.7)(axios@1.13.5)(esbuild@0.27.3)(fuse.js@7.1.0)(jiti@2.4.2)(nprogress@0.2.0)(postcss@8.5.8)(qrcode@1.5.4)(search-insights@2.17.3)(typescript@5.8.3)(yaml@2.8.0):
+  vitepress@1.6.3(@algolia/client-search@5.29.0)(@types/node@24.0.7)(axios@1.13.5)(esbuild@0.27.3)(fuse.js@7.1.0)(jiti@2.4.2)(nprogress@0.2.0)(postcss@8.5.10)(qrcode@1.5.4)(search-insights@2.17.3)(typescript@5.8.3)(yaml@2.8.0):
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.29.0)(search-insights@2.17.3)
@@ -7226,7 +7235,7 @@ snapshots:
       vite: '@voidzero-dev/vite-plus-core@0.1.11(@types/node@24.0.7)(esbuild@0.27.3)(jiti@2.4.2)(typescript@5.8.3)(yaml@2.8.0)'
       vue: 3.5.29(typescript@5.8.3)
     optionalDependencies:
-      postcss: 8.5.8
+      postcss: 8.5.10
     transitivePeerDependencies:
       - '@algolia/client-search'
       - '@arethetypeswrong/core'
