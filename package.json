@@ -74,7 +74,7 @@
     "jsdom": "^26.1.0",
     "laravel-echo": "^2.1.6",
     "laravel-vite-plugin": "^2.1.0",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.10",
     "postcss-mixins": "^10.0.1",
     "postcss-nested": "^6.2.0",
     "pusher-js": "^4.4.0",
