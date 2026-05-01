@@ -6,11 +6,13 @@ use App\Enums\Placement;
 use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Facades\License as LicenseFacade;
 use App\Models\Playlist;
+use App\Models\PlaylistFolder;
 use App\Models\Song as Playable;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Values\Playlist\PlaylistCreateData;
 use App\Values\Playlist\PlaylistUpdateData;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -73,9 +75,20 @@ class PlaylistService
 
         $folderId = $this->resolveFolderId($dto->folderId, $dto->folderName, $playlist->owner);
 
-        if ($folderId) {
-            $playlist->folders()->syncWithoutDetaching([$folderId]);
-        }
+        DB::transaction(static function () use ($playlist, $folderId): void {
+            // Detach from any folder owned by this user, then attach
+            // to the target if one was provided. Covers move-in,
+            // move-between, and move-to-root.
+            PlaylistFolder::query()
+                ->where('user_id', $playlist->owner->id)
+                ->whereHas('playlists', static fn (Builder $query) => $query->where('id', $playlist->id))
+                ->get()
+                ->each(static fn (PlaylistFolder $folder) => $folder->playlists()->detach($playlist->id));
+
+            if ($folderId) {
+                $playlist->folders()->attach($folderId);
+            }
+        });
 
         return $playlist->refresh();
     }
