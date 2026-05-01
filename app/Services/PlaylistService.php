@@ -79,11 +79,15 @@ class PlaylistService
             // Detach from any folder owned by this user, then attach
             // to the target if one was provided. Covers move-in,
             // move-between, and move-to-root.
-            PlaylistFolder::query()
+            $existingFolderIds = PlaylistFolder::query()
                 ->where('user_id', $playlist->owner->id)
                 ->whereHas('playlists', static fn (Builder $query) => $query->where('id', $playlist->id))
-                ->get()
-                ->each(static fn (PlaylistFolder $folder) => $folder->playlists()->detach($playlist->id));
+                ->pluck('id')
+                ->all();
+
+            if ($existingFolderIds) {
+                $playlist->folders()->detach($existingFolderIds);
+            }
 
             if ($folderId) {
                 $playlist->folders()->attach($folderId);
