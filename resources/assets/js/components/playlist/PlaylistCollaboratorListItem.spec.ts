@@ -23,10 +23,10 @@ describe('playlistCollaboratorListItem.vue', () => {
   }
 
   it('does not show a badge when current user is not the collaborator', async () => {
-    const currentUser = h.factory('user') as CurrentUser
+    const currentUser = h.factory('user').make() as CurrentUser
     h.actingAsUser(currentUser)
     renderComponent({
-      collaborator: h.factory('playlist-collaborator', { id: currentUser.id + 1 }),
+      collaborator: h.factory('playlist-collaborator').make({ id: currentUser.id + 1 }),
       removable: true,
       manageable: true,
       role: 'owner',
@@ -36,10 +36,10 @@ describe('playlistCollaboratorListItem.vue', () => {
   })
 
   it('shows a badge when current user is the collaborator', async () => {
-    const currentUser = h.factory('user') as CurrentUser
+    const currentUser = h.factory('user').make() as CurrentUser
     h.actingAsUser(currentUser)
     renderComponent({
-      collaborator: h.factory('playlist-collaborator', {
+      collaborator: h.factory('playlist-collaborator').make({
         id: currentUser.id,
         name: currentUser.name,
         avatar: currentUser.avatar,
@@ -53,7 +53,7 @@ describe('playlistCollaboratorListItem.vue', () => {
   })
 
   it('shows the role', async () => {
-    const collaborator = h.factory('playlist-collaborator')
+    const collaborator = h.factory('playlist-collaborator').make()
 
     h.actingAsUser()
     renderComponent({
@@ -77,7 +77,7 @@ describe('playlistCollaboratorListItem.vue', () => {
   })
 
   it('emits the remove event when the remove button is clicked', async () => {
-    const collaborator = h.factory('playlist-collaborator')
+    const collaborator = h.factory('playlist-collaborator').make()
     h.actingAsUser()
     const { emitted } = renderComponent({
       collaborator,

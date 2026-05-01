@@ -11,7 +11,7 @@ describe('footerPlaybackControls.vue', () => {
 
   const renderComponent = (playable?: Playable | null) => {
     if (playable === undefined) {
-      playable = h.factory('song', {
+      playable = h.factory('song').make({
         id: '00000000-0000-0000-0000-000000000000',
         title: 'Fahrstuhl to Heaven',
         artist_name: 'Led Zeppelin',

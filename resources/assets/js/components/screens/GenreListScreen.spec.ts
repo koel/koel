@@ -9,7 +9,7 @@ describe('genreListScreen', () => {
   const h = createHarness()
 
   const renderComponent = async (genres?: Genre[]) => {
-    genres = genres || h.factory('genre', 5)
+    genres = genres || h.factory('genre').make(5)
     const fetchMock = h.mock(genreStore, 'fetchAll').mockResolvedValue(genres)
 
     const rendered = h.render(Component, {

@@ -49,7 +49,7 @@ describe('themeStore', () => {
   it('initializes the store with a custom theme', () => {
     const setThemeMock = h.mock(themeStore, 'setTheme')
 
-    const theme = h.factory('theme', {
+    const theme = h.factory('theme').make({
       properties: {
         '--color-fg': '#00ff00',
         '--color-bg': '#111111',
@@ -67,7 +67,7 @@ describe('themeStore', () => {
   })
 
   it('sets a theme', () => {
-    const theme = h.factory('theme', {
+    const theme = h.factory('theme').make({
       properties: {
         '--color-fg': '#ffffff',
         '--color-bg': '#000000',
@@ -87,7 +87,7 @@ describe('themeStore', () => {
   })
 
   it('gets a theme by id', () => {
-    const theme = h.factory('theme')
+    const theme = h.factory('theme').make()
     themeStore.all.push(theme)
     expect(themeStore.getThemeById(theme.id)).toEqual(theme)
   })
@@ -97,7 +97,7 @@ describe('themeStore', () => {
   })
 
   it('creates a custom theme', async () => {
-    const createdTheme = h.factory('theme')
+    const createdTheme = h.factory('theme').make()
     const postMock = h.mock(http, 'post').mockResolvedValueOnce(createdTheme)
 
     const data: ThemeData = {
@@ -117,7 +117,7 @@ describe('themeStore', () => {
   })
 
   it('fetches custom themes', async () => {
-    const customThemes = h.factory('theme', 5)
+    const customThemes = h.factory('theme').make(5)
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(customThemes)
 
     await themeStore.fetchCustomThemes()
@@ -129,7 +129,7 @@ describe('themeStore', () => {
   })
 
   it('deletes a custom theme', async () => {
-    const customTheme = h.factory('theme')
+    const customTheme = h.factory('theme').make()
     themeStore.all.push(customTheme)
     const deleteMock = h.mock(http, 'delete')
     await themeStore.destroy(customTheme)

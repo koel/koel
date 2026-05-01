@@ -49,7 +49,7 @@ describe('socketService', () => {
   })
 
   it('broadcasts events', () => {
-    const user = h.factory('user') as CurrentUser
+    const user = h.factory('user').make() as CurrentUser
     userStore.state.current = user
 
     socketService.broadcast('TEST_EVENT', { foo: 'bar' })
@@ -57,7 +57,7 @@ describe('socketService', () => {
   })
 
   it('listens to events', () => {
-    const user = h.factory('user') as CurrentUser
+    const user = h.factory('user').make() as CurrentUser
     userStore.state.current = user
 
     const cb = vi.fn()

@@ -22,7 +22,7 @@ describe('mediaBrowserContextMenu.vue', () => {
   }
 
   it('opens the folder if the only item is a folder', async () => {
-    const folder = h.factory('folder', { path: 'foo/bar' })
+    const folder = h.factory('folder').make({ path: 'foo/bar' })
     const items = [folder]
     const goMock = h.mock(Router, 'go')
 
@@ -35,7 +35,7 @@ describe('mediaBrowserContextMenu.vue', () => {
   it('plays', async () => {
     h.createAudioPlayer()
 
-    const resolvedSongs = h.factory('song', 3)
+    const resolvedSongs = h.factory('song').make(3)
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const resolveMock = h.mock(playableStore, 'resolveSongsFromMediaReferences').mockResolvedValue(resolvedSongs)
     const goMock = h.mock(Router, 'go')
@@ -49,7 +49,7 @@ describe('mediaBrowserContextMenu.vue', () => {
       },
     ])
 
-    const items = [...h.factory('song', 2), h.factory('folder')]
+    const items = [...h.factory('song').make(2), h.factory('folder').make()]
 
     renderComponent(items)
 
@@ -71,7 +71,7 @@ describe('mediaBrowserContextMenu.vue', () => {
   it('shuffles', async () => {
     h.createAudioPlayer()
 
-    const resolvedSongs = h.factory('song', 3)
+    const resolvedSongs = h.factory('song').make(3)
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const resolveMock = h.mock(playableStore, 'resolveSongsFromMediaReferences').mockResolvedValue(resolvedSongs)
     const goMock = h.mock(Router, 'go')
@@ -85,7 +85,7 @@ describe('mediaBrowserContextMenu.vue', () => {
       },
     ])
 
-    const items = [...h.factory('song', 2), h.factory('folder')]
+    const items = [...h.factory('song').make(2), h.factory('folder').make()]
 
     renderComponent(items)
 
@@ -108,7 +108,7 @@ describe('mediaBrowserContextMenu.vue', () => {
   })
 
   it('adds to queue', async () => {
-    const resolvedSongs = h.factory('song', 3)
+    const resolvedSongs = h.factory('song').make(3)
     const queueMock = h.mock(queueStore, 'queue')
     const resolveMock = h.mock(playableStore, 'resolveSongsFromMediaReferences').mockResolvedValue(resolvedSongs)
 
@@ -121,7 +121,7 @@ describe('mediaBrowserContextMenu.vue', () => {
       },
     ])
 
-    const items = [...h.factory('song', 2), h.factory('folder')]
+    const items = [...h.factory('song').make(2), h.factory('folder').make()]
 
     renderComponent(items)
 

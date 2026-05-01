@@ -11,8 +11,8 @@ describe('mediaBrowser', () => {
 
   it('browses a path', async () => {
     const path = 'foo/bar'
-    const folders = h.factory('folder', 2)
-    const songs = h.factory('song', 3)
+    const folders = h.factory('folder').make(2)
+    const songs = h.factory('song').make(3)
 
     const songPaginator: PaginatorResource<Song> = {
       data: songs,
@@ -44,8 +44,8 @@ describe('mediaBrowser', () => {
 
   it('get from cache when available', async () => {
     const path = 'foo/bar'
-    const folders = h.factory('folder', 2)
-    const songs = h.factory('song', 3)
+    const folders = h.factory('folder').make(2)
+    const songs = h.factory('song').make(3)
 
     const songPaginator: PaginatorResource<Song> = {
       data: songs,
@@ -80,8 +80,8 @@ describe('mediaBrowser', () => {
     const removeCacheMock = vi.spyOn(cache, 'remove')
 
     const path = 'foo/bar'
-    const folders = h.factory('folder', 2)
-    const songs = h.factory('song', 3)
+    const folders = h.factory('folder').make(2)
+    const songs = h.factory('song').make(3)
 
     const songPaginator: PaginatorResource<Song> = {
       data: songs,
@@ -154,7 +154,7 @@ describe('mediaBrowser', () => {
   })
 
   it('extracts media references', () => {
-    const items = [h.factory('song'), h.factory('folder', 1)]
+    const items = [h.factory('song').make(), h.factory('folder').make(1)]
 
     const references = mediaBrowser.extractMediaReferences(items)
 

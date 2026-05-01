@@ -31,7 +31,7 @@ describe('invitationService', () => {
   })
 
   it('invites users', async () => {
-    const prospects = factory.states('prospect')('user', 2)
+    const prospects = factory('user').state('prospect').make(2)
     const addMock = h.mock(userStore, 'add')
     const postMock = h.mock(http, 'post').mockResolvedValue(prospects)
 
@@ -46,7 +46,7 @@ describe('invitationService', () => {
   })
 
   it('revokes an invitation', async () => {
-    const user = factory.states('prospect')('user')
+    const user = factory('user').state('prospect').make()
     const removeMock = h.mock(userStore, 'remove')
     const deleteMock = h.mock(http, 'delete')
 

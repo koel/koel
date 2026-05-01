@@ -20,7 +20,7 @@ describe('useDragAndDrop', () => {
   describe('useDraggable', () => {
     it('sets drag data for a single playable', () => {
       const { startDragging } = useDraggable('playables')
-      const song = h.factory('song')
+      const song = h.factory('song').make()
       const event = createDragEvent()
 
       startDragging(event, song)
@@ -33,7 +33,7 @@ describe('useDragAndDrop', () => {
 
     it('sets drag data for an album', () => {
       const { startDragging } = useDraggable('album')
-      const album = h.factory('album')
+      const album = h.factory('album').make()
       const event = createDragEvent()
 
       startDragging(event, album)
@@ -43,7 +43,7 @@ describe('useDragAndDrop', () => {
 
     it('sets drag data for an artist', () => {
       const { startDragging } = useDraggable('artist')
-      const artist = h.factory('artist')
+      const artist = h.factory('artist').make()
       const event = createDragEvent()
 
       startDragging(event, artist)
@@ -53,7 +53,7 @@ describe('useDragAndDrop', () => {
 
     it('sets drag data for a playlist', () => {
       const { startDragging } = useDraggable('playlist')
-      const playlist = h.factory('playlist')
+      const playlist = h.factory('playlist').make()
       const event = createDragEvent()
 
       startDragging(event, playlist)
@@ -67,12 +67,12 @@ describe('useDragAndDrop', () => {
     it('does nothing without dataTransfer', () => {
       const { startDragging } = useDraggable('playables')
       const event = { dataTransfer: null } as unknown as DragEvent
-      expect(() => startDragging(event, h.factory('song'))).not.toThrow()
+      expect(() => startDragging(event, h.factory('song').make())).not.toThrow()
     })
 
     it('creates a ghost drag image', () => {
       const { startDragging } = useDraggable('playables')
-      const song = h.factory('song')
+      const song = h.factory('song').make()
       const event = createDragEvent()
 
       startDragging(event, song)

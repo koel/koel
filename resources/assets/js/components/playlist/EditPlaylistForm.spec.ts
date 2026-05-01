@@ -9,7 +9,7 @@ describe('editPlaylistForm.vue', () => {
   const h = createHarness()
 
   const renderComponent = (playlist?: Playlist) => {
-    playlist = playlist || h.factory('playlist')
+    playlist = playlist || h.factory('playlist').make()
     playlistStore.state.playlists = [playlist]
 
     const rendered = h.render(Component, {
@@ -26,10 +26,10 @@ describe('editPlaylistForm.vue', () => {
 
   it('edits the playlist with no changes to cover', async () => {
     const updateMock = h.mock(playlistStore, 'update')
-    playlistFolderStore.state.folders = h.factory('playlist-folder', 3)
+    playlistFolderStore.state.folders = h.factory('playlist-folder').make(3)
 
     const { playlist } = renderComponent(
-      h.factory('playlist', {
+      h.factory('playlist').make({
         name: 'My playlist',
         folder_id: playlistFolderStore.state.folders[0].id,
       }),
@@ -53,7 +53,7 @@ describe('editPlaylistForm.vue', () => {
     const updateMock = h.mock(playlistStore, 'update')
 
     const { playlist } = renderComponent(
-      h.factory('playlist', {
+      h.factory('playlist').make({
         name: 'My playlist',
         cover: 'https://localhost:3000/img/storage/cover.webp',
       }),
@@ -80,7 +80,7 @@ describe('editPlaylistForm.vue', () => {
     const updateMock = h.mock(playlistStore, 'update')
 
     const { playlist } = renderComponent(
-      h.factory('playlist', {
+      h.factory('playlist').make({
         name: 'My playlist',
         cover: 'https://localhost:3000/img/storage/cover.webp',
       }),

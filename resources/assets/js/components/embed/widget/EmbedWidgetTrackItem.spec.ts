@@ -29,7 +29,7 @@ describe('playableEmbedItem.vue', async () => {
 
   it('renders a song', () => {
     const { html } = renderComponent(
-      h.factory('song', {
+      h.factory('song').make({
         title: 'Bohemian Rhapsody',
         length: 280,
         artist_name: 'Queen',
@@ -43,7 +43,7 @@ describe('playableEmbedItem.vue', async () => {
 
   it('renders a podcast episode', () => {
     const { html } = renderComponent(
-      h.factory('episode', {
+      h.factory('episode').make({
         title: 'How to tell people to shut up about Queen',
         length: 280,
         podcast_title: 'The Everyday Guide',
@@ -55,7 +55,7 @@ describe('playableEmbedItem.vue', async () => {
   })
 
   it('emits the play event on double-click', async () => {
-    const { playable, emitted } = renderComponent(h.factory('song'))
+    const { playable, emitted } = renderComponent(h.factory('song').make())
     await h.user.dblClick(screen.getByTestId('playable-embed-item'))
     expect(emitted().play[0]).toEqual([playable])
   })

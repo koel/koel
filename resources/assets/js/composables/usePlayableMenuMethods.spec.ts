@@ -28,7 +28,7 @@ describe('usePlayableMenuMethods', () => {
   })
 
   it('queues to bottom', async () => {
-    const songs = [h.factory('song')]
+    const songs = [h.factory('song').make()]
     const playables = ref<Playable[]>(songs)
     const close = vi.fn()
 
@@ -42,7 +42,7 @@ describe('usePlayableMenuMethods', () => {
   })
 
   it('queues to top', async () => {
-    const songs = [h.factory('song')]
+    const songs = [h.factory('song').make()]
     const playables = ref<Playable[]>(songs)
     const close = vi.fn()
 
@@ -55,7 +55,7 @@ describe('usePlayableMenuMethods', () => {
   })
 
   it('adds to favorites', async () => {
-    const songs = [h.factory('song')]
+    const songs = [h.factory('song').make()]
     const playables = ref<Playable[]>(songs)
     const close = vi.fn()
 
@@ -68,7 +68,7 @@ describe('usePlayableMenuMethods', () => {
   })
 
   it('opens new playlist modal', async () => {
-    const songs = [h.factory('song')]
+    const songs = [h.factory('song').make()]
     const playables = ref<Playable[]>(songs)
     const close = vi.fn()
 

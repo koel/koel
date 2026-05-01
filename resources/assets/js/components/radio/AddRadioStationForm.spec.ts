@@ -8,7 +8,7 @@ describe('addRadioStationForm.vue', () => {
   const h = createHarness()
 
   it('adds a radio station without a logo', async () => {
-    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station'))
+    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station').make())
 
     h.render(Component)
     await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')
@@ -27,7 +27,7 @@ describe('addRadioStationForm.vue', () => {
   })
 
   it('adds a radio station with a logo', async () => {
-    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station'))
+    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station').make())
 
     h.render(Component)
     await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')

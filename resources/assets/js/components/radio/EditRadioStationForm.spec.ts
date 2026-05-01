@@ -10,7 +10,7 @@ describe('editRadioStationForm.vue', () => {
   const h = createHarness()
 
   const renderComponent = (station?: RadioStation | Reactive<RadioStation>) => {
-    station = station ?? h.factory('radio-station')
+    station = station ?? h.factory('radio-station').make()
 
     const rendered = h.render(Component, {
       props: {
@@ -26,7 +26,7 @@ describe('editRadioStationForm.vue', () => {
 
   it('edits a radio station without logo changing', async () => {
     const updateMock = h.mock(radioStationStore, 'update')
-    const { station } = renderComponent(reactive(h.factory('radio-station', { is_public: false })))
+    const { station } = renderComponent(reactive(h.factory('radio-station').make({ is_public: false })))
 
     await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Pop')
     await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://beet.stream/pop')
@@ -44,7 +44,7 @@ describe('editRadioStationForm.vue', () => {
 
   it('edits a radio station, removing the logo', async () => {
     const updateMock = h.mock(radioStationStore, 'update')
-    const { station } = renderComponent(reactive(h.factory('radio-station', { is_public: false })))
+    const { station } = renderComponent(reactive(h.factory('radio-station').make({ is_public: false })))
 
     await h.user.click(screen.getByRole('button', { name: 'Remove' }))
 
@@ -65,7 +65,7 @@ describe('editRadioStationForm.vue', () => {
 
   it('edits a radio station, replacing the logo', async () => {
     const updateMock = h.mock(radioStationStore, 'update')
-    const { station } = renderComponent(reactive(h.factory('radio-station', { is_public: false })))
+    const { station } = renderComponent(reactive(h.factory('radio-station').make({ is_public: false })))
 
     await h.user.click(screen.getByRole('button', { name: 'Remove' }))
 

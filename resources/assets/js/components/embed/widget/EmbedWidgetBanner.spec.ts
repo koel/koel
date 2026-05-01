@@ -34,7 +34,7 @@ describe('embedWidgetBanner.vue', async () => {
   }
 
   it('renders a song', () => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       title: 'Bohemian Rhapsody',
       artist_name: 'Queen',
       album_name: 'A Night at the Opera',
@@ -42,7 +42,7 @@ describe('embedWidgetBanner.vue', async () => {
     })
 
     const embed: WidgetReadyEmbed = {
-      ...h.factory('embed', {
+      ...h.factory('embed').make({
         embeddable_type: 'playable',
         embeddable_id: song.id,
       }),
@@ -58,14 +58,14 @@ describe('embedWidgetBanner.vue', async () => {
   })
 
   it('renders a podcast episode', () => {
-    const episode = h.factory('episode', {
+    const episode = h.factory('episode').make({
       title: 'How to tell people to shut up about Queen',
       podcast_title: 'The Everyday Guide',
       podcast_author: 'The Everyday Guy',
     })
 
     const embed: WidgetReadyEmbed = {
-      ...h.factory('embed', {
+      ...h.factory('embed').make({
         embeddable_type: 'playable',
         embeddable_id: episode.id,
       }),
@@ -81,18 +81,18 @@ describe('embedWidgetBanner.vue', async () => {
   })
 
   it('renders a playlist', () => {
-    const playlist = h.factory('playlist', {
+    const playlist = h.factory('playlist').make({
       name: 'The Best of Queen',
       description: 'A collection of the best songs from Queen',
     })
 
     const embed: WidgetReadyEmbed = {
-      ...h.factory('embed', {
+      ...h.factory('embed').make({
         embeddable_type: 'playlist',
         embeddable_id: playlist.id,
       }),
       embeddable: playlist,
-      playables: h.factory('song', 5),
+      playables: h.factory('song').make(5),
     }
 
     renderComponent(embed)
@@ -103,18 +103,18 @@ describe('embedWidgetBanner.vue', async () => {
   })
 
   it('renders an album', () => {
-    const album = h.factory('album', {
+    const album = h.factory('album').make({
       name: 'A Night at the Opera',
       artist_name: 'Queen',
     })
 
     const embed: WidgetReadyEmbed = {
-      ...h.factory('embed', {
+      ...h.factory('embed').make({
         embeddable_type: 'album',
         embeddable_id: album.id,
       }),
       embeddable: album,
-      playables: h.factory('song', 5),
+      playables: h.factory('song').make(5),
     }
 
     renderComponent(embed)
@@ -125,17 +125,17 @@ describe('embedWidgetBanner.vue', async () => {
   })
 
   it('renders an artist', () => {
-    const artist = h.factory('artist', {
+    const artist = h.factory('artist').make({
       name: 'Queen',
     })
 
     const embed: WidgetReadyEmbed = {
-      ...h.factory('embed', {
+      ...h.factory('embed').make({
         embeddable_type: 'artist',
         embeddable_id: artist.id,
       }),
       embeddable: artist,
-      playables: h.factory('song', 5),
+      playables: h.factory('song').make(5),
     }
 
     renderComponent(embed)
@@ -146,10 +146,10 @@ describe('embedWidgetBanner.vue', async () => {
   })
 
   it('shows a preview badge if in preview mode', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
 
     const embed: WidgetReadyEmbed = {
-      ...h.factory('embed', {
+      ...h.factory('embed').make({
         embeddable_type: 'playable',
         embeddable_id: song.id,
       }),

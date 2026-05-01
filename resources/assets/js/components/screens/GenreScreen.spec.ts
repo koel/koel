@@ -9,12 +9,12 @@ describe('genreScreen', () => {
   const h = createHarness()
 
   const renderComponent = async (genre?: Genre, songs?: Song[]) => {
-    genre = genre || h.factory('genre')
+    genre = genre || h.factory('genre').make()
 
     const fetchGenreMock = h.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
     const paginateMock = h.mock(playableStore, 'paginateSongsByGenre').mockResolvedValue({
       nextPage: 2,
-      songs: songs || h.factory('song', 13),
+      songs: songs || h.factory('song').make(13),
     })
 
     const rendered = h.visit(`genres/${genre.id}`).render(Component, {

@@ -7,7 +7,7 @@ describe('topArtists.vue', () => {
   const h = createHarness()
 
   it('displays the artists', () => {
-    overviewStore.state.mostPlayedArtists = h.factory('artist', 6)
+    overviewStore.state.mostPlayedArtists = h.factory('artist').make(6)
     expect(
       h
         .render(TopArtists, {

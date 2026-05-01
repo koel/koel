@@ -68,7 +68,7 @@
     "@vueuse/core": "^13.4.0",
     "@vueuse/integrations": "^13.4.0",
     "autoprefixer": "^10.4.21",
-    "factoria": "^4.0.1",
+    "factoria": "^5.0.0",
     "fake-indexeddb": "^6.2.5",
     "jest-serializer-vue": "^2.0.2",
     "jsdom": "^26.1.0",

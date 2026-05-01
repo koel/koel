@@ -9,8 +9,8 @@ describe('episodeItem.vue', () => {
   const h = createHarness()
 
   const renderComponent = (episode?: Episode, podcast?: Podcast) => {
-    episode = episode || h.factory('episode')
-    podcast = podcast || h.factory('podcast', { id: episode.podcast_id })
+    episode = episode || h.factory('episode').make()
+    podcast = podcast || h.factory('podcast').make({ id: episode.podcast_id })
 
     const rendered = h.render(Component, {
       props: {
@@ -35,7 +35,7 @@ describe('episodeItem.vue', () => {
     h.createAudioPlayer()
 
     const pauseMock = h.mock(playbackService, 'pause')
-    renderComponent(h.factory('episode', { playback_state: 'Playing' }))
+    renderComponent(h.factory('episode').make({ playback_state: 'Playing' }))
 
     await h.user.click(screen.getByTestId('play-button'))
 
@@ -46,7 +46,7 @@ describe('episodeItem.vue', () => {
     h.createAudioPlayer()
 
     const resumeMock = h.mock(playbackService, 'resume')
-    renderComponent(h.factory('episode', { playback_state: 'Paused' }))
+    renderComponent(h.factory('episode').make({ playback_state: 'Paused' }))
 
     await h.user.click(screen.getByTestId('play-button'))
 
@@ -63,11 +63,11 @@ describe('episodeItem.vue', () => {
     preferenceStore.temporary.continuous_playback = false
     const playMock = h.mock(playbackService, 'play')
 
-    const episode = h.factory('episode', {
+    const episode = h.factory('episode').make({
       length: episodeLength,
     })
 
-    const podcast = h.factory('podcast', {
+    const podcast = h.factory('podcast').make({
       id: episode.podcast_id,
       state: {
         current_episode: episode.id,
@@ -97,11 +97,11 @@ describe('episodeItem.vue', () => {
   it('shows progress bar if there is progress', async () => {
     h.createAudioPlayer()
 
-    const episode = h.factory('episode', {
+    const episode = h.factory('episode').make({
       length: 300,
     })
 
-    const podcast = h.factory('podcast', {
+    const podcast = h.factory('podcast').make({
       id: episode.podcast_id,
       state: {
         current_episode: episode.id,

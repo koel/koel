@@ -26,7 +26,7 @@ describe('playlistFolderContextMenu.vue', () => {
   })
 
   const renderComponent = async (folder?: PlaylistFolder) => {
-    folder = folder || h.factory('playlist-folder')
+    folder = folder || h.factory('playlist-folder').make()
 
     const rendered = h.render(Component, {
       props: {
@@ -41,8 +41,8 @@ describe('playlistFolderContextMenu.vue', () => {
   }
 
   const createPlayableFolder = () => {
-    const folder = h.factory('playlist-folder')
-    h.mock(playlistStore, 'byFolder', h.factory('playlist', 3, { folder_id: folder.id }))
+    const folder = h.factory('playlist-folder').make()
+    h.mock(playlistStore, 'byFolder', h.factory('playlist').make({ folder_id: folder.id }, 3))
     return folder
   }
 
@@ -65,7 +65,7 @@ describe('playlistFolderContextMenu.vue', () => {
   it('plays', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
@@ -103,7 +103,7 @@ describe('playlistFolderContextMenu.vue', () => {
   it('shuffles', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')

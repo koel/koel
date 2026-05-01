@@ -91,12 +91,12 @@ describe('authService', () => {
   })
 
   it('updates profile', async () => {
-    userStore.state.current = h.factory('user', {
+    userStore.state.current = h.factory('user').make({
       name: 'John Doe',
       email: 'john@doe.com',
     }) as CurrentUser
 
-    const updated = h.factory('user', {
+    const updated = h.factory('user').make({
       name: 'Jane Doe',
       email: 'jane@doe.com',
     })

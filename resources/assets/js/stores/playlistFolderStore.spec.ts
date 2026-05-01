@@ -31,8 +31,8 @@ describe('playlistFolderStore', () => {
   })
 
   it('initializes with sorted folders', () => {
-    const zebra = h.factory('playlist-folder', { name: 'Zebra' })
-    const alpha = h.factory('playlist-folder', { name: 'Alpha' })
+    const zebra = h.factory('playlist-folder').make({ name: 'Zebra' })
+    const alpha = h.factory('playlist-folder').make({ name: 'Alpha' })
 
     playlistFolderStore.init([zebra, alpha])
 
@@ -41,8 +41,8 @@ describe('playlistFolderStore', () => {
   })
 
   it('finds folder by id', () => {
-    const rock = h.factory('playlist-folder', { name: 'Rock' })
-    const jazz = h.factory('playlist-folder', { name: 'Jazz' })
+    const rock = h.factory('playlist-folder').make({ name: 'Rock' })
+    const jazz = h.factory('playlist-folder').make({ name: 'Jazz' })
 
     playlistFolderStore.init([rock, jazz])
 
@@ -55,10 +55,10 @@ describe('playlistFolderStore', () => {
   })
 
   it('stores a new folder via API and adds sorted', async () => {
-    const alpha = h.factory('playlist-folder', { name: 'Alpha' })
+    const alpha = h.factory('playlist-folder').make({ name: 'Alpha' })
     playlistFolderStore.init([alpha])
 
-    const beta = h.factory('playlist-folder', { name: 'Beta' })
+    const beta = h.factory('playlist-folder').make({ name: 'Beta' })
     vi.mocked(http.post).mockResolvedValue(beta)
 
     const folder = await playlistFolderStore.store('Beta')
@@ -71,10 +71,10 @@ describe('playlistFolderStore', () => {
   })
 
   it('deletes a folder and unlinks playlists', async () => {
-    const folder = h.factory('playlist-folder', { name: 'Rock' })
+    const folder = h.factory('playlist-folder').make({ name: 'Rock' })
     playlistFolderStore.init([folder])
 
-    const playlist = h.factory('playlist', { folder_id: folder.id })
+    const playlist = h.factory('playlist').make({ folder_id: folder.id })
     vi.mocked(playlistStore.byFolder).mockReturnValue([playlist])
     vi.mocked(http.delete).mockResolvedValue({})
 
@@ -86,7 +86,7 @@ describe('playlistFolderStore', () => {
   })
 
   it('renames a folder', async () => {
-    const folder = h.factory('playlist-folder', { name: 'Old' })
+    const folder = h.factory('playlist-folder').make({ name: 'Old' })
     playlistFolderStore.init([folder])
     vi.mocked(http.put).mockResolvedValue({})
 
@@ -97,8 +97,8 @@ describe('playlistFolderStore', () => {
   })
 
   it('adds a playlist to folder', async () => {
-    const folder = h.factory('playlist-folder')
-    const playlist = h.factory('playlist', { folder_id: null })
+    const folder = h.factory('playlist-folder').make()
+    const playlist = h.factory('playlist').make({ folder_id: null })
     vi.mocked(http.post).mockResolvedValue({})
 
     await playlistFolderStore.addPlaylistToFolder(folder, playlist)
@@ -108,8 +108,8 @@ describe('playlistFolderStore', () => {
   })
 
   it('removes a playlist from folder', async () => {
-    const folder = h.factory('playlist-folder')
-    const playlist = h.factory('playlist', { folder_id: folder.id })
+    const folder = h.factory('playlist-folder').make()
+    const playlist = h.factory('playlist').make({ folder_id: folder.id })
     vi.mocked(http.delete).mockResolvedValue({})
 
     await playlistFolderStore.removePlaylistFromFolder(folder, playlist)
@@ -120,9 +120,9 @@ describe('playlistFolderStore', () => {
 
   it('sorts folders alphabetically', () => {
     const sorted = playlistFolderStore.sort([
-      h.factory('playlist-folder', { name: 'Zebra' }),
-      h.factory('playlist-folder', { name: 'Alpha' }),
-      h.factory('playlist-folder', { name: 'Middle' }),
+      h.factory('playlist-folder').make({ name: 'Zebra' }),
+      h.factory('playlist-folder').make({ name: 'Alpha' }),
+      h.factory('playlist-folder').make({ name: 'Middle' }),
     ])
 
     expect(sorted.map(f => f.name)).toEqual(['Alpha', 'Middle', 'Zebra'])

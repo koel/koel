@@ -11,7 +11,7 @@ describe('albumOrArtistThumbnail.vue', () => {
   const h = createHarness()
 
   const renderForAlbum = () => {
-    const album = h.factory('album', {
+    const album = h.factory('album').make({
       name: 'IV',
       cover: 'https://test/album.jpg',
     })
@@ -29,7 +29,7 @@ describe('albumOrArtistThumbnail.vue', () => {
   }
 
   const renderForArtist = () => {
-    const artist = h.factory('artist', {
+    const artist = h.factory('artist').make({
       name: 'Led Zeppelin',
       image: 'https://test/blimp.jpg',
     })
@@ -57,7 +57,7 @@ describe('albumOrArtistThumbnail.vue', () => {
   it('plays album', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const { album } = renderForAlbum()
@@ -73,7 +73,7 @@ describe('albumOrArtistThumbnail.vue', () => {
   it('queues album', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
     const queueMock = h.mock(queueStore, 'queue')
     const { album } = renderForAlbum()
@@ -89,7 +89,7 @@ describe('albumOrArtistThumbnail.vue', () => {
   })
 
   it('plays artist', async () => {
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const { artist } = renderForArtist()
@@ -103,7 +103,7 @@ describe('albumOrArtistThumbnail.vue', () => {
   })
 
   it('queues artist', async () => {
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
     const queueMock = h.mock(queueStore, 'queue')
     const { artist } = renderForArtist()

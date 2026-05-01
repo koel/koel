@@ -13,7 +13,7 @@ describe('playlistSidebarItem.vue', () => {
   const h = createHarness()
 
   const renderComponent = (list?: PlaylistLike) => {
-    list = list ?? h.factory('playlist')
+    list = list ?? h.factory('playlist').make()
 
     const rendered = h.render(Component, {
       props: {

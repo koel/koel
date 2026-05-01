@@ -9,7 +9,7 @@ describe('createSmartPlaylistForm', () => {
   const h = createHarness()
 
   const renderComponent = (folder?: PlaylistFolder | null) => {
-    playlistFolderStore.state.folders = h.factory('playlist-folder', 2)
+    playlistFolderStore.state.folders = h.factory('playlist-folder').make(2)
 
     return h.render(Component, {
       props: {
@@ -46,7 +46,7 @@ describe('createSmartPlaylistForm', () => {
   })
 
   it('submits form data with empty rules when no groups added', async () => {
-    const playlist = h.factory('playlist')
+    const playlist = h.factory('playlist').make()
     const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(playlist)
     renderComponent()
 
@@ -64,7 +64,7 @@ describe('createSmartPlaylistForm', () => {
   })
 
   it('submits form data with rule groups when groups are added', async () => {
-    const playlist = h.factory('playlist')
+    const playlist = h.factory('playlist').make()
     const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(playlist)
     renderComponent()
 
@@ -91,7 +91,7 @@ describe('createSmartPlaylistForm', () => {
   })
 
   it('pre-selects folder when folder prop is provided', () => {
-    const folder = h.factory('playlist-folder')
+    const folder = h.factory('playlist-folder').make()
     playlistFolderStore.state.folders = [folder]
 
     h.render(Component, {

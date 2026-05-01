@@ -9,7 +9,7 @@ describe('embedPlayerNextButton.vue', async () => {
   it('renders and works', async () => {
     const { emitted } = h.render(Component, {
       props: {
-        playable: h.factory('song'),
+        playable: h.factory('song').make(),
       },
     })
 

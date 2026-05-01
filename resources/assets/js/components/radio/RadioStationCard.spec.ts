@@ -15,7 +15,7 @@ describe('radioStationCard', () => {
   const h = createHarness()
 
   const createRadioStation = (overrides: Partial<RadioStation> = {}): RadioStation => {
-    return h.factory('radio-station', {
+    return h.factory('radio-station').make({
       id: '----',
       name: 'Beethoven Goes Metal',
       url: 'https://beet.stream/metal',

@@ -23,41 +23,44 @@ describe('playableStore', () => {
   })
 
   it('gets a song by ID', () => {
-    const song = reactive(h.factory('song', { id: 'foo' }))
+    const song = reactive(h.factory('song').make({ id: 'foo' }))
     playableStore.vault.set('foo', reactive(song))
-    playableStore.vault.set('bar', reactive(h.factory('song', { id: 'bar' })))
+    playableStore.vault.set('bar', reactive(h.factory('song').make({ id: 'bar' })))
 
     expect(playableStore.byId('foo')).toBe(song)
   })
 
   it('gets songs by IDs', () => {
-    const foo = reactive(h.factory('song', { id: 'foo' }))
-    const bar = reactive(h.factory('song', { id: 'bar' }))
+    const foo = reactive(h.factory('song').make({ id: 'foo' }))
+    const bar = reactive(h.factory('song').make({ id: 'bar' }))
     playableStore.vault.set('foo', foo)
     playableStore.vault.set('bar', bar)
-    playableStore.vault.set('baz', reactive(h.factory('song', { id: 'baz' })))
+    playableStore.vault.set('baz', reactive(h.factory('song').make({ id: 'baz' })))
 
     expect(playableStore.byIds(['foo', 'bar'])).toEqual([foo, bar])
   })
 
   it('gets formatted length', () => {
-    expect(playableStore.getFormattedLength(h.factory('song', { length: 123 }))).toBe('2 min 3 sec')
+    expect(playableStore.getFormattedLength(h.factory('song').make({ length: 123 }))).toBe('2 min 3 sec')
     expect(
-      playableStore.getFormattedLength([h.factory('song', { length: 122 }), h.factory('song', { length: 123 })]),
+      playableStore.getFormattedLength([
+        h.factory('song').make({ length: 122 }),
+        h.factory('song').make({ length: 123 }),
+      ]),
     ).toBe('4 min 5 sec')
   })
 
   it('gets songs by album', () => {
-    const songs = reactive(h.factory('song', 2, { album_id: 'iv' }))
+    const songs = reactive(h.factory('song').make({ album_id: 'iv' }, 2))
     playableStore.vault.set(songs[0].id, songs[0])
     playableStore.vault.set(songs[1].id, songs[1])
-    const album = h.factory('album', { id: 'iv' })
+    const album = h.factory('album').make({ id: 'iv' })
 
     expect(playableStore.byAlbum(album)).toEqual(songs)
   })
 
   it('resolves a song', async () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(song)
 
     expect(await playableStore.resolve(song.id)).toEqual(song)
@@ -69,8 +72,8 @@ describe('playableStore', () => {
   })
 
   it('matches a song by title', () => {
-    const song = h.factory('song', { title: 'An amazing song' })
-    const songs = [song, ...h.factory('song', 3)]
+    const song = h.factory('song').make({ title: 'An amazing song' })
+    const songs = [song, ...h.factory('song').make(3)]
 
     expect(playableStore.matchSongsByTitle('An amazing song', songs)).toEqual(song)
     expect(playableStore.matchSongsByTitle('An Amazing Song', songs)).toEqual(song)
@@ -78,10 +81,10 @@ describe('playableStore', () => {
   })
 
   it('registers a play', async () => {
-    const song = h.factory('song', { play_count: 42 })
+    const song = h.factory('song').make({ play_count: 42 })
 
     const postMock = h.mock(http, 'post').mockResolvedValueOnce(
-      h.factory('interaction', {
+      h.factory('interaction').make({
         song_id: song.id,
         play_count: 50,
       }),
@@ -93,7 +96,7 @@ describe('playableStore', () => {
   })
 
   it('scrobbles', async () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     song.play_start_time = 123456789
     const postMock = h.mock(http, 'post')
 
@@ -103,12 +106,12 @@ describe('playableStore', () => {
   })
 
   it('updates songs', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
 
     const result: SongUpdateResult = {
-      songs: h.factory('song', 3),
-      albums: h.factory('album', 2),
-      artists: h.factory('artist', 2),
+      songs: h.factory('song').make(3),
+      albums: h.factory('album').make(2),
+      artists: h.factory('artist').make(2),
       removed: {
         album_ids: ['iv'],
         artist_ids: ['led-zeppelin'],
@@ -144,7 +147,7 @@ describe('playableStore', () => {
 
   it('gets source URL', () => {
     commonStore.state.cdn_url = 'http://test/'
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     h.mock(authService, 'getAudioToken', 'hadouken')
 
     expect(playableStore.getSourceUrl(song)).toBe(`http://test/play/${song.id}?t=hadouken`)
@@ -155,12 +158,12 @@ describe('playableStore', () => {
   })
 
   it('gets shareable URL', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     expect(playableStore.getShareableUrl(song)).toBe(`http://test/#/songs/${song.id}`)
   })
 
   it('syncs new songs into the vault and applies playback state defaults', () => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       playback_state: null,
     })
 
@@ -177,7 +180,7 @@ describe('playableStore', () => {
   it('refreshes play stats when a vaulted song play count changes', async () => {
     const refreshMock = h.mock(overviewStore, 'refreshPlayStats')
 
-    const [synced] = playableStore.syncWithVault(h.factory('song', { play_count: 98 }))
+    const [synced] = playableStore.syncWithVault(h.factory('song').make({ play_count: 98 }))
     synced.play_count = 100
 
     await h.tick()
@@ -192,8 +195,8 @@ describe('playableStore', () => {
   })
 
   it('fetches for album', async () => {
-    const songs = h.factory('song', 3)
-    const album = h.factory('album')
+    const songs = h.factory('song').make(3)
+    const album = h.factory('album').make()
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
 
@@ -204,8 +207,8 @@ describe('playableStore', () => {
   })
 
   it('fetches for artist', async () => {
-    const songs = h.factory('song', 3)
-    const artist = h.factory('artist')
+    const songs = h.factory('song').make(3)
+    const artist = h.factory('artist').make()
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
 
@@ -216,8 +219,8 @@ describe('playableStore', () => {
   })
 
   it('fetches for playlist', async () => {
-    const songs = h.factory('song', 3)
-    const playlist = h.factory('playlist', { id: '966268ea-935d-4f63-a84e-180385376a78' })
+    const songs = h.factory('song').make(3)
+    const playlist = h.factory('playlist').make({ id: '966268ea-935d-4f63-a84e-180385376a78' })
     h.mock(playlistStore, 'byId').mockReturnValueOnce(playlist)
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
@@ -231,8 +234,8 @@ describe('playableStore', () => {
   })
 
   it('fetches for playlist with cache', async () => {
-    const songs = h.factory('song', 3)
-    const playlist = h.factory('playlist')
+    const songs = h.factory('song').make(3)
+    const playlist = h.factory('playlist').make()
     h.mock(playlistStore, 'byId').mockReturnValueOnce(playlist)
     cache.set(['playlist.songs', playlist.id], songs)
 
@@ -246,8 +249,8 @@ describe('playableStore', () => {
   })
 
   it('fetches for playlist discarding cache', async () => {
-    const songs = h.factory('song', 3)
-    const playlist = h.factory('playlist')
+    const songs = h.factory('song').make(3)
+    const playlist = h.factory('playlist').make()
     h.mock(playlistStore, 'byId').mockReturnValueOnce(playlist)
     cache.set(['playlist.songs', playlist.id], songs)
 
@@ -261,7 +264,7 @@ describe('playableStore', () => {
   })
 
   it('paginates', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
 
     const getMock = h.mock(http, 'get').mockResolvedValueOnce({
       data: songs,
@@ -289,7 +292,7 @@ describe('playableStore', () => {
   })
 
   it('paginates for genre', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const reactiveSongs = reactive(songs)
 
     const getMock = h.mock(http, 'get').mockResolvedValueOnce({
@@ -320,7 +323,7 @@ describe('playableStore', () => {
   })
 
   it('fetches songs for genre to queue', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const reactiveSongs = reactive(songs)
 
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(songs)
@@ -333,7 +336,7 @@ describe('playableStore', () => {
   })
 
   it('fetches random songs for genre to queue', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const reactiveSongs = reactive(songs)
 
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(songs)
@@ -346,7 +349,7 @@ describe('playableStore', () => {
   })
 
   it('fetches favorites', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const getMock = h.mock(http, 'get').mockResolvedValue(songs)
 
     await playableStore.fetchFavorites()
@@ -356,12 +359,12 @@ describe('playableStore', () => {
   })
 
   it('toggles favorite to true', async () => {
-    playableStore.state.favorites = h.factory('song', 2, { favorite: true })
+    playableStore.state.favorites = h.factory('song').make({ favorite: true }, 2)
 
-    const song = h.factory('song', { favorite: false })
+    const song = h.factory('song').make({ favorite: false })
 
     const postMock = h.mock(http, 'post').mockResolvedValue(
-      h.factory('favorite', {
+      h.factory('favorite').make({
         favoriteable_type: 'playable',
         favoriteable_id: song.id,
       }),
@@ -379,7 +382,7 @@ describe('playableStore', () => {
   })
 
   it('toggles favorite to false', async () => {
-    playableStore.state.favorites = h.factory('song', 3, { favorite: true })
+    playableStore.state.favorites = h.factory('song').make({ favorite: true }, 3)
 
     const song = playableStore.state.favorites[0]
     const postMock = h.mock(http, 'post').mockResolvedValue(null)
@@ -397,7 +400,7 @@ describe('playableStore', () => {
   })
 
   it('adds to favorites', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const postMock = h.mock(http, 'post')
 
     await playableStore.favorite(songs)
@@ -409,7 +412,7 @@ describe('playableStore', () => {
   })
 
   it('removes from favorites', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const deleteMock = h.mock(http, 'delete')
 
     await playableStore.undoFavorite(songs)
@@ -421,10 +424,13 @@ describe('playableStore', () => {
   })
 
   it('syncs album properties', () => {
-    const album = h.factory('album')
-    const songs = h.factory('song', 3, {
-      album_id: album.id,
-    })
+    const album = h.factory('album').make()
+    const songs = h.factory('song').make(
+      {
+        album_id: album.id,
+      },
+      3,
+    )
 
     playableStore.syncWithVault(songs)
 
@@ -440,15 +446,21 @@ describe('playableStore', () => {
   })
 
   it('syncs artist properties', () => {
-    const artist = h.factory('artist')
+    const artist = h.factory('artist').make()
 
-    const songsFromArtist = h.factory('song', 3, {
-      artist_id: artist.id,
-    })
+    const songsFromArtist = h.factory('song').make(
+      {
+        artist_id: artist.id,
+      },
+      3,
+    )
 
-    const songsContributedByArtist = h.factory('song', 2, {
-      album_artist_id: artist.id,
-    })
+    const songsContributedByArtist = h.factory('song').make(
+      {
+        album_artist_id: artist.id,
+      },
+      2,
+    )
 
     playableStore.syncWithVault([...songsFromArtist, ...songsContributedByArtist])
 

@@ -40,7 +40,7 @@ describe('offlineSongsScreen', () => {
   })
 
   it('shows cached songs count in header', () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     songs.forEach(s => {
       cachedSongIds.value.add(s.id)
     })

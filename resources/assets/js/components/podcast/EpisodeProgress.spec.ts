@@ -6,7 +6,7 @@ describe('EpisodeProgress', () => {
   const h = createHarness()
 
   it('renders progress bar with correct percentage', () => {
-    const episode = h.factory('episode', { length: 200 })
+    const episode = h.factory('episode').make({ length: 200 })
     const { container } = h.render(Component, { props: { episode, position: 50 } })
 
     const bar = container.querySelector('span')!
@@ -14,7 +14,7 @@ describe('EpisodeProgress', () => {
   })
 
   it('renders 0% for position 0', () => {
-    const episode = h.factory('episode', { length: 100 })
+    const episode = h.factory('episode').make({ length: 100 })
     const { container } = h.render(Component, { props: { episode, position: 0 } })
 
     const bar = container.querySelector('span')!
@@ -22,7 +22,7 @@ describe('EpisodeProgress', () => {
   })
 
   it('renders 100% when fully played', () => {
-    const episode = h.factory('episode', { length: 300 })
+    const episode = h.factory('episode').make({ length: 300 })
     const { container } = h.render(Component, { props: { episode, position: 300 } })
 
     const bar = container.querySelector('span')!

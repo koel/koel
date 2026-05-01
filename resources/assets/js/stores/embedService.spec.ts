@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
-import type { ModelToTypeMap } from '@/__tests__/factory'
+import type { Factoria } from 'factoria'
 import { embedService } from '@/stores/embedService'
 
 describe('embedService', async () => {
   const h = createHarness()
 
-  it.each<[keyof ModelToTypeMap, string]>([
+  it.each<[keyof Factoria.ModelRegistry, string]>([
     ['song', 'playable'],
     ['episode', 'playable'],
     ['album', 'album'],
     ['artist', 'artist'],
     ['playlist', 'playlist'],
   ])('resolves for %s', async (model, embeddableType) => {
-    const playable = h.factory(model) as Embeddable
-    const embed = h.factory('embed')
+    const playable = h.factory(model).make() as Embeddable
+    const embed = h.factory('embed').make()
     const postMock = h.mock(http, 'post').mockResolvedValue(embed)
 
     const resolved = await embedService.resolveForEmbeddable(playable)
@@ -42,7 +42,7 @@ describe('embedService', async () => {
   })
 
   it('get widget payload', async () => {
-    const embed = h.factory('embed')
+    const embed = h.factory('embed').make()
     const options: EmbedOptions = {
       theme: 'cat',
       layout: 'grid',
@@ -58,7 +58,7 @@ describe('embedService', async () => {
   })
 
   it('get widget payload with invalid theme', async () => {
-    const embed = h.factory('embed')
+    const embed = h.factory('embed').make()
     const options: EmbedOptions = {
       theme: 'invalid-theme',
       layout: 'full',

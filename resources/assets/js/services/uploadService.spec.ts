@@ -127,7 +127,7 @@ describe('uploadService', () => {
   })
 
   it('uploads a file successfully', async () => {
-    const result = { song: h.factory('song'), album: h.factory('album') }
+    const result = { song: h.factory('song').make(), album: h.factory('album').make() }
     mockPostWithProgress(result)
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     const proceedMock = h.mock(uploadService, 'proceed')
@@ -154,7 +154,7 @@ describe('uploadService', () => {
   })
 
   it('sets progress during upload', async () => {
-    const result = { song: h.factory('song'), album: h.factory('album') }
+    const result = { song: h.factory('song').make(), album: h.factory('album').make() }
     postWithProgressMock.mockImplementation((_url: string, _data: FormData, onProgress: Function) => {
       onProgress({ loaded: 50, total: 100 })
       return { promise: Promise.resolve(result), abort: vi.fn() }
@@ -221,7 +221,7 @@ describe('uploadService', () => {
   })
 
   it('cleans up abort handle after successful upload', async () => {
-    const result = { song: h.factory('song'), album: h.factory('album') }
+    const result = { song: h.factory('song').make(), album: h.factory('album').make() }
     mockPostWithProgress(result)
     h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')

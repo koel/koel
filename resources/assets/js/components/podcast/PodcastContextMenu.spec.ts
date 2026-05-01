@@ -12,7 +12,7 @@ describe('podcastContextMenu.vue', () => {
   const renderComponent = async (podcast?: Podcast) => {
     podcast =
       podcast ||
-      h.factory('podcast', {
+      h.factory('podcast').make({
         title: 'A Brief History of Time',
         author: 'Stephen Hawking',
         favorite: false,
@@ -37,7 +37,7 @@ describe('podcastContextMenu.vue', () => {
   it('plays all', async () => {
     h.createAudioPlayer()
 
-    const episodes = h.factory('episode', 10)
+    const episodes = h.factory('episode').make(10)
     const fetchMock = h.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
@@ -52,7 +52,7 @@ describe('podcastContextMenu.vue', () => {
   it('shuffles all', async () => {
     h.createAudioPlayer()
 
-    const episodes = h.factory('episode', 10)
+    const episodes = h.factory('episode').make(10)
     const fetchMock = h.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
@@ -74,7 +74,7 @@ describe('podcastContextMenu.vue', () => {
   })
 
   it('undoes favorite', async () => {
-    const { podcast } = await renderComponent(h.factory('podcast', { favorite: true }))
+    const { podcast } = await renderComponent(h.factory('podcast').make({ favorite: true }))
     const favoriteMock = h.mock(podcastStore, 'toggleFavorite')
 
     await h.user.click(screen.getByText('Undo Favorite'))

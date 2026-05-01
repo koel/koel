@@ -27,7 +27,7 @@ describe('artistContextMenu.vue', () => {
   const renderComponent = async (artist?: Artist) => {
     artist =
       artist ||
-      h.factory('artist', {
+      h.factory('artist').make({
         name: 'Accept',
         favorite: false,
         permissions: { edit: true },
@@ -50,7 +50,7 @@ describe('artistContextMenu.vue', () => {
   it('plays all', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
@@ -65,7 +65,7 @@ describe('artistContextMenu.vue', () => {
   it('shuffles all', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
@@ -94,13 +94,13 @@ describe('artistContextMenu.vue', () => {
   })
 
   it('does not have an option to download Unknown Artist', async () => {
-    await renderComponent(factory.states('unknown')('artist'))
+    await renderComponent(factory('artist').state('unknown').make())
 
     expect(screen.queryByText('Download')).toBeNull()
   })
 
   it('does not have an option to download Various Artist', async () => {
-    await renderComponent(factory.states('various')('artist'))
+    await renderComponent(factory('artist').state('various').make())
     expect(screen.queryByText('Download')).toBeNull()
   })
 

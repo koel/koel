@@ -22,7 +22,7 @@ describe('albumScreen.vue', () => {
 
     album =
       album ||
-      h.factory('album', {
+      h.factory('album').make({
         name: 'Led Zeppelin IV',
         artist_id: 'bar',
         artist_name: 'Led Zeppelin',
@@ -30,7 +30,7 @@ describe('albumScreen.vue', () => {
 
     const resolveAlbumMock = h.mock(albumStore, 'resolve').mockResolvedValue(album)
 
-    const songs = h.factory('song', 13)
+    const songs = h.factory('song').make(13)
     const fetchSongsMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
 
     h.visit(`albums/${album.id}/${tab}`)
@@ -83,7 +83,7 @@ describe('albumScreen.vue', () => {
   })
 
   it('shows other albums from the same artist', async () => {
-    const albums = h.factory('album', 3)
+    const albums = h.factory('album').make(3)
     const fetchMock = h.mock(albumStore, 'fetchForArtist').mockResolvedValue(albums)
     const { album } = await renderComponent('other-albums')
 
@@ -96,7 +96,7 @@ describe('albumScreen.vue', () => {
   })
 
   it('has a Favorite button if album is favorite', async () => {
-    const { album } = await renderComponent('songs', h.factory('album', { favorite: true }))
+    const { album } = await renderComponent('songs', h.factory('album').make({ favorite: true }))
     const favoriteMock = h.mock(albumStore, 'toggleFavorite')
 
     await waitFor(async () => {
@@ -106,7 +106,7 @@ describe('albumScreen.vue', () => {
   })
 
   it('does not have a Favorite button if album is not favorite', async () => {
-    await renderComponent('songs', h.factory('album', { favorite: false }))
+    await renderComponent('songs', h.factory('album').make({ favorite: false }))
     expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
   })
 

@@ -7,14 +7,14 @@ describe('genreStore', () => {
   const h = createHarness()
 
   it('fetches all genres', async () => {
-    const genres = h.factory('genre', 3)
+    const genres = h.factory('genre').make(3)
     h.mock(http, 'get').mockResolvedValue(genres)
 
     expect(await genreStore.fetchAll()).toEqual(genres)
   })
 
   it('fetches a single genre', async () => {
-    const genre = h.factory('genre')
+    const genre = h.factory('genre').make()
     h.mock(http, 'get').mockResolvedValue(genre)
 
     expect(await genreStore.fetchOne(genre.id)).toEqual(genre)

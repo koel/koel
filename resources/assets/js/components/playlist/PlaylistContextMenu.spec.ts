@@ -38,7 +38,7 @@ describe('playlistContextMenu.vue', () => {
       h.mock(playableStore, 'fetchForPlaylist').mockResolvedValue([])
     }
 
-    user = user || (h.factory.states('current')('user') as CurrentUser)
+    user = user || (h.factory('user').state('current').make() as CurrentUser)
 
     userStore.state.current = user
 
@@ -58,10 +58,10 @@ describe('playlistContextMenu.vue', () => {
   }
 
   const makeEditablePlaylist = (overrides: Partial<Playlist> = {}) =>
-    h.factory('playlist', { permissions: { edit: true, delete: false }, ...overrides })
+    h.factory('playlist').make({ permissions: { edit: true, delete: false }, ...overrides })
 
   const makeDeletablePlaylist = (overrides: Partial<Playlist> = {}) =>
-    h.factory('playlist', { permissions: { edit: false, delete: true }, ...overrides })
+    h.factory('playlist').make({ permissions: { edit: false, delete: true }, ...overrides })
 
   it('edits a standard playlist', async () => {
     const { playlist } = await renderComponent(makeEditablePlaylist())
@@ -73,7 +73,9 @@ describe('playlistContextMenu.vue', () => {
 
   it('edits a smart playlist', async () => {
     const { playlist } = await renderComponent(
-      factory.states('smart')('playlist', { permissions: { edit: true, delete: false } }),
+      factory('playlist')
+        .state('smart')
+        .make({ permissions: { edit: true, delete: false } }),
     )
 
     await h.user.click(screen.getByText('Edit…'))
@@ -105,11 +107,11 @@ describe('playlistContextMenu.vue', () => {
   it('plays', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const fetchMock = h.mock(playableStore, 'fetchForPlaylist').mockResolvedValue(songs)
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
-    const { playlist } = await renderComponent(h.factory('playlist'))
+    const { playlist } = await renderComponent(h.factory('playlist').make())
 
     await h.user.click(screen.getByText('Play'))
 
@@ -128,7 +130,7 @@ describe('playlistContextMenu.vue', () => {
     const goMock = h.mock(Router, 'go')
     const warnMock = h.mock(MessageToasterStub.value, 'warning')
 
-    const { playlist } = await renderComponent(h.factory('playlist'))
+    const { playlist } = await renderComponent(h.factory('playlist').make())
 
     await h.user.click(screen.getByText('Play'))
 
@@ -143,11 +145,11 @@ describe('playlistContextMenu.vue', () => {
   it('shuffles', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const fetchMock = h.mock(playableStore, 'fetchForPlaylist').mockResolvedValue(songs)
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
-    const { playlist } = await renderComponent(h.factory('playlist'))
+    const { playlist } = await renderComponent(h.factory('playlist').make())
 
     await h.user.click(screen.getByText('Shuffle'))
 
@@ -166,7 +168,7 @@ describe('playlistContextMenu.vue', () => {
     const goMock = h.mock(Router, 'go')
     const warnMock = h.mock(MessageToasterStub.value, 'warning')
 
-    const { playlist } = await renderComponent(h.factory('playlist'))
+    const { playlist } = await renderComponent(h.factory('playlist').make())
 
     await h.user.click(screen.getByText('Shuffle'))
 
@@ -181,11 +183,11 @@ describe('playlistContextMenu.vue', () => {
   it('queues', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const fetchMock = h.mock(playableStore, 'fetchForPlaylist').mockResolvedValue(songs)
     const queueMock = h.mock(queueStore, 'queueAfterCurrent')
     const toastMock = h.mock(MessageToasterStub.value, 'success')
-    const { playlist } = await renderComponent(h.factory('playlist'))
+    const { playlist } = await renderComponent(h.factory('playlist').make())
 
     await h.user.click(screen.getByText('Add to Queue'))
 
@@ -197,8 +199,8 @@ describe('playlistContextMenu.vue', () => {
   })
 
   it('does not have an option to edit or delete if the playlist is not owned by the current user', async () => {
-    const playlist = h.factory('playlist', { permissions: { edit: false, delete: false } })
-    await renderComponent(playlist, h.factory.states('current')('user') as CurrentUser)
+    const playlist = h.factory('playlist').make({ permissions: { edit: false, delete: false } })
+    await renderComponent(playlist, h.factory('user').state('current').make() as CurrentUser)
 
     expect(screen.queryByText('Edit…')).toBeNull()
     expect(screen.queryByText('Delete')).toBeNull()
@@ -206,7 +208,7 @@ describe('playlistContextMenu.vue', () => {
 
   it('opens collaboration form', async () =>
     await h.withPlusEdition(async () => {
-      const { playlist } = await renderComponent(h.factory('playlist'))
+      const { playlist } = await renderComponent(h.factory('playlist').make())
 
       await h.user.click(screen.getByText('Collaborate…'))
 
@@ -214,7 +216,7 @@ describe('playlistContextMenu.vue', () => {
     }))
 
   it('requests the embed form', async () => {
-    const { playlist } = await renderComponent(h.factory('playlist'))
+    const { playlist } = await renderComponent(h.factory('playlist').make())
     await h.user.click(screen.getByText('Embed…'))
 
     await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: playlist })

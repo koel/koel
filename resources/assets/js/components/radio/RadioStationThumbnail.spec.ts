@@ -9,7 +9,7 @@ describe('radioStationThumbnail.vue', () => {
   const renderComponent = (station?: RadioStation) => {
     station =
       station ||
-      h.factory('radio-station', {
+      h.factory('radio-station').make({
         name: 'Beethoven Goes Metal',
         logo: 'https://test/beet.jpg',
       })

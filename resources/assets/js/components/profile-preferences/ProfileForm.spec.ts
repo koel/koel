@@ -17,7 +17,7 @@ describe('profileForm.vue', () => {
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
     renderComponent(
-      h.factory('user', {
+      h.factory('user').make({
         avatar: 'https://gravatar.com/foo',
       }) as CurrentUser,
     )

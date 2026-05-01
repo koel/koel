@@ -31,16 +31,16 @@ describe('overviewStore', () => {
     const artistSyncMock = h.mock(artistStore, 'syncWithVault')
     const refreshMock = h.mock(overviewStore, 'refreshPlayStats')
 
-    const mostPlayedSongs = h.factory('song', 6)
-    const mostPlayedAlbums = h.factory('album', 6)
-    const mostPlayedArtists = h.factory('artist', 6)
-    const recentlyAddedSongs = h.factory('song', 6)
-    const recentlyAddedAlbums = h.factory('album', 6)
-    const recentlyAddedArtists = h.factory('artist', 6)
-    const recentlyPlayedSongs = h.factory('song', 6)
-    const leastPlayedSongs = h.factory('song', 6)
-    const randomSongs = h.factory('song', 6)
-    const similarSongs = h.factory('song', 6)
+    const mostPlayedSongs = h.factory('song').make(6)
+    const mostPlayedAlbums = h.factory('album').make(6)
+    const mostPlayedArtists = h.factory('artist').make(6)
+    const recentlyAddedSongs = h.factory('song').make(6)
+    const recentlyAddedAlbums = h.factory('album').make(6)
+    const recentlyAddedArtists = h.factory('artist').make(6)
+    const recentlyPlayedSongs = h.factory('song').make(6)
+    const leastPlayedSongs = h.factory('song').make(6)
+    const randomSongs = h.factory('song').make(6)
+    const similarSongs = h.factory('song').make(6)
 
     const getMock = h.mock(http, 'get').mockResolvedValueOnce({
       most_played_songs: mostPlayedSongs,
@@ -72,8 +72,8 @@ describe('overviewStore', () => {
   })
 
   it('refreshes the store', () => {
-    const mostPlayedSongs = h.factory('song', 6)
-    const recentlyPlayedSongs = h.factory('song', 6)
+    const mostPlayedSongs = h.factory('song').make(6)
+    const recentlyPlayedSongs = h.factory('song').make(6)
 
     const mostPlayedSongsMock = h.mock(playableStore, 'getMostPlayedSongs', mostPlayedSongs)
     recentlyPlayedStore.excerptState.playables = recentlyPlayedSongs

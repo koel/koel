@@ -59,7 +59,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   const renderComponent = async (playables?: MaybeArray<Playable>) => {
-    playables = playables ? arrayify(playables) : h.factory('song', 5)
+    playables = playables ? arrayify(playables) : h.factory('song').make(5)
 
     const rendered = h.render(Component, {
       props: {
@@ -76,7 +76,7 @@ describe('playableContextMenu.vue', () => {
   }
 
   const fillQueue = () => {
-    queueStore.state.playables = h.factory('song', 5)
+    queueStore.state.playables = h.factory('song').make(5)
     playableStore.syncWithVault(queueStore.state.playables)
     queueStore.state.playables[2].playback_state = 'Playing'
   }
@@ -85,7 +85,7 @@ describe('playableContextMenu.vue', () => {
     h.createAudioPlayer()
 
     const playMock = h.mock(playbackService, 'play')
-    const song = h.factory('song', { playback_state: 'Stopped' })
+    const song = h.factory('song').make({ playback_state: 'Stopped' })
     await renderComponent(song)
 
     await h.user.click(screen.getByText('Play'))
@@ -97,7 +97,7 @@ describe('playableContextMenu.vue', () => {
     h.createAudioPlayer()
 
     const pauseMock = h.mock(playbackService, 'pause')
-    await renderComponent(h.factory('song', { playback_state: 'Playing' }))
+    await renderComponent(h.factory('song').make({ playback_state: 'Playing' }))
 
     await h.user.click(screen.getByText('Pause'))
 
@@ -108,7 +108,7 @@ describe('playableContextMenu.vue', () => {
     h.createAudioPlayer()
 
     const resumeMock = h.mock(playbackService, 'resume')
-    await renderComponent(h.factory('song', { playback_state: 'Paused' }))
+    await renderComponent(h.factory('song').make({ playback_state: 'Paused' }))
 
     await h.user.click(screen.getByText('Play'))
 
@@ -117,7 +117,7 @@ describe('playableContextMenu.vue', () => {
 
   it('goes to album details screen', async () => {
     const goMock = h.mock(Router, 'go')
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     await renderComponent(song)
 
     await h.user.click(screen.getByText(song.album_name))
@@ -127,7 +127,7 @@ describe('playableContextMenu.vue', () => {
 
   it('goes to artist details screen', async () => {
     const goMock = h.mock(Router, 'go')
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     await renderComponent(song)
 
     await h.user.click(screen.getByText(song.artist_name))
@@ -137,7 +137,7 @@ describe('playableContextMenu.vue', () => {
 
   it('goes to podcast screen', async () => {
     const goMock = h.mock(Router, 'go')
-    const episode = h.factory('episode')
+    const episode = h.factory('episode').make()
     await renderComponent(episode)
 
     await h.user.click(screen.getByText('Podcast'))
@@ -147,7 +147,7 @@ describe('playableContextMenu.vue', () => {
 
   it('goes to episode description', async () => {
     const goMock = h.mock(Router, 'go')
-    const episode = h.factory('episode')
+    const episode = h.factory('episode').make()
     await renderComponent(episode)
 
     await h.user.click(screen.getByText('Episode'))
@@ -252,7 +252,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('lists and adds to existing playlist', async () => {
-    playlistStore.state.playlists = h.factory('playlist', 3)
+    playlistStore.state.playlists = h.factory('playlist').make(3)
     const addMock = h.mock(playlistStore, 'addContent')
     h.mock(MessageToasterStub.value, 'success')
     const { playables } = await renderComponent()
@@ -265,8 +265,8 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('does not list smart playlists', async () => {
-    playlistStore.state.playlists = h.factory('playlist', 3)
-    playlistStore.state.playlists.push(factory.states('smart')('playlist', { name: 'My Smart Playlist' }))
+    playlistStore.state.playlists = h.factory('playlist').make(3)
+    playlistStore.state.playlists.push(factory('playlist').state('smart').make({ name: 'My Smart Playlist' }))
 
     await renderComponent()
 
@@ -274,7 +274,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('removes from playlist', async () => {
-    const playlist = h.factory('playlist')
+    const playlist = h.factory('playlist').make()
     playlistStore.state.playlists.push(playlist)
 
     h.visit(`/playlists/${playlist.id}`)
@@ -314,20 +314,20 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('has an option to copy shareable URL in Community edition', async () => {
-    await renderComponent(h.factory('song'))
+    await renderComponent(h.factory('song').make())
     screen.getByText('Copy URL')
   })
 
   it('has an option to copy shareable URL if song is public in Plus edition', async () => {
     await h.withPlusEdition(async () => {
-      await renderComponent(h.factory('song', { is_public: true }))
+      await renderComponent(h.factory('song').make({ is_public: true }))
       screen.getByText('Copy URL')
     })
   })
 
   it('does not have an option to share if song is private in Plus edition', async () => {
     await h.withPlusEdition(async () => {
-      await renderComponent(h.factory('song', { is_public: false }))
+      await renderComponent(h.factory('song').make({ is_public: false }))
       expect(screen.queryByText('Copy URL')).toBeNull()
     })
   })
@@ -367,18 +367,21 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('does not have the options to mark song as private or public in Community edition', async () => {
-    await renderComponent(h.factory('song'))
+    await renderComponent(h.factory('song').make())
     expect(screen.queryByText('Mark as Private')).toBeNull()
     expect(screen.queryByText('Unmark as Private')).toBeNull()
   })
 
   it('makes songs private', async () =>
     await h.withPlusEdition(async () => {
-      const user = h.factory.states('current')('user') as CurrentUser
-      const songs = h.factory('song', 5, {
-        is_public: true,
-        owner_id: user.id,
-      })
+      const user = h.factory('user').state('current').make() as CurrentUser
+      const songs = h.factory('song').make(
+        {
+          is_public: true,
+          owner_id: user.id,
+        },
+        5,
+      )
 
       h.actingAsUser(user)
 
@@ -392,11 +395,14 @@ describe('playableContextMenu.vue', () => {
 
   it('makes songs public', async () =>
     await h.withPlusEdition(async () => {
-      const user = h.factory.states('current')('user') as CurrentUser
-      const songs = h.factory('song', 5, {
-        is_public: false,
-        owner_id: user.id,
-      })
+      const user = h.factory('user').state('current').make() as CurrentUser
+      const songs = h.factory('song').make(
+        {
+          is_public: false,
+          owner_id: user.id,
+        },
+        5,
+      )
 
       h.actingAsUser(user)
 
@@ -410,12 +416,15 @@ describe('playableContextMenu.vue', () => {
 
   it('does not have an option to make songs public or private if current user is not owner', async () => {
     await h.withPlusEdition(async () => {
-      const user = h.factory.states('current')('user') as CurrentUser
-      const owner = h.factory('user')
-      const songs = h.factory('song', 5, {
-        is_public: false,
-        owner_id: owner.id,
-      })
+      const user = h.factory('user').state('current').make() as CurrentUser
+      const owner = h.factory('user').make()
+      const songs = h.factory('song').make(
+        {
+          is_public: false,
+          owner_id: owner.id,
+        },
+        5,
+      )
 
       h.actingAsUser(user)
 
@@ -428,17 +437,24 @@ describe('playableContextMenu.vue', () => {
 
   it('has both options to make public and private if songs have mixed visibilities', async () => {
     await h.withPlusEdition(async () => {
-      const owner = h.factory.states('current')('user') as CurrentUser
+      const owner = h.factory('user').state('current').make() as CurrentUser
       const songs = h
-        .factory('song', 2, {
-          is_public: false,
-          owner_id: owner.id,
-        })
-        .concat(
-          ...h.factory('song', 3, {
-            is_public: true,
+        .factory('song')
+        .make(
+          {
+            is_public: false,
             owner_id: owner.id,
-          }),
+          },
+          2,
+        )
+        .concat(
+          ...h.factory('song').make(
+            {
+              is_public: true,
+              owner_id: owner.id,
+            },
+            3,
+          ),
         )
 
       h.actingAsUser(owner)
@@ -450,11 +466,14 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('does not have an option to make songs public or private or Community edition', async () => {
-    const owner = h.factory.states('current')('user') as CurrentUser
-    const songs = h.factory('song', 5, {
-      is_public: false,
-      owner_id: owner.id,
-    })
+    const owner = h.factory('user').state('current').make() as CurrentUser
+    const songs = h.factory('song').make(
+      {
+        is_public: false,
+        owner_id: owner.id,
+      },
+      5,
+    )
 
     h.actingAsUser(owner)
     await renderComponent(songs)
@@ -464,7 +483,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('requests the embed form', async () => {
-    const { playables } = await renderComponent(h.factory('song'))
+    const { playables } = await renderComponent(h.factory('song').make())
     await h.user.click(screen.getByText('Embed…'))
 
     await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: playables[0] })
@@ -481,7 +500,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('does not show offline option for episodes', async () => {
-    await renderComponent(h.factory('episode'))
+    await renderComponent(h.factory('episode').make())
     expect(screen.queryByText('Make Available Offline')).toBeNull()
   })
 

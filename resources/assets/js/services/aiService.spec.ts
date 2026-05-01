@@ -50,7 +50,7 @@ describe('aiService', () => {
 
   describe('handleResponse', () => {
     it('handles play_songs action', () => {
-      const songs = h.factory('song', 3)
+      const songs = h.factory('song').make(3)
       const response: AiResponse = {
         message: 'Playing 3 songs.',
         action: 'play_songs',
@@ -70,7 +70,7 @@ describe('aiService', () => {
     })
 
     it('handles play_songs with queue flag', () => {
-      const songs = h.factory('song', 2)
+      const songs = h.factory('song').make(2)
       const response: AiResponse = {
         message: 'Added to queue.',
         action: 'play_songs',
@@ -86,7 +86,7 @@ describe('aiService', () => {
     })
 
     it('handles create_smart_playlist action', () => {
-      const playlist = h.factory('playlist')
+      const playlist = h.factory('playlist').make()
       h.mock(playlistStore, 'setupSmartPlaylist')
 
       const response: AiResponse = {
@@ -103,7 +103,7 @@ describe('aiService', () => {
     })
 
     it('handles add_radio_station action', () => {
-      const station = h.factory('radio-station')
+      const station = h.factory('radio-station').make()
       h.mock(radioStationStore, 'sync').mockReturnValue([station])
 
       const response: AiResponse = {
@@ -120,7 +120,7 @@ describe('aiService', () => {
     })
 
     it('handles add_to_favorites action', () => {
-      const songs = h.factory('song', 2)
+      const songs = h.factory('song').make(2)
       h.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
       const response: AiResponse = {

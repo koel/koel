@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import type { ModelToTypeMap } from '@/__tests__/factory'
+import type { ModelFieldPair } from '@/__tests__/factory'
 import { screen } from '@testing-library/vue'
 import EmbedWidgetThumbnail from './EmbedWidgetThumbnail.vue'
 
@@ -20,19 +20,19 @@ describe('embedThumbnail.vue', () => {
     }
   }
 
-  it.each<[keyof ModelToTypeMap, string]>([
+  it.each<ModelFieldPair>([
     ['album', 'cover'],
     ['artist', 'image'],
     ['playlist', 'cover'],
     ['song', 'album_cover'],
     ['episode', 'episode_image'],
   ])('renders thumbnail for %s', (type, imageField) => {
-    const { embeddable } = renderComponent(h.factory(type) as Embeddable)
+    const { embeddable } = renderComponent(h.factory(type).make() as Embeddable)
     expect(screen.getByRole('img').getAttribute('src')).toBe(embeddable[imageField])
   })
 
   it('renders a default placeholder', () => {
-    renderComponent(h.factory('playlist', { cover: null }))
+    renderComponent(h.factory('playlist').make({ cover: null }))
     expect(screen.getByRole('img').getAttribute('src')).toContain('/resources/assets/img/covers/default.svg')
   })
 })

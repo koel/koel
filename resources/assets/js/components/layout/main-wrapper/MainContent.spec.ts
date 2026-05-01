@@ -15,7 +15,7 @@ describe('mainContent.vue', () => {
     return h.render(Component, {
       global: {
         provide: {
-          [<symbol>CurrentStreamableKey]: ref(h.factory('song')),
+          [<symbol>CurrentStreamableKey]: ref(h.factory('song').make()),
         },
         stubs: {
           AlbumArtOverlay,

@@ -8,7 +8,7 @@ describe('playlistCollaborationModal.vue', () => {
   it('renders the modal', async () => {
     const { html } = h.render(Component, {
       props: {
-        playlist: h.factory('playlist'),
+        playlist: h.factory('playlist').make(),
       },
       global: {
         stubs: {

@@ -71,13 +71,13 @@ class TestHarness {
   public readonly auth = (user?: CurrentUser) => this.actingAsUser(user)
 
   public actingAsUser(user?: CurrentUser) {
-    userStore.state.current = user || (factory.states('current')('user') as CurrentUser)
+    userStore.state.current = user || (factory('user').state('current').make() as CurrentUser)
     preferenceStore.init(userStore.state.current.preferences)
     return this
   }
 
   public actingAsAdmin() {
-    return this.actingAsUser(factory.states('admin')('user') as CurrentUser)
+    return this.actingAsUser(factory('user').state('admin').make() as CurrentUser)
   }
 
   public mock<T, M extends MethodOf<Required<T>>>(obj: T, methodName: M, implementation?: any) {

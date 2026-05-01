@@ -14,13 +14,13 @@ describe('artistStore', () => {
   })
 
   it('gets an artist by ID', () => {
-    const artist = h.factory('artist')
+    const artist = h.factory('artist').make()
     artistStore.vault.set(artist.id, artist)
     expect(artistStore.byId(artist.id)).toEqual(artist)
   })
 
   it('removes artists by IDs', () => {
-    const artists = h.factory('artist', 3)
+    const artists = h.factory('artist').make(3)
     artists.forEach(artist => artistStore.vault.set(artist.id, artist))
     artistStore.state.artists = artists
 
@@ -33,29 +33,29 @@ describe('artistStore', () => {
   })
 
   it('identifies an unknown artist', () => {
-    const artist = factory.states('unknown')('artist')
+    const artist = factory('artist').state('unknown').make()
 
     expect(artistStore.isUnknown(artist)).toBe(true)
     expect(artistStore.isUnknown(artist.name)).toBe(true)
-    expect(artistStore.isUnknown(h.factory('artist'))).toBe(false)
+    expect(artistStore.isUnknown(h.factory('artist').make())).toBe(false)
   })
 
   it('identifies the various artist', () => {
-    const artist = factory.states('various')('artist')
+    const artist = factory('artist').state('various').make()
 
     expect(artistStore.isVarious(artist)).toBe(true)
     expect(artistStore.isVarious(artist.name)).toBe(true)
-    expect(artistStore.isVarious(h.factory('artist'))).toBe(false)
+    expect(artistStore.isVarious(h.factory('artist').make())).toBe(false)
   })
 
   it('identifies a standard artist', () => {
-    expect(artistStore.isStandard(factory.states('unknown')('artist'))).toBe(false)
-    expect(artistStore.isStandard(factory.states('various')('artist'))).toBe(false)
-    expect(artistStore.isStandard(h.factory('artist'))).toBe(true)
+    expect(artistStore.isStandard(factory('artist').state('unknown').make())).toBe(false)
+    expect(artistStore.isStandard(factory('artist').state('various').make())).toBe(false)
+    expect(artistStore.isStandard(h.factory('artist').make())).toBe(true)
   })
 
   it('syncs artists with the vault', () => {
-    const artist = h.factory('artist', { name: 'Led Zeppelin' })
+    const artist = h.factory('artist').make({ name: 'Led Zeppelin' })
 
     artistStore.syncWithVault(artist)
     expect(artistStore.vault.get(artist.id)).toEqual(artist)
@@ -68,7 +68,7 @@ describe('artistStore', () => {
   })
 
   it('resolves an artist', async () => {
-    const artist = h.factory('artist')
+    const artist = h.factory('artist').make()
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(artist)
 
     expect(await artistStore.resolve(artist.id)).toEqual(artist)
@@ -80,7 +80,7 @@ describe('artistStore', () => {
   })
 
   it('paginates', async () => {
-    const artists = h.factory('artist', 3)
+    const artists = h.factory('artist').make(3)
 
     h.mock(http, 'get').mockResolvedValueOnce({
       data: artists,
@@ -106,11 +106,11 @@ describe('artistStore', () => {
   })
 
   it('toggles favorite', async () => {
-    const artist = h.factory('artist', { favorite: false })
+    const artist = h.factory('artist').make({ favorite: false })
     artistStore.syncWithVault(artist)
 
     const postMock = h.mock(http, 'post').mockResolvedValueOnce(
-      h.factory('favorite', {
+      h.factory('favorite').make({
         favoriteable_type: 'artist',
         favoriteable_id: artist.id,
       }),
@@ -129,7 +129,7 @@ describe('artistStore', () => {
   })
 
   it('updates artist', async () => {
-    const artist = h.factory('artist', { name: 'Led Zeppelin' })
+    const artist = h.factory('artist').make({ name: 'Led Zeppelin' })
     artistStore.syncWithVault(artist)
 
     const updatedArtist = {

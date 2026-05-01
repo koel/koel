@@ -22,7 +22,7 @@ describe('artistListScreen.vue', () => {
 
   const renderComponent = async () => {
     const paginator: PaginatorResource<Artist> = {
-      data: h.factory('artist', 9),
+      data: h.factory('artist').make(9),
       links: {
         next: '?page=1',
       },
@@ -117,7 +117,7 @@ describe('artistListScreen.vue', () => {
   })
 
   it('filters out unfavorited artists in favorites mode', async () => {
-    const artists = h.factory('artist', 5, { favorite: true })
+    const artists = h.factory('artist').make({ favorite: true }, 5)
     artistStore.state.artists = artists
 
     h.mock(artistStore, 'paginate').mockResolvedValue(null)

@@ -7,7 +7,7 @@ describe('playlistFolderSidebarItem.vue', () => {
   const h = createHarness()
 
   it('renders folder name', () => {
-    const folder = h.factory('playlist-folder')
+    const folder = h.factory('playlist-folder').make()
 
     h.render(Component, {
       props: { folder },

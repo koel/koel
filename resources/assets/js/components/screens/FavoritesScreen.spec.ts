@@ -8,7 +8,7 @@ describe('favoritesScreen.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (favorites?: Playable[]) => {
-    favorites = favorites ?? h.factory('song', 13)
+    favorites = favorites ?? h.factory('song').make(13)
     playableStore.state.favorites = favorites
 
     const fetchMock = h.mock(playableStore, 'fetchFavorites').mockResolvedValue(favorites)
