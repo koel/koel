@@ -41,7 +41,7 @@ describe('addRadioStationForm.vue', () => {
 
     await waitFor(() => screen.getByRole('img'))
 
-    await h.user.click(screen.getByLabelText('Make this station public'))
+    await h.user.click(screen.getByLabelText('Accessible to all users'))
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(storeMock).toHaveBeenCalledWith({
