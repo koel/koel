@@ -152,6 +152,50 @@ class PlaylistTest extends TestCase
     }
 
     #[Test]
+    public function updatingPlaylistMovesItBetweenFolders(): void
+    {
+        $playlist = create_playlist();
+        $folderA = $playlist->owner->playlistFolders()->create(['name' => 'A']);
+        $folderB = $playlist->owner->playlistFolders()->create(['name' => 'B']);
+        $playlist->folders()->attach($folderA->id);
+
+        $this->putAs(
+            "api/playlists/{$playlist->id}",
+            [
+                'name' => $playlist->name,
+                'description' => '',
+                'folder_id' => $folderB->id,
+            ],
+            $playlist->owner,
+        )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
+
+        $folder = app(PlaylistFolderService::class)->getFolderForPlaylist($playlist->refresh());
+        self::assertNotNull($folder);
+        self::assertSame($folderB->id, $folder->id);
+        self::assertCount(1, $playlist->folders()->where('user_id', $playlist->owner->id)->get());
+    }
+
+    #[Test]
+    public function updatingPlaylistWithNullFolderIdRemovesFromFolder(): void
+    {
+        $playlist = create_playlist();
+        $folder = $playlist->owner->playlistFolders()->create(['name' => 'A']);
+        $playlist->folders()->attach($folder->id);
+
+        $this->putAs(
+            "api/playlists/{$playlist->id}",
+            [
+                'name' => $playlist->name,
+                'description' => '',
+                'folder_id' => null,
+            ],
+            $playlist->owner,
+        )->assertJsonStructure(PlaylistResource::JSON_STRUCTURE);
+
+        self::assertNull(app(PlaylistFolderService::class)->getFolderForPlaylist($playlist->refresh()));
+    }
+
+    #[Test]
     public function createPlaylistWithoutCover(): void
     {
         /** @var PlaylistFolderService $playlistFolderService */
