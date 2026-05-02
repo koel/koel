@@ -73,15 +73,13 @@ const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
       delete formData.logo
     }
 
-    const oldUrl = station.url
+    const current = radioStationStore.current
+    const onAirUrl = current?.id === station.id && current.playback_state === 'Playing' ? station.url : null
 
-    await radioStationStore.update(station, formData)
+    const updated = await radioStationStore.update(station, formData)
 
-    const onAirStream =
-      radioStationStore.current?.id === station.id && radioStationStore.current.playback_state === 'Playing'
-
-    if (onAirStream && station.url !== oldUrl) {
-      await playback('radio').play(station)
+    if (onAirUrl && onAirUrl !== updated.url) {
+      await playback('radio').play(updated)
     }
   },
   onSuccess: () => {
