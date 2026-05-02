@@ -77,13 +77,10 @@ const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
 
     await radioStationStore.update(station, formData)
 
-    // The <audio> element is still pulling bytes from the old
-    // upstream connection; restart so the listener hears the new URL.
-    if (
-      station.url !== oldUrl &&
-      radioStationStore.current?.id === station.id &&
-      radioStationStore.current.playback_state === 'Playing'
-    ) {
+    const onAirStream =
+      radioStationStore.current?.id === station.id && radioStationStore.current.playback_state === 'Playing'
+
+    if (onAirStream && station.url !== oldUrl) {
       await playback('radio').play(station)
     }
   },
