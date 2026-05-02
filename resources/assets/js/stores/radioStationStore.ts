@@ -71,7 +71,26 @@ export const radioStationStore = {
   },
 
   async update(station: Reactive<RadioStation>, data: RadioStationData) {
-    return this.sync(await http.put<RadioStation>(`radio/stations/${station.id}`, data))[0]
+    const oldUrl = station.url
+    const updated = this.sync(await http.put<RadioStation>(`radio/stations/${station.id}`, data))[0]
+
+    // If the on-air station's URL just changed, the <audio> element is
+    // still streaming bytes from a connection opened against the old
+    // upstream URL — restart playback so the listener hears the new
+    // source. Restricted to the 'Playing' state on purpose: a paused
+    // user shouldn't have playback resume on its own.
+    //
+    // Lazy import: a static `import { playback } from
+    // '@/services/playbackManager'` would close the cycle
+    // playbackManager -> RadioPlaybackService -> radioStationStore ->
+    // playbackManager and leave playbackServiceMap holding undefineds.
+    const onAir = this.current
+    if (onAir?.id === station.id && onAir.playback_state === 'Playing' && oldUrl !== updated.url) {
+      const { playback } = await import('@/services/playbackManager')
+      await playback('radio').play(updated)
+    }
+
+    return updated
   },
 
   async delete(station: Reactive<RadioStation>) {
