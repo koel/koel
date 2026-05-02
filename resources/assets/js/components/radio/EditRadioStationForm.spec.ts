@@ -92,11 +92,6 @@ describe('editRadioStationForm.vue', () => {
     })
   })
 
-  // Live-edit playback sync helper: the form may call playback('radio')
-  // to restart the stream when the on-air station's URL changes. That
-  // call activates the radio playback service against #audio-player,
-  // so the element has to exist or activate() throws on
-  // this.media.volume.
   const renderForOnAirStation = (overrides: Partial<RadioStation>) => {
     h.createAudioPlayer()
 
@@ -109,9 +104,6 @@ describe('editRadioStationForm.vue', () => {
     )
     radioStationStore.state.stations = [station]
 
-    // Make the store's update merge the new fields into the same
-    // reactive object the form holds, so post-update station.url
-    // reflects the new value.
     h.mock(radioStationStore, 'update', async (s: Reactive<RadioStation>, data: any) => {
       Object.assign(s, data)
       return s
