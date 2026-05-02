@@ -104,9 +104,9 @@ describe('editRadioStationForm.vue', () => {
     )
     radioStationStore.state.stations = [station]
 
-    h.mock(radioStationStore, 'update', async (s: Reactive<RadioStation>, data: any) => {
-      Object.assign(s, data)
-      return s
+    h.mock(radioStationStore, 'update', async (target: Reactive<RadioStation>, data: any) => {
+      Object.assign(target, data)
+      return target
     })
 
     return {
@@ -157,9 +157,9 @@ describe('editRadioStationForm.vue', () => {
     )
     radioStationStore.state.stations = [onAir, editing]
 
-    h.mock(radioStationStore, 'update', async (s: Reactive<RadioStation>, data: any) => {
-      Object.assign(s, data)
-      return s
+    h.mock(radioStationStore, 'update', async (target: Reactive<RadioStation>, data: any) => {
+      Object.assign(target, data)
+      return target
     })
     const playMock = h.mock(radioPlaybackService, 'play').mockResolvedValue(undefined)
 
