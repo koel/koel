@@ -1,10 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import { authService } from '@/services/authService'
 import { http } from '@/services/http'
 import { radioStationStore as store } from '@/stores/radioStationStore'
-import { playbackService as radioPlaybackService } from '@/services/RadioPlaybackService'
 
 describe('radioStationStore', () => {
   const h = createHarness({
@@ -105,105 +104,6 @@ describe('radioStationStore', () => {
     expect(putMock).toHaveBeenCalledWith(`radio/stations/${station.id}`, updatedData)
     expect(syncMock).toHaveBeenCalledWith({ ...station, ...updatedData })
     expect(updatedStation.name).toBe('Updated Station')
-  })
-
-  describe('live-edit playback sync', () => {
-    // The store calls playback('radio') on URL change, which activates
-    // the radio playback service against #audio-player. Stand the
-    // element up so activation doesn't blow up on this.media.volume.
-    beforeEach(() => h.createAudioPlayer())
-
-    const updateOnAirStation = async (overrides: Partial<RadioStation>) => {
-      const station = h.factory('radio-station').make({
-        url: 'https://old.example.com/stream',
-        playback_state: 'Playing',
-        ...overrides,
-      })
-      store.state.stations.push(station)
-
-      const newData = {
-        name: station.name,
-        url: 'https://new.example.com/stream',
-        description: station.description,
-        is_public: station.is_public,
-      }
-      const updated = { ...station, ...newData }
-
-      h.mock(http, 'put').mockResolvedValue(updated)
-      h.mock(store, 'sync').mockImplementation((s: any) => {
-        Object.assign(station, s)
-        return [station as any]
-      })
-
-      const playMock = h.mock(radioPlaybackService, 'play').mockResolvedValue(undefined)
-
-      await store.update(station, newData)
-
-      return { station, playMock }
-    }
-
-    it('restarts playback when the on-air station has its URL changed', async () => {
-      const { station, playMock } = await updateOnAirStation({})
-
-      expect(playMock).toHaveBeenCalledTimes(1)
-      expect(playMock).toHaveBeenCalledWith(station)
-    })
-
-    it('does not restart playback when only the name changed', async () => {
-      const station = h.factory('radio-station').make({
-        url: 'https://example.com/stream',
-        playback_state: 'Playing',
-      })
-      store.state.stations.push(station)
-
-      const newData = {
-        name: 'A Brand New Name',
-        url: station.url,
-        description: station.description,
-        is_public: station.is_public,
-      }
-      h.mock(http, 'put').mockResolvedValue({ ...station, ...newData })
-      h.mock(store, 'sync').mockImplementation((s: any) => {
-        Object.assign(station, s)
-        return [station as any]
-      })
-      const playMock = h.mock(radioPlaybackService, 'play').mockResolvedValue(undefined)
-
-      await store.update(station, newData)
-
-      expect(playMock).not.toHaveBeenCalled()
-    })
-
-    it('does not restart playback when the on-air station is paused', async () => {
-      const { playMock } = await updateOnAirStation({ playback_state: 'Paused' })
-      expect(playMock).not.toHaveBeenCalled()
-    })
-
-    it('does not restart playback when the edited station is not on air', async () => {
-      const onAir = h.factory('radio-station').make({ playback_state: 'Playing' })
-      const other = h.factory('radio-station').make({
-        url: 'https://old.example.com/stream',
-        playback_state: 'Stopped',
-      })
-      store.state.stations.push(onAir, other)
-
-      const newData = {
-        name: other.name,
-        url: 'https://new.example.com/stream',
-        description: other.description,
-        is_public: other.is_public,
-      }
-      h.mock(http, 'put').mockResolvedValue({ ...other, ...newData })
-      h.mock(store, 'sync').mockImplementation((s: any) => {
-        Object.assign(other, s)
-        return [other as any]
-      })
-      const playMock = h.mock(radioPlaybackService, 'play').mockResolvedValue(undefined)
-
-      await store.update(other, newData)
-
-      expect(playMock).not.toHaveBeenCalled()
-    })
   })
 
   it('deletes a station', async () => {

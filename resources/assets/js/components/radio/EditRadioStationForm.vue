@@ -45,6 +45,7 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 import type { RadioStationData } from '@/stores/radioStationStore'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { useForm } from '@/composables/useForm'
+import { playback } from '@/services/playbackManager'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -72,7 +73,25 @@ const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
       delete formData.logo
     }
 
+    // Snapshot before the store mutates `station` in place so we can
+    // tell whether the URL actually changed.
+    const oldUrl = station.url
+
     await radioStationStore.update(station, formData)
+
+    // If we just edited the station that's currently on air, the
+    // <audio> element is still streaming bytes from a connection
+    // opened against the old upstream URL — restart playback so the
+    // listener hears the new source. Restricted to the 'Playing'
+    // state on purpose: a paused listener shouldn't have playback
+    // resume on its own.
+    if (
+      station.url !== oldUrl &&
+      radioStationStore.current?.id === station.id &&
+      radioStationStore.current.playback_state === 'Playing'
+    ) {
+      await playback('radio').play(station)
+    }
   },
   onSuccess: () => {
     close()

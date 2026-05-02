@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vite-plus/test'
 import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { radioStationStore } from '@/stores/radioStationStore'
+import { playbackService as radioPlaybackService } from '@/services/RadioPlaybackService'
 import type { Reactive } from 'vue'
 import { reactive } from 'vue'
 import Component from './EditRadioStationForm.vue'
@@ -88,6 +89,97 @@ describe('editRadioStationForm.vue', () => {
       description: 'Poppy af',
       logo: 'data:image/png;base64,Ynl0ZXM=',
       is_public: false,
+    })
+  })
+
+  describe('live-edit playback sync', () => {
+    // The form may call playback('radio') to restart the stream when
+    // the on-air station's URL changes. That call activates the radio
+    // playback service against #audio-player, so the element has to
+    // exist or activate() throws on this.media.volume.
+    const renderForOnAirStation = (overrides: Partial<RadioStation>) => {
+      h.createAudioPlayer()
+
+      const station = reactive(
+        h.factory('radio-station').make({
+          url: 'https://old.example.com/stream',
+          playback_state: 'Playing',
+          ...overrides,
+        }),
+      )
+      radioStationStore.state.stations = [station]
+
+      // Make the store's update merge the new fields into the same
+      // reactive object the form holds, so post-update station.url
+      // reflects the new value.
+      h.mock(radioStationStore, 'update', async (s: Reactive<RadioStation>, data: any) => {
+        Object.assign(s, data)
+        return s
+      })
+
+      return {
+        station,
+        playMock: h.mock(radioPlaybackService, 'play').mockResolvedValue(undefined),
+        ...renderComponent(station),
+      }
+    }
+
+    it('restarts playback when the on-air station has its URL changed', async () => {
+      const { station, playMock } = renderForOnAirStation({})
+
+      await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://new.example.com/stream')
+      await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+      await waitFor(() => expect(playMock).toHaveBeenCalledWith(station))
+    })
+
+    it('does not restart playback when only the name changed', async () => {
+      const { playMock } = renderForOnAirStation({})
+
+      await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'A Brand New Name')
+      await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+      // Wait for the save to settle (mocked store.update resolves
+      // synchronously, but we still need a tick).
+      await waitFor(() => expect(radioStationStore.update).toHaveBeenCalled())
+      expect(playMock).not.toHaveBeenCalled()
+    })
+
+    it('does not restart playback when the on-air station is paused', async () => {
+      const { playMock } = renderForOnAirStation({ playback_state: 'Paused' })
+
+      await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://new.example.com/stream')
+      await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+      await waitFor(() => expect(radioStationStore.update).toHaveBeenCalled())
+      expect(playMock).not.toHaveBeenCalled()
+    })
+
+    it('does not restart playback when the edited station is not on air', async () => {
+      h.createAudioPlayer()
+
+      const onAir = reactive(h.factory('radio-station').make({ playback_state: 'Playing' }))
+      const editing = reactive(
+        h.factory('radio-station').make({
+          url: 'https://old.example.com/stream',
+          playback_state: 'Stopped',
+        }),
+      )
+      radioStationStore.state.stations = [onAir, editing]
+
+      h.mock(radioStationStore, 'update', async (s: Reactive<RadioStation>, data: any) => {
+        Object.assign(s, data)
+        return s
+      })
+      const playMock = h.mock(radioPlaybackService, 'play').mockResolvedValue(undefined)
+
+      renderComponent(editing)
+
+      await h.type(screen.getByPlaceholderText('https://radio.example.com/stream'), 'https://new.example.com/stream')
+      await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+      await waitFor(() => expect(radioStationStore.update).toHaveBeenCalled())
+      expect(playMock).not.toHaveBeenCalled()
     })
   })
 })
