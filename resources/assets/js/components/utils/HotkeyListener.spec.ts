@@ -5,6 +5,8 @@ import Component from './HotkeyListener.vue'
 
 const goMock = vi.fn()
 const isCurrentScreenMock = vi.fn().mockReturnValue(false)
+const forwardMock = vi.fn()
+const rewindMock = vi.fn()
 
 vi.mock('@/composables/useRouter', () => ({
   useRouter: () => ({
@@ -12,6 +14,10 @@ vi.mock('@/composables/useRouter', () => ({
     url: (name: string) => `/#/${name}`,
     isCurrentScreen: isCurrentScreenMock,
   }),
+}))
+
+vi.mock('@/services/playbackManager', () => ({
+  playback: () => ({ forward: forwardMock, rewind: rewindMock }),
 }))
 
 const pressKey = (key: string) => {
@@ -36,5 +42,19 @@ describe('hotkeyListener.vue', () => {
     pressKey('h')
 
     expect(goMock).toHaveBeenCalledWith('/#/home')
+  })
+
+  it('seeks forward on ArrowRight', () => {
+    h.render(Component)
+    pressKey('ArrowRight')
+
+    expect(forwardMock).toHaveBeenCalledWith(10)
+  })
+
+  it('seeks backward on ArrowLeft', () => {
+    h.render(Component)
+    pressKey('ArrowLeft')
+
+    expect(rewindMock).toHaveBeenCalledWith(10)
   })
 })
