@@ -11,17 +11,22 @@ class ApplicationInformationService
         private readonly Client $client,
     ) {}
 
-    /**
-     * Get the latest version number of Koel from GitHub.
-     */
     public function getLatestVersionNumber(): string
     {
-        return rescue(function () {
-            return Cache::remember(cache_key('latest version number'), now()->addDay(), function (): string {
-                return json_decode(
-                    $this->client->get('https://api.github.com/repos/koel/koel/tags')->getBody(),
-                )[0]->name;
-            });
-        }) ?? koel_version();
+        return Cache::remember(
+            cache_key('latest version number'),
+            now()->addDay(),
+            fn (): string => (
+                rescue(
+                    fn () => json_decode(
+                        $this->client->get('https://api.github.com/repos/koel/koel/tags', [
+                            'connect_timeout' => 3,
+                            'timeout' => 5,
+                        ])->getBody(),
+                    )[0]->name,
+                    report: false,
+                ) ?? koel_version()
+            ),
+        );
     }
 }
