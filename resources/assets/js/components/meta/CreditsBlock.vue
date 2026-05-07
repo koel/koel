@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { onMounted, ref } from 'vue'
 import { http } from '@/services/http'
 

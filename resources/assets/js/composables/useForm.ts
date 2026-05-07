@@ -1,6 +1,6 @@
 import type { Reactive } from 'vue'
 import { reactive, ref, toRaw } from 'vue'
-import { cloneDeep, isEqual } from 'lodash'
+import { cloneDeep, isEqual } from 'lodash-es'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useOverlay as useOverlayComposable } from '@/composables/useOverlay'
 

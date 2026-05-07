@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { findIndex, throttle } from 'lodash'
+import { findIndex, throttle } from 'lodash-es'
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'

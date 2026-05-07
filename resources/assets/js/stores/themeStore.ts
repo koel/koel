@@ -1,4 +1,4 @@
-import { clone, uniqBy } from 'lodash'
+import { clone, uniqBy } from 'lodash-es'
 import Color from 'color'
 import StyleObserver from 'style-observer'
 import { reactive } from 'vue'

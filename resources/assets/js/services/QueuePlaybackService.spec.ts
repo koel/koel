@@ -1,9 +1,9 @@
 import { nextTick, reactive } from 'vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
-import * as lodash from 'lodash'
+import * as lodash from 'lodash-es'
 import { createHarness } from '@/__tests__/TestHarness'
 
-vi.mock('lodash', async importOriginal => {
+vi.mock('lodash-es', async importOriginal => {
   const mod = await importOriginal<typeof lodash>()
   return { ...mod, shuffle: vi.fn(mod.shuffle) }
 })

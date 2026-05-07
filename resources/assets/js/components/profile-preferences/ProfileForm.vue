@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { pick } from 'lodash'
+import { pick } from 'lodash-es'
 import type { UpdateCurrentProfileData } from '@/services/authService'
 import { authService } from '@/services/authService'
 import { useAuthorization } from '@/composables/useAuthorization'

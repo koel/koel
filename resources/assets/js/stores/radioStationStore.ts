@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue'
 import { http } from '@/services/http'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { arrayify } from '@/utils/helpers'
 import { commonStore } from '@/stores/commonStore'
 

@@ -1,4 +1,4 @@
-import { differenceBy } from 'lodash'
+import { differenceBy } from 'lodash-es'
 import { reactive, type Reactive } from 'vue'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'

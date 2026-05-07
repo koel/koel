@@ -35,7 +35,7 @@
 import isMobile from 'ismobilejs'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { eventBus } from '@/utils/eventBus'
 import { useRouter } from '@/composables/useRouter'
 

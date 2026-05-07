@@ -1,6 +1,6 @@
 import type { Reactive, Ref } from 'vue'
 import { computed, ref } from 'vue'
-import { findIndex, findLastIndex, get } from 'lodash'
+import { findIndex, findLastIndex, get } from 'lodash-es'
 
 type Selectable<T> = Reactive<T & { selected: boolean }>
 

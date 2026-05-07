@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/vue'
-import { merge, take } from 'lodash'
+import { merge, take } from 'lodash-es'
 import { ref } from 'vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'

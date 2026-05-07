@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import isMobile from 'ismobilejs'
-import { unionBy } from 'lodash'
+import { unionBy } from 'lodash-es'
 import { computed, nextTick, reactive, toRefs, watch } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { useRouter } from '@/composables/useRouter'

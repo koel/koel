@@ -1,4 +1,4 @@
-import { trim } from 'lodash'
+import { trim } from 'lodash-es'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
 import { commonStore } from '@/stores/commonStore'

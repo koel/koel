@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep, pick } from 'lodash'
+import { cloneDeep, pick } from 'lodash-es'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
 import type { AlbumUpdateData } from '@/stores/albumStore'

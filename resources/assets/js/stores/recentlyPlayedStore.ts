@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { remove } from 'lodash'
+import { remove } from 'lodash-es'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
 

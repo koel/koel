@@ -44,7 +44,7 @@
 <script lang="ts" setup>
 import { faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { faFolderOpen } from '@fortawesome/free-regular-svg-icons'
-import { pull } from 'lodash'
+import { pull } from 'lodash-es'
 import { computed, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { useRouter } from '@/composables/useRouter'

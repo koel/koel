@@ -30,7 +30,7 @@
 
 <script lang="ts" setup>
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
-import { sample } from 'lodash'
+import { sample } from 'lodash-es'
 import { computed, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { commonStore } from '@/stores/commonStore'

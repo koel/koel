@@ -1,6 +1,6 @@
 import type { Reactive } from 'vue'
 import { reactive } from 'vue'
-import { differenceBy, unionBy } from 'lodash'
+import { differenceBy, unionBy } from 'lodash-es'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import { flattenParams } from '@/utils/helpers'

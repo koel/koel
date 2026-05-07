@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { isEqual } from 'lodash'
+import { isEqual } from 'lodash-es'
 import { faArrowDown, faArrowUp, faCheck, faEllipsis, faSort } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs } from 'vue'
 import { arrayify } from '@/utils/helpers'

@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { faAdd, faPodcast, faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { computed, onMounted, provide, ref } from 'vue'
 import { podcastStore } from '@/stores/podcastStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'

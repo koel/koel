@@ -1,5 +1,5 @@
 import isMobile from 'ismobilejs'
-import { throttle } from 'lodash'
+import { throttle } from 'lodash-es'
 import { watch } from 'vue'
 import { volumeManager } from '@/services/volumeManager'
 

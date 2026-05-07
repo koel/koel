@@ -1,4 +1,4 @@
-import { without } from 'lodash'
+import { without } from 'lodash-es'
 import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'

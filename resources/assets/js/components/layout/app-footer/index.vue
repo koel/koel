@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { throttle } from 'lodash'
+import { throttle } from 'lodash-es'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useFullscreen } from '@vueuse/core'
 import { eventBus } from '@/utils/eventBus'

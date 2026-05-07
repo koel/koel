@@ -1,5 +1,5 @@
 import isMobile from 'ismobilejs'
-import { differenceBy, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
+import { differenceBy, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash-es'
 import { Reactive, reactive, watch } from 'vue'
 import { arrayify, flattenParams, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'

@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { computed, toRefs } from 'vue'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'

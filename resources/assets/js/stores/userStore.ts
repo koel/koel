@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { differenceBy } from 'lodash'
+import { differenceBy } from 'lodash-es'
 import { http } from '@/services/http'
 import { useVault } from '@/composables/useVault'
 

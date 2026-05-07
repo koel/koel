@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { createHarness } from '@/__tests__/TestHarness'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'

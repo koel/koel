@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep, pick } from 'lodash'
+import { cloneDeep, pick } from 'lodash-es'
 import type { ArtistUpdateData } from '@/stores/artistStore'
 import { artistStore } from '@/stores/artistStore'
 import { useMessageToaster } from '@/composables/useMessageToaster'

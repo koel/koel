@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import DOMPurify from 'dompurify'
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { faBookmark, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { secondsToHumanReadable } from '@/utils/formatters'

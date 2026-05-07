@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { take } from 'lodash'
+import { take } from 'lodash-es'
 import { computed, ref, toRefs, watch } from 'vue'
 import { useBranding } from '@/composables/useBranding'
 

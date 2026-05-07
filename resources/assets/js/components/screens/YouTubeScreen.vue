@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
-import { unescape } from 'lodash'
+import { unescape } from 'lodash-es'
 import createYouTubePlayer from 'youtube-player'
 import { ref, watch } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'

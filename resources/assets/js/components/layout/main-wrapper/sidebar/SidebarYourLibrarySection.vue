@@ -62,7 +62,7 @@
 <script lang="ts" setup>
 import { faCloudArrowDown, faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { GuitarIcon, MicVocalIcon, RadioIcon } from 'lucide-vue-next'
-import { unescape } from 'lodash'
+import { unescape } from 'lodash-es'
 import { computed, ref, toRef } from 'vue'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { eventBus } from '@/utils/eventBus'

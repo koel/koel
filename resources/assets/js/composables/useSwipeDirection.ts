@@ -1,5 +1,5 @@
 import { onBeforeUnmount, onMounted } from 'vue'
-import { throttle } from 'lodash'
+import { throttle } from 'lodash-es'
 
 export type SwipeDirection = 'up' | 'down'
 

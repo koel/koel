@@ -1,5 +1,5 @@
 import select from 'select'
-import { isObject, without } from 'lodash'
+import { isObject, without } from 'lodash-es'
 import type { AsyncComponentLoader, Component, DeepReadonly, InjectionKey } from 'vue'
 import {
   defineAsyncComponent as baseDefineAsyncComponent,

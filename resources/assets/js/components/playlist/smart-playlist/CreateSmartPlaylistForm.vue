@@ -88,7 +88,7 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { isEqual } from 'lodash'
+import { isEqual } from 'lodash-es'
 import { ref } from 'vue'
 import type { CreatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'

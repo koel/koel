@@ -1,4 +1,4 @@
-import { differenceBy, orderBy, pick } from 'lodash'
+import { differenceBy, orderBy, pick } from 'lodash-es'
 import { reactive } from 'vue'
 import { arrayify, moveItemsInList } from '@/utils/helpers'
 import { logger } from '@/utils/logger'

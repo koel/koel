@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { http } from '@/services/http'
 
 export const settingStore = {

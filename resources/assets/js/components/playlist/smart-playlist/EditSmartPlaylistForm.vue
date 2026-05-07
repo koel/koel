@@ -89,7 +89,7 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { cloneDeep, isEqual, pick } from 'lodash'
+import { cloneDeep, isEqual, pick } from 'lodash-es'
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { eventBus } from '@/utils/eventBus'

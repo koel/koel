@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { unescape } from 'lodash'
+import { unescape } from 'lodash-es'
 import { toRefs } from 'vue'
 import { youTubeService } from '@/services/youTubeService'
 import { useRouter } from '@/composables/useRouter'

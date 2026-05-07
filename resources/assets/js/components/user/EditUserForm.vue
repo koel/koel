@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import { pick } from 'lodash'
+import { pick } from 'lodash-es'
 import type { UpdateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
 import { useDialogBox } from '@/composables/useDialogBox'

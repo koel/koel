@@ -1,4 +1,4 @@
-import { differenceBy, orderBy, take, throttle } from 'lodash'
+import { differenceBy, orderBy, take, throttle } from 'lodash-es'
 import type { Ref } from 'vue'
 import { computed, provide, reactive, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'

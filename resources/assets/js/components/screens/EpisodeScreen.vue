@@ -65,7 +65,7 @@
 <script setup lang="ts">
 import { faEllipsis, faExternalLink, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import DOMPurify from 'dompurify'
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import { queueStore } from '@/stores/queueStore'

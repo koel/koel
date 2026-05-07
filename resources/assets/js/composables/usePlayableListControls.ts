@@ -1,4 +1,4 @@
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { reactive } from 'vue'
 
 import PlayableListControls from '@/components/playable/playable-list/PlayableListControls.vue'

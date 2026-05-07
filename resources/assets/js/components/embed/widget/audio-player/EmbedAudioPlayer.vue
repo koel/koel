@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, toRefs } from 'vue'
-import { throttle } from 'lodash'
+import { throttle } from 'lodash-es'
 import { secondsToHis } from '@/utils/formatters'
 
 import ProgressBar from '@/components/embed/widget/audio-player/EmbedAudioPlayerProgressBar.vue'
