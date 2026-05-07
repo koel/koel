@@ -60,7 +60,7 @@ onChange(files => {
   })
 })
 
-const removeAvatar = () => emit('changed', gravatar(userStore.current.email))
+const removeAvatar = async () => emit('changed', await gravatar(userStore.current.email))
 
 const resetAvatar = () => {
   emit('changed', userStore.current.avatar)

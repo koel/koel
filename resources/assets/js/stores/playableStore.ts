@@ -4,7 +4,7 @@ import { Reactive, reactive, watch } from 'vue'
 import { arrayify, flattenParams, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
-import { md5 } from '@/utils/crypto'
+import { sha256 } from '@/utils/crypto'
 import { normalizeForComparison, secondsToHumanReadable } from '@/utils/formatters'
 import { authService } from '@/services/authService'
 import { cache } from '@/services/cache'
@@ -360,7 +360,7 @@ export const playableStore = {
     const paths = folderReferences.map(item => item.path).sort()
 
     // since paths can be long, we use a hash instead
-    const cacheKey = ['folders', md5(paths.join(''))]
+    const cacheKey = ['folders', await sha256(paths.join(''))]
 
     const fetcher = () => http.post<Song[]>(`songs/by-folders?shuffle=${shuffle}`, { paths })
 

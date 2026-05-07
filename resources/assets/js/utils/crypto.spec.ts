@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { base64Decode, base64Encode, md5, uuid } from './crypto'
+import { base64Decode, base64Encode, sha256, uuid } from './crypto'
 
 describe('crypto utils', () => {
   it('generates a UUID', () => {
@@ -12,8 +12,8 @@ describe('crypto utils', () => {
     expect(ids.size).toBe(100)
   })
 
-  it('computes MD5 hash', () => {
-    expect(md5('hello')).toBe('5d41402abc4b2a76b9719d911017c592')
+  it('computes SHA-256 hash', async () => {
+    expect(await sha256('hello')).toBe('2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824')
   })
 
   it('base64 encodes a string', () => {

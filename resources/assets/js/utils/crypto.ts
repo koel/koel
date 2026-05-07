@@ -1,5 +1,3 @@
-import baseMd5 from 'md5'
-
 export const uuid = () => {
   if (typeof window === 'undefined') {
     // @ts-ignore
@@ -13,7 +11,11 @@ export const uuid = () => {
     : URL.createObjectURL(new Blob([])).split(/[:/]/g).pop()
 }
 
-export const md5 = (str: string) => baseMd5(str)
+export const sha256 = async (input: string) => {
+  const buffer = new TextEncoder().encode(input)
+  const digest = await crypto.subtle.digest('SHA-256', buffer)
+  return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('')
+}
 
 export const base64Encode = (str: string) => {
   return btoa(String.fromCodePoint(...new TextEncoder().encode(str)))

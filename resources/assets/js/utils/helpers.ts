@@ -10,7 +10,7 @@ import {
 } from 'vue'
 import type { ReadonlyInjectionKey } from '@/config/symbols'
 import { logger } from '@/utils/logger'
-import { md5 } from '@/utils/crypto'
+import { sha256 } from '@/utils/crypto'
 import { isSong } from '@/utils/typeGuards'
 
 import LoadingComponent from '@/components/ui/Loading.vue'
@@ -78,8 +78,8 @@ export const moveItemsInList = <T>(list: T[], items: T | T[], target: T, placeme
   return updatedList
 }
 
-export const gravatar = (email: string, size = 192) => {
-  const hash = md5(email.trim().toLowerCase())
+export const gravatar = async (email: string, size = 192) => {
+  const hash = await sha256(email.trim().toLowerCase())
   return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=robohash`
 }
 
