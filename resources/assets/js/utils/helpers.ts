@@ -1,4 +1,3 @@
-import select from 'select'
 import { isObject } from 'lodash-es'
 import type { AsyncComponentLoader, Component, DeepReadonly, InjectionKey } from 'vue'
 import {
@@ -122,7 +121,8 @@ export const copyText = async (text: string) => {
 
     copyArea.style.top = `${window.scrollY || document.documentElement.scrollTop}px`
     copyArea.value = text
-    select(copyArea)
+    copyArea.focus()
+    copyArea.select()
     document.execCommand('copy')
   }
 }

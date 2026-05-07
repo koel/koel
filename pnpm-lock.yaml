@@ -41,9 +41,6 @@ importers:
       color:
         specifier: ^5.0.2
         version: 5.0.2
-      compare-versions:
-        specifier: ^3.6.0
-        version: 3.6.0
       dompurify:
         specifier: ^3.4.0
         version: 3.4.0
@@ -62,9 +59,6 @@ importers:
       ky:
         specifier: ^1.14.3
         version: 1.14.3
-      local-storage:
-        specifier: ^2.0.0
-        version: 2.0.0
       lodash-es:
         specifier: ^4.18.1
         version: 4.18.1
@@ -86,9 +80,6 @@ importers:
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
-      select:
-        specifier: ^1.1.2
-        version: 1.1.2
       sketch-js:
         specifier: ^1.1.3
         version: 1.1.3
@@ -1927,9 +1918,6 @@ packages:
   compare-func@2.0.0:
     resolution: {integrity: sha512-zHig5N+tPWARooBnb0Zx1MFcdfpyJrfTJ3Y5L+IFvUm8rM74hHz66z0gw0x4tijh5CorKkKUCnW82R2vmpeCRA==}
 
-  compare-versions@3.6.0:
-    resolution: {integrity: sha512-W6Af2Iw1z4CB7q4uU4hv646dW9GQuBM+YpC0UvUCWSD8w90SJjp+ujJuXaEMtAXBtSqGfMPuFOVn4/+FlaqfBA==}
-
   condense-newlines@0.2.1:
     resolution: {integrity: sha512-P7X+QL9Hb9B/c8HI5BFFKmjgBu2XpQuF98WZ9XkO+dBGgk5XgwiQz7o1SmpglNWId3581UcS0SFAWfoIhMHPfg==}
     engines: {node: '>=0.10.0'}
@@ -2721,9 +2709,6 @@ packages:
   load-script@1.0.0:
     resolution: {integrity: sha512-kPEjMFtZvwL9TaZo0uZ2ml+Ye9HUMmPwbYRJ324qF9tqMejwykJ5ggTyvzmrbBeapCAbk98BSbTeovHEEP1uCA==}
 
-  local-storage@2.0.0:
-    resolution: {integrity: sha512-/0sRoeijw7yr/igbVVygDuq6dlYCmtsuTmmpnweVlVtl/s10pf5BCq8LWBxW/AMyFJ3MhMUuggMZiYlx6qr9tw==}
-
   locate-path@5.0.0:
     resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==}
     engines: {node: '>=8'}
@@ -3353,9 +3338,6 @@ packages:
   section-matter@1.0.0:
     resolution: {integrity: sha512-vfD3pmTzGpufjScBh50YHKzEu2lxBWhVEHsNGoEXmCmn2hKGfeNLYMzCJpe8cD7gqX7TJluOVpBkAequ6dgMmA==}
     engines: {node: '>=4'}
-
-  select@1.1.2:
-    resolution: {integrity: sha512-OwpTSOfy6xSs1+pwcNrv0RBMOzI39Lp3qQKUTPVVPRjCdNa5JH/oPRiqsesIskK8TVgmRiHwO4KXlV2Li9dANA==}
 
   semver@7.7.2:
     resolution: {integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==}
@@ -5250,8 +5232,6 @@ snapshots:
       array-ify: 1.0.0
       dot-prop: 5.3.0
 
-  compare-versions@3.6.0: {}
-
   condense-newlines@0.2.1:
     dependencies:
       extend-shallow: 2.0.1
@@ -6028,8 +6008,6 @@ snapshots:
       uc.micro: 2.1.0
 
   load-script@1.0.0: {}
-
-  local-storage@2.0.0: {}
 
   locate-path@5.0.0:
     dependencies:
@@ -6808,8 +6786,6 @@ snapshots:
     dependencies:
       extend-shallow: 2.0.1
       kind-of: 6.0.3
-
-  select@1.1.2: {}
 
   semver@7.7.2: {}
 
