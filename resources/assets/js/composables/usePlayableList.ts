@@ -140,7 +140,7 @@ export const usePlayableList = (
 
   const playSelected = (shuffle: boolean) => playback().queueAndPlay(selectedPlayables.value, shuffle)
 
-  const applyFilter = useThrottleFn((keywords: string) => (filterKeywords.value = keywords), 200)
+  const applyFilter = useThrottleFn((keywords: string) => (filterKeywords.value = keywords), 200, true)
 
   const filteredPlayables = computed(() => {
     // This manually accesses playables.value, forcing Vue to properly track playables.value changes and re-compute.

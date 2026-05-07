@@ -137,7 +137,8 @@ onRouteChanged(async route => {
 })
 
 eventBus.on('SONGS_DELETED', async deletedSongs => {
-  songs.value = songs.value.filter(s => !deletedSongs.includes(s))
+  const deletedIds = new Set(deletedSongs.map(s => s.id))
+  songs.value = songs.value.filter(s => !deletedIds.has(s.id))
 
   if (!songs.value.length) {
     resetState()
