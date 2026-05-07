@@ -36,7 +36,7 @@
 import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useFullscreen } from '@vueuse/core'
-import { throttle } from 'lodash-es'
+import { useThrottleFn } from '@vueuse/core'
 import { logger } from '@/utils/logger'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { visualizerStore } from '@/stores/visualizerStore'
@@ -60,7 +60,7 @@ const setupControlHidingTimer = () => {
   hideControlsTimeout = window.setTimeout(() => (controlsHidden.value = true), 5000)
 }
 
-const showControls = throttle(() => {
+const showControls = useThrottleFn(() => {
   if (!isFullscreen.value) {
     return
   }
@@ -74,7 +74,6 @@ watch(isFullscreen, fullscreen => {
     setupControlHidingTimer()
   } else {
     window.clearTimeout(hideControlsTimeout)
-    showControls.cancel()
     controlsHidden.value = false
   }
 })
@@ -118,7 +117,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.clearTimeout(hideControlsTimeout)
-  showControls.cancel()
   freeUp()
 })
 </script>

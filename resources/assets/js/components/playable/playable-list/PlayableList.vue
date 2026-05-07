@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { throttle } from 'lodash-es'
+import { useThrottleFn } from '@vueuse/core'
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
@@ -171,7 +171,7 @@ const clearDropTarget = () => {
   currentDropTarget = null
 }
 
-const onDragOver = throttle((event: DragEvent) => {
+const onDragOver = useThrottleFn((event: DragEvent) => {
   if (!config.reorderable) {
     return
   }

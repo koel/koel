@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { throttle } from 'lodash-es'
+import { useThrottleFn } from '@vueuse/core'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useFullscreen } from '@vueuse/core'
 import { eventBus } from '@/utils/eventBus'
@@ -138,7 +138,7 @@ const setupControlHidingTimer = () => {
   hideControlsTimeout = window.setTimeout(() => root.value?.classList.add('hide-controls'), 5000)
 }
 
-const showControls = throttle(() => {
+const showControls = useThrottleFn(() => {
   if (!document.fullscreenElement) {
     return
   }

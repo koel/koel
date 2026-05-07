@@ -35,7 +35,7 @@
 import isMobile from 'ismobilejs'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
-import { debounce } from 'lodash-es'
+import { useDebounceFn } from '@vueuse/core'
 import { eventBus } from '@/utils/eventBus'
 import { useRouter } from '@/composables/useRouter'
 
@@ -56,7 +56,7 @@ let onInput = () => {
 }
 
 if (!window.RUNNING_UNIT_TESTS) {
-  onInput = debounce(onInput, 500)
+  onInput = useDebounceFn(onInput, 500)
 }
 
 const onSubmit = () => {
