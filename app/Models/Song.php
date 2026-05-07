@@ -108,10 +108,10 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
             'track' => 'int',
             'disc' => 'int',
             'year' => 'int',
-            'is_public' => 'bool',
+            'is_public' => 'boolean',
             'storage' => SongStorageCast::class,
             'episode_metadata' => EpisodeMetadataCast::class,
-            'favorite' => 'bool',
+            'favorite' => 'boolean',
         ];
     }
 

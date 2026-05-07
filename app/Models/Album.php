@@ -65,6 +65,14 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
     /** @deprecated */
     protected $appends = ['is_compilation'];
 
+    /** @inheritDoc */
+    protected function casts(): array
+    {
+        return [
+            'favorite' => 'boolean',
+        ];
+    }
+
     public static function query(): AlbumBuilder
     {
         /** @var AlbumBuilder */

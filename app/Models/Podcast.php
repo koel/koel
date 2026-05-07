@@ -56,6 +56,7 @@ class Podcast extends Model implements Favoriteable
             'metadata' => PodcastMetadataCast::class,
             'last_synced_at' => 'datetime',
             'explicit' => 'boolean',
+            'favorite' => 'boolean',
         ];
     }
 

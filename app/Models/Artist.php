@@ -59,6 +59,14 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 
+    /** @inheritDoc */
+    protected function casts(): array
+    {
+        return [
+            'favorite' => 'boolean',
+        ];
+    }
+
     public static function query(): ArtistBuilder
     {
         /** @var ArtistBuilder */

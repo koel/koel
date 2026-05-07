@@ -6,10 +6,14 @@ use App\Events\MultipleSongsLiked;
 use App\Events\MultipleSongsUnliked;
 use App\Events\SongFavoriteToggled;
 use App\Http\Resources\FavoriteResource;
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Favorite;
+use App\Models\Podcast;
 use App\Models\Song;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -122,6 +126,43 @@ class FavoriteTest extends TestCase
         }
 
         Event::assertDispatched(MultipleSongsUnliked::class);
+    }
+
+    /** @return array<string, array{class-string<Song|Album|Artist|Podcast>}> */
+    public static function favoriteableModelProvider(): array
+    {
+        return [
+            'song' => [Song::class],
+            'album' => [Album::class],
+            'artist' => [Artist::class],
+            'podcast' => [Podcast::class],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('favoriteableModelProvider')]
+    public function favoriteAttributeIsCastToBoolean(string $modelClass): void
+    {
+        $user = create_user();
+        $favorited = $modelClass::factory()->createOne();
+        $unfavorited = $modelClass::factory()->createOne();
+
+        $favorited->favorites()->create(['user_id' => $user->id]);
+
+        $loadedFavorited = $modelClass::query()
+            ->setScopedUser($user)
+            ->withFavoriteStatus()
+            ->whereKey($favorited->getKey())
+            ->firstOrFail();
+
+        $loadedUnfavorited = $modelClass::query()
+            ->setScopedUser($user)
+            ->withFavoriteStatus()
+            ->whereKey($unfavorited->getKey())
+            ->firstOrFail();
+
+        self::assertSame(true, $loadedFavorited->favorite);
+        self::assertSame(false, $loadedUnfavorited->favorite);
     }
 
     #[Test]
