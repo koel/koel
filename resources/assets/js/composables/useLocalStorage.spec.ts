@@ -55,6 +55,16 @@ describe('useLocalStorage', () => {
     expect(get('corrupt')).toBeNull()
   })
 
+  it.each([
+    ['string', 'dark'],
+    ['number', 80],
+    ['boolean', true],
+  ])('round-trips a %s via set and get', (_label, value) => {
+    const { get, set } = useLocalStorage()
+    set('scalar', value)
+    expect(get('scalar')).toBe(value)
+  })
+
   it('round-trips objects via JSON', () => {
     const { get, set } = useLocalStorage()
     set('preferences', { volume: 80, theme: 'dark' })
