@@ -360,7 +360,7 @@ export const playableStore = {
     const paths = folderReferences.map(item => item.path).sort()
 
     // since paths can be long, we use a hash instead
-    const cacheKey = ['folders', await sha256(paths.join(''))]
+    const cacheKey = ['folders', await sha256(JSON.stringify(paths))]
 
     const fetcher = () => http.post<Song[]>(`songs/by-folders?shuffle=${shuffle}`, { paths })
 
