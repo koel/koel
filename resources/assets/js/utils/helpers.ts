@@ -119,6 +119,8 @@ export const copyText = async (text: string) => {
       document.body.appendChild(copyArea)
     }
 
+    copyArea.style.position = 'absolute'
+    copyArea.style.left = '0'
     copyArea.style.top = `${window.scrollY || document.documentElement.scrollTop}px`
     copyArea.value = text
     copyArea.focus()

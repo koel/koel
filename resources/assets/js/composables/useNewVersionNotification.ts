@@ -7,12 +7,10 @@ const parseVersion = (version: string) => {
   const [base, prerelease] = cleaned.split('-', 2)
   const segments = base.split('.').map(part => Number.parseInt(part, 10) || 0)
 
-  if (!prerelease) {
-    return segments
-  }
-
-  // Sentinel below zero so a pre-release sorts lower than its base release (semver §11).
-  return [...segments, -1, ...prerelease.split('.').map(part => Number.parseInt(part, 10) || 0)]
+  // Any pre-release sorts strictly lower than its base release. Koel only compares
+  // the latest stable release against the installed version, so we don't try to
+  // order two pre-releases of the same base (e.g. beta.1 vs rc.1).
+  return prerelease === undefined ? segments : [...segments, -1]
 }
 
 const isNewerVersion = (candidate: string, current: string) => {
