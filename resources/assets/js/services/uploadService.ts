@@ -1,4 +1,3 @@
-import { without } from 'lodash-es'
 import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
@@ -50,7 +49,7 @@ export const uploadService = {
 
   remove(file: UploadFile) {
     this.abortHandles.delete(file.id)
-    this.state.files = without(this.state.files, file)
+    this.state.files = this.state.files.filter(f => f !== file)
     this.proceed()
   },
 

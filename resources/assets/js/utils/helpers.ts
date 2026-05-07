@@ -1,5 +1,5 @@
 import select from 'select'
-import { isObject, without } from 'lodash-es'
+import { isObject } from 'lodash-es'
 import type { AsyncComponentLoader, Component, DeepReadonly, InjectionKey } from 'vue'
 import {
   defineAsyncComponent as baseDefineAsyncComponent,
@@ -72,7 +72,7 @@ export const moveItemsInList = <T>(list: T[], items: T | T[], target: T, placeme
     return list
   }
 
-  const updatedList = without(list, ...subset)
+  const updatedList = list.filter(item => !subset.includes(item))
   const targetIndex = updatedList.indexOf(target)
   updatedList.splice(placement === 'before' ? targetIndex : targetIndex + 1, 0, ...subset)
 

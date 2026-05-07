@@ -39,7 +39,9 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep, pick } from 'lodash-es'
+import { pick } from 'lodash-es'
+import { toRaw } from 'vue'
+
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import type { RadioStationData } from '@/stores/radioStationStore'
@@ -67,7 +69,7 @@ const { showConfirmDialog } = useDialogBox()
 const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
   initialValues: { ...pick(station, 'name', 'url', 'description', 'is_public', 'logo') },
   onSubmit: async data => {
-    const formData = cloneDeep(data)
+    const formData = structuredClone(toRaw(data))
 
     if (formData.logo === station.logo) {
       delete formData.logo

@@ -89,7 +89,9 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { cloneDeep, isEqual, pick } from 'lodash-es'
+import { isEqual, pick } from 'lodash-es'
+import { toRaw } from 'vue'
+
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { eventBus } from '@/utils/eventBus'
@@ -118,7 +120,7 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const { Btn, RuleGroup, activateTab, isTabActive, collectedRuleGroups, addGroup, onGroupChanged } =
-  useSmartPlaylistForm(cloneDeep(playlist.rules))
+  useSmartPlaylistForm(structuredClone(toRaw(playlist.rules)))
 
 const close = () => emit('close')
 
@@ -127,7 +129,7 @@ const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
   isPristine: (original, current) => isEqual(original, current) && isEqual(collectedRuleGroups.value, playlist.rules),
   onSubmit: async data => {
     const formData = {
-      ...cloneDeep(data),
+      ...structuredClone(toRaw(data)),
       rules: collectedRuleGroups.value,
     }
 

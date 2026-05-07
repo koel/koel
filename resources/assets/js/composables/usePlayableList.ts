@@ -1,4 +1,4 @@
-import { differenceBy, orderBy, take, throttle } from 'lodash-es'
+import { differenceBy, orderBy, throttle } from 'lodash-es'
 import type { Ref } from 'vue'
 import { computed, provide, reactive, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
@@ -127,7 +127,7 @@ export const usePlayableList = (
 
     const sampleCovers = playablesWithCover.slice(0, 100).map(p => getPlayableProp(p, 'album_cover', 'episode_image'))
 
-    return take(Array.from(new Set(sampleCovers)), 4)
+    return Array.from(new Set(sampleCovers)).slice(0, 4)
   })
 
   const getPlayablesToPlay = () => playableList.value!.getAllPlayablesWithSort()

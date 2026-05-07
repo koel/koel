@@ -1,4 +1,4 @@
-import { clone, uniqBy } from 'lodash-es'
+import { uniqBy } from 'lodash-es'
 import Color from 'color'
 import StyleObserver from 'style-observer'
 import { reactive } from 'vue'
@@ -68,7 +68,7 @@ export const themeStore = {
     }
 
     document.documentElement.setAttribute('data-theme', theme.id)
-    const properties = Object.assign(clone(this.defaultProperties), theme.properties ?? {})
+    const properties = { ...this.defaultProperties, ...(theme.properties ?? {}) }
 
     for (const key in properties) {
       document.body.style.setProperty(key, properties[key]) // overriding :root

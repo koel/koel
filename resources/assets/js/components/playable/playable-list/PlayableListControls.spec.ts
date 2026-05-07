@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/vue'
-import { merge, take } from 'lodash-es'
+import { merge } from 'lodash-es'
 import { ref } from 'vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -30,7 +30,7 @@ describe('playableListControls.vue', () => {
         provide: {
           [<symbol>PlayablesKey]: [ref(songs)],
           [<symbol>FilteredPlayablesKey]: [ref(songs)],
-          [<symbol>SelectedPlayablesKey]: [ref(take(songs, selectedCount))],
+          [<symbol>SelectedPlayablesKey]: [ref(songs.slice(0, selectedCount))],
         },
       },
       props: {

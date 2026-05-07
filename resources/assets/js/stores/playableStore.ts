@@ -1,5 +1,5 @@
 import isMobile from 'ismobilejs'
-import { differenceBy, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash-es'
+import { differenceBy, orderBy, unionBy, uniqBy } from 'lodash-es'
 import { Reactive, reactive, watch } from 'vue'
 import { arrayify, flattenParams, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
@@ -62,7 +62,8 @@ export const playableStore = {
     favorites: [],
   }),
 
-  getFormattedLength: (playables: MaybeArray<Playable>) => secondsToHumanReadable(sumBy(arrayify(playables), 'length')),
+  getFormattedLength: (playables: MaybeArray<Playable>) =>
+    secondsToHumanReadable(arrayify(playables).reduce((total, p) => total + p.length, 0)),
 
   findPlaying() {
     for (const playable of this.vault.values()) {
@@ -297,16 +298,13 @@ export const playableStore = {
   },
 
   getMostPlayedSongs(count: number) {
-    return take(
-      orderBy(
-        Array.from(this.vault.values()).filter(
-          playable => isSong(playable) && !playable.deleted && playable.play_count > 0,
-        ),
-        'play_count',
-        'desc',
+    return orderBy(
+      Array.from(this.vault.values()).filter(
+        playable => isSong(playable) && !playable.deleted && playable.play_count > 0,
       ),
-      count,
-    ) as Song[]
+      'play_count',
+      'desc',
+    ).slice(0, count) as Song[]
   },
 
   async deleteSongsFromFilesystem(songs: Song[]) {

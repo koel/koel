@@ -15,7 +15,6 @@
 </template>
 
 <script lang="ts" setup>
-import { take } from 'lodash-es'
 import { computed, ref, toRefs, watch } from 'vue'
 import { useBranding } from '@/composables/useBranding'
 
@@ -32,9 +31,9 @@ watch(
     if (thumbnails.value.length === 0) {
       displayedThumbnails.value = [defaultCover]
     } else {
-      displayedThumbnails.value = take(thumbnails.value, thumbnails.value.length < 4 ? 1 : 4).map(
-        url => url || defaultCover,
-      )
+      displayedThumbnails.value = thumbnails.value
+        .slice(0, thumbnails.value.length < 4 ? 1 : 4)
+        .map(url => url || defaultCover)
     }
   },
   { immediate: true },
