@@ -47,8 +47,7 @@ class HasAudioContentType implements ValidationRule
             if ($response->successful()) {
                 return $response->header('Content-Type');
             }
-        } catch (Throwable) {
-            // HEAD may time out or fail on streaming servers — fall through to GET
+        } catch (Throwable) { // @mago-expect lint:no-empty-catch-clause -- HEAD may time out or fail on streaming servers; fall through to GET below.
         }
 
         // Fall back to GET with ICY headers — streaming servers often only respond to GET
