@@ -42,6 +42,10 @@ class UploadTest extends PlusTestCase
     #[Test]
     public function guestsCannotUpload(): void
     {
-        $this->postAs('api/upload', ['file' => $this->file], create_guest())->assertForbidden();
+        $guest = create_guest();
+
+        $this->postAs('api/upload', ['file' => $this->file], $guest)->assertForbidden();
+
+        $this->assertDatabaseMissing(Song::class, ['owner_id' => $guest->id]);
     }
 }
