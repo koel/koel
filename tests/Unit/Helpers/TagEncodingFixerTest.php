@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Unit\Services\Scanners;
+namespace Tests\Unit\Helpers;
 
-use App\Services\Scanners\TagEncodingFixer;
+use App\Helpers\TagEncodingFixer;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

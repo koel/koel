@@ -2,9 +2,9 @@
 
 namespace App\Values\Scanning;
 
+use App\Helpers\TagEncodingFixer;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\Scanners\TagEncodingFixer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Scanners;
+namespace App\Helpers;
 
 /**
  * Recover the UTF-8 form of an ID3 tag string that was mis-decoded somewhere upstream.
