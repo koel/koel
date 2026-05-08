@@ -6,7 +6,7 @@
  * The probe-element trick lets the browser parse any CSS color syntax
  * (hex, rgb/rgba, hsl/hsla, oklch, named colors) and normalize it to rgb().
  */
-export const isDarkColor = (cssColor: string): boolean => {
+export const isDarkColor = (cssColor: string) => {
   const probe = document.createElement('div')
   probe.style.color = cssColor
   document.body.appendChild(probe)
