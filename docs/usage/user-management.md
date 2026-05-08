@@ -1,5 +1,5 @@
 ---
-description: User roles (admin, user, manager), creating and inviting users, and managing permissions in Koel.
+description: User roles (admin, user, manager, guest), creating and inviting users, and managing permissions in Koel.
 ---
 
 # User Management
@@ -9,6 +9,7 @@ Koel supports multiple users with different roles and permissions.
 * **Admins** can do basically anything: manage settings, users, and the shared music library
 * **Users** can access the shared library and manage their own profile and preferences.
 * <PlusBadge /> **Managers** can manage users and the shared library, but not settings.
+* <PlusBadge /> **Guests** can only play music shared by others — they have no library of their own and cannot upload, edit, or delete songs. Useful when you want to share a Koel Plus instance with friends or family without giving them a personal library.
 
 :::tip Multi-library support
 In the Community edition, all users share a common library (though playlists, favorites, and other stats are private).
