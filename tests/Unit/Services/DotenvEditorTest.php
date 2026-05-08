@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Services;
 
-use App\Services\DotenvEditor as Component;
+use App\Services\DotenvEditor;
 use Illuminate\Filesystem\Filesystem;
 use LogicException;
 use PHPUnit\Framework\Attributes\Test;
@@ -11,7 +11,7 @@ use Tests\TestCase;
 class DotenvEditorTest extends TestCase
 {
     private string $envPath;
-    private Component $editor;
+    private DotenvEditor $editor;
 
     public function setUp(): void
     {
@@ -20,7 +20,7 @@ class DotenvEditorTest extends TestCase
         $this->envPath = tempnam(sys_get_temp_dir(), 'dotenv_test_');
         file_put_contents($this->envPath, "APP_NAME=Koel\nDB_HOST=localhost\n");
 
-        $this->editor = new Component($this->envPath, new Filesystem());
+        $this->editor = new DotenvEditor($this->envPath, new Filesystem());
     }
 
     public function tearDown(): void
