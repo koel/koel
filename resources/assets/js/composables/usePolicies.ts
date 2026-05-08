@@ -34,7 +34,14 @@ export const usePolicies = () => {
 
     manageSettings: () => currentUser.value.abilities.includes('manage settings'),
     manageUsers: () => currentUser.value.abilities.includes('manage users'),
-    uploadSongs: () => isPlus.value || currentUser.value.abilities.includes('manage songs'),
+    uploadSongs: () => {
+      if (currentUser.value.abilities.includes('manage songs')) {
+        return true
+      }
+
+      // On Plus, every user has their own library to upload to — except Guests, who don't.
+      return isPlus.value && currentUser.value.role !== 'guest'
+    },
   }
 
   return {

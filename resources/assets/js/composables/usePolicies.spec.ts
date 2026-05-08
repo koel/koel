@@ -130,6 +130,16 @@ describe('usePolicies', () => {
     expect(currentUserCan.uploadSongs()).toBe(true)
   })
 
+  it('forbids upload for Plus guests', async () => {
+    const guest = h.factory('user').make({ abilities: [], role: 'guest' }) as CurrentUser
+    h.actingAsUser(guest)
+
+    await h.withPlusEdition(async () => {
+      const { currentUserCan } = usePolicies()
+      expect(currentUserCan.uploadSongs()).toBe(false)
+    })
+  })
+
   it('reads the edit permission embedded in the user', () => {
     const { currentUserCan } = usePolicies()
     const editable = h.factory('user').make({ permissions: { edit: true, delete: false } })

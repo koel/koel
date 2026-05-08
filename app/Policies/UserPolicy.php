@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\Acl\Permission;
+use App\Enums\Acl\Role;
 use App\Facades\License;
 use App\Models\User;
 
@@ -32,6 +33,12 @@ class UserPolicy
 
     public function upload(User $currentUser): bool
     {
-        return License::isCommunity() ? $currentUser->hasPermissionTo(Permission::MANAGE_SONGS) : true; // For Plus Edition, any user can upload songs (to their own library).
+        if (License::isCommunity()) {
+            return $currentUser->hasPermissionTo(Permission::MANAGE_SONGS);
+        }
+
+        // On Plus, every authenticated user can upload to their own library — except Guests,
+        // who have no library by design.
+        return $currentUser->role !== Role::GUEST;
     }
 }

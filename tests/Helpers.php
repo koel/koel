@@ -22,6 +22,11 @@ function create_manager(array $attributes = []): User
     return User::factory()->manager()->createOne($attributes);
 }
 
+function create_guest(array $attributes = []): User
+{
+    return User::factory()->guest()->createOne($attributes);
+}
+
 function create_user_prospect(array $attributes = []): User
 {
     return User::factory()->prospect()->createOne($attributes);

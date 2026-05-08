@@ -416,7 +416,7 @@ interface UserPreferences extends Record<string, any> {
 }
 
 type Ability = 'manage settings' | 'manage users' | 'manage songs' | 'manage podcasts' | 'manage radio stations'
-type Role = ('admin' | 'manager' | 'user') & string
+type Role = ('admin' | 'manager' | 'user' | 'guest') & string
 
 interface User {
   type: 'users'

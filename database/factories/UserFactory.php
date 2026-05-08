@@ -37,6 +37,11 @@ class UserFactory extends Factory
         return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::MANAGER)); // @phpstan-ignore-line
     }
 
+    public function guest(): self
+    {
+        return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::GUEST)); // @phpstan-ignore-line
+    }
+
     public function prospect(): self
     {
         // @mago-ignore lint:prefer-static-closure
