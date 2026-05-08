@@ -38,9 +38,6 @@ importers:
       butterchurn-presets:
         specifier: ^2.4.7
         version: 2.4.7
-      color:
-        specifier: ^5.0.2
-        version: 5.0.2
       dompurify:
         specifier: ^3.4.0
         version: 3.4.0
@@ -117,9 +114,6 @@ importers:
       '@testing-library/vue':
         specifier: ^6.6.1
         version: 6.6.1(@vue/compiler-sfc@3.5.29)(vue@3.5.29(typescript@5.8.3))
-      '@types/local-storage':
-        specifier: ^1.4.0
-        version: 1.4.0
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -1309,9 +1303,6 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
-  '@types/local-storage@1.4.0':
-    resolution: {integrity: sha512-a1lcfo+7Cao6ROLcj/OAuMXbfFi8H4wB0T0ROcmxs0BJVGtNkfSqTc5VY9Hbql5wL9FrsefeIOGnjSHrBZTeCQ==}
-
   '@types/lodash-es@4.17.12':
     resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
 
@@ -1869,24 +1860,8 @@ packages:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
     engines: {node: '>=7.0.0'}
 
-  color-convert@3.1.2:
-    resolution: {integrity: sha512-UNqkvCDXstVck3kdowtOTWROIJQwafjOfXSmddoDrXo4cewMKmusCeF22Q24zvjR8nwWib/3S/dfyzPItPEiJg==}
-    engines: {node: '>=14.6'}
-
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
-
-  color-name@2.0.2:
-    resolution: {integrity: sha512-9vEt7gE16EW7Eu7pvZnR0abW9z6ufzhXxGXZEVU9IqPdlsUiMwJeJfRtq0zePUmnbHGT9zajca7mX8zgoayo4A==}
-    engines: {node: '>=12.20'}
-
-  color-string@2.1.2:
-    resolution: {integrity: sha512-RxmjYxbWemV9gKu4zPgiZagUxbH3RQpEIO77XoSSX0ivgABDZ+h8Zuash/EMFLTI4N9QgFPOJ6JQpPZKFxa+dA==}
-    engines: {node: '>=18'}
-
-  color@5.0.2:
-    resolution: {integrity: sha512-e2hz5BzbUPcYlIRHo8ieAhYgoajrJr+hWoceg6E345TPsATMUKqDgzt8fSXZJJbxfpiPzkWyphz8yn8At7q3fA==}
-    engines: {node: '>=18'}
 
   combined-stream@1.0.8:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
@@ -4655,8 +4630,6 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
-  '@types/local-storage@1.4.0': {}
-
   '@types/lodash-es@4.17.12':
     dependencies:
       '@types/lodash': 4.17.19
@@ -5177,22 +5150,7 @@ snapshots:
     dependencies:
       color-name: 1.1.4
 
-  color-convert@3.1.2:
-    dependencies:
-      color-name: 2.0.2
-
   color-name@1.1.4: {}
-
-  color-name@2.0.2: {}
-
-  color-string@2.1.2:
-    dependencies:
-      color-name: 2.0.2
-
-  color@5.0.2:
-    dependencies:
-      color-convert: 3.1.2
-      color-string: 2.1.2
 
   combined-stream@1.0.8:
     dependencies:
