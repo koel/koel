@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d5d4dbd17b1301d5ef1484194c3a8683",
+    "content-hash": "e768912310af48ecbbe8b01fb0d42f4e",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -2176,58 +2176,6 @@
             "time": "2026-02-28T06:49:50+00:00"
         },
         {
-            "name": "jackiedo/path-helper",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/JackieDo/Path-Helper.git",
-                "reference": "43179cfa17d01f94f4889f286430c2cec1071fb2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/JackieDo/Path-Helper/zipball/43179cfa17d01f94f4889f286430c2cec1071fb2",
-                "reference": "43179cfa17d01f94f4889f286430c2cec1071fb2",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Jackiedo\\PathHelper\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jackie Do",
-                    "email": "anhvudo@gmail.com"
-                }
-            ],
-            "description": "Helper class for working with local paths in PHP",
-            "homepage": "https://github.com/JackieDo/path-helper",
-            "keywords": [
-                "helper",
-                "helpers",
-                "library",
-                "path",
-                "paths",
-                "php"
-            ],
-            "support": {
-                "issues": "https://github.com/JackieDo/Path-Helper/issues",
-                "source": "https://github.com/JackieDo/Path-Helper/tree/v1.0.0"
-            },
-            "time": "2022-03-07T20:28:08+00:00"
-        },
-        {
             "name": "james-heinrich/getid3",
             "version": "v1.9.24",
             "source": {
@@ -2395,70 +2343,6 @@
                 "source": "https://github.com/jwilsson/spotify-web-api-php/tree/5.7.1"
             },
             "time": "2023-08-01T17:38:44+00:00"
-        },
-        {
-            "name": "koel/dotenv-editor",
-            "version": "v2.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/koel/Laravel-Dotenv-Editor.git",
-                "reference": "4eb2220dbae0e2f4cec10efd82c0b79721ee423a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/koel/Laravel-Dotenv-Editor/zipball/4eb2220dbae0e2f4cec10efd82c0b79721ee423a",
-                "reference": "4eb2220dbae0e2f4cec10efd82c0b79721ee423a",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/console": "^12|^11|^10.0|^9.0|^8.0|^7.0|^6.0|^5.8",
-                "illuminate/contracts": "^12|^11|^10.0|^9.0|^8.0|^7.0|^6.0|^5.8",
-                "illuminate/support": "^12|^11|^10.0|^9.0|^8.0|^7.0|^6.0|^5.8",
-                "jackiedo/path-helper": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "DotenvEditor": "Jackiedo\\DotenvEditor\\Facades\\DotenvEditor"
-                    },
-                    "providers": [
-                        "Jackiedo\\DotenvEditor\\DotenvEditorServiceProvider"
-                    ]
-                },
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Jackiedo\\DotenvEditor\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jackie Do",
-                    "email": "anhvudo@gmail.com"
-                },
-                {
-                    "name": "Phan An",
-                    "email": "m@phanan.net"
-                }
-            ],
-            "description": "The .env file editor tool for Laravel 5.8+",
-            "keywords": [
-                "dotenv",
-                "dotenv-editor",
-                "laravel"
-            ],
-            "support": {
-                "source": "https://github.com/koel/Laravel-Dotenv-Editor/tree/v2.2.0"
-            },
-            "time": "2025-06-18T17:26:26+00:00"
         },
         {
             "name": "laravel/ai",

@@ -14,13 +14,11 @@ use App\Providers\StreamerServiceProvider;
 use App\Providers\UtilServiceProvider;
 use App\Providers\YouTubeServiceProvider;
 use Intervention\Image\ImageServiceProvider;
-use Jackiedo\DotenvEditor\DotenvEditorServiceProvider;
 use Laravel\Scout\ScoutServiceProvider;
 use OwenIt\Auditing\AuditingServiceProvider;
 use TeamTNT\Scout\TNTSearchScoutServiceProvider;
 
 return [
-    DotenvEditorServiceProvider::class,
     ImageServiceProvider::class,
 
     ScoutServiceProvider::class,

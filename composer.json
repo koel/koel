@@ -15,7 +15,6 @@
     "guzzlehttp/guzzle": "^7.2",
     "pusher/pusher-php-server": "^7.2",
     "predis/predis": "~1.0",
-    "koel/dotenv-editor": "^2.2",
     "ext-exif": "*",
     "ext-gd": "*",
     "ext-fileinfo": "*",

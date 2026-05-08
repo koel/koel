@@ -7,6 +7,7 @@ use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\DotenvEditor;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
@@ -16,7 +17,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
 // @mago-ignore lint:too-many-methods,cyclomatic-complexity,kan-defect
@@ -60,7 +60,6 @@ class InitCommand extends Command
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
             $this->maybeCopyManifests();
-            $this->dotenvEditor->save();
             $this->tryInstallingScheduler();
         } catch (Throwable $e) {
             Log::error($e);
@@ -118,8 +117,6 @@ class InitCommand extends Command
         } else {
             $this->components->task('.env file exists -- skipping');
         }
-
-        $this->dotenvEditor->load(base_path('.env'));
     }
 
     private function maybeGenerateAppKey(): void
@@ -172,7 +169,6 @@ class InitCommand extends Command
         }
 
         $this->dotenvEditor->setKeys($config);
-        $this->dotenvEditor->save();
 
         // Set the config so that the next DB attempt uses refreshed credentials
         config([

@@ -3,10 +3,10 @@
 namespace App\Console\Commands\Storage;
 
 use App\Facades\License;
+use App\Services\DotenvEditor;
 use App\Services\SongStorages\S3CompatibleStorage;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
 class SetupS3StorageCommand extends Command
@@ -40,8 +40,7 @@ class SetupS3StorageCommand extends Command
         $config['AWS_ENDPOINT'] = $this->ask('Enter the endpoint (AWS_ENDPOINT)');
         $config['AWS_BUCKET'] = $this->ask('Enter the bucket name (AWS_BUCKET)');
 
-        $this->dotenvEditor->setKeys($config);
-        $this->dotenvEditor->save();
+        $this->dotenvEditor->backup()->setKeys($config);
 
         $this->comment('Uploading a test file to make sure everything is working...');
 

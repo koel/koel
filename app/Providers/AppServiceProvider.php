@@ -12,6 +12,7 @@ use App\Models\RadioStation;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\Contracts\Encyclopedia;
+use App\Services\DotenvEditor;
 use App\Services\Geolocation\Contracts\GeolocationService;
 use App\Services\Geolocation\IPinfoService;
 use App\Services\LastfmService;
@@ -99,6 +100,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GeolocationService::class, static function (): GeolocationService {
             return app(IPinfoService::class);
         });
+
+        $this->app
+            ->when(DotenvEditor::class)
+            ->needs('$path')
+            ->give(static fn () => app()->environmentFilePath());
     }
 
     public function register(): void
