@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        // On GitHub Actions, MySQL sometimes falsely reports that the table does not exist (probably due to
-        // some race condition with the database connection).
-        if (!Schema::hasTable('playlist_collaborators')) {
+        // Idempotent: skip when the rename has already been applied. Checking the target rather
+        // than the source means a false-negative on `hasTable('playlist_collaborators')` no longer
+        // silently no-ops; the rename below will surface a real error instead. See issue #2019.
+        if (Schema::hasTable('playlist_user')) {
             return;
         }
 
