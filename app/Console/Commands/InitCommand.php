@@ -52,7 +52,7 @@ class InitCommand extends Command
 
         try {
             $this->clearCaches();
-            $this->loadEnvFile();
+            $this->ensureEnvFileExists();
             $this->maybeGenerateAppKey();
             $this->maybeSetUpDatabase();
             $this->migrateDatabase();
@@ -108,7 +108,7 @@ class InitCommand extends Command
         });
     }
 
-    private function loadEnvFile(): void
+    private function ensureEnvFileExists(): void
     {
         if (!File::exists(base_path('.env'))) {
             $this->components->task('Copying .env file', static function (): void {
