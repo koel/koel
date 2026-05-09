@@ -50,15 +50,17 @@ class ProxyAuthService
 
     private function assertProxyIpAllowed(?string $remoteAddr): void
     {
-        if (!IpUtils::checkIp($remoteAddr, $this->allowList)) {
-            throw new ProxyAuthIpNotAllowedException($remoteAddr, $this->allowList);
-        }
+        throw_unless(
+            IpUtils::checkIp($remoteAddr, $this->allowList),
+            new ProxyAuthIpNotAllowedException($remoteAddr, $this->allowList),
+        );
     }
 
     private function assertUserHeaderPresent(Request $request, ?string $remoteAddr): void
     {
-        if (!$request->header($this->userHeader)) {
-            throw new ProxyAuthUserHeaderMissingException($this->userHeader, $remoteAddr);
-        }
+        throw_unless(
+            $request->header($this->userHeader),
+            new ProxyAuthUserHeaderMissingException($this->userHeader, $remoteAddr),
+        );
     }
 }
