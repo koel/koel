@@ -19,14 +19,36 @@ class ProxyAuthService
 
     public function tryGetProxyAuthenticatedUserFromRequest(Request $request): ?User
     {
+        $remoteAddr = $request->server->get('REMOTE_ADDR');
+
         if (!self::validateProxyIp($request)) {
+            Log::warning('[ProxyAuth] Remote address not in allow list', [
+                'remote_addr' => $remoteAddr,
+                'allow_list' => config('koel.proxy_auth.allow_list'),
+            ]);
+
+            return null;
+        }
+
+        $userHeader = config('koel.proxy_auth.user_header');
+
+        if (!$request->header($userHeader)) {
+            Log::warning('[ProxyAuth] User header not present on request', [
+                'expected_header' => $userHeader,
+                'remote_addr' => $remoteAddr,
+            ]);
+
             return null;
         }
 
         try {
             return $this->userService->createOrUpdateUserFromSso(SsoUser::fromProxyAuthRequest($request));
         } catch (Throwable $e) {
-            Log::error($e->getMessage(), ['exception' => $e]);
+            Log::error('[ProxyAuth] Failed to create or update user from SSO headers', [
+                'exception' => $e,
+                'expected_header' => $userHeader,
+                'remote_addr' => $remoteAddr,
+            ]);
         }
 
         return null;

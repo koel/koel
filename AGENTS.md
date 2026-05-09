@@ -267,7 +267,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Git Commits
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).
 - Focus on the feature/purpose, not implementation details. For example, prefer "feat: show current playing song during radio stream" over "feat: radio station ICY metadata now-playing". Same applies to PR titles.
-- Never mention Claude Code in commits, PR descriptions, or any generated content. No "Generated with Claude Code" footers, no Co-Authored-By lines referencing Claude.
+- Never attribute work to AI in any artifact: no "Generated with Claude Code", "Assisted by AI", "Co-Authored-By: Claude/ChatGPT/Copilot/AI" lines, no AI-tool mentions in commits, PR titles, PR descriptions, issue comments, code comments, or doc pages. The author is the human running the tool.
 - When the implementation of a PR changes (e.g. during code review), always update the PR title and description to reflect the current state of the changes.
 
 ## Releasing

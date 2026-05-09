@@ -53,6 +53,21 @@ class AuthTest extends TestCase
     }
 
     #[Test]
+    public function unauthenticatedNavigateRequestRedirectsToRootInsteadOfThrowing(): void
+    {
+        // Without redirectGuestsTo configured, Laravel 12's Authenticate middleware would try
+        // to resolve route('login') and blow up with RouteNotFoundException because koel has
+        // no login route. See issue #2164.
+        $this->get('api/data', ['Accept' => 'text/html'])->assertRedirect('/');
+    }
+
+    #[Test]
+    public function unauthenticatedJsonRequestReturnsCleanUnauthorized(): void
+    {
+        $this->getJson('api/data')->assertUnauthorized()->assertJson(['error' => 'Unauthenticated.']);
+    }
+
+    #[Test]
     public function logOut(): void
     {
         $user = create_user([

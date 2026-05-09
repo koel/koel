@@ -41,15 +41,21 @@ return Application::configure(basePath: dirname(__DIR__))
             'audio.auth' => AudioAuthenticate::class,
             'os.auth' => ObjectStorageAuthenticate::class,
         ]);
+
+        // Koel is an SPA without a `login` route, so the Authenticate middleware would otherwise
+        // throw RouteNotFoundException when it tries to resolve route('login') on guest requests.
+        $middleware->redirectGuestsTo('/');
     })
     ->withExceptions(static function (Exceptions $exceptions): void {
-        $exceptions->render(
-            static function (AuthenticationException $e, Request $request): JsonResponse|RedirectResponse {
-                if ($request->expectsJson()) {
-                    return response()->json(['error' => 'Unauthenticated.'], 401);
-                }
-
-                return redirect()->guest('/');
+        $exceptions->render(static function (
+            AuthenticationException $e,
+            Request $request,
+        ): JsonResponse|RedirectResponse {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Unauthenticated.'], 401);
             }
-        );
-    })->create();
+
+            return redirect()->guest('/');
+        });
+    })
+    ->create();

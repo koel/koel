@@ -3,6 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\PersonalAccessToken;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
@@ -89,6 +90,8 @@ class ProxyAuthTest extends PlusTestCase
     #[Test]
     public function proxyAuthenticateWithDisallowedIp(): void
     {
+        Log::spy();
+
         $response = $this->get('/', [
             'REMOTE_ADDR' => '255.168.1.127',
             'remote-user' => '123456',
@@ -96,7 +99,38 @@ class ProxyAuthTest extends PlusTestCase
         ]);
 
         $response->assertOk();
-
         self::assertNull($response->viewData('token'));
+
+        Log::shouldHaveReceived('warning')
+            ->withArgs( // @phpstan-ignore-line
+                static fn (string $message, array $context) => (
+                    str_contains($message, 'Remote address not in allow list')
+                    && $context['remote_addr'] === '255.168.1.127'
+                ),
+            )
+            ->once();
+    }
+
+    #[Test]
+    public function proxyAuthenticateWithMissingUserHeader(): void
+    {
+        Log::spy();
+
+        $response = $this->get('/', [
+            'REMOTE_ADDR' => '192.168.1.127',
+            'remote-preferred-name' => 'Bruce Dickinson',
+        ]);
+
+        $response->assertOk();
+        self::assertNull($response->viewData('token'));
+
+        Log::shouldHaveReceived('warning')
+            ->withArgs( // @phpstan-ignore-line
+                static fn (string $message, array $context) => (
+                    str_contains($message, 'User header not present')
+                    && $context['expected_header'] === 'remote-user'
+                ),
+            )
+            ->once();
     }
 }
