@@ -12,7 +12,7 @@ class ProxyAuthUserHeaderMissingException extends ProxyAuthException
     }
 
     /** @inheritDoc */
-    public function context(): array
+    public function getContext(): array
     {
         return [
             'expected_header' => $this->expectedHeader,

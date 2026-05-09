@@ -36,7 +36,7 @@ class ProxyAuthService
 
             return $this->userService->createOrUpdateUserFromSso(SsoUser::fromProxyAuthRequest($request));
         } catch (ProxyAuthException $e) {
-            Log::warning(sprintf('[ProxyAuth] %s', $e->getMessage()), $e->context());
+            Log::warning(sprintf('[ProxyAuth] %s', $e->getMessage()), $e->getContext());
         } catch (Throwable $e) {
             Log::error('[ProxyAuth] Failed to create or update user from SSO headers', [
                 'exception' => $e,

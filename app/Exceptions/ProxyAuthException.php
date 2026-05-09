@@ -7,5 +7,5 @@ use RuntimeException;
 abstract class ProxyAuthException extends RuntimeException
 {
     /** @return array<string, mixed> */
-    abstract public function context(): array;
+    abstract public function getContext(): array;
 }

@@ -13,7 +13,7 @@ class ProxyAuthIpNotAllowedException extends ProxyAuthException
     }
 
     /** @inheritDoc */
-    public function context(): array
+    public function getContext(): array
     {
         return [
             'remote_addr' => $this->remoteAddr,
