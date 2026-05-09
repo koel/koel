@@ -156,6 +156,21 @@ const scrollToTop = () => scroller.value?.scrollTo({ top: 0, behavior: 'smooth' 
 watch(minItemWidth, () => measure())
 
 watch(
+  [() => items.value.length, scrollerHeight, measuring],
+  () => {
+    if (
+      !measuring.value &&
+      items.value.length > 0 &&
+      measuredItemHeight.value > 0 &&
+      totalHeight.value <= scrollerHeight.value
+    ) {
+      emit('scrolled-to-end')
+    }
+  },
+  { flush: 'post' },
+)
+
+watch(
   () => items.value.length,
   async (newLen: number, oldLen: number) => {
     if (newLen < oldLen) {
