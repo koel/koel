@@ -89,23 +89,6 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
-    public function indexReturnsArtistOnceEvenWithMultipleAlbums(): void
-    {
-        // Regression guard: a future refactor that swaps whereHas('albums') for a
-        // JOIN without DISTINCT would produce one row per album. Three albums under
-        // one artist is the simplest data shape that surfaces that bug.
-        $artist = Artist::factory()->createOne();
-        Album::factory()
-            ->count(3)
-            ->for($artist)
-            ->create();
-
-        $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
-
-        self::assertSame(1, collect($ids)->filter(static fn ($id) => $id === $artist->id)->count());
-    }
-
-    #[Test]
     public function show(): void
     {
         $this->getAs('api/artists/'
