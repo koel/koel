@@ -7,6 +7,7 @@ use App\Http\Resources\ArtistResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Embed;
+use App\Models\Song;
 use App\Values\EmbedOptions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -43,6 +44,69 @@ class ArtistTest extends TestCase
 
         self::assertContains($albumArtist->id, $ids);
         self::assertNotContains($perTrackOnly->id, $ids);
+    }
+
+    #[Test]
+    public function indexExcludesFeaturedArtistsOnSomeoneElsesAlbum(): void
+    {
+        // Album owned by `albumOwner`, with a track credited to `featuredArtist`.
+        // featuredArtist has no album of their own → must be excluded.
+        $albumOwner = Artist::factory()->createOne();
+        $album = Album::factory()->for($albumOwner)->createOne();
+
+        $featuredArtist = Artist::factory()->createOne();
+        Song::factory()
+            ->for($album)
+            ->for($featuredArtist)
+            ->createOne();
+
+        $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
+
+        self::assertContains($albumOwner->id, $ids);
+        self::assertNotContains($featuredArtist->id, $ids);
+    }
+
+    #[Test]
+    public function indexIncludesCompilationCuratorEvenWithoutOwnTracks(): void
+    {
+        // The curator owns a compilation album but contributes no tracks themselves;
+        // every song on the comp is credited to a different track artist. Curator
+        // is still the album_artist → must be included. Track artist with no album
+        // of their own → excluded.
+        $curator = Artist::factory()->createOne();
+        $compilation = Album::factory()->for($curator)->createOne();
+
+        $trackArtist = Artist::factory()->createOne();
+        Song::factory()
+            ->for($compilation)
+            ->for($trackArtist)
+            ->createOne();
+
+        $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
+
+        self::assertContains($curator->id, $ids);
+        self::assertNotContains($trackArtist->id, $ids);
+    }
+
+    #[Test]
+    public function indexIncludesArtistWhoBothOwnsAlbumAndAppearsAsFeaturedElsewhere(): void
+    {
+        // An artist with their own album AND a feat. credit on someone else's album
+        // should still appear once. Sanity check that the filter doesn't mis-handle
+        // the dual-role case.
+        $hostOfOwnAlbum = Artist::factory()->createOne();
+        Album::factory()->for($hostOfOwnAlbum)->createOne();
+
+        $otherArtist = Artist::factory()->createOne();
+        $otherAlbum = Album::factory()->for($otherArtist)->createOne();
+        Song::factory()
+            ->for($otherAlbum)
+            ->for($hostOfOwnAlbum)
+            ->createOne();
+
+        $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
+
+        self::assertSame(1, collect($ids)->filter(static fn ($id) => $id === $hostOfOwnAlbum->id)->count());
     }
 
     #[Test]
