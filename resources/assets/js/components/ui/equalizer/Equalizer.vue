@@ -20,18 +20,7 @@
         <Btn v-if="customSelected" variant="ghost" @click.prevent="confirmDelete">Delete</Btn>
       </template>
 
-      <template v-else>
-        <input
-          ref="nameInput"
-          v-model="pendingName"
-          class="!bg-black/30 !text-white px-2 py-1 rounded flex-1 min-w-0"
-          placeholder="Preset name"
-          @keydown.enter.prevent="commitSave"
-          @keydown.esc.prevent="cancelSave"
-        />
-        <Btn variant="ghost" :disabled="!pendingName.trim()" @click.prevent="commitSave">Save</Btn>
-        <Btn variant="ghost" @click.prevent="cancelSave">Cancel</Btn>
-      </template>
+      <EqualizerSavePresetForm v-else @submit="commitSave" @cancel="cancelSave" />
     </header>
 
     <main>
@@ -90,6 +79,7 @@ import Btn from '@/components/ui/form/Btn.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 import EqualizerBand from '@/components/ui/equalizer/EqualizerBand.vue'
 import EqualizerCurve from '@/components/ui/equalizer/EqualizerCurve.vue'
+import EqualizerSavePresetForm from '@/components/ui/equalizer/EqualizerSavePresetForm.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
@@ -98,11 +88,9 @@ const preampGain = ref(0)
 const selectedKey = ref<string | null>(null)
 const customPresets = toRef(equalizerStore.state, 'customPresets')
 const saveDialogOpen = ref(false)
-const pendingName = ref('')
 const preampBandEl = ref<InstanceType<typeof EqualizerBand>>()
 const filterBandEls = ref<InstanceType<typeof EqualizerBand>[]>()
 const filterBandsEl = ref<HTMLElement>()
-const nameInput = ref<HTMLInputElement>()
 const curvePoints = ref<{ x: number; y: number }[]>([])
 
 const isModified = computed(() => selectedKey.value === null)
@@ -212,34 +200,18 @@ const save = () =>
 
 const close = () => emit('close')
 
-const openSaveDialog = async () => {
-  pendingName.value = ''
-  saveDialogOpen.value = true
-  await nextTick()
-  nameInput.value?.focus()
-}
+const openSaveDialog = () => (saveDialogOpen.value = true)
+const cancelSave = () => (saveDialogOpen.value = false)
 
-const cancelSave = () => {
-  saveDialogOpen.value = false
-  pendingName.value = ''
-}
-
-const commitSave = () => {
-  const trimmed = pendingName.value.trim()
-
-  if (!trimmed) {
-    return
-  }
-
+const commitSave = (name: string) => {
   const created = equalizerStore.saveCustomPreset(
-    trimmed,
+    name,
     preampGain.value,
     bands.map(band => band.db),
   )
 
   selectedKey.value = `custom:${created.id}`
   saveDialogOpen.value = false
-  pendingName.value = ''
 }
 
 const confirmDelete = () => {
