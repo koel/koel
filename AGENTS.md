@@ -296,6 +296,12 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Vue Template Conventions
 - Always use Vue's same-name shorthand for bindings: `:foo` instead of `:foo="foo"`. This applies to props, components, and any v-bind where the attribute name matches the variable name.
 
+## Vue Forms
+- Any Vue surface that takes user input and commits it on submit must use the `useForm` composable from `@/composables/useForm` — including inline composers, popovers, and mini name-prompts that aren't named `*Form.vue`. Don't roll your own `ref<string>('')` + manual submit handling.
+- Pair it with the canonical wiring: `<form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">`, inputs use `v-koel-focus` (not manual `onMounted` focus) and `required` (not manual `:disabled`), Save is `<Btn type="submit">`, Cancel is `<Btn type="button" @click.prevent="maybeClose">`, and `maybeClose` does `if (isPristine() || (await showConfirmDialog(...))) emit('cancel')`.
+- For purely-local submits (no server call), pass `useOverlay: false` and have `onSubmit` just emit. Use the optional `validator` callback for non-HTML5 rules (e.g. trim/whitespace).
+- Read `resources/assets/js/components/playlist/CreatePlaylistFolderForm.vue` before writing a new form — that's the reference shape.
+
 ## Vue Component Styling
 - Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.
 - For variant-specific styles (e.g. modes, states), use custom CSS classes (`.initial`, `.chat`, `.user`, `.error`, etc.) with `@apply` in a scoped `<style>` block.
