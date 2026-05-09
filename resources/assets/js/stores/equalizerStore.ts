@@ -1,15 +1,11 @@
 import { reactive } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { equalizerPresets as builtInPresets } from '@/config/audio'
-import { ulid } from '@/utils/crypto'
+import { http } from '@/services/http'
 
 const state = reactive({
   customPresets: [] as EqualizerPreset[],
 })
-
-const persist = () => {
-  preferences.equalizer_presets = [...state.customPresets]
-}
 
 export const equalizerStore = {
   state,
@@ -49,7 +45,7 @@ export const equalizerStore = {
     if (current.id) {
       // Saved-custom: resolve by id. If the saved preset was deleted elsewhere,
       // keep the user's slider state by demoting to a modified preset.
-      return this.getCustomPresetById(current.id) ?? { name: null, preamp: current.preamp, gains: current.gains }
+      return this.getCustomPresetById(current.id) ?? { name: null, preamp: current.preamp, gains: [...current.gains] }
     }
 
     if (current.name !== null) {
@@ -66,16 +62,15 @@ export const equalizerStore = {
     preferences.current_equalizer_preset = preset ?? { name: null, preamp, gains }
   },
 
-  saveCustomPreset(name: string, preamp: number, gains: number[]): EqualizerPreset {
-    const preset: EqualizerPreset = { id: ulid(), name, preamp, gains: [...gains] }
+  async saveCustomPreset(name: string, preamp: number, gains: number[]): Promise<EqualizerPreset> {
+    const preset = await http.post<EqualizerPreset>('me/equalizer-presets', { name, preamp, gains })
     state.customPresets.push(preset)
-    persist()
 
     return preset
   },
 
-  deleteCustomPreset(id: string) {
+  async deleteCustomPreset(id: string) {
+    await http.delete(`me/equalizer-presets/${id}`)
     state.customPresets = state.customPresets.filter(p => p.id !== id)
-    persist()
   },
 }

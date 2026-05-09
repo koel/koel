@@ -62,6 +62,17 @@ final readonly class EqualizerPreset implements Arrayable, JsonSerializable
         return new self(id: null, name: 'Default', preamp: 0, gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
     }
 
+    /** @param array<int, float|int> $gains */
+    public static function make(string $id, string $name, float $preamp, array $gains): self
+    {
+        return new self(
+            id: $id,
+            name: $name,
+            preamp: $preamp,
+            gains: array_values(array_map(static fn (float|int $gain): float => (float) $gain, $gains)),
+        );
+    }
+
     /** @inheritDoc */
     public function toArray(): array
     {

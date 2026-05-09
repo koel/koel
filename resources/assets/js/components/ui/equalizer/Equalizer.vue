@@ -79,8 +79,8 @@ const onUserChange = () => {
   selectedKey.value = null
 }
 
-const commitSave = (name: string) => {
-  const created = equalizerStore.saveCustomPreset(
+const commitSave = async (name: string) => {
+  const created = await equalizerStore.saveCustomPreset(
     name,
     bandsRef.value?.getPreamp() ?? 0,
     bands.map(band => band.db),
@@ -89,7 +89,7 @@ const commitSave = (name: string) => {
   selectedKey.value = `custom:${created.id}`
 }
 
-const confirmDelete = () => {
+const confirmDelete = async () => {
   if (!customSelected.value) {
     return
   }
@@ -100,7 +100,7 @@ const confirmDelete = () => {
     return
   }
 
-  equalizerStore.deleteCustomPreset(id)
+  await equalizerStore.deleteCustomPreset(id)
   selectedKey.value = null
   save()
 }
