@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Attributes\RequiresPlus;
 use App\Models\User;
 use App\Values\User\SsoUser;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\IpUtils;
@@ -13,28 +14,31 @@ use Throwable;
 #[RequiresPlus]
 class ProxyAuthService
 {
+    /** @param array<int, string> $allowList */
     public function __construct(
         private readonly UserService $userService,
+        #[Config('koel.proxy_auth.allow_list')]
+        private readonly array $allowList,
+        #[Config('koel.proxy_auth.user_header')]
+        private readonly string $userHeader,
     ) {}
 
     public function tryGetProxyAuthenticatedUserFromRequest(Request $request): ?User
     {
         $remoteAddr = $request->server->get('REMOTE_ADDR');
 
-        if (!self::validateProxyIp($request)) {
+        if (!IpUtils::checkIp($remoteAddr, $this->allowList)) {
             Log::warning('[ProxyAuth] Remote address not in allow list', [
                 'remote_addr' => $remoteAddr,
-                'allow_list' => config('koel.proxy_auth.allow_list'),
+                'allow_list' => $this->allowList,
             ]);
 
             return null;
         }
 
-        $userHeader = config('koel.proxy_auth.user_header');
-
-        if (!$request->header($userHeader)) {
+        if (!$request->header($this->userHeader)) {
             Log::warning('[ProxyAuth] User header not present on request', [
-                'expected_header' => $userHeader,
+                'expected_header' => $this->userHeader,
                 'remote_addr' => $remoteAddr,
             ]);
 
@@ -46,16 +50,11 @@ class ProxyAuthService
         } catch (Throwable $e) {
             Log::error('[ProxyAuth] Failed to create or update user from SSO headers', [
                 'exception' => $e,
-                'expected_header' => $userHeader,
+                'expected_header' => $this->userHeader,
                 'remote_addr' => $remoteAddr,
             ]);
         }
 
         return null;
-    }
-
-    private static function validateProxyIp(Request $request): bool
-    {
-        return IpUtils::checkIp($request->server->get('REMOTE_ADDR'), config('koel.proxy_auth.allow_list'));
     }
 }
