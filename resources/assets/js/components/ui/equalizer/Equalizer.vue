@@ -1,65 +1,17 @@
 <template>
   <div class="select-none w-full flex flex-col" tabindex="0" @keydown.esc="close">
-    <header class="flex gap-2 items-center">
-      <template v-if="!saveDialogOpen">
-        <SelectBox v-model="selectedKey" class="!bg-black/30 !text-white" title="Select equalizer">
-          <option :value="null" disabled>Preset</option>
-          <optgroup label="Built-in">
-            <option v-for="preset in builtInPresets" :key="preset.name!" :value="`builtin:${preset.name}`">
-              {{ preset.name }}
-            </option>
-          </optgroup>
-          <optgroup v-if="customPresets.length" label="Custom">
-            <option v-for="preset in customPresets" :key="preset.id!" :value="`custom:${preset.id}`">
-              {{ preset.name }}
-            </option>
-          </optgroup>
-        </SelectBox>
-
-        <Btn v-if="isModified" variant="ghost" @click.prevent="openSaveDialog">Save as…</Btn>
-        <Btn v-if="customSelected" variant="ghost" @click.prevent="confirmDelete">Delete</Btn>
-      </template>
-
-      <EqualizerSavePresetForm v-else @submit="commitSave" @cancel="cancelSave" />
-    </header>
+    <EqualizerHeader
+      v-model:selectedKey="selectedKey"
+      :built-in-presets="builtInPresets"
+      :custom-presets="customPresets"
+      :is-modified="isModified"
+      :custom-selected="customSelected"
+      @save="commitSave"
+      @delete="confirmDelete"
+    />
 
     <main>
-      <div class="t-4 b-5 x-4 p-4 flex gap-1 rounded-md bg-black/20">
-        <EqualizerBand ref="preampBandEl" v-model="preampGain" type="preamp" @commit="save">Preamp</EqualizerBand>
-
-        <span class="text-sm h-[100px] w-[20px] flex flex-col justify-between items-center opacity-50">
-          <span class="leading-none text-k-fg">+20</span>
-          <span class="leading-none text-k-fg">0</span>
-          <span class="leading-none text-k-fg">-20</span>
-        </span>
-
-        <div ref="filterBandsEl" class="relative flex-1 flex justify-between">
-          <div
-            class="absolute left-0 right-0 top-[50px] h-px pointer-events-none"
-            style="
-              background: linear-gradient(
-                to right,
-                transparent,
-                color-mix(in srgb, var(--color-fg) 10%, transparent) 5%,
-                color-mix(in srgb, var(--color-fg) 10%, transparent) 95%,
-                transparent
-              );
-            "
-          />
-          <EqualizerBand
-            v-for="band in bands"
-            :key="band.label"
-            ref="filterBandEls"
-            v-model="band.db"
-            @commit="commitFilterGain"
-            @update:model-value="changeFilterGain(band)"
-          >
-            {{ band.label }}
-          </EqualizerBand>
-
-          <EqualizerCurve :points="curvePoints" />
-        </div>
-      </div>
+      <EqualizerBands ref="bandsRef" :bands="bands" @user-change="onUserChange" @commit="save" />
     </main>
 
     <footer class="border-t-k-fg-5">
@@ -69,29 +21,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
+import { computed, onMounted, ref, toRef, watch } from 'vue'
 import { equalizerStore } from '@/stores/equalizerStore'
-import type { Band } from '@/services/audioService'
 import { audioService } from '@/services/audioService'
 import { equalizerPresets as builtInPresets } from '@/config/audio'
 
 import Btn from '@/components/ui/form/Btn.vue'
-import SelectBox from '@/components/ui/form/SelectBox.vue'
-import EqualizerBand from '@/components/ui/equalizer/EqualizerBand.vue'
-import EqualizerCurve from '@/components/ui/equalizer/EqualizerCurve.vue'
-import EqualizerSavePresetForm from '@/components/ui/equalizer/EqualizerSavePresetForm.vue'
+import EqualizerBands from '@/components/ui/equalizer/EqualizerBands.vue'
+import EqualizerHeader from '@/components/ui/equalizer/EqualizerHeader.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const bands = audioService.bands
-const preampGain = ref(0)
 const selectedKey = ref<string | null>(null)
 const customPresets = toRef(equalizerStore.state, 'customPresets')
-const saveDialogOpen = ref(false)
-const preampBandEl = ref<InstanceType<typeof EqualizerBand>>()
-const filterBandEls = ref<InstanceType<typeof EqualizerBand>[]>()
-const filterBandsEl = ref<HTMLElement>()
-const curvePoints = ref<{ x: number; y: number }[]>([])
+const bandsRef = ref<InstanceType<typeof EqualizerBands>>()
 
 const isModified = computed(() => selectedKey.value === null)
 const customSelected = computed(() => selectedKey.value?.startsWith('custom:') === true)
@@ -124,94 +68,25 @@ const keyForPreset = (preset: EqualizerPreset): string | null => {
   return null
 }
 
-let curveAnimationId = 0
-
-const updateCurvePoints = () => {
-  if (!filterBandEls.value?.length || !filterBandsEl.value) {
-    return
-  }
-
-  const containerRect = filterBandsEl.value.getBoundingClientRect()
-
-  curvePoints.value = filterBandEls.value.map(bandEl => {
-    const el = bandEl.$el as HTMLElement
-    const handle = el.querySelector('.noUi-handle') as HTMLElement
-
-    if (!handle) {
-      return { x: 0, y: 0 }
-    }
-
-    const handleRect = handle.getBoundingClientRect()
-    const x = handleRect.left - containerRect.left + handleRect.width / 2
-    const y = handleRect.top - containerRect.top + handleRect.height / 2
-
-    return { x, y }
-  })
-}
-
-/**
- * Continuously read handle positions over the duration of the noUi-state-tap
- * CSS transition (~300ms) so the curve animates smoothly alongside the handles.
- */
-const animateCurveToHandles = () => {
-  cancelAnimationFrame(curveAnimationId)
-
-  const start = performance.now()
-  const duration = 350
-
-  const tick = () => {
-    updateCurvePoints()
-
-    if (performance.now() - start < duration) {
-      curveAnimationId = requestAnimationFrame(tick)
-    }
-  }
-
-  curveAnimationId = requestAnimationFrame(tick)
-}
-
-// A flag to determine if the changes made to the bands are from loading a preset
-// or by user customizing the sliders, in such a case the preset name should
-// be set to null (customized).
-let applyingPreset = false
-
-const loadPreset = async (preset: EqualizerPreset) => {
-  applyingPreset = true
-  preampGain.value = preset.preamp
-  preampBandEl.value?.updateSliderValue(preset.preamp)
-
-  preset.gains.forEach((gain, i) => {
-    bands[i].db = gain
-    audioService.changeFilterGain(bands[i].node, gain)
-    filterBandEls.value![i].updateSliderValue(gain)
-  })
-
-  await nextTick()
-  applyingPreset = false
-  animateCurveToHandles()
-}
-
 const save = () =>
   equalizerStore.saveConfig(
     resolvePreset(selectedKey.value),
-    preampGain.value,
+    bandsRef.value?.getPreamp() ?? 0,
     bands.map(band => band.db),
   )
 
-const close = () => emit('close')
-
-const openSaveDialog = () => (saveDialogOpen.value = true)
-const cancelSave = () => (saveDialogOpen.value = false)
+const onUserChange = () => {
+  selectedKey.value = null
+}
 
 const commitSave = (name: string) => {
   const created = equalizerStore.saveCustomPreset(
     name,
-    preampGain.value,
+    bandsRef.value?.getPreamp() ?? 0,
     bands.map(band => band.db),
   )
 
   selectedKey.value = `custom:${created.id}`
-  saveDialogOpen.value = false
 }
 
 const confirmDelete = () => {
@@ -230,30 +105,11 @@ const confirmDelete = () => {
   save()
 }
 
-watch(preampGain, value => {
-  audioService.changePreampGain(value)
-  if (!applyingPreset) {
-    selectedKey.value = null
-  }
-})
-
-const changeFilterGain = (band: Band) => {
-  audioService.changeFilterGain(band.node, band.db)
-
-  if (!applyingPreset) {
-    updateCurvePoints()
-    selectedKey.value = null
-  }
-}
-
-const commitFilterGain = () => {
-  save()
-  animateCurveToHandles()
-}
+const close = () => emit('close')
 
 watch(selectedKey, value => {
   if (value !== null) {
-    loadPreset(resolvePreset(value) ?? builtInPresets[0])
+    bandsRef.value?.loadPreset(resolvePreset(value) ?? builtInPresets[0], bands)
   }
 
   save()
@@ -262,11 +118,7 @@ watch(selectedKey, value => {
 onMounted(async () => {
   equalizerStore.init()
   const preset = equalizerStore.getConfig()
+  await bandsRef.value?.loadPreset(preset, bands)
   selectedKey.value = keyForPreset(preset)
-  preampGain.value = preset.preamp
-  await nextTick()
-  requestAnimationFrame(updateCurvePoints)
 })
-
-onBeforeUnmount(() => cancelAnimationFrame(curveAnimationId))
 </script>
