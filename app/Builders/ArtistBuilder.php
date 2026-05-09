@@ -35,6 +35,11 @@ class ArtistBuilder extends FavoriteableBuilder
         return $this->whereNotIn('artists.name', [Artist::UNKNOWN_NAME, Artist::VARIOUS_NAME]);
     }
 
+    public function onlyAlbumArtists(): self
+    {
+        return $this->whereHas('albums');
+    }
+
     private function accessible(): self
     {
         if (License::isCommunity()) {

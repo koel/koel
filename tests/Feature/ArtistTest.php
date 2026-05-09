@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Helpers\Ulid;
 use App\Http\Resources\ArtistResource;
+use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Embed;
 use App\Values\EmbedOptions;
@@ -28,6 +29,20 @@ class ArtistTest extends TestCase
         $this->getAs(
             'api/artists?sort=created_at&order=desc&page=2',
         )->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
+    }
+
+    #[Test]
+    public function indexExcludesArtistsWithoutAlbums(): void
+    {
+        $albumArtist = Artist::factory()->createOne();
+        Album::factory()->for($albumArtist)->createOne();
+
+        $perTrackOnly = Artist::factory()->createOne();
+
+        $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
+
+        self::assertContains($albumArtist->id, $ids);
+        self::assertNotContains($perTrackOnly->id, $ids);
     }
 
     #[Test]

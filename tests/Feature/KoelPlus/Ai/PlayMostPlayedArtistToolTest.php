@@ -5,6 +5,7 @@ namespace Tests\Feature\KoelPlus\Ai;
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Tools\PlayMostPlayedArtist;
+use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Interaction;
 use App\Models\Song;
@@ -37,9 +38,11 @@ class PlayMostPlayedArtistToolTest extends PlusTestCase
     public function playsMostPlayedArtist(): void
     {
         $artist = Artist::factory()->for($this->user)->createOne();
+        $album = Album::factory()->for($artist)->createOne();
         $songs = Song::factory()
             ->count(3)
             ->for($artist)
+            ->for($album)
             ->for($this->user, 'owner')
             ->create();
 
@@ -70,9 +73,11 @@ class PlayMostPlayedArtistToolTest extends PlusTestCase
     public function queuesInsteadOfPlaying(): void
     {
         $artist = Artist::factory()->for($this->user)->createOne();
+        $album = Album::factory()->for($artist)->createOne();
         $songs = Song::factory()
             ->count(2)
             ->for($artist)
+            ->for($album)
             ->for($this->user, 'owner')
             ->create();
 

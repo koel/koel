@@ -26,6 +26,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
     {
         return Artist::query()
             ->onlyStandard()
+            ->onlyAlbumArtists()
             ->withUserContext(user: $user ?? $this->auth->user())
             ->latest()
             ->limit($count)
@@ -37,6 +38,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
         return Artist::query()
             ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
             ->onlyStandard()
+            ->onlyAlbumArtists()
             ->orderByDesc('play_count')
             ->limit($count)
             ->get();
@@ -62,6 +64,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
         return Artist::query()
             ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
             ->onlyStandard()
+            ->onlyAlbumArtists()
             ->sort($sortColumn, $sortDirection)
             ->simplePaginate(21);
     }
