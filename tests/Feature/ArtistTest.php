@@ -89,24 +89,20 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
-    public function indexIncludesArtistWhoBothOwnsAlbumAndAppearsAsFeaturedElsewhere(): void
+    public function indexReturnsArtistOnceEvenWithMultipleAlbums(): void
     {
-        // An artist with their own album AND a feat. credit on someone else's album
-        // should still appear once. Sanity check that the filter doesn't mis-handle
-        // the dual-role case.
-        $hostOfOwnAlbum = Artist::factory()->createOne();
-        Album::factory()->for($hostOfOwnAlbum)->createOne();
-
-        $otherArtist = Artist::factory()->createOne();
-        $otherAlbum = Album::factory()->for($otherArtist)->createOne();
-        Song::factory()
-            ->for($otherAlbum)
-            ->for($hostOfOwnAlbum)
-            ->createOne();
+        // Regression guard: a future refactor that swaps whereHas('albums') for a
+        // JOIN without DISTINCT would produce one row per album. Three albums under
+        // one artist is the simplest data shape that surfaces that bug.
+        $artist = Artist::factory()->createOne();
+        Album::factory()
+            ->count(3)
+            ->for($artist)
+            ->create();
 
         $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
 
-        self::assertSame(1, collect($ids)->filter(static fn ($id) => $id === $hostOfOwnAlbum->id)->count());
+        self::assertSame(1, collect($ids)->filter(static fn ($id) => $id === $artist->id)->count());
     }
 
     #[Test]
