@@ -62,15 +62,10 @@ trait SupportsDeleteWhereValueNotIn
         });
     }
 
-    /**
-     * Mass-delete bypasses per-model events, which means Scout's `deleted` listener
-     * never fires and orphan rows linger in the search index. Flush the matching rows
-     * from Scout first when the model is searchable, then delete via the same query.
-     */
     private static function deleteAndUnsearch(Builder $query): void
     {
         if (in_array(Searchable::class, class_uses_recursive(static::class), true)) {
-            (clone $query)->unsearchable(); // @phpstan-ignore-line — Scout's Searchable trait macros unsearchable() onto the Eloquent Builder.
+            $query->unsearchable(); // @phpstan-ignore-line
         }
 
         $query->delete();

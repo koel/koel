@@ -70,11 +70,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     #[Test]
     public function flushesOrphanedSongsFromSearchIndex(): void
     {
-        // Replace Scout's engine with a spy so we can assert that `delete()` is called
-        // when orphan songs are pruned. Without the trait fix, the mass-delete bypasses
-        // Scout's per-model `deleted` event and orphans linger in the search index.
         $engine = Mockery::spy(Engine::class);
-
         $manager = Mockery::mock(EngineManager::class);
         $manager->shouldReceive('engine')->andReturn($engine);
         $this->app->instance(EngineManager::class, $manager);
@@ -84,6 +80,6 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
 
         self::assertModelMissing($orphan);
-        $engine->shouldHaveReceived('delete')->atLeast()->once(); // @phpstan-ignore-line — Mockery chained expectations
+        $engine->shouldHaveReceived('delete')->atLeast()->once(); // @phpstan-ignore-line
     }
 }

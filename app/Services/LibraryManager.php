@@ -32,12 +32,8 @@ class LibraryManager
             ];
 
             if (!$dryRun) {
-                // Flush the search index before mass-delete: the query-builder ->delete()
-                // bypasses per-model events, so Scout's `deleted` listener never fires
-                // and orphan rows would otherwise linger in the index.
-                $results['albums']->unsearchable(); // @phpstan-ignore-line — Scout adds unsearchable() to Eloquent collections.
-                $results['artists']->unsearchable(); // @phpstan-ignore-line — Scout adds unsearchable() to Eloquent collections.
-
+                $results['albums']->unsearchable(); // @phpstan-ignore-line
+                $results['artists']->unsearchable(); // @phpstan-ignore-line
                 $albumQuery->delete();
                 $artistQuery->delete();
             }

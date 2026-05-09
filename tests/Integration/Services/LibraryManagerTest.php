@@ -54,11 +54,7 @@ class LibraryManagerTest extends TestCase
     #[Test]
     public function flushesEmptyAlbumsAndArtistsFromSearchIndex(): void
     {
-        // Replace Scout's engine with a spy. The mass-delete in prune() bypasses Scout's
-        // per-model `deleted` event, so the explicit `unsearchable()` calls are the only
-        // way orphan rows leave the search index.
         $engine = Mockery::spy(Engine::class);
-
         $manager = Mockery::mock(EngineManager::class);
         $manager->shouldReceive('engine')->andReturn($engine);
         $this->app->instance(EngineManager::class, $manager);
@@ -68,15 +64,13 @@ class LibraryManagerTest extends TestCase
 
         $this->libraryManager->prune();
 
-        // One Engine::delete() call per searchable type flushed (album + artist).
-        $engine->shouldHaveReceived('delete')->twice(); // @phpstan-ignore-line — Mockery chained expectations
+        $engine->shouldHaveReceived('delete')->twice(); // @phpstan-ignore-line
     }
 
     #[Test]
     public function dryRunDoesNotTouchSearchIndex(): void
     {
         $engine = Mockery::spy(Engine::class);
-
         $manager = Mockery::mock(EngineManager::class);
         $manager->shouldReceive('engine')->andReturn($engine);
         $this->app->instance(EngineManager::class, $manager);
