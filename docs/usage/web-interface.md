@@ -20,8 +20,6 @@ artists…
 
 ![Artists screen](../assets/img/interface/artists.avif)
 
-The Artists screen lists artists who appear as the album artist of at least one album in your library. Per-track collaborators (featured artists, remixers) aren't shown as separate entries — they're still reachable via global search and via the artist link on individual songs. This matches how iTunes/Apple Music and similar apps present an artists view, and prevents one-off "Artist A feat. Artist B" tags from cluttering the list.
-
 albums…
 
 ![Albums screen](../assets/img/interface/albums.avif)
