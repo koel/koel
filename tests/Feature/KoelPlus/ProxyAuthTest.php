@@ -102,7 +102,7 @@ class ProxyAuthTest extends PlusTestCase
         self::assertNull($response->viewData('token'));
 
         Log::shouldHaveReceived('warning')
-            ->withArgs( // @phpstan-ignore-line
+            ->withArgs(
                 static fn (string $message, array $context) => (
                     str_contains($message, 'Remote address not in allow list')
                     && $context['remote_addr'] === '255.168.1.127'
@@ -125,7 +125,7 @@ class ProxyAuthTest extends PlusTestCase
         self::assertNull($response->viewData('token'));
 
         Log::shouldHaveReceived('warning')
-            ->withArgs( // @phpstan-ignore-line
+            ->withArgs(
                 static fn (string $message, array $context) => (
                     str_contains($message, 'User header not present')
                     && $context['expected_header'] === 'remote-user'

@@ -38,6 +38,9 @@ parameters:
         -
           message: '#expects .*, Mockery\\MockInterface given#'
           path: tests/*
+        -
+          message: '#Call to an undefined static method Illuminate\\Support\\Facades\\Log::shouldHaveReceived\(\)#'
+          path: tests/*
 
     excludePaths:
         - ./routes/console.php
