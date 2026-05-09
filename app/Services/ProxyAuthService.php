@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Attributes\RequiresPlus;
+use App\Exceptions\ProxyAuthException;
+use App\Exceptions\ProxyAuthIpNotAllowedException;
+use App\Exceptions\ProxyAuthUserHeaderMissingException;
 use App\Models\User;
 use App\Values\User\SsoUser;
 use Illuminate\Container\Attributes\Config;
@@ -27,26 +30,18 @@ class ProxyAuthService
     {
         $remoteAddr = $request->server->get('REMOTE_ADDR');
 
-        if (!IpUtils::checkIp($remoteAddr, $this->allowList)) {
-            Log::warning('[ProxyAuth] Remote address not in allow list', [
-                'remote_addr' => $remoteAddr,
-                'allow_list' => $this->allowList,
-            ]);
-
-            return null;
-        }
-
-        if (!$request->header($this->userHeader)) {
-            Log::warning('[ProxyAuth] User header not present on request', [
-                'expected_header' => $this->userHeader,
-                'remote_addr' => $remoteAddr,
-            ]);
-
-            return null;
-        }
-
         try {
+            if (!IpUtils::checkIp($remoteAddr, $this->allowList)) {
+                throw new ProxyAuthIpNotAllowedException($remoteAddr, $this->allowList);
+            }
+
+            if (!$request->header($this->userHeader)) {
+                throw new ProxyAuthUserHeaderMissingException($this->userHeader, $remoteAddr);
+            }
+
             return $this->userService->createOrUpdateUserFromSso(SsoUser::fromProxyAuthRequest($request));
+        } catch (ProxyAuthException $e) {
+            Log::warning(sprintf('[ProxyAuth] %s', $e->getMessage()), $e->context());
         } catch (Throwable $e) {
             Log::error('[ProxyAuth] Failed to create or update user from SSO headers', [
                 'exception' => $e,
