@@ -20,7 +20,7 @@
         :key="item.playable.id"
         :item="item"
         :show-disc="showDiscLabel(item.playable)"
-        draggable="true"
+        :draggable="!isMobile.any"
         @click="onClick(item, $event)"
         @dragleave="onDragLeave"
         @dragstart="onDragStart(item, $event)"

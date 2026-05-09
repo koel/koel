@@ -10,7 +10,7 @@
       :class="layout"
       class="relative group flex p-5 rounded-[inherit] flex-col gap-5"
       data-testid="artist-album-card"
-      draggable="true"
+      :draggable="!isMobile.any"
       tabindex="0"
       @dblclick="onDblClick"
       @dragstart="onDragStart"
@@ -35,6 +35,7 @@
 </template>
 
 <script lang="ts" setup>
+import isMobile from 'ismobilejs'
 import { computed, toRefs } from 'vue'
 import { textToHsl } from '@/utils/formatters'
 

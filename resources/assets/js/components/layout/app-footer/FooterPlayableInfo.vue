@@ -24,6 +24,7 @@
 </template>
 
 <script lang="ts" setup>
+import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
 import { getPlayableProp, requireInjection, use } from '@/utils/helpers'
@@ -61,7 +62,7 @@ const artistOrPodcastName = computed(() =>
 )
 
 const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})`)
-const draggable = computed(() => Boolean(playable.value))
+const draggable = computed(() => Boolean(playable.value) && !isMobile.any)
 
 const onDragStart = (event: DragEvent) => use(playable.value, p => startDragging(event, [p]))
 

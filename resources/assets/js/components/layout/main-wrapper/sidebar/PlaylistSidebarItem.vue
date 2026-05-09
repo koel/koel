@@ -4,7 +4,7 @@
     :class="{ droppable }"
     :href="href"
     class="playlist select-none"
-    draggable="true"
+    :draggable="!isMobile.any"
     :active
     @dblclick="onDblClick"
     @contextmenu="onContextMenu"
@@ -26,6 +26,7 @@
 
 <script lang="ts" setup>
 import { faClockRotateLeft, faStar, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import isMobile from 'ismobilejs'
 import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
