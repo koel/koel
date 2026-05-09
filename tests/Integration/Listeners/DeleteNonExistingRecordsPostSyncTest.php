@@ -9,6 +9,9 @@ use App\Models\Song;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Database\Eloquent\Collection;
+use Laravel\Scout\EngineManager;
+use Laravel\Scout\Engines\Engine;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -62,5 +65,25 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $this->assertModelExists($songs[3]);
         $this->assertModelMissing($songs[1]);
         $this->assertModelMissing($songs[2]);
+    }
+
+    #[Test]
+    public function flushesOrphanedSongsFromSearchIndex(): void
+    {
+        // Replace Scout's engine with a spy so we can assert that `delete()` is called
+        // when orphan songs are pruned. Without the trait fix, the mass-delete bypasses
+        // Scout's per-model `deleted` event and orphans linger in the search index.
+        $engine = Mockery::spy(Engine::class);
+
+        $manager = Mockery::mock(EngineManager::class);
+        $manager->shouldReceive('engine')->andReturn($engine);
+        $this->app->instance(EngineManager::class, $manager);
+
+        $orphan = Song::factory()->createOne();
+
+        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+
+        self::assertModelMissing($orphan);
+        $engine->shouldHaveReceived('delete')->atLeast()->once();
     }
 }

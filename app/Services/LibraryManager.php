@@ -32,6 +32,12 @@ class LibraryManager
             ];
 
             if (!$dryRun) {
+                // Flush the search index before mass-delete: the query-builder ->delete()
+                // bypasses per-model events, so Scout's `deleted` listener never fires
+                // and orphan rows would otherwise linger in the index.
+                $results['albums']->unsearchable();
+                $results['artists']->unsearchable();
+
                 $albumQuery->delete();
                 $artistQuery->delete();
             }

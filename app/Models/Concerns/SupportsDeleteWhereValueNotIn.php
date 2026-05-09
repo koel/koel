@@ -5,6 +5,7 @@ namespace App\Models\Concerns;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Laravel\Scout\Searchable;
 
 /**
  * With reference to GitHub issue #463.
@@ -29,7 +30,7 @@ trait SupportsDeleteWhereValueNotIn
         $maxChunkSize = DB::getDriverName() === 'sqlite' ? 999 : 65_535;
 
         if (count($values) <= $maxChunkSize) {
-            $queryModifier(static::query())->whereNotIn($field, $values)->delete();
+            self::deleteAndUnsearch($queryModifier(static::query())->whereNotIn($field, $values));
 
             return;
         }
@@ -42,7 +43,7 @@ trait SupportsDeleteWhereValueNotIn
         $deletableIds = array_diff($allIds, $values);
 
         if (count($deletableIds) < $maxChunkSize) {
-            $queryModifier(static::query())->whereIn($field, $deletableIds)->delete();
+            self::deleteAndUnsearch($queryModifier(static::query())->whereIn($field, $deletableIds));
 
             return;
         }
@@ -56,8 +57,22 @@ trait SupportsDeleteWhereValueNotIn
 
         DB::transaction(static function () use ($values, $field, $chunkSize): void {
             foreach (array_chunk($values, $chunkSize) as $chunk) {
-                static::query()->whereIn($field, $chunk)->delete();
+                self::deleteAndUnsearch(static::query()->whereIn($field, $chunk));
             }
         });
+    }
+
+    /**
+     * Mass-delete bypasses per-model events, which means Scout's `deleted` listener
+     * never fires and orphan rows linger in the search index. Flush the matching rows
+     * from Scout first when the model is searchable, then delete via the same query.
+     */
+    private static function deleteAndUnsearch(Builder $query): void
+    {
+        if (in_array(Searchable::class, class_uses_recursive(static::class), true)) {
+            (clone $query)->unsearchable();
+        }
+
+        $query->delete();
     }
 }
