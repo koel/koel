@@ -2,7 +2,8 @@
 
 namespace App\Values\User;
 
-use App\Values\Equalizer;
+use App\Values\EqualizerPreset;
+use App\Values\EqualizerPresetCollection;
 use Illuminate\Contracts\Support\Arrayable;
 use JsonSerializable;
 use Webmozart\Assert\Assert;
@@ -44,7 +45,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
         'continuous_playback',
         'crossfade_duration',
         'detect_duplicate_uploads',
-        'equalizer',
+        'current_equalizer_preset',
+        'equalizer_presets',
         'genres_sort_field',
         'genres_sort_order',
         'include_public_media',
@@ -73,7 +75,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
     private function __construct(
         public float $volume,
         public string $repeatMode,
-        public Equalizer $equalizer,
+        public EqualizerPreset $currentEqualizerPreset,
+        public EqualizerPresetCollection $equalizerPresets,
         public string $albumsViewMode,
         public string $artistsViewMode,
         public string $radioStationsViewMode,
@@ -136,7 +139,10 @@ final class UserPreferences implements Arrayable, JsonSerializable
         return new self(
             volume: $data['volume'] ?? 7.0,
             repeatMode: $data['repeat_mode'] ?? 'NO_REPEAT',
-            equalizer: isset($data['equalizer']) ? Equalizer::tryMake($data['equalizer']) : Equalizer::default(),
+            currentEqualizerPreset: EqualizerPreset::tryFromArray(
+                $data['current_equalizer_preset'] ?? $data['equalizer'] ?? null,
+            ) ?? EqualizerPreset::default(),
+            equalizerPresets: EqualizerPresetCollection::fromArray($data['equalizer_presets'] ?? []),
             albumsViewMode: $data['albums_view_mode'] ?? 'thumbnails',
             artistsViewMode: $data['artists_view_mode'] ?? 'thumbnails',
             radioStationsViewMode: $data['radio_stations_view_mode'] ?? 'thumbnails',
@@ -236,7 +242,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
             'radio_stations_favorites_only' => $this->radioStationsFavoritesOnly,
             'repeat_mode' => $this->repeatMode,
             'volume' => $this->volume,
-            'equalizer' => $this->equalizer->toArray(),
+            'current_equalizer_preset' => $this->currentEqualizerPreset->toArray(),
+            'equalizer_presets' => $this->equalizerPresets->map(static fn (EqualizerPreset $p) => $p->toArray())->all(),
             'lyrics_zoom_level' => $this->lyricsZoomLevel,
             'visualizer' => $this->visualizer,
             'active_extra_panel_tab' => $this->activeExtraPanelTab,

@@ -1,10 +1,37 @@
 <template>
   <div class="select-none w-full flex flex-col" tabindex="0" @keydown.esc="close">
-    <header>
-      <SelectBox v-model="selectedPresetName" class="!bg-black/30 !text-white" title="Select equalizer">
-        <option :value="null" disabled>Preset</option>
-        <option v-for="preset in presets" :key="preset.name!" :value="preset.name">{{ preset.name }}</option>
-      </SelectBox>
+    <header class="flex gap-2 items-center">
+      <template v-if="!saveDialogOpen">
+        <SelectBox v-model="selectedKey" class="!bg-black/30 !text-white" title="Select equalizer">
+          <option :value="null" disabled>Preset</option>
+          <optgroup label="Built-in">
+            <option v-for="preset in builtInPresets" :key="preset.name!" :value="`builtin:${preset.name}`">
+              {{ preset.name }}
+            </option>
+          </optgroup>
+          <optgroup v-if="customPresets.length" label="Custom">
+            <option v-for="preset in customPresets" :key="preset.id!" :value="`custom:${preset.id}`">
+              {{ preset.name }}
+            </option>
+          </optgroup>
+        </SelectBox>
+
+        <Btn v-if="isModified" variant="ghost" @click.prevent="openSaveDialog">Save as…</Btn>
+        <Btn v-if="customSelected" variant="ghost" @click.prevent="confirmDelete">Delete</Btn>
+      </template>
+
+      <template v-else>
+        <input
+          ref="nameInput"
+          v-model="pendingName"
+          class="!bg-black/30 !text-white px-2 py-1 rounded flex-1 min-w-0"
+          placeholder="Preset name"
+          @keydown.enter.prevent="commitSave"
+          @keydown.esc.prevent="cancelSave"
+        />
+        <Btn variant="ghost" :disabled="!pendingName.trim()" @click.prevent="commitSave">Save</Btn>
+        <Btn variant="ghost" @click.prevent="cancelSave">Cancel</Btn>
+      </template>
     </header>
 
     <main>
@@ -53,11 +80,11 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { equalizerStore } from '@/stores/equalizerStore'
 import type { Band } from '@/services/audioService'
 import { audioService } from '@/services/audioService'
-import { equalizerPresets as presets } from '@/config/audio'
+import { equalizerPresets as builtInPresets } from '@/config/audio'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
@@ -68,11 +95,46 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const bands = audioService.bands
 const preampGain = ref(0)
-const selectedPresetName = ref<EqualizerPreset['name']>(null)
+const selectedKey = ref<string | null>(null)
+const customPresets = toRef(equalizerStore.state, 'customPresets')
+const saveDialogOpen = ref(false)
+const pendingName = ref('')
 const preampBandEl = ref<InstanceType<typeof EqualizerBand>>()
 const filterBandEls = ref<InstanceType<typeof EqualizerBand>[]>()
 const filterBandsEl = ref<HTMLElement>()
+const nameInput = ref<HTMLInputElement>()
 const curvePoints = ref<{ x: number; y: number }[]>([])
+
+const isModified = computed(() => selectedKey.value === null)
+const customSelected = computed(() => selectedKey.value?.startsWith('custom:') === true)
+
+const resolvePreset = (key: string | null): EqualizerPreset | null => {
+  if (key === null) {
+    return null
+  }
+
+  if (key.startsWith('builtin:')) {
+    return equalizerStore.getBuiltInPresetByName(key.slice('builtin:'.length)) ?? null
+  }
+
+  if (key.startsWith('custom:')) {
+    return equalizerStore.getCustomPresetById(key.slice('custom:'.length)) ?? null
+  }
+
+  return null
+}
+
+const keyForPreset = (preset: EqualizerPreset): string | null => {
+  if (preset.id) {
+    return `custom:${preset.id}`
+  }
+
+  if (preset.name !== null) {
+    return `builtin:${preset.name}`
+  }
+
+  return null
+}
 
 let curveAnimationId = 0
 
@@ -143,16 +205,63 @@ const loadPreset = async (preset: EqualizerPreset) => {
 
 const save = () =>
   equalizerStore.saveConfig(
-    selectedPresetName.value,
+    resolvePreset(selectedKey.value),
     preampGain.value,
     bands.map(band => band.db),
   )
+
 const close = () => emit('close')
+
+const openSaveDialog = async () => {
+  pendingName.value = ''
+  saveDialogOpen.value = true
+  await nextTick()
+  nameInput.value?.focus()
+}
+
+const cancelSave = () => {
+  saveDialogOpen.value = false
+  pendingName.value = ''
+}
+
+const commitSave = () => {
+  const trimmed = pendingName.value.trim()
+
+  if (!trimmed) {
+    return
+  }
+
+  const created = equalizerStore.saveCustomPreset(
+    trimmed,
+    preampGain.value,
+    bands.map(band => band.db),
+  )
+
+  selectedKey.value = `custom:${created.id}`
+  saveDialogOpen.value = false
+  pendingName.value = ''
+}
+
+const confirmDelete = () => {
+  if (!customSelected.value) {
+    return
+  }
+
+  const id = selectedKey.value!.slice('custom:'.length)
+
+  if (!window.confirm('Delete this preset?')) {
+    return
+  }
+
+  equalizerStore.deleteCustomPreset(id)
+  selectedKey.value = null
+  save()
+}
 
 watch(preampGain, value => {
   audioService.changePreampGain(value)
   if (!applyingPreset) {
-    selectedPresetName.value = null
+    selectedKey.value = null
   }
 })
 
@@ -161,7 +270,7 @@ const changeFilterGain = (band: Band) => {
 
   if (!applyingPreset) {
     updateCurvePoints()
-    selectedPresetName.value = null
+    selectedKey.value = null
   }
 }
 
@@ -170,18 +279,19 @@ const commitFilterGain = () => {
   animateCurveToHandles()
 }
 
-watch(selectedPresetName, value => {
+watch(selectedKey, value => {
   if (value !== null) {
-    loadPreset(equalizerStore.getPresetByName(value) || presets[0])
+    loadPreset(resolvePreset(value) ?? builtInPresets[0])
   }
 
   save()
 })
 
 onMounted(async () => {
-  const { name, preamp } = equalizerStore.getConfig()
-  selectedPresetName.value = name
-  preampGain.value = preamp
+  equalizerStore.init()
+  const preset = equalizerStore.getConfig()
+  selectedKey.value = keyForPreset(preset)
+  preampGain.value = preset.preamp
   await nextTick()
   requestAnimationFrame(updateCurvePoints)
 })

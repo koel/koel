@@ -165,6 +165,76 @@ class UserPreferencesCastTest extends TestCase
     }
 
     #[Test]
+    public function fallsBackToLegacyEqualizerKeyForBackwardsCompat(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'equalizer' => [
+                    'name' => 'Rock',
+                    'preamp' => 2,
+                    'gains' => [4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                ],
+            ],
+        ]);
+
+        self::assertSame('Rock', $user->preferences->currentEqualizerPreset->name);
+        self::assertSame(2.0, $user->preferences->currentEqualizerPreset->preamp);
+    }
+
+    #[Test]
+    public function defaultsEqualizerPresetsToEmptyCollection(): void
+    {
+        $user = create_user();
+
+        self::assertCount(0, $user->preferences->equalizerPresets);
+    }
+
+    #[Test]
+    public function roundTripsEqualizerPresets(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'equalizer_presets' => [
+                    [
+                        'id' => '01J0000000000000000000ABCD',
+                        'name' => 'My Bass Boost',
+                        'preamp' => 3.0,
+                        'gains' => [6, 5, 4, 3, 2, 1, 0, 0, 0, 0],
+                    ],
+                ],
+            ],
+        ]);
+
+        $presets = $user->refresh()->preferences->equalizerPresets;
+
+        self::assertCount(1, $presets);
+        self::assertSame('01J0000000000000000000ABCD', $presets->first()->id);
+        self::assertSame('My Bass Boost', $presets->first()->name);
+        self::assertSame(3.0, $presets->first()->preamp);
+        self::assertSame([6.0, 5.0, 4.0, 3.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0], $presets->first()->gains);
+    }
+
+    #[Test]
+    public function dropsMalformedEqualizerPresets(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'equalizer_presets' => [
+                    ['id' => 'valid', 'name' => 'Good', 'preamp' => 0, 'gains' => array_fill(0, 10, 0)],
+                    ['id' => 'no-name', 'preamp' => 0, 'gains' => array_fill(0, 10, 0)],
+                    ['id' => 'short-gains', 'name' => 'Bad', 'preamp' => 0, 'gains' => [0, 0, 0]],
+                    'totally-not-an-array',
+                ],
+            ],
+        ]);
+
+        $presets = $user->preferences->equalizerPresets;
+
+        self::assertCount(1, $presets);
+        self::assertSame('Good', $presets->first()->name);
+    }
+
+    #[Test]
     public function roundTripsAllPreferences(): void
     {
         $user = create_user([

@@ -28,9 +28,18 @@ vi.mock('@/services/audioService', () => ({
 
 vi.mock('@/stores/equalizerStore', () => ({
   equalizerStore: {
-    getConfig: () => ({ name: 'Default', preamp: 0 }),
-    getPresetByName: () => null,
+    state: { customPresets: [] },
+    init: vi.fn(),
+    getConfig: () => ({ id: undefined, name: 'Default', preamp: 0, gains: [0, 0, 0] }),
+    getBuiltInPresetByName: (name: string) =>
+      [
+        { name: 'Default', preamp: 0, gains: [0, 0, 0] },
+        { name: 'Rock', preamp: 5, gains: [5, 3, 1] },
+      ].find(p => p.name === name) ?? null,
+    getCustomPresetById: () => null,
     saveConfig: vi.fn(),
+    saveCustomPreset: vi.fn(),
+    deleteCustomPreset: vi.fn(),
   },
 }))
 

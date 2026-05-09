@@ -382,7 +382,8 @@ interface UserPreferences extends Record<string, any> {
   repeat_mode: RepeatMode
   confirm_before_closing: boolean
   continuous_playback: boolean
-  equalizer: EqualizerPreset
+  current_equalizer_preset: EqualizerPreset
+  equalizer_presets: EqualizerPreset[]
   albums_view_mode: ViewMode
   artists_view_mode: ViewMode
   radio_stations_view_mode: ViewMode
@@ -495,6 +496,8 @@ interface PlayableRow {
 }
 
 interface EqualizerPreset {
+  /** Present when this is a user-saved custom preset; absent on built-ins and on the modified-but-unsaved state. */
+  id?: string
   name: string | null
   preamp: number
   gains: number[]
