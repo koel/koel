@@ -70,7 +70,7 @@ trait SupportsDeleteWhereValueNotIn
     private static function deleteAndUnsearch(Builder $query): void
     {
         if (in_array(Searchable::class, class_uses_recursive(static::class), true)) {
-            (clone $query)->unsearchable();
+            (clone $query)->unsearchable(); // @phpstan-ignore-line — Scout's Searchable trait macros unsearchable() onto the Eloquent Builder.
         }
 
         $query->delete();

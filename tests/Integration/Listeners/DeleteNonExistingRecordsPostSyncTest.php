@@ -84,6 +84,6 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
 
         self::assertModelMissing($orphan);
-        $engine->shouldHaveReceived('delete')->atLeast()->once();
+        $engine->shouldHaveReceived('delete')->atLeast()->once(); // @phpstan-ignore-line — Mockery chained expectations
     }
 }

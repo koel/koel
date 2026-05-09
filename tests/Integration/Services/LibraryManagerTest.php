@@ -69,7 +69,7 @@ class LibraryManagerTest extends TestCase
         $this->libraryManager->prune();
 
         // One Engine::delete() call per searchable type flushed (album + artist).
-        $engine->shouldHaveReceived('delete')->twice();
+        $engine->shouldHaveReceived('delete')->twice(); // @phpstan-ignore-line — Mockery chained expectations
     }
 
     #[Test]
