@@ -31,13 +31,8 @@ class ProxyAuthService
         $remoteAddr = $request->server->get('REMOTE_ADDR');
 
         try {
-            if (!IpUtils::checkIp($remoteAddr, $this->allowList)) {
-                throw new ProxyAuthIpNotAllowedException($remoteAddr, $this->allowList);
-            }
-
-            if (!$request->header($this->userHeader)) {
-                throw new ProxyAuthUserHeaderMissingException($this->userHeader, $remoteAddr);
-            }
+            $this->assertProxyIpAllowed($remoteAddr);
+            $this->assertUserHeaderPresent($request, $remoteAddr);
 
             return $this->userService->createOrUpdateUserFromSso(SsoUser::fromProxyAuthRequest($request));
         } catch (ProxyAuthException $e) {
@@ -51,5 +46,19 @@ class ProxyAuthService
         }
 
         return null;
+    }
+
+    private function assertProxyIpAllowed(?string $remoteAddr): void
+    {
+        if (!IpUtils::checkIp($remoteAddr, $this->allowList)) {
+            throw new ProxyAuthIpNotAllowedException($remoteAddr, $this->allowList);
+        }
+    }
+
+    private function assertUserHeaderPresent(Request $request, ?string $remoteAddr): void
+    {
+        if (!$request->header($this->userHeader)) {
+            throw new ProxyAuthUserHeaderMissingException($this->userHeader, $remoteAddr);
+        }
     }
 }
