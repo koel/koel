@@ -29,7 +29,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, toRef } from 'vue'
+import { equalizerPresets as builtInPresets } from '@/config/audio'
+import { equalizerStore } from '@/stores/equalizerStore'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
@@ -37,8 +39,6 @@ import EqualizerSavePresetForm from '@/components/ui/equalizer/EqualizerSavePres
 
 defineProps<{
   selectedId: string | null
-  builtInPresets: EqualizerPreset[]
-  customPresets: EqualizerPreset[]
   isModified: boolean
   customSelected: boolean
 }>()
@@ -49,6 +49,7 @@ const emit = defineEmits<{
   (e: 'delete'): void
 }>()
 
+const customPresets = toRef(equalizerStore.state, 'customPresets')
 const saveDialogOpen = ref(false)
 
 const commitSave = (name: string) => {

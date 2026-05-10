@@ -2,26 +2,28 @@ import { describe, expect, it } from 'vite-plus/test'
 import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { equalizerPresets as builtInPresets } from '@/config/audio'
+import { equalizerStore } from '@/stores/equalizerStore'
 import Component from './EqualizerHeader.vue'
 
 const rock = builtInPresets.find(preset => preset.name === 'Rock')!
-const customPresets: EqualizerPreset[] = [{ id: '01HFCUSTOM01', name: 'My Bass', preamp: 3, gains: [4, 4, 0] }]
+const customPreset: EqualizerPreset = { id: '01HFCUSTOM01', name: 'My Bass', preamp: 3, gains: [4, 4, 0] }
 
 describe('equalizerHeader.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => {
+      equalizerStore.state.customPresets = [customPreset]
+    },
+  })
 
   const renderHeader = (
     overrides: Partial<{
       selectedId: string | null
-      customPresets: EqualizerPreset[]
       isModified: boolean
       customSelected: boolean
     }> = {},
   ) =>
     h.render(Component, {
       props: {
-        builtInPresets,
-        customPresets: overrides.customPresets ?? customPresets,
         isModified: overrides.isModified ?? false,
         customSelected: overrides.customSelected ?? false,
         selectedId: overrides.selectedId ?? builtInPresets[0].id ?? null,
@@ -37,7 +39,8 @@ describe('equalizerHeader.vue', () => {
   })
 
   it('omits the Custom optgroup when there are no custom presets', () => {
-    renderHeader({ customPresets: [] })
+    equalizerStore.state.customPresets = []
+    renderHeader()
 
     expect(screen.queryByText('My Bass')).toBeNull()
   })

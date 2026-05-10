@@ -2,8 +2,6 @@
   <div class="select-none w-full flex flex-col" tabindex="0" @keydown.esc="close">
     <EqualizerHeader
       :selected-id="selectedId"
-      :built-in-presets="builtInPresets"
-      :custom-presets="customPresets"
       :is-modified="isModified"
       :custom-selected="customSelected"
       @select="applySelection"
@@ -22,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRef } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { equalizerStore } from '@/stores/equalizerStore'
 import { audioService } from '@/services/audioService'
 import { equalizerPresets as builtInPresets } from '@/config/audio'
@@ -38,7 +36,6 @@ const { showConfirmDialog } = useDialogBox()
 
 const bands = audioService.bands
 const selectedId = ref<string | null>(null)
-const customPresets = toRef(equalizerStore.state, 'customPresets')
 const bandsRef = ref<InstanceType<typeof EqualizerBands>>()
 
 const isModified = computed(() => selectedId.value === null)
