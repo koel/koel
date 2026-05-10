@@ -41,7 +41,7 @@ const customPresets = toRef(equalizerStore.state, 'customPresets')
 const bandsRef = ref<InstanceType<typeof EqualizerBands>>()
 
 const isModified = computed(() => selectedKey.value === null)
-const customSelected = computed(() => selectedKey.value?.startsWith('custom:') === true)
+const customSelected = computed(() => selectedKey.value?.startsWith('custom:') ?? false)
 
 const resolvePreset = (key: string | null): EqualizerPreset | null => {
   if (key === null) {
