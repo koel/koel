@@ -2,17 +2,17 @@ import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { preferenceStore } from '@/stores/preferenceStore'
-import { equalizerPresets as builtInPresets } from '@/config/audio'
 import { equalizerStore } from '@/stores/equalizerStore'
 
-const ROCK_ID = builtInPresets.find(preset => preset.name === 'Rock')!.id!
-const CLASSICAL_ID = builtInPresets.find(preset => preset.name === 'Classical')!.id!
+const DEFAULT_ID = '01KR9JKWWQDDJZ5HT6DBY9DH3Y'
+const CLASSICAL_ID = '01KR9JKWWQDDJZ5HT6DBY9DH3Z'
+const ROCK_ID = '01KR9JKWWQDDJZ5HT6DBY9DH49'
 
 describe('equalizerStore', () => {
   const h = createHarness({
     beforeEach: () => {
       preferenceStore.current_equalizer_preset = {
-        id: builtInPresets[0].id,
+        id: DEFAULT_ID,
         name: 'Default',
         preamp: 0,
         gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
