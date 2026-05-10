@@ -10,6 +10,60 @@ use function Tests\create_user;
 
 class UserPreferencesCastTest extends TestCase
 {
+    /**
+     * Tripwire: pins the full set of preference storage keys produced by toArray().
+     * Adding or removing a Preference subclass will break this test, forcing an
+     * explicit update so additions/removals can't slip through silently.
+     */
+    #[Test]
+    public function serializedArrayContainsExactlyTheRegisteredPreferenceKeys(): void
+    {
+        $expected = [
+            'active_extra_panel_tab',
+            'albums_favorites_only',
+            'albums_sort_field',
+            'albums_sort_order',
+            'albums_view_mode',
+            'artists_favorites_only',
+            'artists_sort_field',
+            'artists_sort_order',
+            'artists_view_mode',
+            'confirm_before_closing',
+            'continuous_playback',
+            'crossfade_duration',
+            'current_equalizer_preset',
+            'detect_duplicate_uploads',
+            'equalizer_presets',
+            'genres_sort_field',
+            'genres_sort_order',
+            'include_public_media',
+            'lastfm_session_key',
+            'lyrics_zoom_level',
+            'make_uploads_public',
+            'podcasts_favorites_only',
+            'podcasts_sort_field',
+            'podcasts_sort_order',
+            'radio_stations_favorites_only',
+            'radio_stations_sort_field',
+            'radio_stations_sort_order',
+            'radio_stations_view_mode',
+            'repeat_mode',
+            'show_album_art_overlay',
+            'show_now_playing_notification',
+            'support_bar_no_bugging',
+            'theme',
+            'transcode_on_mobile',
+            'transcode_quality',
+            'visualizer',
+            'volume',
+        ];
+
+        $actual = array_keys(UserPreferences::fromArray([])->toArray());
+        sort($actual);
+
+        self::assertSame($expected, $actual);
+    }
+
     #[Test]
     public function cast(): void
     {
