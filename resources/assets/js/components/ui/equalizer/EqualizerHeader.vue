@@ -8,16 +8,21 @@
         @update:model-value="id => emit('select', id)"
       >
         <option :value="null" disabled>Preset</option>
-        <optgroup label="Built-in">
-          <option v-for="preset in builtInPresets" :key="preset.id ?? ''" :value="preset.id ?? ''">
-            {{ preset.name }}
-          </option>
-        </optgroup>
-        <optgroup v-if="customPresets.length" label="Custom">
-          <option v-for="preset in customPresets" :key="preset.id ?? ''" :value="preset.id ?? ''">
-            {{ preset.name }}
-          </option>
-        </optgroup>
+        <template v-if="customPresets.length">
+          <optgroup label="Built-in">
+            <option v-for="preset in builtInPresets" :key="preset.id ?? ''" :value="preset.id ?? ''">
+              {{ preset.name }}
+            </option>
+          </optgroup>
+          <optgroup label="Custom">
+            <option v-for="preset in customPresets" :key="preset.id ?? ''" :value="preset.id ?? ''">
+              {{ preset.name }}
+            </option>
+          </optgroup>
+        </template>
+        <option v-for="preset in builtInPresets" v-else :key="preset.id ?? ''" :value="preset.id ?? ''">
+          {{ preset.name }}
+        </option>
       </SelectBox>
 
       <Btn v-if="isModified" variant="ghost" @click.prevent="saveDialogOpen = true">Save as…</Btn>
