@@ -1,13 +1,10 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { equalizerPresets as builtInPresets } from '@/config/audio'
 import Component from './EqualizerHeader.vue'
 
-const builtInPresets: EqualizerPreset[] = [
-  { id: '01BUILTINDEFAULT0000000000', name: 'Default', preamp: 0, gains: [0, 0, 0] },
-  { id: '01BUILTINROCK00000000000000', name: 'Rock', preamp: 5, gains: [5, 3, 1] },
-]
-
+const rock = builtInPresets.find(preset => preset.name === 'Rock')!
 const customPresets: EqualizerPreset[] = [{ id: '01HFCUSTOM01', name: 'My Bass', preamp: 3, gains: [4, 4, 0] }]
 
 describe('equalizerHeader.vue', () => {
@@ -99,8 +96,8 @@ describe('equalizerHeader.vue', () => {
   it('emits select with the new id when a preset is chosen', async () => {
     const { emitted } = renderHeader()
 
-    await h.user.selectOptions(screen.getByRole('combobox'), builtInPresets[1].id ?? '')
+    await h.user.selectOptions(screen.getByRole('combobox'), rock.id ?? '')
 
-    expect(emitted().select).toEqual([[builtInPresets[1].id]])
+    expect(emitted().select).toEqual([[rock.id]])
   })
 })
