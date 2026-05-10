@@ -10,11 +10,6 @@ use function Tests\create_user;
 
 class UserPreferencesCastTest extends TestCase
 {
-    /**
-     * Tripwire: pins the full set of preference storage keys produced by toArray().
-     * Adding or removing a Preference subclass will break this test, forcing an
-     * explicit update so additions/removals can't slip through silently.
-     */
     #[Test]
     public function serializedArrayContainsExactlyTheRegisteredPreferenceKeys(): void
     {
