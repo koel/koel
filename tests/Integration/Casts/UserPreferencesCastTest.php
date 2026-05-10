@@ -53,10 +53,7 @@ class UserPreferencesCastTest extends TestCase
             'volume',
         ];
 
-        $actual = array_keys(UserPreferences::fromArray([])->toArray());
-        sort($actual);
-
-        self::assertSame($expected, $actual);
+        self::assertEqualsCanonicalizing($expected, array_keys(UserPreferences::fromArray([])->toArray()));
     }
 
     #[Test]
