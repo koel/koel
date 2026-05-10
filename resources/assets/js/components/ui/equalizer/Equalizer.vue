@@ -25,12 +25,15 @@ import { computed, onMounted, ref, toRef, watch } from 'vue'
 import { equalizerStore } from '@/stores/equalizerStore'
 import { audioService } from '@/services/audioService'
 import { equalizerPresets as builtInPresets } from '@/config/audio'
+import { useDialogBox } from '@/composables/useDialogBox'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import EqualizerBands from '@/components/ui/equalizer/EqualizerBands.vue'
 import EqualizerHeader from '@/components/ui/equalizer/EqualizerHeader.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
+
+const { showConfirmDialog } = useDialogBox()
 
 const bands = audioService.bands
 const selectedKey = ref<string | null>(null)
@@ -94,12 +97,11 @@ const confirmDelete = async () => {
     return
   }
 
-  const id = selectedKey.value!.slice('custom:'.length)
-
-  if (!window.confirm('Delete this preset?')) {
+  if (!(await showConfirmDialog('Delete this preset?'))) {
     return
   }
 
+  const id = selectedKey.value!.slice('custom:'.length)
   await equalizerStore.deleteCustomPreset(id)
   selectedKey.value = null
   save()

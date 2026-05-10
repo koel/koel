@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { equalizerStore } from '@/stores/equalizerStore'
 import Component from './Equalizer.vue'
 
 vi.mock('nouislider', () => ({
@@ -16,42 +17,28 @@ vi.mock('nouislider', () => ({
 
 vi.mock('@/services/audioService', () => ({
   audioService: {
-    bands: [
-      { label: '60', db: 0, node: {} },
-      { label: '170', db: 0, node: {} },
-      { label: '1K', db: 0, node: {} },
-    ],
+    bands: Array.from({ length: 10 }, (_, index) => ({
+      label: `band-${index}`,
+      db: 0,
+      node: {},
+    })),
     changePreampGain: vi.fn(),
     changeFilterGain: vi.fn(),
   },
 }))
 
-vi.mock('@/stores/equalizerStore', () => ({
-  equalizerStore: {
-    state: { customPresets: [] },
-    init: vi.fn(),
-    getConfig: () => ({ id: undefined, name: 'Default', preamp: 0, gains: [0, 0, 0] }),
-    getBuiltInPresetByName: (name: string) =>
-      [
-        { name: 'Default', preamp: 0, gains: [0, 0, 0] },
-        { name: 'Rock', preamp: 5, gains: [5, 3, 1] },
-      ].find(p => p.name === name) ?? null,
-    getCustomPresetById: () => null,
-    saveConfig: vi.fn(),
-    saveCustomPreset: vi.fn(),
-    deleteCustomPreset: vi.fn(),
-  },
-}))
-
-vi.mock('@/config/audio', () => ({
-  equalizerPresets: [
-    { name: 'Default', preamp: 0, gains: [0, 0, 0] },
-    { name: 'Rock', preamp: 5, gains: [5, 3, 1] },
-  ],
-}))
-
 describe('equalizer.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => {
+      h.mock(equalizerStore, 'init')
+      h.mock(equalizerStore, 'getConfig').mockReturnValue({
+        id: undefined,
+        name: 'Default',
+        preamp: 0,
+        gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      })
+    },
+  })
 
   it('wires header (preset dropdown) and bands (sliders) together', () => {
     const { container } = h.render(Component)

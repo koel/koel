@@ -15,8 +15,8 @@
         </optgroup>
       </SelectBox>
 
-      <Btn v-if="isModified" variant="ghost" @click.prevent="saveDialogOpen = true">Save as…</Btn>
-      <Btn v-if="customSelected" variant="ghost" @click.prevent="emit('delete')">Delete</Btn>
+      <Btn v-if="isModified" variant="success" @click.prevent="saveDialogOpen = true">Save as…</Btn>
+      <Btn v-if="customSelected" variant="destructive" @click.prevent="emit('delete')">Delete</Btn>
     </template>
 
     <EqualizerSavePresetForm v-else @submit="commitSave" @cancel="saveDialogOpen = false" />

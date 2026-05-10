@@ -1,49 +1,18 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-
-const { mockPreferences, mockHttp } = vi.hoisted(() => ({
-  mockPreferences: {
-    current_equalizer_preset: {
-      name: 'Default',
-      preamp: 0,
-      gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    } as any,
-    equalizer_presets: [] as any[],
-    init: vi.fn(),
-    initialized: { value: true },
-    state: {},
-    setupProxy: vi.fn(),
-    set: vi.fn(),
-    get: vi.fn(),
-    update: vi.fn(),
-  },
-  mockHttp: {
-    post: vi.fn(),
-    delete: vi.fn(),
-  },
-}))
-
-vi.mock('@/stores/preferenceStore', () => ({
-  preferenceStore: mockPreferences,
-}))
-
-vi.mock('@/services/http', () => ({
-  http: mockHttp,
-}))
-
-import { equalizerStore } from './equalizerStore'
+import { http } from '@/services/http'
+import { preferenceStore } from '@/stores/preferenceStore'
+import { equalizerStore } from '@/stores/equalizerStore'
 
 describe('equalizerStore', () => {
-  createHarness({
+  const h = createHarness({
     beforeEach: () => {
-      mockPreferences.current_equalizer_preset = {
+      preferenceStore.current_equalizer_preset = {
         name: 'Default',
         preamp: 0,
         gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       }
-      mockPreferences.equalizer_presets = []
-      mockHttp.post.mockReset()
-      mockHttp.delete.mockReset()
+      preferenceStore.equalizer_presets = []
       equalizerStore.init()
     },
   })
@@ -59,18 +28,21 @@ describe('equalizerStore', () => {
   })
 
   it('returns named built-in config from preferences', () => {
-    mockPreferences.current_equalizer_preset = { name: 'Classical', preamp: 0, gains: [] }
+    preferenceStore.current_equalizer_preset = { name: 'Classical', preamp: 0, gains: [] }
     expect(equalizerStore.getConfig().name).toBe('Classical')
   })
 
   it('returns Default preset when name is unknown', () => {
-    mockPreferences.current_equalizer_preset = { name: 'DoesNotExist', preamp: 0, gains: [] }
+    preferenceStore.current_equalizer_preset = { name: 'DoesNotExist', preamp: 0, gains: [] }
     expect(equalizerStore.getConfig().name).toBe('Default')
   })
 
   it('returns modified preset directly when name is null', () => {
-    const modified = { name: null, preamp: 5, gains: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
-    mockPreferences.current_equalizer_preset = modified
+    preferenceStore.current_equalizer_preset = {
+      name: null,
+      preamp: 5,
+      gains: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    }
     const config = equalizerStore.getConfig()
     expect(config.name).toBeNull()
     expect(config.preamp).toBe(5)
@@ -102,11 +74,11 @@ describe('equalizerStore', () => {
       preamp: 3,
       gains: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     }
-    mockHttp.post.mockResolvedValueOnce(serverPreset)
+    const postMock = h.mock(http, 'post').mockResolvedValueOnce(serverPreset)
 
     const created = await equalizerStore.saveCustomPreset('My Bass', 3, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
-    expect(mockHttp.post).toHaveBeenCalledWith('me/equalizer-presets', {
+    expect(postMock).toHaveBeenCalledWith('me/equalizer-presets', {
       name: 'My Bass',
       preamp: 3,
       gains: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -117,25 +89,25 @@ describe('equalizerStore', () => {
 
   it('deletes a custom preset by id via DELETE', async () => {
     const serverPreset = { id: '01HSERVER', name: 'Tmp', preamp: 0, gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
-    mockHttp.post.mockResolvedValueOnce(serverPreset)
-    mockHttp.delete.mockResolvedValueOnce(undefined)
+    h.mock(http, 'post').mockResolvedValueOnce(serverPreset)
+    const deleteMock = h.mock(http, 'delete').mockResolvedValueOnce(undefined)
 
     const created = await equalizerStore.saveCustomPreset('Tmp', 0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     await equalizerStore.deleteCustomPreset(created.id!)
 
-    expect(mockHttp.delete).toHaveBeenCalledWith(`me/equalizer-presets/${created.id}`)
+    expect(deleteMock).toHaveBeenCalledWith(`me/equalizer-presets/${created.id}`)
     expect(equalizerStore.state.customPresets).toHaveLength(0)
   })
 
   it('saves last-applied config (named preset)', () => {
     const rock = equalizerStore.getBuiltInPresetByName('Rock')!
     equalizerStore.saveConfig(rock, 0, rock.gains)
-    expect(mockPreferences.current_equalizer_preset.name).toBe('Rock')
+    expect(preferenceStore.current_equalizer_preset.name).toBe('Rock')
   })
 
   it('saves last-applied config (modified)', () => {
     equalizerStore.saveConfig(null, 7, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    expect(mockPreferences.current_equalizer_preset.name).toBeNull()
-    expect(mockPreferences.current_equalizer_preset.preamp).toBe(7)
+    expect(preferenceStore.current_equalizer_preset.name).toBeNull()
+    expect(preferenceStore.current_equalizer_preset.preamp).toBe(7)
   })
 })

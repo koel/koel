@@ -23,6 +23,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - tailwindcss (TAILWINDCSS) - v3
 
 ## Conventions
+- **Always infer from the existing codebase before writing — and ask when no precedent exists.** Before any new identifier, mock/test pattern, store/service call shape, form wiring, helper choice, spelling, or file layout, grep `app/` and `resources/assets/js/` for how it has been done before, and copy the existing shape exactly. If no precedent exists in the repo, **stop and ask the user** instead of defaulting to whatever you'd write from training data or personal habit. The codebase is the source of truth for *how things are done*, not just *what exists*. "I should have looked" is the symptom; not looking first is the root cause.
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
