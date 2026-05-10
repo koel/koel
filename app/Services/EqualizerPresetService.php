@@ -45,8 +45,9 @@ class EqualizerPresetService
     /** @return array<int, array<string, mixed>> */
     private function serializeExisting(User $user): array
     {
-        return $user->preferences->equalizerPresets->map(
+        return array_map(
             static fn (EqualizerPreset $preset): array => $preset->toArray(),
-        )->all();
+            $user->preferences->equalizerPresets->all(),
+        );
     }
 }
