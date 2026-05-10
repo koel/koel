@@ -14,7 +14,7 @@ class EqualizerPresetService
         $preset = EqualizerPreset::make(id: (string) Str::ulid(), name: $name, preamp: $preamp, gains: $gains);
 
         $next = [
-            ...$this->serialiseExisting($user),
+            ...$this->serializeExisting($user),
             $preset->toArray(),
         ];
 
@@ -39,7 +39,7 @@ class EqualizerPresetService
     }
 
     /** @return array<int, array<string, mixed>> */
-    private function serialiseExisting(User $user): array
+    private function serializeExisting(User $user): array
     {
         return $user->preferences->equalizerPresets->map(
             static fn (EqualizerPreset $preset): array => $preset->toArray(),
