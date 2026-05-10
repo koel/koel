@@ -16,12 +16,6 @@ final readonly class EqualizerPreset implements Arrayable, JsonSerializable
         public array $gains,
     ) {}
 
-    /**
-     * Build a preset from a raw array. Supports all three states:
-     * built-in (id null, name set), saved-custom (id set, name set),
-     * and modified-but-unsaved (id null, name null). Returns null when
-     * preamp or gains are missing or malformed.
-     */
     public static function tryFromArray(mixed $data): ?self
     {
         if (!is_array($data)) {

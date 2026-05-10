@@ -32,9 +32,6 @@ export const equalizerStore = {
 
   getPresetById: (id: string) => builtInPresets.find(p => p.id === id) ?? state.customPresets.find(p => p.id === id),
 
-  /**
-   * Resolve the preset to apply on app load.
-   */
   getConfig(): EqualizerPreset {
     const current = preferences.current_equalizer_preset
 
@@ -52,9 +49,6 @@ export const equalizerStore = {
     return current
   },
 
-  /**
-   * Persist the user's last-applied preset.
-   */
   saveConfig(preset: EqualizerPreset | null, preamp: number, gains: number[]) {
     preferences.current_equalizer_preset = preset ?? { name: null, preamp, gains }
   },
