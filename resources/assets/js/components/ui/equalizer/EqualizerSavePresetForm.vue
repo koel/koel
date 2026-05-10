@@ -8,8 +8,8 @@
       title="Preset name"
       required
     />
-    <Btn type="submit" variant="success">Save</Btn>
-    <Btn type="button" variant="destructive" @click.prevent="maybeCancel">Cancel</Btn>
+    <Btn type="submit" variant="ghost">Save</Btn>
+    <Btn type="button" variant="ghost" @click.prevent="maybeCancel">Cancel</Btn>
   </form>
 </template>
 

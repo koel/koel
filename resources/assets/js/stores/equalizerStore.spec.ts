@@ -4,15 +4,11 @@ import { http } from '@/services/http'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { equalizerStore } from '@/stores/equalizerStore'
 
-const DEFAULT_ID = '01KR9JKWWQDDJZ5HT6DBY9DH3Y'
-const CLASSICAL_ID = '01KR9JKWWQDDJZ5HT6DBY9DH3Z'
-const ROCK_ID = '01KR9JKWWQDDJZ5HT6DBY9DH49'
-
 describe('equalizerStore', () => {
   const h = createHarness({
     beforeEach: () => {
       preferenceStore.current_equalizer_preset = {
-        id: DEFAULT_ID,
+        id: '01KR9JKWWQDDJZ5HT6DBY9DH3Y',
         name: 'Default',
         preamp: 0,
         gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -23,7 +19,7 @@ describe('equalizerStore', () => {
   })
 
   it('finds a built-in preset by id', () => {
-    const preset = equalizerStore.getPresetById(ROCK_ID)
+    const preset = equalizerStore.getPresetById('01KR9JKWWQDDJZ5HT6DBY9DH49')
     expect(preset).toBeDefined()
     expect(preset!.name).toBe('Rock')
   })
@@ -40,7 +36,7 @@ describe('equalizerStore', () => {
 
   it('returns built-in config from preferences by id', () => {
     preferenceStore.current_equalizer_preset = {
-      id: CLASSICAL_ID,
+      id: '01KR9JKWWQDDJZ5HT6DBY9DH3Z',
       name: 'Classical',
       preamp: 0,
       gains: [],
@@ -110,10 +106,10 @@ describe('equalizerStore', () => {
   })
 
   it('saves last-applied config (named preset)', () => {
-    const rock = equalizerStore.getPresetById(ROCK_ID)!
+    const rock = equalizerStore.getPresetById('01KR9JKWWQDDJZ5HT6DBY9DH49')!
     equalizerStore.saveConfig(rock, 0, rock.gains)
     expect(preferenceStore.current_equalizer_preset.name).toBe('Rock')
-    expect(preferenceStore.current_equalizer_preset.id).toBe(ROCK_ID)
+    expect(preferenceStore.current_equalizer_preset.id).toBe('01KR9JKWWQDDJZ5HT6DBY9DH49')
   })
 
   it('saves last-applied config (modified)', () => {
