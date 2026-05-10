@@ -9,12 +9,12 @@
       >
         <option :value="null" disabled>Preset</option>
         <optgroup label="Built-in">
-          <option v-for="preset in builtInPresets" :key="preset.name!" :value="`builtin:${preset.name}`">
+          <option v-for="preset in builtInPresets" :key="preset.name ?? ''" :value="builtInKey(preset.name ?? '')">
             {{ preset.name }}
           </option>
         </optgroup>
         <optgroup v-if="customPresets.length" label="Custom">
-          <option v-for="preset in customPresets" :key="preset.id!" :value="`custom:${preset.id}`">
+          <option v-for="preset in customPresets" :key="preset.id ?? ''" :value="customKey(preset.id ?? '')">
             {{ preset.name }}
           </option>
         </optgroup>
@@ -30,6 +30,8 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+
+import { builtInKey, customKey } from '@/utils/equalizerKey'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'

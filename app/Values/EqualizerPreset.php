@@ -35,7 +35,7 @@ final readonly class EqualizerPreset implements Arrayable, JsonSerializable
 
         if (
             $id !== null && (!is_string($id) || $id === '')
-            || $name !== null && !is_string($name)
+            || $name !== null && (!is_string($name) || trim($name) === '')
             || !is_numeric($preamp)
             || !is_array($gains)
             || count($gains) !== 10

@@ -103,7 +103,7 @@ const loadPreset = async (preset: EqualizerPreset, audioBands: Band[]) => {
   preset.gains.forEach((gain, index) => {
     audioBands[index].db = gain
     audioService.changeFilterGain(audioBands[index].node, gain)
-    filterBandEls.value![index].updateSliderValue(gain)
+    filterBandEls.value?.[index]?.updateSliderValue(gain)
   })
 
   await nextTick()

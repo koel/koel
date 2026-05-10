@@ -6,7 +6,7 @@
       :custom-presets="customPresets"
       :is-modified="isModified"
       :custom-selected="customSelected"
-      @select="key => (selectedKey = key)"
+      @select="applySelection"
       @save="commitSave"
       @delete="confirmDelete"
     />
@@ -22,11 +22,19 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRef, watch } from 'vue'
+import { computed, onMounted, ref, toRef } from 'vue'
 import { equalizerStore } from '@/stores/equalizerStore'
 import { audioService } from '@/services/audioService'
 import { equalizerPresets as builtInPresets } from '@/config/audio'
 import { useDialogBox } from '@/composables/useDialogBox'
+import {
+  builtInKey,
+  builtInNameFromKey,
+  customIdFromKey,
+  customKey,
+  isBuiltInKey,
+  isCustomKey,
+} from '@/utils/equalizerKey'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import EqualizerBands from '@/components/ui/equalizer/EqualizerBands.vue'
@@ -42,19 +50,15 @@ const customPresets = toRef(equalizerStore.state, 'customPresets')
 const bandsRef = ref<InstanceType<typeof EqualizerBands>>()
 
 const isModified = computed(() => selectedKey.value === null)
-const customSelected = computed(() => Boolean(selectedKey.value?.startsWith('custom:')))
+const customSelected = computed(() => isCustomKey(selectedKey.value))
 
 const resolvePreset = (key: string | null): EqualizerPreset | null => {
-  if (key === null) {
-    return null
+  if (isBuiltInKey(key)) {
+    return equalizerStore.getBuiltInPresetByName(builtInNameFromKey(key)) ?? null
   }
 
-  if (key.startsWith('builtin:')) {
-    return equalizerStore.getBuiltInPresetByName(key.slice('builtin:'.length)) ?? null
-  }
-
-  if (key.startsWith('custom:')) {
-    return equalizerStore.getCustomPresetById(key.slice('custom:'.length)) ?? null
+  if (isCustomKey(key)) {
+    return equalizerStore.getCustomPresetById(customIdFromKey(key)) ?? null
   }
 
   return null
@@ -62,11 +66,11 @@ const resolvePreset = (key: string | null): EqualizerPreset | null => {
 
 const keyForPreset = (preset: EqualizerPreset): string | null => {
   if (preset.id) {
-    return `custom:${preset.id}`
+    return customKey(preset.id)
   }
 
   if (preset.name !== null) {
-    return `builtin:${preset.name}`
+    return builtInKey(preset.name)
   }
 
   return null
@@ -79,6 +83,16 @@ const save = () =>
     bands.map(band => band.db),
   )
 
+const applySelection = async (key: string | null) => {
+  selectedKey.value = key
+
+  if (key !== null) {
+    await bandsRef.value?.loadPreset(resolvePreset(key) ?? builtInPresets[0], bands)
+  }
+
+  save()
+}
+
 const onUserChange = () => {
   selectedKey.value = null
 }
@@ -90,11 +104,12 @@ const commitSave = async (name: string) => {
     bands.map(band => band.db),
   )
 
-  selectedKey.value = `custom:${created.id}`
+  selectedKey.value = customKey(created.id!)
+  save()
 }
 
 const confirmDelete = async () => {
-  if (!customSelected.value) {
+  if (!isCustomKey(selectedKey.value)) {
     return
   }
 
@@ -102,21 +117,12 @@ const confirmDelete = async () => {
     return
   }
 
-  const id = selectedKey.value!.slice('custom:'.length)
-  await equalizerStore.deleteCustomPreset(id)
+  await equalizerStore.deleteCustomPreset(customIdFromKey(selectedKey.value))
   selectedKey.value = null
   save()
 }
 
 const close = () => emit('close')
-
-watch(selectedKey, value => {
-  if (value !== null) {
-    bandsRef.value?.loadPreset(resolvePreset(value) ?? builtInPresets[0], bands)
-  }
-
-  save()
-})
 
 onMounted(async () => {
   equalizerStore.init()
