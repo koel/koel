@@ -1,11 +1,12 @@
 <template>
   <div class="select-none w-full flex flex-col" tabindex="0" @keydown.esc="close">
     <EqualizerHeader
-      v-model:selectedKey="selectedKey"
+      :selected-key="selectedKey"
       :built-in-presets="builtInPresets"
       :custom-presets="customPresets"
       :is-modified="isModified"
       :custom-selected="customSelected"
+      @select="key => (selectedKey = key)"
       @save="commitSave"
       @delete="confirmDelete"
     />

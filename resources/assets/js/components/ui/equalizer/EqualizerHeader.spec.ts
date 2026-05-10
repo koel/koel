@@ -96,11 +96,11 @@ describe('equalizerHeader.vue', () => {
     expect(screen.queryByPlaceholderText('Preset name')).toBeNull()
   })
 
-  it('updates selectedKey via v-model when a preset is chosen', async () => {
+  it('emits select with the new key when a preset is chosen', async () => {
     const { emitted } = renderHeader()
 
     await h.user.selectOptions(screen.getByRole('combobox'), 'builtin:Rock')
 
-    expect(emitted()['update:selectedKey']).toEqual([['builtin:Rock']])
+    expect(emitted().select).toEqual([['builtin:Rock']])
   })
 })

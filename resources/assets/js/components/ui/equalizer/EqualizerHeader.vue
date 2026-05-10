@@ -1,7 +1,12 @@
 <template>
   <header class="flex gap-2 items-center">
     <template v-if="!saveDialogOpen">
-      <SelectBox v-model="selectedKey" class="!bg-black/30 !text-white" title="Select equalizer">
+      <SelectBox
+        :model-value="selectedKey"
+        class="!bg-black/30 !text-white"
+        title="Select equalizer"
+        @update:model-value="key => emit('select', key)"
+      >
         <option :value="null" disabled>Preset</option>
         <optgroup label="Built-in">
           <option v-for="preset in builtInPresets" :key="preset.name!" :value="`builtin:${preset.name}`">
@@ -31,15 +36,15 @@ import SelectBox from '@/components/ui/form/SelectBox.vue'
 import EqualizerSavePresetForm from '@/components/ui/equalizer/EqualizerSavePresetForm.vue'
 
 defineProps<{
+  selectedKey: string | null
   builtInPresets: EqualizerPreset[]
   customPresets: EqualizerPreset[]
   isModified: boolean
   customSelected: boolean
 }>()
 
-const selectedKey = defineModel<string | null>('selectedKey', { required: true })
-
 const emit = defineEmits<{
+  (e: 'select', key: string | null): void
   (e: 'save', name: string): void
   (e: 'delete'): void
 }>()
