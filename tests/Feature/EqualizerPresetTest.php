@@ -77,6 +77,24 @@ class EqualizerPresetTest extends TestCase
     }
 
     #[Test]
+    public function storeKeepsPresetsSortedAlphabeticallyByName(): void
+    {
+        $user = create_user();
+
+        foreach (['Zeta', 'alpha', 'Mu'] as $name) {
+            $this->postAs(
+                'api/me/equalizer-presets',
+                ['name' => $name, 'preamp' => 0, 'gains' => self::VALID_GAINS],
+                $user,
+            )->assertOk();
+        }
+
+        $user->refresh();
+
+        self::assertSame(['alpha', 'Mu', 'Zeta'], $user->preferences->equalizerPresets->pluck('name')->all());
+    }
+
+    #[Test]
     public function storeMintsAUniqueIdPerPreset(): void
     {
         $user = create_user();

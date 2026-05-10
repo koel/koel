@@ -12,12 +12,17 @@ class EqualizerPresetService
     {
         $saved = $preset->withId((string) Str::ulid());
 
-        $next = [
+        $updatedPresets = [
             ...$this->serializeExisting($user),
             $saved->toArray(),
         ];
 
-        $user->preferences = $user->preferences->set('equalizer_presets', $next);
+        usort($updatedPresets, static fn (array $a, array $b): int => strcasecmp(
+            (string) $a['name'],
+            (string) $b['name'],
+        ));
+
+        $user->preferences = $user->preferences->set('equalizer_presets', $updatedPresets);
         $user->save();
 
         return $saved;
@@ -25,7 +30,7 @@ class EqualizerPresetService
 
     public function removePresetForUser(User $user, string $id): void
     {
-        $next = $user
+        $remainingPresets = $user
             ->preferences
             ->equalizerPresets
             ->reject(static fn (EqualizerPreset $preset): bool => $preset->id === $id)
@@ -33,7 +38,7 @@ class EqualizerPresetService
             ->values()
             ->all();
 
-        $user->preferences = $user->preferences->set('equalizer_presets', $next);
+        $user->preferences = $user->preferences->set('equalizer_presets', $remainingPresets);
         $user->save();
     }
 

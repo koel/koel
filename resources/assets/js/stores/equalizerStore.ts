@@ -7,11 +7,14 @@ const state = reactive({
   customPresets: [] as EqualizerPreset[],
 })
 
+const byName = (a: EqualizerPreset, b: EqualizerPreset) =>
+  (a.name ?? '').localeCompare(b.name ?? '', undefined, { sensitivity: 'base' })
+
 export const equalizerStore = {
   state,
 
   init() {
-    state.customPresets = preferences.equalizer_presets ?? []
+    state.customPresets = [...(preferences.equalizer_presets ?? [])].sort(byName)
   },
 
   isBuiltIn: (preset: EqualizerPreset) =>
@@ -64,7 +67,7 @@ export const equalizerStore = {
 
   async saveCustomPreset(name: string, preamp: number, gains: number[]): Promise<EqualizerPreset> {
     const preset = await http.post<EqualizerPreset>('me/equalizer-presets', { name, preamp, gains })
-    state.customPresets.push(preset)
+    state.customPresets = [...state.customPresets, preset].sort(byName)
 
     return preset
   },
