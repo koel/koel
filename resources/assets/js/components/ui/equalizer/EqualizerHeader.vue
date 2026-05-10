@@ -2,19 +2,19 @@
   <header class="flex gap-2 items-center">
     <template v-if="!saveDialogOpen">
       <SelectBox
-        :model-value="selectedKey"
+        :model-value="selectedId"
         class="!bg-black/30 !text-white"
         title="Select equalizer"
-        @update:model-value="key => emit('select', key)"
+        @update:model-value="id => emit('select', id)"
       >
         <option :value="null" disabled>Preset</option>
         <optgroup label="Built-in">
-          <option v-for="preset in builtInPresets" :key="preset.name ?? ''" :value="builtInKey(preset.name ?? '')">
+          <option v-for="preset in builtInPresets" :key="preset.id ?? ''" :value="preset.id ?? ''">
             {{ preset.name }}
           </option>
         </optgroup>
         <optgroup v-if="customPresets.length" label="Custom">
-          <option v-for="preset in customPresets" :key="preset.id ?? ''" :value="customKey(preset.id ?? '')">
+          <option v-for="preset in customPresets" :key="preset.id ?? ''" :value="preset.id ?? ''">
             {{ preset.name }}
           </option>
         </optgroup>
@@ -31,14 +31,12 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-import { builtInKey, customKey } from '@/utils/equalizerKey'
-
 import Btn from '@/components/ui/form/Btn.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 import EqualizerSavePresetForm from '@/components/ui/equalizer/EqualizerSavePresetForm.vue'
 
 defineProps<{
-  selectedKey: string | null
+  selectedId: string | null
   builtInPresets: EqualizerPreset[]
   customPresets: EqualizerPreset[]
   isModified: boolean
@@ -46,7 +44,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'select', key: string | null): void
+  (e: 'select', id: string | null): void
   (e: 'save', name: string): void
   (e: 'delete'): void
 }>()

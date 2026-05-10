@@ -2,12 +2,17 @@ import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { preferenceStore } from '@/stores/preferenceStore'
+import { equalizerPresets as builtInPresets } from '@/config/audio'
 import { equalizerStore } from '@/stores/equalizerStore'
+
+const ROCK_ID = builtInPresets.find(preset => preset.name === 'Rock')!.id!
+const CLASSICAL_ID = builtInPresets.find(preset => preset.name === 'Classical')!.id!
 
 describe('equalizerStore', () => {
   const h = createHarness({
     beforeEach: () => {
       preferenceStore.current_equalizer_preset = {
+        id: builtInPresets[0].id,
         name: 'Default',
         preamp: 0,
         gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -17,22 +22,38 @@ describe('equalizerStore', () => {
     },
   })
 
-  it('finds built-in preset by name', () => {
-    const preset = equalizerStore.getBuiltInPresetByName('Rock')
+  it('finds a built-in preset by id', () => {
+    const preset = equalizerStore.getPresetById(ROCK_ID)
     expect(preset).toBeDefined()
     expect(preset!.name).toBe('Rock')
   })
 
-  it('returns undefined for unknown built-in preset', () => {
-    expect(equalizerStore.getBuiltInPresetByName('NonExistent')).toBeUndefined()
+  it('finds a custom preset by id', () => {
+    const custom: EqualizerPreset = { id: '01HCUSTOM', name: 'Mine', preamp: 0, gains: [] }
+    equalizerStore.state.customPresets = [custom]
+    expect(equalizerStore.getPresetById('01HCUSTOM')).toEqual(custom)
   })
 
-  it('returns named built-in config from preferences', () => {
+  it('returns undefined for an unknown id', () => {
+    expect(equalizerStore.getPresetById('does-not-exist')).toBeUndefined()
+  })
+
+  it('returns built-in config from preferences by id', () => {
+    preferenceStore.current_equalizer_preset = {
+      id: CLASSICAL_ID,
+      name: 'Classical',
+      preamp: 0,
+      gains: [],
+    }
+    expect(equalizerStore.getConfig().name).toBe('Classical')
+  })
+
+  it('falls back to legacy name lookup when no id is persisted', () => {
     preferenceStore.current_equalizer_preset = { name: 'Classical', preamp: 0, gains: [] }
     expect(equalizerStore.getConfig().name).toBe('Classical')
   })
 
-  it('returns Default preset when name is unknown', () => {
+  it('returns Default preset when neither id nor name resolves', () => {
     preferenceStore.current_equalizer_preset = { name: 'DoesNotExist', preamp: 0, gains: [] }
     expect(equalizerStore.getConfig().name).toBe('Default')
   })
@@ -48,23 +69,12 @@ describe('equalizerStore', () => {
     expect(config.preamp).toBe(5)
   })
 
-  it('isModified is true only when id and name are both null', () => {
+  it('isModified is true only when id and name are both falsy', () => {
     expect(equalizerStore.isModified({ name: null, preamp: 3, gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] })).toBe(true)
     expect(equalizerStore.isModified({ name: 'Rock', preamp: 0, gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] })).toBe(false)
     expect(
       equalizerStore.isModified({ id: '01J0', name: null, preamp: 0, gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }),
     ).toBe(false)
-  })
-
-  it('isCustom is true when id is set', () => {
-    expect(equalizerStore.isCustom({ id: '01J0', name: 'Mine', preamp: 0, gains: [] })).toBe(true)
-    expect(equalizerStore.isCustom({ name: 'Rock', preamp: 0, gains: [] })).toBe(false)
-  })
-
-  it('isBuiltIn is true when no id and name matches a built-in', () => {
-    expect(equalizerStore.isBuiltIn({ name: 'Rock', preamp: 0, gains: [] })).toBe(true)
-    expect(equalizerStore.isBuiltIn({ id: '01J0', name: 'Rock', preamp: 0, gains: [] })).toBe(false)
-    expect(equalizerStore.isBuiltIn({ name: 'NotABuiltIn', preamp: 0, gains: [] })).toBe(false)
   })
 
   it('saves a custom preset by POSTing and storing the server response', async () => {
@@ -100,9 +110,10 @@ describe('equalizerStore', () => {
   })
 
   it('saves last-applied config (named preset)', () => {
-    const rock = equalizerStore.getBuiltInPresetByName('Rock')!
+    const rock = equalizerStore.getPresetById(ROCK_ID)!
     equalizerStore.saveConfig(rock, 0, rock.gains)
     expect(preferenceStore.current_equalizer_preset.name).toBe('Rock')
+    expect(preferenceStore.current_equalizer_preset.id).toBe(ROCK_ID)
   })
 
   it('saves last-applied config (modified)', () => {

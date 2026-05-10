@@ -4,8 +4,8 @@ import { createHarness } from '@/__tests__/TestHarness'
 import Component from './EqualizerHeader.vue'
 
 const builtInPresets: EqualizerPreset[] = [
-  { name: 'Default', preamp: 0, gains: [0, 0, 0] },
-  { name: 'Rock', preamp: 5, gains: [5, 3, 1] },
+  { id: '01BUILTINDEFAULT0000000000', name: 'Default', preamp: 0, gains: [0, 0, 0] },
+  { id: '01BUILTINROCK00000000000000', name: 'Rock', preamp: 5, gains: [5, 3, 1] },
 ]
 
 const customPresets: EqualizerPreset[] = [{ id: '01HFCUSTOM01', name: 'My Bass', preamp: 3, gains: [4, 4, 0] }]
@@ -15,7 +15,7 @@ describe('equalizerHeader.vue', () => {
 
   const renderHeader = (
     overrides: Partial<{
-      selectedKey: string | null
+      selectedId: string | null
       customPresets: EqualizerPreset[]
       isModified: boolean
       customSelected: boolean
@@ -27,7 +27,7 @@ describe('equalizerHeader.vue', () => {
         customPresets: overrides.customPresets ?? customPresets,
         isModified: overrides.isModified ?? false,
         customSelected: overrides.customSelected ?? false,
-        selectedKey: overrides.selectedKey ?? 'builtin:Default',
+        selectedId: overrides.selectedId ?? builtInPresets[0].id ?? null,
       },
     })
 
@@ -51,7 +51,7 @@ describe('equalizerHeader.vue', () => {
   })
 
   it('shows Save as… when modified', () => {
-    renderHeader({ isModified: true, selectedKey: null })
+    renderHeader({ isModified: true, selectedId: null })
     screen.getByText('Save as…')
   })
 
@@ -61,12 +61,12 @@ describe('equalizerHeader.vue', () => {
   })
 
   it('shows Delete when a custom preset is selected', () => {
-    renderHeader({ customSelected: true, selectedKey: 'custom:01HFCUSTOM01' })
+    renderHeader({ customSelected: true, selectedId: '01HFCUSTOM01' })
     screen.getByText('Delete')
   })
 
   it('emits delete when Delete is clicked', async () => {
-    const { emitted } = renderHeader({ customSelected: true, selectedKey: 'custom:01HFCUSTOM01' })
+    const { emitted } = renderHeader({ customSelected: true, selectedId: '01HFCUSTOM01' })
 
     await fireEvent.click(screen.getByText('Delete'))
 
@@ -74,7 +74,7 @@ describe('equalizerHeader.vue', () => {
   })
 
   it('opens the save form when Save as… is clicked, then closes it on cancel', async () => {
-    renderHeader({ isModified: true, selectedKey: null })
+    renderHeader({ isModified: true, selectedId: null })
 
     await fireEvent.click(screen.getByText('Save as…'))
     screen.getByPlaceholderText('Preset name')
@@ -84,7 +84,7 @@ describe('equalizerHeader.vue', () => {
   })
 
   it('emits save with the entered name when the form is submitted, and closes the dialog', async () => {
-    const { emitted } = renderHeader({ isModified: true, selectedKey: null })
+    const { emitted } = renderHeader({ isModified: true, selectedId: null })
 
     await fireEvent.click(screen.getByText('Save as…'))
 
@@ -96,11 +96,11 @@ describe('equalizerHeader.vue', () => {
     expect(screen.queryByPlaceholderText('Preset name')).toBeNull()
   })
 
-  it('emits select with the new key when a preset is chosen', async () => {
+  it('emits select with the new id when a preset is chosen', async () => {
     const { emitted } = renderHeader()
 
-    await h.user.selectOptions(screen.getByRole('combobox'), 'builtin:Rock')
+    await h.user.selectOptions(screen.getByRole('combobox'), builtInPresets[1].id ?? '')
 
-    expect(emitted().select).toEqual([['builtin:Rock']])
+    expect(emitted().select).toEqual([[builtInPresets[1].id]])
   })
 })

@@ -17,16 +17,11 @@ export const equalizerStore = {
     state.customPresets = [...(preferences.equalizer_presets ?? [])].sort(byName)
   },
 
-  isBuiltIn: (preset: EqualizerPreset) =>
-    preset.id === undefined && preset.name !== null && builtInPresets.some(p => p.name === preset.name),
-
-  isCustom: (preset: EqualizerPreset) => preset.id !== undefined,
-
   isModified(preset: any) {
     return (
       typeof preset === 'object' &&
       preset !== null &&
-      preset.id === undefined &&
+      !preset.id &&
       preset.name === null &&
       typeof preset.preamp === 'number' &&
       Array.isArray(preset.gains) &&
@@ -35,9 +30,7 @@ export const equalizerStore = {
     )
   },
 
-  getBuiltInPresetByName: (name: string) => builtInPresets.find(p => p.name === name),
-
-  getCustomPresetById: (id: string) => state.customPresets.find(p => p.id === id),
+  getPresetById: (id: string) => builtInPresets.find(p => p.id === id) ?? state.customPresets.find(p => p.id === id),
 
   /**
    * Resolve the preset to apply on app load.
@@ -46,13 +39,14 @@ export const equalizerStore = {
     const current = preferences.current_equalizer_preset
 
     if (current.id) {
-      // Saved-custom: resolve by id. If the saved preset was deleted elsewhere,
-      // keep the user's slider state by demoting to a modified preset.
-      return this.getCustomPresetById(current.id) ?? { name: null, preamp: current.preamp, gains: [...current.gains] }
+      // If the saved preset was deleted elsewhere, keep the user's slider
+      // state by demoting to a modified preset.
+      return this.getPresetById(current.id) ?? { name: null, preamp: current.preamp, gains: [...current.gains] }
     }
 
+    // Backwards-compat: legacy data persisted name without id.
     if (current.name !== null) {
-      return this.getBuiltInPresetByName(current.name) ?? builtInPresets[0]
+      return builtInPresets.find(p => p.name === current.name) ?? builtInPresets[0]
     }
 
     return current
