@@ -13,7 +13,7 @@ class StoreEqualizerPresetRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:191'],
+            'name' => ['required', 'string'],
             'preamp' => ['required', 'numeric', 'between:-20,20'],
             'gains' => ['required', 'array', 'size:10'],
             'gains.*' => ['required', 'numeric', 'between:-20,20'],
