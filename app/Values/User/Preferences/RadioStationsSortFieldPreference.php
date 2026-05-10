@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Values\User\Preferences;
+
+use Webmozart\Assert\Assert;
+
+class RadioStationsSortFieldPreference extends Preference
+{
+    public function getDefaultValue(): string
+    {
+        return 'name';
+    }
+
+    public function assert(): void
+    {
+        Assert::oneOf($this->value, ['name', 'created_at']);
+    }
+}
