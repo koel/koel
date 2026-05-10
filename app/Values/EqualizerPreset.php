@@ -63,7 +63,7 @@ final readonly class EqualizerPreset implements Arrayable, JsonSerializable
     }
 
     /** @param array<int, float|int> $gains */
-    public static function make(string $id, string $name, float $preamp, array $gains): self
+    public static function make(string $name, float $preamp, array $gains, ?string $id = null): self
     {
         return new self(
             id: $id,
@@ -71,6 +71,11 @@ final readonly class EqualizerPreset implements Arrayable, JsonSerializable
             preamp: $preamp,
             gains: array_values(array_map(static fn (float|int $gain): float => (float) $gain, $gains)),
         );
+    }
+
+    public function withId(string $id): self
+    {
+        return new self(id: $id, name: $this->name, preamp: $this->preamp, gains: $this->gains);
     }
 
     /** @inheritDoc */

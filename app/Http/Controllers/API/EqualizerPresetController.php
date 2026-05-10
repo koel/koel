@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\StoreEqualizerPresetRequest;
 use App\Models\User;
 use App\Services\EqualizerPresetService;
+use App\Values\EqualizerPreset;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class EqualizerPresetController extends Controller
@@ -17,12 +18,9 @@ class EqualizerPresetController extends Controller
     /** @param User $user */
     public function store(StoreEqualizerPresetRequest $request, Authenticatable $user)
     {
-        return response()->json($this->service->addPresetForUser(
-            $user,
-            $request->name,
-            (float) $request->preamp,
-            $request->gains,
-        ));
+        $draft = EqualizerPreset::make(name: $request->name, preamp: (float) $request->preamp, gains: $request->gains);
+
+        return response()->json($this->service->addPresetForUser($user, $draft));
     }
 
     /** @param User $user */

@@ -8,20 +8,19 @@ use Illuminate\Support\Str;
 
 class EqualizerPresetService
 {
-    /** @param array<int, float|int> $gains */
-    public function addPresetForUser(User $user, string $name, float $preamp, array $gains): EqualizerPreset
+    public function addPresetForUser(User $user, EqualizerPreset $preset): EqualizerPreset
     {
-        $preset = EqualizerPreset::make(id: (string) Str::ulid(), name: $name, preamp: $preamp, gains: $gains);
+        $saved = $preset->withId((string) Str::ulid());
 
         $next = [
             ...$this->serializeExisting($user),
-            $preset->toArray(),
+            $saved->toArray(),
         ];
 
         $user->preferences = $user->preferences->set('equalizer_presets', $next);
         $user->save();
 
-        return $preset;
+        return $saved;
     }
 
     public function removePresetForUser(User $user, string $id): void
