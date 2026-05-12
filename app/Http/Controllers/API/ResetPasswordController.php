@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Attributes\DisabledInDemo;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ResetPasswordRequest;
-use App\Services\AuthenticationService;
+use App\Services\Auth\AuthenticationService;
 use Illuminate\Validation\ValidationException;
 
 #[DisabledInDemo]

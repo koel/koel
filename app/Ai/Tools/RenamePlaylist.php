@@ -4,7 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiRequestContext;
 use App\Repositories\PlaylistRepository;
-use App\Services\PlaylistService;
+use App\Services\Playlist\PlaylistService;
 use App\Values\Playlist\PlaylistUpdateData;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\JsonSchema\JsonSchema;

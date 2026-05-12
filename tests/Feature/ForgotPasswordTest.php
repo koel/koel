@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\AuthenticationService;
+use App\Services\Auth\AuthenticationService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;

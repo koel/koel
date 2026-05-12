@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\Upload;
 
 use App\Http\Controllers\Controller;
 use App\Models\DuplicateUpload;
-use App\Services\DuplicateUploadService;
+use App\Services\Upload\DuplicateUploadService;
 
 class DiscardDuplicateUploadController extends Controller
 {

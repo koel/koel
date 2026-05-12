@@ -4,7 +4,7 @@ namespace App\Observers;
 
 use App\Helpers\Uuid;
 use App\Models\User;
-use App\Services\ModelImageObserver;
+use App\Services\Image\ModelImageObserver;
 
 class UserObserver
 {

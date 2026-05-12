@@ -6,6 +6,7 @@ use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Models\Organization;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\Image\ImageStorage;
 use App\Values\ImageWritingConfig;
 use App\Values\User\SsoUser;
 use App\Values\User\UserCreateData;

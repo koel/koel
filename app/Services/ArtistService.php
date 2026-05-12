@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\ArtistNameConflictException;
 use App\Models\Artist;
 use App\Repositories\ArtistRepository;
+use App\Services\Image\ImageStorage;
 use App\Values\Artist\ArtistUpdateData;
 use Illuminate\Support\Arr;
 use Webmozart\Assert\Assert;

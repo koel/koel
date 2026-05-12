@@ -4,7 +4,7 @@ namespace Tests\Feature\Commands;
 
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\EncyclopediaService;
+use App\Services\Integrations\EncyclopediaService;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

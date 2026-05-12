@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
-use App\Services\TokenManager;
+use App\Services\Auth\TokenManager;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;

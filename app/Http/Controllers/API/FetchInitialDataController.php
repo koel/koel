@@ -17,15 +17,15 @@ use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
 use App\Repositories\ThemeRepository;
 use App\Services\ApplicationInformationService;
-use App\Services\ITunesService;
-use App\Services\LastfmService;
+use App\Services\Integrations\ITunesService;
+use App\Services\Integrations\LastfmService;
+use App\Services\Integrations\MusicBrainzService;
+use App\Services\Integrations\SpotifyService;
+use App\Services\Integrations\TicketmasterService;
+use App\Services\Integrations\YouTubeService;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\MediaBrowser;
-use App\Services\MusicBrainzService;
 use App\Services\QueueService;
-use App\Services\SpotifyService;
-use App\Services\TicketmasterService;
-use App\Services\YouTubeService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class FetchInitialDataController extends Controller

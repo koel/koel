@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Services\Integrations;
+
+use App\Http\Integrations\Spotify\SpotifyClient;
+use App\Models\Album;
+use App\Models\Artist;
+use Illuminate\Support\Arr;
+
+class SpotifyService
+{
+    public function __construct(
+        private readonly SpotifyClient $client,
+    ) {}
+
+    public static function enabled(): bool
+    {
+        return config('koel.services.spotify.client_id') && config('koel.services.spotify.client_secret');
+    }
+
+    public function tryGetArtistImage(Artist|string $artist): ?string
+    {
+        if (!static::enabled()) {
+            return null;
+        }
+
+        if ($artist instanceof Artist && ($artist->is_various || $artist->is_unknown)) {
+            return null;
+        }
+
+        return Arr::get($this->client->search($artist instanceof Artist ? $artist->name : $artist, 'artist', [
+            'limit' => 1,
+        ]), 'artists.items.0.images.0.url');
+    }
+
+    public function tryGetAlbumCover(Album $album): ?string
+    {
+        if (!static::enabled()) {
+            return null;
+        }
+
+        if ($album->is_unknown || $album->artist->is_unknown || $album->artist->is_various) {
+            return null;
+        }
+
+        return Arr::get($this->client->search("$album->name artist:{$album->artist->name}", 'album', [
+            'limit' => 1,
+        ]), 'albums.items.0.images.0.url');
+    }
+}

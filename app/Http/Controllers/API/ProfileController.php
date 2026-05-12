@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Services\TokenManager;
+use App\Services\Auth\TokenManager;
 use App\Services\UserService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher;

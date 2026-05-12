@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\AuthenticationService;
+use App\Services\Auth\AuthenticationService;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

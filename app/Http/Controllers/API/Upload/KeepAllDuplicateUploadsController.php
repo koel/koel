@@ -9,7 +9,7 @@ use App\Repositories\AlbumRepository;
 use App\Repositories\DuplicateUploadRepository;
 use App\Repositories\SongRepository;
 use App\Responses\SongUploadResponse;
-use App\Services\DuplicateUploadService;
+use App\Services\Upload\DuplicateUploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class KeepAllDuplicateUploadsController extends Controller

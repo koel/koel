@@ -7,7 +7,7 @@ use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Song;
 use App\Services\AlbumService;
-use App\Services\ImageStorage;
+use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;

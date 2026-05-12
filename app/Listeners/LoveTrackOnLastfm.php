@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\SongFavoriteToggled;
-use App\Services\LastfmService;
+use App\Services\Integrations\LastfmService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 readonly class LoveTrackOnLastfm implements ShouldQueue

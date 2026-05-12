@@ -8,7 +8,7 @@ use App\Http\Requests\API\PlaylistFolder\PlaylistFolderUpdateRequest;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Models\PlaylistFolder;
 use App\Models\User;
-use App\Services\PlaylistFolderService;
+use App\Services\Playlist\PlaylistFolderService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class PlaylistFolderController extends Controller

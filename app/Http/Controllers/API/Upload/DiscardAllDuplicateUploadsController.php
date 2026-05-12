@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API\Upload;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repositories\DuplicateUploadRepository;
-use App\Services\DuplicateUploadService;
+use App\Services\Upload\DuplicateUploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class DiscardAllDuplicateUploadsController extends Controller

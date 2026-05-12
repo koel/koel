@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Theme;
 use App\Models\User;
+use App\Services\Image\ImageStorage;
 use App\Values\ImageWritingConfig;
 use App\Values\Theme\ThemeCreateData;
 use App\Values\Theme\ThemeProperties;

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\SongResource;
 use App\Models\Podcast;
 use App\Repositories\SongRepository;
-use App\Services\PodcastService;
+use App\Services\Podcast\PodcastService;
 
 class PodcastEpisodeController extends Controller
 {

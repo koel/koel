@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\AlbumNameConflictException;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
+use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
 use App\Values\ImageWritingConfig;
 use Illuminate\Support\Arr;

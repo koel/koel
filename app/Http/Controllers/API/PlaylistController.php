@@ -11,7 +11,7 @@ use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\PlaylistFolderRepository;
 use App\Repositories\PlaylistRepository;
-use App\Services\PlaylistService;
+use App\Services\Playlist\PlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Validation\ValidationException;
 

@@ -5,7 +5,7 @@ namespace App\Ai\Tools;
 use App\Ai\AiRequestContext;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
-use App\Services\EncyclopediaService;
+use App\Services\Integrations\EncyclopediaService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;

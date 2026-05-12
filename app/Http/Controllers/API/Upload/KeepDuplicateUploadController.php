@@ -7,7 +7,7 @@ use App\Models\DuplicateUpload;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
 use App\Responses\SongUploadResponse;
-use App\Services\DuplicateUploadService;
+use App\Services\Upload\DuplicateUploadService;
 
 class KeepDuplicateUploadController extends Controller
 {

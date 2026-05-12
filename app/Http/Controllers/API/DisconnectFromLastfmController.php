@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\LastfmService;
+use App\Services\Integrations\LastfmService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class DisconnectFromLastfmController extends Controller

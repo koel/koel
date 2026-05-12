@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\YouTubeSearchRequest;
 use App\Models\Song;
-use App\Services\YouTubeService;
+use App\Services\Integrations\YouTubeService;
 
 class SearchYouTubeController extends Controller
 {

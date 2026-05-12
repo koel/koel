@@ -7,7 +7,7 @@ use App\Http\Resources\PlaylistResource;
 use App\Models\Embed;
 use App\Models\Playlist;
 use App\Models\Song;
-use App\Services\PlaylistFolderService;
+use App\Services\Playlist\PlaylistFolderService;
 use App\Values\EmbedOptions;
 use App\Values\SmartPlaylist\SmartPlaylistRule;
 use PHPUnit\Framework\Attributes\Test;

@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Playlist;
-use App\Services\ModelImageObserver;
+use App\Services\Image\ModelImageObserver;
 
 class PlaylistObserver
 {

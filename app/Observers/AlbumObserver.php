@@ -5,7 +5,7 @@ namespace App\Observers;
 use App\Facades\Dispatcher;
 use App\Jobs\GenerateAlbumThumbnailJob;
 use App\Models\Album;
-use App\Services\ModelImageObserver;
+use App\Services\Image\ModelImageObserver;
 use Illuminate\Support\Facades\File;
 
 class AlbumObserver

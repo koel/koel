@@ -5,7 +5,7 @@ namespace Tests\Unit\Listeners;
 use App\Events\UserUnsubscribedFromPodcast;
 use App\Listeners\DeletePodcastIfNoSubscribers;
 use App\Models\Podcast;
-use App\Services\PodcastService;
+use App\Services\Podcast\PodcastService;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;

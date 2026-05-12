@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Resources\PlaylistFolderResource;
 use App\Models\PlaylistFolder;
-use App\Services\PlaylistFolderService;
+use App\Services\Playlist\PlaylistFolderService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

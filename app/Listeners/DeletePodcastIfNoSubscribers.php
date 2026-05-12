@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\UserUnsubscribedFromPodcast;
-use App\Services\PodcastService;
+use App\Services\Podcast\PodcastService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 readonly class DeletePodcastIfNoSubscribers implements ShouldQueue

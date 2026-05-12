@@ -11,7 +11,7 @@ use App\Http\Requests\API\InviteUserRequest;
 use App\Http\Requests\API\RevokeUserInvitationRequest;
 use App\Http\Resources\UserProspectResource;
 use App\Models\User;
-use App\Services\AuthenticationService;
+use App\Services\Auth\AuthenticationService;
 use App\Services\UserInvitationService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;

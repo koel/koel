@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
 use App\Responses\SongUploadResponse;
-use App\Services\UploadService;
+use App\Services\Upload\UploadService;
 
 class HandleSongUploadJob extends QueuedJob
 {

@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Repositories\DuplicateUploadRepository;
-use App\Services\DuplicateUploadService;
+use App\Services\Upload\DuplicateUploadService;
 use Illuminate\Console\Command;
 
 class CleanUpDuplicateUploadsCommand extends Command

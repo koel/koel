@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Podcast;
-use App\Services\PodcastService;
+use App\Services\Podcast\PodcastService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Throwable;

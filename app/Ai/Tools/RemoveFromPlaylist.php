@@ -6,7 +6,7 @@ use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Services\SongRequestResolver;
 use App\Repositories\PlaylistRepository;
-use App\Services\PlaylistService;
+use App\Services\Playlist\PlaylistService;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;

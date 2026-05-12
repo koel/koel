@@ -3,7 +3,7 @@
 namespace Tests\Feature\Commands;
 
 use App\Models\Podcast;
-use App\Services\PodcastService;
+use App\Services\Podcast\PodcastService;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;

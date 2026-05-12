@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\RadioStation;
-use App\Services\RadioStreamMetadata;
+use App\Services\Radio\RadioStreamMetadata;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 

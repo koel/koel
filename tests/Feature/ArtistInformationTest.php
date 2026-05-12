@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Artist;
-use App\Services\EncyclopediaService;
+use App\Services\Integrations\EncyclopediaService;
 use App\Values\Artist\ArtistInformation;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;

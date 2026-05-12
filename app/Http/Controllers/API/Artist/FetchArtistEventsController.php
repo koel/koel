@@ -6,7 +6,7 @@ use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LiveEventResource;
 use App\Models\Artist;
-use App\Services\TicketmasterService;
+use App\Services\Integrations\TicketmasterService;
 use Illuminate\Http\Request;
 
 #[RequiresPlus]

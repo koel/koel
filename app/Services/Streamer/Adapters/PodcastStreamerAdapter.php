@@ -3,7 +3,7 @@
 namespace App\Services\Streamer\Adapters;
 
 use App\Models\Song as Episode;
-use App\Services\PodcastService;
+use App\Services\Podcast\PodcastService;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Values\Podcast\EpisodePlayable;
 use App\Values\RequestedStreamingConfig;
