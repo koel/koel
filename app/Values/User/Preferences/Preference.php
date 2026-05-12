@@ -5,6 +5,7 @@ namespace App\Values\User\Preferences;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use ReflectionClass;
+use Throwable;
 
 /**
  * @property mixed $value
@@ -29,8 +30,15 @@ abstract class Preference
             throw new InvalidArgumentException("Unknown property: {$name}");
         }
 
+        $previous = $this->resolvedValue;
         $this->resolvedValue = $value;
-        $this->assert();
+
+        try {
+            $this->assert();
+        } catch (Throwable $exception) {
+            $this->resolvedValue = $previous;
+            throw $exception;
+        }
     }
 
     public function __get(string $name): mixed

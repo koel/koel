@@ -9,6 +9,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use JsonSerializable;
+use ReflectionClass;
 use Webmozart\Assert\Assert;
 
 // @mago-ignore lint:too-many-methods
@@ -88,7 +89,9 @@ final class UserPreferences implements Arrayable, JsonSerializable
 
     public function __isset(string $property): bool
     {
-        return $this->preferenceByProperty($property) !== null;
+        $preference = $this->preferenceByProperty($property);
+
+        return $preference !== null && $preference->getValue() !== null;
     }
 
     public static function customizable(string $key): bool
@@ -139,7 +142,11 @@ final class UserPreferences implements Arrayable, JsonSerializable
 
         $classes = collect(glob(__DIR__ . '/Preferences/*Preference.php') ?: [])
             ->map(static fn (string $file): string => $namespace . pathinfo($file, PATHINFO_FILENAME))
-            ->filter(static fn (string $candidate): bool => is_subclass_of($candidate, Preference::class))
+            ->filter(
+                static fn (string $candidate): bool => (
+                    is_subclass_of($candidate, Preference::class) && !(new ReflectionClass($candidate))->isAbstract()
+                ),
+            )
             ->values();
 
         self::$discoveredClasses = $classes;

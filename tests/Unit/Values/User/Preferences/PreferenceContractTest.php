@@ -127,8 +127,13 @@ class PreferenceContractTest extends TestCase
                 continue;
             }
 
-            $shortName = (new ReflectionClass($class))->getShortName();
-            yield $shortName => [$class];
+            $reflection = new ReflectionClass($class);
+
+            if ($reflection->isAbstract()) {
+                continue;
+            }
+
+            yield $reflection->getShortName() => [$class];
         }
     }
 

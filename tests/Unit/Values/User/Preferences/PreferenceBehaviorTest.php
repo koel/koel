@@ -61,10 +61,10 @@ class PreferenceBehaviorTest extends TestCase
     }
 
     #[Test]
-    public function albumsSortOrderIsCaseInsensitive(): void
+    public function albumsSortOrderNormalizesToLowercase(): void
     {
-        self::assertSame('ASC', AlbumsSortOrderPreference::make('ASC')->getValue());
-        self::assertSame('Desc', AlbumsSortOrderPreference::make('Desc')->getValue());
+        self::assertSame('asc', AlbumsSortOrderPreference::make('ASC')->getValue());
+        self::assertSame('desc', AlbumsSortOrderPreference::make('Desc')->getValue());
     }
 
     #[Test]
