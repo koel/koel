@@ -1,5 +1,5 @@
 <template>
-  <div v-koel-overflow-fade class="max-h-[9rem] overflow-auto" data-testid="demo-credits">
+  <div v-koel-overflow-fade class="max-h-36 overflow-auto" data-testid="demo-credits">
     Music by
     <ul class="inline">
       <li v-for="credit in credits" :key="credit.name" class="inline">

@@ -57,6 +57,7 @@ onMounted(() => setAutoDismiss())
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .info {
   @apply bg-blue-600 text-blue-100;
 }

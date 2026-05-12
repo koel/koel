@@ -82,6 +82,7 @@ onMounted(async () => await userStore.fetch())
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .invited-heading-decoration {
   @apply relative flex-1 before:absolute before:top-1/2;
   @apply before:left-0 before:right-0 before:h-px before:opacity-20 before:bg-k-fg-70;

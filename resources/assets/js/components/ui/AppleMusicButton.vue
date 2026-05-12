@@ -31,8 +31,6 @@ const { url } = toRefs(props)
 </script>
 
 <style lang="postcss" scoped>
-@tailwind utilities;
-
 @layer utilities {
   .itunes-gradient {
     background: linear-gradient(27deg, #fe5c52 0%, #c74bd5 50%, #2daaff 100%);

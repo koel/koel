@@ -135,6 +135,7 @@ const continuousPlaybackLabel = computed(() => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .pref-row {
   @apply flex items-center gap-4 cursor-pointer;
 

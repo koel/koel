@@ -1,7 +1,7 @@
 <template>
   <nav
     :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
-    class="group left-0 top-0 flex flex-col fixed h-full w-full md:relative md:w-k-sidebar-width z-[999] md:z-10"
+    class="group left-0 top-0 flex flex-col fixed h-full w-full md:relative md:w-k-sidebar-width z-999 md:z-10"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
@@ -114,6 +114,7 @@ eventBus.on('TOGGLE_SIDEBAR', () => (mobileShowing.value = !mobileShowing.value)
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 @import '@/../css/partials/mixins.pcss';
 
 nav {

@@ -42,11 +42,11 @@
         {{ canDropFolders ? 'Drop files or folders to upload' : 'Drop files to upload' }}
 
         <span class="secondary block">
-          <a class="block relative !text-k-fg-70 hover:!text-k-fg" role="button">
+          <a class="block relative text-k-fg-70! hover:text-k-fg!" role="button">
             or click here to select songs
             <input
               :accept="acceptAttribute"
-              class="absolute opacity-0 w-full h-full z-[2] cursor-pointer left-0 top-0"
+              class="absolute opacity-0 w-full h-full z-2 cursor-pointer left-0 top-0"
               multiple
               name="file[]"
               type="file"
@@ -126,6 +126,7 @@ onMounted(() => uploadService.fetchDuplicates())
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .droppable {
   @apply border-2 border-dashed border-white/40 bg-black/20 rounded-3xl;
 }

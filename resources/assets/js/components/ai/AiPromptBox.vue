@@ -93,6 +93,7 @@ defineExpose({ fill, focus })
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .initial textarea {
   @apply h-40 p-6 pr-14 pb-12 text-xl rounded-3xl;
 }

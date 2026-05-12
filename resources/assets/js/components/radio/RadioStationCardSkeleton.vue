@@ -15,6 +15,7 @@ withDefaults(defineProps<{ layout?: CardLayout }>(), { layout: 'full' })
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .compact {
   @apply flex-row items-center max-w-full p-4 rounded-md;
 

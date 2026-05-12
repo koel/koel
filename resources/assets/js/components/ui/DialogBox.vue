@@ -89,6 +89,7 @@ defineExpose({ success, info, warning, error, confirm })
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 dialog {
   &.info aside i {
     @apply bg-blue-100 text-blue-600;

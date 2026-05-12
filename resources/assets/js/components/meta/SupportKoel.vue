@@ -53,6 +53,7 @@ watch(
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 a {
   @apply text-k-fg hover:text-k-highlight;
 }

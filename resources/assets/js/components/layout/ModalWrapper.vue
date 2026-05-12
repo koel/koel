@@ -40,6 +40,7 @@ watch(
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 dialog {
   :deep(> *) {
     @apply relative;

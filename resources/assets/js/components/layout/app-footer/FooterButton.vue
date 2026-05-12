@@ -5,6 +5,7 @@
 </template>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 button::after {
   content: '';
   @apply absolute -inset-3;

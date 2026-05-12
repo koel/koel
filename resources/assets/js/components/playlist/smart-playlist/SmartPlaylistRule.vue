@@ -16,7 +16,7 @@
           v-model="input.value"
           :type="(selectedOperator?.type || selectedModel?.type)!"
           :value="input.value"
-          class="!flex-1"
+          class="flex-1!"
           @update:model-value="onInput"
         />
 
@@ -26,7 +26,7 @@
       <Btn
         size="small"
         variant="destructive"
-        class="absolute -right-[14px] aspect-square top-1 scale-[60%] hover:scale-75 active:scale-[60%]"
+        class="absolute right-[-14px] aspect-square top-1 scale-[60%] hover:scale-75 active:scale-[60%]"
         rounded
         title="Remove this rule"
         @click.prevent="removeRule"

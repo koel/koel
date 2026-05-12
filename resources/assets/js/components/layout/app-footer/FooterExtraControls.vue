@@ -4,7 +4,7 @@
       <FooterQueueIcon />
 
       <FooterBtn
-        class="visualizer-btn hidden md:!block"
+        class="visualizer-btn hidden md:block!"
         data-testid="toggle-visualizer-btn"
         title="Toggle visualizer"
         @click.prevent="toggleVisualizer"
@@ -65,6 +65,7 @@ onMounted(() => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .extra-controls {
   :fullscreen & {
     @apply pr-0;

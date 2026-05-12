@@ -34,6 +34,7 @@ const { podcasts, searching } = toRefs(props)
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .results {
   @apply grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3;
 }

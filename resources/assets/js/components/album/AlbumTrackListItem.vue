@@ -47,6 +47,7 @@ const play = () => matchedSong.value && playback().play(matchedSong.value)
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .track-list-item {
   &:focus,
   &.active {

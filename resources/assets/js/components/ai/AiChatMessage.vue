@@ -18,7 +18,7 @@
         <CopyIcon v-else class="size-4" />
       </button>
     </div>
-    <UserAvatar v-if="message.role === 'user'" :user class="size-8 flex-shrink-0" />
+    <UserAvatar v-if="message.role === 'user'" :user class="size-8 shrink-0" />
   </div>
 </template>
 
@@ -54,6 +54,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .user {
   @apply bg-white/5 text-k-fg;
 }
