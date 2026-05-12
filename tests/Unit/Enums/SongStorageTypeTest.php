@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Enums;
+namespace Tests\Unit\Enums;
 
 use App\Enums\SongStorageType;
 use PHPUnit\Framework\Attributes\Test;

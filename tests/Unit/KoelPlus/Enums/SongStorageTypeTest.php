@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\KoelPlus\Enums;
+namespace Tests\Unit\KoelPlus\Enums;
 
 use App\Enums\SongStorageType;
 use PHPUnit\Framework\Attributes\Test;
