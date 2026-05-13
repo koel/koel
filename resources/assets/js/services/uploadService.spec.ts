@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { albumStore } from '@/stores/albumStore'
+import { playableStore } from '@/stores/playableStore'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 
@@ -311,5 +313,17 @@ describe('uploadService', () => {
 
     expect(file.status).toBe('Ready')
     expect(file.progress).toBe(0)
+  })
+
+  it('invalidates album and artist song caches when handling an upload result', () => {
+    const song = h.factory('song').make()
+    const album = h.factory('album').make()
+    const invalidateMock = h.mock(playableStore, 'invalidateCachedSongsFor')
+    h.mock(playableStore, 'syncWithVault')
+    h.mock(albumStore, 'syncWithVault')
+
+    uploadService.handleUploadResult({ song, album })
+
+    expect(invalidateMock).toHaveBeenCalledWith(song)
   })
 })

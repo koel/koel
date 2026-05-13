@@ -210,6 +210,11 @@ export const playableStore = {
     )
   },
 
+  invalidateCachedSongsFor(song: Song) {
+    cache.remove(['album.songs', song.album_id])
+    cache.remove(['artist.songs', song.artist_id])
+  },
+
   async fetchSongsForArtist(artist: Artist | Artist['id']) {
     const id = typeof artist === 'string' ? artist : artist.id
 
