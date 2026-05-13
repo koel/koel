@@ -6,7 +6,7 @@
         v-model="text"
         v-koel-focus
         :readonly="disabled"
-        class="block w-full bg-k-bg-input text-k-fg-input border border-k-fg-10 resize-none focus:outline-none focus:border-k-highlight"
+        class="block w-full bg-k-bg-input text-k-fg-input border border-k-fg-10 resize-none focus:outline-hidden focus:border-k-highlight"
         :placeholder="
           mode === 'initial'
             ? 'Ask Koel to play songs, create playlists, add radio stations, and more.'
