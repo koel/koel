@@ -87,6 +87,7 @@
   "scripts": {
     "check": "vp check resources/assets",
     "check:fix": "vp check --fix resources/assets",
+    "typecheck": "vue-tsc --noEmit -p resources/assets/tsconfig.typecheck.json",
     "test": "vp test",
     "test:unit": "vp test",
     "build:sw": "vp build --config vite.config.sw.js",
