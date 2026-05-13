@@ -1,32 +1,40 @@
-@import './partials/vars.pcss';
-@import './partials/hack.pcss';
+@import './partials/vars.pcss' layer(base);
+@import './partials/hack.pcss' layer(base);
 
-@import './partials/mixins.pcss';
+@import './vendor/nprogress.pcss' layer(base);
 
-@import '@modules/nouislider/distribute/nouislider.min.css';
-@import './vendor/nprogress.pcss';
+@import './partials/skeleton.pcss' layer(base);
+@import './partials/tooltip.pcss' layer(base);
+@import './partials/context-menu.pcss' layer(base);
+@import './partials/shared.pcss' layer(base);
 
-@import './partials/skeleton.pcss';
-@import './partials/tooltip.pcss';
-@import './partials/context-menu.pcss';
-@import './partials/shared.pcss';
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@config "../../../tailwind.config.js";
 
-@layer utilities {
-  .fade-top {
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
-    mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
   }
+}
 
-  .fade-bottom {
-    -webkit-mask-image: linear-gradient(to top, transparent, black var(--fade-size));
-    mask-image: linear-gradient(to top, transparent, black var(--fade-size));
-  }
+@utility fade-top {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
+  mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
 
-  .fade-top.fade-bottom {
+  &.fade-bottom {
     -webkit-mask:
       linear-gradient(to bottom, transparent, black var(--fade-size)) top,
       linear-gradient(to top, transparent, black var(--fade-size)) bottom;
@@ -39,16 +47,35 @@
     mask-size: 100% 51%;
     mask-repeat: no-repeat;
   }
+}
 
-  .playable-list-item {
-    @apply border-b border-k-fg-10 !max-w-full h-[64px] flex
+@utility fade-bottom {
+  -webkit-mask-image: linear-gradient(to top, transparent, black var(--fade-size));
+  mask-image: linear-gradient(to top, transparent, black var(--fade-size));
+
+  &.fade-top {
+    -webkit-mask:
+      linear-gradient(to bottom, transparent, black var(--fade-size)) top,
+      linear-gradient(to top, transparent, black var(--fade-size)) bottom;
+    -webkit-mask-size: 100% 51%;
+    -webkit-mask-repeat: no-repeat;
+
+    mask:
+      linear-gradient(to bottom, transparent, black var(--fade-size)) top,
+      linear-gradient(to top, transparent, black var(--fade-size)) bottom;
+    mask-size: 100% 51%;
+    mask-repeat: no-repeat;
+  }
+}
+
+@utility playable-list-item {
+  @apply border-b border-k-fg-10 max-w-full! h-[64px] flex
     items-center transition-[background-color_box-shadow] ease-in-out duration-200
-    focus:rounded-md focus-within:rounded-md focus:ring-inset focus:ring-1 focus:!ring-k-highlight
-    focus-within:ring-inset focus-within:ring-1 focus-within:!ring-k-highlight
+    focus:rounded-md focus-within:rounded-md focus:ring-inset focus:ring-1 focus:ring-k-highlight!
+    focus-within:ring-inset focus-within:ring-1 focus-within:ring-k-highlight!
     hover:bg-k-fg-5 hover:ring-inset hover:ring-1 hover:ring-k-fg-10 hover:rounded-md;
 
-    &.selected {
-      @apply bg-k-fg-10;
-    }
+  &.selected {
+    @apply bg-k-fg-10;
   }
 }

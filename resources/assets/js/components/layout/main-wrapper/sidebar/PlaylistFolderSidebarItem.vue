@@ -150,6 +150,7 @@ const onContextMenu = (event: MouseEvent) =>
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .droppable {
   @apply ring-1 ring-offset-0 ring-k-highlight rounded-md cursor-copy;
 }

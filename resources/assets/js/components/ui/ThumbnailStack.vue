@@ -43,6 +43,7 @@ const layout = computed(() => (displayedThumbnails.value.length < 4 ? 'single' :
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 article {
   background-image: v-bind(defaultBackgroundImage);
 

@@ -1,5 +1,5 @@
 <template>
-  <span class="!opacity-50">
+  <span class="opacity-50!">
     <Icon :icon="faSquareUpRight" />
   </span>
 </template>

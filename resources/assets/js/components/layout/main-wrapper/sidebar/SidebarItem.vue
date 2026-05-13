@@ -1,7 +1,7 @@
 <template>
   <li
     :class="{ active }"
-    class="relative before:right-0 px-6 before:top-1/4 before:w-[4px] before:h-1/2 before:absolute before:rounded-full before:transition-[box-shadow,_background-color] before:ease-in-out before:duration-500"
+    class="relative before:right-0 px-6 before:top-1/4 before:w-[4px] before:h-1/2 before:absolute before:rounded-full before:transition-[box-shadow,background-color] before:ease-in-out before:duration-500"
     data-testid="sidebar-item"
   >
     <a
@@ -63,6 +63,7 @@ const onDblClick = () => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 li.active {
   a {
     @apply text-k-fg;

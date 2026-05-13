@@ -32,6 +32,7 @@
 <script setup lang="ts"></script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .song-list-header {
   @apply h-[35px] flex bg-k-fg-5;
 }

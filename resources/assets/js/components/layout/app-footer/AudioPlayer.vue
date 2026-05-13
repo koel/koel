@@ -151,6 +151,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .hit-area {
   @apply absolute left-0 right-0 top-0 cursor-pointer;
   z-index: 30;
@@ -227,6 +228,6 @@ onBeforeUnmount(() => {
 }
 
 :fullscreen .progress-played {
-  @apply bg-white !important;
+  @apply bg-white!;
 }
 </style>

@@ -53,11 +53,12 @@ const play = () => emit('play', playable.value)
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 article {
   &.playing {
     .title,
     .track-number {
-      @apply text-k-highlight !important;
+      @apply text-k-highlight!;
     }
   }
 

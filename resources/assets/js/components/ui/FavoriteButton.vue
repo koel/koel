@@ -22,6 +22,7 @@ const title = computed(() => (props.favorite ? 'Undo Favorite' : 'Favorite'))
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 button::after {
   content: '';
   @apply absolute -inset-3;

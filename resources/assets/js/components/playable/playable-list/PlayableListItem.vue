@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4 v-if="isSong(playable) && showDisc && playable.disc" class="title text-k-fg !flex gap-2 p-2 uppercase pl-5">
+    <h4 v-if="isSong(playable) && showDisc && playable.disc" class="title text-k-fg flex! gap-2 p-2 uppercase pl-5">
       Disc {{ playable.disc }}
     </h4>
 
@@ -22,12 +22,12 @@
         <PlayableThumbnail :playable @clicked="play" />
       </span>
       <span class="title-artist flex flex-col gap-1 overflow-hidden">
-        <span class="title text-k-fg !flex gap-2 items-center">
+        <span class="title text-k-fg flex! gap-2 items-center">
           <ExternalMark v-if="external" />
           <Icon
             v-if="cachingOffline"
             :icon="faSpinner"
-            class="!opacity-50"
+            class="opacity-50!"
             spin
             title="Caching for offline playback"
             aria-label="Caching for offline playback"
@@ -35,7 +35,7 @@
           <Icon
             v-else-if="cachingFailed"
             :icon="faExclamationTriangle"
-            class="text-k-danger !opacity-75"
+            class="text-k-danger opacity-75!"
             :title="`Error: ${cachingErrorMessage}`"
           />
           <OfflineMark v-else-if="cachedOffline" />
@@ -121,6 +121,7 @@ const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 article {
   &.droppable {
     @apply relative transition-none after:absolute after:w-full after:h-[3px] after:rounded after:bg-k-success after:top-0;
@@ -134,7 +135,7 @@ article {
     .title,
     .track-number,
     .favorite {
-      @apply text-k-highlight !important;
+      @apply text-k-highlight!;
     }
   }
 

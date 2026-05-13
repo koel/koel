@@ -3,8 +3,8 @@
 exports[`uploadItem.vue > renders 1`] = `
 <article data-v-c7c7e2e2="" title="" class="upload-item relative">
   <div data-v-c7c7e2e2="" class="canceled h-full w-full min-h-[32px] bg-k-fg-5 relative rounded-lg overflow-hidden">
-    <div data-v-c7c7e2e2="" class="absolute z-1 h-full w-full flex items-center"><span data-v-c7c7e2e2="" class="name px-4 flex-1 flex items-center">Sample Track</span><button data-v-8943c846="" data-v-c7c7e2e2="" data-variant="ghost" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer !px-3" type="button" icon-only="" title="Retry" unrounded=""><br data-v-c7c7e2e2="" data-testid="Icon" icon="[object Object]"></button>
-      <!--v-if--><button data-v-8943c846="" data-v-c7c7e2e2="" data-variant="ghost" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer !px-3" type="button" icon-only="" title="Remove" unrounded=""><br data-v-c7c7e2e2="" data-testid="Icon" icon="[object Object]"></button>
+    <div data-v-c7c7e2e2="" class="absolute z-1 h-full w-full flex items-center"><span data-v-c7c7e2e2="" class="name px-4 flex-1 flex items-center">Sample Track</span><button data-v-8943c846="" data-v-c7c7e2e2="" data-variant="ghost" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer px-3!" type="button" icon-only="" title="Retry" unrounded=""><br data-v-c7c7e2e2="" data-testid="Icon" icon="[object Object]"></button>
+      <!--v-if--><button data-v-8943c846="" data-v-c7c7e2e2="" data-variant="ghost" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer px-3!" type="button" icon-only="" title="Remove" unrounded=""><br data-v-c7c7e2e2="" data-testid="Icon" icon="[object Object]"></button>
     </div>
   </div>
   <p data-v-c7c7e2e2="" class="text-[.90rem] mt-1 ml-4">

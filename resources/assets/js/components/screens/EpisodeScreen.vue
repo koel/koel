@@ -11,7 +11,7 @@
         <h2 class="text-2xl">
           <a
             :href="url('podcasts.show', { id: episode.podcast_id })"
-            class="!text-k-fg hover:!text-k-highlight font-normal"
+            class="text-k-fg! hover:text-k-highlight! font-normal"
           >
             {{ episode.podcast_title }}
           </a>
@@ -167,6 +167,7 @@ onScreenActivated('Episode', () => (episodeId.value = getRouteParam('id')!))
 </script>
 
 <style scoped lang="postcss">
+@reference '@css/app.pcss';
 .description {
   :deep(p) {
     @apply mb-3;

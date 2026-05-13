@@ -3,7 +3,7 @@
     <template v-if="!saveDialogOpen">
       <SelectBox
         :model-value="selectedId"
-        class="!bg-black/30 !text-white"
+        class="bg-black/30! text-white!"
         title="Select equalizer"
         @update:model-value="id => emit('select', id)"
       >

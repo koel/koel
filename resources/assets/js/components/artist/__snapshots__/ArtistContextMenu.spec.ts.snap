@@ -2,35 +2,35 @@
 
 exports[`artistContextMenu.vue > renders 1`] = `
 <ul>
-  <li class="focus:outline-none focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
+  <li class="focus:outline-hidden focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
     <!--v-if--><span class="label flex-1 min-w-0 max-w-40 truncate">Play All</span>
     <!--v-if-->
     <!--v-if-->
   </li>
-  <li class="focus:outline-none focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
+  <li class="focus:outline-hidden focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
     <!--v-if--><span class="label flex-1 min-w-0 max-w-40 truncate">Shuffle All</span>
     <!--v-if-->
     <!--v-if-->
   </li>
   <li class="separator"></li>
-  <li class="focus:outline-none focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
+  <li class="focus:outline-hidden focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
     <!--v-if--><span class="label flex-1 min-w-0 max-w-40 truncate">Favorite</span>
     <!--v-if-->
     <!--v-if-->
   </li>
-  <li class="focus:outline-none focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
+  <li class="focus:outline-hidden focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
     <!--v-if--><span class="label flex-1 min-w-0 max-w-40 truncate">Edit…</span>
     <!--v-if-->
     <!--v-if-->
   </li>
   <li class="separator"></li>
-  <li class="focus:outline-none focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
+  <li class="focus:outline-hidden focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
     <!--v-if--><span class="label flex-1 min-w-0 max-w-40 truncate">Download</span>
     <!--v-if-->
     <!--v-if-->
   </li>
   <li class="separator"></li>
-  <li class="focus:outline-none focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
+  <li class="focus:outline-hidden focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg" tabindex="-1">
     <!--v-if--><span class="label flex-1 min-w-0 max-w-40 truncate">Embed…</span>
     <!--v-if-->
     <!--v-if-->

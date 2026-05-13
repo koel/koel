@@ -1,10 +1,10 @@
 <template>
   <aside
     :class="{ 'showing-pane': activeTab }"
-    class="fixed sm:relative top-0 w-screen md:w-auto flex flex-col md:flex-row-reverse z-[2]"
+    class="fixed sm:relative top-0 w-screen md:w-auto flex flex-col md:flex-row-reverse z-2"
   >
     <header
-      class="controls flex md:flex-col justify-between items-center md:w-[64px] md:py-6 tw:px-0 bg-black/5 md:border-l border-solid md:border-l-k-fg-5 md:border-b-0 md:shadow-none z-[2] w-screen flex-row border-b border-b-k-fg-5 border-l-0 shadow-xl py-0 px-6 h-k-header-height"
+      class="controls flex md:flex-col justify-between items-center md:w-[64px] md:py-6 tw:px-0 bg-black/5 md:border-l border-solid md:border-l-k-fg-5 md:border-b-0 md:shadow-none z-2 w-screen flex-row border-b border-b-k-fg-5 border-l-0 shadow-xl py-0 px-6 h-k-header-height"
     >
       <div class="btn-group">
         <SideSheetButton class="md:hidden" @click.prevent="expandSidebar">
@@ -19,7 +19,7 @@
       </div>
     </header>
 
-    <main v-if="songPlaying" v-show="activeTab" class="panes relative overflow-auto" v-koel-overflow-fade>
+    <main v-if="songPlaying" v-show="activeTab" class="panes relative overflow-auto wrap-anywhere" v-koel-overflow-fade>
       <SideSheetPanelLazyWrapper
         id="extraPanelLyrics"
         :active="activeTab === 'Lyrics'"
@@ -193,9 +193,7 @@ onMounted(() => {
 </script>
 
 <style lang="postcss" scoped>
-@import '@/../css/partials/mixins.pcss';
-
-@tailwind utilities;
+@reference '@css/app.pcss';
 
 @layer utilities {
   .btn-group {
@@ -206,8 +204,11 @@ onMounted(() => {
 aside {
   @media screen and (max-width: 768px) {
     &.showing-pane {
-      @mixin themed-background {
-      }
+      background-color: var(--color-bg);
+      background-image: var(--bg-image);
+      background-attachment: var(--bg-attachment);
+      background-size: var(--bg-size);
+      background-position: var(--bg-position);
 
       height: 100%;
     }

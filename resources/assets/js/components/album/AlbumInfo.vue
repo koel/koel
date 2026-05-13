@@ -57,6 +57,7 @@ watch(
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 :deep(.play-icon) {
   @apply scale-[3];
 }

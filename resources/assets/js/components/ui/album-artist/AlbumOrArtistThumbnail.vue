@@ -60,6 +60,7 @@ const playOrQueue = async (event: MouseEvent) => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .droppable {
   @apply border-2 border-dotted border-white brightness-50;
 

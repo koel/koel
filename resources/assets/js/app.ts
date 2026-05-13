@@ -7,6 +7,7 @@ import { overflowFade } from '@/directives/overflowFade'
 import { newTab } from '@/directives/newTab'
 import { RouterKey } from '@/config/symbols'
 import Router from '@/router'
+import 'nouislider/distribute/nouislider.min.css'
 import '@/../css/app.pcss'
 import App from './App.vue'
 

@@ -2,7 +2,7 @@
   <dialog
     ref="dialog"
     :class="`${type}`"
-    class="rounded-md bg-k-bg text-k-fg-70 shadow-xl border-0 p-0 min-w-[320px] max-w-[calc(100vw - 40px)] backdrop:bg-black/70"
+    class="m-auto rounded-md bg-k-bg text-k-fg-70 shadow-xl border-0 p-0 min-w-[320px] max-w-[calc(100vw - 40px)] backdrop:bg-black/70"
   >
     <div class="flex gap-5 py-6 px-7">
       <aside>
@@ -89,6 +89,7 @@ defineExpose({ success, info, warning, error, confirm })
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 dialog {
   &.info aside i {
     @apply bg-blue-100 text-blue-600;
