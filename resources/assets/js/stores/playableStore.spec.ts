@@ -219,13 +219,13 @@ describe('playableStore', () => {
   })
 
   it('invalidates the album and artist song caches for a song', () => {
-    const song = h.factory('song').make({ album_id: 1, artist_id: 2 })
+    const song = h.factory('song').make({ album_id: 'album-1', artist_id: 'artist-1' })
     const removeMock = h.mock(cache, 'remove')
 
     playableStore.invalidateAlbumAndArtistSongCaches(song)
 
-    expect(removeMock).toHaveBeenCalledWith(['album.songs', 1])
-    expect(removeMock).toHaveBeenCalledWith(['artist.songs', 2])
+    expect(removeMock).toHaveBeenCalledWith(['album.songs', 'album-1'])
+    expect(removeMock).toHaveBeenCalledWith(['artist.songs', 'artist-1'])
   })
 
   it('fetches for playlist', async () => {
