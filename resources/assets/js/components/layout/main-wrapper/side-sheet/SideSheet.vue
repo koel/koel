@@ -194,7 +194,6 @@ onMounted(() => {
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
-@import '@/../css/partials/mixins.pcss';
 
 @layer utilities {
   .btn-group {
@@ -205,8 +204,11 @@ onMounted(() => {
 aside {
   @media screen and (max-width: 768px) {
     &.showing-pane {
-      @mixin themed-background {
-      }
+      background-color: var(--color-bg);
+      background-image: var(--bg-image);
+      background-attachment: var(--bg-attachment);
+      background-size: var(--bg-size);
+      background-position: var(--bg-position);
 
       height: 100%;
     }
