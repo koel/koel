@@ -61,7 +61,7 @@ const { startDragging } = useDraggable('playables')
 const { openContextMenu } = useContextMenu()
 const { isCached, isCaching, hasCachingError, getCachingError } = useOfflinePlayback()
 
-const artist = computed(() => getPlayableProp<string>(playable.value, 'artist_name', 'podcast_author') || '')
+const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author') || '')
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 const cachedOffline = computed(() => isSong(playable.value) && isCached(playable.value))
 const cachingOffline = computed(() => isSong(playable.value) && isCaching(playable.value))

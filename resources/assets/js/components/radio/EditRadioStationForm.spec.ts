@@ -110,7 +110,6 @@ describe('editRadioStationForm.vue', () => {
     })
 
     return {
-      station,
       playMock: h.mock(radioPlaybackService, 'play').mockResolvedValue(undefined),
       ...renderComponent(station),
     }

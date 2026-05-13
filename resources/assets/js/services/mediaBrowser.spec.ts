@@ -154,7 +154,7 @@ describe('mediaBrowser', () => {
   })
 
   it('extracts media references', () => {
-    const items = [h.factory('song').make(), h.factory('folder').make(1)]
+    const items = [h.factory('song').make(), h.factory('folder').make()]
 
     const references = mediaBrowser.extractMediaReferences(items)
 

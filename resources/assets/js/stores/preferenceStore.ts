@@ -11,6 +11,12 @@ export const defaultPreferences: UserPreferences = {
     preamp: 0,
     gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
+  current_equalizer_preset: {
+    name: 'Default',
+    preamp: 0,
+    gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  },
+  equalizer_presets: [],
   albums_view_mode: 'thumbnails',
   artists_view_mode: 'thumbnails',
   radio_stations_view_mode: 'thumbnails',

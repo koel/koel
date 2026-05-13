@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "lib": ["es2022", "dom", "dom.iterable"],
+    "lib": ["es2022", "es2023.array", "dom", "dom.iterable"],
     "jsx": "preserve",
     "strict": true,
     "noImplicitAny": false,

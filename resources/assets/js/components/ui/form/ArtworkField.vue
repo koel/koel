@@ -56,6 +56,8 @@ const onPaste = (event: ClipboardEvent) => {
 
   // Create a fresh FileReader per paste to avoid accumulating listeners on a shared instance.
   const { readAsDataUrl } = useFileReader()
-  readAsDataUrl(file, dataUrl => (model.value = dataUrl))
+  readAsDataUrl(file, dataUrl => {
+    model.value = dataUrl
+  })
 }
 </script>

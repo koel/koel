@@ -52,8 +52,8 @@ const emit = defineEmits<{
   (e: 'contextmenu', event: MouseEvent): void
 }>()
 
-const hasThumbnail = (entity: Artist | Album | Podcast | RadioStation): entity is Artist | Album | Podcast =>
-  entity.type !== 'radio-stations'
+const hasThumbnail = (entity: Artist | Album | Podcast | RadioStation): entity is Artist | Album =>
+  entity.type !== 'radio-stations' && entity.type !== 'podcasts'
 
 const { layout } = toRefs(props)
 const gradientColor = computed(() => textToHsl(String(props.entity.id)))

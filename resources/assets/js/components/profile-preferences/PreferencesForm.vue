@@ -117,7 +117,7 @@ const showTranscodingOption = toRef(commonStore.state, 'supports_transcoding')
 
 const crossfadeEnabled = computed(() => preferences.crossfade_duration > 0)
 
-const toggleCrossfade = (enabled: boolean) => {
+const toggleCrossfade = (enabled: boolean | undefined) => {
   preferences.crossfade_duration = enabled ? 7 : 0
 }
 
