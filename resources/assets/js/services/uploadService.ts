@@ -176,7 +176,7 @@ export const uploadService = {
 
   handleUploadResult: (result: UploadResult) => {
     playableStore.syncWithVault(result.song)
-    playableStore.invalidateCachedSongsFor(result.song)
+    playableStore.invalidateAlbumAndArtistSongCaches(result.song)
     albumStore.syncWithVault(result.album)
     commonStore.state.song_length += 1
     eventBus.emit('SONG_UPLOADED', result.song)

@@ -222,7 +222,7 @@ describe('playableStore', () => {
     const song = h.factory('song').make({ album_id: 1, artist_id: 2 })
     const removeMock = h.mock(cache, 'remove')
 
-    playableStore.invalidateCachedSongsFor(song)
+    playableStore.invalidateAlbumAndArtistSongCaches(song)
 
     expect(removeMock).toHaveBeenCalledWith(['album.songs', 1])
     expect(removeMock).toHaveBeenCalledWith(['artist.songs', 2])

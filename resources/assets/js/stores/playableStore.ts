@@ -210,7 +210,7 @@ export const playableStore = {
     )
   },
 
-  invalidateCachedSongsFor(song: Song) {
+  invalidateAlbumAndArtistSongCaches(song: Song) {
     cache.remove(['album.songs', song.album_id])
     cache.remove(['artist.songs', song.artist_id])
   },

@@ -318,7 +318,7 @@ describe('uploadService', () => {
   it('invalidates album and artist song caches when handling an upload result', () => {
     const song = h.factory('song').make()
     const album = h.factory('album').make()
-    const invalidateMock = h.mock(playableStore, 'invalidateCachedSongsFor')
+    const invalidateMock = h.mock(playableStore, 'invalidateAlbumAndArtistSongCaches')
     h.mock(playableStore, 'syncWithVault')
     h.mock(albumStore, 'syncWithVault')
 
