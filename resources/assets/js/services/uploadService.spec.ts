@@ -192,7 +192,23 @@ describe('uploadService', () => {
     await uploadService.upload(file)
 
     expect(file.status).toBe('Errored')
-    expect(file.message).toBe('Upload failed: Unknown error.')
+    expect(file.message).toBe('Server error.')
+  })
+
+  it('shows a generic server error when responseData cannot be parsed', async () => {
+    const error = Object.assign(new Error('Upload failed with status 413'), {
+      status: 413,
+      responseData: undefined,
+    })
+
+    mockPostWithProgressRejection(error)
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Errored')
+    expect(file.message).toBe('Server error.')
   })
 
   it('aborts an in-progress upload', async () => {

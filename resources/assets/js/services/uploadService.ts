@@ -125,20 +125,22 @@ export const uploadService = {
 
       const err = error as {
         status?: number
-        responseData?: DuplicateUpload | { message?: string }
+        responseData?: unknown
       }
 
-      if (err.status === 409 && err.responseData) {
-        this.state.duplicatedSongs.push(err.responseData as DuplicateUpload)
+      const responseData = err.responseData
+      const isObjectResponse = responseData !== null && typeof responseData === 'object'
+
+      if (err.status === 409 && isObjectResponse) {
+        this.state.duplicatedSongs.push(responseData as DuplicateUpload)
         this.remove(file)
         return
       }
 
-      if (err.responseData && 'message' in err.responseData && err.responseData.message) {
-        file.message = `Upload failed: ${err.responseData.message}`
-      } else {
-        file.message = 'Upload failed: Unknown error.'
-      }
+      const message =
+        isObjectResponse && 'message' in responseData ? (responseData as { message?: unknown }).message : undefined
+
+      file.message = typeof message === 'string' && message ? `Upload failed: ${message}` : 'Server error.'
 
       this.proceed() // upload the next file
     } finally {
