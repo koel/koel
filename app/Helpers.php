@@ -29,12 +29,12 @@ function base_url(): string
 
 function image_storage_path(?string $fileName, ?string $default = null): ?string
 {
-    return $fileName ? config('koel.image_storage_dir') . DIRECTORY_SEPARATOR . $fileName : $default;
+    return $fileName ? public_path(config('koel.image_storage_dir') . $fileName) : $default;
 }
 
 function image_storage_url(?string $fileName, ?string $default = null): ?string
 {
-    return $fileName ? static_url('storage/images/' . $fileName) : $default;
+    return $fileName ? static_url(config('koel.image_storage_dir') . $fileName) : $default;
 }
 
 function artifact_path(?string $subPath = null, $ensureDirectoryExists = true): string
