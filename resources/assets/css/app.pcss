@@ -81,3 +81,15 @@
     @apply bg-k-fg-10;
   }
 }
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop {
+    padding-block: revert;
+    padding-inline: revert;
+    margin-block: revert;
+    margin-inline: revert;
+  }
+}

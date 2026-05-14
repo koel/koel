@@ -29,3 +29,15 @@
     @apply h-screen relative;
   }
 }
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop {
+    padding-block: revert;
+    padding-inline: revert;
+    margin-block: revert;
+    margin-inline: revert;
+  }
+}
