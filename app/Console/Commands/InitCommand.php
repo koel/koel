@@ -57,6 +57,7 @@ class InitCommand extends Command
             $this->maybeSetUpDatabase();
             $this->migrateDatabase();
             $this->maybeSeedDatabase();
+            $this->linkStorage();
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
             $this->maybeCopyManifests();
@@ -260,6 +261,13 @@ class InitCommand extends Command
     {
         $this->components->task('Migrating database', static function (): void {
             Artisan::call('migrate', ['--force' => true, '--quiet' => true]);
+        });
+    }
+
+    private function linkStorage(): void
+    {
+        $this->components->task('Linking storage', static function (): void {
+            Artisan::call('storage:link', ['--quiet' => true]);
         });
     }
 
