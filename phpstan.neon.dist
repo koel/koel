@@ -44,6 +44,5 @@ parameters:
 
     excludePaths:
         - ./routes/console.php
-        - ./app/Services/Util.php
 
     reportUnmatchedIgnoredErrors: false

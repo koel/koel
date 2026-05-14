@@ -31,11 +31,13 @@ final class Bom
         }
 
         foreach (self::BOMS as $bom => $encoding) {
-            if (str_starts_with($str, $bom)) {
-                $rest = substr($str, strlen($bom));
-
-                return $encoding === 'UTF-8' ? $rest : mb_convert_encoding($rest, 'UTF-8', $encoding);
+            if (!str_starts_with($str, $bom)) {
+                continue;
             }
+
+            $rest = substr($str, strlen($bom));
+
+            return $encoding === 'UTF-8' ? $rest : mb_convert_encoding($rest, 'UTF-8', $encoding);
         }
 
         return $str;
