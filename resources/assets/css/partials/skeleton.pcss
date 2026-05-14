@@ -6,9 +6,6 @@
   }
 }
 
-/* `@keyframes` must live at the top level — nesting it inside `.skeleton`
-   is invalid CSS that v3's postcss-nested flattened silently but v4's
-   lightningcss optimizer rejects, dropping the animation from the bundle. */
 @keyframes skeleton-pulse {
   0%,
   100% {

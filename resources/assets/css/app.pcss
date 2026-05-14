@@ -12,11 +12,6 @@
 
 @config "../../../tailwind.config.js";
 
-/*
-  Register `no-hover:` as a v4 custom variant (was a `screens.raw` entry in v3).
-  Keeping it in `theme.screens` made the `container` utility iterate it and
-  emit invalid `@media (width >= (hover: none))` rules in production output.
-*/
 @custom-variant no-hover (&:where(@media (hover: none) *));
 
 /*
