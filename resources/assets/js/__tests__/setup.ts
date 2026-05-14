@@ -4,10 +4,6 @@ import './shims/popover'
 
 declare global {
   interface Window {
-    BASE_URL: string
-    MAILER_CONFIGURED: boolean
-    SSO_PROVIDERS: SSOProvider[]
-    BRANDING: Branding
     createLemonSqueezy?: () => Closure
     RUNNING_UNIT_TESTS?: boolean
   }
