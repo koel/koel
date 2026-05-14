@@ -47,15 +47,15 @@ describe('loginForm.vue', () => {
   })
 
   it('does not show forgot password form if mailer is not configure', async () => {
-    window.MAILER_CONFIGURED = false
+    window.KOEL.mailer_configured = false
     h.render(Component)
 
     expect(screen.queryByText('Forgot password?')).toBeNull()
-    window.MAILER_CONFIGURED = true
+    window.KOEL.mailer_configured = true
   })
 
   it('shows Google login button', async () => {
-    window.SSO_PROVIDERS = ['Google']
+    window.KOEL.sso_providers = ['Google']
 
     h.render(Component, {
       global: {
@@ -67,6 +67,6 @@ describe('loginForm.vue', () => {
 
     screen.getByTestId('google-login-button')
 
-    window.SSO_PROVIDERS = []
+    window.KOEL.sso_providers = []
   })
 })

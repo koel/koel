@@ -86,7 +86,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 const { toastSuccess } = useMessageToaster()
 const { currentUser } = useAuthorization()
 
-const isDemo = window.IS_DEMO
+const isDemo = window.KOEL.is_demo
 
 const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
   initialValues: {

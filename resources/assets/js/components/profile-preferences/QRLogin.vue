@@ -22,7 +22,7 @@ watch(oneTimeToken, () => {
   qrCodeData.value = base64Encode(
     JSON.stringify({
       token: oneTimeToken.value,
-      host: window.BASE_URL,
+      host: window.KOEL.base_url,
     }),
   )
 })

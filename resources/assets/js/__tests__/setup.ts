@@ -53,9 +53,15 @@ HTMLDialogElement.prototype.close = vi.fn(function mock(this: HTMLDialogElement)
   this.open = false
 })
 
-window.BASE_URL = 'http://test/'
-window.MAILER_CONFIGURED = true
-window.SSO_PROVIDERS = []
+window.KOEL = {
+  base_url: 'http://test/',
+  is_demo: false,
+  pusher: { app_key: '', app_cluster: '' },
+  branding: { name: 'Koel', logo: '', cover: '' },
+  mailer_configured: true,
+  sso_providers: [],
+  accepted_audio_extensions: [],
+}
 window.RUNNING_UNIT_TESTS = true
 
 window.createLemonSqueezy = vi.fn()

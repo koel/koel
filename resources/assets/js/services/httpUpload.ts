@@ -16,7 +16,7 @@ export const postWithProgress = <T>(
   const xhr = new XMLHttpRequest()
 
   const promise = new Promise<T>((resolve, reject) => {
-    xhr.open('POST', `${window.BASE_URL}api/${url}`)
+    xhr.open('POST', `${window.KOEL.base_url}api/${url}`)
     xhr.setRequestHeader('Accept', 'application/json')
     xhr.setRequestHeader('Authorization', `Bearer ${authService.getApiToken()}`)
     xhr.setRequestHeader('X-Api-Version', 'v7')

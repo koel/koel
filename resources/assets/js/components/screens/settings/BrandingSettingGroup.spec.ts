@@ -8,7 +8,7 @@ describe('brandingSettingGroup.vue', () => {
   const h = createHarness()
 
   const renderComponent = (currentBranding?: Branding) => {
-    currentBranding = currentBranding ?? window.BRANDING
+    currentBranding = currentBranding ?? window.KOEL.branding
 
     const rendered = h.render(Component, {
       props: {

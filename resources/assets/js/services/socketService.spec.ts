@@ -32,16 +32,15 @@ import { userStore } from '@/stores/userStore'
 describe('socketService', () => {
   const h = createHarness()
 
-  it('does not init without PUSHER_APP_KEY', async () => {
-    Object.defineProperty(window, 'PUSHER_APP_KEY', { value: '', writable: true, configurable: true })
+  it('does not init without a Pusher app key', async () => {
+    window.KOEL.pusher = { app_key: '', app_cluster: '' }
     const result = await socketService.init()
     expect(result).toBe(false)
   })
 
-  it('inits with PUSHER_APP_KEY', async () => {
-    Object.defineProperty(window, 'PUSHER_APP_KEY', { value: 'test-key', writable: true, configurable: true })
-    Object.defineProperty(window, 'PUSHER_APP_CLUSTER', { value: 'mt1', writable: true, configurable: true })
-    window.BASE_URL = 'http://localhost/'
+  it('inits with a Pusher app key', async () => {
+    window.KOEL.pusher = { app_key: 'test-key', app_cluster: 'mt1' }
+    window.KOEL.base_url = 'http://localhost/'
 
     const result = await socketService.init()
     expect(result).toBe(true)

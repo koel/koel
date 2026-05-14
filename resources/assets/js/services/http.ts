@@ -13,7 +13,7 @@ class Http {
 
   constructor() {
     this.client = ky.create({
-      prefixUrl: `${window.BASE_URL}api`,
+      prefixUrl: `${window.KOEL.base_url}api`,
       headers: {
         Accept: 'application/json',
         'X-Api-Version': 'v7',

@@ -1,4 +1,4 @@
-export const acceptedExtensions = window.ACCEPTED_AUDIO_EXTENSIONS
+export const acceptedExtensions = window.KOEL.accepted_audio_extensions
 
 const getFileExtension = (filename: string): string | null => {
   const match = filename.toLowerCase().match(/\.([a-z0-9+]+)$/)

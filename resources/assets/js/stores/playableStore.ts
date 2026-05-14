@@ -196,7 +196,7 @@ export const playableStore = {
       : `${commonStore.state.cdn_url}play/${playable.id}?t=${authService.getAudioToken()}`
   },
 
-  getShareableUrl: (song: Playable) => `${window.BASE_URL}#/songs/${song.id}`,
+  getShareableUrl: (song: Playable) => `${window.KOEL.base_url}#/songs/${song.id}`,
 
   ensureNotDeleted: (songs: MaybeArray<Song>) => arrayify(songs).filter(({ deleted }) => !deleted),
 

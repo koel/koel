@@ -53,25 +53,28 @@ interface CompositeToken {
 
 type SSOProvider = 'Google' | 'Reverse Proxy'
 
-interface Window {
-  BASE_URL: string
-  MAILER_CONFIGURED: boolean
-  IS_DEMO: boolean
-
-  DEMO_ACCOUNT?: {
+interface KoelGlobals {
+  base_url: string
+  is_demo: boolean
+  pusher: {
+    readonly app_key: string
+    readonly app_cluster: string
+  }
+  branding: Branding
+  mailer_configured: boolean
+  sso_providers: SSOProvider[]
+  accepted_audio_extensions: string[]
+  demo_account?: {
     email: string
     password: string
   }
+  auth_token?: CompositeToken | null
+}
 
-  SSO_PROVIDERS: SSOProvider[]
-  AUTH_TOKEN: CompositeToken | null
-  ACCEPTED_AUDIO_EXTENSIONS: string[]
+interface Window {
+  KOEL: KoelGlobals
+
   RUNNING_UNIT_TESTS?: boolean
-
-  BRANDING: Branding
-
-  readonly PUSHER_APP_KEY: string
-  readonly PUSHER_APP_CLUSTER: string
 
   readonly MediaMetadata: Constructable<Record<string, any>>
   createLemonSqueezy?: () => Closure

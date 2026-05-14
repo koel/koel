@@ -85,7 +85,7 @@ const close = () => emit('close')
 
 const showPlusModal = () => openModal<'KOEL_PLUS'>(KoelPlusModal)
 
-const isDemo = window.IS_DEMO
+const isDemo = window.KOEL.is_demo
 </script>
 
 <style lang="postcss" scoped>

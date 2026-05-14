@@ -73,7 +73,7 @@ const users = computed(() =>
 
 const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_prospect))
 
-const canInvite = window.MAILER_CONFIGURED
+const canInvite = window.KOEL.mailer_configured
 
 const showAddUserForm = () => openModal<'ADD_USER_FORM'>(AddUserForm)
 const showInviteUserForm = () => openModal<'INVITE_USER_FORM'>(InviteUserForm)

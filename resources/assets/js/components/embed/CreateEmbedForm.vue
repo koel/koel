@@ -89,7 +89,7 @@ const embedSrc = computed(() => {
     return null
   }
 
-  return `${window.BASE_URL}#/embed/${embed.value.id}/${encryptedOptions.value}`
+  return `${window.KOEL.base_url}#/embed/${embed.value.id}/${encryptedOptions.value}`
 })
 
 const code = computed(() => {

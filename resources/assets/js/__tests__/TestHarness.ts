@@ -61,7 +61,7 @@ class TestHarness {
   }
 
   private setDefaultBranding() {
-    window.BRANDING = {
+    window.KOEL.branding = {
       name: 'Koel',
       logo: '',
       cover: '',
@@ -165,16 +165,16 @@ class TestHarness {
   public async withCustomBranding(branding: Branding, cb: Closure) {
     // Custom branding implicitly requires Plus edition.
     return await this.withPlusEdition(async () => {
-      window.BRANDING = branding
+      window.KOEL.branding = branding
       await cb()
       this.setDefaultBranding()
     })
   }
 
   public async withDemoMode(cb: Closure) {
-    window.IS_DEMO = true
+    window.KOEL.is_demo = true
     await cb()
-    window.IS_DEMO = false
+    window.KOEL.is_demo = false
 
     return this
   }

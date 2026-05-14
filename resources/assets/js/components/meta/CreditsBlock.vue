@@ -22,7 +22,7 @@ interface DemoCredits {
 const credits = ref<DemoCredits[]>([])
 
 onMounted(async () => {
-  credits.value = window.IS_DEMO ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : []
+  credits.value = window.KOEL.is_demo ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : []
 })
 </script>
 

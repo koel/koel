@@ -81,7 +81,7 @@ const { url, isCurrentScreen } = useRouter()
 const usesMediaBrowser = toRef(commonStore.state, 'uses_media_browser')
 const { swReady, cachedSongCount } = useOfflinePlayback()
 const supportsOffline = computed(() => swReady.value && cachedSongCount.value > 0)
-const isDemo = window.IS_DEMO
+const isDemo = window.KOEL.is_demo
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => (youtubeVideoTitle.value = unescape(payload.title)))
 </script>

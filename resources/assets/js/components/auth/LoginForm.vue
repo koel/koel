@@ -58,20 +58,20 @@ const emit = defineEmits<{ (e: 'loggedin'): void }>()
 const { toastWarning, toastError } = useMessageToaster()
 const { logo } = useBranding()
 
-const demoAccount = window.DEMO_ACCOUNT || {
+const demoAccount = window.KOEL.demo_account || {
   email: 'demo@koel.dev',
   password: 'demo',
 }
 
 const failed = ref(false)
 const showingForgotPasswordForm = ref(false)
-const canResetPassword = window.MAILER_CONFIGURED && !window.IS_DEMO
-const ssoProviders = window.SSO_PROVIDERS || []
-const emailPlaceholder = window.IS_DEMO ? demoAccount.email : 'Your email address'
-const passwordPlaceholder = window.IS_DEMO ? demoAccount.password : 'Your password'
+const canResetPassword = window.KOEL.mailer_configured && !window.KOEL.is_demo
+const ssoProviders = window.KOEL.sso_providers || []
+const emailPlaceholder = window.KOEL.is_demo ? demoAccount.email : 'Your email address'
+const passwordPlaceholder = window.KOEL.is_demo ? demoAccount.password : 'Your password'
 
 const { data, handleSubmit } = useForm<{ email: string; password: string }>({
-  initialValues: window.IS_DEMO
+  initialValues: window.KOEL.is_demo
     ? demoAccount
     : {
         email: '',

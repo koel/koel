@@ -65,7 +65,7 @@ const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_se
  */
 const connect = () =>
   window.open(
-    `${window.BASE_URL}lastfm/connect?api_token=${authService.getApiToken()}`,
+    `${window.KOEL.base_url}lastfm/connect?api_token=${authService.getApiToken()}`,
     '_blank',
     'toolbar=no,titlebar=no,location=no,width=1024,height=640',
   )
