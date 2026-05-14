@@ -67,7 +67,6 @@ const showQueue = () => go(isCurrentScreen('Queue') ? -1 : url('queue'))
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .droppable {
   @apply text-k-highlight scale-125;
 }

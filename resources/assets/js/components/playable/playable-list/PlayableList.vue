@@ -344,7 +344,6 @@ onMounted(() => render())
 </script>
 
 <style lang="postcss">
-@reference '@css/app.pcss';
 .playable-list-wrap {
   .virtual-scroller {
     @apply flex-1;

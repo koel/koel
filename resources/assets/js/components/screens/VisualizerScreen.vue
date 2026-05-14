@@ -7,7 +7,7 @@
     @mousemove="showControls"
   >
     <div
-      class="controls absolute z-1 w-full h-full top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out"
+      class="controls absolute z-[1] w-full h-full top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out"
       :class="{ 'hover:opacity-100': !isFullscreen, 'show-controls': !controlsHidden && isFullscreen }"
     >
       <div v-if="selectedVisualizer" class="absolute bottom-8 left-8 px-6 py-4 bg-black/30 rounded-md">
@@ -21,7 +21,7 @@
       </div>
 
       <div class="absolute bottom-8 right-8 border border-white/30 rounded-md">
-        <SelectBox v-model="selectedId" class="bg-black/20! text-white! block">
+        <SelectBox v-model="selectedId" class="!bg-black/20 !text-white block">
           <option disabled value="-1">Pick a visualizer</option>
           <option v-for="v in visualizers" :key="v.id" :value="v.id">{{ v.name }}</option>
         </SelectBox>
@@ -122,7 +122,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 :deep(canvas) {
   @apply transition-opacity duration-300 h-full w-full;
 }

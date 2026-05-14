@@ -14,7 +14,6 @@ const { playables } = toRefs(props)
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 /* 1-col: divider above every item except the first */
 ol > :deep(:nth-child(n + 2)) {
   @apply border-t border-k-fg-5;

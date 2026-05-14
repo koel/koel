@@ -1,5 +1,5 @@
 <template>
-  <header class="flex h-[150px] p-6 gap-5 bg-k-fg-5 shrink-0 justify-end">
+  <header class="flex h-[150px] p-6 gap-5 bg-k-fg-5 flex-shrink-0 justify-end">
     <aside class="size-[112px] aspect-square">
       <Thumbnail :embeddable="embed.embeddable" />
     </aside>

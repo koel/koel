@@ -1,7 +1,6 @@
 /// <reference types="vite-plus/test" />
 import { defineConfig } from 'vite-plus'
 import vue from '@vitejs/plugin-vue'
-import tailwindcss from '@tailwindcss/vite'
 import laravel from 'laravel-vite-plugin'
 import { resolve } from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -56,7 +55,6 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    tailwindcss(),
     laravel({
       input: [
         'resources/assets/js/app.ts',

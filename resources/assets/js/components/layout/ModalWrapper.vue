@@ -1,7 +1,7 @@
 <template>
   <dialog
     ref="dialog"
-    class="m-auto text-k-fg min-w-full md:min-w-[480px] border-0 p-0 md:rounded-md overflow-visible bg-k-bg backdrop:bg-black/70"
+    class="text-k-fg min-w-full md:min-w-[480px] border-0 p-0 md:rounded-md overflow-visible bg-k-bg backdrop:bg-black/70"
     @close.prevent
     @keydown.esc.prevent
   >
@@ -40,7 +40,6 @@ watch(
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 dialog {
   :deep(> *) {
     @apply relative;

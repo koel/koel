@@ -30,7 +30,6 @@ const rows = computed(() => {
 </script>
 
 <style scoped lang="postcss">
-@reference '@css/app.pcss';
 .track-list-wrap {
   .virtual-scroller {
     @apply flex-1;

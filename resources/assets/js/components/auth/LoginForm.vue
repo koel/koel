@@ -111,7 +111,6 @@ onMounted(() => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 /**
  * I like to move it move it
  * I like to move it move it

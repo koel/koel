@@ -289,7 +289,6 @@ eventBus.on('PODCAST_UNSUBSCRIBED', ({ id }) => id === podcast.value?.id && go(u
 </script>
 
 <style scoped lang="postcss">
-@reference '@css/app.pcss';
 :deep(.items-wrapper) {
   @apply divide-y divide-k-fg-10;
 }

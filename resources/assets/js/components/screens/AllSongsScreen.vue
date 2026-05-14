@@ -139,7 +139,6 @@ onMounted(async () => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .collapsed .controls {
   @apply w-auto;
 }

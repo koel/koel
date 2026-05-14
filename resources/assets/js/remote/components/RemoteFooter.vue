@@ -68,7 +68,6 @@ const playPrev = () => socketService.broadcast('SOCKET_PLAY_PREV')
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 a {
   @apply text-k-fg active:text-k-fg-80;
 }

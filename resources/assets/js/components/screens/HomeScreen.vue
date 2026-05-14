@@ -96,7 +96,6 @@ useRouter().onScreenActivated('Home', async () => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .home-sections {
   > *:not(:first-child) {
     @apply pt-12 relative;

@@ -1,7 +1,7 @@
 <template>
   <a
     data-testid="episode-item"
-    class="group relative flex flex-col md:flex-row gap-4 px-6 py-5 text-k-fg! hover:bg-k-fg-10 duration-200"
+    class="group relative flex flex-col md:flex-row gap-4 px-6 py-5 !text-k-fg hover:bg-k-fg-10 duration-200"
     :class="isCurrentEpisode && 'current'"
     :href="url('episodes.show', { id: episode.id })"
     @contextmenu.prevent="requestContextMenu"
@@ -47,7 +47,7 @@
     </div>
     <div class="md:flex-[0_0_122px] text-sm flex md:flex-col items-center justify-center w-full">
       <span class="block md:mb-2 text-k-fg-70">{{ timeLeft ? timeLeft : 'Played' }}</span>
-      <div class="px-4 flex-1 md:grow-0 md:w-full">
+      <div class="px-4 flex-1 md:flex-grow-0 md:w-full">
         <EpisodeProgress v-if="shouldShowProgress" :episode="episode" :position="currentPosition" />
       </div>
     </div>
@@ -138,7 +138,6 @@ const toggleFavorite = () => episodeStore.toggleFavorite(episode.value)
 </script>
 
 <style scoped lang="postcss">
-@reference '@css/app.pcss';
 .description {
   :deep(p) {
     @apply mb-3;

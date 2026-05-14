@@ -45,7 +45,6 @@ const { currentUser } = useAuthorization()
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 span {
   @apply inline-block min-w-0 leading-normal;
 }

@@ -25,7 +25,7 @@
         <template v-else>
           <p v-if="currentUserCan.manageSettings()" class="py-3">
             <!-- close the modal first to prevent it from overlapping Lemonsqueezy's overlay -->
-            <BtnUpgradeToPlus class="w-auto! inline-block px-6!" @click.prevent="showPlusModal" />
+            <BtnUpgradeToPlus class="!w-auto inline-block !px-6" @click.prevent="showPlusModal" />
           </p>
         </template>
       </div>
@@ -89,7 +89,6 @@ const isDemo = window.KOEL.is_demo
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 p {
   @apply mx-0 my-3;
 }

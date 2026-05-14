@@ -67,7 +67,6 @@ const toggleFavorite = () => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 :fullscreen .playback-controls {
   @apply scale-125;
 }

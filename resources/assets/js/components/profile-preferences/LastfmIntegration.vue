@@ -1,7 +1,7 @@
 <template>
   <section>
     <h3 class="text-2xl mb-2">
-      <span class="mr-2 text-(--lastfm-color)">
+      <span class="mr-2 text-[var(--lastfm-color)]">
         <Icon :icon="faLastfm" />
       </span>
       Last.fm Integration
@@ -19,7 +19,7 @@
         <a href="https://www.last.fm/about/trackmymusic" rel="noopener" target="_blank">scrobbling</a>.
       </p>
       <div class="buttons mt-4 space-x-2">
-        <Btn class="bg-(--lastfm-color)!" @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
+        <Btn class="!bg-[var(--lastfm-color)]" @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
         <Btn variant="ghost" v-if="connected" class="disconnect" @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>

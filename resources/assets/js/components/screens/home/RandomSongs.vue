@@ -43,7 +43,6 @@ const refresh = async () => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 :deep([aria-busy='true']) {
   @apply opacity-70 transition-opacity;
 }

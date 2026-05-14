@@ -79,7 +79,6 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .context-menu {
   @apply absolute right-0 top-full mt-2 md:right-full md:bottom-0 md:top-auto md:mt-0 md:mr-3;
 }

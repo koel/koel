@@ -2,7 +2,7 @@
   <article class="flex-1 flex flex-col items-center justify-around w-screen">
     <img
       :src="coverArt"
-      class="my-0 mx-auto w-[calc(70vw+4px)] aspect-square rounded-full border-2 border-solid border-k-fg object-center object-cover"
+      class="my-0 mx-auto w-[calc(70vw_+_4px)] aspect-square rounded-full border-2 border-solid border-k-fg object-center object-cover"
       alt="Cover art"
     />
     <div class="w-full flex flex-col justify-around px-6">
@@ -48,7 +48,6 @@ const album = computed(() =>
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 p {
   @apply max-w-[90%] mx-auto truncate leading-[1.3];
 }

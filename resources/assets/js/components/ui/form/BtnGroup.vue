@@ -5,7 +5,6 @@
 </template>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .btn-group {
   :deep(button) {
     &:not(:first-child) {

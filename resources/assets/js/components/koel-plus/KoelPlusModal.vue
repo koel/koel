@@ -2,12 +2,12 @@
   <div class="plus max-w-[480px] flex flex-col items-center" data-testid="koel-plus" tabindex="0">
     <img
       alt="Koel Plus"
-      class="mt-[-48px] rounded-full border-[6px] border-k-fg"
+      class="-mt-[48px] rounded-full border-[6px] border-k-fg"
       src="@/../img/koel-plus.svg"
       width="96"
     />
 
-    <main class="px-8! py-5! text-center flex flex-col gap-5">
+    <main class="!px-8 !py-5 text-center flex flex-col gap-5">
       <div>
         Koel Plus adds premium features on top of the default installation.<br />
         Pay <em>once</em> and enjoy all additional features forever — including those to be built into the app in the

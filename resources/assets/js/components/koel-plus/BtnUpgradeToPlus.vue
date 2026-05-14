@@ -1,6 +1,6 @@
 <template>
   <Btn
-    class="block w-full rounded-md px-4 py-3 text-white/80 hover:text-white bg-linear-to-r to-[#c62be8] from-[#671ce4] text-left!"
+    class="block w-full rounded-md px-4 py-3 text-white/80 hover:text-white bg-gradient-to-r to-[#c62be8] from-[#671ce4] !text-left"
     @click.prevent="showPlusModal"
   >
     <Icon :icon="faPlus" fixed-width />

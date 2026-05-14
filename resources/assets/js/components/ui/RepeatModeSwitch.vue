@@ -32,7 +32,6 @@ const changeMode = () => playback().rotateRepeatMode()
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .active {
   @apply text-k-fg-70;
 }

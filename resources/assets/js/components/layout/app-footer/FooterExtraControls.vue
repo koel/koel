@@ -4,7 +4,7 @@
       <FooterQueueIcon />
 
       <FooterBtn
-        class="visualizer-btn hidden md:block!"
+        class="visualizer-btn hidden md:!block"
         data-testid="toggle-visualizer-btn"
         title="Toggle visualizer"
         @click.prevent="toggleVisualizer"
@@ -24,12 +24,7 @@
 
       <VolumeSlider />
 
-      <FooterBtn
-        v-if="isFullscreenSupported()"
-        class="hidden md:block!"
-        :title="fullscreenButtonTitle"
-        @click.prevent="toggleFullscreen"
-      >
+      <FooterBtn v-if="isFullscreenSupported()" :title="fullscreenButtonTitle" @click.prevent="toggleFullscreen">
         <Icon :icon="isFullscreen ? faCompress : faExpand" fixed-width />
       </FooterBtn>
     </div>
@@ -70,7 +65,6 @@ onMounted(() => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .extra-controls {
   :fullscreen & {
     @apply pr-0;

@@ -26,7 +26,6 @@ withDefaults(
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 main {
   -ms-overflow-style: -ms-autohiding-scrollbar;
 }

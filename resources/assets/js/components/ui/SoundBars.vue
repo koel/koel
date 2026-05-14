@@ -5,7 +5,6 @@
 </template>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 span {
   @apply w-[3px] h-full bg-current rounded-full origin-bottom;
   animation: bounce 2.2s ease-out infinite alternate;

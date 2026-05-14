@@ -7,7 +7,7 @@
     </div>
 
     <Magnifier
-      class="absolute top-4 right-4 opacity-0 group-hover:opacity-50 hover:opacity-100! transition-opacity no-hover:opacity-100!"
+      class="absolute top-4 right-4 opacity-0 group-hover:opacity-50 hover:!opacity-100 transition-opacity no-hover:!opacity-100"
       @in="zoomIn"
       @out="zoomOut"
     />

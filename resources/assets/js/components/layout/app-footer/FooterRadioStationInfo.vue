@@ -32,7 +32,6 @@ const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .station-info {
   :fullscreen & {
     @apply pl-0;

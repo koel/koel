@@ -38,8 +38,6 @@ defineExpose({
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
-
 /**
  * Except for the `highlight` variant, button text colors are independent from the theme.
  */

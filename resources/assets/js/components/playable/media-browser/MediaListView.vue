@@ -2,7 +2,7 @@
   <VirtualScroller
     v-slot="{ item: row }: { item: MediaRow }"
     tabindex="0"
-    class="focus-visible:outline-hidden"
+    class="focus-visible:outline-none"
     :item-height="40"
     :items="rows"
     @scrolled-to-end="$emit('scrolled-to-end')"

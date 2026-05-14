@@ -227,7 +227,6 @@ eventBus.on('SONGS_UPDATED', result => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .screen-header :deep(.play-icon) {
   @apply scale-[2];
 }

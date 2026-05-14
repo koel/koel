@@ -10,7 +10,7 @@
           v-for="item in menuItems"
           :key="item.label"
           :class="currentlySortedBy(item.field) && 'active'"
-          class="cursor-pointer group flex justify-between pl-3! hover:bg-k-highlight! hover:text-k-highlight-fg!"
+          class="cursor-pointer group flex justify-between !pl-3 hover:!bg-k-highlight hover:!text-k-highlight-fg"
           @click="sortable && sort(item.field)"
         >
           <label
@@ -163,7 +163,6 @@ const currentlySortedBy = (field: MaybeArray<PlayableListSortField>) => isEqual(
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .active {
   @apply bg-k-highlight text-k-highlight-fg;
 
@@ -172,7 +171,7 @@ const currentlySortedBy = (field: MaybeArray<PlayableListSortField>) => isEqual(
   }
 
   input {
-    @apply border-k-highlight-fg!;
+    @apply border-k-highlight-fg !important;
   }
 }
 </style>

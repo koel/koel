@@ -78,7 +78,7 @@ const onCancel = () => (cropperSource.value = null)
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
+@tailwind utilities;
 
 @layer utilities {
   .control {

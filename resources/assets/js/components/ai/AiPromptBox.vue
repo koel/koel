@@ -6,7 +6,7 @@
         v-model="text"
         v-koel-focus
         :readonly="disabled"
-        class="block w-full bg-k-bg-input text-k-fg-input border border-k-fg-10 resize-none focus:outline-hidden focus:border-k-highlight"
+        class="block w-full bg-k-bg-input text-k-fg-input border border-k-fg-10 resize-none focus:outline-none focus:border-k-highlight"
         :placeholder="
           mode === 'initial'
             ? 'Ask Koel to play songs, create playlists, add radio stations, and more.'
@@ -93,7 +93,6 @@ defineExpose({ fill, focus })
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .initial textarea {
   @apply h-40 p-6 pr-14 pb-12 text-xl rounded-3xl;
 }

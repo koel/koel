@@ -1,7 +1,7 @@
 <template>
   <FooterButton
     :title
-    class="w-12! rounded-full border-2 border-solid border-k-fg-70 aspect-square transition-transform! hover:scale-125 text-2xl! has-[.icon-play]:indent-[0.23rem]"
+    class="!w-[3rem] rounded-full border-2 border-solid border-k-fg-70 aspect-square !transition-transform hover:scale-125 !text-2xl has-[.icon-play]:indent-[0.23rem]"
     @click.prevent="toggle"
   >
     <Icon v-if="playing" :icon="faPause" />

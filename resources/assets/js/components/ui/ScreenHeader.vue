@@ -1,7 +1,7 @@
 <template>
   <header
     :class="[layout, disabled ? 'disabled' : '']"
-    class="screen-header gap-4 min-h-0 md:min-h-full flex items-end shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-fg-5"
+    class="screen-header gap-4 min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-fg-5"
   >
     <aside v-if="$slots.thumbnail" class="thumbnail-wrapper hidden md:flex items-end overflow-hidden rounded-md">
       <slot name="thumbnail" />
@@ -40,12 +40,11 @@ withDefaults(
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 header.screen-header {
   --transition-duration: 300ms;
 
   .thumbnail-wrapper {
-    @apply origin-top duration-(--transition-duration) translate-y-0 opacity-100 w-[192px];
+    @apply origin-top duration-[var(--transition-duration)] translate-y-0 opacity-100 w-[192px];
     will-change: transform, opacity;
     transition-property: transform, opacity;
   }

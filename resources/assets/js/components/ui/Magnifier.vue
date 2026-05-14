@@ -1,9 +1,9 @@
 <template>
   <span class="flex transition-opacity duration-200">
-    <button class="rounded-l! border-r-0!" title="Zoom out" type="button" @click.prevent="$emit('out')">
+    <button class="!rounded-l !border-r-0" title="Zoom out" type="button" @click.prevent="$emit('out')">
       <Icon :icon="faSearchMinus" />
     </button>
-    <button class="rounded-r!" title="Zoom in" type="button" @click.prevent="$emit('in')">
+    <button class="!rounded-r" title="Zoom in" type="button" @click.prevent="$emit('in')">
       <Icon :icon="faSearchPlus" />
     </button>
   </span>
@@ -16,7 +16,6 @@ defineEmits<{ (e: 'in' | 'out'): void }>()
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 button {
   @apply text-k-fg bg-k-bg border border-solid border-white/20 opacity-80
   px-3 py-1.5 hover:opacity-100 active:scale-95;

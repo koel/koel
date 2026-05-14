@@ -33,7 +33,6 @@ const value = defineModel<ViewMode>({ default: 'thumbnails' })
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 label {
   @apply w-1/2 flex items-center justify-center h-full mb-0 cursor-pointer;
 

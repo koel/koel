@@ -58,7 +58,6 @@ const pausePlayback = () => playback().pause()
 </script>
 
 <style scoped lang="postcss">
-@reference '@css/app.pcss';
 .selected {
   @apply bg-k-fg-10 border-transparent;
 }

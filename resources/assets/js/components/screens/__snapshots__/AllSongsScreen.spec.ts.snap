@@ -3,7 +3,7 @@
 exports[`allSongsScreen.vue > renders 1`] = `
 <section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu overflow-hidden">
   <!--v-if-->
-  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded screen-header gap-4 min-h-0 md:min-h-full flex items-end shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-fg-5">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded screen-header gap-4 min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-fg-5">
     <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:flex items-end overflow-hidden rounded-md">
       <!---->
     </aside>

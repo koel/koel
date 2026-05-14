@@ -71,7 +71,6 @@ eventBus.on('PLAY_YOUTUBE_VIDEO', payload => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 :deep(iframe#player) {
   /* this is the iframe created by the YouTubePlayer plugin, not the div element! */
   @apply -m-6 w-auto h-auto flex-1 flex flex-col;

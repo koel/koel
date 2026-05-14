@@ -59,7 +59,6 @@ defineExpose({ info, success, warning, error })
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .popover,
 .popover:popover-open {
   inset: unset;

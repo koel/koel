@@ -77,7 +77,6 @@ const scrollToCurrentInQueue = () => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .song-info {
   :fullscreen & {
     @apply pl-0;

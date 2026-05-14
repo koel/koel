@@ -3,7 +3,7 @@
     <template v-if="authenticated">
       <AlbumArtOverlay v-if="showAlbumArtOverlay" :album="(state.streamable as Song).album_id" />
 
-      <main class="h-screen flex flex-col items-center justify-between text-center relative z-1">
+      <main class="h-screen flex flex-col items-center justify-between text-center relative z-[1]">
         <template v-if="connected">
           <template v-if="state.streamable">
             <StreamableDetails :streamable="state.streamable" />
@@ -91,7 +91,6 @@ onMounted(async () => {
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .standalone {
   @apply pt-[20px];
 

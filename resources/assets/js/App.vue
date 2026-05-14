@@ -184,7 +184,6 @@ provide(
 </script>
 
 <style lang="postcss">
-@reference '@css/app.pcss';
 #dragGhost {
   @apply hidden py-2 pl-8 pr-3 rounded-md text-base fixed bg-k-bg border border-k-fg-10
   text-k-fg pointer-events-none z-50 whitespace-nowrap;

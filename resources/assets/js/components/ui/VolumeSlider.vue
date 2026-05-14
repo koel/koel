@@ -10,7 +10,7 @@
 
     <input
       ref="inputEl"
-      class="volume-slider w-[120px]! before:absolute before:left-0 before:right-0 before:top-[-12px] before:bottom-[-12px]"
+      class="volume-slider !w-[120px] before:absolute before:left-0 before:right-0 before:top-[-12px] before:bottom-[-12px]"
       max="10"
       role="slider"
       step="0.1"
@@ -62,7 +62,6 @@ onMounted(() => volumeManager.init(inputEl.value!, preferenceStore.volume))
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .volume-slider[type='range'] {
   -webkit-appearance: none;
   -moz-appearance: none;

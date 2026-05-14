@@ -28,7 +28,6 @@ const props = withDefaults(defineProps<{ type?: 'default' | 'info' | 'danger' | 
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
 .alert-box {
   &-info {
     @apply bg-blue-500;

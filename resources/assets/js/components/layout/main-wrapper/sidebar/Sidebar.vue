@@ -1,7 +1,7 @@
 <template>
   <nav
     :class="{ collapsed: !expanded, 'tmp-showing': tmpShowing, showing: mobileShowing }"
-    class="group left-0 top-0 flex flex-col fixed h-full w-full md:relative md:w-k-sidebar-width z-999 md:z-10"
+    class="group left-0 top-0 flex flex-col fixed h-full w-full md:relative md:w-k-sidebar-width z-[999] md:z-10"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
@@ -114,7 +114,7 @@ eventBus.on('TOGGLE_SIDEBAR', () => (mobileShowing.value = !mobileShowing.value)
 </script>
 
 <style lang="postcss" scoped>
-@reference '@css/app.pcss';
+@import '@/../css/partials/mixins.pcss';
 
 nav {
   -ms-overflow-style: -ms-autohiding-scrollbar;
@@ -140,11 +140,8 @@ nav {
   }
 
   @media screen and (max-width: 768px) {
-    background-color: var(--color-bg);
-    background-image: var(--bg-image);
-    background-attachment: var(--bg-attachment);
-    background-size: var(--bg-size);
-    background-position: var(--bg-position);
+    @mixin themed-background {
+    }
 
     transform: translateX(-100vw);
     transition: transform 0.2s ease-in-out;

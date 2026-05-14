@@ -15,7 +15,6 @@
 </template>
 
 <style lang="postcss">
-@reference '@css/app.pcss';
 .text {
   a {
     @apply text-k-fg-20;

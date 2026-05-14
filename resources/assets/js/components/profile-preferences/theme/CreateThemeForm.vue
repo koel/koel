@@ -59,7 +59,7 @@
           <TextInput
             v-model="data.font_size"
             aria-label="Font size"
-            class="w-20!"
+            class="!w-20"
             min="1"
             step="0.5"
             title="Font size"
@@ -223,7 +223,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="postcss">
-@reference '@css/app.pcss';
 label {
   @apply flex items-center;
 }

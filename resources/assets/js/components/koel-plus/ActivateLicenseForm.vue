@@ -4,12 +4,12 @@
       v-model="data.licenseKey"
       v-koel-focus
       :disabled="loading"
-      class="rounded-r-none!"
+      class="!rounded-r-none"
       name="license"
       placeholder="Enter your license key"
       required
     />
-    <Btn :disabled="loading" class="rounded-l-none!" type="submit">Activate</Btn>
+    <Btn :disabled="loading" class="!rounded-l-none" type="submit">Activate</Btn>
   </form>
 </template>
 
