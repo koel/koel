@@ -1,8 +1,10 @@
 <?php
 
 $base = dirname(__DIR__);
-$target = $base . '/public/.htaccess';
+$source = $base . '/.htaccess.example';
+$destination = $base . '/public/.htaccess';
 
-if (!file_exists($target)) {
-    copy($base . '/.htaccess.example', $target);
+if (!file_exists($destination) && !copy($source, $destination)) {
+    fwrite(STDERR, "Failed to copy $source to $destination\n");
+    exit(1);
 }
