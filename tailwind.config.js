@@ -46,6 +46,9 @@ export default {
         'k-sidebar-width': 'var(--sidebar-width)',
         'k-side-sheet-width': 'var(--side-sheet-width)',
       },
+      screens: {
+        'no-hover': { 'raw': '(hover: none)' },
+      }
     },
     variants: {
       extend: {
