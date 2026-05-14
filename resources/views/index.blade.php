@@ -4,11 +4,14 @@
 
 @push('scripts')
     <script>
-        Object.assign(window.KOEL, @json([
-            'mailer_configured' => mailer_configured(),
-            'sso_providers' => collect_sso_providers(),
-            'accepted_audio_extensions' => collect_accepted_audio_extensions(),
-        ]));
+        @php
+            $koelExtraGlobals = [
+                'mailer_configured' => mailer_configured(),
+                'sso_providers' => collect_sso_providers(),
+                'accepted_audio_extensions' => collect_accepted_audio_extensions(),
+            ];
+        @endphp
+        Object.assign(window.KOEL, @json($koelExtraGlobals));
 
         @if (session()->has('demo_account'))
             window.KOEL.demo_account = @json(session('demo_account'));

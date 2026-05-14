@@ -30,15 +30,18 @@
 <div id="app"></div>
 
 <script>
-    window.KOEL = @json([
-        'base_url' => base_url(),
-        'is_demo' => config('koel.misc.demo'),
-        'pusher' => [
-            'app_key' => config('broadcasting.connections.pusher.key'),
-            'app_cluster' => config('broadcasting.connections.pusher.options.cluster'),
-        ],
-        'branding' => koel_branding(),
-    ]);
+    @php
+        $koelGlobals = [
+            'base_url' => base_url(),
+            'is_demo' => config('koel.misc.demo'),
+            'pusher' => [
+                'app_key' => config('broadcasting.connections.pusher.key'),
+                'app_cluster' => config('broadcasting.connections.pusher.options.cluster'),
+            ],
+            'branding' => koel_branding(),
+        ];
+    @endphp
+    window.KOEL = @json($koelGlobals);
 </script>
 
 @stack('scripts')
