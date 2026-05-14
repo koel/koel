@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Helpers\Encoding;
 
 /**
  * Recover the UTF-8 form of an ID3 tag string that was mis-decoded somewhere upstream.
@@ -22,7 +22,7 @@ namespace App\Helpers;
  * positives in one direction or the other. They're a future iteration once a
  * concrete bug report justifies the trade-off.
  */
-class TagEncodingFixer
+class TagFixer
 {
     public static function fix(mixed $value): mixed
     {

@@ -11,7 +11,6 @@ use App\Providers\MacroProvider;
 use App\Providers\ObjectStorageServiceProvider;
 use App\Providers\SongStorageServiceProvider;
 use App\Providers\StreamerServiceProvider;
-use App\Providers\UtilServiceProvider;
 use App\Providers\YouTubeServiceProvider;
 use Intervention\Image\ImageServiceProvider;
 use Laravel\Scout\ScoutServiceProvider;
@@ -28,7 +27,6 @@ return [
     AppServiceProvider::class,
     AuthServiceProvider::class,
     EventServiceProvider::class,
-    UtilServiceProvider::class,
     YouTubeServiceProvider::class,
     DownloadServiceProvider::class,
     BroadcastServiceProvider::class,

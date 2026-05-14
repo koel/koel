@@ -3,7 +3,6 @@
 use App\Facades\Download;
 use App\Facades\ITunes;
 use App\Facades\License;
-use App\Facades\Util;
 use App\Facades\YouTube;
 use App\Services\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
@@ -185,7 +184,6 @@ return [
         'Validator' => Validator::class,
         'View' => View::class,
 
-        'Util' => Util::class,
         'YouTube' => YouTube::class,
         'Download' => Download::class,
         'ITunes' => ITunes::class,

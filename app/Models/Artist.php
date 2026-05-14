@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Builders\ArtistBuilder;
 use App\Facades\License;
-use App\Facades\Util;
+use App\Helpers\Encoding\Bom;
 use App\Models\Concerns\Artists\HasArtistAttributes;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
@@ -99,14 +99,7 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
      */
     public static function getOrCreate(User $user, ?string $name = null): self
     {
-        // Remove the BOM from UTF-8/16/32, as it will mess up the database constraints.
-        $encoding = Util::detectUTFEncoding($name);
-
-        if ($encoding) {
-            $name = mb_convert_encoding($name, 'UTF-8', $encoding);
-        }
-
-        $name = trim($name) ?: self::UNKNOWN_NAME;
+        $name = trim(Bom::strip($name) ?? '') ?: self::UNKNOWN_NAME;
 
         // In the Community license, all artists are shared, so we determine the first artist by the name only.
         // In the Plus license, artists are user-specific, so we create or return the artist for the given user.
