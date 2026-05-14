@@ -14,7 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-return Application::configure(basePath: dirname(__DIR__))
+$app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         using: static function (): void {
             RouteServiceProvider::loadVersionAwareRoutes('web');
@@ -59,3 +59,11 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->create();
+
+$storagePath = $_ENV['LARAVEL_STORAGE_PATH'] ?? $_SERVER['LARAVEL_STORAGE_PATH'] ?? null;
+
+if ($storagePath !== null) {
+    $app->useEnvironmentPath($storagePath);
+}
+
+return $app;
