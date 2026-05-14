@@ -21,6 +21,21 @@ for details.
 | `STORAGE_DRIVER` | The storage driver for your media files. Valid values: `local`, `sftp`, `s3` (Koel Plus), `dropbox` (Koel Plus). See [Cloud Storage Support](plus/cloud-storage-support). | `local` |
 | `MEDIA_PATH` | The absolute path to your media directory. Required when using `STORAGE_DRIVER=local`. Can also be changed via the web interface. | _(empty)_ |
 | `ARTIFACTS_PATH` | The absolute path to store Koel artifacts (transcoded files, podcast episodes, temporary downloads, etc.). If empty, uses the system's temporary directory. | _(empty)_ |
+| `LARAVEL_STORAGE_PATH` | Absolute path Koel uses for writable runtime data — album/artist images (under `app/public/images`), logs, search indexes, framework cache, sessions. Set this to keep mutable state outside the application directory (read-only deploys, multi-instance setups, etc.). After setting it, run `php artisan storage:link` (or `composer koel:init`) so `public/storage` symlinks to `LARAVEL_STORAGE_PATH/app/public`. | `<app>/storage` |
+
+:::warning Upgrading an older Koel install
+The image storage location moved from `public/img/storage/` to `storage/app/public/images/`
+(or `LARAVEL_STORAGE_PATH/app/public/images/` when set). If you have a `public/img/storage/`
+directory with files in it, migrate them once or album/artist art will appear broken:
+
+```bash
+mkdir -p "${LARAVEL_STORAGE_PATH:-$(pwd)/storage}/app/public/images"
+rsync -a public/img/storage/ "${LARAVEL_STORAGE_PATH:-$(pwd)/storage}/app/public/images/"
+php artisan storage:link
+```
+
+After confirming images render, the old `public/img/storage/` directory can be removed.
+:::
 
 ### S3 / S3-Compatible
 

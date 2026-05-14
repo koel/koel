@@ -57,6 +57,7 @@ class InitCommand extends Command
             $this->maybeSetUpDatabase();
             $this->migrateDatabase();
             $this->maybeSeedDatabase();
+            $this->linkStorage();
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
             $this->maybeCopyManifests();
@@ -261,6 +262,20 @@ class InitCommand extends Command
         $this->components->task('Migrating database', static function (): void {
             Artisan::call('migrate', ['--force' => true, '--quiet' => true]);
         });
+    }
+
+    private function linkStorage(): void
+    {
+        $result = self::SUCCESS;
+
+        $this->components->task('Linking storage', static function () use (&$result): void {
+            $result = Artisan::call('storage:link', ['--quiet' => true]);
+        });
+
+        if ($result !== self::SUCCESS) {
+            $this->components->warn('Failed to link storage. Album and artist images may not load until you run '
+            . '`php artisan storage:link` manually.');
+        }
     }
 
     private function maybeSetMediaPath(): void
