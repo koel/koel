@@ -13,6 +13,13 @@
 @config "../../../tailwind.config.js";
 
 /*
+  Register `no-hover:` as a v4 custom variant (was a `screens.raw` entry in v3).
+  Keeping it in `theme.screens` made the `container` utility iterate it and
+  emit invalid `@media (width >= (hover: none))` rules in production output.
+*/
+@custom-variant no-hover (&:where(@media (hover: none) *));
+
+/*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.

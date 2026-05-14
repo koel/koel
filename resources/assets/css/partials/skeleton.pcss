@@ -4,14 +4,17 @@
     @apply bg-k-fg-5;
     animation: skeleton-pulse 2s infinite;
   }
+}
 
-  @keyframes skeleton-pulse {
-    0%,
-    100% {
-      opacity: 0;
-    }
-    50% {
-      opacity: 1;
-    }
+/* `@keyframes` must live at the top level — nesting it inside `.skeleton`
+   is invalid CSS that v3's postcss-nested flattened silently but v4's
+   lightningcss optimizer rejects, dropping the animation from the bundle. */
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
   }
 }
