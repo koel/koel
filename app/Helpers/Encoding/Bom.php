@@ -2,6 +2,8 @@
 
 namespace App\Helpers\Encoding;
 
+use Illuminate\Support\Str;
+
 /**
  * Remove a leading byte-order mark and normalize the result to UTF-8.
  *
@@ -31,7 +33,7 @@ final class Bom
         }
 
         foreach (self::BOMS as $bom => $encoding) {
-            if (!str_starts_with($str, $bom)) {
+            if (!Str::startsWith($str, $bom)) {
                 continue;
             }
 
