@@ -14,9 +14,10 @@ class HomeTest extends TestCase
             ->withoutVite()
             ->get('/')
             ->assertOk()
-            ->assertSee('window.ACCEPTED_AUDIO_EXTENSIONS')
-            ->assertSee('window.BRANDING')
-            ->assertSee('window.MAILER_CONFIGURED')
-            ->assertSee('window.SSO_PROVIDERS');
+            ->assertSee('window.KOEL = ', false)
+            ->assertSee('accepted_audio_extensions', false)
+            ->assertSee('mailer_configured', false)
+            ->assertSee('sso_providers', false)
+            ->assertSee('branding', false);
     }
 }

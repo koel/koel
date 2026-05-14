@@ -33,7 +33,7 @@ class DemoSessionTest extends TestCase
         $demoAccount = $this
             ->get('/')
             ->assertSuccessful()
-            ->assertSee('window.DEMO_ACCOUNT')
+            ->assertSee('window.KOEL.demo_account', false)
             ->viewData('demo_account');
 
         self::assertStringEndsWith('@demo.koel.dev', $demoAccount['email']);
@@ -45,7 +45,7 @@ class DemoSessionTest extends TestCase
     {
         $this->mock(CrawlerDetect::class)->expects('isCrawler')->andReturnTrue();
 
-        $this->get('/')->assertSee('window.DEMO_ACCOUNT')->assertViewHas('demo_account', [
+        $this->get('/')->assertSee('window.KOEL.demo_account', false)->assertViewHas('demo_account', [
             'email' => 'demo@koel.dev',
             'password' => 'demo',
         ]);
