@@ -266,9 +266,16 @@ class InitCommand extends Command
 
     private function linkStorage(): void
     {
-        $this->components->task('Linking storage', static function (): void {
-            Artisan::call('storage:link', ['--quiet' => true]);
+        $result = self::SUCCESS;
+
+        $this->components->task('Linking storage', static function () use (&$result): void {
+            $result = Artisan::call('storage:link', ['--quiet' => true]);
         });
+
+        if ($result !== self::SUCCESS) {
+            $this->components->warn('Failed to link storage. Album and artist images may not load until you run '
+            . '`php artisan storage:link` manually.');
+        }
     }
 
     private function maybeSetMediaPath(): void
