@@ -1,0 +1,20 @@
+# Sample Caddyfile for running Koel with FrankenPHP (https://frankenphp.dev).
+# Copy to `Caddyfile`, replace `localhost` with your domain, then run
+# `frankenphp run` from the project root.
+{
+	frankenphp
+}
+
+localhost {
+	root public/
+
+	encode zstd br gzip
+
+	request_body {
+		max_size 50MB
+	}
+
+	php_server {
+		try_files {path} index.php
+	}
+}

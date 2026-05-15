@@ -3,6 +3,7 @@ node_modules
 Homestead.yaml
 Homestead.json
 .env
+/Caddyfile
 .idea
 /_ide_helper.php
 /config.testing

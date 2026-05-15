@@ -63,10 +63,16 @@ In both cases, you should now be able to visit http://localhost:8000 in your bro
 
 ::: warning Use a proper webserver
 http://localhost:8000 is only the _development_ server for Koel (or rather, Laravel).
-For optimal performance, you'll want to set up a production server (Apache, nginx, Caddy etc.) and point it to the
-`public` directory of Koel.
-Koel provides a sample configuration for nginx in `nginx.conf.example`,
-but the process shouldn't be any different from that of a standard PHP application.
+For production, point a proper server (Apache, nginx, Caddy, etc.) at Koel's
+`public/` directory — the process is no different from any standard PHP application.
+
+Koel ships two starter configs at the project root:
+
+- `nginx.conf.example` — nginx + PHP-FPM.
+- `Caddyfile.example` — [FrankenPHP](https://frankenphp.dev), which bundles the
+  webserver and PHP runtime in a single binary. After installing FrankenPHP,
+  copy this file to `Caddyfile`, replace `localhost` with your domain, and run
+  `frankenphp run` from the project root.
 :::
 
 ### Using Docker
