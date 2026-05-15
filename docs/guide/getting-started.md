@@ -98,6 +98,10 @@ and Koel will know to remove/disable these features.
 runtime into a single binary — replacing the typical nginx + PHP-FPM pair with one process and giving you automatic
 HTTPS out of the box. Koel ships a `Caddyfile.example` at the project root that wires it up correctly.
 
+FrankenPHP is only the runtime — you still need a fully prepared Koel install (i.e. `vendor/` from `composer install`
+and the compiled frontend in `public/build/`) before it has anything to serve. Use either of the installation methods
+above (pre-compiled archive or building from source) first.
+
 ### Install FrankenPHP
 
 Pre-built binaries are published at [frankenphp.dev/docs/#install](https://frankenphp.dev/docs/#install). On Linux,
