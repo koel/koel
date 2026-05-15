@@ -2,7 +2,18 @@
 # Copy to `Caddyfile`, replace `localhost` with your domain, then run
 # `frankenphp run` from the project root.
 {
-	frankenphp
+	frankenphp {
+		# Suppress display + mute deprecation notices. FrankenPHP ships PHP 8.5,
+		# which deprecates the PDO::MYSQL_ATTR_* constants Laravel's stock
+		# config/database.php still uses; without these, the deprecation lands
+		# in the HTTP response stream and corrupts JSON responses.
+		php_ini display_errors "off"
+		php_ini error_reporting "E_ALL & ~E_DEPRECATED & ~E_STRICT"
+
+		# Match Koel's nginx.conf.example / .htaccess.example upload ceiling.
+		php_ini upload_max_filesize "50M"
+		php_ini post_max_size "50M"
+	}
 }
 
 localhost {

@@ -1,5 +1,5 @@
 ---
-description: Requirements, installation methods (pre-compiled, source, Docker), configuration, upgrading, and downgrading Koel.
+description: Requirements, installation methods (pre-compiled, source, Docker), configuration, running with FrankenPHP (binary + systemd), upgrading, and downgrading Koel.
 ---
 
 # Getting Started
@@ -63,16 +63,10 @@ In both cases, you should now be able to visit http://localhost:8000 in your bro
 
 ::: warning Use a proper webserver
 http://localhost:8000 is only the _development_ server for Koel (or rather, Laravel).
-For production, point a proper server (Apache, nginx, Caddy, etc.) at Koel's
-`public/` directory — the process is no different from any standard PHP application.
-
-Koel ships two starter configs at the project root:
-
-- `nginx.conf.example` — nginx + PHP-FPM.
-- `Caddyfile.example` — [FrankenPHP](https://frankenphp.dev), which bundles the
-  webserver and PHP runtime in a single binary. After installing FrankenPHP,
-  copy this file to `Caddyfile`, replace `localhost` with your domain, and run
-  `frankenphp run` from the project root.
+For production, point a proper server (Apache, nginx, Caddy, etc.) at Koel's `public/`
+directory — the process is no different from any standard PHP application.
+Koel ships starter configs at the project root: `nginx.conf.example` for nginx + PHP-FPM,
+and `Caddyfile.example` for [FrankenPHP](#running-with-frankenphp).
 :::
 
 ### Using Docker
@@ -97,6 +91,96 @@ Any non-empty value other than `log` or `array` is considered a proper mailer.
 As such, if you don't need email-required features, you can simply set `MAIL_MAILER` to `log` or `array` and leave the
 rest of the mailer-related values empty,
 and Koel will know to remove/disable these features.
+
+## Running with FrankenPHP
+
+[FrankenPHP](https://frankenphp.dev) is a modern PHP application server that bundles the webserver (Caddy) and the PHP
+runtime into a single binary — replacing the typical nginx + PHP-FPM pair with one process and giving you automatic
+HTTPS out of the box. Koel ships a `Caddyfile.example` at the project root that wires it up correctly.
+
+### Install FrankenPHP
+
+Pre-built binaries are published at [frankenphp.dev/docs/#install](https://frankenphp.dev/docs/#install). On Linux,
+the one-line installer fetches the right binary for your architecture:
+
+```bash
+curl https://frankenphp.dev/install.sh | sh
+sudo mv frankenphp /usr/local/bin/
+```
+
+### Configure the Caddyfile
+
+From the Koel project root:
+
+```bash
+cp Caddyfile.example Caddyfile
+```
+
+Edit `Caddyfile` and replace `localhost` with the domain you'll serve from. Using a real public domain enables automatic
+HTTPS via Let's Encrypt; keeping `localhost` is fine for local testing and uses Caddy's local development CA.
+
+### Run it
+
+```bash
+frankenphp run
+```
+
+That's it — Koel is now served on port 443 (and 80, redirected to HTTPS).
+
+### Run as a systemd service (Ubuntu)
+
+For a production deployment, run FrankenPHP under `systemd` so it starts on boot and restarts on failure. Create
+`/etc/systemd/system/koel.service`:
+
+```ini
+[Unit]
+Description=Koel (FrankenPHP)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/koel
+ExecStart=/usr/local/bin/frankenphp run
+Restart=on-failure
+# Allow binding to privileged ports 80 and 443 without running as root.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Adjust `WorkingDirectory` and `User` to match where Koel lives on your host. Then enable and start it:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now koel
+sudo journalctl -u koel -f
+```
+
+The `AmbientCapabilities=CAP_NET_BIND_SERVICE` directive is what lets the unrooted service bind to ports 80 and 443.
+Without it, you'd have to either run as root (don't) or pick non-privileged ports and front the service with something
+that owns them.
+
+### Behind a reverse proxy
+
+If you're already running nginx (or another reverse proxy) and want to use FrankenPHP only as the PHP runtime, bind it
+to a loopback port and disable Caddy's automatic HTTPS. Replace the site block in `Caddyfile` with:
+
+```
+:8001 {
+	bind 127.0.0.1
+	root public/
+	encode zstd gzip
+	php_server {
+		try_files {path} index.php
+	}
+}
+```
+
+…and add `auto_https off` to the global block. Then point your existing reverse proxy at `127.0.0.1:8001` and let it
+terminate TLS as before.
 
 ## Upgrade
 
