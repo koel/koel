@@ -2,8 +2,8 @@
 	frankenphp {
 		php_ini display_errors "off"
 		php_ini error_reporting "E_ALL & ~E_DEPRECATED & ~E_STRICT"
-		php_ini upload_max_filesize "50M"
-		php_ini post_max_size "50M"
+		php_ini upload_max_filesize "512M"
+		php_ini post_max_size "512M"
 	}
 }
 
@@ -13,7 +13,7 @@ localhost {
 	encode zstd br gzip
 
 	request_body {
-		max_size 50MB
+		max_size 512MB
 	}
 
 	php_server {

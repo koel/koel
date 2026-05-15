@@ -2,5 +2,5 @@
 ; via .user.ini files. For example, you can increase the upload file and post size
 ; limits by setting the desired values here and renaming this file into .user.ini.
 
-upload_max_filesize = 50M
-post_max_size = 50M
+upload_max_filesize = 512M
+post_max_size = 512M
