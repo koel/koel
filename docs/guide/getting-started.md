@@ -143,7 +143,6 @@ User=www-data
 WorkingDirectory=/var/www/koel
 ExecStart=/usr/local/bin/frankenphp run
 Restart=on-failure
-# Allow binding to privileged ports 80 and 443 without running as root.
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 
@@ -168,7 +167,7 @@ that owns them.
 If you're already running nginx (or another reverse proxy) and want to use FrankenPHP only as the PHP runtime, bind it
 to a loopback port and disable Caddy's automatic HTTPS. Replace the site block in `Caddyfile` with:
 
-```
+```caddyfile
 :8001 {
 	bind 127.0.0.1
 	root public/
