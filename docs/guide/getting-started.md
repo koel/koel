@@ -123,7 +123,7 @@ cp Caddyfile.example Caddyfile
 ```
 
 Edit `Caddyfile` and replace `localhost` with the domain you'll serve from. Using a real public domain enables automatic
-HTTPS via Let's Encrypt; keeping `localhost` is fine for local testing and uses Caddy's local development CA.
+HTTPS via Let's Encrypt.
 
 ### Run it
 
