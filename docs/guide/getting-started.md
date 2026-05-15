@@ -158,10 +158,6 @@ sudo systemctl enable --now koel
 sudo journalctl -u koel -f
 ```
 
-The `AmbientCapabilities=CAP_NET_BIND_SERVICE` directive is what lets the unrooted service bind to ports 80 and 443.
-Without it, you'd have to either run as root (don't) or pick non-privileged ports and front the service with something
-that owns them.
-
 ### Behind a reverse proxy
 
 If you're already running nginx (or another reverse proxy) and want to use FrankenPHP only as the PHP runtime, bind it
