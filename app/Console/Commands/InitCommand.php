@@ -295,25 +295,33 @@ class InitCommand extends Command
             return;
         }
 
+        $allMigrated = true;
+
         $this->components->task(
             sprintf('Migrating %d legacy image(s) to storage/app/public/images/', count($files)),
-            static function () use ($files, $legacyDir): void {
+            static function () use ($files, &$allMigrated): void {
                 $destDir = storage_path('app/public/images');
                 File::ensureDirectoryExists($destDir);
 
                 foreach ($files as $file) {
                     $dest = $destDir . DIRECTORY_SEPARATOR . $file->getFilename();
 
-                    if (File::exists($dest)) {
-                        File::delete($file->getPathname());
-                    } else {
-                        File::move($file->getPathname(), $dest);
-                    }
-                }
+                    $ok = File::exists($dest)
+                        ? File::delete($file->getPathname())
+                        : File::move($file->getPathname(), $dest);
 
-                File::deleteDirectory($legacyDir);
+                    $allMigrated = $allMigrated && $ok;
+                }
             },
         );
+
+        if ($allMigrated) {
+            File::deleteDirectory($legacyDir);
+        } else {
+            $this->components->warn(
+                'Some legacy images could not be migrated. Keeping public/img/storage for manual recovery.',
+            );
+        }
     }
 
     private function maybeSetMediaPath(): void
