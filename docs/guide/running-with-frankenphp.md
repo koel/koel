@@ -105,19 +105,13 @@ sudo journalctl -u koel -f
 
 ## Behind a reverse proxy
 
-If you're already running nginx (or another reverse proxy) and want to use FrankenPHP only as the PHP runtime, bind it
-to a loopback port and disable Caddy's automatic HTTPS. Replace the site block in `Caddyfile` with:
+If you're already running nginx (or another reverse proxy) and want to use FrankenPHP only as the PHP runtime, make two
+changes to your `Caddyfile`:
 
-```caddyfile
-:8001 {
-	bind 127.0.0.1
-	root public/
-	encode zstd gzip
-	php_server {
-		try_files {path} index.php
-	}
-}
-```
+1. **Uncomment the `auto_https off` and `servers { trusted_proxies … }` block** at the top — `Caddyfile.example` ships
+   it commented and ready for this case. Adjust the trusted-proxies CIDR if the reverse proxy lives on a different
+   host.
+2. **Bind the site block to a loopback port** — change `localhost {` to `:8001 {` and add `bind 127.0.0.1` as the first
+   line inside the block. Everything else inside the site block stays as-is.
 
-…and add `auto_https off` to the global block. Then point your existing reverse proxy at `127.0.0.1:8001` and let it
-terminate TLS as before.
+Then point your existing reverse proxy at `127.0.0.1:8001` and let it terminate TLS as before.
