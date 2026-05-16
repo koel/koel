@@ -23,10 +23,14 @@ for details.
 | `ARTIFACTS_PATH` | The absolute path to store Koel artifacts (transcoded files, podcast episodes, temporary downloads, etc.). If empty, uses the system's temporary directory. | _(empty)_ |
 | `LARAVEL_STORAGE_PATH` | Absolute path Koel uses for writable runtime data — album/artist images (under `app/public/images`), logs, search indexes, framework cache, sessions. Set this to keep mutable state outside the application directory (read-only deploys, multi-instance setups, etc.). After setting it, run `php artisan storage:link` (or `composer koel:init`) so `public/storage` symlinks to `LARAVEL_STORAGE_PATH/app/public`. | `<app>/storage` |
 
-:::warning Upgrading an older Koel install
+:::info Upgrading an older Koel install
 The image storage location moved from `public/img/storage/` to `storage/app/public/images/`
-(or `LARAVEL_STORAGE_PATH/app/public/images/` when set). If you have a `public/img/storage/`
-directory with files in it, migrate them once or album/artist art will appear broken:
+(or `LARAVEL_STORAGE_PATH/app/public/images/` when set). `php artisan koel:init` handles the
+migration automatically on the first run after upgrading — no manual action needed.
+
+If `koel:init` reports `Some legacy images could not be migrated. Keeping public/img/storage
+for manual recovery.`, rerun `koel:init` after fixing the underlying cause (most often a
+permissions issue on `storage/`). As a last resort, perform the move manually:
 
 ```bash
 mkdir -p "${LARAVEL_STORAGE_PATH:-$(pwd)/storage}/app/public/images"
