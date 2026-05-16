@@ -1,10 +1,20 @@
 {
+	# Uncomment the following block when running behind a reverse proxy that
+	# terminates TLS (e.g. nginx, Apache). Adjust the trusted-proxies CIDR if
+	# the proxy lives on a different host.
+	# auto_https off
+	# servers {
+	# 	trusted_proxies static 127.0.0.1/32
+	# }
+
 	frankenphp {
 		php_ini display_errors "off"
 		php_ini log_errors "on"
 		php_ini error_reporting "E_ALL & ~E_DEPRECATED & ~E_STRICT"
 		php_ini upload_max_filesize "512M"
 		php_ini post_max_size "512M"
+		php_ini max_execution_time "300"
+		php_ini max_input_time "300"
 	}
 }
 
