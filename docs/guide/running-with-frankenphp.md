@@ -8,7 +8,7 @@ description: Install FrankenPHP, configure Koel's Caddyfile, run artisan command
 runtime into a single binary — replacing the typical nginx + PHP-FPM pair with one process and giving you automatic
 HTTPS out of the box. Koel ships a `Caddyfile.example` at the project root that wires it up correctly.
 
-FrankenPHP is only the runtime — Koel itself still needs to be installed first, with `vendor/` populated and the
+Note that FrankenPHP is only the runtime — Koel itself still needs to be installed first, with `vendor/` populated and the
 frontend built into `public/build/`. The
 [pre-compiled archive](/guide/getting-started#using-a-pre-compiled-archive) is the recommended path when pairing with
 FrankenPHP: it ships both folders pre-built, so the FrankenPHP binary becomes your only runtime dependency — no system
