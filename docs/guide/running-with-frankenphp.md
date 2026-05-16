@@ -13,7 +13,7 @@ frontend built into `public/build/`. As such, a
 [pre-compiled archive](/guide/getting-started#using-a-pre-compiled-archive) is the recommended path when pairing with
 FrankenPHP: it ships both folders pre-built, so the FrankenPHP binary becomes your only runtime dependency — no system
 PHP, Composer, Node, or pnpm needed on the host.
-[Building from source](/guide/getting-started#building-from-source) still works if you already have that toolchain
+Of course, [building from source](/guide/getting-started#building-from-source) still works if you already have that toolchain
 installed.
 
 ## Install FrankenPHP
