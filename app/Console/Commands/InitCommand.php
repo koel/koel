@@ -57,6 +57,8 @@ class InitCommand extends Command
             $this->maybeSetUpDatabase();
             $this->migrateDatabase();
             $this->maybeSeedDatabase();
+            $this->linkStorage();
+            $this->migrateLegacyImages();
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
             $this->maybeCopyManifests();
@@ -261,6 +263,65 @@ class InitCommand extends Command
         $this->components->task('Migrating database', static function (): void {
             Artisan::call('migrate', ['--force' => true, '--quiet' => true]);
         });
+    }
+
+    private function linkStorage(): void
+    {
+        $result = self::SUCCESS;
+
+        $this->components->task('Linking storage', static function () use (&$result): void {
+            $result = Artisan::call('storage:link', ['--quiet' => true]);
+        });
+
+        if ($result !== self::SUCCESS) {
+            $this->components->warn('Failed to link storage. Album and artist images may not load until you run '
+            . '`php artisan storage:link` manually.');
+        }
+    }
+
+    private function migrateLegacyImages(): void
+    {
+        $legacyDir = public_path('img/storage');
+
+        if (!File::isDirectory($legacyDir)) {
+            return;
+        }
+
+        $files = File::files($legacyDir);
+
+        if (!count($files)) {
+            File::deleteDirectory($legacyDir);
+
+            return;
+        }
+
+        $allMigrated = true;
+
+        $this->components->task(
+            sprintf('Migrating %d legacy image(s) to storage/app/public/images/', count($files)),
+            static function () use ($files, &$allMigrated): void {
+                $destDir = storage_path('app/public/images');
+                File::ensureDirectoryExists($destDir);
+
+                foreach ($files as $file) {
+                    $dest = $destDir . DIRECTORY_SEPARATOR . $file->getFilename();
+
+                    $ok = File::exists($dest)
+                        ? File::delete($file->getPathname())
+                        : File::move($file->getPathname(), $dest);
+
+                    $allMigrated = $allMigrated && $ok;
+                }
+            },
+        );
+
+        if ($allMigrated) {
+            File::deleteDirectory($legacyDir);
+        } else {
+            $this->components->warn(
+                'Some legacy images could not be migrated. Keeping public/img/storage for manual recovery.',
+            );
+        }
     }
 
     private function maybeSetMediaPath(): void

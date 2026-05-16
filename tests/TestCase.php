@@ -66,7 +66,7 @@ abstract class TestCase extends BaseTestCase
     private static function createSandbox(): void
     {
         config([
-            'koel.image_storage_dir' => 'sandbox/img/storage/',
+            'koel.image_storage_dir' => 'sandbox/img/storage',
             'koel.artifacts_path' => public_path('sandbox/artifacts/'),
         ]);
 
