@@ -133,6 +133,34 @@ frankenphp run
 
 That's it — Koel is now served on port 443 (and 80, redirected to HTTPS).
 
+### Running artisan commands
+
+FrankenPHP bundles its own PHP, exposed via the `php-cli` subcommand. Any `php artisan …` from Koel's CLI documentation
+becomes:
+
+```bash
+frankenphp php-cli artisan <command>
+```
+
+For example, `frankenphp php-cli artisan migrate` runs database migrations and `frankenphp php-cli artisan koel:sync`
+triggers a media scan. For convenience: `alias artisan='frankenphp php-cli artisan'`.
+
+If Koel was installed alongside a system PHP (used by `composer install`, etc.), running `php artisan <command>` against
+the system PHP works too — both PHPs share the same `.env` and database.
+
+::: warning DB_HOST=localhost gotcha
+FrankenPHP's bundled PHP has a different compiled-in default MySQL socket path than the system PHP your distro ships.
+If `.env` has `DB_HOST=localhost`, Laravel connects via Unix socket — and `frankenphp php-cli` will look at the wrong
+path. Symptom: `Checking database connection … ERROR` when running `koel:init` under FrankenPHP even though
+HTTP serving works fine. Fix either of:
+
+- Override per-command: `DB_HOST=127.0.0.1 frankenphp php-cli artisan <command>`
+- Or change `.env` to `DB_HOST=127.0.0.1` to force TCP for everyone (small loopback overhead, but uniform).
+:::
+
+For FrankenPHP CLI options not covered here (worker mode, multi-domain serving, custom PHP flags, etc.), refer to the
+[official FrankenPHP documentation](https://frankenphp.dev/docs/).
+
 ### Run as a systemd service (Ubuntu)
 
 For a production deployment, run FrankenPHP under `systemd` so it starts on boot and restarts on failure. Create
