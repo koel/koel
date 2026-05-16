@@ -55,6 +55,7 @@ export default defineConfig({
         items: [
           { text: 'What Is Koel?', link: '/guide/what-is-koel' },
           { text: 'Getting Started', link: '/guide/getting-started' },
+          { text: 'Running with FrankenPHP', link: '/guide/running-with-frankenphp' },
         ],
       },
       {
