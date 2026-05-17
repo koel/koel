@@ -25,7 +25,22 @@ The requirements for each part are as follows:
 
 ## Installation
 
-There are three methods to install and start using Koel:
+There are four methods to install and start using Koel:
+
+### Using the Standalone Binary
+
+The single-archive distribution from [koel/franken](https://github.com/koel/franken/releases) bundles
+[FrankenPHP](https://frankenphp.dev) (Caddy + the PHP runtime) with the compiled Koel application code.
+No Composer, Node, or system PHP needed on the host. SQLite by default for zero-setup operation.
+
+```bash
+tar -xzf koel-franken-v9.3.2-linux-x86_64.tar.gz
+cd koel-franken-v9.3.2-linux-x86_64
+./koel php-server --listen :8000
+```
+
+See the [Standalone Binary](/guide/standalone-binary) page for the full setup, conventions, MySQL/Postgres
+override, and systemd service unit.
 
 ### Using a Pre-Compiled Archive
 
