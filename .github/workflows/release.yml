@@ -33,11 +33,12 @@ jobs:
         run: |
           sudo apt install pngquant zip unzip
           sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=sqlite/' .env
+          sed -i 's/DB_DATABASE=koel/DB_DATABASE=:memory:/' .env
           php artisan koel:init --no-interaction
       - name: Create archives
         run: |
           sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=sqlite-persistent/' .env
-          sed -i 's/DB_DATABASE=koel/DB_DATABASE=koel.db/' .env
+          sed -i 's|DB_DATABASE=:memory:|DB_DATABASE=koel.db|' .env
           rm -rf .git ./node_modules ./storage/search-indexes/*.index ./koel.db ./.env
           cd ../
           zip -r /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip koel/
