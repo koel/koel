@@ -10,8 +10,9 @@ These commands are available via Laravel’s `artisan` command line interface.
 
 ::: tip Standalone Binary users
 If you installed Koel via the [Standalone Binary](/guide/standalone-binary), replace `php artisan` with
-`./koel php-cli artisan` (run from the bundle directory) in every command below. The bundle ships its own PHP
-runtime; `php-cli` is the launcher's bridge to it. Otherwise the commands below are identical.
+`./artisan` (run from the bundle directory) in every command below. `./artisan` is a thin shortcut for
+`./koel php-cli artisan` that re-execs the launcher so the bundle's PHP runtime stays in scope.
+Otherwise the commands below are identical.
 :::
 
 You can run `php artisan list` from your Koel installation directory and pipe the output to `grep` to filter out those under the `koel` namespace:

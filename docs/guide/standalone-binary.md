@@ -56,13 +56,17 @@ The bundle itself is conceptually immutable — anything you'd want to back up o
 
 ## Running Artisan commands
 
+The bundle ships an `./artisan` shortcut next to `./koel`:
+
 ```bash
-./koel php-cli artisan koel:sync
-./koel php-cli artisan tinker
+./artisan koel:sync
+./artisan tinker
 ```
 
-See [Running with FrankenPHP](/guide/running-with-frankenphp#running-artisan-commands) for the full set of
-caveats (notably the PHP 8.5 / `DB_HOST=localhost` gotcha when using MySQL).
+It's a thin wrapper that re-execs the launcher (`./koel php-cli artisan …`), so all the bundle's PHP runtime
+and env wiring stays in scope. See
+[Running with FrankenPHP](/guide/running-with-frankenphp#running-artisan-commands) for the full set of
+caveats (notably the `DB_HOST=localhost` MySQL-socket gotcha).
 
 ## Customization and migration
 
@@ -73,7 +77,7 @@ yet exist**. If you want a different database or other custom configuration, you
   corresponding credentials, plus any other settings) *before* the first `./koel` invocation. The launcher
   will see the file already exists, skip the SQLite seeding, and run migrations against your DB.
 - **Override after the fact**: let the bundle auto-init, then edit `$HOME/.koel/.env` to point at your DB
-  and re-run `./koel php-cli artisan migrate --force` against the new connection.
+  and re-run `./artisan migrate --force` against the new connection.
 
 Migrating an existing Koel install into the bundle isn't a turnkey path: beyond `.env`, you'd need to copy
 your media files (or repoint `MEDIA_PATH`), uploaded images (`storage/app/public/images/`), search indexes,
@@ -106,7 +110,7 @@ WantedBy=multi-user.target
 ```
 
 Adjust `WorkingDirectory`, `User`, and the `--domain` (or `--listen`) flag to match your host. The
-`AmbientCapabilities` line lets the unrooted service bind to ports 80/443 for automatic HTTPS. The
+`AmbientCapabilities` line lets the non-root service bind to ports 80/443 for automatic HTTPS. The
 launcher will provision `~koel/.koel/` (the service user's `$HOME/.koel/`) on first start.
 
 Then enable and start it:
