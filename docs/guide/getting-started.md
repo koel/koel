@@ -29,8 +29,8 @@ There are four methods to install and start using Koel:
 
 ### Using the Standalone Binary
 
-The single-archive distribution from [koel/franken](https://github.com/koel/franken/releases) bundles
-[FrankenPHP](https://frankenphp.dev) (Caddy + the PHP runtime) with the compiled Koel application code.
+The single-archive distribution from [koel/franken](https://github.com/koel/franken/releases) packages
+[FrankenPHP](https://frankenphp.dev) (Caddy + the PHP runtime) with the compiled Koel application.
 No Composer, Node, or system PHP needed on the host. SQLite by default for zero-setup operation.
 
 ```bash
