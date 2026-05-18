@@ -41,11 +41,25 @@ final class EpisodePlayable implements Arrayable, Jsonable
         $file = artifact_path("episodes/{$episode->id}.mp3");
 
         if (!File::exists($file)) {
-            if (!Network::isSafeUrl((string) $episode->path)) {
-                throw UnsafeUrlException::forUrl((string) $episode->path);
+            $url = (string) $episode->path;
+
+            if (!Network::isSafeUrl($url)) {
+                throw UnsafeUrlException::forUrl($url);
             }
 
-            Http::sink($file)->get($episode->path)->throw();
+            Http::sink($file)
+                ->withOptions([
+                    'allow_redirects' => [
+                        'max' => 5,
+                        'on_redirect' => static function ($request, $response, $uri): void {
+                            if (!Network::isSafeUrl((string) $uri)) {
+                                throw UnsafeUrlException::forUrl((string) $uri);
+                            }
+                        },
+                    ],
+                ])
+                ->get($url)
+                ->throw();
         }
 
         $playable = new self($file, File::hash($file));
