@@ -302,7 +302,9 @@ php artisan koel:tags:collect
 Some commands, such as `koel:scan`, `koel:prune`, and `koel:clean-up-temp-files` can be scheduled to run at regular intervals.
 Instead of setting up individual cron jobs, you can use Koel’s built-in scheduler to handle them automatically.
 
-`koel:init` installs the scheduler for you, so most installations have nothing more to do — including the [Standalone Binary](/guide/standalone-binary). If you ran `koel:init` with `--no-scheduler`, install it on its own as the web server user (e.g. `www-data` or `nginx`):
+Every install method sets the scheduler up for you, so most users have nothing more to do. `koel:init` runs `koel:scheduler:install` for the pre-compiled archive and build-from-source paths; the [Standalone Binary](/guide/standalone-binary) launcher writes its own cron entry on every `./koel php-server` start.
+
+If you ran `koel:init` with `--no-scheduler` and want to install it on its own, run as the web server user (e.g. `www-data` or `nginx`):
 
 ```bash
 php artisan koel:scheduler:install
