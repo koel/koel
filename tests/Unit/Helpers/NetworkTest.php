@@ -39,4 +39,36 @@ class NetworkTest extends TestCase
     {
         self::assertFalse(Network::isPublicHost('this-host-does-not-exist.invalid'));
     }
+
+    #[Test]
+    public function isSafeUrlAcceptsPublicHttpUrl(): void
+    {
+        self::assertTrue(Network::isSafeUrl('https://example.com/feed.xml'));
+        self::assertTrue(Network::isSafeUrl('http://example.com/feed.xml'));
+    }
+
+    /** @return array<string, array{string}> */
+    public static function provideUnsafeUrls(): array
+    {
+        return [
+            'AWS metadata IP' => ['http://169.254.169.254/latest/meta-data/'],
+            'loopback IPv4' => ['http://127.0.0.1/admin'],
+            'private 192.168.x' => ['http://192.168.1.1/secrets'],
+            'private 10.x' => ['http://10.0.0.1/internal'],
+            'loopback IPv6' => ['http://[::1]/admin'],
+            'file scheme' => ['file:///etc/passwd'],
+            'ftp scheme' => ['ftp://example.com/feed'],
+            'gopher scheme' => ['gopher://example.com/feed'],
+            'no scheme' => ['example.com/feed'],
+            'no host' => ['http:///path'],
+            'empty string' => [''],
+            'garbage' => ['not a url at all'],
+        ];
+    }
+
+    #[Test, DataProvider('provideUnsafeUrls')]
+    public function isSafeUrlRejectsUnsafeUrl(string $url): void
+    {
+        self::assertFalse(Network::isSafeUrl($url));
+    }
 }

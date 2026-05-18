@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+    <channel>
+        <title>Mixed Podcast</title>
+        <link>https://example.com</link>
+        <description>Mix of safe and unsafe enclosure URLs</description>
+        <language>en-US</language>
+
+        <item>
+            <title>Episode 1 (safe)</title>
+            <description>A safe public episode</description>
+            <enclosure
+                length="1000"
+                type="audio/mpeg"
+                url="https://example.com/episodes/safe.mp3"
+            />
+            <guid>safe-1</guid>
+            <pubDate>Tue, 8 Jan 2019 01:15:00 GMT</pubDate>
+        </item>
+
+        <item>
+            <title>Episode 2 (AWS metadata SSRF)</title>
+            <description>Attempts to exfiltrate AWS IAM credentials</description>
+            <enclosure
+                length="1000"
+                type="audio/mpeg"
+                url="http://169.254.169.254/latest/meta-data/iam/security-credentials/"
+            />
+            <guid>unsafe-1</guid>
+            <pubDate>Tue, 8 Jan 2019 01:15:00 GMT</pubDate>
+        </item>
+
+        <item>
+            <title>Episode 3 (loopback SSRF)</title>
+            <description>Attempts to read local services</description>
+            <enclosure
+                length="1000"
+                type="audio/mpeg"
+                url="http://127.0.0.1:6379/INFO"
+            />
+            <guid>unsafe-2</guid>
+            <pubDate>Tue, 8 Jan 2019 01:15:00 GMT</pubDate>
+        </item>
+
+        <item>
+            <title>Episode 4 (private network SSRF)</title>
+            <description>Attempts to scan internal network</description>
+            <enclosure
+                length="1000"
+                type="audio/mpeg"
+                url="http://10.0.0.1/admin"
+            />
+            <guid>unsafe-3</guid>
+            <pubDate>Tue, 8 Jan 2019 01:15:00 GMT</pubDate>
+        </item>
+
+        <item>
+            <title>Episode 5 (file scheme)</title>
+            <description>Attempts to read local file</description>
+            <enclosure
+                length="1000"
+                type="audio/mpeg"
+                url="file:///etc/passwd"
+            />
+            <guid>unsafe-4</guid>
+            <pubDate>Tue, 8 Jan 2019 01:15:00 GMT</pubDate>
+        </item>
+    </channel>
+</rss>

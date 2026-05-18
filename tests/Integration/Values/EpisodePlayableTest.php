@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Values;
 
+use App\Exceptions\UnsafeUrlException;
 use App\Models\Song;
 use App\Values\Podcast\EpisodePlayable;
 use Illuminate\Support\Facades\Cache;
@@ -39,5 +40,25 @@ class EpisodePlayableTest extends TestCase
 
         file_put_contents($playable->path, 'bar');
         self::assertFalse($retrieved->valid());
+    }
+
+    #[Test]
+    public function refusesToFetchUnsafeUrl(): void
+    {
+        Http::fake();
+
+        $episode = Song::factory()
+            ->asEpisode()
+            ->createOne([
+                'path' => 'http://169.254.169.254/latest/meta-data/iam/security-credentials/',
+            ]);
+
+        self::expectException(UnsafeUrlException::class);
+
+        try {
+            EpisodePlayable::getForEpisode($episode);
+        } finally {
+            Http::assertNothingSent();
+        }
     }
 }

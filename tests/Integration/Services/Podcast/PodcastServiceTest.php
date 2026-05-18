@@ -14,6 +14,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Client\ClientInterface;
 use Tests\TestCase;
@@ -245,6 +246,39 @@ class PodcastServiceTest extends TestCase
         $podcast = Podcast::factory()->createOne();
         $this->service->deletePodcast($podcast);
         self::assertModelMissing($podcast);
+    }
+
+    #[Test]
+    public function addPodcastSkipsEpisodesWithUnsafeEnclosureUrls(): void
+    {
+        $mock = new MockHandler([
+            new Response(200, [], file_get_contents(test_path('fixtures/podcast-with-unsafe-enclosures.xml'))),
+        ]);
+
+        $this->instance(ClientInterface::class, new Client(['handler' => HandlerStack::create($mock)]));
+        $service = app(PodcastService::class);
+
+        $podcast = $service->addPodcast('https://example.com/feed.xml', create_user());
+
+        self::assertCount(1, $podcast->episodes);
+        self::assertSame('https://example.com/episodes/safe.mp3', $podcast->episodes->first()->path);
+    }
+
+    /** @return array<string, array{string}> */
+    public static function provideUnsafeStreamableUrls(): array
+    {
+        return [
+            'AWS metadata IP' => ['http://169.254.169.254/latest/meta-data/'],
+            'loopback IPv4' => ['http://127.0.0.1:6379/INFO'],
+            'private 10.x' => ['http://10.0.0.1/admin'],
+            'file scheme' => ['file:///etc/passwd'],
+        ];
+    }
+
+    #[Test, DataProvider('provideUnsafeStreamableUrls')]
+    public function getStreamableUrlRejectsUnsafeUrl(string $url): void
+    {
+        self::assertNull($this->service->getStreamableUrl($url));
     }
 
     #[Test]

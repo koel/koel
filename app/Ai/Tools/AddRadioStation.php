@@ -4,9 +4,14 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
+use App\Rules\HasAudioContentType;
+use App\Rules\SafeUrl;
 use App\Services\RadioService;
 use App\Values\Radio\RadioStationCreateData;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Stringable;
@@ -34,6 +39,22 @@ class AddRadioStation implements Tool
 
     public function handle(Request $request): Stringable|string
     {
+        $userId = $this->context->user->id;
+
+        $validator = Validator::make(['url' => $request['url']], [
+            'url' => [
+                'required',
+                'url',
+                Rule::unique('radio_stations')->where(static fn (Builder $query) => $query->where('user_id', $userId)),
+                new SafeUrl(),
+                new HasAudioContentType(),
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return sprintf('Cannot add radio station: %s', $validator->errors()->first('url'));
+        }
+
         $station = $this->radioService->createRadioStation(
             RadioStationCreateData::make(url: $request['url'], name: $request['name'], description: ''),
             $this->context->user,
