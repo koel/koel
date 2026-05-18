@@ -300,26 +300,19 @@ php artisan koel:tags:collect
 ## Command Scheduling
 
 Some commands, such as `koel:scan`, `koel:prune`, and `koel:clean-up-temp-files` can be scheduled to run at regular intervals.
-Instead of setting up individual cron jobs, you can use Koel’s built-in scheduler to automatically handle the commands for you.
+Instead of setting up individual cron jobs, you can use Koel’s built-in scheduler to handle them automatically.
 
-::: tip Standalone Binary users
-The launcher installs the cron entry for you on every `./koel php-server` start — nothing to set up by hand. You can skip the rest of this section.
-:::
-
-To set up the scheduler, run the `koel:scheduler:install` command as the web server user (e.g. `www-data` or `nginx`):
+`koel:init` installs the scheduler for you, so most installations have nothing more to do — including the [Standalone Binary](/guide/standalone-binary). If you ran `koel:init` with `--no-scheduler`, install it on its own as the web server user (e.g. `www-data` or `nginx`):
 
 ```bash
 php artisan koel:scheduler:install
 ```
 
-Alternatively, you can manually add the following cron entry into the crontab of the webserver user (for example, if it's `www-data`, run `sudo crontab -u www-data -e`):
+If you'd rather edit the crontab directly (for example, with `sudo crontab -u www-data -e`), add this line:
 
 ```bash
 * * * * * cd /path-to-koel-installation && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-Either way, the scheduler will run every minute once installed, executing any scheduled commands as needed.
-By default, `koel:scan`, `koel:prune`, and `koel:podcasts:sync` are set to run every day at midnight.
-
-Though you can still manually set up cron jobs for individual commands, the scheduler is the recommended approach to do command scheduling in Koel,
-as it will automatically cover any commands that may be added in the future.
+Either way, the scheduler runs every minute and executes any scheduled commands as needed.
+By default, `koel:scan`, `koel:prune`, and `koel:podcasts:sync` run every day at midnight.
