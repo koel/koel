@@ -4,25 +4,19 @@ description: Install FrankenPHP, configure Koel's Caddyfile, run artisan command
 
 # Running with FrankenPHP
 
-[FrankenPHP](https://frankenphp.dev) is a modern PHP application server that bundles the webserver (Caddy) and the PHP
-runtime into a single binary — replacing the typical nginx + PHP-FPM pair with one process and giving you automatic
-HTTPS out of the box. Koel ships a `Caddyfile.example` at the project root that wires it up correctly.
+[FrankenPHP](https://frankenphp.dev) is a PHP application server that packages a webserver (Caddy) and the
+PHP runtime into a single binary, with automatic HTTPS. Koel ships a `Caddyfile.example` at the project
+root to use with it.
 
-::: tip Looking for a one-download experience?
-If you'd rather not install FrankenPHP separately and pair it with Koel by hand, the
-[Standalone Binary](/guide/getting-started#using-the-standalone-binary) distribution from
-[koel/franken](https://github.com/koel/franken/releases) packages FrankenPHP + Koel + a launcher into a single
-archive. This page is for users who want to install FrankenPHP themselves and use it as the runtime for an existing
-Koel install.
+::: tip Want a one-download install instead?
+The [Standalone Binary](/guide/standalone-binary) distribution from
+[koel/franken](https://github.com/koel/franken/releases) packages FrankenPHP, Koel, and a launcher into a
+single archive. This page is for installing FrankenPHP yourself as the runtime for an existing Koel install.
 :::
 
-Note that FrankenPHP is only the runtime — Koel itself still needs to be installed first, with `vendor/` populated and the
-frontend built into `public/build/`. As such, a
-[pre-compiled archive](/guide/getting-started#using-a-pre-compiled-archive) is the recommended path when pairing with
-FrankenPHP: it ships both folders pre-built, so the FrankenPHP binary becomes your only runtime dependency — no system
-PHP, Composer, Node, or pnpm needed on the host.
-Of course, [building from source](/guide/getting-started#building-from-source) still works if you already have that toolchain
-installed.
+FrankenPHP is only the runtime. Install Koel first via
+[Pre-Compiled Archive](/guide/getting-started#using-a-pre-compiled-archive) or
+[Building from Source](/guide/getting-started#building-from-source), then use FrankenPHP as the webserver.
 
 ## Install FrankenPHP
 
@@ -55,27 +49,26 @@ That's it — Koel is now served on port 443 (and 80, redirected to HTTPS).
 
 ## Running artisan commands
 
-FrankenPHP bundles its own PHP, exposed via the `php-cli` subcommand. Any `php artisan …` from Koel's CLI documentation
-becomes:
+FrankenPHP ships its own PHP, available via the `php-cli` subcommand. Any `php artisan …` from Koel's CLI
+documentation becomes:
 
 ```bash
 frankenphp php-cli artisan <command>
 ```
 
-For example, `frankenphp php-cli artisan migrate` runs database migrations and `frankenphp php-cli artisan koel:sync`
-triggers a media scan. For convenience: `alias artisan='frankenphp php-cli artisan'`.
+For example, `frankenphp php-cli artisan migrate` runs database migrations and `frankenphp php-cli artisan
+koel:sync` triggers a media scan. For convenience: `alias artisan='frankenphp php-cli artisan'`.
 
-If Koel was installed alongside a system PHP (used by `composer install`, etc.), running `php artisan <command>` against
-the system PHP works too — both PHPs share the same `.env` and database.
+If you also have system PHP installed (e.g. for `composer install`), running `php artisan <command>` against
+it works the same — both share the same `.env` and database.
 
 ::: warning DB_HOST=localhost gotcha
-FrankenPHP's bundled PHP has a different compiled-in default MySQL socket path than the system PHP your distro ships.
-If `.env` has `DB_HOST=localhost`, Laravel connects via Unix socket — and `frankenphp php-cli` will look at the wrong
-path. Symptom: `Checking database connection … ERROR` when running `koel:init` under FrankenPHP even though
-HTTP serving works fine. Fix either of:
+If your `.env` has `DB_HOST=localhost` with MySQL, FrankenPHP's PHP will fail to find the MySQL socket and
+you'll see `Checking database connection … ERROR` when running `koel:init`, even though HTTP serving works
+fine. Fix it one of two ways:
 
 - Override per-command: `DB_HOST=127.0.0.1 frankenphp php-cli artisan <command>`
-- Or change `.env` to `DB_HOST=127.0.0.1` to force TCP for everyone (small loopback overhead, but uniform).
+- Or change `.env` to `DB_HOST=127.0.0.1`.
 :::
 
 For FrankenPHP CLI options not covered here (worker mode, multi-domain serving, custom PHP flags, etc.), refer to the
@@ -120,7 +113,7 @@ changes to your `Caddyfile`:
 1. **Uncomment the `auto_https off` and `servers { trusted_proxies … }` block** at the top — `Caddyfile.example` ships
    it commented and ready for this case. Adjust the trusted-proxies CIDR if the reverse proxy lives on a different
    host.
-2. **Bind the site block to a loopback port** — change `localhost {` to `:8001 {` and add `bind 127.0.0.1` as the first
-   line inside the block. Everything else inside the site block stays as-is.
+2. **Bind the site block to a local port** — change `localhost {` to `:8001 {` and add `bind 127.0.0.1` as
+   the first line inside the block. Everything else inside the site block stays as-is.
 
 Then point your existing reverse proxy at `127.0.0.1:8001` and let it terminate TLS as before.
