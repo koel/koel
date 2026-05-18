@@ -2,6 +2,8 @@
 
 namespace App\Values\Podcast;
 
+use App\Exceptions\UnsafeUrlException;
+use App\Helpers\Network;
 use App\Models\Song as Episode;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -39,6 +41,10 @@ final class EpisodePlayable implements Arrayable, Jsonable
         $file = artifact_path("episodes/{$episode->id}.mp3");
 
         if (!File::exists($file)) {
+            if (!Network::isSafeUrl((string) $episode->path)) {
+                throw UnsafeUrlException::forUrl((string) $episode->path);
+            }
+
             Http::sink($file)->get($episode->path)->throw();
         }
 

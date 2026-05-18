@@ -2,10 +2,35 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Uri;
 use Throwable;
 
 class Network
 {
+    private const array SAFE_URL_SCHEMES = ['http', 'https'];
+
+    /**
+     * Check if a URL is safe to reach: HTTP/HTTPS scheme + a public host.
+     * Does NOT perform any network calls beyond DNS resolution.
+     * For full validation including effective-URL-after-redirect, use the SafeUrl validation rule.
+     */
+    public static function isSafeUrl(string $url): bool
+    {
+        try {
+            $uri = Uri::of($url);
+        } catch (Throwable) {
+            return false;
+        }
+
+        if (!in_array($uri->scheme(), self::SAFE_URL_SCHEMES, true)) {
+            return false;
+        }
+
+        $host = $uri->host();
+
+        return $host !== '' && self::isPublicHost($host);
+    }
+
     /**
      * Check if a host resolves only to public (non-private, non-reserved) IP addresses.
      * Validates both A (IPv4) and AAAA (IPv6) records. All resolved IPs must be public.

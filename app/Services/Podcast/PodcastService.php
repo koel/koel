@@ -5,6 +5,7 @@ namespace App\Services\Podcast;
 use App\Events\UserUnsubscribedFromPodcast;
 use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
+use App\Helpers\Network;
 use App\Helpers\Uuid;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
@@ -136,6 +137,18 @@ class PodcastService
                 continue;
             }
 
+            $enclosureUrl = (string) $episodeValue->enclosure->url;
+
+            if (!Network::isSafeUrl($enclosureUrl)) {
+                Log::warning(sprintf(
+                    'Skipping podcast episode "%s" with unsafe enclosure URL: %s',
+                    $episodeValue->title,
+                    $enclosureUrl,
+                ));
+
+                continue;
+            }
+
             $id = Uuid::generate();
             $ids[] = $id;
             $records[] = [
@@ -143,7 +156,7 @@ class PodcastService
                 'podcast_id' => $podcast->id,
                 'title' => $episodeValue->title,
                 'lyrics' => '',
-                'path' => $episodeValue->enclosure->url,
+                'path' => $enclosureUrl,
                 'created_at' => $episodeValue->metadata->pubDate ?: now(),
                 'updated_at' => $episodeValue->metadata->pubDate ?: now(),
                 'episode_metadata' => $episodeValue->metadata->toJson(),
@@ -226,6 +239,11 @@ class PodcastService
     public function getStreamableUrl(string|Episode $url, ?Client $client = null, string $method = 'OPTIONS'): ?string
     {
         $url = $url instanceof Episode ? $url->path : $url;
+
+        if (!Network::isSafeUrl($url)) {
+            return null;
+        }
+
         $client ??= new Client();
 
         try {
