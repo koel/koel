@@ -2,7 +2,7 @@
   <div>
     <div
       v-if="entering"
-      class="flex items-stretch rounded border border-k-fg-10 overflow-hidden bg-k-bg-input focus-within:border-k-highlight transition-[border] duration-200"
+      class="flex items-stretch rounded-sm border border-k-fg-10 overflow-hidden bg-k-bg-input focus-within:border-k-highlight transition-[border] duration-200"
     >
       <input
         ref="newFolderInput"

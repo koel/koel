@@ -1,14 +1,13 @@
-@import './partials/vars.pcss' layer(base);
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss';
+@import './partials/vars.pcss';
 @import './partials/hack.pcss' layer(base);
-
 @import './vendor/nprogress.pcss' layer(base);
-
 @import './partials/skeleton.pcss' layer(base);
 @import './partials/tooltip.pcss' layer(base);
 @import './partials/context-menu.pcss' layer(base);
 @import './partials/shared.pcss' layer(base);
-
-@import 'tailwindcss';
 
 @config "../../../tailwind.config.js";
 

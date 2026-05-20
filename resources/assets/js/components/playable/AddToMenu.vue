@@ -81,7 +81,7 @@ watch(playables, () => playables.value.length || close())
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 li {
-  @apply h-9 leading-9 py-0 px-3 truncate rounded bg-k-fg-5 cursor-pointer
+  @apply h-9 leading-9 py-0 px-3 truncate rounded-sm bg-k-fg-5 cursor-pointer
   hover:bg-k-highlight hover:text-k-highlight-fg;
 }
 </style>

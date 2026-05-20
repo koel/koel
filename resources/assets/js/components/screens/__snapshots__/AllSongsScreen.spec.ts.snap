@@ -13,7 +13,7 @@ exports[`allSongsScreen.vue > renders 1`] = `
       </div>
       <div data-v-8ea4eaa5="" class="controls w-full flex justify-between items-center gap-4">
         <div data-v-8ea4eaa5="" class="relative" data-testid="song-list-controls">
-          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-flex relative flex-nowrap" uppercase=""><button data-v-8943c846="" data-variant="highlight" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-flex relative flex-nowrap" uppercase=""><button data-v-8943c846="" data-variant="highlight" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded-sm cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>

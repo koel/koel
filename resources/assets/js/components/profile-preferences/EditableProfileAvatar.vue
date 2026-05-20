@@ -80,13 +80,11 @@ const onCancel = () => (cropperSource.value = null)
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 
-@layer utilities {
-  .control {
-    @apply bg-black/5 w-[28px] aspect-square rounded-full px-2 py-1 hover:bg-black/70;
-  }
+.control {
+  @apply bg-black/5 w-[28px] aspect-square rounded-full px-2 py-1 hover:bg-black/70;
+}
 
-  .avatar-width {
-    @apply w-[105px];
-  }
+.avatar-width {
+  @apply w-[105px];
 }
 </style>

@@ -69,7 +69,7 @@ onBeforeUnmount(() => {
 
 .copy-btn {
   @apply absolute -bottom-6 left-4 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity
-    text-k-fg-50 hover:text-k-fg p-1 rounded;
+    text-k-fg-50 hover:text-k-fg p-1 rounded-sm;
 }
 
 .ai-message {
@@ -91,7 +91,7 @@ onBeforeUnmount(() => {
   }
 
   :deep(code) {
-    @apply bg-white/10 px-1.5 py-0.5 rounded text-[0.9em];
+    @apply bg-white/10 px-1.5 py-0.5 rounded-sm text-[0.9em];
   }
 
   :deep(pre) {

@@ -2,7 +2,7 @@
   <button
     :style="{ backgroundImage: `url(${defaultCover})` }"
     :title="title"
-    class="song-thumbnail w-[48px] aspect-square bg-cover relative rounded overflow-hidden active:scale-95"
+    class="song-thumbnail w-[48px] aspect-square bg-cover relative rounded-sm overflow-hidden active:scale-95"
     @click.prevent="emit('clicked')"
   >
     <img v-if="src" :src="src" alt="Cover image" class="w-full aspect-square object-cover" loading="lazy" />

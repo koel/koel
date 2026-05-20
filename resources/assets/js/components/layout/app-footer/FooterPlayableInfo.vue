@@ -106,14 +106,7 @@ const scrollToCurrentInQueue = () => {
   }
 
   &.playing .album-thumb {
-    @apply motion-reduce:animate-none;
-    animation: spin 30s linear infinite;
-  }
-}
-
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
+    @apply motion-reduce:animate-none animate-vinyl-spin;
   }
 }
 </style>

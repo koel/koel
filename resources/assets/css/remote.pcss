@@ -1,8 +1,8 @@
-@import './vendor/reset.pcss' layer(base);
-@import './partials/vars.pcss' layer(base);
-@import './partials/shared.pcss' layer(base);
+@layer theme, base, components, utilities;
 
 @import 'tailwindcss';
+@import './partials/vars.pcss';
+@import './partials/shared.pcss' layer(base);
 
 @config "../../../tailwind.config.js";
 

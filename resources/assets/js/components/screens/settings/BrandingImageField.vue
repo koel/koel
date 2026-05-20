@@ -5,10 +5,10 @@
     </h4>
 
     <span class="w-48 h-48 my-4 aspect-square relative block rounded-md">
-      <img :src="model" alt="" class="rounded object-cover" />
+      <img :src="model" alt="" class="rounded-sm object-cover" />
       <button
         v-if="hasCustomValue"
-        class="absolute top-2 right-2 w-9 active:scale-95 bg-black/50 hover:bg-black/70 aspect-square border border-k-fg-10 rounded"
+        class="absolute top-2 right-2 w-9 active:scale-95 bg-black/50 hover:bg-black/70 aspect-square border border-k-fg-10 rounded-sm"
         type="button"
         @click.prevent="removeCustomValue"
       >

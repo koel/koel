@@ -195,10 +195,8 @@ onMounted(() => {
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 
-@layer utilities {
-  .btn-group {
-    @apply flex md:flex-col justify-between items-center gap-2;
-  }
+.btn-group {
+  @apply flex md:flex-col justify-between items-center gap-2;
 }
 
 aside {

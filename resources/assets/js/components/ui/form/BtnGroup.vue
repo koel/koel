@@ -21,7 +21,7 @@
     }
 
     &:only-of-type {
-      @apply rounded;
+      @apply rounded-sm;
     }
   }
 
