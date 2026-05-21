@@ -55,6 +55,7 @@ const qrCodeUrl = useQRCode(qrCodeData, {
 
 let refreshTimeout: number | null = null
 let cycleCount = 0
+let isUnmounted = false
 
 const clearRefreshTimeout = () => {
   if (refreshTimeout !== null) {
@@ -64,7 +65,13 @@ const clearRefreshTimeout = () => {
 }
 
 const resetOneTimeToken = async () => {
-  oneTimeToken.value = await authService.getOneTimeToken()
+  const token = await authService.getOneTimeToken()
+
+  if (isUnmounted) {
+    return
+  }
+
+  oneTimeToken.value = token
   paused.value = false
   cycleCount = 0
   clearRefreshTimeout()
@@ -82,11 +89,20 @@ const scheduleNextRefresh = () => {
       return
     }
 
-    oneTimeToken.value = await authService.getOneTimeToken()
+    const token = await authService.getOneTimeToken()
+
+    if (isUnmounted) {
+      return
+    }
+
+    oneTimeToken.value = token
     scheduleNextRefresh()
   }, REFRESH_INTERVAL_MS)
 }
 
 onMounted(() => resetOneTimeToken())
-onBeforeUnmount(() => clearRefreshTimeout())
+onBeforeUnmount(() => {
+  isUnmounted = true
+  clearRefreshTimeout()
+})
 </script>
