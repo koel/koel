@@ -16,7 +16,7 @@
         <Icon
           v-if="cachingOffline"
           :icon="faSpinner"
-          class="!opacity-50"
+          class="opacity-50!"
           spin
           title="Caching for offline playback"
           aria-label="Caching for offline playback"
@@ -24,7 +24,7 @@
         <Icon
           v-else-if="cachingFailed"
           :icon="faExclamationTriangle"
-          class="text-k-danger !opacity-75"
+          class="text-k-danger opacity-75!"
           :title="`Error: ${cachingErrorMessage}`"
         />
         <OfflineMark v-else-if="cachedOffline" />
@@ -87,6 +87,7 @@ const onContextMenu = (event: MouseEvent) => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 li.playing .title {
   @apply text-k-highlight;
 }

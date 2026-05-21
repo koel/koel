@@ -2,7 +2,7 @@
   <dialog
     ref="el"
     :class="state.type"
-    class="border-0 p-0 bg-transparent backdrop:bg-black/80 outline-none"
+    class="m-auto border-0 p-0 bg-transparent backdrop:bg-black/80 outline-hidden"
     data-testid="overlay"
     @cancel.prevent="onCancel"
   >
@@ -44,6 +44,7 @@ defineExpose({ show, hide })
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 dialog {
   /* since the texts are placed directly on a dark backdrop, the colors should be a bit washed out */
 

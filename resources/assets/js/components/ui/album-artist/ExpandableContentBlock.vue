@@ -1,6 +1,6 @@
 <template>
   <article>
-    <div :class="showingFull ? 'line-clamp-none' : 'line-clamp-[10]'">
+    <div :class="showingFull ? 'line-clamp-none' : 'line-clamp-10'">
       <slot />
     </div>
 

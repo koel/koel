@@ -11,6 +11,8 @@
     <meta name="theme-color" content="#282828">
     <meta name="msapplication-navbutton-color" content="#282828">
 
+    <link rel="stylesheet" href="{{ static_url('css/layer-order.css') }}">
+
     <link rel="manifest" href="{{ static_url('manifest.json') }}" />
     <meta name="msapplication-config" content="{{ static_url('browserconfig.xml') }}" />
     <link rel="icon" type="image/x-icon" href="{{ koel_branding('logo') ?? static_url('img/favicon.ico') }}" />

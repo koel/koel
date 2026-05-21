@@ -32,6 +32,7 @@ const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .station-info {
   :fullscreen & {
     @apply pl-0;
@@ -56,14 +57,7 @@ const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})
   }
 
   &.playing .logo {
-    @apply motion-reduce:animate-none;
-    animation: spin 30s linear infinite;
-  }
-}
-
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
+    @apply motion-reduce:animate-none animate-vinyl-spin;
   }
 }
 </style>

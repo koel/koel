@@ -2,13 +2,13 @@
   <div>
     <div
       v-if="entering"
-      class="flex items-stretch rounded border border-k-fg-10 overflow-hidden bg-k-bg-input focus-within:border-k-highlight transition-[border] duration-200"
+      class="flex items-stretch rounded-sm border border-k-fg-10 overflow-hidden bg-k-bg-input focus-within:border-k-highlight transition-[border] duration-200"
     >
       <input
         ref="newFolderInput"
         v-model="inputName"
         aria-label="New folder name"
-        class="flex-1 min-w-0 text-base px-3.5 py-2 bg-transparent text-k-fg-input border-0 focus-visible:outline-none"
+        class="flex-1 min-w-0 text-base px-3.5 py-2 bg-transparent text-k-fg-input border-0 focus-visible:outline-hidden"
         placeholder="Folder name"
         type="text"
         @keydown.enter.prevent="confirm"

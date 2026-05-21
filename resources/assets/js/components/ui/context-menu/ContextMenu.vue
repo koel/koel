@@ -3,7 +3,7 @@
     ref="el"
     v-koel-focus
     :class="extraClass"
-    class="menu context-menu select-none shadow overflow-visible fixed inset-auto m-0"
+    class="menu context-menu select-none shadow-sm overflow-visible fixed inset-auto m-0"
     popover="manual"
     role="menu"
     tabindex="0"

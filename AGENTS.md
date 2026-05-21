@@ -20,7 +20,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - phpunit/phpunit (PHPUNIT) - v11
 - vue (VUE) - v3
 - laravel-echo (ECHO) - v2
-- tailwindcss (TAILWINDCSS) - v3
+- tailwindcss (TAILWINDCSS) - v4
 
 ## Conventions
 - **Always infer from the existing codebase before writing — and ask when no precedent exists.** Before any new identifier, mock/test pattern, store/service call shape, form wiring, helper choice, spelling, or file layout, grep `app/` and `resources/assets/js/` for how it has been done before, and copy the existing shape exactly. If no precedent exists in the repo, **stop and ask the user** instead of defaulting to whatever you'd write from training data or personal habit. The codebase is the source of truth for *how things are done*, not just *what exists*. "I should have looked" is the symptom; not looking first is the root cause.
@@ -225,11 +225,18 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ### Dark Mode
 - If existing pages and components support dark mode, new pages and components must support dark mode in a similar way, typically using `dark:`.
 
-=== tailwindcss/v3 rules ===
+=== tailwindcss/v4 rules ===
 
-## Tailwind CSS 3
+## Tailwind CSS 4
 
-- Always use Tailwind CSS v3; verify you're using only classes supported by this version.
+- Always use Tailwind CSS v4; verify you're using only classes supported by this version. Remember v4 utility renames (e.g. `rounded-sm` is the old `rounded`, `shadow-sm` is the old `shadow`, `outline-hidden` replaces `outline-none`, `ring` is now 1px not 3px).
+- The important modifier goes after the class, not before: `text-red-500!`, never `!text-red-500`.
+- Opacity modifiers replace the deprecated `*-opacity-*` utilities: `bg-black/50` not `bg-black bg-opacity-50`.
+- `@apply` inside Vue scoped `<style>` blocks **must** be preceded by `@reference '@css/app.pcss';` so v4 can resolve theme tokens — the `@css` alias is rewritten to an absolute path by the small custom postcss plugin in `postcss.config.cjs`. Never write relative paths to `app.pcss` in `@reference` directives.
+- Theme tokens (custom colors etc.) live in `tailwind.config.js`'s `theme.extend.colors`, linked from `resources/assets/css/app.pcss` via `@config`. Prefer CSS variables on the koel side (defined in `partials/vars.pcss`) over hardcoded colors.
+- Layer order is pinned globally by `public/css/layer-order.css` (`@layer theme, base, components, utilities;`) loaded from `base.blade.php` **before** any Vite-emitted CSS. Don't remove that `<link>`: Vite chunks scoped Vue CSS files load before the main app CSS, and several of them declare `@layer utilities { ... }` without first declaring `@layer base`, which would establish utilities as a low-priority layer and let `@layer base` rules win over utility classes. The static pre-load locks the canonical order.
+- Partial pcss imports (`vars.pcss` aside) use the `layer(base)` modifier in `app.pcss`/`remote.pcss` — e.g. `@import './partials/shared.pcss' layer(base);`. Don't wrap rules in `@layer base { ... }` *inside* a partial that's already imported via `layer(base)`; that creates a `base.base` sub-layer with weird precedence. Either use the import modifier OR an internal `@layer base { }` block, never both.
+- `shared.pcss` element-default rules wrap their selectors in `:where()` (e.g. `:where(a) { color: var(--color-fg); }`) to drop specificity to 0. This is defense-in-depth so utility classes always win on specificity even when layer cascade gets confused by load order.
 </laravel-boost-guidelines>
 
 ## Architecture

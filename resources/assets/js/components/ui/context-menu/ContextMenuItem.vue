@@ -2,7 +2,7 @@
   <li
     ref="el"
     :class="cssClasses"
-    class="focus:outline-none focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg"
+    class="focus:outline-hidden focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg"
     tabindex="-1"
     @mouseover="focus()"
     @click.prevent="emit('click')"

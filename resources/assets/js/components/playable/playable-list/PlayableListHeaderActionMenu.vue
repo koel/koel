@@ -10,7 +10,7 @@
           v-for="item in menuItems"
           :key="item.label"
           :class="currentlySortedBy(item.field) && 'active'"
-          class="cursor-pointer group flex justify-between !pl-3 hover:!bg-k-highlight hover:!text-k-highlight-fg"
+          class="cursor-pointer group flex justify-between pl-3! hover:bg-k-highlight! hover:text-k-highlight-fg!"
           @click="sortable && sort(item.field)"
         >
           <label
@@ -22,7 +22,7 @@
               :checked="shouldShowColumn(item.column!)"
               :disabled="!item.visibilityToggleable"
               :title="item.visibilityToggleable ? `Click to toggle the ${item.label} column` : ''"
-              class="disabled:opacity-20 disabled:cursor-not-allowed bg-k-fg group-hover:border-k-highlight-fg h-4 aspect-square rounded checked:border-k-fg-70 checked:border-2 checked:bg-k-highlight"
+              class="disabled:opacity-20 disabled:cursor-not-allowed bg-k-fg group-hover:border-k-highlight-fg h-4 aspect-square rounded-sm checked:border-k-fg-70 checked:border-2 checked:bg-k-highlight"
               type="checkbox"
             />
           </label>
@@ -163,6 +163,7 @@ const currentlySortedBy = (field: MaybeArray<PlayableListSortField>) => isEqual(
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .active {
   @apply bg-k-highlight text-k-highlight-fg;
 
@@ -171,7 +172,7 @@ const currentlySortedBy = (field: MaybeArray<PlayableListSortField>) => isEqual(
   }
 
   input {
-    @apply border-k-highlight-fg !important;
+    @apply border-k-highlight-fg!;
   }
 }
 </style>

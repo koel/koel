@@ -6,7 +6,7 @@
       :is-active="index === currentLineIndex"
       :line
       :style="{ opacity: Math.max(0.1, 1 - Math.abs(index - currentLineIndex) / 4) }"
-      class="hover:!opacity-100"
+      class="hover:opacity-100!"
       @click="seekToLine(line)"
     />
   </article>

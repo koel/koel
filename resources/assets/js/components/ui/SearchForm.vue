@@ -1,7 +1,7 @@
 <template>
   <form
     id="searchForm"
-    class="relative text-k-fg-70 flex items-stretch border border-k-fg-10 overflow-hidden py-0 rounded-md bg-k-bg-50 focus-within:border-k-highlight transition-[border,_background-color] duration-200 ease-in-out"
+    class="relative text-k-fg-70 flex items-stretch border border-k-fg-10 overflow-hidden py-0 rounded-md bg-k-bg-50 focus-within:border-k-highlight transition-[border,background-color] duration-200 ease-in-out"
     role="search"
     @submit.prevent="onSubmit"
   >
@@ -11,7 +11,7 @@
       :class="{ dirty: q }"
       :placeholder
       autocorrect="false"
-      class="flex-1 rounded-none border-0 bg-transparent focus-visible:outline-none px-4"
+      class="flex-1 rounded-none border-0 bg-transparent focus-visible:outline-hidden px-4"
       name="q"
       required
       spellcheck="false"

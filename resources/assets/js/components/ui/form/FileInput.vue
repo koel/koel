@@ -3,7 +3,7 @@
     class="inline-flex text-base items-center gap-2 relative cursor-pointer hover:text-k-fg-70 active:text-k-fg-60"
   >
     <input v-bind="$attrs" type="file" class="opacity-0 appearance-none absolute inset-0 z-10" />
-    <span class="border border-px border-white/20 px-1.5 py-1 rounded pointer-events-none">
+    <span class="border border-px border-white/20 px-1.5 py-1 rounded-sm pointer-events-none">
       <Icon :icon="faPaperclip" fixed-width />
     </span>
     <span class="text-1 pointer-events-none">

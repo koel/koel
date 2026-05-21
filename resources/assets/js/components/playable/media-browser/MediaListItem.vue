@@ -23,7 +23,7 @@
       <!-- on a mobile device, show an Open button for a better UX -->
       <button
         v-if="item.type === 'folders'"
-        class="sm:hidden border border-k-fg-10 rounded px-1.5 py-px"
+        class="sm:hidden border border-k-fg-10 rounded-sm px-1.5 py-px"
         title="Open"
         @click.prevent.stop="emit('open-folder')"
       >
@@ -58,6 +58,7 @@ const pausePlayback = () => playback().pause()
 </script>
 
 <style scoped lang="postcss">
+@reference '@css/app.pcss';
 .selected {
   @apply bg-k-fg-10 border-transparent;
 }

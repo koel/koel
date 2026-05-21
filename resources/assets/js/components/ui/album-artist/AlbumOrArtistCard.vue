@@ -64,6 +64,7 @@ const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 article {
   @apply bg-k-fg-5;
 

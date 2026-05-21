@@ -13,7 +13,7 @@
     </div>
     <div v-for="key in 40" :key class="flex gap-4 px-4 py-3 border-b border-k-fg-10">
       <div class="title flex gap-3">
-        <div class="thumbnail block h-[48px] aspect-square rounded pulse" />
+        <div class="thumbnail block h-[48px] aspect-square rounded-sm pulse" />
         <div class="flex-1 flex-col space-y-2 content-center">
           <div class="block h-5 rounded-full w-4/5 pulse" />
           <div class="block h-5 rounded-full w-2/5 pulse" />
@@ -32,6 +32,7 @@
 <script setup lang="ts"></script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .song-list-header {
   @apply h-[35px] flex bg-k-fg-5;
 }

@@ -1,22 +1,21 @@
 <template>
   <article
     :class="message.type"
-    class="group rounded-l-md cursor-pointer flex items-stretch opacity-90 transition-transform duration-300 origin-right hover:opacity-100 hover:scale-110"
+    class="rounded-l-md cursor-pointer flex items-stretch opacity-90 transition-transform duration-300 origin-right hover:opacity-100 hover:scale-110"
     title="Click to dismiss"
     @click="dismiss"
-    @mouseenter="cancelAutoDismiss"
-    @mouseleave="setAutoDismiss"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
   >
     <aside class="flex items-center px-3 py-0 bg-black/10">
-      <Icon :icon="typeIcon" class="group-hover:hidden" />
-      <Icon :icon="faTimesCircle" class="hidden group-hover:block" />
+      <Icon :icon="hovering ? faTimesCircle : typeIcon" />
     </aside>
     <main class="flex-1 py-2 pl-3 pr-4">{{ message.content }}</main>
   </article>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, toRefs } from 'vue'
+import { computed, onMounted, ref, toRefs } from 'vue'
 import {
   faCircleCheck,
   faCircleExclamation,
@@ -44,6 +43,7 @@ const typeIcon = computed(() => {
 })
 
 let timeoutHandler: number
+const hovering = ref(false)
 
 const dismiss = () => {
   emit('dismiss', message.value)
@@ -53,10 +53,21 @@ const dismiss = () => {
 const cancelAutoDismiss = () => window.clearTimeout(timeoutHandler)
 const setAutoDismiss = () => (timeoutHandler = window.setTimeout(() => dismiss(), message.value.timeout * 1000))
 
+const onMouseEnter = () => {
+  hovering.value = true
+  cancelAutoDismiss()
+}
+
+const onMouseLeave = () => {
+  hovering.value = false
+  setAutoDismiss()
+}
+
 onMounted(() => setAutoDismiss())
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .info {
   @apply bg-blue-600 text-blue-100;
 }

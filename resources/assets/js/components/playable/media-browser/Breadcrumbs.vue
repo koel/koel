@@ -40,6 +40,7 @@ const crumbs = computed(() => {
 </script>
 
 <style scoped lang="postcss">
+@reference '@css/app.pcss';
 .disabled {
   @apply opacity-50 cursor-not-allowed pointer-events-none;
 }

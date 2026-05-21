@@ -15,6 +15,7 @@ defineProps<{
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 p {
   &.active {
     @apply scale-105 font-semibold;

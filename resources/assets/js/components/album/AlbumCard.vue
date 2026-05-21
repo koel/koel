@@ -21,7 +21,7 @@
         <span
           v-if="showReleaseYear && album.year"
           :title="`Released in ${album.year}`"
-          class="text-sm text-k-fg rounded px-2 py-[2px] bg-k-fg-10"
+          class="text-sm text-k-fg rounded-sm px-2 py-[2px] bg-k-fg-10"
         >
           {{ album.year }}
         </span>

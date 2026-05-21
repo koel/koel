@@ -249,6 +249,7 @@ const maybeClose = async () => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .mixed {
   @apply text-k-fg-50;
 }

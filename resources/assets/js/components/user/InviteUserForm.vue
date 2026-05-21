@@ -11,7 +11,7 @@
           ref="emailsEl"
           v-model="data.raw_emails"
           v-koel-focus
-          class="!min-h-[8rem]"
+          class="min-h-32!"
           name="emails"
           required
           title="Emails"

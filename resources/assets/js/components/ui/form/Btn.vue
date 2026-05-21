@@ -4,7 +4,7 @@
     ref="button"
     :data-variant="variant"
     :data-size="size"
-    class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer"
+    class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded-sm cursor-pointer"
     type="button"
   >
     <slot>Click me</slot>
@@ -14,7 +14,7 @@
     ref="button"
     :data-variant="variant"
     :data-size="size"
-    class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer"
+    class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded-sm cursor-pointer"
   >
     <slot>Click me</slot>
   </a>
@@ -38,6 +38,8 @@ defineExpose({
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
+
 /**
  * Except for the `highlight` variant, button text colors are independent from the theme.
  */

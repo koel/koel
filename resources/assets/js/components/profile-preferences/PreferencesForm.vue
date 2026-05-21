@@ -45,7 +45,7 @@
           <select
             v-model="preferences.transcode_quality"
             :disabled="!preferences.transcode_on_mobile"
-            class="appearance-auto rounded"
+            class="appearance-auto rounded-sm"
           >
             <option v-for="quality in [64, 96, 128, 192, 256, 320]" :key="quality" :value="quality">
               {{ quality }}
@@ -135,6 +135,7 @@ const continuousPlaybackLabel = computed(() => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .pref-row {
   @apply flex items-center gap-4 cursor-pointer;
 

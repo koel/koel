@@ -1,80 +1,94 @@
-@tailwind base;
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
 
-@layer base {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  blockquote {
-    @apply text-balance;
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+*,
+::after,
+::before,
+::backdrop,
+::file-selector-button {
+  border-color: var(--color-gray-200, currentcolor);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+blockquote {
+  @apply text-balance;
+}
+
+*::marker {
+  @apply hidden!;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+input,
+textarea {
+  @apply placeholder:text-k-fg-50;
+}
+
+body,
+html {
+  background-color: var(--color-bg);
+  background-image: var(--bg-image);
+  background-attachment: var(--bg-attachment);
+  background-size: var(--bg-size);
+  background-position: var(--bg-position);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+
+  @apply h-screen text-k-fg font-light leading-6 overflow-hidden;
+}
+
+input,
+select,
+button,
+textarea,
+.btn {
+  font-family: var(--font-family);
+
+  @apply appearance-none border-0 outline-0 text-base font-light;
+
+  &:required,
+  &:invalid {
+    @apply shadow-none;
   }
 
-  *::marker {
-    @apply hidden !important;
+  &::-moz-focus-inner {
+    @apply border-0!;
   }
+}
 
-  :root {
-    color-scheme: dark;
+:where(a) {
+  @apply no-underline cursor-pointer focus:text-k-highlight;
+
+  color: var(--color-fg);
+
+  &:hover {
+    color: var(--color-highlight);
   }
+}
 
-  input,
-  textarea {
-    @apply placeholder:text-k-fg-50;
-  }
+button,
+[role='button'] {
+  @apply touch-manipulation select-none cursor-pointer focus-visible:outline-1 focus-visible:outline-k-highlight;
+}
 
-  body,
-  html {
-    @mixin themed-background {
-    }
+* {
+  @apply focus-visible:ring-0 focus-visible:outline-1 focus-visible:outline-k-highlight;
 
-    font-family: var(--font-family);
-    font-size: var(--font-size);
-
-    @apply h-screen text-k-fg font-light leading-6 overflow-hidden;
-  }
-
-  input,
-  select,
-  button,
-  textarea,
-  .btn {
-    font-family: var(--font-family);
-
-    @apply appearance-none border-0 outline-0 text-base font-light;
-
-    &:required,
-    &:invalid {
-      @apply shadow-none;
-    }
-
-    &::-moz-focus-inner {
-      @apply border-0 !important;
-    }
-  }
-
-  a {
-    @apply no-underline cursor-pointer focus:text-k-highlight;
-
-    /** Set the attributes manually to allow for inline overriding, which wouldn't be possible with @apply. */
-    color: var(--color-fg);
-
-    &:hover {
-      color: var(--color-highlight);
-    }
-  }
-
-  button,
-  [role='button'] {
-    @apply touch-manipulation select-none cursor-pointer focus-visible:outline-1 focus-visible:outline-k-highlight;
-  }
-
-  * {
-    @apply focus-visible:ring-0 focus-visible:outline-1 focus-visible:outline-k-highlight;
-
-    &::selection {
-      @apply bg-k-highlight text-k-highlight-fg;
-    }
+  &::selection {
+    @apply bg-k-highlight text-k-highlight-fg;
   }
 }

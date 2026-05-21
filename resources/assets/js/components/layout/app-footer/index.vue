@@ -1,7 +1,7 @@
 <template>
   <footer
     ref="root"
-    class="flex flex-col relative z-20 bg-k-fg-3 border border-k-fg-5 m-4 rounded-xl overflow-hidden h-k-footer-height pt-[var(--progress-bar-height)]"
+    class="flex flex-col relative z-20 bg-k-fg-3 border border-k-fg-5 m-4 rounded-xl overflow-hidden h-k-footer-height pt-(--progress-bar-height)"
     @mousemove="showControls"
     @contextmenu.prevent="requestContextMenu"
   >
@@ -161,6 +161,7 @@ eventBus.on('FULLSCREEN_TOGGLE', () => toggleFullscreen()).on('UP_NEXT', next =>
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .v-enter-active,
 .v-leave-active {
   transition: opacity 2s ease;
@@ -198,7 +199,7 @@ footer {
     }
 
     &::before {
-      @apply bg-black bg-repeat absolute top-0 left-0 opacity-50 z-[1] pointer-events-none -m-[20rem];
+      @apply bg-black bg-repeat absolute top-0 left-0 opacity-50 z-1 pointer-events-none -m-[20rem];
       content: '';
       background-image:
         linear-gradient(135deg, #111 25%, transparent 25%), linear-gradient(225deg, #111 25%, transparent 25%),
@@ -217,7 +218,7 @@ footer {
     &::after {
       background-image: linear-gradient(0deg, var(--color-bg) 0%, rgba(255, 255, 255, 0) 30vh);
       content: '';
-      @apply absolute w-full h-full top-0 left-0 z-[1] pointer-events-none;
+      @apply absolute w-full h-full top-0 left-0 z-1 pointer-events-none;
     }
 
     .fullscreen-backdrop {
