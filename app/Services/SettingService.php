@@ -31,6 +31,7 @@ class SettingService
 
     private static function canonicalizeMediaPath(string $path): string
     {
+        $path = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
         $sep = preg_quote(DIRECTORY_SEPARATOR, '#');
         $path = preg_replace('#' . $sep . '+#', DIRECTORY_SEPARATOR, $path);
         $path = rtrim($path, DIRECTORY_SEPARATOR);
