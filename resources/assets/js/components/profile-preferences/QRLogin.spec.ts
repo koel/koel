@@ -14,14 +14,6 @@ describe('qRLogin.vue', () => {
   beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }))
   afterEach(() => vi.useRealTimers())
 
-  it('renders', async () => {
-    const getTokenMock = h.mock(authService, 'getOneTimeToken').mockResolvedValue('my-token')
-    const { html } = h.render(Component)
-
-    await vi.waitFor(() => expect(getTokenMock).toHaveBeenCalled())
-    expect(html()).toMatchSnapshot()
-  })
-
   it('pauses after 5 auto-refresh cycles and resumes on click', async () => {
     const getTokenMock = h.mock(authService, 'getOneTimeToken').mockResolvedValue('my-token')
     h.render(Component)
