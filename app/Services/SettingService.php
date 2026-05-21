@@ -34,6 +34,11 @@ class SettingService
         $path = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
         $sep = preg_quote(DIRECTORY_SEPARATOR, '#');
         $path = preg_replace('#' . $sep . '+#', DIRECTORY_SEPARATOR, $path);
+
+        if ($path === DIRECTORY_SEPARATOR) {
+            return DIRECTORY_SEPARATOR;
+        }
+
         $path = rtrim($path, DIRECTORY_SEPARATOR);
 
         $real = realpath($path);

@@ -52,4 +52,12 @@ class SettingServiceTest extends TestCase
 
         self::assertSame('/foo/bar', Setting::get('media_path'));
     }
+
+    #[Test]
+    public function updateMediaPathPreservesRoot(): void
+    {
+        $this->service->updateMediaPath('///');
+
+        self::assertSame('/', Setting::get('media_path'));
+    }
 }
