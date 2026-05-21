@@ -8,6 +8,7 @@
 @import './partials/tooltip.pcss' layer(base);
 @import './partials/context-menu.pcss' layer(base);
 @import './partials/shared.pcss' layer(base);
+@import './partials/scroll-mask.pcss';
 
 @config "../../../tailwind.config.js";
 
@@ -28,44 +29,6 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
-  }
-}
-
-@utility fade-top {
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
-  mask-image: linear-gradient(to bottom, transparent, black var(--fade-size));
-
-  &.fade-bottom {
-    -webkit-mask:
-      linear-gradient(to bottom, transparent, black var(--fade-size)) top,
-      linear-gradient(to top, transparent, black var(--fade-size)) bottom;
-    -webkit-mask-size: 100% 51%;
-    -webkit-mask-repeat: no-repeat;
-
-    mask:
-      linear-gradient(to bottom, transparent, black var(--fade-size)) top,
-      linear-gradient(to top, transparent, black var(--fade-size)) bottom;
-    mask-size: 100% 51%;
-    mask-repeat: no-repeat;
-  }
-}
-
-@utility fade-bottom {
-  -webkit-mask-image: linear-gradient(to top, transparent, black var(--fade-size));
-  mask-image: linear-gradient(to top, transparent, black var(--fade-size));
-
-  &.fade-top {
-    -webkit-mask:
-      linear-gradient(to bottom, transparent, black var(--fade-size)) top,
-      linear-gradient(to top, transparent, black var(--fade-size)) bottom;
-    -webkit-mask-size: 100% 51%;
-    -webkit-mask-repeat: no-repeat;
-
-    mask:
-      linear-gradient(to bottom, transparent, black var(--fade-size)) top,
-      linear-gradient(to top, transparent, black var(--fade-size)) bottom;
-    mask-size: 100% 51%;
-    mask-repeat: no-repeat;
   }
 }
 

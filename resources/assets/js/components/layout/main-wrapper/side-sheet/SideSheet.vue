@@ -19,7 +19,7 @@
       </div>
     </header>
 
-    <main v-if="songPlaying" v-show="activeTab" class="panes relative overflow-auto wrap-anywhere" v-koel-overflow-fade>
+    <main v-if="songPlaying" v-show="activeTab" class="scroll-mask-y panes relative overflow-auto wrap-anywhere">
       <SideSheetPanelLazyWrapper
         id="extraPanelLyrics"
         :active="activeTab === 'Lyrics'"

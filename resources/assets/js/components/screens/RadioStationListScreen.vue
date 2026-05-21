@@ -58,7 +58,7 @@
       </template>
     </ScreenEmptyState>
 
-    <div v-else ref="gridContainer" v-koel-overflow-fade class="-m-6 flex-1 overflow-auto">
+    <div v-else ref="gridContainer" class="scroll-mask-y -m-6 flex-1 overflow-auto">
       <GridListView ref="grid" :view-mode="preferences.radio_stations_view_mode" data-testid="radio-station-grid">
         <div v-if="showSkeletons" role="status" aria-busy="true" aria-label="Loading" class="contents">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />

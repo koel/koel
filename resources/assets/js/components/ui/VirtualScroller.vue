@@ -1,8 +1,7 @@
 <template>
   <div
     ref="scroller"
-    v-koel-overflow-fade
-    class="virtual-scroller will-change-transform overflow-scroll"
+    class="scroll-mask-y virtual-scroller will-change-transform overflow-scroll"
     @scroll.passive="onScroll"
   >
     <div :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">

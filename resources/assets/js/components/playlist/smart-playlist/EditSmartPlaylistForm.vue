@@ -55,7 +55,7 @@
             aria-labelledby="createSmartPlaylistTabRules"
             class="space-y-5"
           >
-            <div v-koel-overflow-fade class="group-container space-y-5 overflow-auto max-h-[480px]">
+            <div class="scroll-mask-y group-container space-y-5 overflow-auto max-h-[480px]">
               <RuleGroup
                 v-for="(group, index) in collectedRuleGroups"
                 :key="group.id"

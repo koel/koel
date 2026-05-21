@@ -18,7 +18,7 @@
       <SearchForm class="flex-1" @focus-change="onSearchFocusChange" />
     </section>
 
-    <section v-koel-overflow-fade class="pt-2 pb-10 overflow-y-auto space-y-8">
+    <section class="scroll-mask-y pt-2 pb-10 overflow-y-auto space-y-8">
       <SidebarYourMusicSection />
       <SidebarPlaylistsSection />
       <SidebarManageSection v-if="showManageOptions" />
