@@ -8,6 +8,7 @@ use App\Facades\License;
 use App\Models\Folder;
 use App\Models\Setting;
 use App\Models\Song;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class MediaBrowser
@@ -41,6 +42,19 @@ class MediaBrowser
         self::$mediaPath ??= Setting::get('media_path');
 
         throw_unless(self::$mediaPath, MediaPathNotSetException::class);
+
+        $prefix = rtrim(self::$mediaPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+        if (!str_starts_with($song->path, $prefix)) {
+            Log::warning(sprintf(
+                'Skipping folder structure for song %s: path %s is outside media_path %s',
+                $song->id,
+                $song->path,
+                self::$mediaPath,
+            ));
+
+            return;
+        }
 
         $parentId = null;
         $currentPath = '';

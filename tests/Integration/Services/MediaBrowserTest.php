@@ -60,4 +60,24 @@ class MediaBrowserTest extends TestCase
 
         self::assertNull($songInRootPath->folder);
     }
+
+    #[Test]
+    public function skipsSongOutsideMediaPath(): void
+    {
+        Setting::set('media_path', $this->mediaPath);
+
+        // Simulates a song whose path predates a media_path normalization fix, or any path
+        // that doesn't sit under the configured media_path. The folder structure must NOT
+        // be created — otherwise the media browser would expose host directories.
+        $song = Song::factory()->createOne([
+            'path' => '/etc/passwd-themed/album/track.mp3',
+            'storage' => SongStorageType::LOCAL,
+        ]);
+
+        $this->browser->maybeCreateFolderStructureForSong($song);
+
+        self::assertNull($song->folder);
+        self::assertSame(0, Folder::query()->where('path', 'etc')->count());
+        self::assertSame(0, Folder::query()->where('path', 'etc/passwd-themed')->count());
+    }
 }
