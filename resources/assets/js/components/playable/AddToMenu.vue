@@ -3,7 +3,7 @@
     <section class="existing-playlists">
       <p class="mb-2 text-[0.9rem]">Add {{ pluralize(playables, 'item') }} to</p>
 
-      <ul v-koel-overflow-fade class="relative max-h-48 overflow-y-scroll space-y-1.5">
+      <ul class="scroll-mask-y relative max-h-48 overflow-y-scroll space-y-1.5">
         <template v-if="config.queue">
           <template v-if="queue.length">
             <li

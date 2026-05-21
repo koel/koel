@@ -61,7 +61,7 @@
         </template>
         <Separator v-if="normalPlaylists.length" />
         <template class="block">
-          <ul v-if="normalPlaylists.length" v-koel-overflow-fade class="relative max-h-48 overflow-y-auto">
+          <ul v-if="normalPlaylists.length" class="scroll-mask-y relative max-h-48 overflow-y-auto">
             <MenuItem v-for="p in normalPlaylists" :key="p.id" @click="addToExistingPlaylist(p)">
               {{ p.name }}
             </MenuItem>

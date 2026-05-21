@@ -1,8 +1,7 @@
 <template>
   <div
     ref="scroller"
-    v-koel-overflow-fade
-    class="virtual-grid-scroller will-change-transform overflow-scroll h-full"
+    class="scroll-mask-y virtual-grid-scroller will-change-transform overflow-scroll h-full"
     @scroll.passive="onScroll"
   >
     <!-- Measuring phase: render one item to measure height, gap, and padding -->
