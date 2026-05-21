@@ -23,10 +23,21 @@ class SettingService
 
     public function updateMediaPath(string $path): string
     {
-        $path = rtrim($path, DIRECTORY_SEPARATOR);
+        $path = self::canonicalizeMediaPath($path);
         Setting::set('media_path', $path);
 
         return $path;
+    }
+
+    private static function canonicalizeMediaPath(string $path): string
+    {
+        $sep = preg_quote(DIRECTORY_SEPARATOR, '#');
+        $path = preg_replace('#' . $sep . '+#', DIRECTORY_SEPARATOR, $path);
+        $path = rtrim($path, DIRECTORY_SEPARATOR);
+
+        $real = realpath($path);
+
+        return $real ?: $path;
     }
 
     public function updateBranding(string $name, ?string $logo, ?string $cover): void
