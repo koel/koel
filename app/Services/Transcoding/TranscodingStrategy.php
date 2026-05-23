@@ -45,7 +45,7 @@ abstract class TranscodingStrategy
         return $this->findTranscodeBySongAndBitRate($song, $bitRate); // @phpstan-ignore-line
     }
 
-    protected function transcodeAndRecord(Song $song, string $tmpSource, string $destination, int $bitRate): void
+    protected function transcodeAndUpsert(Song $song, string $tmpSource, string $destination, int $bitRate): void
     {
         $this->transcoder->transcode($tmpSource, $destination, $bitRate);
 

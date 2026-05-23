@@ -31,7 +31,7 @@ class WebDAVTranscodingStrategy extends TranscodingStrategy
         $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
 
         try {
-            $this->transcodeAndRecord($song, $tmpSource, $destination, $bitRate);
+            $this->transcodeAndUpsert($song, $tmpSource, $destination, $bitRate);
         } catch (Throwable $e) {
             File::delete($destination);
 
