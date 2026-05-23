@@ -84,7 +84,7 @@ Required when `STORAGE_DRIVER=webdav`.
 | Variable | Description | Default |
 |---|---|---|
 | `WEBDAV_BASE_URL` | The WebDAV base URL. For NextCloud, this looks like `https://your-nextcloud.example/remote.php/dav/files/<username>/`. | _(empty)_ |
-| `WEBDAV_USERNAME` | The WebDAV username. For NextCloud, use a dedicated [app password](https://docs.nextcloud.com/server/latest/user_manual/en/session_management.html#managing-devices) rather than the account password. | _(empty)_ |
+| `WEBDAV_USERNAME` | The WebDAV username. For NextCloud, use a dedicated app password rather than the account password. | _(empty)_ |
 | `WEBDAV_PASSWORD` | The WebDAV password (or NextCloud app password). | _(empty)_ |
 | `WEBDAV_PATH_PREFIX` | Optional path prefix beneath the base URL where Koel stores its media (no leading or trailing slash). For example: `Music`. | _(empty)_ |
 
