@@ -13,6 +13,7 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LastfmController;
 use App\Http\Controllers\PlayController;
 use App\Http\Controllers\SSO\GoogleCallbackController;
+use App\Http\Controllers\SSO\OpenIDConnectCallbackController;
 use App\Http\Controllers\StreamEmbedController;
 use App\Http\Controllers\StreamRadioController;
 use App\Http\Controllers\ViewSongOnITunesController;
@@ -21,10 +22,9 @@ use Laravel\Socialite\Facades\Socialite;
 
 Route::middleware('web')->group(static function (): void {
     // Using a closure to determine the controller instead of static configuration to allow for testing.
-    Route::get(
-        '/',
-        static fn () => app()->call(config('koel.misc.demo') ? DemoIndexController::class : IndexController::class),
-    );
+    Route::get('/', static fn () => app()->call(
+        config('koel.misc.demo') ? DemoIndexController::class : IndexController::class,
+    ));
 
     Route::get('remote', static fn () => view('remote'));
 
@@ -41,6 +41,9 @@ Route::middleware('web')->group(static function (): void {
 
     Route::get('auth/google/redirect', static fn () => Socialite::driver('google')->redirect());
     Route::get('auth/google/callback', GoogleCallbackController::class);
+
+    Route::get('auth/oidc/redirect', static fn () => Socialite::driver('oidc')->redirect());
+    Route::get('auth/oidc/callback', OpenIDConnectCallbackController::class);
 
     Route::get('dropbox/authorize/{key}', AuthorizeDropboxController::class)->name('dropbox.authorize');
 
@@ -60,13 +63,13 @@ Route::middleware('web')->group(static function (): void {
         }
     });
 
-    Route::get('embeds/{embed}/stream/{song}/{options}', StreamEmbedController::class)
-        ->name('embeds.stream')
-        ->middleware('signed', 'throttle:10,1');
+    Route::get('embeds/{embed}/stream/{song}/{options}', StreamEmbedController::class)->name(
+        'embeds.stream',
+    )->middleware('signed', 'throttle:10,1');
 });
 
-Route::middleware('web')->prefix('demo')->group(static function (): void {
-    Route::get('/new-session', NewSessionController::class)
-        ->name('demo.new-session')
-        ->middleware('throttle:10,1');
-});
+Route::middleware('web')
+    ->prefix('demo')
+    ->group(static function (): void {
+        Route::get('/new-session', NewSessionController::class)->name('demo.new-session')->middleware('throttle:10,1');
+    });

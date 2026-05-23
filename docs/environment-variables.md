@@ -130,6 +130,10 @@ Koel Plus only. See [Single Sign-On](plus/sso).
 | `SSO_GOOGLE_CLIENT_ID` | Your Google OAuth client ID. | _(empty)_ |
 | `SSO_GOOGLE_CLIENT_SECRET` | Your Google OAuth client secret. | _(empty)_ |
 | `SSO_GOOGLE_HOSTED_DOMAIN` | The Google Workspace domain users must belong to. | _(empty)_ |
+| `SSO_OIDC_ISSUER` | Issuer URL of an OpenID Connect IdP (Authentik, Authelia, Keycloak, Zitadel, …). Koel reads `<issuer>/.well-known/openid-configuration` for endpoint discovery. | _(empty)_ |
+| `SSO_OIDC_CLIENT_ID` | OAuth client ID registered with the IdP. | _(empty)_ |
+| `SSO_OIDC_CLIENT_SECRET` | OAuth client secret. | _(empty)_ |
+| `SSO_OIDC_BUTTON_LABEL` | Label shown on the OIDC login button. | `OpenID Connect` |
 
 ## Proxy Authentication
 

@@ -8,6 +8,7 @@
             $koelExtraGlobals = [
                 'mailer_configured' => mailer_configured(),
                 'sso_providers' => collect_sso_providers(),
+                'sso_oidc_label' => config('services.oidc.button_label'),
                 'accepted_audio_extensions' => collect_accepted_audio_extensions(),
             ];
         @endphp

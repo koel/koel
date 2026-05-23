@@ -9,6 +9,7 @@ use App\Providers\ITunesServiceProvider;
 use App\Providers\LicenseServiceProvider;
 use App\Providers\MacroProvider;
 use App\Providers\ObjectStorageServiceProvider;
+use App\Providers\SocialiteServiceProvider;
 use App\Providers\SongStorageServiceProvider;
 use App\Providers\StreamerServiceProvider;
 use App\Providers\YouTubeServiceProvider;
@@ -36,4 +37,5 @@ return [
     ObjectStorageServiceProvider::class,
     MacroProvider::class,
     LicenseServiceProvider::class,
+    SocialiteServiceProvider::class,
 ];
