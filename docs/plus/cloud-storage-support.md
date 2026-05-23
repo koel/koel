@@ -168,7 +168,7 @@ WEBDAV_PATH_PREFIX=
 ```
 
 :::warning Use an app password
-For NextCloud, consider creating a dedicated app password instead of using your account password, so you can revoke Koel's access without affecting other clients.
+For NextCloud, consider creating a dedicated [app password](https://docs.nextcloud.com/server/latest/user_manual/en/session_management.html#device-specific-passwords-and-password-changes) instead of using your account password, so you can revoke Koel's access without affecting other clients.
 :::
 
 <script lang="ts" setup>
