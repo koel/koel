@@ -60,7 +60,7 @@ class WebDAVStorage extends SongStorage implements MustDeleteTemporaryLocalFileA
         throw_unless($stream, new RuntimeException("Failed to open remote stream for $path."));
 
         try {
-            File::put($localPath, stream_get_contents($stream));
+            file_put_contents($localPath, $stream);
         } finally {
             fclose($stream);
         }
