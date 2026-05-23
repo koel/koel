@@ -14,6 +14,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class WebDAVStorage extends SongStorage implements MustDeleteTemporaryLocalFileAfterUpload
 {
@@ -54,8 +55,15 @@ class WebDAVStorage extends SongStorage implements MustDeleteTemporaryLocalFileA
     public function copyToLocal(string $path): string
     {
         $localPath = artifact_path(sprintf('tmp/%s_%s', Ulid::generate(), basename($path)));
+        $stream = $this->disk->readStream($path);
 
-        file_put_contents($localPath, $this->disk->readStream($path));
+        throw_unless($stream, new RuntimeException("Failed to open remote stream for $path."));
+
+        try {
+            File::put($localPath, stream_get_contents($stream));
+        } finally {
+            fclose($stream);
+        }
 
         return $localPath;
     }

@@ -153,7 +153,7 @@ Koel Plus can use any WebDAV server as a storage backend, including [NextCloud](
 
 Add the following to your `.env` file:
 
-```
+```dotenv
 STORAGE_DRIVER=webdav
 
 # For NextCloud, the base URL looks like:
@@ -162,7 +162,7 @@ WEBDAV_BASE_URL=
 WEBDAV_USERNAME=
 WEBDAV_PASSWORD=
 
-# Optional path prefix beneath the base URI where Koel stores its media (no leading or trailing slash).
+# Optional path prefix beneath the base URL where Koel stores its media (no leading or trailing slash).
 # For example: Music
 WEBDAV_PATH_PREFIX=
 ```

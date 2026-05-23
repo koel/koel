@@ -27,29 +27,28 @@ class SftpTranscodingStrategy extends TranscodingStrategy
         $storage = app(SftpStorage::class);
         $tmpSource = $storage->copyToLocal($song->storage_metadata->getPath());
 
-        // (Re)Transcode the song to the specified bit rate and either create a new transcode record or
-        // update the existing one.
-        $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
-        $this->transcoder->transcode($tmpSource, $destination, $bitRate);
+        try {
+            // (Re)Transcode the song to the specified bit rate and either create a new transcode record or
+            // update the existing one.
+            $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
+            $this->transcoder->transcode($tmpSource, $destination, $bitRate);
 
-        $this->createOrUpdateTranscode(
-            $song,
-            $destination,
-            $bitRate,
-            File::hash($destination),
-            File::size($destination),
-        );
-
-        File::delete($tmpSource);
+            $this->createOrUpdateTranscode(
+                $song,
+                $destination,
+                $bitRate,
+                File::hash($destination),
+                File::size($destination),
+            );
+        } finally {
+            File::delete($tmpSource);
+        }
 
         return $destination;
     }
 
     public function deleteTranscodeFile(string $location, SongStorageType $storageType): void
     {
-        /** @var SftpStorage $storage */
-        $storage = app(SftpStorage::class);
-
-        $storage->deleteFileUnderPath(path: $location, backup: false);
+        File::delete($location);
     }
 }
