@@ -8,6 +8,7 @@ use App\Services\SongStorages\S3CompatibleStorage;
 use App\Services\SongStorages\SftpStorage;
 use App\Services\SongStorages\SongStorage;
 use App\Services\SongStorages\WebDAVStorage;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
@@ -34,7 +35,7 @@ class SongStorageServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Storage::extend('webdav', static function ($app, array $config): FilesystemAdapter {
+        Storage::extend('webdav', static function (Container $app, array $config): FilesystemAdapter {
             $client = new WebDAVClient([
                 'baseUri' => (string) ($config['baseUri'] ?? ''),
                 'userName' => (string) ($config['userName'] ?? ''),
