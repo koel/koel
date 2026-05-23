@@ -15,6 +15,7 @@ import { faKey } from '@fortawesome/free-solid-svg-icons'
 import { openPopup } from '@/utils/helpers'
 
 import appleLogo from '@/../img/logos/sso/apple.svg'
+import auth0Logo from '@/../img/logos/sso/auth0.svg'
 import autheliaLogo from '@/../img/logos/sso/authelia.svg'
 import authentikLogo from '@/../img/logos/sso/authentik.svg'
 import awsLogo from '@/../img/logos/sso/aws.svg'
@@ -33,6 +34,7 @@ const brandIcons: Array<[RegExp, string]> = [
   [/keycloak/i, keycloakLogo],
   [/zitadel/i, zitadelLogo],
   [/okta/i, oktaLogo],
+  [/auth0/i, auth0Logo],
   [/github/i, githubLogo],
   [/gitlab/i, gitlabLogo],
   [/microsoft|azure|entra/i, microsoftLogo],
