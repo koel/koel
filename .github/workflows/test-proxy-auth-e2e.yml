@@ -30,7 +30,7 @@ permissions:
 
 jobs:
   e2e:
-    name: Caddy reverse-proxy auth flow
+    name: Reverse-proxy auth flow
     runs-on: ubuntu-latest
     # Skip on fork PRs — secrets.KOEL_PLUS_LICENSE_KEY isn't available there.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
