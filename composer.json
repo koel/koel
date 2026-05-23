@@ -52,7 +52,8 @@
     "spatie/laravel-permission": "^6.21",
     "enshrined/svg-sanitize": "^0.22.0",
     "phanan/poddle": "^1.2",
-    "laravel/ai": "^0.2.6"
+    "laravel/ai": "^0.2.6",
+    "league/flysystem-webdav": "^3.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

@@ -23,7 +23,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - tailwindcss (TAILWINDCSS) - v4
 
 ## Conventions
-- **Always infer from the existing codebase before writing — and ask when no precedent exists.** Before any new identifier, mock/test pattern, store/service call shape, form wiring, helper choice, spelling, or file layout, grep `app/` and `resources/assets/js/` for how it has been done before, and copy the existing shape exactly. If no precedent exists in the repo, **stop and ask the user** instead of defaulting to whatever you'd write from training data or personal habit. The codebase is the source of truth for *how things are done*, not just *what exists*. "I should have looked" is the symptom; not looking first is the root cause.
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
@@ -229,14 +228,42 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Tailwind CSS 4
 
-- Always use Tailwind CSS v4; verify you're using only classes supported by this version. Remember v4 utility renames (e.g. `rounded-sm` is the old `rounded`, `shadow-sm` is the old `shadow`, `outline-hidden` replaces `outline-none`, `ring` is now 1px not 3px).
-- The important modifier goes after the class, not before: `text-red-500!`, never `!text-red-500`.
-- Opacity modifiers replace the deprecated `*-opacity-*` utilities: `bg-black/50` not `bg-black bg-opacity-50`.
-- `@apply` inside Vue scoped `<style>` blocks **must** be preceded by `@reference '@css/app.pcss';` so v4 can resolve theme tokens — the `@css` alias is rewritten to an absolute path by the small custom postcss plugin in `postcss.config.cjs`. Never write relative paths to `app.pcss` in `@reference` directives.
-- Theme tokens (custom colors etc.) live in `tailwind.config.js`'s `theme.extend.colors`, linked from `resources/assets/css/app.pcss` via `@config`. Prefer CSS variables on the koel side (defined in `partials/vars.pcss`) over hardcoded colors.
-- Layer order is pinned globally by `public/css/layer-order.css` (`@layer theme, base, components, utilities;`) loaded from `base.blade.php` **before** any Vite-emitted CSS. Don't remove that `<link>`: Vite chunks scoped Vue CSS files load before the main app CSS, and several of them declare `@layer utilities { ... }` without first declaring `@layer base`, which would establish utilities as a low-priority layer and let `@layer base` rules win over utility classes. The static pre-load locks the canonical order.
-- Partial pcss imports (`vars.pcss` aside) use the `layer(base)` modifier in `app.pcss`/`remote.pcss` — e.g. `@import './partials/shared.pcss' layer(base);`. Don't wrap rules in `@layer base { ... }` *inside* a partial that's already imported via `layer(base)`; that creates a `base.base` sub-layer with weird precedence. Either use the import modifier OR an internal `@layer base { }` block, never both. **Exception**: partials that contain `@utility` directives (like `scroll-mask.pcss`) must be imported unlayered. v4 forbids `@utility` from being nested inside any at-rule (including `@layer base`), so adding `layer(base)` to such an import wraps the whole file in `@layer base { … }` and the build fails with "`@utility` cannot be nested".
-- `shared.pcss` element-default rules wrap their selectors in `:where()` (e.g. `:where(a) { color: var(--color-fg); }`) to drop specificity to 0. This is defense-in-depth so utility classes always win on specificity even when layer cascade gets confused by load order.
+- Always use Tailwind CSS v4; do not use the deprecated utilities.
+- `corePlugins` is not supported in Tailwind v4.
+- In Tailwind v4, configuration is CSS-first using the `@theme` directive — no separate `tailwind.config.js` file is needed.
+
+<code-snippet name="Extending Theme in CSS" lang="css">
+@theme {
+  --color-brand: oklch(0.72 0.11 178);
+}
+</code-snippet>
+
+- In Tailwind v4, you import Tailwind using a regular CSS `@import` statement, not using the `@tailwind` directives used in v3:
+
+<code-snippet name="Tailwind v4 Import Tailwind Diff" lang="diff">
+   - @tailwind base;
+   - @tailwind components;
+   - @tailwind utilities;
+   + @import "tailwindcss";
+</code-snippet>
+
+### Replaced Utilities
+- Tailwind v4 removed deprecated utilities. Do not use the deprecated option; use the replacement.
+- Opacity values are still numeric.
+
+| Deprecated |	Replacement |
+|------------+--------------|
+| bg-opacity-* | bg-black/* |
+| text-opacity-* | text-black/* |
+| border-opacity-* | border-black/* |
+| divide-opacity-* | divide-black/* |
+| ring-opacity-* | ring-black/* |
+| placeholder-opacity-* | placeholder-black/* |
+| flex-shrink-* | shrink-* |
+| flex-grow-* | grow-* |
+| overflow-ellipsis | text-ellipsis |
+| decoration-slice | box-decoration-slice |
+| decoration-clone | box-decoration-clone |
 </laravel-boost-guidelines>
 
 ## Architecture
@@ -251,7 +278,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Self-Explanatory Code
 - Code should read on its own. If a piece of code needs a comment to be understood, that's a signal the code is wrong, not that the comment is needed — refactor it: extract a named helper, rename a variable to encode intent, lift a condition into a named flag, pull a block into a small function. Use a comment only when refactoring genuinely can't carry the intent (a hidden invariant, a workaround tied to a specific external bug, behaviour a reader would otherwise misjudge). Never write comments that narrate the next line, summarise the surrounding block, or restate what well-named identifiers already say.
-- Don't use single-letter variable names. The only allowed ones are `i` / `j` for loop counters and `h` for the test harness. For everything else (callback params, destructured fields, lambda args, etc.) pick a name that says what it is.
+- Don't use single-letter variable names. The only allowed ones are `i` / `j` for loop counters, `h` for the test harness, and `$e` for the exception variable in `catch (Throwable|Exception|Error $e)` blocks (PHP's universal idiom — analogous to `e` for events in JS/TS event handlers). For everything else (callback params, destructured fields, lambda args, etc.) pick a name that says what it is.
 - Never combine assignment with return. Always `$x = expr;` then `return $x;` on a separate line — `return $x = expr;` cramming two effects into one statement is forbidden in PHP, TS, and JS.
 
 ## PHP Conventions

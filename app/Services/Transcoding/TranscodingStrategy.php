@@ -6,6 +6,7 @@ use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\Transcode;
 use App\Repositories\TranscodeRepository;
+use Illuminate\Support\Facades\File;
 
 abstract class TranscodingStrategy
 {
@@ -42,6 +43,19 @@ abstract class TranscodingStrategy
         );
 
         return $this->findTranscodeBySongAndBitRate($song, $bitRate); // @phpstan-ignore-line
+    }
+
+    protected function transcodeAndUpsert(Song $song, string $tmpSource, string $destination, int $bitRate): void
+    {
+        $this->transcoder->transcode($tmpSource, $destination, $bitRate);
+
+        $this->createOrUpdateTranscode(
+            $song,
+            $destination,
+            $bitRate,
+            File::hash($destination),
+            File::size($destination),
+        );
     }
 
     abstract public function getTranscodeLocation(Song $song, int $bitRate): string;

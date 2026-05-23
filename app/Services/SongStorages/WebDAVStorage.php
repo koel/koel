@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RuntimeException;
 
-class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAfterUpload
+class WebDAVStorage extends SongStorage implements MustDeleteTemporaryLocalFileAfterUpload
 {
     use DeletesUsingFilesystem;
     use MovesUploadedFile;
@@ -25,24 +25,23 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
 
     public function __construct()
     {
-        $this->disk = Storage::disk('sftp');
+        $this->disk = Storage::disk('webdav');
     }
 
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
         $path = $this->generateRemotePath(basename($uploadedFilePath), $uploader);
-        $this->disk->put($path, fopen($uploadedFilePath, 'r'));
+        // Buffer in memory so the PUT carries a fixed Content-Length; streaming PUTs trip
+        // HTTP/2 INTERNAL_ERROR on Cloudflare-fronted NextCloud.
+        $this->disk->put($path, File::get($uploadedFilePath));
 
-        return UploadReference::make(location: "sftp://$path", localPath: $uploadedFilePath);
+        return UploadReference::make(location: "webdav://$path", localPath: $uploadedFilePath);
     }
 
     public function undoUpload(UploadReference $reference): void
     {
-        // Delete the tmp file
         File::delete($reference->localPath);
-
-        // Delete the file from the SFTP server
-        $this->delete(location: Str::after($reference->location, 'sftp://'), backup: false);
+        $this->delete(location: Str::after($reference->location, 'webdav://'), backup: false);
     }
 
     public function delete(string $location, bool $backup = false): void
@@ -81,9 +80,9 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
         $this->disk->delete('test.txt');
     }
 
-    private function generateRemotePath(string $filename, User $uploader): string
+    public function getLocalPath(string $location): string
     {
-        return sprintf('%s__%s__%s', $uploader->id, Ulid::generate(), $filename);
+        return $this->copyToLocal(Str::after($location, 'webdav://'));
     }
 
     public function deleteFileUnderPath(string $path, bool|Closure $backup): void
@@ -91,13 +90,13 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
         $this->deleteUsingFilesystem($this->disk, $path, $backup);
     }
 
-    public function getLocalPath(string $location): string
-    {
-        return $this->copyToLocal(Str::after($location, 'sftp://'));
-    }
-
     public function getStorageType(): SongStorageType
     {
-        return SongStorageType::SFTP;
+        return SongStorageType::WEBDAV;
+    }
+
+    private function generateRemotePath(string $filename, User $uploader): string
+    {
+        return sprintf('%s__%s__%s', $uploader->id, Ulid::generate(), $filename);
     }
 }

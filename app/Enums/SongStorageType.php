@@ -10,6 +10,7 @@ enum SongStorageType: string
     case S3_LAMBDA = 's3-lambda';
     case DROPBOX = 'dropbox';
     case SFTP = 'sftp';
+    case WEBDAV = 'webdav';
     case LOCAL = '';
 
     public function supported(): bool
