@@ -3,6 +3,7 @@
 namespace App\Socialite\OpenIDConnect;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Arr;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\User;
 use RuntimeException;
@@ -67,12 +68,17 @@ class Provider extends AbstractProvider
     {
         $instance = new User();
 
+        $name = Arr::first(
+            ['name', 'preferred_username', 'email', 'sub'],
+            static fn (string $key): bool => filled(Arr::get($user, $key)),
+        );
+
         return $instance->setRaw($user)->map([
-            'id' => $user['sub'],
-            'nickname' => $user['preferred_username'] ?? null,
-            'name' => $user['name'] ?? $user['preferred_username'] ?? $user['email'] ?? $user['sub'],
-            'email' => $user['email'] ?? null,
-            'avatar' => $user['picture'] ?? null,
+            'id' => Arr::get($user, 'sub'),
+            'nickname' => Arr::get($user, 'preferred_username'),
+            'name' => Arr::get($user, $name),
+            'email' => Arr::get($user, 'email'),
+            'avatar' => Arr::get($user, 'picture'),
         ]);
     }
 
