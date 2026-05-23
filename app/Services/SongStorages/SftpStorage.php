@@ -61,9 +61,15 @@ class SftpStorage extends SongStorage implements MustDeleteTemporaryLocalFileAft
         throw_unless($stream, new RuntimeException("Failed to open remote stream for $path."));
 
         try {
-            file_put_contents($localPath, $stream);
+            $bytes = file_put_contents($localPath, $stream);
         } finally {
             fclose($stream);
+        }
+
+        if ($bytes === false) {
+            File::delete($localPath);
+
+            throw new RuntimeException("Failed to write remote stream to $localPath.");
         }
 
         return $localPath;

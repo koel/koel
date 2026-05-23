@@ -8,6 +8,7 @@ use App\Models\Song;
 use App\Services\SongStorages\SftpStorage;
 use Illuminate\Support\Facades\File;
 use Throwable;
+use Webmozart\Assert\Assert;
 
 class SftpTranscodingStrategy extends TranscodingStrategy
 {
@@ -31,15 +32,7 @@ class SftpTranscodingStrategy extends TranscodingStrategy
         $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
 
         try {
-            $this->transcoder->transcode($tmpSource, $destination, $bitRate);
-
-            $this->createOrUpdateTranscode(
-                $song,
-                $destination,
-                $bitRate,
-                File::hash($destination),
-                File::size($destination),
-            );
+            $this->transcodeAndRecord($song, $tmpSource, $destination, $bitRate);
         } catch (Throwable $e) {
             File::delete($destination);
 
@@ -53,6 +46,8 @@ class SftpTranscodingStrategy extends TranscodingStrategy
 
     public function deleteTranscodeFile(string $location, SongStorageType $storageType): void
     {
+        Assert::eq($storageType, SongStorageType::SFTP);
+
         File::delete($location);
     }
 }

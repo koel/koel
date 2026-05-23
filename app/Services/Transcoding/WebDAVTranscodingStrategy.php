@@ -8,6 +8,7 @@ use App\Models\Song;
 use App\Services\SongStorages\WebDAVStorage;
 use Illuminate\Support\Facades\File;
 use Throwable;
+use Webmozart\Assert\Assert;
 
 class WebDAVTranscodingStrategy extends TranscodingStrategy
 {
@@ -30,15 +31,7 @@ class WebDAVTranscodingStrategy extends TranscodingStrategy
         $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
 
         try {
-            $this->transcoder->transcode($tmpSource, $destination, $bitRate);
-
-            $this->createOrUpdateTranscode(
-                $song,
-                $destination,
-                $bitRate,
-                File::hash($destination),
-                File::size($destination),
-            );
+            $this->transcodeAndRecord($song, $tmpSource, $destination, $bitRate);
         } catch (Throwable $e) {
             File::delete($destination);
 
@@ -52,6 +45,8 @@ class WebDAVTranscodingStrategy extends TranscodingStrategy
 
     public function deleteTranscodeFile(string $location, SongStorageType $storageType): void
     {
+        Assert::eq($storageType, SongStorageType::WEBDAV);
+
         File::delete($location);
     }
 }
