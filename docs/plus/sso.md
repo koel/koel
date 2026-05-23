@@ -1,11 +1,10 @@
 ---
-description: Configuring Google SSO with OAuth for Koel Plus, including environment variables and user management.
+description: Configure Google or generic OpenID Connect SSO for Koel Plus, including environment variables and user management.
 ---
 
 # Single Sign-On
 
-Apart from the default authentication mechanism with email and password, users can also log in to Koel Plus via Single Sign-On (SSO).
-As of current, the only supported SSO provider is Google, with more to come in the future.
+Apart from the default authentication mechanism with email and password, users can also log in to Koel Plus via Single Sign-On (SSO). Koel supports Google and any OpenID Connect–compliant identity provider (Authentik, Authelia, Keycloak, Zitadel, …).
 
 ## Google
 
@@ -33,6 +32,26 @@ Save the `.env` file and reload Koel. You should now see a "Log in with Google" 
 <img src="../assets/img/plus/login-form-google.webp" loading="lazy" style="width: 324px" alt="Google login button">
 
 Clicking on the Google button will open a new window where you can log in with your Google account (make sure to allow pop-ups if you have a pop-up blocker enabled).
+
+## OpenID Connect
+
+Koel works with any OIDC-compliant provider. Set the issuer URL (the one that exposes `/.well-known/openid-configuration`), the client ID, and the client secret:
+
+```
+SSO_OIDC_ISSUER=https://your-idp.example.com
+SSO_OIDC_CLIENT_ID=<your-client-id>
+SSO_OIDC_CLIENT_SECRET=<your-client-secret>
+```
+
+Set the redirect URI in your IdP to `https://<your-koel-domain>/auth/oidc/callback`. Koel asks for the `openid`, `email`, and `profile` scopes.
+
+Optionally, customize the label shown on the login button (defaults to "OpenID Connect"):
+
+```
+SSO_OIDC_BUTTON_LABEL=Authentik
+```
+
+Save the `.env` file and reload Koel. A corresponding button appears on the login page.
 
 ## User Management
 

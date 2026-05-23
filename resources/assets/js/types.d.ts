@@ -51,7 +51,7 @@ interface CompositeToken {
   token: string
 }
 
-type SSOProvider = 'Google' | 'Reverse Proxy'
+type SSOProvider = 'Google' | 'OpenID Connect' | 'Reverse Proxy'
 
 interface KoelGlobals {
   base_url: string
@@ -63,6 +63,7 @@ interface KoelGlobals {
   branding: Branding
   mailer_configured: boolean
   sso_providers: SSOProvider[]
+  sso_oidc_label?: string
   accepted_audio_extensions: string[]
   demo_account?: {
     email: string

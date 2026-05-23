@@ -114,6 +114,10 @@ function collect_sso_providers(): array
         $providers[] = 'Google';
     }
 
+    if (config('services.oidc.issuer') && config('services.oidc.client_id') && config('services.oidc.client_secret')) {
+        $providers[] = 'OpenID Connect';
+    }
+
     return $providers;
 }
 
