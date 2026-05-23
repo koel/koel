@@ -12,6 +12,7 @@ use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
 use App\Services\Streamer\Adapters\SftpStreamerAdapter;
 use App\Services\Streamer\Adapters\StreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
+use App\Services\Streamer\Adapters\WebDAVStreamerAdapter;
 use App\Values\RequestedStreamingConfig;
 
 class Streamer
@@ -41,6 +42,7 @@ class Streamer
             SongStorageType::SFTP => app(SftpStreamerAdapter::class),
             SongStorageType::S3, SongStorageType::S3_LAMBDA => app(S3CompatibleStreamerAdapter::class),
             SongStorageType::DROPBOX => app(DropboxStreamerAdapter::class),
+            SongStorageType::WEBDAV => app(WebDAVStreamerAdapter::class),
         };
     }
 

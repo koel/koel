@@ -14,6 +14,7 @@ class SongStorageFactory
             SongStorageType::S3 => app(S3CompatibleStorage::class),
             SongStorageType::S3_LAMBDA => app(S3LambdaStorage::class),
             SongStorageType::DROPBOX => app(DropboxStorage::class),
+            SongStorageType::WEBDAV => app(WebDAVStorage::class),
         };
     }
 }

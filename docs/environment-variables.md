@@ -18,7 +18,7 @@ for details.
 
 | Variable | Description | Default |
 |---|---|---|
-| `STORAGE_DRIVER` | The storage driver for your media files. Valid values: `local`, `sftp`, `s3` (Koel Plus), `dropbox` (Koel Plus). See [Cloud Storage Support](plus/cloud-storage-support). | `local` |
+| `STORAGE_DRIVER` | The storage driver for your media files. Valid values: `local`, `sftp`, `s3` (Koel Plus), `dropbox` (Koel Plus), `webdav` (Koel Plus). See [Cloud Storage Support](plus/cloud-storage-support). | `local` |
 | `MEDIA_PATH` | The absolute path to your media directory. Required when using `STORAGE_DRIVER=local`. Can also be changed via the web interface. | _(empty)_ |
 | `ARTIFACTS_PATH` | The absolute path to store Koel artifacts (transcoded files, podcast episodes, temporary downloads, etc.). If empty, uses the system's temporary directory. | _(empty)_ |
 | `LARAVEL_STORAGE_PATH` | Absolute path Koel uses for writable runtime data — album/artist images (under `app/public/images`), logs, search indexes, framework cache, sessions. Set this to keep mutable state outside the application directory (read-only deploys, multi-instance setups, etc.). After setting it, run `php artisan storage:link` (or `composer koel:init`) so `public/storage` symlinks to `LARAVEL_STORAGE_PATH/app/public`. | `<app>/storage` |
@@ -76,6 +76,10 @@ Required when `STORAGE_DRIVER=sftp`.
 | `SFTP_PASSWORD` | The SFTP password. | _(empty)_ |
 | `SFTP_PRIVATE_KEY` | Path to the private key for key-based authentication (alternative to password). | _(empty)_ |
 | `SFTP_PASSPHRASE` | The passphrase for the private key. | _(empty)_ |
+| `WEBDAV_BASE_URL` | The WebDAV base URL. For NextCloud, this looks like `https://your-nextcloud.example/remote.php/dav/files/<username>/`. Required when `STORAGE_DRIVER=webdav`. | _(empty)_ |
+| `WEBDAV_USERNAME` | The WebDAV username. For NextCloud, use a dedicated [app password](https://docs.nextcloud.com/server/latest/user_manual/en/session_management.html#managing-devices) rather than the account password. | _(empty)_ |
+| `WEBDAV_PASSWORD` | The WebDAV password (or NextCloud app password). | _(empty)_ |
+| `WEBDAV_PATH_PREFIX` | Optional path prefix beneath the base URI where Koel stores its media (no leading or trailing slash). For example: `Music`. | _(empty)_ |
 
 ## Media Scanning
 

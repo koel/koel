@@ -15,6 +15,7 @@ class TranscodeStrategyFactory
             SongStorageType::DROPBOX,
                 => app(CloudTranscodingStrategy::class),
             SongStorageType::SFTP => app(SftpTranscodingStrategy::class),
+            SongStorageType::WEBDAV => app(WebDAVTranscodingStrategy::class),
         };
     }
 }
