@@ -36,6 +36,8 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -54,12 +56,25 @@ jobs:
           cp .env.example .env
           php artisan key:generate --quiet
           touch database/database.sqlite
-          sed -i 's|^DB_CONNECTION=.*|DB_CONNECTION=sqlite|' .env
+
+          # Replace the key if present, otherwise append. Defends against the test silently
+          # no-op'ing if .env.example ever loses one of these lines.
+          set_env() {
+              local key=$1 value=$2
+              if grep -q "^${key}=" .env; then
+                  sed -i "s|^${key}=.*|${key}=${value}|" .env
+              else
+                  echo "${key}=${value}" >> .env
+              fi
+          }
+
+          set_env DB_CONNECTION sqlite
           sed -i '/^DB_HOST=/d;/^DB_PORT=/d;/^DB_DATABASE=/d;/^DB_USERNAME=/d;/^DB_PASSWORD=/d' .env
-          sed -i 's|^PROXY_AUTH_ENABLED=.*|PROXY_AUTH_ENABLED=true|' .env
-          sed -i 's|^PROXY_AUTH_USER_HEADER=.*|PROXY_AUTH_USER_HEADER=remote-user|' .env
-          sed -i 's|^PROXY_AUTH_PREFERRED_NAME_HEADER=.*|PROXY_AUTH_PREFERRED_NAME_HEADER=remote-preferred-name|' .env
-          sed -i 's|^PROXY_AUTH_ALLOW_LIST=.*|PROXY_AUTH_ALLOW_LIST=127.0.0.1|' .env
+          set_env PROXY_AUTH_ENABLED true
+          set_env PROXY_AUTH_USER_HEADER remote-user
+          set_env PROXY_AUTH_PREFERRED_NAME_HEADER remote-preferred-name
+          set_env PROXY_AUTH_ALLOW_LIST 127.0.0.1
+
           php artisan migrate --force
 
       - name: Stub Vite manifest
