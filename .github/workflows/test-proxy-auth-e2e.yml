@@ -130,15 +130,15 @@ jobs:
       - name: Wait for services
         run: |
           for attempt in $(seq 1 30); do
-              koel_ok=$(curl -fsS -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/ || echo 0)
-              caddy_ok=$(curl -fsS -o /dev/null -w '%{http_code}' http://127.0.0.1:8001/ || echo 0)
+              koel_ok=$(curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/ 2>/dev/null || echo 0)
+              caddy_ok=$(curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:8001/ 2>/dev/null || echo 0)
               if [ "$koel_ok" = "200" ] && [ "$caddy_ok" = "401" ]; then
                   echo "Koel ready on :8000, Caddy ready on :8001 (challenging basic auth as expected)"
                   exit 0
               fi
               sleep 1
           done
-          echo "Services did not come up in time. Koel log:"
+          echo "Services did not come up in time (last koel=$koel_ok caddy=$caddy_ok). Koel log:"
           cat /tmp/koel.log
           echo "Caddy log:"
           cat /tmp/caddy.log
