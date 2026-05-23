@@ -14,6 +14,9 @@ class Provider extends AbstractProvider
 {
     public const string IDENTIFIER = 'OPENID';
 
+    private const int CONNECT_TIMEOUT_SECONDS = 5;
+    private const int REQUEST_TIMEOUT_SECONDS = 10;
+
     /** @var array<string> */
     protected $scopes = ['openid', 'email', 'profile'];
 
@@ -36,9 +39,11 @@ class Provider extends AbstractProvider
     /** @return array<string, mixed> */
     private function discover(): array
     {
-        $this->discovery ??= Http::get(
-            Str::finish($this->issuer, '/') . '.well-known/openid-configuration',
-        )->throw()->json();
+        $this->discovery ??= Http::connectTimeout(self::CONNECT_TIMEOUT_SECONDS)
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+            ->get(Str::finish($this->issuer, '/') . '.well-known/openid-configuration')
+            ->throw()
+            ->json();
 
         return $this->discovery;
     }
@@ -57,6 +62,8 @@ class Provider extends AbstractProvider
     protected function getUserByToken(#[SensitiveParameter] $token): array
     {
         return Http::withToken($token)
+            ->connectTimeout(self::CONNECT_TIMEOUT_SECONDS)
+            ->timeout(self::REQUEST_TIMEOUT_SECONDS)
             ->get(Arr::get($this->discover(), 'userinfo_endpoint'))
             ->throw()
             ->json();
@@ -72,11 +79,13 @@ class Provider extends AbstractProvider
             static fn (string $key): bool => filled(Arr::get($user, $key)),
         );
 
+        $email = Arr::get($user, 'email_verified') === true ? Arr::get($user, 'email') : null;
+
         return $instance->setRaw($user)->map([
             'id' => Arr::get($user, 'sub'),
             'nickname' => Arr::get($user, 'preferred_username'),
             'name' => Arr::get($user, $name),
-            'email' => Arr::get($user, 'email'),
+            'email' => $email,
             'avatar' => Arr::get($user, 'picture'),
         ]);
     }
