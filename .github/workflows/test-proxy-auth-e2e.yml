@@ -25,6 +25,9 @@ on:
       - .github/workflows/test-proxy-auth-e2e.yml
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   e2e:
     name: Caddy reverse-proxy auth flow
