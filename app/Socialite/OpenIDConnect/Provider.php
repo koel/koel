@@ -2,8 +2,8 @@
 
 namespace App\Socialite\OpenIDConnect;
 
-use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\User;
 use RuntimeException;
@@ -37,8 +37,7 @@ class Provider extends AbstractProvider
 
         throw_unless($issuer, new RuntimeException('OIDC issuer URL is not configured.'));
 
-        $response = (new Client())->get($issuer . '/.well-known/openid-configuration');
-        $this->discovery = json_decode((string) $response->getBody(), true, flags: JSON_THROW_ON_ERROR);
+        $this->discovery = Http::get($issuer . '/.well-known/openid-configuration')->throw()->json();
 
         return $this->discovery;
     }
@@ -56,11 +55,10 @@ class Provider extends AbstractProvider
     /** @inheritdoc */
     protected function getUserByToken(#[SensitiveParameter] $token): array
     {
-        $response = (new Client())->get($this->discover()['userinfo_endpoint'], [
-            'headers' => ['Authorization' => 'Bearer ' . $token],
-        ]);
-
-        return json_decode((string) $response->getBody(), true, flags: JSON_THROW_ON_ERROR);
+        return Http::withToken($token)
+            ->get($this->discover()['userinfo_endpoint'])
+            ->throw()
+            ->json();
     }
 
     /** @inheritdoc */
