@@ -1,7 +1,7 @@
 <template>
   <button
     class="opacity-50 hover:opacity-100 flex items-center gap-2 px-3 py-2 border border-k-fg-20 rounded-sm"
-    :title="`Log in with ${label}`"
+    :title="label"
     type="button"
     @click.prevent="loginWithOpenID"
   >
