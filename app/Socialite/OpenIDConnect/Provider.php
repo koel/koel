@@ -27,7 +27,7 @@ class Provider extends AbstractProvider
         #[SensitiveParameter]
         string $clientSecret,
         string $redirectUrl,
-        private string $issuer,
+        private readonly string $issuer,
     ) {
         parent::__construct($request, $clientId, $clientSecret, $redirectUrl);
     }
