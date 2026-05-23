@@ -7,6 +7,7 @@ use App\Helpers\Ulid;
 use App\Models\Song;
 use App\Services\SongStorages\SftpStorage;
 use Illuminate\Support\Facades\File;
+use Throwable;
 
 class SftpTranscodingStrategy extends TranscodingStrategy
 {
@@ -27,10 +28,9 @@ class SftpTranscodingStrategy extends TranscodingStrategy
         $storage = app(SftpStorage::class);
         $tmpSource = $storage->copyToLocal($song->storage_metadata->getPath());
 
+        $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
+
         try {
-            // (Re)Transcode the song to the specified bit rate and either create a new transcode record or
-            // update the existing one.
-            $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
             $this->transcoder->transcode($tmpSource, $destination, $bitRate);
 
             $this->createOrUpdateTranscode(
@@ -40,6 +40,10 @@ class SftpTranscodingStrategy extends TranscodingStrategy
                 File::hash($destination),
                 File::size($destination),
             );
+        } catch (Throwable $e) {
+            File::delete($destination);
+
+            throw $e;
         } finally {
             File::delete($tmpSource);
         }

@@ -7,6 +7,7 @@ use App\Helpers\Ulid;
 use App\Models\Song;
 use App\Services\SongStorages\WebDAVStorage;
 use Illuminate\Support\Facades\File;
+use Throwable;
 
 class WebDAVTranscodingStrategy extends TranscodingStrategy
 {
@@ -26,8 +27,9 @@ class WebDAVTranscodingStrategy extends TranscodingStrategy
         $storage = app(WebDAVStorage::class);
         $tmpSource = $storage->copyToLocal($song->storage_metadata->getPath());
 
+        $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
+
         try {
-            $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
             $this->transcoder->transcode($tmpSource, $destination, $bitRate);
 
             $this->createOrUpdateTranscode(
@@ -37,6 +39,10 @@ class WebDAVTranscodingStrategy extends TranscodingStrategy
                 File::hash($destination),
                 File::size($destination),
             );
+        } catch (Throwable $e) {
+            File::delete($destination);
+
+            throw $e;
         } finally {
             File::delete($tmpSource);
         }
