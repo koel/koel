@@ -5,6 +5,7 @@ namespace App\Socialite\OpenIDConnect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\User;
 use SensitiveParameter;
@@ -36,7 +37,7 @@ class Provider extends AbstractProvider
     private function discover(): array
     {
         $this->discovery ??= Http::get(
-            rtrim($this->issuer, '/') . '/.well-known/openid-configuration',
+            Str::finish($this->issuer, '/') . '.well-known/openid-configuration',
         )->throw()->json();
 
         return $this->discovery;
