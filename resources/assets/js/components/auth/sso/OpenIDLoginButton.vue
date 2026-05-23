@@ -4,28 +4,37 @@
     type="button"
     @click.prevent="loginWithOpenID"
   >
-    <Icon :icon="icon" />
+    <img v-if="brandIconUrl" :src="brandIconUrl" :alt="label" class="w-4 h-4" @error="brandIconUrl = ''" />
+    <Icon v-else :icon="faKey" />
     <span class="text-sm">{{ label }}</span>
   </button>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { ref } from 'vue'
 import { faKey } from '@fortawesome/free-solid-svg-icons'
-import { faApple, faAws, faGithub, faGitlab, faMicrosoft } from '@fortawesome/free-brands-svg-icons'
 import { openPopup } from '@/utils/helpers'
 
 const label = window.KOEL.sso_oidc_label || 'OpenID Connect'
 
-const brandIcons: Array<[RegExp, typeof faKey]> = [
-  [/github/i, faGithub],
-  [/gitlab/i, faGitlab],
-  [/microsoft|azure|entra/i, faMicrosoft],
-  [/apple/i, faApple],
-  [/cognito|amazon|aws/i, faAws],
+const brandSlugs: Array<[RegExp, string]> = [
+  [/authentik/i, 'authentik'],
+  [/authelia/i, 'authelia'],
+  [/keycloak/i, 'keycloak'],
+  [/zitadel/i, 'zitadel'],
+  [/okta/i, 'okta'],
+  [/auth0/i, 'auth0'],
+  [/github/i, 'github'],
+  [/gitlab/i, 'gitlab'],
+  [/microsoft|azure|entra/i, 'microsoft'],
+  [/apple/i, 'apple'],
+  [/cognito|amazon|aws/i, 'aws'],
 ]
 
-const icon = computed(() => brandIcons.find(([pattern]) => pattern.test(label))?.[1] ?? faKey)
+const matchedSlug = brandSlugs.find(([pattern]) => pattern.test(label))?.[1]
+const brandIconUrl = ref(
+  matchedSlug ? `https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/${matchedSlug}.svg` : '',
+)
 
 const emit = defineEmits<{
   (e: 'success', data: any): void
