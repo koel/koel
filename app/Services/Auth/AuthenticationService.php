@@ -56,8 +56,10 @@ class AuthenticationService
 
     public function tryResetPasswordUsingBroker(
         string $email,
-        #[SensitiveParameter] string $password,
-        #[SensitiveParameter] string $token,
+        #[SensitiveParameter]
+        string $password,
+        #[SensitiveParameter]
+        string $token,
     ): bool {
         $credentials = [
             'email' => $email,
@@ -68,7 +70,8 @@ class AuthenticationService
 
         $status = $this->passwordBroker->reset($credentials, static function (
             User $user,
-            #[SensitiveParameter] string $password,
+            #[SensitiveParameter]
+            string $password,
         ): void {
             $user->password = Hash::make($password);
             $user->save();

@@ -92,7 +92,10 @@ class AddToFavoritesToolTest extends PlusTestCase
         $artist = Artist::factory()->createOne(['name' => 'Queen']);
 
         $artistRepository = Mockery::mock(ArtistRepository::class);
-        $artistRepository->shouldReceive('search')->with('Queen', 1, $this->user)->andReturn(new Collection([$artist]));
+        $artistRepository
+            ->shouldReceive('search')
+            ->with('Queen', 1, $this->user)
+            ->andReturn(new Collection([$artist]));
 
         app()->instance(ArtistRepository::class, $artistRepository);
         $this->tool = app()->make(AddToFavorites::class);

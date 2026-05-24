@@ -16,12 +16,7 @@ class PlaylistSongTest extends PlusTestCase
     public function getSongsInCollaborativePlaylist(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(
-            Song::factory()
-                ->public()
-                ->count(2)
-                ->create(),
-        );
+        $playlist->addPlayables(Song::factory()->public()->count(2)->create());
 
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
@@ -37,12 +32,7 @@ class PlaylistSongTest extends PlusTestCase
     public function privateSongsDoNotShowUpInCollaborativePlaylist(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(
-            Song::factory()
-                ->public()
-                ->count(2)
-                ->create(),
-        );
+        $playlist->addPlayables(Song::factory()->public()->count(2)->create());
         $privateSong = Song::factory()->private()->createOne();
         $playlist->addPlayables($privateSong);
 
@@ -63,10 +53,7 @@ class PlaylistSongTest extends PlusTestCase
         $playlist = create_playlist();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
-        $songs = Song::factory()
-            ->for($collaborator, 'owner')
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for($collaborator, 'owner')->count(2)->create();
 
         $this->postAs(
             "api/playlists/{$playlist->id}/songs",
@@ -84,10 +71,7 @@ class PlaylistSongTest extends PlusTestCase
         $playlist = create_playlist();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
-        $songs = Song::factory()
-            ->for($collaborator, 'owner')
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for($collaborator, 'owner')->count(2)->create();
         $playlist->addPlayables($songs);
 
         $this->deleteAs(

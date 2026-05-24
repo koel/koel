@@ -188,10 +188,7 @@ class SongTest extends TestCase
             create_admin(),
         )->assertOk();
 
-        $songs = Song::query()
-            ->whereIn('id', $originalSongIds)
-            ->get()
-            ->orderByArray($originalSongIds);
+        $songs = Song::query()->whereIn('id', $originalSongIds)->get()->orderByArray($originalSongIds);
 
         // Even though the album name doesn't change, a new artist should have been created
         // and thus, a new album with the same name was created as well.

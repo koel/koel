@@ -129,7 +129,10 @@ class DuplicateUploadActionTest extends TestCase
             DuplicateUpload::factory()->for($user)->createOne(['location' => $songPath]);
         }
 
-        $this->postAs('api/duplicate-uploads', [], $user)->assertSuccessful()->assertJsonStructure([['song', 'album']]);
+        $this
+            ->postAs('api/duplicate-uploads', [], $user)
+            ->assertSuccessful()
+            ->assertJsonStructure([['song', 'album']]);
 
         self::assertSame(0, DuplicateUpload::query()->where('user_id', $user->id)->count());
     }

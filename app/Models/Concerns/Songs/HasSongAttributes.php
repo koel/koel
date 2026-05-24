@@ -73,11 +73,6 @@ trait HasSongAttributes
 
     protected function genre(): Attribute
     {
-        return Attribute::get(
-            fn () => $this->genres
-                ->pluck('name')
-                ->sort()
-                ->implode(', '),
-        )->shouldCache();
+        return Attribute::get(fn () => $this->genres->pluck('name')->sort()->implode(', '))->shouldCache();
     }
 }

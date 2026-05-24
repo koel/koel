@@ -95,7 +95,10 @@ class RemoveFromFavoritesToolTest extends PlusTestCase
         $artist->favorites()->create(['user_id' => $this->user->id]);
 
         $artistRepository = Mockery::mock(ArtistRepository::class);
-        $artistRepository->shouldReceive('search')->with('Queen', 1, $this->user)->andReturn(new Collection([$artist]));
+        $artistRepository
+            ->shouldReceive('search')
+            ->with('Queen', 1, $this->user)
+            ->andReturn(new Collection([$artist]));
 
         app()->instance(ArtistRepository::class, $artistRepository);
         $this->tool = app()->make(RemoveFromFavorites::class);

@@ -13,10 +13,7 @@ class AlbumTest extends PlusTestCase
     public function getOrCreate(): void
     {
         $artist = Artist::factory()->createOne();
-        $album = Album::factory()
-            ->for($artist)
-            ->for($artist->user)
-            ->createOne(['name' => 'Foo']);
+        $album = Album::factory()->for($artist)->for($artist->user)->createOne(['name' => 'Foo']);
 
         // The album can be retrieved by its artist and user
         self::assertTrue(Album::getOrCreate($album->artist, 'Foo')->is($album));

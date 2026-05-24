@@ -37,10 +37,9 @@ class SpotifyServiceTest extends TestCase
     {
         $artist = Artist::factory(['name' => 'Foo'])->create();
 
-        $this->client
-            ->expects('search')
-            ->with('Foo', 'artist', ['limit' => 1])
-            ->andReturn(self::parseFixture('search-artist.json'));
+        $this->client->expects('search')->with('Foo', 'artist', [
+            'limit' => 1,
+        ])->andReturn(self::parseFixture('search-artist.json'));
 
         self::assertSame('https://foo/bar.jpg', $this->service->tryGetArtistImage($artist));
     }
@@ -60,10 +59,9 @@ class SpotifyServiceTest extends TestCase
     {
         $album = Album::factory(['name' => 'Bar'])->for(Artist::factory(['name' => 'Foo']))->create();
 
-        $this->client
-            ->expects('search')
-            ->with('Bar artist:Foo', 'album', ['limit' => 1])
-            ->andReturn(self::parseFixture('search-album.json'));
+        $this->client->expects('search')->with('Bar artist:Foo', 'album', [
+            'limit' => 1,
+        ])->andReturn(self::parseFixture('search-album.json'));
 
         self::assertSame('https://foo/bar.jpg', $this->service->tryGetAlbumCover($album));
     }

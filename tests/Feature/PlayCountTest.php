@@ -48,10 +48,7 @@ class PlayCountTest extends TestCase
             'play_count',
         ]);
 
-        $interaction = Interaction::query()
-            ->whereBelongsTo($song)
-            ->whereBelongsTo($user)
-            ->first();
+        $interaction = Interaction::query()->whereBelongsTo($song)->whereBelongsTo($user)->first();
 
         self::assertSame(1, $interaction->play_count);
         Event::assertDispatched(PlaybackStarted::class);

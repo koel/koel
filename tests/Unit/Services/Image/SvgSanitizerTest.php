@@ -25,10 +25,7 @@ class SvgSanitizerTest extends TestCase
     #[Test]
     public function sanitize(): void
     {
-        $this->sanitizer
-            ->expects('sanitize')
-            ->with('<svg><raw /></svg>')
-            ->andReturn('<svg><sanitized /></svg>');
+        $this->sanitizer->expects('sanitize')->with('<svg><raw /></svg>')->andReturn('<svg><sanitized /></svg>');
 
         self::assertSame('<svg><sanitized /></svg>', $this->service->sanitize('<svg><raw /></svg>'));
     }

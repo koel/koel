@@ -22,10 +22,7 @@ class DropboxStorage extends CloudStorage
         #[Config('filesystems.disks.dropbox')]
         private readonly array $config = [],
     ) {
-        $this->filesystem
-            ->getAdapter()
-            ->getClient()
-            ->setAccessToken($this->maybeRefreshAccessToken());
+        $this->filesystem->getAdapter()->getClient()->setAccessToken($this->maybeRefreshAccessToken());
     }
 
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference

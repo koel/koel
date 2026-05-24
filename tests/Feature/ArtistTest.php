@@ -55,10 +55,7 @@ class ArtistTest extends TestCase
         $album = Album::factory()->for($albumOwner)->createOne();
 
         $featuredArtist = Artist::factory()->createOne();
-        Song::factory()
-            ->for($album)
-            ->for($featuredArtist)
-            ->createOne();
+        Song::factory()->for($album)->for($featuredArtist)->createOne();
 
         $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
 
@@ -77,10 +74,7 @@ class ArtistTest extends TestCase
         $compilation = Album::factory()->for($curator)->createOne();
 
         $trackArtist = Artist::factory()->createOne();
-        Song::factory()
-            ->for($compilation)
-            ->for($trackArtist)
-            ->createOne();
+        Song::factory()->for($compilation)->for($trackArtist)->createOne();
 
         $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
 

@@ -20,10 +20,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializePlaySongs(): void
     {
-        $songs = Song::factory()
-            ->for(create_user(), 'owner')
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for(create_user(), 'owner')->count(2)->create();
 
         $result = new AiAssistantResult();
         $result->action = 'play_songs';
@@ -39,10 +36,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializePlaySongsDefaultsQueueToFalse(): void
     {
-        $songs = Song::factory()
-            ->for(create_user(), 'owner')
-            ->count(1)
-            ->create();
+        $songs = Song::factory()->for(create_user(), 'owner')->count(1)->create();
 
         $result = new AiAssistantResult();
         $result->action = 'play_songs';
@@ -56,10 +50,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeSuggestSongs(): void
     {
-        $songs = Song::factory()
-            ->for(create_user(), 'owner')
-            ->count(3)
-            ->create();
+        $songs = Song::factory()->for(create_user(), 'owner')->count(3)->create();
 
         $result = new AiAssistantResult();
         $result->action = 'suggest_songs';
@@ -75,10 +66,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeSuggestSongsDefaultsListToEmpty(): void
     {
-        $songs = Song::factory()
-            ->for(create_user(), 'owner')
-            ->count(1)
-            ->create();
+        $songs = Song::factory()->for(create_user(), 'owner')->count(1)->create();
 
         $result = new AiAssistantResult();
         $result->action = 'suggest_songs';
@@ -92,10 +80,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeAddToFavoritesWithSongs(): void
     {
-        $songs = Song::factory()
-            ->for(create_user(), 'owner')
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for(create_user(), 'owner')->count(2)->create();
 
         $result = new AiAssistantResult();
         $result->action = 'add_to_favorites';
@@ -155,10 +140,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeAddToPlaylist(): void
     {
-        $songs = Song::factory()
-            ->for(create_user(), 'owner')
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for(create_user(), 'owner')->count(2)->create();
         $playlist = create_playlist();
 
         $result = new AiAssistantResult();
@@ -174,10 +156,7 @@ class AiResultSerializerRegistryTest extends TestCase
     #[Test]
     public function serializeRemoveFromPlaylist(): void
     {
-        $songs = Song::factory()
-            ->for(create_user(), 'owner')
-            ->count(1)
-            ->create();
+        $songs = Song::factory()->for(create_user(), 'owner')->count(1)->create();
         $playlist = create_playlist();
 
         $result = new AiAssistantResult();

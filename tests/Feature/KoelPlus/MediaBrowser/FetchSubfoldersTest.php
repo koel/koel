@@ -24,10 +24,7 @@ class FetchSubfoldersTest extends PlusTestCase
         $folder = Folder::factory()->createOne();
 
         /** @var Collection $subfolders */
-        $subfolders = Folder::factory()
-            ->for($folder, 'parent')
-            ->count(2)
-            ->create();
+        $subfolders = Folder::factory()->for($folder, 'parent')->count(2)->create();
 
         $response = $this->getAs('/api/browse/folders?path=' . $folder->path)->assertJsonStructure([
             0 => FolderResource::JSON_STRUCTURE,

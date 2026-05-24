@@ -30,14 +30,8 @@ class ArtistServiceTest extends TestCase
     {
         $artist = Artist::factory()->createOne(['name' => 'Old Artist Name']);
 
-        $songs = Song::factory()
-            ->for($artist)
-            ->count(2)
-            ->create();
-        $albums = Album::factory()
-            ->for($artist)
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for($artist)->count(2)->create();
+        $albums = Album::factory()->for($artist)->count(2)->create();
 
         $data = ArtistUpdateData::make(name: 'New Artist Name');
 
@@ -59,14 +53,8 @@ class ArtistServiceTest extends TestCase
     {
         $artist = Artist::factory()->createOne(['name' => 'Old Artist Name']);
 
-        $songs = Song::factory()
-            ->for($artist)
-            ->count(2)
-            ->create();
-        $albums = Album::factory()
-            ->for($artist)
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for($artist)->count(2)->create();
+        $albums = Album::factory()->for($artist)->count(2)->create();
 
         $data = ArtistUpdateData::make(name: 'New Artist Name', image: minimal_base64_encoded_image());
 

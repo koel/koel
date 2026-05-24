@@ -37,17 +37,10 @@ class PlayMostPlayedAlbumToolTest extends PlusTestCase
     public function playsMostPlayedAlbum(): void
     {
         $album = Album::factory()->for($this->user)->createOne();
-        $songs = Song::factory()
-            ->count(3)
-            ->for($album)
-            ->for($this->user, 'owner')
-            ->create();
+        $songs = Song::factory()->count(3)->for($album)->for($this->user, 'owner')->create();
 
         foreach ($songs as $song) {
-            Interaction::factory()
-                ->for($this->user)
-                ->for($song)
-                ->createOne(['play_count' => 10]);
+            Interaction::factory()->for($this->user)->for($song)->createOne(['play_count' => 10]);
         }
 
         $response = $this->tool->handle(new Request([]));
@@ -70,17 +63,10 @@ class PlayMostPlayedAlbumToolTest extends PlusTestCase
     public function queuesInsteadOfPlaying(): void
     {
         $album = Album::factory()->for($this->user)->createOne();
-        $songs = Song::factory()
-            ->count(2)
-            ->for($album)
-            ->for($this->user, 'owner')
-            ->create();
+        $songs = Song::factory()->count(2)->for($album)->for($this->user, 'owner')->create();
 
         foreach ($songs as $song) {
-            Interaction::factory()
-                ->for($this->user)
-                ->for($song)
-                ->createOne(['play_count' => 5]);
+            Interaction::factory()->for($this->user)->for($song)->createOne(['play_count' => 5]);
         }
 
         $response = $this->tool->handle(new Request(['queue' => true]));

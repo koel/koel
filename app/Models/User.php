@@ -11,6 +11,9 @@ use App\Observers\UserObserver;
 use App\Values\User\UserPreferences;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
@@ -58,6 +61,9 @@ use Spatie\Permission\Traits\HasRoles;
  */
 #[ObservedBy(UserObserver::class)]
 #[UseEloquentBuilder(UserBuilder::class)]
+#[Guarded(['id', 'public_id'])]
+#[Hidden(['password', 'remember_token', 'created_at', 'updated_at', 'invitation_accepted_at'])]
+#[Appends(['avatar'])]
 class User extends Authenticatable implements AuditableContract
 {
     use Auditable;
@@ -77,9 +83,6 @@ class User extends Authenticatable implements AuditableContract
     public const string DEMO_PASSWORD = 'demo';
     public const string DEMO_USER_DOMAIN = 'demo.koel.dev';
 
-    protected $guarded = ['id', 'public_id'];
-    protected $hidden = ['password', 'remember_token', 'created_at', 'updated_at', 'invitation_accepted_at'];
-    protected $appends = ['avatar'];
     protected array $auditExclude = ['password', 'remember_token', 'invitation_token'];
     protected $with = ['roles', 'permissions'];
 

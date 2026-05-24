@@ -71,7 +71,10 @@ class DeactivateLicenseCommandTest extends TestCase
         $licenseService = Mockery::mock(LicenseServiceInterface::class);
         $licenseService->shouldReceive('getStatus')->once()->andReturn(LicenseStatus::valid($license));
 
-        $licenseService->shouldReceive('deactivate')->once()->andThrow(new \RuntimeException('API error'));
+        $licenseService
+            ->shouldReceive('deactivate')
+            ->once()
+            ->andThrow(new \RuntimeException('API error'));
 
         $this->app->instance(LicenseServiceInterface::class, $licenseService);
 

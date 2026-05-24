@@ -68,12 +68,7 @@ class KoelAssistant implements Agent, Conversational, HasTools
 
     public function tools(): iterable
     {
-        $tools = collect(
-            Finder::create()
-                ->files()
-                ->name('*.php')
-                ->in(app_path('Ai/Tools')),
-        )
+        $tools = collect(Finder::create()->files()->name('*.php')->in(app_path('Ai/Tools')))
             ->map(
                 static fn ($file) => 'App\\Ai\\Tools\\'
                 . str_replace(['/', '.php'], ['\\', ''], $file->getRelativePathname()),

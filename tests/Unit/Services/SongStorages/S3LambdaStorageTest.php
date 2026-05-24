@@ -107,10 +107,7 @@ class S3LambdaStorageTest extends TestCase
             'storage' => 's3-lambda',
         ]);
 
-        $this->songRepository
-            ->expects('findOneByPath')
-            ->with('s3://foo/bar')
-            ->andReturn($song);
+        $this->songRepository->expects('findOneByPath')->with('s3://foo/bar')->andReturn($song);
 
         $this->storage->deleteSongEntry('foo', 'bar');
 

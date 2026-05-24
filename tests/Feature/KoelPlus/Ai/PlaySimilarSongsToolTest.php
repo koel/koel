@@ -35,10 +35,7 @@ class PlaySimilarSongsToolTest extends PlusTestCase
     public function findsSimilarSongsByArtist(): void
     {
         $referenceSong = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'One']);
-        Song::factory()
-            ->for($this->user, 'owner')
-            ->for($referenceSong->artist)
-            ->createOne(['title' => 'Two']);
+        Song::factory()->for($this->user, 'owner')->for($referenceSong->artist)->createOne(['title' => 'Two']);
         Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Unrelated']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $referenceSong->id));
@@ -91,10 +88,7 @@ class PlaySimilarSongsToolTest extends PlusTestCase
     public function usesCurrentlyPlayingSongWhenNoTitleSpecified(): void
     {
         $referenceSong = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Master of Puppets']);
-        Song::factory()
-            ->for($this->user, 'owner')
-            ->for($referenceSong->artist)
-            ->createOne(['title' => 'Battery']);
+        Song::factory()->for($this->user, 'owner')->for($referenceSong->artist)->createOne(['title' => 'Battery']);
 
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $referenceSong->id));
         $this->tool = app()->make(PlaySimilarSongs::class);

@@ -158,10 +158,7 @@ class SmartPlaylistServiceTest extends TestCase
     public function albumIs(): void
     {
         $album = Album::factory()->createOne(['name' => 'Foo Album']);
-        $matches = Song::factory()
-            ->count(1)
-            ->for($album)
-            ->create();
+        $matches = Song::factory()->count(1)->for($album)->create();
         Song::factory()->createOne();
 
         $this->assertMatchesAgainstRules($matches, [
@@ -210,10 +207,7 @@ class SmartPlaylistServiceTest extends TestCase
     public function genreIs(): void
     {
         $genre = Genre::factory()->createOne(['name' => 'Foo Genre']);
-        $matches = Song::factory()
-            ->count(1)
-            ->hasAttached($genre)
-            ->create();
+        $matches = Song::factory()->count(1)->hasAttached($genre)->create();
 
         Song::factory()->createOne();
 
@@ -337,15 +331,9 @@ class SmartPlaylistServiceTest extends TestCase
         $matches = Song::factory()->createMany(1);
         $notMatch = Song::factory()->createOne();
 
-        Interaction::factory()
-            ->for($matches[0])
-            ->for($user)
-            ->createOne(['play_count' => 1000]);
+        Interaction::factory()->for($matches[0])->for($user)->createOne(['play_count' => 1000]);
 
-        Interaction::factory()
-            ->for($user)
-            ->for($notMatch)
-            ->createOne(['play_count' => 500]);
+        Interaction::factory()->for($user)->for($notMatch)->createOne(['play_count' => 500]);
 
         $this->assertMatchesAgainstRules(
             $matches,
@@ -370,7 +358,9 @@ class SmartPlaylistServiceTest extends TestCase
     public function lastPlayedAtIsInLast(): void
     {
         $user = create_user();
-        $matches = Song::factory()->count(1)->create(['created_at' => now()->subDays(3)]);
+        $matches = Song::factory()
+            ->count(1)
+            ->create(['created_at' => now()->subDays(3)]);
         $notMatch = Song::factory()->createOne(['created_at' => now()->subDays(5)]);
 
         Interaction::factory()
@@ -406,7 +396,9 @@ class SmartPlaylistServiceTest extends TestCase
     public function lastPlayedNotInLast(): void
     {
         $user = create_user();
-        $matches = Song::factory()->count(1)->create(['created_at' => now()->subDays(4)]);
+        $matches = Song::factory()
+            ->count(1)
+            ->create(['created_at' => now()->subDays(4)]);
         $notMatch = Song::factory()->createOne();
 
         Interaction::factory()
@@ -414,10 +406,7 @@ class SmartPlaylistServiceTest extends TestCase
             ->for($user)
             ->createOne(['last_played_at' => now()->subDays(3)]);
 
-        Interaction::factory()
-            ->for($user)
-            ->for($notMatch)
-            ->createOne(['last_played_at' => now()]);
+        Interaction::factory()->for($user)->for($notMatch)->createOne(['last_played_at' => now()]);
 
         $this->assertMatchesAgainstRules(
             $matches,
@@ -445,10 +434,7 @@ class SmartPlaylistServiceTest extends TestCase
         $matches = Song::factory()->createMany(1);
         $notMatch = Song::factory()->createOne(['created_at' => now()->subDays(5)]);
 
-        Interaction::factory()
-            ->for($matches[0])
-            ->for($user)
-            ->createOne(['last_played_at' => now()]);
+        Interaction::factory()->for($matches[0])->for($user)->createOne(['last_played_at' => now()]);
 
         Interaction::factory()
             ->for($user)
@@ -532,7 +518,9 @@ class SmartPlaylistServiceTest extends TestCase
             ->create(['created_at' => now()->subDay()])
             ->merge(Song::factory()->count(1)->create(['created_at' => today()]));
 
-        Song::factory()->count(1)->create(['created_at' => now()->subDays(4)]);
+        Song::factory()
+            ->count(1)
+            ->create(['created_at' => now()->subDays(4)]);
 
         $this->assertMatchesAgainstRules($matches, [
             [
@@ -555,7 +543,9 @@ class SmartPlaylistServiceTest extends TestCase
         $matches = Song::factory()
             ->count(1)
             ->create(['created_at' => now()->subDays(4)])
-            ->merge(Song::factory()->count(1)->create(['created_at' => now()->subDays(5)]));
+            ->merge(Song::factory()
+                ->count(1)
+                ->create(['created_at' => now()->subDays(5)]));
 
         Song::factory()->createOne(['created_at' => now()->subDays(2)]);
 

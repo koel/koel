@@ -47,10 +47,7 @@ class PlayMostPlayedArtistToolTest extends PlusTestCase
             ->create();
 
         foreach ($songs as $song) {
-            Interaction::factory()
-                ->for($this->user)
-                ->for($song)
-                ->createOne(['play_count' => 10]);
+            Interaction::factory()->for($this->user)->for($song)->createOne(['play_count' => 10]);
         }
 
         $response = $this->tool->handle(new Request([]));
@@ -82,10 +79,7 @@ class PlayMostPlayedArtistToolTest extends PlusTestCase
             ->create();
 
         foreach ($songs as $song) {
-            Interaction::factory()
-                ->for($this->user)
-                ->for($song)
-                ->createOne(['play_count' => 5]);
+            Interaction::factory()->for($this->user)->for($song)->createOne(['play_count' => 5]);
         }
 
         $response = $this->tool->handle(new Request(['queue' => true]));

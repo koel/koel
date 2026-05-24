@@ -14,6 +14,8 @@ use App\Models\Contracts\Favoriteable;
 use App\Observers\ArtistObserver;
 use Carbon\Carbon;
 use Database\Factories\ArtistFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
@@ -42,6 +44,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  */
 #[ObservedBy(ArtistObserver::class)]
 #[UseEloquentBuilder(ArtistBuilder::class)]
+#[Guarded(['id'])]
+#[Hidden(['created_at', 'updated_at'])]
 class Artist extends Model implements AuditableContract, Embeddable, Favoriteable
 {
     use Auditable;
@@ -55,9 +59,6 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
 
     public const string UNKNOWN_NAME = 'Unknown Artist';
     public const string VARIOUS_NAME = 'Various Artists';
-
-    protected $guarded = ['id'];
-    protected $hidden = ['created_at', 'updated_at'];
 
     /** @inheritDoc */
     protected function casts(): array

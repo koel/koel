@@ -32,10 +32,7 @@ class DownloadTest extends PlusTestCase
         $this->get("download/songs?songs[]={$externalPublicSong->id}&api_token=" . $apiToken)->assertOk();
 
         // Can download a private song that belongs to the user
-        $ownSong = Song::factory()
-            ->for($owner, 'owner')
-            ->private()
-            ->createOne();
+        $ownSong = Song::factory()->for($owner, 'owner')->private()->createOne();
         $downloadService->expects('getDownloadable')->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
         $this->get("download/songs?songs[]={$ownSong->id}&api_token=" . $apiToken)->assertOk();
     }
