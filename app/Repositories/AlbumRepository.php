@@ -21,7 +21,9 @@ class AlbumRepository extends Repository implements ScoutableRepository
      */
     public function getOne($id, ?User $user = null): Album
     {
-        return Album::query()->withUserContext(user: $user ?? $this->auth->user())->findOrFail($id);
+        return Album::query()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->findOrFail($id);
     }
 
     public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
@@ -86,10 +88,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: Album::search($keywords)
-                ->take($limit)
-                ->get()
-                ->modelKeys(),
+            ids: Album::search($keywords)->take($limit)->get()->modelKeys(),
             preserveOrder: true,
             user: $user,
         );

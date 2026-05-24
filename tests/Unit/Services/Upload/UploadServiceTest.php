@@ -62,10 +62,7 @@ class UploadServiceTest extends TestCase
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->duplicateUploadService->expects('detectDuplicate');
 
-        $this->scanner
-            ->expects('scan')
-            ->with('/var/media/koel/some-file.mp3')
-            ->andReturn($scanInfo);
+        $this->scanner->expects('scan')->with('/var/media/koel/some-file.mp3')->andReturn($scanInfo);
 
         $this->songService
             ->expects('createOrUpdateSongFromScan')
@@ -93,10 +90,7 @@ class UploadServiceTest extends TestCase
 
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->duplicateUploadService->expects('detectDuplicate');
-        $this->scanner
-            ->expects('scan')
-            ->with('/tmp/some-tmp-file.mp3')
-            ->andReturn($scanInfo);
+        $this->scanner->expects('scan')->with('/tmp/some-tmp-file.mp3')->andReturn($scanInfo);
         $this->songService->expects('createOrUpdateSongFromScan')->andReturn($song);
 
         $result = $this->makeService($storage)->handleUpload($file, $uploader);

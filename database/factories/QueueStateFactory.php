@@ -15,10 +15,7 @@ class QueueStateFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'song_ids' => Song::factory()
-                ->count(3)
-                ->create()
-                ->modelKeys(),
+            'song_ids' => Song::factory()->count(3)->create()->modelKeys(),
             'current_song_id' => null,
             'playback_position' => 0,
         ];

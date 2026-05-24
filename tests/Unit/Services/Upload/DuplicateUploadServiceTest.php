@@ -50,10 +50,7 @@ class DuplicateUploadServiceTest extends TestCase
         $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3');
 
         File::expects('hash')->with('/tmp/song.mp3')->andReturn('abc123');
-        $this->songRepository
-            ->expects('findByHash')
-            ->with('abc123', $uploader)
-            ->andReturn($existingSong);
+        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturn($existingSong);
 
         try {
             $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
@@ -84,10 +81,7 @@ class DuplicateUploadServiceTest extends TestCase
         $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3');
 
         File::expects('hash')->andReturn('abc123');
-        $this->songRepository
-            ->expects('findByHash')
-            ->with('abc123', $uploader)
-            ->andReturnNull();
+        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturnNull();
 
         $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
 

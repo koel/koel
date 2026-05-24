@@ -46,10 +46,7 @@ class ImageStorageTest extends TestCase
         $ulid = Ulid::freeze();
         $logo = "$ulid.svg";
 
-        $this->svgSanitizer
-            ->expects('sanitize')
-            ->with('foo')
-            ->andReturn('foo');
+        $this->svgSanitizer->expects('sanitize')->with('foo')->andReturn('foo');
 
         File::expects('put')->with(image_storage_path($logo), 'foo');
 

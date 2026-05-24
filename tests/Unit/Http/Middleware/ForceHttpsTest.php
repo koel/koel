@@ -52,10 +52,7 @@ class ForceHttpsTest extends TestCase
     {
         config(['koel.force_https' => false]);
 
-        $this->url
-            ->expects('forceScheme')
-            ->with('https')
-            ->never();
+        $this->url->expects('forceScheme')->with('https')->never();
 
         $request = Mockery::mock(Request::class);
         $request->shouldNotReceive('setTrustedProxies');

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Database\Factories\SettingFactory;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Auditable;
@@ -15,15 +17,12 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @method static self find(string $key)
  * @method static SettingFactory factory(...$parameters)
  */
+#[Table(key: 'key', keyType: 'string', timestamps: false)]
+#[Unguarded]
 class Setting extends Model implements AuditableContract
 {
     use Auditable;
     use HasFactory;
-
-    protected $primaryKey = 'key';
-    protected $keyType = 'string';
-    public $timestamps = false;
-    protected $guarded = [];
 
     protected function casts(): array
     {

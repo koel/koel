@@ -44,7 +44,8 @@ final readonly class UserCreateData implements Arrayable
     public static function make(
         string $name,
         string $email,
-        #[SensitiveParameter] ?string $plainTextPassword = null,
+        #[SensitiveParameter]
+        ?string $plainTextPassword = null,
         ?Role $role = null,
         ?string $avatar = null,
         ?string $ssoId = null,

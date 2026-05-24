@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SongStorageType;
 use Database\Factories\TranscodeFactory;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,12 +24,11 @@ use Illuminate\Support\Facades\File;
  *
  * @method static TranscodeFactory factory(...$parameters)
  */
+#[Unguarded]
 class Transcode extends Model
 {
     use HasFactory;
     use HasUuids;
-
-    protected $guarded = [];
 
     protected function casts(): array
     {

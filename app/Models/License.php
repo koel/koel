@@ -9,6 +9,7 @@ use App\Values\License\LicenseInstance;
 use App\Values\License\LicenseMeta;
 use Carbon\Carbon;
 use Database\Factories\LicenseFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,11 +25,10 @@ use Illuminate\Support\Str;
  *
  * @method static LicenseFactory factory(...$parameters)
  */
+#[Guarded(['id'])]
 class License extends Model
 {
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     protected function casts(): array
     {

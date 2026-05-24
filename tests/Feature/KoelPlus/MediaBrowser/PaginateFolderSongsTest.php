@@ -17,10 +17,7 @@ class PaginateFolderSongsTest extends PlusTestCase
         $folder = Folder::factory()->createOne(['path' => 'foo/bar']);
 
         /** @var Collection<Song> $songs */
-        $songs = Song::factory()
-            ->for($folder)
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for($folder)->count(2)->create();
 
         $response = $this->getAs(
             '/api/browse/songs?path=foo/bar&page=1',

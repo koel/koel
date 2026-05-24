@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\OrganizationFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,14 +23,13 @@ use Illuminate\Support\Carbon;
  * @method static OrganizationFactory factory(...$parameters)
  */
 
+#[Guarded(['id'])]
 class Organization extends Model
 {
     use HasUlids;
     use HasFactory;
 
     public const string DEFAULT_SLUG = 'koel';
-
-    protected $guarded = ['id'];
 
     public static function default(): Organization
     {

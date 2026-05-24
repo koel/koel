@@ -57,10 +57,7 @@ class EncyclopediaServiceTest extends TestCase
         $album = Album::factory()->createOne();
         $info = AlbumInformation::make();
 
-        $this->encyclopedia
-            ->expects('getAlbumInformation')
-            ->with($album)
-            ->andReturn($info);
+        $this->encyclopedia->expects('getAlbumInformation')->with($album)->andReturn($info);
 
         self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
         self::assertNotNull(cache()->get(cache_key('album information', $album->name, $album->artist->name)));
@@ -74,10 +71,7 @@ class EncyclopediaServiceTest extends TestCase
 
         self::assertEmpty($album->cover);
 
-        $this->encyclopedia
-            ->expects('getAlbumInformation')
-            ->with($album)
-            ->andReturn($info);
+        $this->encyclopedia->expects('getAlbumInformation')->with($album)->andReturn($info);
 
         $this->imageStorage->expects('storeImage')->with('https://wiki.example.com/album-cover.jpg');
 
@@ -96,15 +90,9 @@ class EncyclopediaServiceTest extends TestCase
 
         self::assertEmpty($album->cover);
 
-        $this->encyclopedia
-            ->expects('getAlbumInformation')
-            ->with($album)
-            ->andReturn($info);
+        $this->encyclopedia->expects('getAlbumInformation')->with($album)->andReturn($info);
 
-        $this->spotifyService
-            ->expects('tryGetAlbumCover')
-            ->with($album)
-            ->andReturn('https://spotify.com/cover.jpg');
+        $this->spotifyService->expects('tryGetAlbumCover')->with($album)->andReturn('https://spotify.com/cover.jpg');
 
         $this->imageStorage->expects('storeImage')->with('https://spotify.com/cover.jpg');
 
@@ -119,10 +107,7 @@ class EncyclopediaServiceTest extends TestCase
 
         self::assertNotEmpty($artist->image);
 
-        $this->encyclopedia
-            ->expects('getArtistInformation')
-            ->with($artist)
-            ->andReturn($info);
+        $this->encyclopedia->expects('getArtistInformation')->with($artist)->andReturn($info);
 
         self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
         self::assertNotNull(cache()->get(cache_key('artist information', $artist->name)));
@@ -136,10 +121,7 @@ class EncyclopediaServiceTest extends TestCase
 
         self::assertEmpty($artist->image);
 
-        $this->encyclopedia
-            ->expects('getArtistInformation')
-            ->with($artist)
-            ->andReturn($info);
+        $this->encyclopedia->expects('getArtistInformation')->with($artist)->andReturn($info);
 
         $this->imageStorage->expects('storeImage')->with('https://wiki.example.com/artist-image.jpg');
 
@@ -158,15 +140,9 @@ class EncyclopediaServiceTest extends TestCase
 
         self::assertEmpty($artist->image);
 
-        $this->encyclopedia
-            ->expects('getArtistInformation')
-            ->with($artist)
-            ->andReturn($info);
+        $this->encyclopedia->expects('getArtistInformation')->with($artist)->andReturn($info);
 
-        $this->spotifyService
-            ->expects('tryGetArtistImage')
-            ->with($artist)
-            ->andReturn('https://spotify.com/image.jpg');
+        $this->spotifyService->expects('tryGetArtistImage')->with($artist)->andReturn('https://spotify.com/image.jpg');
 
         $this->imageStorage->expects('storeImage')->with('https://spotify.com/image.jpg');
 
@@ -181,10 +157,7 @@ class EncyclopediaServiceTest extends TestCase
         $album = Album::factory()->createOne();
         $info = AlbumInformation::make();
 
-        $this->encyclopedia
-            ->expects('getAlbumInformation')
-            ->with($album)
-            ->andReturn($info);
+        $this->encyclopedia->expects('getAlbumInformation')->with($album)->andReturn($info);
 
         self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
     }
@@ -197,10 +170,7 @@ class EncyclopediaServiceTest extends TestCase
         $artist = Artist::factory()->createOne(['image' => 'existing.jpg']);
         $info = ArtistInformation::make();
 
-        $this->encyclopedia
-            ->expects('getArtistInformation')
-            ->with($artist)
-            ->andReturn($info);
+        $this->encyclopedia->expects('getArtistInformation')->with($artist)->andReturn($info);
 
         self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
     }

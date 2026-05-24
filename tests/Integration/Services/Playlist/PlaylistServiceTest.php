@@ -210,10 +210,7 @@ class PlaylistServiceTest extends TestCase
         $playlist = create_playlist();
         $playlist->addPlayables(Song::factory()->createMany(2));
         $podcast = Podcast::factory()->createOne();
-        $episodes = Song::factory()
-            ->asEpisode()
-            ->for($podcast)
-            ->createMany(2);
+        $episodes = Song::factory()->asEpisode()->for($podcast)->createMany(2);
 
         $podcastService->subscribeUserToPodcast($playlist->owner, $podcast);
 
@@ -230,10 +227,7 @@ class PlaylistServiceTest extends TestCase
     {
         $playlist = create_playlist();
         $playlist->addPlayables(Song::factory()->createMany(2));
-        $playables = Song::factory()
-            ->asEpisode()
-            ->createMany(2)
-            ->merge(Song::factory()->createMany(2));
+        $playables = Song::factory()->asEpisode()->createMany(2)->merge(Song::factory()->createMany(2));
 
         $addedEpisodes = $this->service->addPlayablesToPlaylist($playlist, $playables, $playlist->owner);
         $playlist->refresh();

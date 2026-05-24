@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\QueueStateFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,11 +16,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @method static QueueStateFactory factory(...$parameters)
  */
+#[Guarded(['id'])]
 class QueueState extends Model
 {
     use HasFactory;
-
-    protected $guarded = ['id'];
 
     protected function casts(): array
     {

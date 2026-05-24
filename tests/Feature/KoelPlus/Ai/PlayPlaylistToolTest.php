@@ -38,10 +38,7 @@ class PlayPlaylistToolTest extends PlusTestCase
         $playlist = Playlist::factory()->createOne(['name' => 'Chill Vibes']);
         $playlist->users()->attach($this->user, ['role' => 'owner']);
 
-        $songs = Song::factory()
-            ->count(3)
-            ->for($this->user, 'owner')
-            ->create();
+        $songs = Song::factory()->count(3)->for($this->user, 'owner')->create();
         $playlist->addPlayables($songs, $this->user);
 
         $response = $this->tool->handle(new Request(['name' => 'Chill']));

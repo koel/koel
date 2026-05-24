@@ -52,10 +52,7 @@ class SongRepository extends Repository implements ScoutableRepository
 
     public function findByHash(string $hash, User $owner): ?Song
     {
-        return Song::query()
-            ->where('hash', $hash)
-            ->where('owner_id', $owner->id)
-            ->first();
+        return Song::query()->where('hash', $hash)->where('owner_id', $owner->id)->first();
     }
 
     public function getAllStoredOnCloud(): Collection
@@ -311,18 +308,24 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @param string $id */
     public function getOne($id, ?User $user = null): Song
     {
-        return Song::query(user: $user ?? $this->auth->user())->withUserContext()->findOrFail($id);
+        return Song::query(user: $user ?? $this->auth->user())
+            ->withUserContext()
+            ->findOrFail($id);
     }
 
     /** @param string $id */
     public function findOne($id, ?User $user = null): ?Song
     {
-        return Song::query(user: $user ?? $this->auth->user())->withUserContext()->find($id);
+        return Song::query(user: $user ?? $this->auth->user())
+            ->withUserContext()
+            ->find($id);
     }
 
     public function countSongs(?User $scopedUser = null): int
     {
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())->accessible()->count();
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->count();
     }
 
     public function getTotalSongLength(?User $scopedUser = null): float
@@ -439,7 +442,10 @@ class SongRepository extends Repository implements ScoutableRepository
 
         /** @var Collection<int, Song> $loadedSongs */
         $loadedSongs = $songs->load('genres');
-        $genreIds = $loadedSongs->flatMap(static fn (Song $song) => $song->genres->pluck('id'))->unique()->all();
+        $genreIds = $loadedSongs
+            ->flatMap(static fn (Song $song) => $song->genres->pluck('id'))
+            ->unique()
+            ->all();
 
         return Song::query(type: PlayableType::SONG, user: $user ?? $this->auth->user())
             ->withUserContext()
@@ -461,10 +467,7 @@ class SongRepository extends Repository implements ScoutableRepository
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: Song::search($keywords)
-                ->take($limit)
-                ->get()
-                ->modelKeys(),
+            ids: Song::search($keywords)->take($limit)->get()->modelKeys(),
             preserveOrder: true,
             scopedUser: $user,
         );

@@ -24,7 +24,8 @@ final readonly class UserUpdateData
     public static function make(
         string $name,
         string $email,
-        #[SensitiveParameter] ?string $plainTextPassword = null,
+        #[SensitiveParameter]
+        ?string $plainTextPassword = null,
         ?Role $role = null,
         ?string $avatar = null,
     ): self {

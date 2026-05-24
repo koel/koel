@@ -105,10 +105,7 @@ class FavoriteTest extends TestCase
         $user = create_user();
 
         /** @var Collection<Favorite> $favorites */
-        $favorites = Favorite::factory()
-            ->for($user)
-            ->count(2)
-            ->create();
+        $favorites = Favorite::factory()->for($user)->count(2)->create();
 
         $this->deleteAs(
             'api/favorites',

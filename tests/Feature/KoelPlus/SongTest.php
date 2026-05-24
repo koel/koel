@@ -18,10 +18,7 @@ class SongTest extends PlusTestCase
 
         // We can access public songs.
         $this->getAs("api/songs/{$publicSong->id}", $user)->assertSuccessful();
-        $ownPrivateSong = Song::factory()
-            ->for($user, 'owner')
-            ->private()
-            ->createOne();
+        $ownPrivateSong = Song::factory()->for($user, 'owner')->private()->createOne();
 
         // We can access our own private songs.
         $this->getAs("api/songs/{$ownPrivateSong->id}", $user)->assertSuccessful();
@@ -37,10 +34,7 @@ class SongTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        $externalUnownedSongs = Song::factory()
-            ->for($anotherUser, 'owner')
-            ->private()
-            ->createMany(2);
+        $externalUnownedSongs = Song::factory()->for($anotherUser, 'owner')->private()->createMany(2);
 
         // We can't edit songs that are not ours.
         $this->putAs(
@@ -89,10 +83,7 @@ class SongTest extends PlusTestCase
         $currentUser = create_user();
         $anotherUser = create_user();
 
-        $externalUnownedSongs = Song::factory()
-            ->for($anotherUser, 'owner')
-            ->private()
-            ->createMany(2);
+        $externalUnownedSongs = Song::factory()->for($anotherUser, 'owner')->private()->createMany(2);
 
         // We can't delete songs that are not ours.
         $this->deleteAs('api/songs', ['songs' => $externalUnownedSongs->modelKeys()], $currentUser)->assertForbidden();
@@ -113,10 +104,7 @@ class SongTest extends PlusTestCase
     {
         $user = create_user();
 
-        $songs = Song::factory()
-            ->for($user, 'owner')
-            ->private()
-            ->createMany(2);
+        $songs = Song::factory()->for($user, 'owner')->private()->createMany(2);
 
         $this->putAs('api/songs/publicize', ['songs' => $songs->modelKeys()], $user)->assertSuccessful();
 
@@ -131,10 +119,7 @@ class SongTest extends PlusTestCase
     {
         $user = create_user();
 
-        $songs = Song::factory()
-            ->for($user, 'owner')
-            ->public()
-            ->createMany(2);
+        $songs = Song::factory()->for($user, 'owner')->public()->createMany(2);
 
         $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()], $user)->assertSuccessful();
 

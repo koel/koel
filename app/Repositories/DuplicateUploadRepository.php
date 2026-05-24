@@ -11,10 +11,7 @@ class DuplicateUploadRepository extends Repository
 {
     public function getAllForUser(User $user): Collection
     {
-        return DuplicateUpload::query()
-            ->whereBelongsTo($user)
-            ->with('existingSong:id,title,artist_name')
-            ->get();
+        return DuplicateUpload::query()->whereBelongsTo($user)->with('existingSong:id,title,artist_name')->get();
     }
 
     public function getStaleUploads(int $days): Collection

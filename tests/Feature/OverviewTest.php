@@ -25,10 +25,7 @@ class OverviewTest extends TestCase
         $songs = Song::factory()->for($artist)->createMany(10);
 
         foreach ($songs as $song) {
-            Interaction::factory()
-                ->for($user)
-                ->for($song)
-                ->createOne();
+            Interaction::factory()->for($user)->for($song)->createOne();
         }
 
         $this->getAs('api/overview', $user)->assertJsonStructure([

@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Models\Contracts\Favoriteable;
 use Carbon\Carbon;
 use Database\Factories\FavoriteFactory;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,12 +23,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *
  * @method static FavoriteFactory factory(...$parameters)
  */
+#[Unguarded]
+#[WithoutTimestamps]
 class Favorite extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
-    public $timestamps = false;
     protected $with = ['user', 'favoriteable'];
 
     protected function casts(): array

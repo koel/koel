@@ -26,10 +26,7 @@ class PlaylistFolderTest extends TestCase
     public function listing(): void
     {
         $user = create_user();
-        PlaylistFolder::factory()
-            ->for($user)
-            ->count(2)
-            ->create();
+        PlaylistFolder::factory()->for($user)->count(2)->create();
 
         $this
             ->getAs('api/playlist-folders', $user)

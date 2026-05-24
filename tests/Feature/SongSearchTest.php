@@ -29,10 +29,7 @@ class SongSearchTest extends TestCase
     public function search(): void
     {
         $user = create_user();
-        Song::factory()
-            ->for($user, 'owner')
-            ->state(['title' => 'Foo Song'])
-            ->createMany(2);
+        Song::factory()->for($user, 'owner')->state(['title' => 'Foo Song'])->createMany(2);
 
         $this->getAs('api/search/songs?q=foo', $user)->assertJsonStructure([0 => SongResource::JSON_STRUCTURE]);
     }

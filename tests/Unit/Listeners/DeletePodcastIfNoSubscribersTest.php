@@ -31,10 +31,7 @@ class DeletePodcastIfNoSubscribersTest extends TestCase
     {
         $podcast = Podcast::factory()->createOne();
 
-        $this->podcastService
-            ->expects('deletePodcast')
-            ->once()
-            ->with($podcast);
+        $this->podcastService->expects('deletePodcast')->once()->with($podcast);
 
         $this->listener->handle(new UserUnsubscribedFromPodcast(create_user(), $podcast));
     }

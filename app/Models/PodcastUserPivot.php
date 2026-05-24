@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Casts\Podcast\PodcastStateCast;
 use App\Values\Podcast\PodcastState;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -12,12 +14,10 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property Carbon $updated_at
  * @property PodcastState $state
  */
+#[Table('podcast_user')]
+#[Unguarded]
 class PodcastUserPivot extends Pivot
 {
-    protected $table = 'podcast_user';
-
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return [

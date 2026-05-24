@@ -58,15 +58,9 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function resolvePlayableByQuery(): void
     {
-        $songs = Song::factory()
-            ->for($this->user, 'owner')
-            ->count(3)
-            ->create();
+        $songs = Song::factory()->for($this->user, 'owner')->count(3)->create();
 
-        $this->songRepository
-            ->shouldReceive('search')
-            ->with('rock', 10, $this->user)
-            ->andReturn($songs);
+        $this->songRepository->shouldReceive('search')->with('rock', 10, $this->user)->andReturn($songs);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolve(FavoriteableType::PLAYABLE, new Request(['query' => 'rock']), $context);
@@ -79,10 +73,7 @@ class FavoriteableEntityResolverTest extends TestCase
     {
         $albums = Album::factory()->createMany(1);
 
-        $this->albumRepository
-            ->shouldReceive('search')
-            ->with('abbey road', 1, $this->user)
-            ->andReturn($albums);
+        $this->albumRepository->shouldReceive('search')->with('abbey road', 1, $this->user)->andReturn($albums);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolve(FavoriteableType::ALBUM, new Request(['query' => 'abbey road']), $context);
@@ -95,10 +86,7 @@ class FavoriteableEntityResolverTest extends TestCase
     {
         $artists = Artist::factory()->createMany(1);
 
-        $this->artistRepository
-            ->shouldReceive('search')
-            ->with('beatles', 1, $this->user)
-            ->andReturn($artists);
+        $this->artistRepository->shouldReceive('search')->with('beatles', 1, $this->user)->andReturn($artists);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolve(FavoriteableType::ARTIST, new Request(['query' => 'beatles']), $context);
@@ -111,10 +99,7 @@ class FavoriteableEntityResolverTest extends TestCase
     {
         $stations = RadioStation::factory()->createMany(1);
 
-        $this->radioStationRepository
-            ->shouldReceive('search')
-            ->with('jazz fm', 1, $this->user)
-            ->andReturn($stations);
+        $this->radioStationRepository->shouldReceive('search')->with('jazz fm', 1, $this->user)->andReturn($stations);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolve(
@@ -131,10 +116,7 @@ class FavoriteableEntityResolverTest extends TestCase
     {
         $podcasts = Podcast::factory()->createMany(1);
 
-        $this->podcastRepository
-            ->shouldReceive('search')
-            ->with('tech talk', 1, $this->user)
-            ->andReturn($podcasts);
+        $this->podcastRepository->shouldReceive('search')->with('tech talk', 1, $this->user)->andReturn($podcasts);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolve(FavoriteableType::PODCAST, new Request(['query' => 'tech talk']), $context);
@@ -147,10 +129,7 @@ class FavoriteableEntityResolverTest extends TestCase
     {
         $song = Song::factory()->for($this->user, 'owner')->createOne();
 
-        $this->songRepository
-            ->shouldReceive('findOne')
-            ->with($song->id, $this->user)
-            ->andReturn($song);
+        $this->songRepository->shouldReceive('findOne')->with($song->id, $this->user)->andReturn($song);
 
         $context = new AiRequestContext($this->user, currentSongId: $song->id);
         $result = $this->resolver->resolve(FavoriteableType::PLAYABLE, new Request([]), $context);
@@ -162,10 +141,7 @@ class FavoriteableEntityResolverTest extends TestCase
     #[Test]
     public function resolveReturnsEmptyWhenCurrentSongNotFound(): void
     {
-        $this->songRepository
-            ->shouldReceive('findOne')
-            ->with('nonexistent', $this->user)
-            ->andReturn(null);
+        $this->songRepository->shouldReceive('findOne')->with('nonexistent', $this->user)->andReturn(null);
 
         $context = new AiRequestContext($this->user, currentSongId: 'nonexistent');
         $result = $this->resolver->resolve(FavoriteableType::PLAYABLE, new Request([]), $context);
@@ -206,15 +182,9 @@ class FavoriteableEntityResolverTest extends TestCase
     public function resolvePrefersQueryOverCurrentSong(): void
     {
         $currentSong = Song::factory()->for($this->user, 'owner')->createOne();
-        $queriedSongs = Song::factory()
-            ->for($this->user, 'owner')
-            ->count(2)
-            ->create();
+        $queriedSongs = Song::factory()->for($this->user, 'owner')->count(2)->create();
 
-        $this->songRepository
-            ->shouldReceive('search')
-            ->with('jazz', 10, $this->user)
-            ->andReturn($queriedSongs);
+        $this->songRepository->shouldReceive('search')->with('jazz', 10, $this->user)->andReturn($queriedSongs);
 
         $context = new AiRequestContext($this->user, currentSongId: $currentSong->id);
         $result = $this->resolver->resolve(FavoriteableType::PLAYABLE, new Request(['query' => 'jazz']), $context);

@@ -35,11 +35,7 @@ trait SupportsDeleteWhereValueNotIn
             return;
         }
 
-        $allIds = static::query()
-            ->select($field)
-            ->get()
-            ->pluck($field)
-            ->all();
+        $allIds = static::query()->select($field)->get()->pluck($field)->all();
         $deletableIds = array_diff($allIds, $values);
 
         if (count($deletableIds) < $maxChunkSize) {

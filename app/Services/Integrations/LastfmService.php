@@ -85,10 +85,7 @@ class LastfmService implements Encyclopedia
             }
         };
 
-        $this->connector
-            ->pool($generatorCallback)
-            ->send()
-            ->wait();
+        $this->connector->pool($generatorCallback)->send()->wait();
     }
 
     public function updateNowPlaying(Song $song, User $user): void

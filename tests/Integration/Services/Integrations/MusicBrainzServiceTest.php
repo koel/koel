@@ -36,7 +36,10 @@ class MusicBrainzServiceTest extends TestCase
 
     private function mockPipelinePipe(string $class, mixed $input, mixed $output): void
     {
-        $expectation = $this->mock($class)->expects('__invoke')->with($input, Mockery::on(is_callable(...)));
+        $expectation = $this
+            ->mock($class)
+            ->expects('__invoke')
+            ->with($input, Mockery::on(is_callable(...)));
 
         if ($output instanceof Throwable) {
             $expectation->andThrow($output);

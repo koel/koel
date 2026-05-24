@@ -71,9 +71,11 @@ class UserInvitationService
     }
 
     public function accept(
-        #[SensitiveParameter] string $token,
+        #[SensitiveParameter]
+        string $token,
         string $name,
-        #[SensitiveParameter] string $password,
+        #[SensitiveParameter]
+        string $password,
     ): User {
         $user = $this->getUserProspectByToken($token);
 

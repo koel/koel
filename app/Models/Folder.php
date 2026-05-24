@@ -4,7 +4,10 @@ namespace App\Models;
 
 use App\Observers\FolderObserver;
 use Database\Factories\FolderFactory;
+use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -29,14 +32,13 @@ use Illuminate\Support\Arr;
  * @method static FolderFactory factory(...$parameters)
  */
 #[ObservedBy(FolderObserver::class)]
+#[Unguarded]
+#[WithoutTimestamps]
+#[Appends(['name'])]
 class Folder extends Model
 {
     use HasFactory;
     use HasUuids;
-
-    protected $guarded = [];
-    public $timestamps = false;
-    protected $appends = ['name'];
 
     public function songs(): HasMany
     {

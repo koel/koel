@@ -54,10 +54,7 @@ class CheckDownloadableCountTest extends TestCase
     public function checkArtist(): void
     {
         $artist = Artist::factory()->createOne();
-        Song::factory()
-            ->for($artist)
-            ->for(Album::factory())
-            ->createMany(4);
+        Song::factory()->for($artist)->for(Album::factory())->createMany(4);
 
         $this->getAs(
             'api/download/check?'
