@@ -13,7 +13,7 @@ describe('breadcrumbs.vue', () => {
   })
 
   it('renders the current folder under the root', () => {
-    const current = h.factory('folder').make({ id: 'current-id', name: 'Music' })
+    const current = h.factory('folder').make({ name: 'Music' })
 
     h.render(Component, { props: { current, ancestors: [] } })
 
@@ -23,34 +23,32 @@ describe('breadcrumbs.vue', () => {
   })
 
   it('renders the full ancestor chain when within the limit', () => {
-    const ancestors = [
-      h.factory('folder').make({ id: 'a1', name: 'Music' }),
-      h.factory('folder').make({ id: 'a2', name: 'Rock' }),
-    ]
-    const current = h.factory('folder').make({ id: 'cur', name: 'Pink Floyd' })
+    const music = h.factory('folder').make({ name: 'Music' })
+    const rock = h.factory('folder').make({ name: 'Rock' })
+    const current = h.factory('folder').make({ name: 'Pink Floyd' })
 
-    h.render(Component, { props: { current, ancestors } })
+    h.render(Component, { props: { current, ancestors: [music, rock] } })
 
-    expect(screen.getByRole('link', { name: 'Music' }).getAttribute('href')).toBe('/#/browse/a1')
-    expect(screen.getByRole('link', { name: 'Rock' }).getAttribute('href')).toBe('/#/browse/a2')
+    expect(screen.getByRole('link', { name: 'Music' }).getAttribute('href')).toBe(`/#/browse/${music.id}`)
+    expect(screen.getByRole('link', { name: 'Rock' }).getAttribute('href')).toBe(`/#/browse/${rock.id}`)
     screen.getByText('Pink Floyd')
     expect(screen.queryByText('…')).toBeNull()
   })
 
   it('truncates the middle when the chain is deep', () => {
     const ancestors = [
-      h.factory('folder').make({ id: 'a1', name: 'Music' }),
-      h.factory('folder').make({ id: 'a2', name: 'Rock' }),
-      h.factory('folder').make({ id: 'a3', name: 'Progressive' }),
-      h.factory('folder').make({ id: 'a4', name: 'Pink Floyd' }),
+      h.factory('folder').make({ name: 'Music' }),
+      h.factory('folder').make({ name: 'Rock' }),
+      h.factory('folder').make({ name: 'Progressive' }),
+      h.factory('folder').make({ name: 'Pink Floyd' }),
     ]
-    const current = h.factory('folder').make({ id: 'cur', name: 'The Wall' })
+    const current = h.factory('folder').make({ name: 'The Wall' })
 
     h.render(Component, { props: { current, ancestors } })
 
     screen.getByRole('link', { name: 'Library' })
     screen.getByText('…')
-    expect(screen.getByRole('link', { name: 'Pink Floyd' }).getAttribute('href')).toBe('/#/browse/a4')
+    expect(screen.getByRole('link', { name: 'Pink Floyd' }).getAttribute('href')).toBe(`/#/browse/${ancestors[3].id}`)
     screen.getByText('The Wall')
 
     expect(screen.queryByText('Music')).toBeNull()

@@ -9,8 +9,8 @@ describe('mediaBrowser', () => {
   const h = createHarness()
 
   it('browses a folder', async () => {
-    const folderId = 'folder-uuid'
-    const current = h.factory('folder').make({ id: folderId })
+    const current = h.factory('folder').make()
+    const folderId = current.id
     const ancestors = h.factory('folder').make(2)
     const subfolders = h.factory('folder').make(3)
     const songs = h.factory('song').make(3)
@@ -80,8 +80,8 @@ describe('mediaBrowser', () => {
   })
 
   it('get from cache when available', async () => {
-    const folderId = 'folder-uuid'
-    const current = h.factory('folder').make({ id: folderId })
+    const current = h.factory('folder').make()
+    const folderId = current.id
     const ancestors = h.factory('folder').make(1)
     const subfolders = h.factory('folder').make(2)
     const songs = h.factory('song').make(3)
@@ -124,8 +124,8 @@ describe('mediaBrowser', () => {
   it('clears the cache if forced to', async () => {
     const removeCacheMock = vi.spyOn(cache, 'remove')
 
-    const folderId = 'folder-uuid'
-    const current = h.factory('folder').make({ id: folderId })
+    const current = h.factory('folder').make()
+    const folderId = current.id
     const subfolders = h.factory('folder').make(2)
     const songs = h.factory('song').make(3)
 
@@ -170,11 +170,12 @@ describe('mediaBrowser', () => {
   })
 
   it('builds a parent reference for a folder with a parent', () => {
-    const folder = h.factory('folder').make({ parent_id: 'parent-uuid' })
+    const parent = h.factory('folder').make()
+    const folder = h.factory('folder').make({ parent_id: parent.id })
 
     expect(mediaBrowser.getParentReference(folder)).toEqual({
       type: 'folders',
-      id: 'parent-uuid',
+      id: parent.id,
       parent_id: null,
       name: '..',
       is_uploads: false,
