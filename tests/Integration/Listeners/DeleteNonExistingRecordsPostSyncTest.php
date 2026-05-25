@@ -5,6 +5,8 @@ namespace Tests\Integration\Listeners;
 use App\Enums\SongStorageType;
 use App\Events\MediaScanCompleted;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Song;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
@@ -65,6 +67,41 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $this->assertModelExists($songs[3]);
         $this->assertModelMissing($songs[1]);
         $this->assertModelMissing($songs[2]);
+    }
+
+    #[Test]
+    public function prunesAlbumsAndArtistsLeftEmptyByTheScan(): void
+    {
+        $album = Album::factory()->createOne();
+        $artist = $album->artist;
+        $song = Song::factory()->for($album)->for($artist)->createOne();
+
+        $unaffectedAlbum = Album::factory()->createOne();
+        Song::factory()->for($unaffectedAlbum)->for($unaffectedAlbum->artist)->createOne();
+
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($unaffectedAlbum->songs->first()->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        self::assertModelMissing($song);
+        self::assertModelMissing($album);
+        self::assertModelMissing($artist);
+        self::assertModelExists($unaffectedAlbum);
+    }
+
+    #[Test]
+    public function prunesAlbumsAndArtistsOrphanedByPriorSongDeletions(): void
+    {
+        $album = Album::factory()->createOne();
+        $artist = $album->artist;
+
+        $syncResult = ScanResultCollection::create();
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        self::assertModelMissing($album);
+        self::assertModelMissing($artist);
     }
 
     #[Test]
