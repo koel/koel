@@ -19,6 +19,13 @@ class SafeUrl implements ValidationRule
 {
     private const array ALLOWED_SCHEMES = ['http', 'https'];
 
+    private Network $network;
+
+    public function __construct(?Network $network = null)
+    {
+        $this->network = $network ?? app(Network::class);
+    }
+
     /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -36,7 +43,7 @@ class SafeUrl implements ValidationRule
             return;
         }
 
-        if (!Network::isPublicHost($uri->host())) {
+        if (!$this->network->isPublicHost($uri->host())) {
             $fail('The :attribute must point to a public URL.');
 
             return;
@@ -57,7 +64,7 @@ class SafeUrl implements ValidationRule
 
         $effectiveHost = $response->effectiveUri()?->getHost();
 
-        if ($effectiveHost && !Network::isPublicHost($effectiveHost)) {
+        if ($effectiveHost && !$this->network->isPublicHost($effectiveHost)) {
             $fail('The :attribute must point to a public URL.');
         }
     }

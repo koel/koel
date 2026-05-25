@@ -14,7 +14,7 @@ class Network
      * Does NOT perform any network calls beyond DNS resolution.
      * For full validation including effective-URL-after-redirect, use the SafeUrl validation rule.
      */
-    public static function isSafeUrl(string $url): bool
+    public function isSafeUrl(string $url): bool
     {
         try {
             $uri = Uri::of($url);
@@ -28,14 +28,14 @@ class Network
 
         $host = $uri->host();
 
-        return $host !== '' && self::isPublicHost($host);
+        return $host !== '' && $this->isPublicHost($host);
     }
 
     /**
      * Check if a host resolves only to public (non-private, non-reserved) IP addresses.
      * Validates both A (IPv4) and AAAA (IPv6) records. All resolved IPs must be public.
      */
-    public static function isPublicHost(string $host): bool
+    public function isPublicHost(string $host): bool
     {
         if (filter_var($host, FILTER_VALIDATE_IP)) {
             return (

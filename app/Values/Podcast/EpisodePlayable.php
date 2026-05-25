@@ -41,9 +41,10 @@ final class EpisodePlayable implements Arrayable, Jsonable
         $file = artifact_path("episodes/{$episode->id}.mp3");
 
         if (!File::exists($file)) {
+            $network = app(Network::class);
             $url = (string) $episode->path;
 
-            if (!Network::isSafeUrl($url)) {
+            if (!$network->isSafeUrl($url)) {
                 throw UnsafeUrlException::forUrl($url);
             }
 
@@ -51,8 +52,8 @@ final class EpisodePlayable implements Arrayable, Jsonable
                 ->withOptions([
                     'allow_redirects' => [
                         'max' => 5,
-                        'on_redirect' => static function ($request, $response, $uri): void {
-                            if (!Network::isSafeUrl((string) $uri)) {
+                        'on_redirect' => static function ($request, $response, $uri) use ($network): void {
+                            if (!$network->isSafeUrl((string) $uri)) {
                                 throw UnsafeUrlException::forUrl((string) $uri);
                             }
                         },
