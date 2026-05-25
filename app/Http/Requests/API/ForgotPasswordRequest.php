@@ -7,11 +7,11 @@ namespace App\Http\Requests\API;
  */
 class ForgotPasswordRequest extends Request
 {
-    /** @return array<string, string> */
+    /** @inheritdoc */
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
+            'email' => ['required', 'email'],
         ];
     }
 }

@@ -17,7 +17,7 @@ class CheckDownloadableCountRequest extends Request
     {
         return [
             'type' => ['required', new Enum(DownloadableType::class)],
-            'ids' => 'required_if:type,songs|array',
+            'ids' => ['required_if:type,songs', 'array'],
             'id' => 'required_if:type,album,artist,playlist',
         ];
     }

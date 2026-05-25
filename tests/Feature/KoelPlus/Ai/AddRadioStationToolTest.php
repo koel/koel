@@ -17,7 +17,6 @@ use function Tests\create_user;
 
 class AddRadioStationToolTest extends PlusTestCase
 {
-    private AiAssistantResult $result;
     private User $user;
     private AddRadioStation $tool;
 
@@ -26,9 +25,9 @@ class AddRadioStationToolTest extends PlusTestCase
         parent::setUp();
 
         $this->user = create_user();
-        $this->result = new AiAssistantResult();
+        $result = new AiAssistantResult();
 
-        app()->instance(AiAssistantResult::class, $this->result);
+        app()->instance(AiAssistantResult::class, $result);
         app()->instance(AiRequestContext::class, new AiRequestContext($this->user));
         $this->tool = app()->make(AddRadioStation::class);
     }

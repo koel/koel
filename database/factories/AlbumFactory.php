@@ -18,9 +18,9 @@ class AlbumFactory extends Factory
             'user_id' => User::factory(),
             'artist_id' => Artist::factory(),
             'artist_name' => static fn (array $attributes) => Artist::query()->find($attributes['artist_id'])->name, // @phpstan-ignore-line
-            'name' => $this->faker->colorName,
+            'name' => fake()->colorName,
             'cover' => Ulid::generate() . '.jpg',
-            'year' => $this->faker->year,
+            'year' => fake()->year,
         ];
     }
 }

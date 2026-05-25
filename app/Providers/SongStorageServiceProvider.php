@@ -35,6 +35,7 @@ class SongStorageServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // @mago-ignore lint:prefer-static-closure
         Storage::extend('webdav', function (Container $app, array $config): FilesystemAdapter {
             $client = new WebDAVClient([
                 'baseUri' => (string) ($config['baseUri'] ?? ''),

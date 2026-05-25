@@ -26,7 +26,7 @@ class UpdateBrandingRequest extends Request
         };
 
         return [
-            'name' => 'required|string',
+            'name' => ['required', 'string'],
             'logo' => ['sometimes', 'nullable', $validImageDataOrUrl],
             'cover' => ['sometimes', 'nullable', $validImageDataOrUrl],
         ];

@@ -14,14 +14,14 @@ class ThemeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(3, true),
+            'name' => fake()->words(3, true),
             'properties' => ThemeProperties::make(
-                fgColor: $this->faker->hexColor(),
-                bgColor: $this->faker->hexColor(),
+                fgColor: fake()->hexColor(),
+                bgColor: fake()->hexColor(),
                 bgImage: '',
-                highlightColor: $this->faker->hexColor(),
-                fontFamily: $this->faker->word(),
-                fontSize: $this->faker->numberBetween(13, 20),
+                highlightColor: fake()->hexColor(),
+                fontFamily: fake()->word(),
+                fontSize: fake()->numberBetween(13, 20),
             ),
             'user_id' => User::factory(),
         ];

@@ -6,7 +6,6 @@ use App\Enums\SongStorageType;
 use App\Events\MediaScanCompleted;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Models\Album;
-use App\Models\Artist;
 use App\Models\Song;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;

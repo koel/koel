@@ -14,7 +14,7 @@ class EmbedFactory extends Factory
     public function definition(): array
     {
         /** @var EmbeddableType $type */
-        $type = $this->faker->randomElement(EmbeddableType::cases());
+        $type = fake()->randomElement(EmbeddableType::cases());
 
         return [
             'user_id' => User::factory(),
