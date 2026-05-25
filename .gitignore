@@ -91,4 +91,5 @@ docs/.vitepress/cache
 demo-credits.json
 
 public/sandbox
+public/storage
 build/
