@@ -26,6 +26,7 @@ use Illuminate\Support\Arr;
  * @property-read string $name
  * @property-read bool $is_uploads_folder Where the folder is the uploads folder by any user
  * @property-read ?int $uploader_id
+ * @property-read ?User $uploader
  * @property ?string $parent_id
  * @property string $hash
  *
@@ -48,6 +49,11 @@ class Folder extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(__CLASS__);
+    }
+
+    public function uploader(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'uploader_id');
     }
 
     public function subfolders(): HasMany

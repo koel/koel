@@ -218,10 +218,10 @@ export const routes = [
   },
   {
     name: 'media-browser',
-    path: '/browse/:path?',
+    path: '/browse/:folder?',
     screen: 'MediaBrowser',
     constraints: {
-      path: '.+',
+      folder: UUID_REGEX,
     },
   },
   {

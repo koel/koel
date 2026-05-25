@@ -356,18 +356,17 @@ export const playableStore = {
     const songReferences = data.filter(item => item.type === 'songs') as Array<Pick<Song, 'type' | 'id'>>
     const songs = this.byIds(songReferences.map(item => item.id)) as Song[]
 
-    const folderReferences = data.filter(item => item.type === 'folders') as Array<Pick<Folder, 'type' | 'path'>>
+    const folderReferences = data.filter(item => item.type === 'folders') as Array<Pick<Folder, 'type' | 'id'>>
 
     if (!folderReferences.length) {
       return songs
     }
 
-    const paths = folderReferences.map(item => item.path).sort()
+    const folders = folderReferences.map(item => item.id).sort()
 
-    // since paths can be long, we use a hash instead
-    const cacheKey = ['folders', await sha256(JSON.stringify(paths))]
+    const cacheKey = ['folders', await sha256(JSON.stringify(folders))]
 
-    const fetcher = () => http.post<Song[]>(`songs/by-folders?shuffle=${shuffle}`, { paths })
+    const fetcher = () => http.post<Song[]>(`songs/by-folders?shuffle=${shuffle}`, { folders })
 
     const songsFromFolders = this.syncWithVault(
       shuffle ? await fetcher() : await cache.remember(cacheKey, async () => await fetcher()),
@@ -376,8 +375,9 @@ export const playableStore = {
     return unionBy(songs, songsFromFolders as Song[], 'id')
   },
 
-  async fetchSongsInFolder(path: Folder['path']) {
-    return this.syncWithVault(await http.get<Song[]>(`songs/in-folder?path=${path}`))
+  async fetchSongsInFolder(folderId: Folder['id'] | null) {
+    const query = folderId ? `?folder=${folderId}` : ''
+    return this.syncWithVault(await http.get<Song[]>(`songs/in-folder${query}`))
   },
 
   async fetchFavorites() {

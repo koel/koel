@@ -703,8 +703,8 @@ interface Folder {
   type: 'folders'
   id: string
   parent_id: string | null
-  path: string
   name: string
+  is_uploads: boolean
 }
 
 interface MediaRow {
@@ -712,7 +712,7 @@ interface MediaRow {
   selected: boolean
 }
 
-type MediaReference = Pick<Folder, 'type' | 'path'> | Pick<Song, 'type' | 'id'>
+type MediaReference = Pick<Folder, 'type' | 'id'> | Pick<Song, 'type' | 'id'>
 
 interface LiveEvent {
   type: 'live-events'

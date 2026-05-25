@@ -29,7 +29,7 @@ const isForSingleFolder = computed(() => items.value?.length === 1 && items.valu
 
 let references: MediaReference[]
 
-const openFolder = () => trigger(async () => go(url('media-browser', { path: (items.value[0] as Folder).path })))
+const openFolder = () => trigger(async () => go(url('media-browser', { folder: (items.value[0] as Folder).id })))
 
 const play = () =>
   trigger(async () => {

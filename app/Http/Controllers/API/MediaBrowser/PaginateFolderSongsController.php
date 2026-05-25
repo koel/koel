@@ -14,7 +14,7 @@ class PaginateFolderSongsController extends Controller
 {
     public function __invoke(MediaBrowser $browser, FolderRepository $folderRepository, SongRepository $songRepository)
     {
-        $folder = $folderRepository->findByPath(request('path'));
+        $folder = $folderRepository->findOneByPublicId(request('folder'));
 
         if ($folder) {
             $this->authorize('browse', $folder);

@@ -13,7 +13,7 @@ class FetchFolderSongsController extends Controller
 {
     public function __invoke(SongRepository $songRepository, FolderRepository $folderRepository)
     {
-        $folder = $folderRepository->findByPath(request('path'));
+        $folder = $folderRepository->findOneByPublicId(request('folder'));
 
         if ($folder) {
             $this->authorize('browse', $folder);

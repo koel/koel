@@ -22,14 +22,14 @@ describe('mediaBrowserContextMenu.vue', () => {
   }
 
   it('opens the folder if the only item is a folder', async () => {
-    const folder = h.factory('folder').make({ path: 'foo/bar' })
+    const folder = h.factory('folder').make()
     const items = [folder]
     const goMock = h.mock(Router, 'go')
 
     await renderComponent(items)
     await h.user.click(screen.getByText('Open'))
 
-    expect(goMock).toHaveBeenCalledWith('/#/browse/foo/bar')
+    expect(goMock).toHaveBeenCalledWith(`/#/browse/${folder.id}`)
   })
 
   it('plays', async () => {

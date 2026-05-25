@@ -8,6 +8,8 @@ use App\Facades\License;
 use App\Models\Folder;
 use App\Models\Setting;
 use App\Models\Song;
+use App\Repositories\FolderRepository;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -18,9 +20,40 @@ class MediaBrowser
 
     private static ?string $mediaPath;
 
+    public function __construct(
+        private readonly FolderRepository $folderRepository,
+    ) {}
+
     public static function used(): bool
     {
         return config('koel.media_browser.enabled') && License::isPlus();
+    }
+
+    /**
+     * @return array{
+     *     current: ?Folder,
+     *     ancestors: Collection<int, Folder>,
+     *     subfolders: Collection<int, Folder>,
+     * }
+     */
+    public function getSubfolderView(?Folder $folder): array
+    {
+        $ancestors = $folder ? $this->folderRepository->getAncestors($folder) : new Collection();
+        $subfolders = $this->folderRepository->getSubfolders($folder);
+
+        $batch = $ancestors->merge($subfolders);
+
+        if ($folder) {
+            $batch->push($folder);
+        }
+
+        $batch->loadMissing('uploader');
+
+        return [
+            'current' => $folder,
+            'ancestors' => $ancestors,
+            'subfolders' => $subfolders,
+        ];
     }
 
     /**

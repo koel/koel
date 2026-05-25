@@ -17,6 +17,7 @@
           </button>
         </template>
       </template>
+      <FolderUpIcon v-else-if="(item as Folder).is_uploads" class="text-k-fg" :size="16" />
       <Icon v-else :icon="faFolder" class="text-k-fg" fixed-width />
       <span class="flex-1 truncate user-select-none">{{ label }}</span>
 
@@ -34,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { FileMusicIcon, PlayCircleIcon } from 'lucide-vue-next'
+import { FileMusicIcon, FolderUpIcon, PlayCircleIcon } from 'lucide-vue-next'
 import { faFolder } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { isSong } from '@/utils/typeGuards'
