@@ -220,6 +220,9 @@ export const routes = [
     name: 'media-browser',
     path: '/browse/:folder?',
     screen: 'MediaBrowser',
+    constraints: {
+      folder: UUID_REGEX,
+    },
   },
   {
     name: 'embed',
