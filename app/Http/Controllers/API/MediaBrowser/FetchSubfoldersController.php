@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\FolderResource;
 use App\Repositories\FolderRepository;
 use App\Services\MediaBrowser;
-use Illuminate\Database\Eloquent\Collection;
 
 #[RequiresPlus]
 class FetchSubfoldersController extends Controller
@@ -20,21 +19,12 @@ class FetchSubfoldersController extends Controller
             $this->authorize('browse', $folder);
         }
 
-        $ancestors = $folder ? $folderRepository->getAncestors($folder) : new Collection();
-        $subfolders = $folderRepository->getSubfolders($folder);
-
-        $serializable = $ancestors->merge($subfolders);
-
-        if ($folder) {
-            $serializable->push($folder);
-        }
-
-        $serializable->loadMissing('uploader');
+        $view = $browser->getSubfolderView($folder);
 
         return [
-            'current' => $folder ? new FolderResource($folder) : null,
-            'ancestors' => FolderResource::collection($ancestors),
-            'subfolders' => FolderResource::collection($subfolders),
+            'current' => $view['current'] ? new FolderResource($view['current']) : null,
+            'ancestors' => FolderResource::collection($view['ancestors']),
+            'subfolders' => FolderResource::collection($view['subfolders']),
         ];
     }
 }

@@ -10,6 +10,8 @@ use App\Services\MediaBrowser;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_user;
+
 class MediaBrowserTest extends TestCase
 {
     private MediaBrowser $browser;
@@ -59,6 +61,41 @@ class MediaBrowserTest extends TestCase
         $this->browser->maybeCreateFolderStructureForSong($songInRootPath);
 
         self::assertNull($songInRootPath->folder);
+    }
+
+    #[Test]
+    public function getSubfolderViewReturnsCurrentAncestorsAndSubfoldersWithEagerLoadedUploader(): void
+    {
+        $this->actingAs(create_user());
+
+        $music = Folder::factory()->createOne(['path' => 'Music']);
+        $rock = Folder::factory()->for($music, 'parent')->createOne(['path' => 'Music/Rock']);
+        Folder::factory()->for($rock, 'parent')->createOne(['path' => 'Music/Rock/PinkFloyd']);
+        Folder::factory()->for($rock, 'parent')->createOne(['path' => 'Music/Rock/LedZeppelin']);
+
+        $view = $this->browser->getSubfolderView($rock);
+
+        self::assertTrue($view['current']->is($rock));
+        self::assertSame([$music->id], $view['ancestors']->pluck('id')->all());
+        self::assertCount(2, $view['subfolders']);
+
+        self::assertTrue($view['current']->relationLoaded('uploader'));
+        $view['ancestors']->each(static fn (Folder $f) => self::assertTrue($f->relationLoaded('uploader')));
+        $view['subfolders']->each(static fn (Folder $f) => self::assertTrue($f->relationLoaded('uploader')));
+    }
+
+    #[Test]
+    public function getSubfolderViewReturnsRootLevelSubfoldersWithNullCurrent(): void
+    {
+        $this->actingAs(create_user());
+
+        Folder::factory()->createMany(3);
+
+        $view = $this->browser->getSubfolderView(null);
+
+        self::assertNull($view['current']);
+        self::assertTrue($view['ancestors']->isEmpty());
+        self::assertCount(3, $view['subfolders']);
     }
 
     #[Test]
