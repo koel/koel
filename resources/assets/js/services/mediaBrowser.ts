@@ -40,13 +40,12 @@ export const mediaBrowser = {
       return null
     }
 
-    // A faux folder used as the "go up" entry in the list. Clicking it navigates to the parent
-    // folder (or the library root when parent_id is null).
     return {
       type: 'folders',
       id: folder.parent_id ?? '',
       parent_id: null,
       name: '..',
+      is_uploads: false,
     }
   },
 
