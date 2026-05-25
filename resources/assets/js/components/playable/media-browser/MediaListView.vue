@@ -148,8 +148,7 @@ const onClick = (row: MediaRow, event: MouseEvent) => {
 
 const playSong = async (song: Song) => {
   if (preferenceStore.state.continuous_playback) {
-    const songsUnderPath = folderId.value ? await playableStore.fetchSongsInFolder(folderId.value) : []
-    // make sure the clicked playable is in the list
+    const songsUnderPath = await playableStore.fetchSongsInFolder(folderId.value)
     queueStore.replaceQueueWith(unionBy(songsUnderPath, [song], 'id'))
     playback().play(song)
   } else {

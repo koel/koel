@@ -25,6 +25,7 @@ class FolderRepository extends Repository
         return simple_hash($path ? trim($path, DIRECTORY_SEPARATOR) : $path);
     }
 
+    /** @return Collection<int, Folder> */
     public function getSubfolders(?Folder $folder = null, ?User $scopedUser = null): Collection
     {
         if ($folder) {

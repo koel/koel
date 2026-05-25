@@ -103,18 +103,22 @@ describe('mediaBrowser', () => {
 
     const syncWithVaultMock = h.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
-    const result = await mediaBrowser.browse(folderId, 2)
+    const firstResult = await mediaBrowser.browse(folderId, 2)
+    const secondResult = await mediaBrowser.browse(folderId, 2)
 
     expect(getMock).not.toHaveBeenCalled()
     expect(syncWithVaultMock).toHaveBeenCalledWith(songs)
 
-    expect(result).toEqual({
+    const expected = {
       current,
       ancestors,
       subfolders,
       songs,
       nextPage: 3,
-    })
+    }
+
+    expect(firstResult).toEqual(expected)
+    expect(secondResult).toEqual(expected)
   })
 
   it('clears the cache if forced to', async () => {

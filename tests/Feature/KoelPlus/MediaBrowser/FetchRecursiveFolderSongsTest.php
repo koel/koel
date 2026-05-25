@@ -26,11 +26,7 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
         $irrelevantFolder = Folder::factory()->createOne(['path' => 'foo/baz']);
         Song::factory()->for($irrelevantFolder)->createOne();
 
-        $songs = Song::factory()
-            ->for($subfolder)
-            ->count(2)
-            ->create()
-            ->merge(Song::factory()->for($folder)->count(1)->create());
+        $songs = Song::factory()->for($subfolder)->createMany(2)->push(Song::factory()->for($folder)->createOne());
 
         $response = $this->postAs('/api/songs/by-folders', [
             'folders' => [$folder->id, $subfolder->id],
@@ -44,14 +40,14 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
     {
         $folder = Folder::factory()->createOne(['path' => 'foo']);
 
-        $songs = Song::factory()->for($folder)->count(2)->create();
-        // a root-level song that should NOT be returned
-        Song::factory()->createOne();
+        $folderSongs = Song::factory()->for($folder)->createMany(2);
+        $rootLevelSong = Song::factory()->createOne();
 
         $response = $this->postAs('/api/songs/by-folders', [
             'folders' => [$folder->id],
         ]);
 
-        self::assertEqualsCanonicalizing($response->json('*.id'), $songs->pluck('id')->all());
+        self::assertEqualsCanonicalizing($response->json('*.id'), $folderSongs->pluck('id')->all());
+        self::assertNotContains($rootLevelSong->id, $response->json('*.id'));
     }
 }

@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\Folder;
 use App\Models\User;
-use App\Repositories\UserRepository;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class FolderResource extends JsonResource
@@ -45,9 +44,6 @@ class FolderResource extends JsonResource
             return 'Your uploads';
         }
 
-        /** @var ?User $uploader */
-        $uploader = app(UserRepository::class)->findOneBy(['id' => $this->folder->uploader_id]);
-
-        return $uploader ? "Uploads by {$uploader->name}" : 'Uploads by deleted user';
+        return $this->folder->uploader ? "Uploads by {$this->folder->uploader->name}" : 'Uploads by deleted user';
     }
 }

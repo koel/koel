@@ -31,7 +31,7 @@ export const mediaBrowser = {
       ancestors: folders.ancestors,
       subfolders: folders.subfolders,
       songs: playableStore.syncWithVault(paginator.data) as Song[],
-      nextPage: paginator.links.next ? ++paginator.meta.current_page : null,
+      nextPage: paginator.links.next ? paginator.meta.current_page + 1 : null,
     }
   },
 

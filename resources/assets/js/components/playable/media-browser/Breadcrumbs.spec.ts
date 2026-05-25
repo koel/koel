@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
+import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './Breadcrumbs.vue'
 
@@ -6,21 +7,19 @@ describe('breadcrumbs.vue', () => {
   const h = createHarness()
 
   it('renders the library root only', () => {
-    const { html } = h.render(Component, {
-      props: { current: null, ancestors: [] },
-    })
+    h.render(Component, { props: { current: null, ancestors: [] } })
 
-    expect(html()).toMatchSnapshot()
+    expect(screen.getByRole('link', { name: 'Library' }).getAttribute('href')).toBe('/#/browse')
   })
 
   it('renders the current folder under the root', () => {
     const current = h.factory('folder').make({ id: 'current-id', name: 'Music' })
 
-    const { html } = h.render(Component, {
-      props: { current, ancestors: [] },
-    })
+    h.render(Component, { props: { current, ancestors: [] } })
 
-    expect(html()).toMatchSnapshot()
+    screen.getByRole('link', { name: 'Library' })
+    screen.getByText('Music')
+    expect(screen.queryByRole('link', { name: 'Music' })).toBeNull()
   })
 
   it('renders the full ancestor chain when within the limit', () => {
@@ -30,11 +29,12 @@ describe('breadcrumbs.vue', () => {
     ]
     const current = h.factory('folder').make({ id: 'cur', name: 'Pink Floyd' })
 
-    const { html } = h.render(Component, {
-      props: { current, ancestors },
-    })
+    h.render(Component, { props: { current, ancestors } })
 
-    expect(html()).toMatchSnapshot()
+    expect(screen.getByRole('link', { name: 'Music' }).getAttribute('href')).toBe('/#/browse/a1')
+    expect(screen.getByRole('link', { name: 'Rock' }).getAttribute('href')).toBe('/#/browse/a2')
+    screen.getByText('Pink Floyd')
+    expect(screen.queryByText('…')).toBeNull()
   })
 
   it('truncates the middle when the chain is deep', () => {
@@ -46,10 +46,15 @@ describe('breadcrumbs.vue', () => {
     ]
     const current = h.factory('folder').make({ id: 'cur', name: 'The Wall' })
 
-    const { html } = h.render(Component, {
-      props: { current, ancestors },
-    })
+    h.render(Component, { props: { current, ancestors } })
 
-    expect(html()).toMatchSnapshot()
+    screen.getByRole('link', { name: 'Library' })
+    screen.getByText('…')
+    expect(screen.getByRole('link', { name: 'Pink Floyd' }).getAttribute('href')).toBe('/#/browse/a4')
+    screen.getByText('The Wall')
+
+    expect(screen.queryByText('Music')).toBeNull()
+    expect(screen.queryByText('Rock')).toBeNull()
+    expect(screen.queryByText('Progressive')).toBeNull()
   })
 })
