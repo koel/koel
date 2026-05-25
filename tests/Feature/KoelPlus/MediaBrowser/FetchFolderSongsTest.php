@@ -32,7 +32,7 @@ class FetchFolderSongsTest extends PlusTestCase
         // create songs in the subfolder, which should not be returned
         Song::factory()->for($subfolder)->createOne();
 
-        $response = $this->getAs('api/songs/in-folder?path=foo');
+        $response = $this->getAs('api/songs/in-folder?folder=' . $folder->id);
 
         $response->assertJsonStructure([0 => SongFileResource::JSON_STRUCTURE]);
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $response->json('*.id'));
@@ -49,7 +49,7 @@ class FetchFolderSongsTest extends PlusTestCase
         // create songs in the folder, which should not be returned
         Song::factory()->for($folder)->createOne();
 
-        $response = $this->getAs('api/songs/in-folder?path=');
+        $response = $this->getAs('api/songs/in-folder?folder=');
 
         $response->assertJsonStructure([0 => SongFileResource::JSON_STRUCTURE]);
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), Arr::pluck($response->json(), 'id'));
@@ -68,7 +68,7 @@ class FetchFolderSongsTest extends PlusTestCase
 
         Song::factory()->createOne(['is_public' => false]);
 
-        $response = $this->getAs('api/songs/in-folder?path=');
+        $response = $this->getAs('api/songs/in-folder?folder=');
 
         $response->assertJsonStructure([0 => SongFileResource::JSON_STRUCTURE]);
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $response->json('*.id'));

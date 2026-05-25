@@ -6,7 +6,7 @@
 
         <template #meta>
           <div class="flex items-center gap-2 mt-2">
-            <Breadcrumbs :path class="flex-1" />
+            <Breadcrumbs :current="currentFolder" :ancestors class="flex-1" />
             <Btn size="small" variant="ghost" title="Reload" @click.prevent="refresh">
               <Icon :icon="faRotateRight" />
             </Btn>
@@ -24,7 +24,7 @@
       <MediaListView
         v-show="!shouldShowSkeleton"
         :items
-        :path
+        :folder-id="folderId"
         :class="noContent || 'flex-1'"
         @scrolled-to-end="onScrolledToEnd"
       />
@@ -66,15 +66,17 @@ const { onRouteChanged, getRouteParam, onScreenActivated } = useRouter()
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const loading = ref(false)
-const path = ref<string>('')
+const folderId = ref<string | null>(null)
+const currentFolder = ref<Folder | null>(null)
+const ancestors = ref<Folder[]>([])
 
-const getPathFromRoute = () => getRouteParam('path') || ''
+const getFolderIdFromRoute = () => getRouteParam('folder') || null
 
 const subfolders = ref<Folder[]>([])
 const songs = ref<Song[]>([])
 const nextPage = ref<number | null>(1)
 
-const parentFolder = computed(() => mediaBrowser.getParentFolder(path.value))
+const parentEntry = computed(() => mediaBrowser.getParentReference(currentFolder.value))
 const noContent = computed(() => !loading.value && !subfolders.value.length && !songs.value.length)
 
 const shouldShowSkeleton = computed(() => {
@@ -84,8 +86,8 @@ const shouldShowSkeleton = computed(() => {
 const items = computed(() => {
   const _items = [...subfolders.value, ...songs.value]
 
-  if (parentFolder.value) {
-    _items.unshift(parentFolder.value)
+  if (parentEntry.value) {
+    _items.unshift(parentEntry.value)
   }
 
   return _items
@@ -94,6 +96,8 @@ const items = computed(() => {
 const resetState = () => {
   subfolders.value = []
   songs.value = []
+  currentFolder.value = null
+  ancestors.value = []
   nextPage.value = 1
 }
 
@@ -104,7 +108,9 @@ const fetchContent = async (forceRefresh = false) => {
 
   try {
     loading.value = true
-    const fetched = await mediaBrowser.browse(path.value, nextPage.value, forceRefresh)
+    const fetched = await mediaBrowser.browse(folderId.value, nextPage.value, forceRefresh)
+    currentFolder.value = fetched.current
+    ancestors.value = fetched.ancestors
     subfolders.value = fetched.subfolders
     songs.value = [...songs.value, ...fetched.songs]
     nextPage.value = fetched.nextPage
@@ -131,7 +137,7 @@ onRouteChanged(async route => {
     return
   }
 
-  path.value = getPathFromRoute()
+  folderId.value = getFolderIdFromRoute()
   resetState()
   await fetchContent()
 })
@@ -147,7 +153,7 @@ eventBus.on('SONGS_DELETED', async deletedSongs => {
 })
 
 onScreenActivated('MediaBrowser', async () => {
-  path.value = getPathFromRoute()
+  folderId.value = getFolderIdFromRoute()
   await fetchContent()
 })
 </script>

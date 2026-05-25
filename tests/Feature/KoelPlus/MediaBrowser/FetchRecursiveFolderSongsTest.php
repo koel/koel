@@ -33,21 +33,23 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
             ->merge(Song::factory()->for($folder)->count(1)->create());
 
         $response = $this->postAs('/api/songs/by-folders', [
-            'paths' => ['foo', 'foo/bar'],
+            'folders' => [$folder->id, $subfolder->id],
         ]);
 
         self::assertEqualsCanonicalizing($response->json('*.id'), $songs->pluck('id')->all());
     }
 
     #[Test]
-    public function resolveWhenOneOfThePathsIsRoot(): void
+    public function fetchSongsForASingleFolder(): void
     {
         $folder = Folder::factory()->createOne(['path' => 'foo']);
 
-        $songs = Song::factory()->for($folder)->count(2)->create()->merge(Song::factory()->createMany(1));
+        $songs = Song::factory()->for($folder)->count(2)->create();
+        // a root-level song that should NOT be returned
+        Song::factory()->createOne();
 
         $response = $this->postAs('/api/songs/by-folders', [
-            'paths' => ['', 'foo'],
+            'folders' => [$folder->id],
         ]);
 
         self::assertEqualsCanonicalizing($response->json('*.id'), $songs->pluck('id')->all());

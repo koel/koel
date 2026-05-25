@@ -39,10 +39,37 @@ class FolderRepository extends Repository
         return $this->findOneBy(['hash' => self::pathToHash($path)]);
     }
 
+    public function findOneByPublicId(?string $publicId = null): ?Folder
+    {
+        return $publicId ? $this->findOneBy(['id' => $publicId]) : null;
+    }
+
+    /** @return Collection<int, Folder> */
+    public function getAncestors(Folder $folder): Collection
+    {
+        $ancestors = new Collection();
+        $current = $folder->parent;
+
+        while ($current) {
+            $ancestors->prepend($current);
+            $current = $current->parent;
+        }
+
+        return $ancestors;
+    }
+
     public function getByPaths(array $paths, ?User $scopedUser = null): Collection
     {
         $hashes = array_map(self::pathToHash(...), $paths);
 
         return $this->getOnlyBrowsable(Folder::query()->whereIn('hash', $hashes)->get(), $scopedUser);
+    }
+
+    /**
+     * @param array<int, string> $publicIds
+     */
+    public function getByPublicIds(array $publicIds, ?User $scopedUser = null): Collection
+    {
+        return $this->getOnlyBrowsable(Folder::query()->whereIn('id', $publicIds)->get(), $scopedUser);
     }
 }

@@ -13,12 +13,18 @@ class FetchSubfoldersController extends Controller
 {
     public function __invoke(MediaBrowser $browser, FolderRepository $folderRepository)
     {
-        $folder = $folderRepository->findByPath(request('path'));
+        $folder = $folderRepository->findOneByPublicId(request('folder'));
 
         if ($folder) {
             $this->authorize('browse', $folder);
         }
 
-        return FolderResource::collection($folderRepository->getSubfolders($folder));
+        return [
+            'current' => $folder ? new FolderResource($folder) : null,
+            'ancestors' => $folder
+                ? FolderResource::collection($folderRepository->getAncestors($folder))
+                : FolderResource::collection(collect()),
+            'subfolders' => FolderResource::collection($folderRepository->getSubfolders($folder)),
+        ];
     }
 }

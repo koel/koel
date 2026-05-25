@@ -43,7 +43,7 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import MediaListItem from '@/components/playable/media-browser/MediaListItem.vue'
 
-const props = defineProps<{ items: (Folder | Song)[]; path: string }>()
+const props = defineProps<{ items: (Folder | Song)[]; folderId: string | null }>()
 defineEmits<{
   (e: 'press:enter', event: KeyboardEvent): void
   (e: 'scrolled-to-end'): void
@@ -53,7 +53,7 @@ const MediaBrowserContextMenu = defineAsyncComponent(
 )
 const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
 
-const { items, path } = toRefs(props)
+const { items, folderId } = toRefs(props)
 
 const { go, url } = useRouter()
 const { startDragging } = useDraggable('browser-media')
@@ -78,7 +78,7 @@ const {
   selected,
   lastSelected,
   reapplySelection,
-} = useListSelection(rows, (row: MediaRow) => (isSong(row.item) ? 'item.id' : 'item.path'))
+} = useListSelection(rows, () => 'item.id')
 
 watch(items, () => reapplySelection(), { deep: true })
 
@@ -90,7 +90,7 @@ const handleEnter = async (event: KeyboardEvent) => {
   // if it's a simple Enter key press on a folder, open it
   if (singleFolderSelected.value && !event.shiftKey && !event.ctrlKey && !event.metaKey) {
     const folder = selectedItems.value[0] as Folder
-    go(url('media-browser', { path: folder.path }))
+    go(url('media-browser', { folder: folder.id }))
 
     return
   }
@@ -148,7 +148,7 @@ const onClick = (row: MediaRow, event: MouseEvent) => {
 
 const playSong = async (song: Song) => {
   if (preferenceStore.state.continuous_playback) {
-    const songsUnderPath = await playableStore.fetchSongsInFolder(path.value)
+    const songsUnderPath = folderId.value ? await playableStore.fetchSongsInFolder(folderId.value) : []
     // make sure the clicked playable is in the list
     queueStore.replaceQueueWith(unionBy(songsUnderPath, [song], 'id'))
     playback().play(song)
@@ -156,7 +156,7 @@ const playSong = async (song: Song) => {
     playback().queueAndPlay(song)
   }
 }
-const openFolder = (folder: Folder) => go(url('media-browser', { path: folder.path }))
+const openFolder = (folder: Folder) => go(url('media-browser', { folder: folder.id }))
 
 const onDblclick = async (row: MediaRow) => {
   if (isSong(row.item)) {
