@@ -47,15 +47,26 @@ class FolderRepository extends Repository
     /** @return Collection<int, Folder> */
     public function getAncestors(Folder $folder): Collection
     {
-        $ancestors = new Collection();
-        $current = $folder->parent;
+        $segments = $folder->path ? explode(DIRECTORY_SEPARATOR, trim($folder->path, DIRECTORY_SEPARATOR)) : [];
+        array_pop($segments);
 
-        while ($current) {
-            $ancestors->prepend($current);
-            $current = $current->parent;
+        if (!$segments) {
+            return new Collection();
         }
 
-        return $ancestors;
+        $ancestorPaths = [];
+
+        for ($i = 1, $count = count($segments); $i <= $count; $i++) {
+            $ancestorPaths[] = implode(DIRECTORY_SEPARATOR, array_slice($segments, 0, $i));
+        }
+
+        $hashes = array_map(self::pathToHash(...), $ancestorPaths);
+
+        return Folder::query()
+            ->whereIn('hash', $hashes)
+            ->get()
+            ->sortBy(static fn (Folder $folder): int => array_search($folder->path, $ancestorPaths, true))
+            ->values();
     }
 
     public function getByPaths(array $paths, ?User $scopedUser = null): Collection

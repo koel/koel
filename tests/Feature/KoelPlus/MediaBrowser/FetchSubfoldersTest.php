@@ -54,9 +54,9 @@ class FetchSubfoldersTest extends PlusTestCase
     #[Test]
     public function fetchReturnsAncestorChain(): void
     {
-        $grandparent = Folder::factory()->createOne();
-        $parent = Folder::factory()->for($grandparent, 'parent')->createOne();
-        $folder = Folder::factory()->for($parent, 'parent')->createOne();
+        $grandparent = Folder::factory()->createOne(['path' => 'Music']);
+        $parent = Folder::factory()->for($grandparent, 'parent')->createOne(['path' => 'Music/Rock']);
+        $folder = Folder::factory()->for($parent, 'parent')->createOne(['path' => 'Music/Rock/PinkFloyd']);
 
         $response = $this->getAs('/api/browse/folders?folder=' . $folder->id)->assertOk();
 
