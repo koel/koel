@@ -18,7 +18,7 @@ class SocialiteServiceProvider extends ServiceProvider
         /** @var SocialiteManager $socialite */
         $socialite = $this->app->make(SocialiteFactory::class);
 
-        $socialite->extend('oidc', function (Application $app): OpenIDConnectProvider {
+        $socialite->extend('oidc', function (Application $app): OpenIDConnectProvider { // @mago-ignore lint:prefer-static-closure
             $config = config('services.oidc');
 
             return new OpenIDConnectProvider(

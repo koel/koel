@@ -16,7 +16,7 @@ class ResetPasswordRequest extends Request
     {
         return [
             'token' => 'required',
-            'email' => 'required|email',
+            'email' => ['required', 'email'],
             'password' => ['sometimes', Password::defaults()],
         ];
     }

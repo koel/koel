@@ -19,10 +19,10 @@ class RadioStationFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->company(),
-            'url' => $this->faker->url(),
+            'name' => fake()->company(),
+            'url' => fake()->url(),
             'logo' => Ulid::generate() . '.webp',
-            'description' => $this->faker->text(),
+            'description' => fake()->text(),
             'is_public' => false,
         ];
     }

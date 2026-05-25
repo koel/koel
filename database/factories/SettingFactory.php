@@ -12,8 +12,8 @@ class SettingFactory extends Factory
     public function definition(): array
     {
         return [
-            'key' => $this->faker->slug,
-            'value' => $this->faker->name,
+            'key' => fake()->slug,
+            'value' => fake()->name,
         ];
     }
 }

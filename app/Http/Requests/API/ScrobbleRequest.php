@@ -10,6 +10,6 @@ class ScrobbleRequest extends Request
     /** @inheritdoc */
     public function rules(): array
     {
-        return ['timestamp' => 'required|numeric'];
+        return ['timestamp' => ['required', 'numeric']];
     }
 }

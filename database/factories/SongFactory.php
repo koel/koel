@@ -21,19 +21,20 @@ class SongFactory extends Factory
             'artist_name' => static fn (array $attributes) => Album::query()->find( // @phpstan-ignore-line
                 $attributes['album_id'],
             )?->artist_name,
-            'title' => $this->faker->sentence,
-            'length' => $this->faker->randomFloat(2, 10, 500),
+            'title' => fake()->sentence,
+            'length' => fake()->randomFloat(2, 10, 500),
             'track' => random_int(1, 20),
             'disc' => random_int(1, 5),
-            'lyrics' => $this->faker->paragraph(),
+            'lyrics' => fake()->paragraph(),
             'path' => '/tmp/' . uniqid('', true) . '.mp3',
-            'year' => $this->faker->year(),
+            'year' => fake()->year(),
             'is_public' => true,
-            'owner_id' => static fn (array $attributes) => Album::query()->find($attributes['album_id'])->user_id, // @phpstan-ignore-line
-            'hash' => $this->faker->md5(),
+            // @mago-ignore lint:prefer-static-closure
+            'owner_id' => fn (array $attributes) => Album::query()->find($attributes['album_id'])->user_id, // @phpstan-ignore-line
+            'hash' => fake()->md5(),
             'mtime' => time(),
             'mime_type' => 'audio/mpeg',
-            'file_size' => $this->faker->numberBetween(4_000_000, 10_000_000),
+            'file_size' => fake()->numberBetween(4_000_000, 10_000_000),
         ];
     }
 
@@ -51,20 +52,21 @@ class SongFactory extends Factory
 
     public function asEpisode(): self
     {
+        // @mago-ignore lint:prefer-static-closure
         return $this->state(fn () => [
             'podcast_id' => Podcast::factory(),
             'episode_metadata' => EpisodeMetadata::fromArray([
-                'link' => $this->faker->url(),
-                'description' => $this->faker->paragraph,
-                'duration' => $this->faker->randomFloat(2, 10, 500),
-                'image' => $this->faker->imageUrl(),
+                'link' => fake()->url(),
+                'description' => fake()->paragraph,
+                'duration' => fake()->randomFloat(2, 10, 500),
+                'image' => fake()->imageUrl(),
             ]),
             'is_public' => true,
             'artist_id' => null,
             'owner_id' => null,
             'album_id' => null,
             'storage' => null,
-            'path' => $this->faker->url(),
+            'path' => fake()->url(),
             'lyrics' => '',
             'track' => null,
             'disc' => 0,

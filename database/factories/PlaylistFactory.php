@@ -18,9 +18,9 @@ class PlaylistFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
+            'name' => fake()->name,
             'rules' => null,
-            'description' => $this->faker->realText(),
+            'description' => fake()->realText(),
             'cover' => Ulid::generate() . '.webp',
         ];
     }

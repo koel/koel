@@ -20,8 +20,8 @@ class MovePlaylistSongsRequest extends Request
             // We don't validate against the playlist_song table here, because songs might have been removed
             // from the playlist in the meantime.
             // Instead, we only validate that the songs exist.
-            'songs' => 'required|array|exists:songs,id',
-            'target' => 'required|exists:playlist_song,song_id',
+            'songs' => ['required', 'array', 'exists:songs,id'],
+            'target' => ['required', 'exists:playlist_song,song_id'],
             'placement' => ['required', new Enum(Placement::class)],
         ];
     }

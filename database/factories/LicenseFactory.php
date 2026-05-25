@@ -19,9 +19,9 @@ class LicenseFactory extends Factory
             'hash' => Str::random(32),
             'instance' => LicenseInstance::make(id: Str::uuid()->toString(), name: 'Koel Plus', createdAt: now()),
             'meta' => LicenseMeta::make(
-                customerId: $this->faker->numberBetween(1, 1000),
-                customerName: $this->faker->name(),
-                customerEmail: $this->faker->email(),
+                customerId: fake()->numberBetween(1, 1000),
+                customerName: fake()->name(),
+                customerEmail: fake()->email(),
             ),
             'expires_at' => null,
         ];

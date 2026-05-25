@@ -63,11 +63,14 @@ class FolderRepository extends Repository
 
         $hashes = array_map(self::pathToHash(...), $ancestorPaths);
 
-        return Folder::query()
-            ->whereIn('hash', $hashes)
-            ->get()
-            ->sortBy(static fn (Folder $folder): int => array_search($folder->path, $ancestorPaths, true))
-            ->values();
+        $ancestors = Folder::query()->whereIn('hash', $hashes)->get();
+
+        return new Collection(
+            $ancestors
+                ->sortBy(static fn (Folder $folder): int => array_search($folder->path, $ancestorPaths, true))
+                ->values()
+                ->all(),
+        );
     }
 
     public function getByPaths(array $paths, ?User $scopedUser = null): Collection
