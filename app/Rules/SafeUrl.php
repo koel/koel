@@ -19,11 +19,10 @@ class SafeUrl implements ValidationRule
 {
     private const array ALLOWED_SCHEMES = ['http', 'https'];
 
-    private Network $network;
-
-    public function __construct(?Network $network = null)
-    {
-        $this->network = $network ?? app(Network::class);
+    public function __construct(
+        private ?Network $network = null,
+    ) {
+        $this->network ??= app(Network::class);
     }
 
     /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */

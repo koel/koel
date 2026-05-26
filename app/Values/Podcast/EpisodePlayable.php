@@ -10,6 +10,9 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 final class EpisodePlayable implements Arrayable, Jsonable
 {
@@ -25,7 +28,7 @@ final class EpisodePlayable implements Arrayable, Jsonable
 
     public function valid(): bool
     {
-        return File::isReadable($this->path) && $this->checksum === md5_file($this->path);
+        return File::isReadable($this->path) && $this->checksum === File::hash($this->path);
     }
 
     public static function getForEpisode(Episode $episode): self
@@ -52,7 +55,11 @@ final class EpisodePlayable implements Arrayable, Jsonable
                 ->withOptions([
                     'allow_redirects' => [
                         'max' => 5,
-                        'on_redirect' => static function ($request, $response, $uri) use ($network): void {
+                        'on_redirect' => static function (
+                            RequestInterface $request,
+                            ResponseInterface $response,
+                            UriInterface $uri,
+                        ) use ($network): void {
                             if (!$network->isSafeUrl((string) $uri)) {
                                 throw UnsafeUrlException::forUrl((string) $uri);
                             }
