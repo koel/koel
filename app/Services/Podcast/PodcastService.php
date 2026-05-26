@@ -34,6 +34,7 @@ class PodcastService
     public function __construct(
         private readonly PodcastRepository $podcastRepository,
         private readonly SongRepository $songRepository,
+        private readonly Network $network,
         private ?ClientInterface $client = null,
     ) {}
 
@@ -139,7 +140,7 @@ class PodcastService
 
             $enclosureUrl = (string) $episodeValue->enclosure->url;
 
-            if (!Network::isSafeUrl($enclosureUrl)) {
+            if (!$this->network->isSafeUrl($enclosureUrl)) {
                 Log::warning(sprintf(
                     'Skipping podcast episode "%s" with unsafe enclosure URL: %s',
                     $episodeValue->title,
@@ -240,7 +241,7 @@ class PodcastService
     {
         $url = $url instanceof Episode ? $url->path : $url;
 
-        if (!Network::isSafeUrl($url)) {
+        if (!$this->network->isSafeUrl($url)) {
             return null;
         }
 

@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Facades\License;
+use App\Helpers\Network;
 use App\Helpers\Ulid;
 use App\Helpers\Uuid;
 use App\Models\Album;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\File;
 use Tests\Concerns\AssertsArraySubset;
 use Tests\Concerns\CreatesApplication;
 use Tests\Concerns\MakesHttpRequests;
+use Tests\Fakes\FakeNetwork;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -36,6 +38,7 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         License::swap($this->app->make(CommunityLicenseService::class));
+        $this->app->instance(Network::class, new FakeNetwork());
         $this->fileSystem = File::getFacadeRoot();
 
         // Replace the AlbumObserver with a partial that skips the `saved` event (which dispatches
