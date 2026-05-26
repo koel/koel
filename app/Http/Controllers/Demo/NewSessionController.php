@@ -30,7 +30,7 @@ class NewSessionController extends Controller
             name: 'Koel',
             email: $email,
             plainTextPassword: User::DEMO_PASSWORD,
-            role: Role::ADMIN,
+            role: Role::USER,
         ));
 
         return redirect('/')->with('demo_account', [

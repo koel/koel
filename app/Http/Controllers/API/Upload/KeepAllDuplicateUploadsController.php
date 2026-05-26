@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Upload;
 
+use App\Attributes\DisabledInDemo;
 use App\Http\Controllers\Controller;
 use App\Models\Song;
 use App\Models\User;
@@ -12,6 +13,7 @@ use App\Responses\SongUploadResponse;
 use App\Services\Upload\DuplicateUploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
+#[DisabledInDemo]
 class KeepAllDuplicateUploadsController extends Controller
 {
     /** @param User $user */

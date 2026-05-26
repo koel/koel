@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Upload;
 
+use App\Attributes\DisabledInDemo;
 use App\Http\Controllers\Controller;
 use App\Models\DuplicateUpload;
 use App\Repositories\AlbumRepository;
@@ -9,6 +10,7 @@ use App\Repositories\SongRepository;
 use App\Responses\SongUploadResponse;
 use App\Services\Upload\DuplicateUploadService;
 
+#[DisabledInDemo]
 class KeepDuplicateUploadController extends Controller
 {
     public function __invoke(
