@@ -25,10 +25,10 @@ jobs:
         with:
           composer-options: "--prefer-dist --no-dev --optimize-autoloader"
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v6
         with:
           node-version: 22
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
       - name: Build project
         run: |
           sudo apt install pngquant zip unzip
