@@ -35,7 +35,7 @@ jobs:
     # Skip on fork PRs — secrets.KOEL_PLUS_LICENSE_KEY isn't available there.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
 
@@ -201,7 +201,7 @@ jobs:
 
       - name: Upload logs on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: proxy-auth-e2e-logs-${{ github.run_id }}
           path: |
