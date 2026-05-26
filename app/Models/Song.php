@@ -152,14 +152,23 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
     /** @inheritdoc */
     public function toSearchableArray(): array
     {
-        return [
+        $array = [
             'id' => $this->id,
             'owner_id' => $this->owner_id,
             'title' => $this->title,
             'type' => $this->type->value,
-            'artist_name' => $this->artist_name,
             'album_name' => $this->album_name,
         ];
+
+        if (
+            $this->artist_name
+            && $this->artist_name !== Artist::UNKNOWN_NAME
+            && $this->artist_name !== Artist::VARIOUS_NAME
+        ) {
+            $array['artist_name'] = $this->artist_name;
+        }
+
+        return $array;
     }
 
     public function syncGenres(string|array $genres): void
