@@ -13,7 +13,7 @@ use Throwable;
 
 class ImageWriter
 {
-    private FileExtension $extension;
+    public readonly FileExtension $extension;
 
     public function __construct()
     {

@@ -14,6 +14,7 @@ use App\Http\Integrations\YouTube\YouTubeConnector;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\Image\ImageWriter;
 use App\Services\Integrations\LastfmService;
 use App\Services\Integrations\SpotifyService;
 use App\Services\Integrations\YouTubeService;
@@ -68,6 +69,7 @@ class DoctorCommand extends Command
         $this->checkFullTextSearch();
         $this->checkApiHealth();
         $this->checkFFMpeg();
+        $this->checkImageWriting();
         $this->checkPhpExtensions();
         $this->checkPhpConfiguration();
         $this->checkStreamingMethod();
@@ -338,6 +340,18 @@ class DoctorCommand extends Command
         $this->assertDirectoryPermissions(base_path('storage/framework/sessions'), 'Session');
         $this->assertDirectoryPermissions(base_path('storage/framework/cache'), 'Cache');
         $this->assertDirectoryPermissions(base_path('storage/logs'), 'Log');
+        $this->assertDirectoryPermissions(public_path(config('koel.image_storage_dir')), 'Image storage');
+    }
+
+    private function checkImageWriting(): void
+    {
+        try {
+            $writer = new ImageWriter();
+            $this->reportSuccess('Image processing', $writer->extension->value);
+        } catch (Throwable $e) {
+            $this->collectError($e);
+            $this->reportError('Image processing', 'No supported format');
+        }
     }
 
     private function reportError(string $message, ?string $value = 'ERROR'): void

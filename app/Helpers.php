@@ -27,9 +27,19 @@ function base_url(): string
     return app()->runningUnitTests() ? config('app.url') : asset('');
 }
 
-function image_storage_path(?string $fileName, ?string $default = null): ?string
+function image_storage_path(?string $fileName, ?string $default = null, bool $ensureDirectoryExists = true): ?string
 {
-    return $fileName ? public_path(config('koel.image_storage_dir') . DIRECTORY_SEPARATOR . $fileName) : $default;
+    if (!$fileName) {
+        return $default;
+    }
+
+    $path = public_path(config('koel.image_storage_dir') . DIRECTORY_SEPARATOR . $fileName);
+
+    if ($ensureDirectoryExists && !is_dir(dirname($path))) {
+        File::ensureDirectoryExists(dirname($path));
+    }
+
+    return $path;
 }
 
 function image_storage_url(?string $fileName, ?string $default = null): ?string
