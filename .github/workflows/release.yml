@@ -13,7 +13,7 @@ jobs:
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -25,10 +25,10 @@ jobs:
         with:
           composer-options: "--prefer-dist --no-dev --optimize-autoloader"
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v6
         with:
           node-version: 22
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
       - name: Build project
         run: |
           sudo apt install pngquant zip unzip

@@ -45,7 +45,7 @@ jobs:
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -63,7 +63,7 @@ jobs:
         env:
           COMPOSER_PROCESS_TIMEOUT: 600
       - name: Upload logs if broken
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: unit-be-pgsql-logs-${{ github.run_id }}-${{ github.run_attempt }}
