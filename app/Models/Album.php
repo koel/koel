@@ -118,20 +118,11 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
     /** @inheritdoc */
     public function toSearchableArray(): array
     {
-        $array = [
+        return [
             'id' => $this->id,
             'user_id' => $this->user_id,
             'name' => $this->name,
+            'artist_name' => $this->artist_name,
         ];
-
-        if (
-            $this->artist_name
-            && $this->artist_name !== Artist::UNKNOWN_NAME
-            && $this->artist_name !== Artist::VARIOUS_NAME
-        ) {
-            $array['artist'] = $this->artist_name;
-        }
-
-        return $array;
     }
 }
