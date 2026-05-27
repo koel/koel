@@ -13,12 +13,16 @@ return new class extends Migration {
         }
 
         Schema::table('songs', static function (Blueprint $table): void {
-            $table->dropFullText(['title']);
+            if (Schema::hasIndex('songs', 'songs_title_fulltext')) {
+                $table->dropFullText(['title']);
+            }
             $table->fullText(['title', 'artist_name', 'album_name'])->language('simple');
         });
 
         Schema::table('albums', static function (Blueprint $table): void {
-            $table->dropFullText(['name']);
+            if (Schema::hasIndex('albums', 'albums_name_fulltext')) {
+                $table->dropFullText(['name']);
+            }
             $table->fullText(['name', 'artist_name'])->language('simple');
         });
 
