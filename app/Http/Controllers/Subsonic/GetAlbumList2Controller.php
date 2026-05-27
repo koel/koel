@@ -38,7 +38,7 @@ class GetAlbumList2Controller extends Controller
             'newest' => $this->albumRepository->getRecentlyAdded($size),
             'frequent' => $this->albumRepository->getMostPlayed($size),
             'random' => $this->albumRepository->getRandom($size),
-            'starred' => $this->albumRepository->getFavorites(),
+            'starred' => $this->albumRepository->getFavorites($size, $offset),
             'alphabeticalByName' => $this->albumRepository->getOrdered('albums.name', 'asc', $size, $offset),
             default => throw new LogicException("Unsupported album list type: {$type}"),
         };

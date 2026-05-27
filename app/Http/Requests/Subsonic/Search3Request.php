@@ -11,9 +11,9 @@ class Search3Request extends Request
     {
         return [
             'query' => ['required', 'string'],
-            'artistCount' => ['integer', 'min:0'],
-            'albumCount' => ['integer', 'min:0'],
-            'songCount' => ['integer', 'min:0'],
+            'artistCount' => ['integer', 'min:0', 'max:500'],
+            'albumCount' => ['integer', 'min:0', 'max:500'],
+            'songCount' => ['integer', 'min:0', 'max:500'],
         ];
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Enums\FavoriteableType;
 use App\Models\Album;
+use App\Models\Favorite;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -59,6 +61,43 @@ class GetAlbumList2Test extends TestCase
         )->assertOk();
 
         self::assertCount(3, $response->json('subsonic-response.albumList2.album'));
+    }
+
+    #[Test]
+    public function starredReturnsOnlyFavoritedAlbums(): void
+    {
+        $user = create_user();
+
+        $favorited = Album::factory()->createOne(['name' => 'Liked', 'user_id' => $user->id]);
+        Album::factory()->createOne(['name' => 'NotLiked', 'user_id' => $user->id]);
+
+        Favorite::factory()->createOne([
+            'user_id' => $user->id,
+            'favoriteable_type' => FavoriteableType::ALBUM->value,
+            'favoriteable_id' => $favorited->id,
+        ]);
+
+        $response = $this->getJson(
+            "/rest/getAlbumList2.view?apiKey={$user->subsonic_api_key}&f=json&type=starred",
+        )->assertOk();
+
+        $names = array_column($response->json('subsonic-response.albumList2.album') ?? [], 'name');
+        self::assertSame(['Liked'], $names);
+    }
+
+    #[Test]
+    public function frequentReturnsAtMostRequestedSize(): void
+    {
+        $user = create_user();
+
+        Album::factory()->count(3)->create(['user_id' => $user->id]);
+
+        $response = $this
+            ->getJson("/rest/getAlbumList2.view?apiKey={$user->subsonic_api_key}&f=json&type=frequent&size=2")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'ok');
+
+        self::assertLessThanOrEqual(2, count($response->json('subsonic-response.albumList2.album') ?? []));
     }
 
     #[Test]
