@@ -129,7 +129,7 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
             && $this->artist_name !== Artist::UNKNOWN_NAME
             && $this->artist_name !== Artist::VARIOUS_NAME
         ) {
-            $array['artist_name'] = $this->artist_name;
+            $array['artist'] = $this->artist_name;
         }
 
         return $array;
