@@ -5,6 +5,7 @@ use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
 use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\RestrictPlusFeatures;
+use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -14,6 +15,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -58,6 +62,18 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return redirect()->guest('/');
+        });
+
+        $exceptions->render(static function (NotFoundHttpException $e, Request $request): ?SymfonyResponse {
+            return $request->is('rest/*')
+                ? SubsonicResponse::error(70, 'The requested data was not found.')->toResponse($request)
+                : null;
+        });
+
+        $exceptions->render(static function (ValidationException $e, Request $request): ?SymfonyResponse {
+            return $request->is('rest/*')
+                ? SubsonicResponse::error(10, 'Required parameter is missing.')->toResponse($request)
+                : null;
         });
     })
     ->create();
