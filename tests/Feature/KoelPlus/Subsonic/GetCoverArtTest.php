@@ -33,12 +33,7 @@ class GetCoverArtTest extends PlusTestCase
     public function otherUsersCoverReturnsCode70(): void
     {
         $owner = create_user();
-        $owner->preferences->includePublicMedia = false;
-        $owner->save();
-
         $requester = create_user();
-        $requester->preferences->includePublicMedia = false;
-        $requester->save();
 
         $album = Album::factory()->createOne([
             'cover' => basename($this->stagedPath),
