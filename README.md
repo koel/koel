@@ -7,12 +7,14 @@
 **Koel** (also stylized as **koel**, with a lowercase k) is a free, open-source music streaming solution
 that turns your personal collection into a sleek, web-based listening experience.
 
-Built on Laravel and Vue, it scans your music library and serves it back through a fast, modern interface 
-that works in any browser. Beyond playback, Koel handles playlists, smart playlists, scrobbling, podcasts, 
-Last.fm and Spotify integrations, lyric search, and an AI assistant that responds to natural-language commands. 
+Built on [Laravel](https://laravel.com/) and [Vue](https://vuejs.org/), it scans your music library and 
+serves it back through a fast, modern interface that works in any browser. Beyond playback, Koel handles 
+playlists, smart playlists, scrobbling, podcasts, radio, Last.fm/Spotify/MusicBrainz integrations, and 
+an AI assistant that responds to natural-language commands. 
 
-The premium Koel Plus tier adds multi-user libraries, collaboration, SSO, cloud storage drivers, custom themes, 
-and white-labeling for organizations that want to host their own Spotify-style experience without paying anyone else.
+The premium Koel Plus adds multi-user libraries, collaboration, SSO, cloud storage drivers, custom themes, 
+and white-labeling for organizations that want to host their own Spotify-style experience without paying
+anyone else.
 
 ## Install and Upgrade Guide
 
