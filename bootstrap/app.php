@@ -7,6 +7,7 @@ use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\RestrictPlusFeatures;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -73,6 +74,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(static function (ValidationException $e, Request $request): ?SymfonyResponse {
             return $request->is('rest/*')
                 ? SubsonicResponse::error(10, 'Required parameter is missing.')->toResponse($request)
+                : null;
+        });
+
+        $exceptions->render(static function (AuthorizationException $e, Request $request): ?SymfonyResponse {
+            return $request->is('rest/*')
+                ? SubsonicResponse::error(50, 'User is not authorized for the given operation.')->toResponse($request)
                 : null;
         });
     })
