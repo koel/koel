@@ -4,6 +4,9 @@ namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
 
+/**
+ * @property string $id
+ */
 class IdRequest extends Request
 {
     /** @inheritdoc */
@@ -12,10 +15,5 @@ class IdRequest extends Request
         return [
             'id' => ['required', 'string'],
         ];
-    }
-
-    public function id(): string
-    {
-        return (string) $this->input('id');
     }
 }

@@ -19,7 +19,7 @@ class GetAlbumController extends Controller
 
     public function __invoke(IdRequest $request)
     {
-        $album = $this->albumRepository->getOne($request->id());
+        $album = $this->albumRepository->getOne($request->id);
         $album->loadCount('songs')->loadSum('songs', 'length');
 
         $songs = $this->songRepository->getByAlbum($album);

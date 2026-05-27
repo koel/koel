@@ -16,7 +16,7 @@ class GetSongController extends Controller
 
     public function __invoke(IdRequest $request)
     {
-        $song = $this->songRepository->getOne($request->id());
+        $song = $this->songRepository->getOne($request->id);
 
         return SubsonicResponse::ok([
             'song' => SongResource::toArray($song),

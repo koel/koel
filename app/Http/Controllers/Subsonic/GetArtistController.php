@@ -19,7 +19,7 @@ class GetArtistController extends Controller
 
     public function __invoke(IdRequest $request)
     {
-        $artist = $this->artistRepository->getOne($request->id());
+        $artist = $this->artistRepository->getOne($request->id);
         $artist->loadCount('albums');
 
         $albums = $this->albumRepository->getByArtist($artist)->loadCount('songs')->loadSum('songs', 'length');
