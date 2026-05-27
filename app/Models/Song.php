@@ -157,18 +157,15 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
             'owner_id' => $this->owner_id,
             'title' => $this->title,
             'type' => $this->type->value,
+            'album_name' => $this->album_name,
         ];
-
-        if ($this->episode_metadata?->description) {
-            $array['episode_description'] = $this->episode_metadata->description;
-        }
 
         if (
             $this->artist_name
             && $this->artist_name !== Artist::UNKNOWN_NAME
             && $this->artist_name !== Artist::VARIOUS_NAME
         ) {
-            $array['artist'] = $this->artist_name;
+            $array['artist_name'] = $this->artist_name;
         }
 
         return $array;
