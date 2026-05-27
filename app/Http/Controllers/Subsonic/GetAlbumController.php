@@ -23,14 +23,12 @@ class GetAlbumController extends Controller
         $album->loadCount('songs')->loadSum('songs', 'length');
 
         $songs = $this->songRepository->getByAlbum($album);
-        $songPayloads = [];
-
-        foreach ($songs as $song) {
-            $songPayloads[] = SongResource::toArray($song);
-        }
 
         return SubsonicResponse::ok([
-            'album' => AlbumResource::toArray($album) + ['song' => $songPayloads],
+            'album' => AlbumResource::toArray($album)
+                + [
+                    'song' => $songs->map(SongResource::toArray(...))->all(),
+                ],
         ]);
     }
 }

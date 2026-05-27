@@ -23,14 +23,12 @@ class GetArtistController extends Controller
         $artist->loadCount('albums');
 
         $albums = $this->albumRepository->getByArtist($artist)->loadCount('songs')->loadSum('songs', 'length');
-        $albumPayloads = [];
-
-        foreach ($albums as $album) {
-            $albumPayloads[] = AlbumResource::toArray($album);
-        }
 
         return SubsonicResponse::ok([
-            'artist' => ArtistResource::toArray($artist) + ['album' => $albumPayloads],
+            'artist' => ArtistResource::toArray($artist)
+                + [
+                    'album' => $albums->map(AlbumResource::toArray(...))->all(),
+                ],
         ]);
     }
 }
