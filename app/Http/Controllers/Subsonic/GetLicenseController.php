@@ -10,7 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class GetLicenseController extends Controller
 {
     /** @param User $user */
-    public function __invoke(Authenticatable $user): SubsonicResponse
+    public function __invoke(Authenticatable $user)
     {
         return SubsonicResponse::ok([
             'license' => [

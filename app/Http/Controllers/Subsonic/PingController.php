@@ -7,7 +7,7 @@ use App\Http\Responses\Subsonic\SubsonicResponse;
 
 class PingController extends Controller
 {
-    public function __invoke(): SubsonicResponse
+    public function __invoke()
     {
         return SubsonicResponse::ok();
     }

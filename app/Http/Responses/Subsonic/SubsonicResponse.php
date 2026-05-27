@@ -74,6 +74,21 @@ class SubsonicResponse implements Responsable
     /** @param array<string, mixed> $envelope */
     private function toJsonp(array $envelope, string $callback): Response
     {
+        if (!preg_match('/^[A-Za-z_$][A-Za-z0-9_$]*(?:\.[A-Za-z_$][A-Za-z0-9_$]*)*$/', $callback)) {
+            $errorBody = json_encode([
+                'subsonic-response' => [
+                    'status' => 'failed',
+                    'version' => self::API_VERSION,
+                    'type' => 'koel',
+                    'serverVersion' => koel_version(),
+                    'openSubsonic' => true,
+                    'error' => ['code' => 10, 'message' => 'Required parameter is missing.'],
+                ],
+            ]);
+
+            return response($errorBody, Response::HTTP_OK, ['Content-Type' => 'application/json']);
+        }
+
         $body = $callback . '(' . json_encode(['subsonic-response' => $envelope]) . ');';
 
         return response($body, Response::HTTP_OK, ['Content-Type' => 'application/javascript']);

@@ -67,4 +67,33 @@ class PingTest extends TestCase
 
         self::assertNotNull($user->subsonic_api_key);
     }
+
+    #[Test]
+    public function jsonpWrapsResponseInValidCallback(): void
+    {
+        $user = create_user();
+
+        $response = $this->get(
+            '/rest/ping.view?apiKey=' . $user->subsonic_api_key . '&f=jsonp&callback=myCallback',
+        )->assertOk();
+
+        $body = $response->getContent();
+        self::assertStringStartsWith('myCallback(', $body);
+        self::assertStringEndsWith(');', $body);
+    }
+
+    #[Test]
+    public function jsonpRejectsCallbackWithXssPayload(): void
+    {
+        $user = create_user();
+
+        $response = $this->get(
+            '/rest/ping.view?apiKey=' . $user->subsonic_api_key . '&f=jsonp&callback='
+                . urlencode('</script><script>evil()'),
+        )->assertOk();
+
+        self::assertStringNotContainsString('<script>', $response->getContent());
+        $response->assertJsonPath('subsonic-response.status', 'failed');
+        $response->assertJsonPath('subsonic-response.error.code', 10);
+    }
 }
