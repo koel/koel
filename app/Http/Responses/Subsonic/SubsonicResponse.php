@@ -4,6 +4,7 @@ namespace App\Http\Responses\Subsonic;
 
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use SimpleXMLElement;
 
 class SubsonicResponse implements Responsable
@@ -84,7 +85,7 @@ class SubsonicResponse implements Responsable
         foreach ($data as $key => $value) {
             if (is_scalar($value) || $value === null) {
                 $element->addAttribute($key, self::formatScalar($value));
-            } elseif (array_is_list($value)) {
+            } elseif (Arr::isList($value)) {
                 foreach ($value as $item) {
                     $child = $element->addChild($key);
                     self::serializeTo($child, is_array($item) ? $item : ['value' => $item]);
