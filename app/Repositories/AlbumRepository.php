@@ -73,6 +73,46 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** @return Collection<int, Album> */
+    public function getFavorites(int $limit, int $offset = 0, ?User $user = null): Collection
+    {
+        return Album::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: true)
+            ->orderBy('favorites.position')
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+    }
+
+    /** @return Collection<int, Album> */
+    public function getRandom(int $limit, ?User $user = null): Collection
+    {
+        return Album::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get();
+    }
+
+    /** @return Collection<int, Album> */
+    public function getOrdered(
+        string $sortColumn,
+        string $sortDirection,
+        int $limit,
+        int $offset = 0,
+        ?User $user = null,
+    ): Collection {
+        return Album::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->sort($sortColumn, $sortDirection)
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+    }
+
     public function getForListing(
         string $sortColumn,
         string $sortDirection,
