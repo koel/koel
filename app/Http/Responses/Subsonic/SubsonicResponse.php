@@ -34,13 +34,32 @@ class SubsonicResponse implements Responsable
     /** @inheritdoc */
     public function toResponse($request)
     {
-        $envelope = $this->buildEnvelope();
+        $envelope = self::stripNulls($this->buildEnvelope());
 
         return match ($request->input('f')) {
             'json' => response()->json(['subsonic-response' => $envelope]),
             'jsonp' => $this->toJsonp($envelope, (string) $request->input('callback', '')),
             default => $this->toXml($envelope),
         };
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    private static function stripNulls(array $data): array
+    {
+        $result = [];
+
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            $result[$key] = is_array($value) ? self::stripNulls($value) : $value;
+        }
+
+        return $result;
     }
 
     /** @return array<string, mixed> */
@@ -93,14 +112,24 @@ class SubsonicResponse implements Responsable
                 $element->addAttribute($key, self::formatScalar($value));
             } elseif (Arr::isList($value)) {
                 foreach ($value as $item) {
-                    $child = $element->addChild($key);
-                    self::serializeTo($child, is_array($item) ? $item : ['value' => $item]);
+                    self::appendChild($element, $key, is_array($item) ? $item : ['value' => $item]);
                 }
             } else {
-                $child = $element->addChild($key);
-                self::serializeTo($child, $value);
+                self::appendChild($element, $key, $value);
             }
         }
+    }
+
+    /** @param array<string, mixed> $data */
+    private static function appendChild(SimpleXMLElement $parent, string $key, array $data): void
+    {
+        $text = $data['value'] ?? null;
+
+        $child = is_scalar($text)
+            ? $parent->addChild($key, htmlspecialchars(self::formatScalar($text), ENT_XML1, 'UTF-8'))
+            : $parent->addChild($key);
+
+        self::serializeTo($child, Arr::except($data, 'value'));
     }
 
     private static function formatScalar(mixed $value): string

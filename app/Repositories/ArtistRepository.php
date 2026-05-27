@@ -57,6 +57,17 @@ class ArtistRepository extends Repository implements ScoutableRepository
         return $preserveOrder ? $artists->orderByArray($ids) : $artists;
     }
 
+    public function getAll(?User $user = null): Collection
+    {
+        return Artist::query()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->onlyStandard()
+            ->onlyAlbumArtists()
+            ->withCount('albums')
+            ->orderBy('name')
+            ->get();
+    }
+
     public function getForListing(
         string $sortColumn,
         string $sortDirection,

@@ -152,6 +152,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** @return Collection<int, Song> */
     public function getByAlbum(Album|string $album, ?User $scopedUser = null): Collection
     {
         $album = $this->albumRepository->resolveOne($album);

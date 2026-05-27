@@ -57,6 +57,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
         return $preserveOrder ? $albums->orderByArray($ids) : $albums;
     }
 
+    /** @return Collection<int, Album> */
     public function getByArtist(Artist $artist, ?User $user = null): Collection
     {
         return Album::query()
