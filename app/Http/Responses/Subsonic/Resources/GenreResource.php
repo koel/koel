@@ -6,7 +6,13 @@ use App\Values\GenreSummary;
 
 final class GenreResource
 {
-    /** @return array<string, mixed> */
+    /**
+     * @return array{
+     *     songCount: int,
+     *     albumCount: int,
+     *     value: string,
+     * }
+     */
     public static function toArray(GenreSummary $genre): array
     {
         return [

@@ -6,7 +6,14 @@ use App\Models\Artist;
 
 final class ArtistResource
 {
-    /** @return array<string, mixed> */
+    /**
+     * @return array{
+     *     id: string,
+     *     name: string,
+     *     coverArt: ?string,
+     *     albumCount: int,
+     * }
+     */
     public static function toArray(Artist $artist): array
     {
         return [

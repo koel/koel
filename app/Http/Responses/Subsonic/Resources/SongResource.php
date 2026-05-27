@@ -6,7 +6,30 @@ use App\Models\Song;
 
 final class SongResource
 {
-    /** @return array<string, mixed> */
+    /**
+     * @return array{
+     *     id: string,
+     *     parent: string,
+     *     isDir: bool,
+     *     title: string,
+     *     album: ?string,
+     *     artist: ?string,
+     *     track: ?int,
+     *     year: ?int,
+     *     genre: ?string,
+     *     coverArt: ?string,
+     *     size: ?int,
+     *     contentType: ?string,
+     *     suffix: ?string,
+     *     duration: int,
+     *     created: string,
+     *     albumId: string,
+     *     artistId: string,
+     *     type: string,
+     *     discNumber: ?int,
+     *     isVideo: bool,
+     * }
+     */
     public static function toArray(Song $song): array
     {
         return [

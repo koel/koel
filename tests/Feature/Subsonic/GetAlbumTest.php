@@ -42,6 +42,7 @@ class GetAlbumTest extends TestCase
         $this
             ->getJson("/rest/getAlbum.view?apiKey={$user->subsonic_api_key}&f=json&id=does-not-exist")
             ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'failed')
             ->assertJsonPath('subsonic-response.error.code', 70);
     }
 }

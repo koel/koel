@@ -6,7 +6,19 @@ use App\Models\Album;
 
 final class AlbumResource
 {
-    /** @return array<string, mixed> */
+    /**
+     * @return array{
+     *     id: string,
+     *     name: string,
+     *     artist: string,
+     *     artistId: string,
+     *     coverArt: ?string,
+     *     songCount: int,
+     *     duration: int,
+     *     created: string,
+     *     year: ?int,
+     * }
+     */
     public static function toArray(Album $album): array
     {
         return [
