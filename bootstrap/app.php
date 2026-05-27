@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Http\Middleware\AudioAuthenticate;
 use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
@@ -80,6 +81,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(static function (AuthorizationException $e, Request $request): ?SymfonyResponse {
             return $request->is('rest/*')
                 ? SubsonicResponse::error(50, 'User is not authorized for the given operation.')->toResponse($request)
+                : null;
+        });
+
+        $exceptions->render(static function (
+            OperationNotApplicableForSmartPlaylistException $e,
+            Request $request,
+        ): ?SymfonyResponse {
+            return $request->is('rest/*')
+                ? SubsonicResponse::error(0, 'Operation is not applicable to smart playlists.')->toResponse($request)
                 : null;
         });
     })
