@@ -22,6 +22,8 @@ trait HasArtistAttributes
      */
     protected function name(): Attribute
     {
-        return Attribute::get(static fn (string $value): string => html_entity_decode($value) ?: self::UNKNOWN_NAME);
+        return Attribute::get(
+            static fn (?string $value): string => html_entity_decode($value ?? '') ?: self::UNKNOWN_NAME,
+        );
     }
 }
