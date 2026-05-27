@@ -70,7 +70,7 @@ class GetCoverArtTest extends TestCase
     public function albumWithoutCoverReturnsCode70(): void
     {
         $user = create_user();
-        $album = Album::factory()->createOne(['cover' => null, 'user_id' => $user->id]);
+        $album = Album::factory()->createOne(['cover' => '', 'user_id' => $user->id]);
 
         $this
             ->getJson("/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&f=json&id={$album->id}")

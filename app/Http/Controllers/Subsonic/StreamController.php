@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Subsonic;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Subsonic\IdRequest;
+use App\Http\Requests\Subsonic\StreamRequest;
 use App\Repositories\SongRepository;
 use App\Services\Streamer\Streamer;
 use App\Values\RequestedStreamingConfig;
@@ -14,7 +14,7 @@ class StreamController extends Controller
         private readonly SongRepository $songRepository,
     ) {}
 
-    public function __invoke(IdRequest $request)
+    public function __invoke(StreamRequest $request)
     {
         $song = $this->songRepository->getOne($request->id);
         $this->authorize('access', $song);
