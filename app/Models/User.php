@@ -34,6 +34,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property ?Carbon $invited_at
  * @property ?User $invitedBy
  * @property ?string $invitation_token
+ * @property ?string $subsonic_api_key
  * @property Collection<array-key, Playlist> $collaboratedPlaylists
  * @property Collection<array-key, Playlist> $playlists
  * @property Collection<array-key, PlaylistFolder> $playlistFolders
@@ -61,8 +62,8 @@ use Spatie\Permission\Traits\HasRoles;
  */
 #[ObservedBy(UserObserver::class)]
 #[UseEloquentBuilder(UserBuilder::class)]
-#[Guarded(['id', 'public_id'])]
-#[Hidden(['password', 'remember_token', 'created_at', 'updated_at', 'invitation_accepted_at'])]
+#[Guarded(['id', 'public_id', 'subsonic_api_key'])]
+#[Hidden(['password', 'remember_token', 'subsonic_api_key', 'created_at', 'updated_at', 'invitation_accepted_at'])]
 #[Appends(['avatar'])]
 class User extends Authenticatable implements AuditableContract
 {
