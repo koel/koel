@@ -18,6 +18,7 @@ class UserObserver
     public function creating(User $user): void
     {
         $user->public_id ??= Uuid::generate();
+        $user->subsonic_api_key ??= Uuid::generate();
     }
 
     public function updating(User $user): void

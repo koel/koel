@@ -13,12 +13,14 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         using: static function (): void {
             RouteServiceProvider::loadVersionAwareRoutes('web');
             RouteServiceProvider::loadVersionAwareRoutes('api');
+            Route::middleware('api')->group(base_path('routes/subsonic.php'));
         },
         commands: __DIR__ . '/../routes/console.php',
         channels: __DIR__ . '/../routes/channels.php',
