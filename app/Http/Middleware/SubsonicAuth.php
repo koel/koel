@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use App\Http\Responses\Subsonic\SubsonicResponse;
-use App\Models\User;
 use App\Repositories\UserRepository;
 use Closure;
 use Illuminate\Http\Request;
@@ -24,8 +23,7 @@ class SubsonicAuth
             return SubsonicResponse::error(10, 'Required parameter is missing.')->toResponse($request);
         }
 
-        /** @var ?User $user */
-        $user = $this->userRepository->findOneBy(['subsonic_api_key' => $apiKey]);
+        $user = $this->userRepository->findOneBySubsonicApiKey($apiKey);
 
         if (!$user) {
             return SubsonicResponse::error(40, 'Wrong username or password.')->toResponse($request);

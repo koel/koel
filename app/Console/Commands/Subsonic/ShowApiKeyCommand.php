@@ -10,12 +10,18 @@ class ShowApiKeyCommand extends Command
     protected $signature = 'koel:subsonic:apikey {email}';
     protected $description = "Show a user's Subsonic API key";
 
-    public function handle(UserRepository $userRepository): int
+    public function __construct(
+        private readonly UserRepository $userRepository,
+    ) {
+        parent::__construct();
+    }
+
+    public function handle(): int
     {
-        $user = $userRepository->findOneBy(['email' => $this->argument('email')]);
+        $user = $this->userRepository->findOneByEmail($this->argument('email'));
 
         if (!$user) {
-            $this->components->error(sprintf('No user found with email "%s".', $this->argument('email')));
+            $this->error('The user account cannot be found.');
 
             return self::FAILURE;
         }
