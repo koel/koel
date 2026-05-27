@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 class ShowApiKeyCommand extends Command
 {
     protected $signature = 'koel:subsonic:apikey {email}';
-    protected $description = 'Show a user\'s Subsonic API key';
+    protected $description = "Show a user's Subsonic API key";
 
     public function handle(UserRepository $userRepository): int
     {

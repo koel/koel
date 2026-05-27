@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class SubsonicAuth
@@ -30,7 +31,7 @@ class SubsonicAuth
             return SubsonicResponse::error(40, 'Wrong username or password.')->toResponse($request);
         }
 
-        $request->setUserResolver(static fn () => $user);
+        Auth::setUser($user);
 
         return $next($request);
     }

@@ -67,7 +67,7 @@ class SubsonicResponse implements Responsable
         $root = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><subsonic-response/>');
         self::serializeTo($root, $envelope);
 
-        return response($root->asXML(), 200, ['Content-Type' => 'application/xml']);
+        return response($root->asXML(), Response::HTTP_OK, ['Content-Type' => 'application/xml']);
     }
 
     /** @param array<string, mixed> $envelope */
@@ -75,7 +75,7 @@ class SubsonicResponse implements Responsable
     {
         $body = $callback . '(' . json_encode(['subsonic-response' => $envelope]) . ');';
 
-        return response($body, 200, ['Content-Type' => 'application/javascript']);
+        return response($body, Response::HTTP_OK, ['Content-Type' => 'application/javascript']);
     }
 
     /** @param array<string, mixed> $data */

@@ -4,16 +4,18 @@ namespace App\Http\Controllers\Subsonic;
 
 use App\Http\Controllers\Controller;
 use App\Http\Responses\Subsonic\SubsonicResponse;
-use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetLicenseController extends Controller
 {
-    public function __invoke(Request $request): SubsonicResponse
+    /** @param User $user */
+    public function __invoke(Authenticatable $user): SubsonicResponse
     {
         return SubsonicResponse::ok([
             'license' => [
                 'valid' => true,
-                'email' => $request->user()->email,
+                'email' => $user->email,
             ],
         ]);
     }
