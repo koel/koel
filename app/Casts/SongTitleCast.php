@@ -15,7 +15,7 @@ class SongTitleCast implements CastsAttributes
     public function get(Model $model, string $key, mixed $value, array $attributes): string
     {
         // If the title is empty, we "guess" the title by extracting the filename from the song's path.
-        return $value ?: pathinfo($model->path, PATHINFO_FILENAME);
+        return $value ?: pathinfo($model->path ?? '', PATHINFO_FILENAME);
     }
 
     /**
