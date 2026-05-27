@@ -78,7 +78,7 @@ class PingTest extends TestCase
         )->assertOk();
 
         $body = $response->getContent();
-        self::assertStringStartsWith('myCallback(', $body);
+        self::assertStringContainsString('myCallback(', $body);
         self::assertStringEndsWith(');', $body);
     }
 

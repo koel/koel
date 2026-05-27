@@ -5,7 +5,9 @@ namespace App\Http\Responses\Subsonic;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
+use InvalidArgumentException;
 use SimpleXMLElement;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class SubsonicResponse implements Responsable
 {
@@ -72,26 +74,15 @@ class SubsonicResponse implements Responsable
     }
 
     /** @param array<string, mixed> $envelope */
-    private function toJsonp(array $envelope, string $callback): Response
+    private function toJsonp(array $envelope, string $callback): SymfonyResponse
     {
-        if (!preg_match('/^[A-Za-z_$][A-Za-z0-9_$]*(?:\.[A-Za-z_$][A-Za-z0-9_$]*)*$/', $callback)) {
-            $errorBody = json_encode([
-                'subsonic-response' => [
-                    'status' => 'failed',
-                    'version' => self::API_VERSION,
-                    'type' => 'koel',
-                    'serverVersion' => koel_version(),
-                    'openSubsonic' => true,
-                    'error' => ['code' => 10, 'message' => 'Required parameter is missing.'],
-                ],
-            ]);
+        try {
+            return response()->jsonp($callback, ['subsonic-response' => $envelope]);
+        } catch (InvalidArgumentException) {
+            $errorEnvelope = self::error(10, 'Required parameter is missing.')->buildEnvelope();
 
-            return response($errorBody, Response::HTTP_OK, ['Content-Type' => 'application/json']);
+            return response()->json(['subsonic-response' => $errorEnvelope]);
         }
-
-        $body = $callback . '(' . json_encode(['subsonic-response' => $envelope]) . ');';
-
-        return response($body, Response::HTTP_OK, ['Content-Type' => 'application/javascript']);
     }
 
     /** @param array<string, mixed> $data */
