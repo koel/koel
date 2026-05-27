@@ -19,9 +19,7 @@ class GetCoverArtTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach ($this->createdPaths as $path) {
-            File::delete($path);
-        }
+        File::delete($this->createdPaths);
 
         parent::tearDown();
     }
