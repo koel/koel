@@ -8,6 +8,7 @@ use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\File;
 
 class GetCoverArtController extends Controller
 {
@@ -21,7 +22,7 @@ class GetCoverArtController extends Controller
         $filename = $this->resolveImageFilename($request->id);
         $path = $filename ? image_storage_path($filename, ensureDirectoryExists: false) : null;
 
-        if (!$path || !is_file($path)) {
+        if (!$path || !File::isFile($path)) {
             return SubsonicResponse::error(70, 'Cover art not found.');
         }
 
