@@ -6,6 +6,7 @@ use App\Models\Artist;
 use App\Models\User;
 use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -63,6 +64,18 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->get();
 
         return $preserveOrder ? $artists->orderByArray($ids) : $artists;
+    }
+
+    /** @return Collection<int, Artist> */
+    public function getFavorites(?int $limit = null, int $offset = 0, ?User $user = null): Collection
+    {
+        return Artist::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: true)
+            ->orderBy('favorites.position')
+            ->when($offset > 0, static fn (Builder $query) => $query->offset($offset))
+            ->when($limit !== null, static fn (Builder $query) => $query->limit($limit))
+            ->get();
     }
 
     public function getAll(?User $user = null): Collection

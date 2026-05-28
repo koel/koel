@@ -7,6 +7,20 @@ use App\Models\User;
 
 final class SongResource
 {
+    /** Keys always present after stripNulls. Nullable fields like album/artist/track/year/genre/coverArt/size/contentType/suffix/discNumber/userRating are not listed because they may be absent. */
+    public const array JSON_STRUCTURE = [
+        'id',
+        'parent',
+        'isDir',
+        'title',
+        'duration',
+        'created',
+        'albumId',
+        'artistId',
+        'type',
+        'isVideo',
+    ];
+
     /**
      * @return array{
      *     id: string,

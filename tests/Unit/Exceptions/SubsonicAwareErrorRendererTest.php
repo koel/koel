@@ -6,11 +6,11 @@ use App\Exceptions\Contracts\SubsonicThrowable;
 use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Exceptions\SubsonicAwareErrorRenderer;
 use Exception;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\TestCase;
 use Throwable;
@@ -24,9 +24,9 @@ class SubsonicAwareErrorRendererTest extends TestCase
     }
 
     #[Test]
-    public function authorizationMapsToCode50(): void
+    public function accessDeniedMapsToCode50(): void
     {
-        $this->assertMapping(new AuthorizationException(), 50);
+        $this->assertMapping(new AccessDeniedHttpException(), 50);
     }
 
     #[Test]

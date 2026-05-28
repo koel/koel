@@ -6,6 +6,19 @@ use App\Models\Playlist;
 
 final class PlaylistResource
 {
+    /** Keys always present after stripNulls. Nullable `coverArt` is not listed. */
+    public const array JSON_STRUCTURE = [
+        'id',
+        'name',
+        'comment',
+        'owner',
+        'public',
+        'songCount',
+        'duration',
+        'created',
+        'changed',
+    ];
+
     /**
      * @return array{
      *     id: string,
