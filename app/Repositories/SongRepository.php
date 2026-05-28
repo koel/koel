@@ -144,6 +144,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** @return Collection<int, Song> */
     public function getFavorites(?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
         return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
@@ -256,6 +257,7 @@ class SongRepository extends Repository implements ScoutableRepository
         return $query->orderBy('songs.title')->limit(self::LIST_SIZE_LIMIT)->get();
     }
 
+    /** @return Collection<int, Song> */
     public function getRandom(int $limit, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())

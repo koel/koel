@@ -65,6 +65,18 @@ class ArtistRepository extends Repository implements ScoutableRepository
         return $preserveOrder ? $artists->orderByArray($ids) : $artists;
     }
 
+    /** @return Collection<int, Artist> */
+    public function getFavorites(int $limit, int $offset = 0, ?User $user = null): Collection
+    {
+        return Artist::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: true)
+            ->orderBy('favorites.position')
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+    }
+
     public function getAll(?User $user = null): Collection
     {
         return Artist::query()
