@@ -12,6 +12,7 @@ use App\Http\Controllers\Subsonic\GetArtistsController;
 use App\Http\Controllers\Subsonic\GetAvatarController;
 use App\Http\Controllers\Subsonic\GetCoverArtController;
 use App\Http\Controllers\Subsonic\GetGenresController;
+use App\Http\Controllers\Subsonic\GetIndexesController;
 use App\Http\Controllers\Subsonic\GetLicenseController;
 use App\Http\Controllers\Subsonic\GetLyricsBySongIdController;
 use App\Http\Controllers\Subsonic\GetMusicFoldersController;
@@ -44,6 +45,7 @@ Route::prefix('rest')
         Route::match(['get', 'post'], 'getLicense.view', GetLicenseController::class);
         Route::match(['get', 'post'], 'getMusicFolders.view', GetMusicFoldersController::class);
         Route::match(['get', 'post'], 'getArtists.view', GetArtistsController::class);
+        Route::match(['get', 'post'], 'getIndexes.view', GetIndexesController::class);
         Route::match(['get', 'post'], 'getArtist.view', GetArtistController::class);
         Route::match(['get', 'post'], 'getAlbum.view', GetAlbumController::class);
         Route::match(['get', 'post'], 'getSong.view', GetSongController::class);
