@@ -2,20 +2,26 @@
 
 use App\Http\Controllers\Subsonic\CreatePlaylistController;
 use App\Http\Controllers\Subsonic\DeletePlaylistController;
+use App\Http\Controllers\Subsonic\DownloadController;
 use App\Http\Controllers\Subsonic\GetAlbumController;
+use App\Http\Controllers\Subsonic\GetAlbumInfo2Controller;
 use App\Http\Controllers\Subsonic\GetAlbumList2Controller;
 use App\Http\Controllers\Subsonic\GetArtistController;
+use App\Http\Controllers\Subsonic\GetArtistInfo2Controller;
 use App\Http\Controllers\Subsonic\GetArtistsController;
 use App\Http\Controllers\Subsonic\GetAvatarController;
 use App\Http\Controllers\Subsonic\GetCoverArtController;
 use App\Http\Controllers\Subsonic\GetGenresController;
 use App\Http\Controllers\Subsonic\GetLicenseController;
+use App\Http\Controllers\Subsonic\GetLyricsBySongIdController;
 use App\Http\Controllers\Subsonic\GetMusicFoldersController;
 use App\Http\Controllers\Subsonic\GetNowPlayingController;
+use App\Http\Controllers\Subsonic\GetOpenSubsonicExtensionsController;
 use App\Http\Controllers\Subsonic\GetPlaylistController;
 use App\Http\Controllers\Subsonic\GetPlaylistsController;
 use App\Http\Controllers\Subsonic\GetRandomSongsController;
 use App\Http\Controllers\Subsonic\GetSongController;
+use App\Http\Controllers\Subsonic\GetSongsByGenreController;
 use App\Http\Controllers\Subsonic\GetStarred2Controller;
 use App\Http\Controllers\Subsonic\GetUserController;
 use App\Http\Controllers\Subsonic\PingController;
@@ -59,4 +65,10 @@ Route::prefix('rest')
         Route::match(['get', 'post'], 'getNowPlaying.view', GetNowPlayingController::class);
         Route::match(['get', 'post'], 'getUser.view', GetUserController::class);
         Route::match(['get', 'post'], 'getAvatar.view', GetAvatarController::class);
+        Route::match(['get', 'post'], 'getOpenSubsonicExtensions.view', GetOpenSubsonicExtensionsController::class);
+        Route::match(['get', 'post'], 'download.view', DownloadController::class);
+        Route::match(['get', 'post'], 'getSongsByGenre.view', GetSongsByGenreController::class);
+        Route::match(['get', 'post'], 'getLyricsBySongId.view', GetLyricsBySongIdController::class);
+        Route::match(['get', 'post'], 'getArtistInfo2.view', GetArtistInfo2Controller::class);
+        Route::match(['get', 'post'], 'getAlbumInfo2.view', GetAlbumInfo2Controller::class);
     });

@@ -341,15 +341,22 @@ class SongRepository extends Repository implements ScoutableRepository
 
     /**
      * @param Genre|null $genre If null, query songs that have no genre.
+     * @return Collection<int, Song>
      */
-    public function getByGenre(?Genre $genre, int $limit, $random = false, ?User $scopedUser = null): Collection
-    {
+    public function getByGenre(
+        ?Genre $genre,
+        int $limit,
+        bool $random = false,
+        ?User $scopedUser = null,
+        int $offset = 0,
+    ): Collection {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
             ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
             ->when($random, static fn (Builder $builder) => $builder->inRandomOrder())
             ->when(!$random, static fn (Builder $builder) => $builder->orderBy('songs.title'))
+            ->when($offset > 0, static fn (Builder $builder) => $builder->offset($offset))
             ->limit($limit)
             ->get();
     }
