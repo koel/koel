@@ -246,7 +246,7 @@ Route::get('library/stats', function () {
     return response()->json([
       'songs' => Song::count(),
        'albums' => Album::getTotalAlbums(),
-       'artists' => Artist::count(),
+       'artists' => Artist::getTotalArtists(),
        'duration' => Song::getTotalDuration(),
     ]);
 });
