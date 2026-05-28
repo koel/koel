@@ -28,16 +28,22 @@ class Search3Controller extends Controller
     /** @param User $user */
     public function __invoke(Search3Request $request, Authenticatable $user)
     {
-        $artists = $this->artistRepository
-            ->search($request->input('query'), $request->integer('artistCount', 20))
-            ->loadCount('albums');
+        $query = (string) $request->input('query');
+
+        if ($query === '') {
+            return SubsonicResponse::ok([
+                'searchResult3' => ['artist' => [], 'album' => [], 'song' => []],
+            ]);
+        }
+
+        $artists = $this->artistRepository->search($query, $request->integer('artistCount', 20))->loadCount('albums');
 
         $albums = $this->albumRepository
-            ->search($request->input('query'), $request->integer('albumCount', 20))
+            ->search($query, $request->integer('albumCount', 20))
             ->loadCount('songs')
             ->loadSum('songs', 'length');
 
-        $songs = $this->songRepository->search($request->input('query'), $request->integer('songCount', 20));
+        $songs = $this->songRepository->search($query, $request->integer('songCount', 20));
 
         return SubsonicResponse::ok([
             'searchResult3' => [

@@ -65,15 +65,28 @@ class GetCoverArtTest extends TestCase
     }
 
     #[Test]
-    public function albumWithoutCoverReturnsCode70(): void
+    public function albumWithoutCoverReturnsTransparentPlaceholder(): void
     {
         $user = create_user();
         $album = Album::factory()->createOne(['cover' => '', 'user_id' => $user->id]);
 
-        $this
-            ->getJson("/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&f=json&id={$album->id}")
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.error.code', 70);
+        $response = $this->get(
+            "/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&id={$album->id}",
+        )->assertOk()->assertHeader('Content-Type', 'image/png');
+
+        self::assertSame("\x89PNG\r\n\x1a\n", substr((string) $response->getContent(), 0, 8));
+    }
+
+    #[Test]
+    public function albumWithMissingCoverFileReturnsPlaceholder(): void
+    {
+        $user = create_user();
+        $album = Album::factory()->createOne(['cover' => 'never-staged.png', 'user_id' => $user->id]);
+
+        $this->get("/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&id={$album->id}")->assertOk()->assertHeader(
+            'Content-Type',
+            'image/png',
+        );
     }
 
     private function stageCover(string $filename): string
