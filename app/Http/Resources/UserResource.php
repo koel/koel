@@ -22,6 +22,7 @@ class UserResource extends JsonResource
         'is_admin',
         'role',
         'abilities',
+        'subsonic_api_key',
         'permissions' => [
             'edit',
             'delete',
@@ -56,6 +57,7 @@ class UserResource extends JsonResource
                 ->getPermissionsViaRoles()
                 ->pluck('name')
                 ->toArray()),
+            'subsonic_api_key' => $this->when($isCurrentUser, fn () => $this->user->subsonic_api_key),
             'permissions' => [
                 'edit' => $currentUser->can('update', $this->user),
                 'delete' => $currentUser->can('destroy', $this->user),
