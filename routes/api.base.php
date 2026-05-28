@@ -245,7 +245,7 @@ Route::prefix('api')
 Route::get('library/stats', function () {
     return response()->json([
       'songs' => Song::count(),
-        'albums' => Album::count(),
+       'albums' => Album::getTotalAlbums(),
        'artists' => Artist::count(),
        'duration' => Song::getTotalDuration(),
     ]);
