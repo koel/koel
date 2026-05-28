@@ -9,6 +9,7 @@ use App\Models\Organization;
 use App\Models\User;
 use App\Values\User\SsoUser;
 use Illuminate\Support\Facades\Hash;
+use SensitiveParameter;
 
 /**
  * @extends Repository<User>
@@ -41,7 +42,7 @@ class UserRepository extends Repository
         return User::query()->firstWhere('email', $email);
     }
 
-    public function findOneBySubsonicApiKey(#[\SensitiveParameter] string $apiKey): ?User
+    public function findOneBySubsonicApiKey(#[SensitiveParameter] string $apiKey): ?User
     {
         return User::query()->firstWhere('subsonic_api_key', $apiKey);
     }

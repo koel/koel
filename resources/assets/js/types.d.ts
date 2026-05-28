@@ -443,6 +443,11 @@ interface User {
    */
   abilities?: Ability[]
   /**
+   * The user's personal Subsonic API key. Only populated for the current user
+   * (their own /me response); never leaked through user listings.
+   */
+  subsonic_api_key?: string
+  /**
    * What the *current user* (the one making the request) is permitted to do
    * *to this user* — the result of running UserPolicy from their perspective.
    * Distinct from `abilities` above, which is the user's own globally-granted
@@ -457,6 +462,7 @@ interface User {
 type CurrentUser = User & {
   preferences: UserPreferences
   abilities: Ability[]
+  subsonic_api_key: string
 }
 
 interface Settings {
