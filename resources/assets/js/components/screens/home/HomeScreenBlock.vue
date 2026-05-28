@@ -5,5 +5,8 @@
     </h3>
 
     <slot />
+    <p class="text-sm text-k-text-secondary">
+  Library Statistics
+</p>
   </div>
 </template>
