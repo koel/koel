@@ -247,7 +247,7 @@ Route::get('library/stats', function () {
       'songs' => Song::count(),
         'albums' => Album::count(),
        'artists' => Artist::count(),
-        'duration' => 0,
+        'duration' => Song::sum('length'),
     ]);
 });
             // License routes
