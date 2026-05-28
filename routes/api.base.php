@@ -81,6 +81,7 @@ use App\Http\Controllers\Download\CheckDownloadableCountController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Pusher\Pusher;
+use App\Models\Song;
 
 Route::prefix('api')
     ->middleware('api')
@@ -241,7 +242,7 @@ Route::prefix('api')
             Route::put('songs/privatize', PrivatizeSongsController::class);
 Route::get('library/stats', function () {
     return response()->json([
-        'songs' => 0,
+      'songs' => Song::count(),
         'albums' => 0,
         'artists' => 0,
         'duration' => 0,
