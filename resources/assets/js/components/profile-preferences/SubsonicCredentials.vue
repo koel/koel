@@ -10,7 +10,23 @@
 
     <div class="mt-4 space-y-2" data-testid="subsonic-credentials">
       <label class="flex items-stretch gap-2 w-full lg:w-1/2">
-        <TextInput id="subsonicApiKey" :model-value="key" readonly class="flex-1 font-mono" @focus="onFocus" />
+        <TextInput
+          id="subsonicApiKey"
+          :model-value="key"
+          :type="revealed ? 'text' : 'password'"
+          readonly
+          class="flex-1 font-mono"
+          @focus="onFocus"
+        />
+        <Btn
+          variant="ghost"
+          type="button"
+          :title="revealed ? 'Hide key' : 'Reveal key'"
+          @click.prevent="revealed = !revealed"
+        >
+          <EyeOffIcon v-if="revealed" :size="16" />
+          <EyeIcon v-else :size="16" />
+        </Btn>
         <Btn variant="ghost" type="button" :title="copied ? 'Copied' : 'Copy'" @click.prevent="copyKey">
           <CopyIcon :size="16" />
         </Btn>
@@ -26,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { CopyIcon } from 'lucide-vue-next'
+import { CopyIcon, EyeIcon, EyeOffIcon } from 'lucide-vue-next'
 import { computed, defineAsyncComponent, ref } from 'vue'
 import { userStore } from '@/stores/userStore'
 import { useAuthorization } from '@/composables/useAuthorization'
@@ -45,6 +61,7 @@ const { toastSuccess, toastWarning } = useMessageToaster()
 
 const copied = ref(false)
 const regenerating = ref(false)
+const revealed = ref(false)
 
 const key = computed(() => currentUser.value.subsonic_api_key)
 

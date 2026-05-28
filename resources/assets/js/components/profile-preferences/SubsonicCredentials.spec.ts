@@ -19,13 +19,24 @@ describe('subsonicCredentials.vue', () => {
     },
   })
 
-  it('renders the current key', async () => {
+  it('renders the key masked by default', async () => {
     h.render(Component)
-    const input = await screen.findByRole<HTMLInputElement>('textbox')
-    expect(input.value).toBe('original-key')
+    const input = await screen.findByDisplayValue<HTMLInputElement>('original-key')
+    expect(input.type).toBe('password')
   })
 
-  it('copies the key to the clipboard', async () => {
+  it('toggles between masked and revealed', async () => {
+    h.render(Component)
+    const input = await screen.findByDisplayValue<HTMLInputElement>('original-key')
+
+    await h.user.click(await screen.findByRole('button', { name: /reveal key/i }))
+    expect(input.type).toBe('text')
+
+    await h.user.click(await screen.findByRole('button', { name: /hide key/i }))
+    expect(input.type).toBe('password')
+  })
+
+  it('copies the key to the clipboard regardless of reveal state', async () => {
     h.mock(MessageToasterStub.value, 'success')
     h.render(Component)
 
@@ -45,8 +56,7 @@ describe('subsonicCredentials.vue', () => {
     h.render(Component)
     await h.user.click(await screen.findByRole('button', { name: /regenerate key/i }))
 
-    const input = await screen.findByRole<HTMLInputElement>('textbox')
-    expect(input.value).toBe('fresh-key')
+    await screen.findByDisplayValue('fresh-key')
   })
 
   it('does not regenerate when the confirm is dismissed', async () => {
