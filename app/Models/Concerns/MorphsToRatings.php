@@ -15,6 +15,10 @@ trait MorphsToRatings
 
     public function getRatingFor(User $user): int
     {
+        if ($this->relationLoaded('ratings')) {
+            return (int) $this->ratings->firstWhere('user_id', $user->id)?->rating;
+        }
+
         return (int) $this->ratings()->where('user_id', $user->id)->value('rating');
     }
 }

@@ -45,6 +45,20 @@ class SetRatingTest extends TestCase
     }
 
     #[Test]
+    public function nonNumericRatingIsRejected(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->createOne(['owner_id' => $user->id]);
+
+        $this
+            ->getJson("/rest/setRating.view?apiKey={$user->subsonic_api_key}&f=json&id={$song->id}&rating=foo")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.error.code', 10);
+
+        self::assertSame(0, $song->getRatingFor($user));
+    }
+
+    #[Test]
     public function ratingOutOfRangeReturnsCode10(): void
     {
         $user = create_user();

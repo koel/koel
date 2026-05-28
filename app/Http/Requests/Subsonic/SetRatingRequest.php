@@ -10,11 +10,6 @@ use App\Http\Requests\Request;
  */
 class SetRatingRequest extends Request
 {
-    protected function prepareForValidation(): void
-    {
-        $this->merge(['rating' => (int) $this->input('rating', 0)]);
-    }
-
     /** @inheritdoc */
     public function rules(): array
     {
@@ -22,5 +17,10 @@ class SetRatingRequest extends Request
             'id' => ['required', 'string'],
             'rating' => ['required', 'integer', 'between:0,5'],
         ];
+    }
+
+    protected function passedValidation(): void
+    {
+        $this->merge(['rating' => (int) $this->input('rating')]);
     }
 }
