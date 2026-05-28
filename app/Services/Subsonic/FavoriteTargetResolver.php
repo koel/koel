@@ -43,16 +43,26 @@ class FavoriteTargetResolver
     {
         $targets = new Collection();
 
-        foreach ($this->songRepository->getMany($request->id, scopedUser: $user) as $song) {
-            $targets->push($song);
+        if ($request->id) {
+            foreach ($this->songRepository->getMany($request->id, preserveOrder: true, scopedUser: $user) as $song) {
+                $targets->push($song);
+            }
         }
 
-        foreach ($this->albumRepository->getMany($request->albumId, user: $user) as $album) {
-            $targets->push($album);
+        if ($request->albumId) {
+            foreach ($this->albumRepository->getMany($request->albumId, preserveOrder: true, user: $user) as $album) {
+                $targets->push($album);
+            }
         }
 
-        foreach ($this->artistRepository->getMany($request->artistId, user: $user) as $artist) {
-            $targets->push($artist);
+        if ($request->artistId) {
+            foreach ($this->artistRepository->getMany(
+                $request->artistId,
+                preserveOrder: true,
+                user: $user,
+            ) as $artist) {
+                $targets->push($artist);
+            }
         }
 
         return $targets;

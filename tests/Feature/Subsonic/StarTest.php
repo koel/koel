@@ -54,6 +54,26 @@ class StarTest extends TestCase
     }
 
     #[Test]
+    public function preservesRequestOrderInFavoritesPosition(): void
+    {
+        $user = create_user();
+        $songs = Song::factory()->count(3)->create(['owner_id' => $user->id]);
+        // request order: songs[2], songs[0], songs[1]
+        $ordered = [$songs[2]->id, $songs[0]->id, $songs[1]->id];
+        $idParams = implode('&', array_map(static fn (string $id) => "id={$id}", $ordered));
+
+        $this->getJson("/rest/star.view?apiKey={$user->subsonic_api_key}&f=json&{$idParams}")->assertOk();
+
+        $favoriteIdsByPosition = Favorite::query()
+            ->where('user_id', $user->id)
+            ->orderBy('position')
+            ->pluck('favoriteable_id')
+            ->all();
+
+        self::assertSame($ordered, $favoriteIdsByPosition);
+    }
+
+    #[Test]
     public function emptyCallIsNoOp(): void
     {
         $user = create_user();
