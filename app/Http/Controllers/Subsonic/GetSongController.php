@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\IdRequest;
 use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
+use App\Models\User;
 use App\Repositories\SongRepository;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetSongController extends Controller
 {
@@ -14,12 +16,13 @@ class GetSongController extends Controller
         private readonly SongRepository $songRepository,
     ) {}
 
-    public function __invoke(IdRequest $request)
+    /** @param User $user */
+    public function __invoke(IdRequest $request, Authenticatable $user)
     {
         $song = $this->songRepository->getOne($request->id);
 
         return SubsonicResponse::ok([
-            'song' => SongResource::toArray($song),
+            'song' => SongResource::toArray($song, $user),
         ]);
     }
 }

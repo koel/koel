@@ -3,6 +3,7 @@
 namespace App\Http\Responses\Subsonic\Resources;
 
 use App\Models\Song;
+use App\Models\User;
 
 final class SongResource
 {
@@ -28,9 +29,10 @@ final class SongResource
      *     type: string,
      *     discNumber: ?int,
      *     isVideo: bool,
+     *     userRating: ?int,
      * }
      */
-    public static function toArray(Song $song): array
+    public static function toArray(Song $song, User $user): array
     {
         return [
             'id' => $song->id,
@@ -53,6 +55,7 @@ final class SongResource
             'type' => 'music',
             'discNumber' => $song->disc ?: null,
             'isVideo' => false,
+            'userRating' => $song->getRatingFor($user) ?: null,
         ];
     }
 }

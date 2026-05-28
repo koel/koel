@@ -7,6 +7,7 @@ use App\Http\Requests\Subsonic\IdRequest;
 use App\Http\Responses\Subsonic\Resources\PlaylistResource;
 use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
+use App\Models\Song;
 use App\Models\User;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SongRepository;
@@ -32,7 +33,7 @@ class GetPlaylistController extends Controller
         return SubsonicResponse::ok([
             'playlist' => PlaylistResource::toArray($playlist)
                 + [
-                    'entry' => $songs->map(SongResource::toArray(...))->all(),
+                    'entry' => $songs->map(static fn (Song $song) => SongResource::toArray($song, $user))->all(),
                 ],
         ]);
     }
