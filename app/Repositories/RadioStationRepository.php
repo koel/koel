@@ -32,6 +32,7 @@ class RadioStationRepository extends Repository implements ScoutableRepository
         );
     }
 
+    /** @return Collection<int, RadioStation> */
     public function getAllForUser(User $user): Collection
     {
         return RadioStation::query()->withUserContext(user: $user)->get();
