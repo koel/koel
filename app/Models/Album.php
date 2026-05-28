@@ -125,4 +125,8 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
 
         return $array;
     }
+    public static function getTotalAlbums(): int
+{
+    return static::count();
+}
 }
