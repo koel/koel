@@ -239,7 +239,14 @@ Route::prefix('api')
 
             Route::put('songs/publicize', PublicizeSongsController::class);
             Route::put('songs/privatize', PrivatizeSongsController::class);
-
+Route::get('library/stats', function () {
+    return response()->json([
+        'songs' => 0,
+        'albums' => 0,
+        'artists' => 0,
+        'duration' => 0,
+    ]);
+});
             // License routes
             Route::post('licenses/activate', ActivateLicenseController::class);
 
