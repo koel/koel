@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
-class SubsonicAwareErrorHandler
+class SubsonicAwareErrorRenderer
 {
     /**
      * Subsonic error codes per https://opensubsonic.netlify.app/docs/responses/error/
@@ -26,7 +26,7 @@ class SubsonicAwareErrorHandler
         NotFoundHttpException::class => [70, 'The requested data was not found.'],
     ];
 
-    public static function handle(Throwable $e, Request $request): ?Response
+    public static function render(Throwable $e, Request $request): ?Response
     {
         if (!$request->is('rest/*')) {
             return null;

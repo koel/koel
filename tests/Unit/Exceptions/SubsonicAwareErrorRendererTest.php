@@ -4,7 +4,7 @@ namespace Tests\Unit\Exceptions;
 
 use App\Exceptions\Contracts\SubsonicThrowable;
 use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
-use App\Exceptions\SubsonicAwareErrorHandler;
+use App\Exceptions\SubsonicAwareErrorRenderer;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\TestCase;
 use Throwable;
 
-class SubsonicAwareErrorHandlerTest extends TestCase
+class SubsonicAwareErrorRendererTest extends TestCase
 {
     #[Test]
     public function notFoundMapsToCode70(): void
@@ -57,7 +57,7 @@ class SubsonicAwareErrorHandlerTest extends TestCase
         };
 
         $request = Request::create('/rest/ping.view?f=json', 'GET');
-        $response = SubsonicAwareErrorHandler::handle($exception, $request);
+        $response = SubsonicAwareErrorRenderer::render($exception, $request);
 
         self::assertNotNull($response);
         $body = (string) $response->getContent();
@@ -70,7 +70,7 @@ class SubsonicAwareErrorHandlerTest extends TestCase
     {
         $request = Request::create('/api/songs', 'GET');
 
-        self::assertNull(SubsonicAwareErrorHandler::handle(new NotFoundHttpException(), $request));
+        self::assertNull(SubsonicAwareErrorRenderer::render(new NotFoundHttpException(), $request));
     }
 
     #[Test]
@@ -78,13 +78,13 @@ class SubsonicAwareErrorHandlerTest extends TestCase
     {
         $request = Request::create('/rest/ping.view', 'GET');
 
-        self::assertNull(SubsonicAwareErrorHandler::handle(new RuntimeException('boom'), $request));
+        self::assertNull(SubsonicAwareErrorRenderer::render(new RuntimeException('boom'), $request));
     }
 
     private function assertMapping(Throwable $exception, int $expectedCode): void
     {
         $request = Request::create('/rest/ping.view?f=json', 'GET');
-        $response = SubsonicAwareErrorHandler::handle($exception, $request);
+        $response = SubsonicAwareErrorRenderer::render($exception, $request);
 
         self::assertNotNull($response);
         self::assertStringContainsString('"code":' . $expectedCode, (string) $response->getContent());

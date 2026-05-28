@@ -1,6 +1,6 @@
 <?php
 
-use App\Exceptions\SubsonicAwareErrorHandler;
+use App\Exceptions\SubsonicAwareErrorRenderer;
 use App\Http\Middleware\AudioAuthenticate;
 use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
@@ -63,7 +63,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(
-            static fn (Throwable $e, Request $request): ?SymfonyResponse => SubsonicAwareErrorHandler::handle(
+            static fn (Throwable $e, Request $request): ?SymfonyResponse => SubsonicAwareErrorRenderer::render(
                 $e,
                 $request,
             ),
