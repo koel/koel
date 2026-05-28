@@ -8,29 +8,36 @@
       Configure the client with your email as the username and this key in the API-key or password field.
     </p>
 
-    <div class="mt-4 space-y-2" data-testid="subsonic-credentials">
-      <label class="flex items-stretch gap-2 w-full lg:w-1/2">
-        <TextInput
-          id="subsonicApiKey"
-          :model-value="key"
-          :type="revealed ? 'text' : 'password'"
-          readonly
-          class="flex-1 font-mono"
-          @focus="onFocus"
-        />
-        <Btn
-          variant="ghost"
-          type="button"
-          :title="revealed ? 'Hide key' : 'Reveal key'"
-          @click.prevent="revealed = !revealed"
-        >
-          <EyeOffIcon v-if="revealed" :size="16" />
-          <EyeIcon v-else :size="16" />
-        </Btn>
-        <Btn variant="ghost" type="button" :title="copied ? 'Copied' : 'Copy'" @click.prevent="copyKey">
-          <CopyIcon :size="16" />
-        </Btn>
-      </label>
+    <div
+      class="mt-4 w-full lg:w-1/2 relative text-k-fg-70 flex items-stretch border border-k-fg-10 overflow-hidden rounded-md bg-k-bg-50 focus-within:border-k-highlight transition-[border,background-color] duration-200 ease-in-out"
+      data-testid="subsonic-credentials"
+    >
+      <TextInput
+        id="subsonicApiKey"
+        :model-value="key"
+        :type="revealed ? 'text' : 'password'"
+        readonly
+        aria-label="Subsonic API key"
+        class="flex-1 rounded-none border-0 focus-visible:outline-hidden px-4 font-mono read-only:!bg-transparent read-only:!text-current"
+        @focus="onFocus"
+      />
+      <button
+        type="button"
+        class="px-3 hover:bg-k-fg-5 border-l border-k-fg-10"
+        :title="revealed ? 'Hide key' : 'Reveal key'"
+        @click.prevent="revealed = !revealed"
+      >
+        <EyeOffIcon v-if="revealed" :size="16" />
+        <EyeIcon v-else :size="16" />
+      </button>
+      <button
+        type="button"
+        class="px-3 hover:bg-k-fg-5 border-l border-k-fg-10"
+        :title="copied ? 'Copied' : 'Copy'"
+        @click.prevent="copyKey"
+      >
+        <CopyIcon :size="16" />
+      </button>
     </div>
 
     <div class="mt-4">
