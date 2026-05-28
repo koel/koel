@@ -82,6 +82,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Pusher\Pusher;
 use App\Models\Song;
+use App\Models\Album;
 
 Route::prefix('api')
     ->middleware('api')
@@ -243,7 +244,7 @@ Route::prefix('api')
 Route::get('library/stats', function () {
     return response()->json([
       'songs' => Song::count(),
-        'albums' => 0,
+        'albums' => Album::count(),
         'artists' => 0,
         'duration' => 0,
     ]);
