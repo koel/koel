@@ -3,8 +3,8 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Models\Song;
-use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -27,7 +27,7 @@ class DownloadTest extends TestCase
     }
 
     #[Test]
-    public function downloadsAudioBytes(): void
+    public function servesAsAttachment(): void
     {
         $user = create_user();
         $song = Song::factory()->createOne([
@@ -35,9 +35,11 @@ class DownloadTest extends TestCase
             'owner_id' => $user->id,
         ]);
 
-        $this->mock(LocalStreamerAdapter::class)->expects('stream');
+        $response = $this->get("/rest/download.view?id={$song->id}&apiKey={$user->subsonic_api_key}")->assertOk();
 
-        $this->get("/rest/download.view?id={$song->id}&apiKey={$user->subsonic_api_key}")->assertOk();
+        $base = $response->baseResponse;
+        self::assertInstanceOf(BinaryFileResponse::class, $base);
+        self::assertStringContainsString('attachment', (string) $base->headers->get('Content-Disposition'));
     }
 
     #[Test]
