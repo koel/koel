@@ -3,6 +3,7 @@
 namespace App\Http\Responses\Subsonic\Resources;
 
 use App\Models\Album;
+use App\Models\User;
 
 final class AlbumResource
 {
@@ -17,9 +18,10 @@ final class AlbumResource
      *     duration: int,
      *     created: string,
      *     year: ?int,
+     *     userRating: ?int,
      * }
      */
-    public static function toArray(Album $album): array
+    public static function toArray(Album $album, User $user): array
     {
         return [
             'id' => $album->id,
@@ -31,6 +33,7 @@ final class AlbumResource
             'duration' => (int) round($album->songs_sum_length ?? 0),
             'created' => $album->created_at->toIso8601String(),
             'year' => $album->year,
+            'userRating' => $album->getRatingFor($user) ?: null,
         ];
     }
 }

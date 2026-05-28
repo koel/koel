@@ -8,9 +8,14 @@ use App\Http\Responses\Subsonic\Resources\AlbumResource;
 use App\Http\Responses\Subsonic\Resources\ArtistResource;
 use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
+use App\Models\Album;
+use App\Models\Artist;
+use App\Models\Song;
+use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\SongRepository;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class Search3Controller extends Controller
 {
@@ -20,7 +25,8 @@ class Search3Controller extends Controller
         private readonly SongRepository $songRepository,
     ) {}
 
-    public function __invoke(Search3Request $request)
+    /** @param User $user */
+    public function __invoke(Search3Request $request, Authenticatable $user)
     {
         $artists = $this->artistRepository
             ->search($request->input('query'), $request->integer('artistCount', 20))
@@ -35,9 +41,9 @@ class Search3Controller extends Controller
 
         return SubsonicResponse::ok([
             'searchResult3' => [
-                'artist' => $artists->map(ArtistResource::toArray(...))->all(),
-                'album' => $albums->map(AlbumResource::toArray(...))->all(),
-                'song' => $songs->map(SongResource::toArray(...))->all(),
+                'artist' => $artists->map(static fn (Artist $artist) => ArtistResource::toArray($artist, $user))->all(),
+                'album' => $albums->map(static fn (Album $album) => AlbumResource::toArray($album, $user))->all(),
+                'song' => $songs->map(static fn (Song $song) => SongResource::toArray($song, $user))->all(),
             ],
         ]);
     }

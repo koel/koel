@@ -7,6 +7,7 @@ use App\Http\Requests\Subsonic\CreatePlaylistRequest;
 use App\Http\Responses\Subsonic\Resources\PlaylistResource;
 use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
+use App\Models\Song;
 use App\Models\User;
 use App\Services\Playlist\PlaylistService;
 use App\Values\Playlist\PlaylistCreateData;
@@ -31,7 +32,9 @@ class CreatePlaylistController extends Controller
         return SubsonicResponse::ok([
             'playlist' => PlaylistResource::toArray($playlist)
                 + [
-                    'entry' => $playlist->playables->map(SongResource::toArray(...))->all(),
+                    'entry' => $playlist->playables->map(
+                        static fn (Song $song) => SongResource::toArray($song, $user),
+                    )->all(),
                 ],
         ]);
     }

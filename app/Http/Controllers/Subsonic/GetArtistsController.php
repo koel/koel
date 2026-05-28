@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Responses\Subsonic\Resources\ArtistResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Models\Artist;
+use App\Models\User;
 use App\Repositories\ArtistRepository;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
@@ -18,7 +20,8 @@ class GetArtistsController extends Controller
         private readonly ArtistRepository $artistRepository,
     ) {}
 
-    public function __invoke()
+    /** @param User $user */
+    public function __invoke(Authenticatable $user)
     {
         $ignored = array_map(Str::lower(...), explode(' ', self::IGNORED_ARTICLES));
 
@@ -28,7 +31,7 @@ class GetArtistsController extends Controller
             ->sortKeys()
             ->map(static fn (Collection $group, string $letter) => [
                 'name' => $letter,
-                'artist' => $group->map(ArtistResource::toArray(...))->all(),
+                'artist' => $group->map(static fn (Artist $artist) => ArtistResource::toArray($artist, $user))->all(),
             ])
             ->values()
             ->all();

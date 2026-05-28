@@ -7,8 +7,11 @@ use App\Http\Requests\Subsonic\IdRequest;
 use App\Http\Responses\Subsonic\Resources\AlbumResource;
 use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
+use App\Models\Song;
+use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetAlbumController extends Controller
 {
@@ -17,7 +20,8 @@ class GetAlbumController extends Controller
         private readonly SongRepository $songRepository,
     ) {}
 
-    public function __invoke(IdRequest $request)
+    /** @param User $user */
+    public function __invoke(IdRequest $request, Authenticatable $user)
     {
         $album = $this->albumRepository->getOne($request->id);
         $album->loadCount('songs')->loadSum('songs', 'length');
@@ -25,9 +29,9 @@ class GetAlbumController extends Controller
         $songs = $this->songRepository->getByAlbum($album);
 
         return SubsonicResponse::ok([
-            'album' => AlbumResource::toArray($album)
+            'album' => AlbumResource::toArray($album, $user)
                 + [
-                    'song' => $songs->map(SongResource::toArray(...))->all(),
+                    'song' => $songs->map(static fn (Song $song) => SongResource::toArray($song, $user))->all(),
                 ],
         ]);
     }

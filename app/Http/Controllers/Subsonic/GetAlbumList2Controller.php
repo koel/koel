@@ -7,7 +7,9 @@ use App\Http\Requests\Subsonic\GetAlbumList2Request;
 use App\Http\Responses\Subsonic\Resources\AlbumResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Models\Album;
+use App\Models\User;
 use App\Repositories\AlbumRepository;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
 use LogicException;
 
@@ -17,7 +19,8 @@ class GetAlbumList2Controller extends Controller
         private readonly AlbumRepository $albumRepository,
     ) {}
 
-    public function __invoke(GetAlbumList2Request $request)
+    /** @param User $user */
+    public function __invoke(GetAlbumList2Request $request, Authenticatable $user)
     {
         $size = $request->integer('size', 10);
         $offset = $request->integer('offset', 0);
@@ -26,7 +29,7 @@ class GetAlbumList2Controller extends Controller
 
         return SubsonicResponse::ok([
             'albumList2' => [
-                'album' => $albums->map(AlbumResource::toArray(...))->all(),
+                'album' => $albums->map(static fn (Album $album) => AlbumResource::toArray($album, $user))->all(),
             ],
         ]);
     }

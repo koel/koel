@@ -26,6 +26,14 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->findOrFail($id);
     }
 
+    /** @param string $id */
+    public function findOne($id, ?User $user = null): ?Album
+    {
+        return Album::query()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->find($id);
+    }
+
     public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
     {
         return Album::query()

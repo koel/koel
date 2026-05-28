@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Support\Arr;
 
 /**
  * @property string $playlistId
@@ -16,8 +17,8 @@ class UpdatePlaylistRequest extends Request
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'songIdToAdd' => (array) $this->input('songIdToAdd', []),
-            'songIndexToRemove' => (array) $this->input('songIndexToRemove', []),
+            'songIdToAdd' => Arr::wrap($this->input('songIdToAdd')),
+            'songIndexToRemove' => Arr::wrap($this->input('songIndexToRemove')),
         ]);
     }
 
@@ -38,7 +39,7 @@ class UpdatePlaylistRequest extends Request
     protected function passedValidation(): void
     {
         $this->merge([
-            'songIndexToRemove' => array_map('intval', (array) $this->input('songIndexToRemove', [])),
+            'songIndexToRemove' => array_map('intval', Arr::wrap($this->input('songIndexToRemove'))),
         ]);
     }
 }
