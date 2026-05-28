@@ -11,7 +11,6 @@ use App\Repositories\PlaylistRepository;
 use App\Repositories\SongRepository;
 use App\Services\Playlist\PlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Arr;
 
 class UpdatePlaylistController extends Controller
 {
@@ -28,10 +27,7 @@ class UpdatePlaylistController extends Controller
         $this->authorize('edit', $playlist);
 
         $changes = array_filter(
-            [
-                'name' => $request->input('name'),
-                'description' => $request->input('comment'),
-            ],
+            ['name' => $request->name, 'description' => $request->comment],
             static fn ($value) => $value !== null,
         );
 
@@ -39,22 +35,19 @@ class UpdatePlaylistController extends Controller
             $playlist->update($changes);
         }
 
-        $songIdsToAdd = Arr::wrap($request->input('songIdToAdd', []));
-        $indicesToRemove = Arr::wrap($request->input('songIndexToRemove', []));
-
-        if (($songIdsToAdd || $indicesToRemove) && $playlist->is_smart) {
+        if (($request->songIdToAdd || $request->songIndexToRemove) && $playlist->is_smart) {
             throw new OperationNotApplicableForSmartPlaylistException();
         }
 
-        if ($songIdsToAdd) {
-            $songs = $this->songRepository->getMany($songIdsToAdd);
+        if ($request->songIdToAdd) {
+            $songs = $this->songRepository->getMany($request->songIdToAdd);
             $this->playlistService->addPlayablesToPlaylist($playlist, $songs, $user);
         }
 
-        if ($indicesToRemove) {
+        if ($request->songIndexToRemove) {
             $songs = $playlist->load('playables')->playables->values();
-            $toRemove = collect($indicesToRemove)
-                ->map(static fn (int|string $index) => $songs->get((int) $index))
+            $toRemove = collect($request->songIndexToRemove)
+                ->map($songs->get(...))
                 ->filter()
                 ->values();
 

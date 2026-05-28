@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Services\Playlist\PlaylistService;
 use App\Values\Playlist\PlaylistCreateData;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Arr;
 
 class CreatePlaylistController extends Controller
 {
@@ -22,11 +21,8 @@ class CreatePlaylistController extends Controller
     /** @param User $user */
     public function __invoke(CreatePlaylistRequest $request, Authenticatable $user)
     {
-        /** @var list<string> $songIds */
-        $songIds = Arr::wrap($request->input('songId', []));
-
         $playlist = $this->playlistService->createPlaylist(
-            PlaylistCreateData::make(name: (string) $request->input('name'), playableIds: $songIds),
+            PlaylistCreateData::make(name: $request->name, playableIds: $request->songId),
             $user,
         );
 
