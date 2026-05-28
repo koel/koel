@@ -53,15 +53,17 @@ class GetCoverArtTest extends TestCase
     }
 
     #[Test]
-    public function unknownIdReturnsCode70(): void
+    public function unknownIdReturnsDefaultPlaceholder(): void
     {
         $user = create_user();
 
-        $this
-            ->getJson("/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&f=json&id=does-not-exist")
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'failed')
-            ->assertJsonPath('subsonic-response.error.code', 70);
+        $response = $this->get(
+            "/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&id=does-not-exist",
+        )->assertOk()->assertHeader('Content-Type', 'image/png');
+
+        $base = $response->baseResponse;
+        self::assertInstanceOf(BinaryFileResponse::class, $base);
+        self::assertSame(resource_path('assets/img/covers/default.png'), $base->getFile()->getRealPath());
     }
 
     #[Test]

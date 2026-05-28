@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\IdRequest;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\File;
 
 class GetCoverArtController extends Controller
@@ -30,10 +29,12 @@ class GetCoverArtController extends Controller
 
     private function resolveImageFilename(string $id): ?string
     {
-        try {
-            return $this->albumRepository->getOne($id)->cover;
-        } catch (ModelNotFoundException) {
-            return $this->artistRepository->getOne($id)->image;
+        $album = $this->albumRepository->findOne($id);
+
+        if ($album) {
+            return $album->cover;
         }
+
+        return $this->artistRepository->findOne($id)?->image;
     }
 }
