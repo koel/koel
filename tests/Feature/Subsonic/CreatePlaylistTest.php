@@ -4,15 +4,12 @@ namespace Tests\Feature\Subsonic;
 
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\Concerns\CreatesOwnedPlaylists;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class CreatePlaylistTest extends TestCase
 {
-    use CreatesOwnedPlaylists;
-
     #[Test]
     public function createsNewPlaylistWithSongs(): void
     {
@@ -34,28 +31,7 @@ class CreatePlaylistTest extends TestCase
     }
 
     #[Test]
-    public function withPlaylistIdReplacesContents(): void
-    {
-        $user = create_user();
-        $playlist = self::playlistOwnedBy($user);
-
-        $existing = Song::factory()->count(2)->create(['owner_id' => $user->id]);
-        $playlist->addPlayables($existing, $user);
-
-        $replacements = Song::factory()->count(3)->create(['owner_id' => $user->id]);
-        $songParams = implode('&', array_map(static fn (Song $song) => 'songId=' . $song->id, $replacements->all()));
-
-        $response = $this->getJson(
-            "/rest/createPlaylist.view?apiKey={$user->subsonic_api_key}"
-            . "&f=json&playlistId={$playlist->id}&{$songParams}",
-        )->assertOk();
-
-        $entryIds = array_column($response->json('subsonic-response.playlist.entry'), 'id');
-        self::assertEqualsCanonicalizing($replacements->modelKeys(), $entryIds);
-    }
-
-    #[Test]
-    public function missingNameAndPlaylistIdReturnsCode10(): void
+    public function missingNameReturnsCode10(): void
     {
         $user = create_user();
 

@@ -10,8 +10,7 @@ class CreatePlaylistRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => ['required_without:playlistId', 'string'],
-            'playlistId' => ['nullable', 'string'],
+            'name' => ['required', 'string'],
         ];
     }
 }
