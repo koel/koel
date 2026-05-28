@@ -50,4 +50,17 @@ class GetRandomSongsTest extends TestCase
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 10);
     }
+
+    #[Test]
+    public function rejectsSizeBelowOne(): void
+    {
+        $user = create_user();
+
+        foreach (['0', '-1'] as $bad) {
+            $this
+                ->getJson("/rest/getRandomSongs.view?apiKey={$user->subsonic_api_key}&f=json&size={$bad}")
+                ->assertOk()
+                ->assertJsonPath('subsonic-response.error.code', 10);
+        }
+    }
 }
