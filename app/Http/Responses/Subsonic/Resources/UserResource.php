@@ -31,7 +31,7 @@ final class UserResource
         $canManage = $isAdmin || $user->role === Role::MANAGER;
 
         return [
-            'username' => $user->name,
+            'username' => $user->email,
             'email' => $user->email,
             'scrobblingEnabled' => true,
             'adminRole' => $isAdmin,

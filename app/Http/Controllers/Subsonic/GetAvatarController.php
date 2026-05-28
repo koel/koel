@@ -17,7 +17,7 @@ class GetAvatarController extends Controller
 
     public function __invoke(GetUserRequest $request)
     {
-        $target = $this->userRepository->findOneByName($request->username) ?? throw new ModelNotFoundException();
+        $target = $this->userRepository->findOneByEmail($request->username) ?? throw new ModelNotFoundException();
 
         if (!$target->has_custom_avatar) {
             return SubsonicResponse::error(70, 'Avatar not set.');

@@ -16,9 +16,9 @@ class GetUserTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson("/rest/getUser.view?apiKey={$user->subsonic_api_key}&f=json&username=" . urlencode($user->name))
+            ->getJson("/rest/getUser.view?apiKey={$user->subsonic_api_key}&f=json&username=" . urlencode($user->email))
             ->assertOk()
-            ->assertJsonPath('subsonic-response.user.username', $user->name)
+            ->assertJsonPath('subsonic-response.user.username', $user->email)
             ->assertJsonPath('subsonic-response.user.email', $user->email)
             ->assertJsonPath('subsonic-response.user.adminRole', false);
     }
@@ -30,9 +30,11 @@ class GetUserTest extends TestCase
         $other = create_user();
 
         $this
-            ->getJson("/rest/getUser.view?apiKey={$admin->subsonic_api_key}&f=json&username=" . urlencode($other->name))
+            ->getJson(
+                "/rest/getUser.view?apiKey={$admin->subsonic_api_key}&f=json&username=" . urlencode($other->email),
+            )
             ->assertOk()
-            ->assertJsonPath('subsonic-response.user.username', $other->name);
+            ->assertJsonPath('subsonic-response.user.username', $other->email);
     }
 
     #[Test]
@@ -42,7 +44,7 @@ class GetUserTest extends TestCase
         $bob = create_user();
 
         $this
-            ->getJson("/rest/getUser.view?apiKey={$alice->subsonic_api_key}&f=json&username=" . urlencode($bob->name))
+            ->getJson("/rest/getUser.view?apiKey={$alice->subsonic_api_key}&f=json&username=" . urlencode($bob->email))
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 50);
     }

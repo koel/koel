@@ -22,7 +22,7 @@ class GetUserController extends Controller
     /** @param User $user */
     public function __invoke(GetUserRequest $request, Authenticatable $user)
     {
-        $isSelf = $user->name === $request->username;
+        $isSelf = $user->email === $request->username;
 
         if (!$isSelf && $user->role !== Role::ADMIN) {
             throw new AuthorizationException();
@@ -30,7 +30,7 @@ class GetUserController extends Controller
 
         $target = $isSelf
             ? $user
-            : $this->userRepository->findOneByName($request->username) ?? throw new ModelNotFoundException();
+            : $this->userRepository->findOneByEmail($request->username) ?? throw new ModelNotFoundException();
 
         return SubsonicResponse::ok(['user' => UserResource::toArray($target)]);
     }

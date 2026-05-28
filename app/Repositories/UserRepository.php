@@ -41,11 +41,6 @@ class UserRepository extends Repository
         return User::query()->firstWhere('email', $email);
     }
 
-    public function findOneByName(string $name): ?User
-    {
-        return User::query()->firstWhere('name', $name);
-    }
-
     public function findOneBySubsonicApiKey(#[\SensitiveParameter] string $apiKey): ?User
     {
         return User::query()->firstWhere('subsonic_api_key', $apiKey);

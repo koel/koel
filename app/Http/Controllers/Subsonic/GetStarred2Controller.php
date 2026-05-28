@@ -18,8 +18,6 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetStarred2Controller extends Controller
 {
-    private const int LIMIT = 500;
-
     public function __construct(
         private readonly ArtistRepository $artistRepository,
         private readonly AlbumRepository $albumRepository,
@@ -29,12 +27,9 @@ class GetStarred2Controller extends Controller
     /** @param User $user */
     public function __invoke(Authenticatable $user)
     {
-        $artists = $this->artistRepository->getFavorites(self::LIMIT, user: $user);
-        $albums = $this->albumRepository
-            ->getFavorites(self::LIMIT, user: $user)
-            ->loadCount('songs')
-            ->loadSum('songs', 'length');
-        $songs = $this->songRepository->getFavorites(scopedUser: $user)->take(self::LIMIT);
+        $artists = $this->artistRepository->getFavorites(user: $user);
+        $albums = $this->albumRepository->getFavorites(user: $user)->loadCount('songs')->loadSum('songs', 'length');
+        $songs = $this->songRepository->getFavorites(scopedUser: $user);
 
         return SubsonicResponse::ok([
             'starred2' => [

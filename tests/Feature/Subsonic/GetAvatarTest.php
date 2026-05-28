@@ -33,7 +33,7 @@ class GetAvatarTest extends TestCase
         $user = create_user(['avatar' => $filename]);
 
         $response = $this->get(
-            "/rest/getAvatar.view?apiKey={$user->subsonic_api_key}&username=" . urlencode($user->name),
+            "/rest/getAvatar.view?apiKey={$user->subsonic_api_key}&username=" . urlencode($user->email),
         )->assertOk()->assertHeader('Content-Type', 'image/png');
 
         $base = $response->baseResponse;
@@ -47,7 +47,9 @@ class GetAvatarTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson("/rest/getAvatar.view?apiKey={$user->subsonic_api_key}&f=json&username=" . urlencode($user->name))
+            ->getJson(
+                "/rest/getAvatar.view?apiKey={$user->subsonic_api_key}&f=json&username=" . urlencode($user->email),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 70);
     }

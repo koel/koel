@@ -82,14 +82,14 @@ class AlbumRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection<int, Album> */
-    public function getFavorites(int $limit, int $offset = 0, ?User $user = null): Collection
+    public function getFavorites(?int $limit = null, int $offset = 0, ?User $user = null): Collection
     {
         return Album::query()
             ->onlyStandard()
             ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: true)
             ->orderBy('favorites.position')
-            ->offset($offset)
-            ->limit($limit)
+            ->when($offset > 0, static fn (Builder $query) => $query->offset($offset))
+            ->when($limit !== null, static fn (Builder $query) => $query->limit($limit))
             ->get();
     }
 
