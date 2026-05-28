@@ -17,7 +17,7 @@ class UpdatePlaylistRequest extends Request
     {
         $this->merge([
             'songIdToAdd' => (array) $this->input('songIdToAdd', []),
-            'songIndexToRemove' => array_map('intval', (array) $this->input('songIndexToRemove', [])),
+            'songIndexToRemove' => (array) $this->input('songIndexToRemove', []),
         ]);
     }
 
@@ -28,6 +28,17 @@ class UpdatePlaylistRequest extends Request
             'playlistId' => ['required', 'string'],
             'name' => ['nullable', 'string'],
             'comment' => ['nullable', 'string'],
+            'songIdToAdd' => ['array'],
+            'songIdToAdd.*' => ['string'],
+            'songIndexToRemove' => ['array'],
+            'songIndexToRemove.*' => ['integer', 'min:0'],
         ];
+    }
+
+    protected function passedValidation(): void
+    {
+        $this->merge([
+            'songIndexToRemove' => array_map('intval', (array) $this->input('songIndexToRemove', [])),
+        ]);
     }
 }

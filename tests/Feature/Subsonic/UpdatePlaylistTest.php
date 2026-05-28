@@ -83,6 +83,26 @@ class UpdatePlaylistTest extends TestCase
     }
 
     #[Test]
+    public function nonNumericSongIndexIsRejected(): void
+    {
+        $user = create_user();
+        $playlist = self::playlistOwnedBy($user);
+        $songs = Song::factory()->count(2)->create(['owner_id' => $user->id]);
+        $playlist->addPlayables($songs, $user);
+
+        $this
+            ->getJson(
+                "/rest/updatePlaylist.view?apiKey={$user->subsonic_api_key}"
+                . "&f=json&playlistId={$playlist->id}&songIndexToRemove=foo",
+            )
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'failed')
+            ->assertJsonPath('subsonic-response.error.code', 10);
+
+        self::assertCount(2, $playlist->refresh()->playables);
+    }
+
+    #[Test]
     public function missingPlaylistIdReturnsCode10(): void
     {
         $user = create_user();
