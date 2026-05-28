@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Support\Arr;
 
 /**
  * @property string $name
@@ -12,7 +13,7 @@ class CreatePlaylistRequest extends Request
 {
     protected function prepareForValidation(): void
     {
-        $this->merge(['songId' => (array) $this->input('songId', [])]);
+        $this->merge(['songId' => Arr::wrap($this->input('songId'))]);
     }
 
     /** @inheritdoc */

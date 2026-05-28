@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Support\Arr;
 
 /**
  * @property list<string> $id
@@ -14,9 +15,9 @@ class FavoriteRequest extends Request
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'id' => (array) $this->input('id', []),
-            'albumId' => (array) $this->input('albumId', []),
-            'artistId' => (array) $this->input('artistId', []),
+            'id' => Arr::wrap($this->input('id')),
+            'albumId' => Arr::wrap($this->input('albumId')),
+            'artistId' => Arr::wrap($this->input('artistId')),
         ]);
     }
 
