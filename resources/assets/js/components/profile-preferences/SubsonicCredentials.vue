@@ -23,7 +23,7 @@
       />
       <button
         type="button"
-        class="px-3 hover:bg-k-fg-5 border-l border-k-fg-10"
+        class="px-3 hover:bg-k-fg-5"
         :title="revealed ? 'Hide key' : 'Reveal key'"
         @click.prevent="revealed = !revealed"
       >
