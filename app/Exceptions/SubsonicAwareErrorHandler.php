@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Contracts\SubsonicThrowable;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
@@ -14,7 +15,8 @@ class SubsonicAwareErrorHandler
 {
     /**
      * Subsonic error codes per https://opensubsonic.netlify.app/docs/responses/error/
-     * Listed specific-first; the first matching class wins.
+     * for framework/SPL exceptions we can't modify. koel-owned exceptions should
+     * implement {@see SubsonicThrowable} instead.
      *
      * @var array<class-string<Throwable>, array{int, string}>
      */
@@ -22,16 +24,18 @@ class SubsonicAwareErrorHandler
         ValidationException::class => [10, 'Required parameter is missing.'],
         AuthorizationException::class => [50, 'User is not authorized for the given operation.'],
         NotFoundHttpException::class => [70, 'The requested data was not found.'],
-        OperationNotApplicableForSmartPlaylistException::class => [
-            0,
-            'Operation is not applicable to smart playlists.',
-        ],
     ];
 
     public static function handle(Throwable $e, Request $request): ?Response
     {
         if (!$request->is('rest/*')) {
             return null;
+        }
+
+        if ($e instanceof SubsonicThrowable) {
+            return SubsonicResponse::error($e->getSubsonicErrorCode(), $e->getSubsonicErrorMessage())->toResponse(
+                $request,
+            );
         }
 
         foreach (self::EXCEPTION_MAP as $class => [$code, $message]) {
