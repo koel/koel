@@ -347,8 +347,8 @@ class SongRepository extends Repository implements ScoutableRepository
         ?Genre $genre,
         int $limit,
         bool $random = false,
-        int $offset = 0,
         ?User $scopedUser = null,
+        int $offset = 0,
     ): Collection {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()

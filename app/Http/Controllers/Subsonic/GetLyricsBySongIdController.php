@@ -31,7 +31,7 @@ class GetLyricsBySongIdController extends Controller
                     [
                         'displayArtist' => $song->artist_name,
                         'displayTitle' => $song->title,
-                        'lang' => 'xxx',
+                        'lang' => 'und',
                         'offset' => 0,
                         'synced' => false,
                         'line' => $lines,

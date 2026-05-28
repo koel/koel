@@ -29,6 +29,8 @@ class GetLyricsBySongIdTest extends TestCase
         $structured = $response->json('subsonic-response.lyricsList.structuredLyrics.0');
         self::assertSame('Radiohead', $structured['displayArtist']);
         self::assertSame('Karma Police', $structured['displayTitle']);
+        self::assertSame('und', $structured['lang']);
+        self::assertSame(0, $structured['offset']);
         self::assertSame(false, $structured['synced']);
         self::assertSame(
             [['value' => 'Line one'], ['value' => 'Line two'], ['value' => 'Line three']],
