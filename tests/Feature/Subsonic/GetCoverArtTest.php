@@ -65,7 +65,7 @@ class GetCoverArtTest extends TestCase
     }
 
     #[Test]
-    public function albumWithoutCoverReturnsTransparentPlaceholder(): void
+    public function albumWithoutCoverReturnsDefaultPlaceholder(): void
     {
         $user = create_user();
         $album = Album::factory()->createOne(['cover' => '', 'user_id' => $user->id]);
@@ -74,19 +74,24 @@ class GetCoverArtTest extends TestCase
             "/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&id={$album->id}",
         )->assertOk()->assertHeader('Content-Type', 'image/png');
 
-        self::assertSame("\x89PNG\r\n\x1a\n", substr((string) $response->getContent(), 0, 8));
+        $base = $response->baseResponse;
+        self::assertInstanceOf(BinaryFileResponse::class, $base);
+        self::assertSame(resource_path('assets/img/covers/default.png'), $base->getFile()->getRealPath());
     }
 
     #[Test]
-    public function albumWithMissingCoverFileReturnsPlaceholder(): void
+    public function albumWithMissingCoverFileReturnsDefaultPlaceholder(): void
     {
         $user = create_user();
         $album = Album::factory()->createOne(['cover' => 'never-staged.png', 'user_id' => $user->id]);
 
-        $this->get("/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&id={$album->id}")->assertOk()->assertHeader(
-            'Content-Type',
-            'image/png',
-        );
+        $response = $this->get(
+            "/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&id={$album->id}",
+        )->assertOk()->assertHeader('Content-Type', 'image/png');
+
+        $base = $response->baseResponse;
+        self::assertInstanceOf(BinaryFileResponse::class, $base);
+        self::assertSame(resource_path('assets/img/covers/default.png'), $base->getFile()->getRealPath());
     }
 
     private function stageCover(string $filename): string

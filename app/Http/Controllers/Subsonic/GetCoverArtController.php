@@ -8,12 +8,9 @@ use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\HttpFoundation\Response;
 
 class GetCoverArtController extends Controller
 {
-    private const string PLACEHOLDER_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-
     public function __construct(
         private readonly AlbumRepository $albumRepository,
         private readonly ArtistRepository $artistRepository,
@@ -28,7 +25,7 @@ class GetCoverArtController extends Controller
             return response()->file($path);
         }
 
-        return self::placeholderResponse();
+        return response()->file(resource_path('assets/img/covers/default.png'));
     }
 
     private function resolveImageFilename(string $id): ?string
@@ -38,10 +35,5 @@ class GetCoverArtController extends Controller
         } catch (ModelNotFoundException) {
             return $this->artistRepository->getOne($id)->image;
         }
-    }
-
-    private static function placeholderResponse(): Response
-    {
-        return response(base64_decode(self::PLACEHOLDER_PNG_BASE64, true), 200, ['Content-Type' => 'image/png']);
     }
 }

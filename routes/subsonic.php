@@ -23,6 +23,7 @@ use App\Http\Controllers\Subsonic\GetRandomSongsController;
 use App\Http\Controllers\Subsonic\GetSongController;
 use App\Http\Controllers\Subsonic\GetSongsByGenreController;
 use App\Http\Controllers\Subsonic\GetStarred2Controller;
+use App\Http\Controllers\Subsonic\GetStarredController;
 use App\Http\Controllers\Subsonic\GetUserController;
 use App\Http\Controllers\Subsonic\PingController;
 use App\Http\Controllers\Subsonic\ScrobbleController;
@@ -60,6 +61,7 @@ Route::prefix('rest')
         Route::match(['get', 'post'], 'star.view', StarController::class);
         Route::match(['get', 'post'], 'unstar.view', UnstarController::class);
         Route::match(['get', 'post'], 'setRating.view', SetRatingController::class);
+        Route::match(['get', 'post'], 'getStarred.view', GetStarredController::class);
         Route::match(['get', 'post'], 'getStarred2.view', GetStarred2Controller::class);
         Route::match(['get', 'post'], 'getRandomSongs.view', GetRandomSongsController::class);
         Route::match(['get', 'post'], 'getNowPlaying.view', GetNowPlayingController::class);
