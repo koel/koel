@@ -3,6 +3,9 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Enums\FavoriteableType;
+use App\Http\Responses\Subsonic\Resources\AlbumResource;
+use App\Http\Responses\Subsonic\Resources\ArtistResource;
+use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Favorite;
@@ -44,12 +47,20 @@ class GetStarred2Test extends TestCase
         $response = $this
             ->getJson("/rest/getStarred2.view?apiKey={$user->subsonic_api_key}&f=json")
             ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'ok');
+            ->assertJsonStructure([
+                'subsonic-response' => [
+                    'starred2' => [
+                        'song' => ['*' => SongResource::JSON_STRUCTURE],
+                        'album' => ['*' => AlbumResource::JSON_STRUCTURE],
+                        'artist' => ['*' => ArtistResource::JSON_STRUCTURE],
+                    ],
+                ],
+            ]);
 
         $payload = $response->json('subsonic-response.starred2');
-        self::assertContains($song->id, array_column($payload['song'] ?? [], 'id'));
-        self::assertContains($album->id, array_column($payload['album'] ?? [], 'id'));
-        self::assertContains($artist->id, array_column($payload['artist'] ?? [], 'id'));
+        self::assertContains($song->id, array_column($payload['song'], 'id'));
+        self::assertContains($album->id, array_column($payload['album'], 'id'));
+        self::assertContains($artist->id, array_column($payload['artist'], 'id'));
     }
 
     #[Test]

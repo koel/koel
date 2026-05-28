@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -16,9 +17,14 @@ class GetRandomSongsTest extends TestCase
         $user = create_user();
         Song::factory()->count(5)->create(['owner_id' => $user->id]);
 
-        $response = $this->getJson(
-            "/rest/getRandomSongs.view?apiKey={$user->subsonic_api_key}&f=json&size=3",
-        )->assertOk();
+        $response = $this
+            ->getJson("/rest/getRandomSongs.view?apiKey={$user->subsonic_api_key}&f=json&size=3")
+            ->assertOk()
+            ->assertJsonStructure([
+                'subsonic-response' => [
+                    'randomSongs' => ['song' => ['*' => SongResource::JSON_STRUCTURE]],
+                ],
+            ]);
 
         self::assertCount(3, $response->json('subsonic-response.randomSongs.song'));
     }

@@ -7,6 +7,23 @@ use App\Models\User;
 
 final class UserResource
 {
+    public const array JSON_STRUCTURE = [
+        'username',
+        'email',
+        'scrobblingEnabled',
+        'adminRole',
+        'settingsRole',
+        'downloadRole',
+        'uploadRole',
+        'playlistRole',
+        'coverArtRole',
+        'commentRole',
+        'podcastRole',
+        'streamRole',
+        'jukeboxRole',
+        'shareRole',
+    ];
+
     /**
      * @return array{
      *     username: string,

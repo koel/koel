@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Http\Responses\Subsonic\Resources\GenreResource;
 use App\Models\Genre;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
@@ -23,9 +24,13 @@ class GetGenresTest extends TestCase
         $response = $this
             ->getJson('/rest/getGenres.view?apiKey=' . $user->subsonic_api_key . '&f=json')
             ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'ok');
+            ->assertJsonStructure([
+                'subsonic-response' => [
+                    'genres' => ['genre' => ['*' => GenreResource::JSON_STRUCTURE]],
+                ],
+            ]);
 
-        $genres = collect($response->json('subsonic-response.genres.genre') ?? []);
+        $genres = collect($response->json('subsonic-response.genres.genre'));
         $rockEntry = $genres->firstWhere('value', 'Rock');
 
         self::assertNotNull($rockEntry);

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Http\Responses\Subsonic\Resources\AlbumResource;
+use App\Http\Responses\Subsonic\Resources\ArtistResource;
 use App\Models\Album;
 use App\Models\Artist;
 use PHPUnit\Framework\Attributes\Test;
@@ -25,7 +27,13 @@ class GetArtistTest extends TestCase
         $response = $this
             ->getJson("/rest/getArtist.view?apiKey={$user->subsonic_api_key}&f=json&id={$artist->id}")
             ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'ok')
+            ->assertJsonStructure([
+                'subsonic-response' => [
+                    'artist' => array_merge(ArtistResource::JSON_STRUCTURE, [
+                        'album' => ['*' => AlbumResource::JSON_STRUCTURE],
+                    ]),
+                ],
+            ])
             ->assertJsonPath('subsonic-response.artist.id', $artist->id)
             ->assertJsonPath('subsonic-response.artist.name', 'Tool');
 

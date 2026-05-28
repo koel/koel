@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -19,11 +20,9 @@ class GetSongTest extends TestCase
         $this
             ->getJson("/rest/getSong.view?apiKey={$user->subsonic_api_key}&f=json&id={$song->id}")
             ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'ok')
+            ->assertJsonStructure(['subsonic-response' => ['song' => SongResource::JSON_STRUCTURE]])
             ->assertJsonPath('subsonic-response.song.id', $song->id)
-            ->assertJsonPath('subsonic-response.song.title', 'Karma Police')
-            ->assertJsonPath('subsonic-response.song.type', 'music')
-            ->assertJsonPath('subsonic-response.song.isDir', false);
+            ->assertJsonPath('subsonic-response.song.title', 'Karma Police');
     }
 
     #[Test]

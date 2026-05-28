@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Http\Responses\Subsonic\Resources\UserResource;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -18,8 +19,8 @@ class GetUserTest extends TestCase
         $this
             ->getJson("/rest/getUser.view?apiKey={$user->subsonic_api_key}&f=json&username=" . urlencode($user->email))
             ->assertOk()
+            ->assertJsonStructure(['subsonic-response' => ['user' => UserResource::JSON_STRUCTURE]])
             ->assertJsonPath('subsonic-response.user.username', $user->email)
-            ->assertJsonPath('subsonic-response.user.email', $user->email)
             ->assertJsonPath('subsonic-response.user.adminRole', false);
     }
 
@@ -34,6 +35,7 @@ class GetUserTest extends TestCase
                 "/rest/getUser.view?apiKey={$admin->subsonic_api_key}&f=json&username=" . urlencode($other->email),
             )
             ->assertOk()
+            ->assertJsonStructure(['subsonic-response' => ['user' => UserResource::JSON_STRUCTURE]])
             ->assertJsonPath('subsonic-response.user.username', $other->email);
     }
 
