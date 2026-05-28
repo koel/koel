@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Subsonic\CreatePlaylistController;
+use App\Http\Controllers\Subsonic\DeletePlaylistController;
 use App\Http\Controllers\Subsonic\GetAlbumController;
 use App\Http\Controllers\Subsonic\GetAlbumList2Controller;
 use App\Http\Controllers\Subsonic\GetArtistController;
@@ -8,15 +10,19 @@ use App\Http\Controllers\Subsonic\GetCoverArtController;
 use App\Http\Controllers\Subsonic\GetGenresController;
 use App\Http\Controllers\Subsonic\GetLicenseController;
 use App\Http\Controllers\Subsonic\GetMusicFoldersController;
+use App\Http\Controllers\Subsonic\GetPlaylistController;
+use App\Http\Controllers\Subsonic\GetPlaylistsController;
 use App\Http\Controllers\Subsonic\GetSongController;
 use App\Http\Controllers\Subsonic\PingController;
 use App\Http\Controllers\Subsonic\Search3Controller;
 use App\Http\Controllers\Subsonic\StreamController;
+use App\Http\Controllers\Subsonic\UpdatePlaylistController;
+use App\Http\Middleware\NormalizeSubsonicArrayParams;
 use App\Http\Middleware\SubsonicAuth;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('rest')
-    ->middleware(SubsonicAuth::class)
+    ->middleware([NormalizeSubsonicArrayParams::class, SubsonicAuth::class])
     ->group(static function (): void {
         Route::match(['get', 'post'], 'ping.view', PingController::class);
         Route::match(['get', 'post'], 'getLicense.view', GetLicenseController::class);
@@ -30,4 +36,9 @@ Route::prefix('rest')
         Route::match(['get', 'post'], 'getAlbumList2.view', GetAlbumList2Controller::class);
         Route::match(['get', 'post'], 'stream.view', StreamController::class);
         Route::match(['get', 'post'], 'getCoverArt.view', GetCoverArtController::class);
+        Route::match(['get', 'post'], 'getPlaylists.view', GetPlaylistsController::class);
+        Route::match(['get', 'post'], 'getPlaylist.view', GetPlaylistController::class);
+        Route::match(['get', 'post'], 'createPlaylist.view', CreatePlaylistController::class);
+        Route::match(['get', 'post'], 'updatePlaylist.view', UpdatePlaylistController::class);
+        Route::match(['get', 'post'], 'deletePlaylist.view', DeletePlaylistController::class);
     });
