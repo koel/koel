@@ -226,15 +226,13 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
      * This is done by comparing the stored hash or mtime with the corresponding
      * value from the scan information.
      */
-    public function isFileModified(int $lastModified): bool
-    {
-        throw_if($this->isEpisode(), new LogicException('Podcast episodes do not have associated files.'));
+public function __toString(): string
+{
+    return $this->id;
+}
 
-        return $this->mtime !== $lastModified;
-    }
-
-    public function __toString(): string
-    {
-        return $this->id;
-    }
+public static function getTotalDuration(): int
+{
+    return (int) static::sum('length');
+}
 }
