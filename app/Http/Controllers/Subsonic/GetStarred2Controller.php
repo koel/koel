@@ -27,7 +27,7 @@ class GetStarred2Controller extends Controller
     /** @param User $user */
     public function __invoke(Authenticatable $user)
     {
-        $artists = $this->artistRepository->getFavorites(user: $user);
+        $artists = $this->artistRepository->getFavorites(user: $user)->loadCount('albums');
         $albums = $this->albumRepository->getFavorites(user: $user)->loadCount('songs')->loadSum('songs', 'length');
         $songs = $this->songRepository->getFavorites(scopedUser: $user);
 

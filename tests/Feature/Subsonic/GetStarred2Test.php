@@ -25,6 +25,13 @@ class GetStarred2Test extends TestCase
         $song = Song::factory()->createOne(['owner_id' => $user->id]);
         $album = Album::factory()->createOne(['user_id' => $user->id]);
         $artist = Artist::factory()->createOne(['user_id' => $user->id]);
+        Album::factory()
+            ->count(2)
+            ->create([
+                'artist_id' => $artist->id,
+                'artist_name' => $artist->name,
+                'user_id' => $user->id,
+            ]);
 
         Favorite::factory()->createMany([
             [
@@ -61,6 +68,9 @@ class GetStarred2Test extends TestCase
         self::assertContains($song->id, array_column($payload['song'], 'id'));
         self::assertContains($album->id, array_column($payload['album'], 'id'));
         self::assertContains($artist->id, array_column($payload['artist'], 'id'));
+
+        $byId = collect($payload['artist'])->keyBy('id');
+        self::assertSame(2, $byId[$artist->id]['albumCount']);
     }
 
     #[Test]
