@@ -39,8 +39,8 @@ class GetInternetRadioStationsTest extends TestCase
         self::assertContains('BBC 6', $byName->keys());
         self::assertContains('KEXP', $byName->keys());
 
-        self::assertSame('https://www.bbc.co.uk/sounds/play/live:bbc_6music', $byName['BBC 6']['homePageUrl']);
-        self::assertArrayNotHasKey('homePageUrl', $byName['KEXP']);
+        self::assertSame('https://www.bbc.co.uk/sounds/play/live:bbc_6music', $byName['BBC 6']['homepageUrl']);
+        self::assertArrayNotHasKey('homepageUrl', $byName['KEXP']);
 
         foreach ($stations as $station) {
             self::assertNotEmpty($station['streamUrl']);

@@ -26,7 +26,7 @@ class GetInternetRadioStationsController extends Controller
                     'id' => $station->id,
                     'name' => $station->name,
                     'streamUrl' => $station->url,
-                    'homePageUrl' => $station->homepage_url,
+                    'homepageUrl' => $station->homepage_url,
                 ])->all(),
             ],
         ]);
