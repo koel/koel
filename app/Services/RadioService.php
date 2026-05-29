@@ -30,6 +30,7 @@ class RadioService
             'logo' => $logoFileName,
             'description' => $dto->description,
             'is_public' => $dto->isPublic,
+            'homepage_url' => $dto->homepageUrl,
         ]);
 
         return $this->repository->findOneWithUserContext($station->id, $user);
@@ -42,6 +43,7 @@ class RadioService
             'name' => $dto->name,
             'description' => $dto->description,
             'is_public' => $dto->isPublic,
+            'homepage_url' => $dto->homepageUrl,
         ];
 
         if (is_string($dto->logo)) {

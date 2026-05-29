@@ -14,6 +14,10 @@
         <TextInput v-model="data.url" type="url" name="url" placeholder="https://radio.example.com/stream" required />
       </FormRow>
       <FormRow>
+        <template #label>Homepage URL</template>
+        <TextInput v-model="data.homepage_url" type="url" name="homepage_url" placeholder="https://radio.example.com" />
+      </FormRow>
+      <FormRow>
         <template #label>Description</template>
         <TextArea
           v-model="data.description"
@@ -67,7 +71,7 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
-  initialValues: { ...pick(station, 'name', 'url', 'description', 'is_public', 'logo') },
+  initialValues: { ...pick(station, 'name', 'url', 'homepage_url', 'description', 'is_public', 'logo') },
   onSubmit: async data => {
     const formData = structuredClone(toRaw(data))
 

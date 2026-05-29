@@ -55,6 +55,25 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query()->where('hash', $hash)->where('owner_id', $owner->id)->first();
     }
 
+    public function findOneByArtistAndTitle(?string $artist, ?string $title, ?User $scopedUser = null): ?Song
+    {
+        $hasTitle = $title !== null && $title !== '';
+        $hasArtist = $artist !== null && $artist !== '';
+
+        if (!$hasTitle && !$hasArtist) {
+            return null;
+        }
+
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->withUserContext()
+            ->when($hasTitle, static fn (Builder $query) => $query->where('songs.title', $title))
+            ->when($hasArtist, static fn (Builder $query) => $query->whereHas('artist', static fn (Builder $artistQuery) => $artistQuery->where(
+                'name',
+                $artist,
+            )))
+            ->first();
+    }
+
     public function getAllStoredOnCloud(): Collection
     {
         return Song::query()->storedOnCloud()->get();
@@ -144,6 +163,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** @return Collection<int, Song> */
     public function getFavorites(?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
         return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
@@ -152,6 +172,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** @return Collection<int, Song> */
     public function getByAlbum(Album|string $album, ?User $scopedUser = null): Collection
     {
         $album = $this->albumRepository->resolveOne($album);
@@ -193,6 +214,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** @return Collection<int, Song> */
     public function getByPlaylist(Playlist|string $playlist, ?User $scopedUser = null): Collection
     {
         $playlist = $this->playlistRepository->resolveOne($playlist);
@@ -254,6 +276,7 @@ class SongRepository extends Repository implements ScoutableRepository
         return $query->orderBy('songs.title')->limit(self::LIST_SIZE_LIMIT)->get();
     }
 
+    /** @return Collection<int, Song> */
     public function getRandom(int $limit, ?User $scopedUser = null): Collection
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
@@ -337,15 +360,22 @@ class SongRepository extends Repository implements ScoutableRepository
 
     /**
      * @param Genre|null $genre If null, query songs that have no genre.
+     * @return Collection<int, Song>
      */
-    public function getByGenre(?Genre $genre, int $limit, $random = false, ?User $scopedUser = null): Collection
-    {
+    public function getByGenre(
+        ?Genre $genre,
+        int $limit,
+        bool $random = false,
+        ?User $scopedUser = null,
+        int $offset = 0,
+    ): Collection {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
             ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
             ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
             ->when($random, static fn (Builder $builder) => $builder->inRandomOrder())
             ->when(!$random, static fn (Builder $builder) => $builder->orderBy('songs.title'))
+            ->when($offset > 0, static fn (Builder $builder) => $builder->offset($offset))
             ->limit($limit)
             ->get();
     }

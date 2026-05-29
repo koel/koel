@@ -25,6 +25,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property int $user_id
  * @property User $user
  * @property string $url
+ * @property ?string $homepage_url The station's homepage URL
  * @property ?string $logo The station's logo file name
  * @property ?string $description
  * @property boolean $is_public

@@ -60,6 +60,10 @@ with a progress bar showing used vs. available space. You can clear all cached s
 
 If your Koel installation is [integrated](../service-integrations) with any external services, such as Last.fm or Spotify, you can see their statuses here along with the ability to connect or disconnect them when applicable.
 
+## Subsonic API Key
+
+This tab shows your personal API key for connecting [Subsonic-compatible clients](./subsonic) to your Koel library. You can reveal, copy, or regenerate the key from here.
+
 ## QR Code Authentication
 
 This tab displays a QR code that you can scan to log in to [Koel Player](../mobile-apps.md) on your phone without having to manually enter your credentials.

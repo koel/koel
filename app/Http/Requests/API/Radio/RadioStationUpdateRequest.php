@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
  * @property-read ?string $logo
  * @property-read ?string $description
  * @property-read ?bool $is_public
+ * @property-read ?string $homepage_url
  */
 class RadioStationUpdateRequest extends Request
 {
@@ -37,6 +38,7 @@ class RadioStationUpdateRequest extends Request
             'logo' => ['nullable', 'sometimes', new ValidImageData()],
             'description' => ['string', 'sometimes', 'nullable'],
             'is_public' => ['boolean'],
+            'homepage_url' => ['sometimes', 'nullable', 'url'],
         ];
     }
 
@@ -48,6 +50,7 @@ class RadioStationUpdateRequest extends Request
             description: $this->string('description'),
             logo: $this->has('logo') ? $this->string('logo') : null,
             isPublic: $this->boolean('is_public'),
+            homepageUrl: $this->homepage_url,
         );
     }
 }

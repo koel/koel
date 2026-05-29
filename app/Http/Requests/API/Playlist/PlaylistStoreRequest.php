@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
 /**
  * @property array<string> $songs
  * @property-read ?string $folder_id
+ * @property-read ?string $folder_name
  * @property-read ?string $description
  * @property-read array $rules
  * @property-read string $name
