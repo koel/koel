@@ -3,6 +3,7 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Models\RadioStation;
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -16,13 +17,16 @@ class CreateInternetRadioStationTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf(
-                '/rest/createInternetRadioStation.view?apiKey=%s&f=json&name=%s&streamUrl=%s&homepageUrl=%s',
-                $user->subsonic_api_key,
-                urlencode('NTS Live'),
-                urlencode('https://stream-relay-geo.ntslive.net/stream'),
-                urlencode('https://www.nts.live'),
-            ))
+            ->getJson(
+                '/rest/createInternetRadioStation.view?'
+                    . Arr::query([
+                        'apiKey' => $user->subsonic_api_key,
+                        'f' => 'json',
+                        'name' => 'NTS Live',
+                        'streamUrl' => 'https://stream-relay-geo.ntslive.net/stream',
+                        'homepageUrl' => 'https://www.nts.live',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'ok');
 
@@ -38,12 +42,15 @@ class CreateInternetRadioStationTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf(
-                '/rest/createInternetRadioStation.view?apiKey=%s&f=json&name=%s&streamUrl=%s',
-                $user->subsonic_api_key,
-                urlencode('Plain Station'),
-                urlencode('https://example.com/stream'),
-            ))
+            ->getJson(
+                '/rest/createInternetRadioStation.view?'
+                    . Arr::query([
+                        'apiKey' => $user->subsonic_api_key,
+                        'f' => 'json',
+                        'name' => 'Plain Station',
+                        'streamUrl' => 'https://example.com/stream',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'ok');
 
@@ -58,11 +65,14 @@ class CreateInternetRadioStationTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf(
-                '/rest/createInternetRadioStation.view?apiKey=%s&f=json&name=%s',
-                $user->subsonic_api_key,
-                urlencode('Missing'),
-            ))
+            ->getJson(
+                '/rest/createInternetRadioStation.view?'
+                    . Arr::query([
+                        'apiKey' => $user->subsonic_api_key,
+                        'f' => 'json',
+                        'name' => 'Missing',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'failed')
             ->assertJsonPath('subsonic-response.error.code', 10);

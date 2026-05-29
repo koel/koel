@@ -7,6 +7,7 @@ use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -36,11 +37,14 @@ class GetMusicDirectoryTest extends TestCase
         ]);
 
         $response = $this
-            ->getJson(sprintf(
-                '/rest/getMusicDirectory.view?apiKey=%s&f=json&id=%s',
-                $user->subsonic_api_key,
-                $artist->id,
-            ))
+            ->getJson(
+                '/rest/getMusicDirectory.view?'
+                    . Arr::query([
+                        'apiKey' => $user->subsonic_api_key,
+                        'f' => 'json',
+                        'id' => $artist->id,
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.directory.id', $artist->id)
             ->assertJsonPath('subsonic-response.directory.name', $artist->name)
@@ -76,11 +80,14 @@ class GetMusicDirectoryTest extends TestCase
         ]);
 
         $response = $this
-            ->getJson(sprintf(
-                '/rest/getMusicDirectory.view?apiKey=%s&f=json&id=%s',
-                $user->subsonic_api_key,
-                $album->id,
-            ))
+            ->getJson(
+                '/rest/getMusicDirectory.view?'
+                    . Arr::query([
+                        'apiKey' => $user->subsonic_api_key,
+                        'f' => 'json',
+                        'id' => $album->id,
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.directory.id', $album->id)
             ->assertJsonPath('subsonic-response.directory.parent', $album->artist_id)
