@@ -4,11 +4,8 @@ namespace App\Http\Controllers\Subsonic;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\IdRequest;
-use App\Http\Responses\Subsonic\Resources\AlbumChildResource;
-use App\Http\Responses\Subsonic\Resources\SongResource;
+use App\Http\Responses\Subsonic\Resources\DirectoryResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
-use App\Models\Album;
-use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
@@ -29,7 +26,9 @@ class GetMusicDirectoryController extends Controller
         $album = $this->albumRepository->findOne($request->id);
 
         if ($album) {
-            return $this->renderAlbum($album, $user);
+            $songs = $this->songRepository->getByAlbum($album);
+
+            return SubsonicResponse::ok(['directory' => DirectoryResource::forAlbum($album, $songs, $user)]);
         }
 
         $artist = $this->artistRepository->findOne($request->id);
@@ -37,29 +36,9 @@ class GetMusicDirectoryController extends Controller
         if ($artist) {
             $albums = $this->albumRepository->getByArtist($artist);
 
-            return SubsonicResponse::ok([
-                'directory' => [
-                    'id' => $artist->id,
-                    'name' => $artist->name,
-                    'child' => $albums->map(AlbumChildResource::toArray(...))->all(),
-                ],
-            ]);
+            return SubsonicResponse::ok(['directory' => DirectoryResource::forArtist($artist, $albums)]);
         }
 
         return SubsonicResponse::error(70, 'Directory not found.');
-    }
-
-    private function renderAlbum(Album $album, User $user)
-    {
-        $songs = $this->songRepository->getByAlbum($album);
-
-        return SubsonicResponse::ok([
-            'directory' => [
-                'id' => $album->id,
-                'parent' => $album->artist_id,
-                'name' => $album->name,
-                'child' => $songs->map(static fn (Song $song) => SongResource::toArray($song, $user))->all(),
-            ],
-        ]);
     }
 }
