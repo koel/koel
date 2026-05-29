@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Http\Responses\Subsonic\Resources\AlbumChildResource;
+use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
@@ -41,7 +43,14 @@ class GetMusicDirectoryTest extends TestCase
             ))
             ->assertOk()
             ->assertJsonPath('subsonic-response.directory.id', $artist->id)
-            ->assertJsonPath('subsonic-response.directory.name', $artist->name);
+            ->assertJsonPath('subsonic-response.directory.name', $artist->name)
+            ->assertJsonStructure([
+                'subsonic-response' => [
+                    'directory' => [
+                        'child' => ['*' => AlbumChildResource::JSON_STRUCTURE],
+                    ],
+                ],
+            ]);
 
         $children = $response->json('subsonic-response.directory.child') ?? [];
         $names = array_column($children, 'title');
@@ -75,7 +84,14 @@ class GetMusicDirectoryTest extends TestCase
             ->assertOk()
             ->assertJsonPath('subsonic-response.directory.id', $album->id)
             ->assertJsonPath('subsonic-response.directory.parent', $album->artist_id)
-            ->assertJsonPath('subsonic-response.directory.name', $album->name);
+            ->assertJsonPath('subsonic-response.directory.name', $album->name)
+            ->assertJsonStructure([
+                'subsonic-response' => [
+                    'directory' => [
+                        'child' => ['*' => SongResource::JSON_STRUCTURE],
+                    ],
+                ],
+            ]);
 
         $children = $response->json('subsonic-response.directory.child') ?? [];
         $titles = array_column($children, 'title');

@@ -4,13 +4,8 @@ namespace App\Http\Controllers\Subsonic;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\Search3Request;
-use App\Http\Responses\Subsonic\Resources\AlbumResource;
-use App\Http\Responses\Subsonic\Resources\ArtistResource;
-use App\Http\Responses\Subsonic\Resources\SongResource;
+use App\Http\Responses\Subsonic\Resources\SearchResultResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
-use App\Models\Album;
-use App\Models\Artist;
-use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
@@ -31,9 +26,7 @@ class Search3Controller extends Controller
         $query = (string) $request->input('query');
 
         if ($query === '') {
-            return SubsonicResponse::ok([
-                'searchResult3' => ['artist' => [], 'album' => [], 'song' => []],
-            ]);
+            return SubsonicResponse::ok(['searchResult3' => SearchResultResource::empty()]);
         }
 
         $artists = $this->artistRepository->search($query, $request->integer('artistCount', 20))->loadCount('albums');
@@ -46,11 +39,7 @@ class Search3Controller extends Controller
         $songs = $this->songRepository->search($query, $request->integer('songCount', 20));
 
         return SubsonicResponse::ok([
-            'searchResult3' => [
-                'artist' => $artists->map(static fn (Artist $artist) => ArtistResource::toArray($artist, $user))->all(),
-                'album' => $albums->map(static fn (Album $album) => AlbumResource::toArray($album, $user))->all(),
-                'song' => $songs->map(static fn (Song $song) => SongResource::toArray($song, $user))->all(),
-            ],
+            'searchResult3' => SearchResultResource::toArray($artists, $albums, $songs, $user),
         ]);
     }
 }

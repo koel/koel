@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Http\Responses\Subsonic\Resources\RadioStationResource;
 use App\Models\RadioStation;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -28,7 +29,14 @@ class GetInternetRadioStationsTest extends TestCase
         $response = $this
             ->getJson("/rest/getInternetRadioStations.view?apiKey={$user->subsonic_api_key}&f=json")
             ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'ok');
+            ->assertJsonPath('subsonic-response.status', 'ok')
+            ->assertJsonStructure([
+                'subsonic-response' => [
+                    'internetRadioStations' => [
+                        'internetRadioStation' => ['*' => RadioStationResource::JSON_STRUCTURE],
+                    ],
+                ],
+            ]);
 
         $stations = $response->json('subsonic-response.internetRadioStations.internetRadioStation') ?? [];
 

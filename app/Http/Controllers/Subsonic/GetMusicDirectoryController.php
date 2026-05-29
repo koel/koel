@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Subsonic;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\IdRequest;
+use App\Http\Responses\Subsonic\Resources\AlbumChildResource;
 use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Models\Album;
@@ -40,7 +41,7 @@ class GetMusicDirectoryController extends Controller
                 'directory' => [
                     'id' => $artist->id,
                     'name' => $artist->name,
-                    'child' => $albums->map(self::albumAsChild(...))->all(),
+                    'child' => $albums->map(AlbumChildResource::toArray(...))->all(),
                 ],
             ]);
         }
@@ -60,33 +61,5 @@ class GetMusicDirectoryController extends Controller
                 'child' => $songs->map(static fn (Song $song) => SongResource::toArray($song, $user))->all(),
             ],
         ]);
-    }
-
-    /**
-     * @return array{
-     *     id: string,
-     *     parent: string,
-     *     isDir: bool,
-     *     title: string,
-     *     artist: string,
-     *     artistId: string,
-     *     coverArt: ?string,
-     *     year: ?int,
-     *     created: string,
-     * }
-     */
-    private static function albumAsChild(Album $album): array
-    {
-        return [
-            'id' => $album->id,
-            'parent' => $album->artist_id,
-            'isDir' => true,
-            'title' => $album->name,
-            'artist' => $album->artist_name,
-            'artistId' => $album->artist_id,
-            'coverArt' => $album->cover ? $album->id : null,
-            'year' => $album->year,
-            'created' => $album->created_at->toIso8601String(),
-        ];
     }
 }
