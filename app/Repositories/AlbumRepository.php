@@ -9,13 +9,14 @@ use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 /**
  * @extends Repository<Album>
  * @implements ScoutableRepository<Album>
  */
-// @mago-ignore lint:cyclomatic-complexity
+// @mago-ignore lint:too-many-methods,cyclomatic-complexity
 class AlbumRepository extends Repository implements ScoutableRepository
 {
     /**
@@ -84,6 +85,38 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->withUserContext(user: $user ?? $this->auth->user())
             ->whereBetween('albums.year', [$low, $high])
             ->orderBy('albums.year', $reverse ? 'desc' : 'asc')
+            ->orderBy('albums.name')
+            ->offset($offset)
+            ->limit($size)
+            ->get();
+    }
+
+    public function getByGenre(string $genreName, int $size, int $offset = 0, ?User $user = null): Collection
+    {
+        return Album::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->whereHas('songs.genres', static fn (Builder $query) => $query->where('genres.name', $genreName))
+            ->orderBy('albums.name')
+            ->offset($offset)
+            ->limit($size)
+            ->get();
+    }
+
+    public function getHighestRated(int $size, int $offset = 0, ?User $user = null): Collection
+    {
+        $user ??= $this->auth->user();
+
+        return Album::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user)
+            ->join('ratings', static function (JoinClause $join) use ($user): void {
+                $join->on('ratings.rateable_id', '=', 'albums.id')->where('ratings.rateable_type', 'album')->where(
+                    'ratings.user_id',
+                    $user->id,
+                );
+            })
+            ->orderByDesc('ratings.rating')
             ->orderBy('albums.name')
             ->offset($offset)
             ->limit($size)

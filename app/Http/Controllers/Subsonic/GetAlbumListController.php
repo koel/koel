@@ -4,15 +4,14 @@ namespace App\Http\Controllers\Subsonic;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Subsonic\Concerns\LoadsAlbumsByType;
-use App\Http\Requests\Subsonic\GetAlbumList2Request;
-use App\Http\Responses\Subsonic\Resources\AlbumResource;
+use App\Http\Requests\Subsonic\GetAlbumListRequest;
+use App\Http\Responses\Subsonic\Resources\AlbumChildResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
-use App\Models\Album;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class GetAlbumList2Controller extends Controller
+class GetAlbumListController extends Controller
 {
     use LoadsAlbumsByType;
 
@@ -21,19 +20,16 @@ class GetAlbumList2Controller extends Controller
     ) {}
 
     /** @param User $user */
-    public function __invoke(GetAlbumList2Request $request, Authenticatable $user)
+    public function __invoke(GetAlbumListRequest $request, Authenticatable $user)
     {
         $size = $request->integer('size', 10);
         $offset = $request->integer('offset', 0);
 
-        $albums = $this
-            ->loadAlbumsByType($this->albumRepository, $request, $size, $offset)
-            ->loadCount('songs')
-            ->loadSum('songs', 'length');
+        $albums = $this->loadAlbumsByType($this->albumRepository, $request, $size, $offset);
 
         return SubsonicResponse::ok([
-            'albumList2' => [
-                'album' => $albums->map(static fn (Album $album) => AlbumResource::toArray($album, $user))->all(),
+            'albumList' => [
+                'album' => $albums->map(AlbumChildResource::toArray(...))->all(),
             ],
         ]);
     }

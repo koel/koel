@@ -55,6 +55,19 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query()->where('hash', $hash)->where('owner_id', $owner->id)->first();
     }
 
+    public function findOneByArtistAndTitle(?string $artist, ?string $title): ?Song
+    {
+        return Song::query()
+            ->when($title !== null && $title !== '', static fn ($query) => $query->where('songs.title', $title))
+            ->when($artist !== null
+            && $artist
+                !== '', static fn ($query) => $query->whereHas('artist', static fn ($artistQuery) => $artistQuery->where(
+                'name',
+                $artist,
+            )))
+            ->first();
+    }
+
     public function getAllStoredOnCloud(): Collection
     {
         return Song::query()->storedOnCloud()->get();
