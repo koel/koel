@@ -5,8 +5,10 @@ namespace Tests\Feature\Subsonic;
 use App\Enums\FavoriteableType;
 use App\Models\Album;
 use App\Models\Favorite;
+use App\Models\Genre;
 use App\Models\Interaction;
 use App\Models\Song;
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -186,6 +188,83 @@ class GetAlbumList2Test extends TestCase
             ->getJson("/rest/getAlbumList2.view?apiKey={$user->subsonic_api_key}&f=json&type=byYear&toYear=2000")
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'failed')
+            ->assertJsonPath('subsonic-response.error.code', 10);
+    }
+
+    #[Test]
+    public function alphabeticalByArtistSortsByArtistThenAlbumName(): void
+    {
+        $user = create_user();
+
+        Album::factory()->createMany([
+            ['name' => 'Z Album', 'artist_name' => 'Alice', 'user_id' => $user->id],
+            ['name' => 'A Album', 'artist_name' => 'Alice', 'user_id' => $user->id],
+            ['name' => 'A Album', 'artist_name' => 'Bob', 'user_id' => $user->id],
+        ]);
+
+        $response = $this->getJson(
+            '/rest/getAlbumList2.view?'
+                . Arr::query([
+                    'apiKey' => $user->subsonic_api_key,
+                    'f' => 'json',
+                    'type' => 'alphabeticalByArtist',
+                    'size' => 10,
+                ]),
+        )->assertOk();
+
+        $albums = $response->json('subsonic-response.albumList2.album');
+        $tuples = array_map(static fn (array $a) => [$a['artist'], $a['name']], $albums);
+
+        self::assertSame([['Alice', 'A Album'], ['Alice', 'Z Album'], ['Bob', 'A Album']], $tuples);
+    }
+
+    #[Test]
+    public function byGenreReturnsAlbumsWithSongsInThatGenre(): void
+    {
+        $user = create_user();
+
+        $rock = Genre::factory()->createOne(['name' => 'Rock']);
+        $jazz = Genre::factory()->createOne(['name' => 'Jazz']);
+
+        $matching = Album::factory()->createOne(['name' => 'Rock Album', 'user_id' => $user->id]);
+        $other = Album::factory()->createOne(['name' => 'Jazz Album', 'user_id' => $user->id]);
+
+        $rockSong = Song::factory()->createOne(['album_id' => $matching->id, 'owner_id' => $user->id]);
+        $jazzSong = Song::factory()->createOne(['album_id' => $other->id, 'owner_id' => $user->id]);
+
+        $rockSong->genres()->attach($rock->id);
+        $jazzSong->genres()->attach($jazz->id);
+
+        $response = $this->getJson(
+            '/rest/getAlbumList2.view?'
+                . Arr::query([
+                    'apiKey' => $user->subsonic_api_key,
+                    'f' => 'json',
+                    'type' => 'byGenre',
+                    'genre' => 'Rock',
+                    'size' => 10,
+                ]),
+        )->assertOk();
+
+        $names = array_column($response->json('subsonic-response.albumList2.album') ?? [], 'name');
+        self::assertSame(['Rock Album'], $names);
+    }
+
+    #[Test]
+    public function byGenreWithoutGenreReturnsCode10(): void
+    {
+        $user = create_user();
+
+        $this
+            ->getJson(
+                '/rest/getAlbumList2.view?'
+                    . Arr::query([
+                        'apiKey' => $user->subsonic_api_key,
+                        'f' => 'json',
+                        'type' => 'byGenre',
+                    ]),
+            )
+            ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 10);
     }
 

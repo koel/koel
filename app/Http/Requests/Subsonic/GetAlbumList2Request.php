@@ -15,8 +15,11 @@ class GetAlbumList2Request extends Request
         'random',
         'starred',
         'recent',
+        'highest',
         'byYear',
+        'byGenre',
         'alphabeticalByName',
+        'alphabeticalByArtist',
     ];
 
     /** @inheritdoc */
@@ -28,6 +31,7 @@ class GetAlbumList2Request extends Request
             'offset' => ['integer', 'min:0'],
             'fromYear' => ['required_if:type,byYear', 'integer'],
             'toYear' => ['required_if:type,byYear', 'integer'],
+            'genre' => ['required_if:type,byGenre', 'string'],
         ];
     }
 }

@@ -9,7 +9,11 @@ use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\ArtistRepository;
 use App\Services\Contracts\Encyclopedia;
 
-class GetArtistInfo2Controller extends Controller
+/**
+ * Subsonic v1 `getArtistInfo`. Per spec the wrapper is `<artistInfo>` (v2 uses
+ * `<artistInfo2>`); the body shape is identical and shared via ArtistInfoResource.
+ */
+class GetArtistInfoController extends Controller
 {
     public function __construct(
         private readonly ArtistRepository $artistRepository,
@@ -22,7 +26,7 @@ class GetArtistInfo2Controller extends Controller
         $info = $this->encyclopedia->getArtistInformation($artist);
 
         return SubsonicResponse::ok([
-            'artistInfo2' => $info === null ? [] : ArtistInfoResource::toArray($info),
+            'artistInfo' => $info === null ? [] : ArtistInfoResource::toArray($info),
         ]);
     }
 }
