@@ -62,6 +62,7 @@ describe('radioStationStore', () => {
     const data = {
       name: 'Test Station',
       url: 'https://test.com/stream',
+      homepage_url: 'https://test.com',
       logo: 'data:image/png;base64,whatever',
       description: 'A test radio station',
       is_public: true,
@@ -90,6 +91,7 @@ describe('radioStationStore', () => {
 
     const updatedData = {
       url: 'https://test.com/new-stream',
+      homepage_url: 'https://test.com',
       logo: 'data:image/png;base64,updatedLogo',
       description: 'Updated description',
       is_public: false,

@@ -9,11 +9,13 @@ use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @extends Repository<Album>
  * @implements ScoutableRepository<Album>
  */
+// @mago-ignore lint:cyclomatic-complexity
 class AlbumRepository extends Repository implements ScoutableRepository
 {
     /**
@@ -51,6 +53,40 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
             ->orderByDesc('play_count')
             ->limit($count)
+            ->get();
+    }
+
+    public function getRecentlyPlayed(int $count = 6, ?User $user = null): Collection
+    {
+        return Album::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
+            ->addSelect(DB::raw('MAX(interactions.last_played_at) as last_played_at'))
+            ->havingRaw('MAX(interactions.last_played_at) IS NOT NULL')
+            ->orderByDesc('last_played_at')
+            ->limit($count)
+            ->get();
+    }
+
+    public function getByYearRange(
+        int $fromYear,
+        int $toYear,
+        int $size,
+        int $offset = 0,
+        ?User $user = null,
+    ): Collection {
+        $reverse = $fromYear > $toYear;
+        $low = $reverse ? $toYear : $fromYear;
+        $high = $reverse ? $fromYear : $toYear;
+
+        return Album::query()
+            ->onlyStandard()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->whereBetween('albums.year', [$low, $high])
+            ->orderBy('albums.year', $reverse ? 'desc' : 'asc')
+            ->orderBy('albums.name')
+            ->offset($offset)
+            ->limit($size)
             ->get();
     }
 

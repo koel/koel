@@ -215,6 +215,7 @@ interface RadioStation extends IStreamable {
   readonly type: 'radio-stations'
   name: string
   url: string
+  homepage_url: string | null
   logo: string | null
   description: string
   is_public: boolean

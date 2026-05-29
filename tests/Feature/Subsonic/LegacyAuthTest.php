@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Subsonic;
 
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -15,7 +16,14 @@ class LegacyAuthTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf('/rest/ping.view?u=%s&p=%s&f=json', urlencode($user->email), $user->subsonic_api_key))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        'p' => $user->subsonic_api_key,
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'ok');
     }
@@ -26,7 +34,14 @@ class LegacyAuthTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf('/rest/ping.view?u=%s&p=not-the-real-key&f=json', urlencode($user->email)))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        'p' => 'not-the-real-key',
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 40);
     }
@@ -37,11 +52,14 @@ class LegacyAuthTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf(
-                '/rest/ping.view?u=%s&p=enc:%s&f=json',
-                urlencode($user->email),
-                bin2hex($user->subsonic_api_key),
-            ))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        'p' => 'enc:' . bin2hex($user->subsonic_api_key),
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'ok');
     }
@@ -52,7 +70,14 @@ class LegacyAuthTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf('/rest/ping.view?u=%s&p=enc:nothex&f=json', urlencode($user->email)))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        'p' => 'enc:nothex',
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 40);
     }
@@ -63,11 +88,14 @@ class LegacyAuthTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf(
-                '/rest/ping.view?u=%s&p=enc:%s&f=json',
-                urlencode($user->email),
-                bin2hex('not-the-real-key'),
-            ))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        'p' => 'enc:' . bin2hex('not-the-real-key'),
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 40);
     }
@@ -80,7 +108,15 @@ class LegacyAuthTest extends TestCase
         $token = md5($user->subsonic_api_key . $salt);
 
         $this
-            ->getJson(sprintf('/rest/ping.view?u=%s&t=%s&s=%s&f=json', urlencode($user->email), $token, $salt))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        't' => $token,
+                        's' => $salt,
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'ok');
     }
@@ -93,7 +129,15 @@ class LegacyAuthTest extends TestCase
         $token = strtoupper(md5($user->subsonic_api_key . $salt));
 
         $this
-            ->getJson(sprintf('/rest/ping.view?u=%s&t=%s&s=%s&f=json', urlencode($user->email), $token, $salt))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        't' => $token,
+                        's' => $salt,
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'ok');
     }
@@ -104,12 +148,15 @@ class LegacyAuthTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf(
-                '/rest/ping.view?u=%s&t=%s&s=%s&f=json',
-                urlencode($user->email),
-                md5('wrong-key.c19b2d'),
-                'c19b2d',
-            ))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        't' => md5('wrong-key.c19b2d'),
+                        's' => 'c19b2d',
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 40);
     }
@@ -120,11 +167,14 @@ class LegacyAuthTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf(
-                '/rest/ping.view?u=%s&t=%s&f=json',
-                urlencode($user->email),
-                md5($user->subsonic_api_key . 'irrelevant'),
-            ))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        't' => md5($user->subsonic_api_key . 'irrelevant'),
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 10);
     }
@@ -135,7 +185,14 @@ class LegacyAuthTest extends TestCase
         create_user();
 
         $this
-            ->getJson('/rest/ping.view?u=ghost@example.com&p=anything&f=json')
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => 'ghost@example.com',
+                        'p' => 'anything',
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 40);
     }
@@ -144,7 +201,7 @@ class LegacyAuthTest extends TestCase
     public function missingUsernameIsRejectedAsMissingParameter(): void
     {
         $this
-            ->getJson('/rest/ping.view?p=anything&f=json')
+            ->getJson('/rest/ping.view?' . Arr::query(['p' => 'anything', 'f' => 'json']))
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 10);
     }
@@ -155,7 +212,7 @@ class LegacyAuthTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf('/rest/ping.view?u=%s&f=json', urlencode($user->email)))
+            ->getJson('/rest/ping.view?' . Arr::query(['u' => $user->email, 'f' => 'json']))
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 10);
     }
@@ -166,10 +223,15 @@ class LegacyAuthTest extends TestCase
         $user = create_user();
 
         $this
-            ->getJson(sprintf(
-                '/rest/ping.view?apiKey=%s&u=ghost@example.com&p=anything&f=json',
-                $user->subsonic_api_key,
-            ))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'apiKey' => $user->subsonic_api_key,
+                        'u' => 'ghost@example.com',
+                        'p' => 'anything',
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'ok');
     }
@@ -182,12 +244,16 @@ class LegacyAuthTest extends TestCase
         $token = md5($user->subsonic_api_key . $salt);
 
         $this
-            ->getJson(sprintf(
-                '/rest/ping.view?u=%s&t=%s&s=%s&p=wrong-but-ignored&f=json',
-                urlencode($user->email),
-                $token,
-                $salt,
-            ))
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        't' => $token,
+                        's' => $salt,
+                        'p' => 'wrong-but-ignored',
+                        'f' => 'json',
+                    ]),
+            )
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'ok');
     }

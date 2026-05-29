@@ -55,15 +55,39 @@ class Search3Test extends TestCase
     }
 
     #[Test]
-    public function missingQueryReturnsCode10(): void
+    public function missingQueryReturnsEmptyResult(): void
     {
         $user = create_user();
 
         $this
             ->getJson("/rest/search3.view?apiKey={$user->subsonic_api_key}&f=json")
             ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'failed')
-            ->assertJsonPath('subsonic-response.error.code', 10);
+            ->assertJsonPath('subsonic-response.status', 'ok')
+            ->assertExactJson([
+                'subsonic-response' => [
+                    'status' => 'ok',
+                    'version' => '1.16.1',
+                    'type' => 'koel',
+                    'serverVersion' => koel_version(),
+                    'openSubsonic' => true,
+                    'searchResult3' => ['artist' => [], 'album' => [], 'song' => []],
+                ],
+            ]);
+    }
+
+    #[Test]
+    public function emptyQueryReturnsEmptyResult(): void
+    {
+        $user = create_user();
+
+        $this
+            ->getJson("/rest/search3.view?apiKey={$user->subsonic_api_key}&f=json&query=")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.searchResult3', [
+                'artist' => [],
+                'album' => [],
+                'song' => [],
+            ]);
     }
 
     #[Test]

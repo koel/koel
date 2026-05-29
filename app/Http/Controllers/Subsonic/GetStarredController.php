@@ -11,7 +11,7 @@ use App\Repositories\ArtistRepository;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class GetStarred2Controller extends Controller
+class GetStarredController extends Controller
 {
     public function __construct(
         private readonly ArtistRepository $artistRepository,
@@ -27,7 +27,7 @@ class GetStarred2Controller extends Controller
         $songs = $this->songRepository->getFavorites(scopedUser: $user);
 
         return SubsonicResponse::ok([
-            'starred2' => StarredResource::toArray($artists, $albums, $songs, $user),
+            'starred' => StarredResource::toArray($artists, $albums, $songs, $user),
         ]);
     }
 }

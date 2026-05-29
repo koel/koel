@@ -15,10 +15,10 @@ use Tests\TestCase;
 
 use function Tests\create_user;
 
-class GetStarred2Test extends TestCase
+class GetStarredTest extends TestCase
 {
     #[Test]
-    public function returnsFavoritedEntitiesAcrossTypes(): void
+    public function returnsFavoritedEntitiesUnderStarredWrapper(): void
     {
         $user = create_user();
 
@@ -52,11 +52,11 @@ class GetStarred2Test extends TestCase
         ]);
 
         $response = $this
-            ->getJson("/rest/getStarred2.view?apiKey={$user->subsonic_api_key}&f=json")
+            ->getJson("/rest/getStarred.view?apiKey={$user->subsonic_api_key}&f=json")
             ->assertOk()
             ->assertJsonStructure([
                 'subsonic-response' => [
-                    'starred2' => [
+                    'starred' => [
                         'song' => ['*' => SongResource::JSON_STRUCTURE],
                         'album' => ['*' => AlbumResource::JSON_STRUCTURE],
                         'artist' => ['*' => ArtistResource::JSON_STRUCTURE],
@@ -64,7 +64,7 @@ class GetStarred2Test extends TestCase
                 ],
             ]);
 
-        $payload = $response->json('subsonic-response.starred2');
+        $payload = $response->json('subsonic-response.starred');
         self::assertContains($song->id, array_column($payload['song'], 'id'));
         self::assertContains($album->id, array_column($payload['album'], 'id'));
         self::assertContains($artist->id, array_column($payload['artist'], 'id'));
@@ -78,9 +78,9 @@ class GetStarred2Test extends TestCase
     {
         $user = create_user();
 
-        $response = $this->getJson("/rest/getStarred2.view?apiKey={$user->subsonic_api_key}&f=json")->assertOk();
+        $response = $this->getJson("/rest/getStarred.view?apiKey={$user->subsonic_api_key}&f=json")->assertOk();
 
-        $payload = $response->json('subsonic-response.starred2');
+        $payload = $response->json('subsonic-response.starred');
         self::assertSame([], $payload['song'] ?? []);
         self::assertSame([], $payload['album'] ?? []);
         self::assertSame([], $payload['artist'] ?? []);

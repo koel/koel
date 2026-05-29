@@ -14,8 +14,10 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -68,5 +70,15 @@ return Application::configure(basePath: dirname(__DIR__))
                 $request,
             ),
         );
+
+        // Surface Subsonic clients hitting unmapped routes so we can implement missing endpoints.
+        // NotFoundHttpException is normally on Laravel's internalDontReport list.
+        $exceptions->reportable(static function (NotFoundHttpException $e): bool {
+            if (request()->is('rest/*')) {
+                Log::error('Missing Subsonic route: ' . $e->getMessage(), ['exception' => $e]);
+            }
+
+            return false;
+        });
     })
     ->create();

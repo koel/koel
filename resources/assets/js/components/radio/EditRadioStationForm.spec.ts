@@ -38,6 +38,7 @@ describe('editRadioStationForm.vue', () => {
     expect(updateMock).toHaveBeenCalledWith(station, {
       name: 'Beethoven Goes Pop',
       url: 'https://beet.stream/pop',
+      homepage_url: station.homepage_url,
       description: 'Poppy af',
       is_public: false,
     })
@@ -58,6 +59,7 @@ describe('editRadioStationForm.vue', () => {
     expect(updateMock).toHaveBeenCalledWith(station, {
       name: 'Beethoven Goes Pop',
       url: 'https://beet.stream/pop',
+      homepage_url: station.homepage_url,
       description: 'Poppy af',
       logo: '',
       is_public: false,
@@ -86,6 +88,7 @@ describe('editRadioStationForm.vue', () => {
     expect(updateMock).toHaveBeenCalledWith(station, {
       name: 'Beethoven Goes Pop',
       url: 'https://beet.stream/pop',
+      homepage_url: station.homepage_url,
       description: 'Poppy af',
       logo: 'data:image/png;base64,Ynl0ZXM=',
       is_public: false,

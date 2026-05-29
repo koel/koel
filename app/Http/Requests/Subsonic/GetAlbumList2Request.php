@@ -14,6 +14,8 @@ class GetAlbumList2Request extends Request
         'frequent',
         'random',
         'starred',
+        'recent',
+        'byYear',
         'alphabeticalByName',
     ];
 
@@ -24,6 +26,8 @@ class GetAlbumList2Request extends Request
             'type' => ['required', 'string', 'in:' . implode(',', self::SUPPORTED_TYPES)],
             'size' => ['integer', 'min:1', 'max:500'],
             'offset' => ['integer', 'min:0'],
+            'fromYear' => ['required_if:type,byYear', 'integer'],
+            'toYear' => ['required_if:type,byYear', 'integer'],
         ];
     }
 }

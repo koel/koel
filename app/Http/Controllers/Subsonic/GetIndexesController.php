@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Repositories\ArtistRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class GetArtistsController extends Controller
+class GetIndexesController extends Controller
 {
     public function __construct(
         private readonly ArtistRepository $artistRepository,
@@ -18,8 +18,13 @@ class GetArtistsController extends Controller
     /** @param User $user */
     public function __invoke(Authenticatable $user)
     {
+        $artists = $this->artistRepository->getAll();
+
         return SubsonicResponse::ok([
-            'artists' => IndexesResource::toArray($this->artistRepository->getAll(), $user),
+            'indexes' => IndexesResource::toArray($artists, $user)
+                + [
+                    'lastModified' => (int) ($artists->max('updated_at')?->getTimestampMs() ?? now()->getTimestampMs()),
+                ],
         ]);
     }
 }

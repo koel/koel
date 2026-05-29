@@ -7,7 +7,6 @@ use App\Http\Requests\Subsonic\IdRequest;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\File;
 
 class GetCoverArtController extends Controller
@@ -19,22 +18,20 @@ class GetCoverArtController extends Controller
 
     public function __invoke(IdRequest $request)
     {
-        $filename = $this->resolveImageFilename($request->id);
-        $path = $filename ? image_storage_path($filename, ensureDirectoryExists: false) : null;
+        $album = $this->albumRepository->findOne($request->id);
+        $artist = $album ? null : $this->artistRepository->findOne($request->id);
 
-        if (!$path || !File::isFile($path)) {
+        if (!$album && !$artist) {
             return SubsonicResponse::error(70, 'Cover art not found.');
         }
 
-        return response()->file($path);
-    }
+        $filename = $album ? $album->cover : $artist->image;
+        $path = $filename ? image_storage_path($filename, ensureDirectoryExists: false) : null;
 
-    private function resolveImageFilename(string $id): ?string
-    {
-        try {
-            return $this->albumRepository->getOne($id)->cover;
-        } catch (ModelNotFoundException) {
-            return $this->artistRepository->getOne($id)->image;
+        if ($path && File::isFile($path)) {
+            return response()->file($path);
         }
+
+        return response()->file(resource_path('assets/img/covers/default.png'));
     }
 }

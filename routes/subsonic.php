@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Subsonic\CreateInternetRadioStationController;
 use App\Http\Controllers\Subsonic\CreatePlaylistController;
+use App\Http\Controllers\Subsonic\DeleteInternetRadioStationController;
 use App\Http\Controllers\Subsonic\DeletePlaylistController;
 use App\Http\Controllers\Subsonic\DownloadController;
 use App\Http\Controllers\Subsonic\GetAlbumController;
@@ -12,8 +14,11 @@ use App\Http\Controllers\Subsonic\GetArtistsController;
 use App\Http\Controllers\Subsonic\GetAvatarController;
 use App\Http\Controllers\Subsonic\GetCoverArtController;
 use App\Http\Controllers\Subsonic\GetGenresController;
+use App\Http\Controllers\Subsonic\GetIndexesController;
+use App\Http\Controllers\Subsonic\GetInternetRadioStationsController;
 use App\Http\Controllers\Subsonic\GetLicenseController;
 use App\Http\Controllers\Subsonic\GetLyricsBySongIdController;
+use App\Http\Controllers\Subsonic\GetMusicDirectoryController;
 use App\Http\Controllers\Subsonic\GetMusicFoldersController;
 use App\Http\Controllers\Subsonic\GetNowPlayingController;
 use App\Http\Controllers\Subsonic\GetOpenSubsonicExtensionsController;
@@ -23,6 +28,7 @@ use App\Http\Controllers\Subsonic\GetRandomSongsController;
 use App\Http\Controllers\Subsonic\GetSongController;
 use App\Http\Controllers\Subsonic\GetSongsByGenreController;
 use App\Http\Controllers\Subsonic\GetStarred2Controller;
+use App\Http\Controllers\Subsonic\GetStarredController;
 use App\Http\Controllers\Subsonic\GetUserController;
 use App\Http\Controllers\Subsonic\PingController;
 use App\Http\Controllers\Subsonic\ScrobbleController;
@@ -31,6 +37,7 @@ use App\Http\Controllers\Subsonic\SetRatingController;
 use App\Http\Controllers\Subsonic\StarController;
 use App\Http\Controllers\Subsonic\StreamController;
 use App\Http\Controllers\Subsonic\UnstarController;
+use App\Http\Controllers\Subsonic\UpdateInternetRadioStationController;
 use App\Http\Controllers\Subsonic\UpdatePlaylistController;
 use App\Http\Middleware\NormalizeSubsonicArrayParams;
 use App\Http\Middleware\SubsonicAuth;
@@ -43,6 +50,12 @@ Route::prefix('rest')
         Route::match(['get', 'post'], 'getLicense.view', GetLicenseController::class);
         Route::match(['get', 'post'], 'getMusicFolders.view', GetMusicFoldersController::class);
         Route::match(['get', 'post'], 'getArtists.view', GetArtistsController::class);
+        Route::match(['get', 'post'], 'getIndexes.view', GetIndexesController::class);
+        Route::match(['get', 'post'], 'getMusicDirectory.view', GetMusicDirectoryController::class);
+        Route::match(['get', 'post'], 'getInternetRadioStations.view', GetInternetRadioStationsController::class);
+        Route::match(['get', 'post'], 'createInternetRadioStation.view', CreateInternetRadioStationController::class);
+        Route::match(['get', 'post'], 'updateInternetRadioStation.view', UpdateInternetRadioStationController::class);
+        Route::match(['get', 'post'], 'deleteInternetRadioStation.view', DeleteInternetRadioStationController::class);
         Route::match(['get', 'post'], 'getArtist.view', GetArtistController::class);
         Route::match(['get', 'post'], 'getAlbum.view', GetAlbumController::class);
         Route::match(['get', 'post'], 'getSong.view', GetSongController::class);
@@ -60,6 +73,7 @@ Route::prefix('rest')
         Route::match(['get', 'post'], 'star.view', StarController::class);
         Route::match(['get', 'post'], 'unstar.view', UnstarController::class);
         Route::match(['get', 'post'], 'setRating.view', SetRatingController::class);
+        Route::match(['get', 'post'], 'getStarred.view', GetStarredController::class);
         Route::match(['get', 'post'], 'getStarred2.view', GetStarred2Controller::class);
         Route::match(['get', 'post'], 'getRandomSongs.view', GetRandomSongsController::class);
         Route::match(['get', 'post'], 'getNowPlaying.view', GetNowPlayingController::class);

@@ -25,7 +25,7 @@ class GetAlbumList2Controller extends Controller
         $size = $request->integer('size', 10);
         $offset = $request->integer('offset', 0);
 
-        $albums = $this->loadAlbums($request->type, $size, $offset)->loadCount('songs')->loadSum('songs', 'length');
+        $albums = $this->loadAlbums($request, $size, $offset)->loadCount('songs')->loadSum('songs', 'length');
 
         return SubsonicResponse::ok([
             'albumList2' => [
@@ -35,15 +35,22 @@ class GetAlbumList2Controller extends Controller
     }
 
     /** @return Collection<int, Album> */
-    private function loadAlbums(string $type, int $size, int $offset): Collection
+    private function loadAlbums(GetAlbumList2Request $request, int $size, int $offset): Collection
     {
-        return match ($type) {
+        return match ($request->type) {
             'newest' => $this->albumRepository->getRecentlyAdded($size),
             'frequent' => $this->albumRepository->getMostPlayed($size),
             'random' => $this->albumRepository->getRandom($size),
             'starred' => $this->albumRepository->getFavorites($size, $offset),
+            'recent' => $this->albumRepository->getRecentlyPlayed($size),
+            'byYear' => $this->albumRepository->getByYearRange(
+                $request->integer('fromYear'),
+                $request->integer('toYear'),
+                $size,
+                $offset,
+            ),
             'alphabeticalByName' => $this->albumRepository->getOrdered('albums.name', 'asc', $size, $offset),
-            default => throw new LogicException("Unsupported album list type: {$type}"),
+            default => throw new LogicException("Unsupported album list type: {$request->type}"),
         };
     }
 }
