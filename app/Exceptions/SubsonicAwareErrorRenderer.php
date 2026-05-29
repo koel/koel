@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Exceptions\Contracts\SubsonicThrowable;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -28,6 +29,8 @@ class SubsonicAwareErrorRenderer
 
     public static function render(Throwable $e, Request $request): ?Response
     {
+        Log::error($e->getMessage(), ['exception' => $e]);
+
         if (!$request->is('rest/*')) {
             return null;
         }

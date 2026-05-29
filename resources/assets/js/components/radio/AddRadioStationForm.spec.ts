@@ -20,6 +20,7 @@ describe('addRadioStationForm.vue', () => {
     expect(storeMock).toHaveBeenCalledWith({
       name: 'Beethoven Goes Metal',
       url: 'https://beet.stream/metal',
+      homepage_url: null,
       description: 'Heavy af',
       logo: null,
       is_public: false,
@@ -47,6 +48,7 @@ describe('addRadioStationForm.vue', () => {
     expect(storeMock).toHaveBeenCalledWith({
       name: 'Beethoven Goes Metal',
       url: 'https://beet.stream/metal',
+      homepage_url: null,
       description: 'Heavy af',
       logo: 'data:image/png;base64,Ynl0ZXM=',
       is_public: true,

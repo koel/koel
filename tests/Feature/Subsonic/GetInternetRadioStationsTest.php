@@ -16,7 +16,12 @@ class GetInternetRadioStationsTest extends TestCase
         $user = create_user();
 
         RadioStation::factory()->createMany([
-            ['name' => 'BBC 6', 'url' => 'https://stream.bbc/6', 'user_id' => $user->id],
+            [
+                'name' => 'BBC 6',
+                'url' => 'https://stream.bbc/6',
+                'homepage_url' => 'https://www.bbc.co.uk/sounds/play/live:bbc_6music',
+                'user_id' => $user->id,
+            ],
             ['name' => 'KEXP', 'url' => 'https://kexp.org/stream', 'user_id' => $user->id],
         ]);
 
@@ -29,9 +34,13 @@ class GetInternetRadioStationsTest extends TestCase
 
         self::assertCount(2, $stations);
 
-        $names = array_column($stations, 'name');
-        self::assertContains('BBC 6', $names);
-        self::assertContains('KEXP', $names);
+        $byName = collect($stations)->keyBy('name');
+
+        self::assertContains('BBC 6', $byName->keys());
+        self::assertContains('KEXP', $byName->keys());
+
+        self::assertSame('https://www.bbc.co.uk/sounds/play/live:bbc_6music', $byName['BBC 6']['homePageUrl']);
+        self::assertArrayNotHasKey('homePageUrl', $byName['KEXP']);
 
         foreach ($stations as $station) {
             self::assertNotEmpty($station['streamUrl']);

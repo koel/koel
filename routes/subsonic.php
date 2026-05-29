@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Subsonic\CreateInternetRadioStationController;
 use App\Http\Controllers\Subsonic\CreatePlaylistController;
+use App\Http\Controllers\Subsonic\DeleteInternetRadioStationController;
 use App\Http\Controllers\Subsonic\DeletePlaylistController;
 use App\Http\Controllers\Subsonic\DownloadController;
 use App\Http\Controllers\Subsonic\GetAlbumController;
@@ -35,6 +37,7 @@ use App\Http\Controllers\Subsonic\SetRatingController;
 use App\Http\Controllers\Subsonic\StarController;
 use App\Http\Controllers\Subsonic\StreamController;
 use App\Http\Controllers\Subsonic\UnstarController;
+use App\Http\Controllers\Subsonic\UpdateInternetRadioStationController;
 use App\Http\Controllers\Subsonic\UpdatePlaylistController;
 use App\Http\Middleware\NormalizeSubsonicArrayParams;
 use App\Http\Middleware\SubsonicAuth;
@@ -50,6 +53,9 @@ Route::prefix('rest')
         Route::match(['get', 'post'], 'getIndexes.view', GetIndexesController::class);
         Route::match(['get', 'post'], 'getMusicDirectory.view', GetMusicDirectoryController::class);
         Route::match(['get', 'post'], 'getInternetRadioStations.view', GetInternetRadioStationsController::class);
+        Route::match(['get', 'post'], 'createInternetRadioStation.view', CreateInternetRadioStationController::class);
+        Route::match(['get', 'post'], 'updateInternetRadioStation.view', UpdateInternetRadioStationController::class);
+        Route::match(['get', 'post'], 'deleteInternetRadioStation.view', DeleteInternetRadioStationController::class);
         Route::match(['get', 'post'], 'getArtist.view', GetArtistController::class);
         Route::match(['get', 'post'], 'getAlbum.view', GetAlbumController::class);
         Route::match(['get', 'post'], 'getSong.view', GetSongController::class);
