@@ -10708,16 +10708,16 @@
         },
         {
             "name": "teamtnt/laravel-scout-tntsearch-driver",
-            "version": "v15.1.0",
+            "version": "v15.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phanan-forks/laravel-scout-tntsearch-driver.git",
-                "reference": "9d9d11593533f8b4edc90894f3afedf337feb73c"
+                "reference": "e086eae67c5af9a9e7f5e6235df4f6eb06dd6ace"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phanan-forks/laravel-scout-tntsearch-driver/zipball/9d9d11593533f8b4edc90894f3afedf337feb73c",
-                "reference": "9d9d11593533f8b4edc90894f3afedf337feb73c",
+                "url": "https://api.github.com/repos/phanan-forks/laravel-scout-tntsearch-driver/zipball/e086eae67c5af9a9e7f5e6235df4f6eb06dd6ace",
+                "reference": "e086eae67c5af9a9e7f5e6235df4f6eb06dd6ace",
                 "shasum": ""
             },
             "require": {
@@ -10776,7 +10776,7 @@
                 "tntsearch"
             ],
             "support": {
-                "source": "https://github.com/phanan-forks/laravel-scout-tntsearch-driver/tree/v15.1.0"
+                "source": "https://github.com/phanan-forks/laravel-scout-tntsearch-driver/tree/v15.1.1"
             },
             "funding": [
                 {
@@ -10784,7 +10784,7 @@
                     "url": "https://github.com/teamtnt"
                 }
             ],
-            "time": "2026-03-24T13:08:08+00:00"
+            "time": "2026-05-28T23:49:35+00:00"
         },
         {
             "name": "teamtnt/tntsearch",
