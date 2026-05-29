@@ -61,6 +61,7 @@ class Search2Test extends TestCase
 
         self::assertContains('Radiohead', array_column($payload['artist'] ?? [], 'name'));
         self::assertContains('In Rainbows', array_column($payload['album'] ?? [], 'title'));
+        self::assertContains('Radiohead Karma', array_column($payload['song'] ?? [], 'title'));
 
         foreach ($payload['album'] as $album) {
             self::assertTrue($album['isDir']);

@@ -42,4 +42,24 @@ class GetArtistInfoTest extends TestCase
             ->assertJsonPath('subsonic-response.artistInfo.lastFmUrl', 'https://www.last.fm/artist/Foo')
             ->assertJsonPath('subsonic-response.artistInfo.smallImageUrl', 'https://example.test/artist.jpg');
     }
+
+    #[Test]
+    public function returnsEmptyArtistInfoWhenEncyclopediaReturnsNull(): void
+    {
+        $user = create_user();
+        $artist = Artist::factory()->createOne(['user_id' => $user->id]);
+
+        $this->mock(Encyclopedia::class)->expects('getArtistInformation')->andReturnNull();
+
+        $response = $this->getJson(
+            '/rest/getArtistInfo.view?'
+                . Arr::query([
+                    'apiKey' => $user->subsonic_api_key,
+                    'f' => 'json',
+                    'id' => $artist->id,
+                ]),
+        )->assertOk();
+
+        self::assertSame([], $response->json('subsonic-response.artistInfo'));
+    }
 }
