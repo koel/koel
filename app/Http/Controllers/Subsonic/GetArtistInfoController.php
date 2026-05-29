@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Subsonic;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\IdRequest;
+use App\Http\Responses\Subsonic\Resources\ArtistInfoResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\ArtistRepository;
 use App\Services\Contracts\Encyclopedia;
 
 /**
  * Subsonic v1 `getArtistInfo`. Per spec the wrapper is `<artistInfo>` (v2 uses
- * `<artistInfo2>`); fields are otherwise identical for koel's purposes.
+ * `<artistInfo2>`); the body shape is identical and shared via ArtistInfoResource.
  */
 class GetArtistInfoController extends Controller
 {
@@ -24,20 +25,8 @@ class GetArtistInfoController extends Controller
         $artist = $this->artistRepository->getOne($request->id);
         $info = $this->encyclopedia->getArtistInformation($artist);
 
-        if ($info === null) {
-            return SubsonicResponse::ok(['artistInfo' => []]);
-        }
-
-        $imageUrl = $info->image ?: null;
-
         return SubsonicResponse::ok([
-            'artistInfo' => [
-                'biography' => $info->bio['summary'] ?: null,
-                'lastFmUrl' => $info->url,
-                'smallImageUrl' => $imageUrl,
-                'mediumImageUrl' => $imageUrl,
-                'largeImageUrl' => $imageUrl,
-            ],
+            'artistInfo' => $info === null ? [] : ArtistInfoResource::toArray($info),
         ]);
     }
 }

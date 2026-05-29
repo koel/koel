@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Subsonic\Concerns;
 
+use App\Exceptions\Subsonic\UnsupportedAlbumListTypeException;
 use App\Http\Requests\Subsonic\GetAlbumList2Request;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
 use Illuminate\Database\Eloquent\Collection;
-use LogicException;
 
 /**
  * Dispatches the Subsonic `type` parameter onto AlbumRepository methods.
@@ -39,7 +39,7 @@ trait LoadsAlbumsByType
             'byGenre' => $albumRepository->getByGenre((string) $request->input('genre'), $size, $offset),
             'alphabeticalByName' => $albumRepository->getOrdered('albums.name', 'asc', $size, $offset),
             'alphabeticalByArtist' => $albumRepository->getOrdered('albums.artist_name', 'asc', $size, $offset),
-            default => throw new LogicException("Unsupported album list type: {$request->type}"),
+            default => throw UnsupportedAlbumListTypeException::create($request->type),
         };
     }
 }
