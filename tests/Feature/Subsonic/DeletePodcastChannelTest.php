@@ -43,6 +43,23 @@ class DeletePodcastChannelTest extends TestCase
             ->assertJsonPath('subsonic-response.error.code', 70);
     }
 
+    #[Test]
+    public function podcastSubscribedByAnotherUserReturnsCode70(): void
+    {
+        $requestingUser = create_user();
+        $otherUser = create_user();
+        $podcast = Podcast::factory()->createOne();
+        $podcast->subscribers()->attach($otherUser);
+
+        $this
+            ->getJson(self::urlFor($requestingUser, $podcast->id))
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'failed')
+            ->assertJsonPath('subsonic-response.error.code', 70);
+
+        self::assertTrue($otherUser->fresh()->subscribedToPodcast($podcast));
+    }
+
     private static function urlFor(User $user, string $id): string
     {
         return '/rest/deletePodcastChannel.view?'
