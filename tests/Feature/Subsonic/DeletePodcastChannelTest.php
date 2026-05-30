@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Events\UserUnsubscribedFromPodcast;
 use App\Models\Podcast;
 use App\Models\User;
-use App\Services\Podcast\PodcastService;
 use Illuminate\Support\Arr;
-use Mockery;
+use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -17,20 +17,21 @@ class DeletePodcastChannelTest extends TestCase
     #[Test]
     public function unsubscribesFromSubscribedPodcast(): void
     {
+        // Fake the unsubscribe event so the queued DeletePodcastIfNoSubscribers
+        // listener doesn't round-trip through the sync queue — its model
+        // deserialization is brittle on SQLite-in-memory's write/read PDO split.
+        Event::fake([UserUnsubscribedFromPodcast::class]);
+
         $user = create_user();
         $podcast = Podcast::factory()->createOne();
         $podcast->subscribers()->attach($user);
 
-        $service = $this->mock(PodcastService::class);
-        $service
-            ->expects('unsubscribeUserFromPodcast')
-            ->once()
-            ->with(
-                Mockery::on(static fn (User $u) => $u->is($user)),
-                Mockery::on(static fn (Podcast $p) => $p->is($podcast)),
-            );
+        self::assertTrue($user->subscribedToPodcast($podcast));
 
         $this->getJson(self::urlFor($user, $podcast->id))->assertOk()->assertJsonPath('subsonic-response.status', 'ok');
+
+        self::assertFalse($user->fresh()->subscribedToPodcast($podcast));
+        Event::assertDispatched(UserUnsubscribedFromPodcast::class);
     }
 
     #[Test]
