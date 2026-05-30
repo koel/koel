@@ -2,16 +2,16 @@
 
 namespace Tests\Unit\Exceptions\Subsonic;
 
-use App\Exceptions\Subsonic\WrongUsernameOrPasswordException;
+use App\Exceptions\Subsonic\InvalidCredentialsException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class WrongUsernameOrPasswordExceptionTest extends TestCase
+class InvalidCredentialsExceptionTest extends TestCase
 {
     #[Test]
     public function mapsToSubsonicCode40WithDefaultMessage(): void
     {
-        $exception = new WrongUsernameOrPasswordException();
+        $exception = new InvalidCredentialsException();
 
         self::assertSame(40, $exception->getSubsonicErrorCode());
         self::assertSame('Wrong username or password.', $exception->getSubsonicErrorMessage());
@@ -20,7 +20,7 @@ class WrongUsernameOrPasswordExceptionTest extends TestCase
     #[Test]
     public function acceptsCustomMessage(): void
     {
-        $exception = new WrongUsernameOrPasswordException('Token signature invalid.');
+        $exception = new InvalidCredentialsException('Token signature invalid.');
 
         self::assertSame(40, $exception->getSubsonicErrorCode());
         self::assertSame('Token signature invalid.', $exception->getSubsonicErrorMessage());

@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Exceptions\Subsonic\InvalidCredentialsException;
 use App\Exceptions\Subsonic\RequiredParameterMissingException;
-use App\Exceptions\Subsonic\WrongUsernameOrPasswordException;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Closure;
@@ -52,7 +52,7 @@ class SubsonicAuth
         }
 
         $user = $this->userRepository->findOneBySubsonicApiKey($apiKey);
-        throw_unless($user, WrongUsernameOrPasswordException::class);
+        throw_unless($user, InvalidCredentialsException::class);
 
         return $user;
     }
@@ -70,10 +70,10 @@ class SubsonicAuth
         throw_if($salt === '', RequiredParameterMissingException::class);
 
         $user = $this->userRepository->findOneByEmail($username);
-        throw_unless($user, WrongUsernameOrPasswordException::class);
+        throw_unless($user, InvalidCredentialsException::class);
 
         $expected = md5($user->subsonic_api_key . $salt);
-        throw_unless(hash_equals($expected, strtolower($token)), WrongUsernameOrPasswordException::class);
+        throw_unless(hash_equals($expected, strtolower($token)), InvalidCredentialsException::class);
 
         return $user;
     }
@@ -93,15 +93,15 @@ class SubsonicAuth
             $hex = substr($candidate, 4);
             throw_if(
                 $hex === '' || (strlen($hex) % 2) !== 0 || !ctype_xdigit($hex),
-                WrongUsernameOrPasswordException::class,
+                InvalidCredentialsException::class,
             );
 
             $candidate = hex2bin($hex);
         }
 
         $user = $this->userRepository->findOneByEmail($username);
-        throw_unless($user, WrongUsernameOrPasswordException::class);
-        throw_unless(hash_equals($user->subsonic_api_key, $candidate), WrongUsernameOrPasswordException::class);
+        throw_unless($user, InvalidCredentialsException::class);
+        throw_unless(hash_equals($user->subsonic_api_key, $candidate), InvalidCredentialsException::class);
 
         return $user;
     }

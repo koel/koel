@@ -2,7 +2,7 @@
 
 namespace App\Exceptions\Subsonic;
 
-class WrongUsernameOrPasswordException extends SubsonicException
+class InvalidCredentialsException extends SubsonicException
 {
     public function getSubsonicErrorCode(): int
     {
