@@ -395,6 +395,19 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** @return Collection<int, Song> */
+    public function getNewestEpisodesForUser(int $count, ?User $user = null): Collection
+    {
+        $user ??= $this->auth->user();
+
+        return Song::query(type: PlayableType::PODCAST_EPISODE, user: $user)
+            ->withUserContext()
+            ->whereHas('podcast.subscribers', static fn (Builder $query) => $query->where('users.id', $user->id))
+            ->orderByDesc('songs.created_at')
+            ->limit($count)
+            ->get();
+    }
+
     public function getUnderPaths(
         array $paths,
         int $limit = 500,

@@ -33,7 +33,7 @@ use PhanAn\Poddle\Values\ChannelMetadata;
  * @property string $image
  * @property string $link
  * @property Collection<User> $subscribers
- * @property Collection<Episode> $episodes
+ * @property Collection<int, Episode> $episodes
  * @property int $added_by
  * @property Carbon $last_synced_at
  * @property ?string $author
