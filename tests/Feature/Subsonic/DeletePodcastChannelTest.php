@@ -17,9 +17,6 @@ class DeletePodcastChannelTest extends TestCase
     #[Test]
     public function unsubscribesFromSubscribedPodcast(): void
     {
-        // Fake the unsubscribe event so the queued DeletePodcastIfNoSubscribers
-        // listener doesn't round-trip through the sync queue — its model
-        // deserialization is brittle on SQLite-in-memory's write/read PDO split.
         Event::fake([UserUnsubscribedFromPodcast::class]);
 
         $user = create_user();
