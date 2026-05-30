@@ -2,7 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Responses\Subsonic\SubsonicResponse;
+use App\Exceptions\Subsonic\RequiredParameterMissingException;
+use App\Exceptions\Subsonic\WrongUsernameOrPasswordException;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Closure;
@@ -10,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-// @mago-ignore lint:cyclomatic-complexity
 class SubsonicAuth
 {
     public function __construct(
@@ -19,30 +19,31 @@ class SubsonicAuth
 
     public function handle(Request $request, Closure $next): Response
     {
+        Auth::setUser($this->authenticate($request));
+
+        return $next($request);
+    }
+
+    private function authenticate(Request $request): User
+    {
         $attempts = [
-            fn (): User|Response|null => $this->authenticateViaApiKey($request),
-            fn (): User|Response|null => $this->authenticateViaToken($request),
-            fn (): User|Response|null => $this->authenticateViaPassword($request),
+            fn (): ?User => $this->authenticateViaApiKey($request),
+            fn (): ?User => $this->authenticateViaToken($request),
+            fn (): ?User => $this->authenticateViaPassword($request),
         ];
 
         foreach ($attempts as $attempt) {
-            $result = $attempt();
+            $user = $attempt();
 
-            if ($result instanceof User) {
-                Auth::setUser($result);
-
-                return $next($request);
-            }
-
-            if ($result instanceof Response) {
-                return $result;
+            if ($user) {
+                return $user;
             }
         }
 
-        return self::missingParameter($request);
+        throw new RequiredParameterMissingException();
     }
 
-    private function authenticateViaApiKey(Request $request): User|Response|null
+    private function authenticateViaApiKey(Request $request): ?User
     {
         $apiKey = self::stringInput($request, 'apiKey');
 
@@ -50,10 +51,13 @@ class SubsonicAuth
             return null;
         }
 
-        return $this->userRepository->findOneBySubsonicApiKey($apiKey) ?? self::wrongCredentials($request);
+        $user = $this->userRepository->findOneBySubsonicApiKey($apiKey);
+        throw_unless($user, WrongUsernameOrPasswordException::class);
+
+        return $user;
     }
 
-    private function authenticateViaToken(Request $request): User|Response|null
+    private function authenticateViaToken(Request $request): ?User
     {
         $username = self::stringInput($request, 'u');
         $token = self::stringInput($request, 't');
@@ -63,23 +67,18 @@ class SubsonicAuth
         }
 
         $salt = self::stringInput($request, 's');
-
-        if ($salt === '') {
-            return self::missingParameter($request);
-        }
+        throw_if($salt === '', RequiredParameterMissingException::class);
 
         $user = $this->userRepository->findOneByEmail($username);
-
-        if (!$user) {
-            return self::wrongCredentials($request);
-        }
+        throw_unless($user, WrongUsernameOrPasswordException::class);
 
         $expected = md5($user->subsonic_api_key . $salt);
+        throw_unless(hash_equals($expected, strtolower($token)), WrongUsernameOrPasswordException::class);
 
-        return hash_equals($expected, strtolower($token)) ? $user : self::wrongCredentials($request);
+        return $user;
     }
 
-    private function authenticateViaPassword(Request $request): User|Response|null
+    private function authenticateViaPassword(Request $request): ?User
     {
         $username = self::stringInput($request, 'u');
         $password = self::stringInput($request, 'p');
@@ -92,21 +91,19 @@ class SubsonicAuth
 
         if (str_starts_with($candidate, 'enc:')) {
             $hex = substr($candidate, 4);
-
-            if ($hex === '' || (strlen($hex) % 2) !== 0 || !ctype_xdigit($hex)) {
-                return self::wrongCredentials($request);
-            }
+            throw_if(
+                $hex === '' || (strlen($hex) % 2) !== 0 || !ctype_xdigit($hex),
+                WrongUsernameOrPasswordException::class,
+            );
 
             $candidate = hex2bin($hex);
         }
 
         $user = $this->userRepository->findOneByEmail($username);
+        throw_unless($user, WrongUsernameOrPasswordException::class);
+        throw_unless(hash_equals($user->subsonic_api_key, $candidate), WrongUsernameOrPasswordException::class);
 
-        if (!$user) {
-            return self::wrongCredentials($request);
-        }
-
-        return hash_equals($user->subsonic_api_key, $candidate) ? $user : self::wrongCredentials($request);
+        return $user;
     }
 
     private static function stringInput(Request $request, string $key): string
@@ -114,15 +111,5 @@ class SubsonicAuth
         $value = $request->input($key);
 
         return is_string($value) ? $value : '';
-    }
-
-    private static function missingParameter(Request $request): Response
-    {
-        return SubsonicResponse::error(10, 'Required parameter is missing.')->toResponse($request);
-    }
-
-    private static function wrongCredentials(Request $request): Response
-    {
-        return SubsonicResponse::error(40, 'Wrong username or password.')->toResponse($request);
     }
 }

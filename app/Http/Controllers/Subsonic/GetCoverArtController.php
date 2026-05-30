@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Subsonic;
 
+use App\Exceptions\Subsonic\DataNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\IdRequest;
-use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\PodcastRepository;
@@ -24,9 +24,7 @@ class GetCoverArtController extends Controller
         $artist = $album ? null : $this->artistRepository->findOne($request->id);
         $podcast = $album || $artist ? null : $this->podcastRepository->findOne($request->id);
 
-        if (!$album && !$artist && !$podcast) {
-            return SubsonicResponse::error(70, 'Cover art not found.');
-        }
+        throw_if(!$album && !$artist && !$podcast, DataNotFoundException::class, 'Cover art not found.');
 
         if ($podcast?->image) {
             return redirect($podcast->image);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Subsonic;
 
+use App\Exceptions\Subsonic\DataNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\IdRequest;
 use App\Http\Responses\Subsonic\Resources\DirectoryResource;
@@ -39,6 +40,6 @@ class GetMusicDirectoryController extends Controller
             return SubsonicResponse::ok(['directory' => DirectoryResource::forArtist($artist, $albums)]);
         }
 
-        return SubsonicResponse::error(70, 'Directory not found.');
+        throw new DataNotFoundException('Directory not found.');
     }
 }
