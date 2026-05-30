@@ -31,6 +31,6 @@ class RefreshPodcastsController extends Controller
             }
         }
 
-        return SubsonicResponse::ok([]);
+        return SubsonicResponse::ok();
     }
 }

@@ -24,6 +24,6 @@ class DeleteInternetRadioStationController extends Controller
 
         $station->delete();
 
-        return SubsonicResponse::ok([]);
+        return SubsonicResponse::ok();
     }
 }

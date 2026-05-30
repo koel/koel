@@ -28,6 +28,6 @@ class DeletePodcastChannelController extends Controller
 
         $this->podcastService->unsubscribeUserFromPodcast($user, $podcast);
 
-        return SubsonicResponse::ok([]);
+        return SubsonicResponse::ok();
     }
 }

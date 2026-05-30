@@ -20,6 +20,6 @@ class CreatePodcastChannelController extends Controller
     {
         $this->podcastService->addPodcast($request->url, $user);
 
-        return SubsonicResponse::ok([]);
+        return SubsonicResponse::ok();
     }
 }
