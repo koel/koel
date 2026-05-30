@@ -29,6 +29,6 @@ class CreateInternetRadioStationController extends Controller
             $user,
         );
 
-        return SubsonicResponse::ok([]);
+        return SubsonicResponse::ok();
     }
 }
