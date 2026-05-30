@@ -13,7 +13,7 @@ class GetNewestPodcastsRequest extends Request
     public function rules(): array
     {
         return [
-            'count' => ['nullable', 'integer', 'min:1'],
+            'count' => ['integer', 'min:1'],
         ];
     }
 

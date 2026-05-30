@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\GetPodcastsRequest;
 use App\Http\Responses\Subsonic\Resources\PodcastChannelResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
+use App\Models\Podcast;
 use App\Models\User;
 use App\Repositories\PodcastRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -29,7 +30,7 @@ class GetPodcastsController extends Controller
 
         return SubsonicResponse::ok([
             'podcasts' => [
-                'channel' => $podcasts->map(static fn ($podcast) => PodcastChannelResource::toArray(
+                'channel' => $podcasts->map(static fn (Podcast $podcast) => PodcastChannelResource::toArray(
                     $podcast,
                     $request->includeEpisodes,
                 ))->all(),

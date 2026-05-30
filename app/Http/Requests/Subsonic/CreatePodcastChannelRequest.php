@@ -13,7 +13,7 @@ class CreatePodcastChannelRequest extends Request
     public function rules(): array
     {
         return [
-            'url' => ['required', 'string'],
+            'url' => ['required', 'string', 'url'],
         ];
     }
 }

@@ -34,6 +34,18 @@ class CreatePodcastChannelTest extends TestCase
     }
 
     #[Test]
+    public function malformedUrlReturnsCode10(): void
+    {
+        $user = create_user();
+
+        $this
+            ->getJson(self::urlFor($user, 'not-a-real-url'))
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'failed')
+            ->assertJsonPath('subsonic-response.error.code', 10);
+    }
+
+    #[Test]
     public function missingUrlReturnsCode10(): void
     {
         $user = create_user();
