@@ -7,7 +7,6 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Values\QueueState as QueueStateDTO;
-use SensitiveParameter;
 
 class QueueService
 {
@@ -53,7 +52,6 @@ class QueueService
         array $songIds,
         ?Song $currentSong,
         int $position,
-        #[SensitiveParameter]
         ?string $clientName = null,
     ): void {
         QueueState::query()->updateOrCreate(['user_id' => $user->id], [
