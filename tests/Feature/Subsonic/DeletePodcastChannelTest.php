@@ -4,15 +4,12 @@ namespace Tests\Feature\Subsonic;
 
 use App\Events\UserUnsubscribedFromPodcast;
 use App\Models\Podcast;
-use App\Models\User;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
 use function Tests\create_user;
 
-class DeletePodcastChannelTest extends TestCase
+class DeletePodcastChannelTest extends SubsonicTestCase
 {
     #[Test]
     public function unsubscribesFromSubscribedPodcast(): void
@@ -25,7 +22,7 @@ class DeletePodcastChannelTest extends TestCase
 
         self::assertTrue($user->subscribedToPodcast($podcast));
 
-        $this->getJson(self::urlFor($user, $podcast->id))->assertOk()->assertJsonPath('subsonic-response.status', 'ok');
+        self::assertSubsonicOk($this->getSubsonic('deletePodcastChannel.view', $user, ['id' => $podcast->id]));
 
         self::assertFalse($user->fresh()->subscribedToPodcast($podcast));
         Event::assertDispatched(UserUnsubscribedFromPodcast::class);
@@ -36,11 +33,9 @@ class DeletePodcastChannelTest extends TestCase
     {
         $user = create_user();
 
-        $this
-            ->getJson(self::urlFor($user, 'nonexistent-id'))
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'failed')
-            ->assertJsonPath('subsonic-response.error.code', 70);
+        self::assertSubsonicErrorCode($this->getSubsonic('deletePodcastChannel.view', $user, [
+            'id' => 'nonexistent-id',
+        ]), 70);
     }
 
     #[Test]
@@ -51,22 +46,10 @@ class DeletePodcastChannelTest extends TestCase
         $podcast = Podcast::factory()->createOne();
         $podcast->subscribers()->attach($otherUser);
 
-        $this
-            ->getJson(self::urlFor($requestingUser, $podcast->id))
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'failed')
-            ->assertJsonPath('subsonic-response.error.code', 70);
+        self::assertSubsonicErrorCode($this->getSubsonic('deletePodcastChannel.view', $requestingUser, [
+            'id' => $podcast->id,
+        ]), 70);
 
         self::assertTrue($otherUser->fresh()->subscribedToPodcast($podcast));
-    }
-
-    private static function urlFor(User $user, string $id): string
-    {
-        return '/rest/deletePodcastChannel.view?'
-        . Arr::query([
-            'apiKey' => $user->subsonic_api_key,
-            'f' => 'json',
-            'id' => $id,
-        ]);
     }
 }

@@ -22,15 +22,12 @@ class SavePlayQueueController extends Controller
     {
         $current = $request->current ? $this->songRepository->findOne($request->current, $user) : null;
 
-        $positionSeconds = (int) round($request->position / 1000);
-        $clientName = (string) $request->input('c') ?: null;
-
         $this->queueService->savePlayQueue(
             user: $user,
             songIds: $request->id,
             currentSong: $current,
-            position: $positionSeconds,
-            clientName: $clientName,
+            position: intdiv($request->position, 1000),
+            clientName: $request->c ?: null,
         );
 
         return SubsonicResponse::ok();

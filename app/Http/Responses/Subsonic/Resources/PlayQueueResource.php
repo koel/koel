@@ -2,6 +2,7 @@
 
 namespace App\Http\Responses\Subsonic\Resources;
 
+use App\Models\Song;
 use App\Models\User;
 use App\Values\QueueState;
 
@@ -34,7 +35,7 @@ final class PlayQueueResource
             'position' => $state->playbackPosition !== null ? $state->playbackPosition * 1000 : null,
         ];
 
-        $entries = $state->playables->map(static fn ($song) => SongResource::toArray($song, $user))->all();
+        $entries = $state->playables->map(static fn (Song $song) => SongResource::toArray($song, $user))->all();
 
         if ($entries) {
             $payload['entry'] = $entries;

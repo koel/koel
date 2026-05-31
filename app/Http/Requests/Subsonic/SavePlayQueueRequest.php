@@ -8,6 +8,7 @@ use App\Http\Requests\Request;
  * @property array<string> $id
  * @property ?string $current
  * @property int $position
+ * @property ?string $c
  */
 class SavePlayQueueRequest extends Request
 {
@@ -18,7 +19,8 @@ class SavePlayQueueRequest extends Request
             'id' => ['array'],
             'id.*' => ['string'],
             'current' => ['nullable', 'string'],
-            'position' => ['integer', 'min:0'],
+            'position' => ['nullable', 'integer', 'min:0'],
+            'c' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -26,8 +28,12 @@ class SavePlayQueueRequest extends Request
     {
         $this->merge([
             'id' => self::asStringList($this->input('id', [])),
-            'position' => (int) $this->input('position', 0),
         ]);
+    }
+
+    protected function passedValidation(): void
+    {
+        $this->merge(['position' => (int) ($this->input('position') ?? 0)]);
     }
 
     /** @return array<string> */

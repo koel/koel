@@ -8,6 +8,9 @@ use Illuminate\Support\Collection;
 
 final class QueueState
 {
+    /**
+     * @param Collection<int, Playable> $playables
+     */
     private function __construct(
         public Collection $playables,
         public ?Playable $currentPlayable,
@@ -16,6 +19,9 @@ final class QueueState
         public ?Carbon $changedAt,
     ) {}
 
+    /**
+     * @param Collection<int, Playable> $songs
+     */
     public static function make(
         Collection $songs,
         ?Playable $currentPlayable = null,

@@ -3,17 +3,14 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Models\Podcast;
-use App\Models\User;
 use App\Services\Podcast\PodcastService;
-use Illuminate\Support\Arr;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
-use Tests\TestCase;
 
 use function Tests\create_user;
 
-class RefreshPodcastsTest extends TestCase
+class RefreshPodcastsTest extends SubsonicTestCase
 {
     #[Test]
     public function refreshesSubscribedPodcasts(): void
@@ -31,7 +28,7 @@ class RefreshPodcastsTest extends TestCase
             ->with(Mockery::on(static fn (Podcast $p) => $p->is($podcastA) || $p->is($podcastB)))
             ->andReturnUsing(static fn (Podcast $p) => $p);
 
-        $this->getJson(self::urlFor($user))->assertOk()->assertJsonPath('subsonic-response.status', 'ok');
+        self::assertSubsonicOk($this->getSubsonic('refreshPodcasts.view', $user));
     }
 
     #[Test]
@@ -54,15 +51,6 @@ class RefreshPodcastsTest extends TestCase
                 return $p;
             });
 
-        $this->getJson(self::urlFor($user))->assertOk()->assertJsonPath('subsonic-response.status', 'ok');
-    }
-
-    private static function urlFor(User $user): string
-    {
-        return '/rest/refreshPodcasts.view?'
-        . Arr::query([
-            'apiKey' => $user->subsonic_api_key,
-            'f' => 'json',
-        ]);
+        self::assertSubsonicOk($this->getSubsonic('refreshPodcasts.view', $user));
     }
 }

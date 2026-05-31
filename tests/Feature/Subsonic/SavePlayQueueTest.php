@@ -4,14 +4,11 @@ namespace Tests\Feature\Subsonic;
 
 use App\Models\QueueState;
 use App\Models\Song;
-use App\Models\User;
-use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
 use function Tests\create_user;
 
-class SavePlayQueueTest extends TestCase
+class SavePlayQueueTest extends SubsonicTestCase
 {
     #[Test]
     public function savesQueueWithCurrentSongAndPosition(): void
@@ -19,15 +16,12 @@ class SavePlayQueueTest extends TestCase
         $user = create_user();
         $songs = Song::factory()->count(3)->create();
 
-        $this
-            ->getJson(self::urlFor($user, [
-                'id' => $songs->pluck('id')->all(),
-                'current' => $songs[1]->id,
-                'position' => 12_345, // ms
-                'c' => 'Feishin',
-            ]))
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'ok');
+        self::assertSubsonicOk($this->getSubsonic('savePlayQueue.view', $user, [
+            'id' => $songs->pluck('id')->all(),
+            'current' => $songs[1]->id,
+            'position' => 12_345, // ms
+            'c' => 'Feishin',
+        ]));
 
         $state = QueueState::query()->where('user_id', $user->id)->firstOrFail();
         self::assertSame($songs->pluck('id')->all(), $state->song_ids);
@@ -46,21 +40,11 @@ class SavePlayQueueTest extends TestCase
             'playback_position' => 30,
         ]);
 
-        $this->getJson(self::urlFor($user, []))->assertOk()->assertJsonPath('subsonic-response.status', 'ok');
+        self::assertSubsonicOk($this->getSubsonic('savePlayQueue.view', $user));
 
         $state = QueueState::query()->where('user_id', $user->id)->firstOrFail();
         self::assertSame([], $state->song_ids);
         self::assertNull($state->current_song_id);
         self::assertSame(0, $state->playback_position);
-    }
-
-    /** @param array<string, mixed> $extra */
-    private static function urlFor(User $user, array $extra): string
-    {
-        return '/rest/savePlayQueue.view?'
-        . Arr::query(array_merge([
-            'apiKey' => $user->subsonic_api_key,
-            'f' => 'json',
-        ], $extra));
     }
 }

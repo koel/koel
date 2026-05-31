@@ -5,14 +5,11 @@ namespace Tests\Feature\Subsonic;
 use App\Http\Responses\Subsonic\Resources\PlayQueueResource;
 use App\Models\QueueState;
 use App\Models\Song;
-use App\Models\User;
-use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
 use function Tests\create_user;
 
-class GetPlayQueueTest extends TestCase
+class GetPlayQueueTest extends SubsonicTestCase
 {
     #[Test]
     public function returnsSavedQueueForUser(): void
@@ -28,14 +25,14 @@ class GetPlayQueueTest extends TestCase
             'changed_by' => 'Feishin',
         ]);
 
-        $response = $this
-            ->getJson(self::urlFor($user))
-            ->assertOk()
-            ->assertJsonStructure([
-                'subsonic-response' => [
-                    'playQueue' => PlayQueueResource::JSON_STRUCTURE,
-                ],
-            ]);
+        $response = $this->getSubsonic('getPlayQueue.view', $user);
+
+        self::assertSubsonicOk($response);
+        $response->assertJsonStructure([
+            'subsonic-response' => [
+                'playQueue' => PlayQueueResource::JSON_STRUCTURE,
+            ],
+        ]);
 
         self::assertSame($user->email, $response->json('subsonic-response.playQueue.username'));
         self::assertSame('Feishin', $response->json('subsonic-response.playQueue.changedBy'));
@@ -49,11 +46,10 @@ class GetPlayQueueTest extends TestCase
     {
         $user = create_user();
 
-        $this
-            ->getJson(self::urlFor($user))
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'ok')
-            ->assertJsonMissingPath('subsonic-response.playQueue');
+        $response = $this->getSubsonic('getPlayQueue.view', $user);
+
+        self::assertSubsonicOk($response);
+        $response->assertJsonMissingPath('subsonic-response.playQueue');
     }
 
     #[Test]
@@ -69,18 +65,6 @@ class GetPlayQueueTest extends TestCase
             'playback_position' => 0,
         ]);
 
-        $this
-            ->getJson(self::urlFor($user))
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.playQueue.changedBy', 'koel');
-    }
-
-    private static function urlFor(User $user): string
-    {
-        return '/rest/getPlayQueue.view?'
-        . Arr::query([
-            'apiKey' => $user->subsonic_api_key,
-            'f' => 'json',
-        ]);
+        $this->getSubsonic('getPlayQueue.view', $user)->assertJsonPath('subsonic-response.playQueue.changedBy', 'koel');
     }
 }
