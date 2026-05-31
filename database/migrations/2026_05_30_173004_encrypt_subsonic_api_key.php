@@ -1,6 +1,5 @@
 <?php
 
-use App\Services\Subsonic\Authenticators\ApiKeyAuthenticator;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Crypt;
@@ -16,19 +15,19 @@ return new class extends Migration {
             $table->string('subsonic_api_key_hash', 64)->nullable()->after('subsonic_api_key');
         });
 
-        $hasher = app(ApiKeyAuthenticator::class);
+        $pepper = (string) config('app.key');
 
         DB::table('users')
             ->whereNotNull('subsonic_api_key')
             ->orderBy('id')
-            ->each(static function (object $row) use ($hasher): void {
+            ->each(static function (object $row) use ($pepper): void {
                 $plaintext = $row->subsonic_api_key;
 
                 DB::table('users')
                     ->where('id', $row->id)
                     ->update([
                         'subsonic_api_key' => Crypt::encryptString($plaintext),
-                        'subsonic_api_key_hash' => $hasher->hash($plaintext),
+                        'subsonic_api_key_hash' => hash_hmac('sha256', $plaintext, $pepper),
                     ]);
             });
 

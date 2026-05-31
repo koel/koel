@@ -198,6 +198,48 @@ class LegacyAuthTest extends TestCase
     }
 
     #[Test]
+    public function tokenAuthFailsClosedWhenStoredKeyIsNull(): void
+    {
+        $user = create_user();
+        $user->forceFill(['subsonic_api_key' => null, 'subsonic_api_key_hash' => null])->saveQuietly();
+
+        $salt = 'attack';
+        $forgedToken = md5($salt);
+
+        $this
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        't' => $forgedToken,
+                        's' => $salt,
+                        'f' => 'json',
+                    ]),
+            )
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.error.code', 40);
+    }
+
+    #[Test]
+    public function passwordAuthFailsClosedWhenStoredKeyIsNull(): void
+    {
+        $user = create_user();
+        $user->forceFill(['subsonic_api_key' => null, 'subsonic_api_key_hash' => null])->saveQuietly();
+
+        $this
+            ->getJson(
+                '/rest/ping.view?'
+                    . Arr::query([
+                        'u' => $user->email,
+                        'p' => 'anything-the-attacker-tries',
+                        'f' => 'json',
+                    ]),
+            )
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.error.code', 40);
+    }
+
+    #[Test]
     public function missingUsernameIsRejectedAsMissingParameter(): void
     {
         $this
