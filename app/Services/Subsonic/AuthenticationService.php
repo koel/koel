@@ -8,6 +8,7 @@ use App\Helpers\Uuid;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Container\Attributes\Config;
+use Illuminate\Support\Str;
 use SensitiveParameter;
 
 class AuthenticationService
@@ -64,7 +65,7 @@ class AuthenticationService
 
     public function authenticateViaApiKey(#[SensitiveParameter] string $apiKey): ?User
     {
-        if ($apiKey === '') {
+        if (!$apiKey) {
             return null;
         }
 
@@ -81,42 +82,38 @@ class AuthenticationService
         #[SensitiveParameter]
         string $salt,
     ): ?User {
-        if ($username === '' || $token === '') {
+        if (!$username || !$token) {
             return null;
         }
 
-        throw_if($salt === '', RequiredParameterMissingException::class);
+        throw_if(!$salt, RequiredParameterMissingException::class);
 
         $user = $this->userRepository->findOneByEmail($username);
-        throw_unless($user, InvalidCredentialsException::class);
-
-        $expected = md5($user->subsonic_api_key . $salt);
-        throw_unless(hash_equals($expected, strtolower($token)), InvalidCredentialsException::class);
+        throw_unless(
+            $user && hash_equals(md5($user->subsonic_api_key . $salt), Str::lower($token)),
+            InvalidCredentialsException::class,
+        );
 
         return $user;
     }
 
     public function authenticateViaPassword(string $username, #[SensitiveParameter] string $password): ?User
     {
-        if ($username === '' || $password === '') {
+        if (!$username || !$password) {
             return null;
         }
 
         $candidate = $password;
 
-        if (str_starts_with($candidate, 'enc:')) {
-            $hex = substr($candidate, 4);
-            throw_if(
-                $hex === '' || (strlen($hex) % 2) !== 0 || !ctype_xdigit($hex),
-                InvalidCredentialsException::class,
-            );
+        if (Str::startsWith($candidate, 'enc:')) {
+            $hex = Str::substr($candidate, 4);
+            throw_if(!$hex || (Str::length($hex) % 2) !== 0 || !ctype_xdigit($hex), InvalidCredentialsException::class);
 
             $candidate = hex2bin($hex);
         }
 
         $user = $this->userRepository->findOneByEmail($username);
-        throw_unless($user, InvalidCredentialsException::class);
-        throw_unless(hash_equals($user->subsonic_api_key, $candidate), InvalidCredentialsException::class);
+        throw_unless($user && hash_equals($user->subsonic_api_key, $candidate), InvalidCredentialsException::class);
 
         return $user;
     }
