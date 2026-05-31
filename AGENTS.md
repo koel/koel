@@ -295,6 +295,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - When parsing or manipulating URLs, use `Illuminate\Support\Uri` instead of `parse_url()`.
 - Do not add return type declarations to controller methods — controller responses are too dynamic/flexible for strict return types.
 - Keep controllers thin. A controller method's job is: parse input → authorize → delegate → shape the response (resources/JSON). When a method starts accumulating data-loading orchestration, eager-load bookkeeping, multi-collection merges, or any multi-step domain logic, push that work into a service. Prefer extending an existing service in the same domain (e.g. `MediaBrowser` for browse-side folder operations) over creating a new one. Services return raw domain objects (Collections, Models) — Resource/JSON wrapping stays in the controller. Authorization stays in the controller too, so unauthorized requests fail before expensive data loads.
+- Value objects in `app/Values/` must use a `final readonly class` with a `private __construct(...)` and a `public static function make(...): self` factory. Call sites construct them via `Foo::make(...)`, never `new Foo(...)`. The reference shape is `App\Values\Radio\RadioStationCreateData`.
 
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.

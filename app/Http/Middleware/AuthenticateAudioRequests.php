@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class AudioAuthenticate
+class AuthenticateAudioRequests
 {
     public function handle(Request $request, Closure $next)
     {
