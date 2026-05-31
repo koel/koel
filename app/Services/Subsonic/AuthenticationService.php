@@ -2,33 +2,45 @@
 
 namespace App\Services\Subsonic;
 
-use App\Exceptions\Subsonic\InvalidCredentialsException;
 use App\Exceptions\Subsonic\RequiredParameterMissingException;
 use App\Helpers\Uuid;
 use App\Models\User;
-use App\Repositories\UserRepository;
-use Illuminate\Container\Attributes\Config;
-use Illuminate\Support\Str;
+use App\Services\Subsonic\Authenticators\ApiKeyAuthenticator;
+use App\Services\Subsonic\Authenticators\PasswordAuthenticator;
+use App\Services\Subsonic\Authenticators\TokenAuthenticator;
+use App\Values\Subsonic\SubsonicCredentials;
 use SensitiveParameter;
 
 class AuthenticationService
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
-        #[Config('app.key')]
-        private readonly string $appKey,
+        private readonly ApiKeyAuthenticator $apiKeyAuthenticator,
+        private readonly TokenAuthenticator $tokenAuthenticator,
+        private readonly PasswordAuthenticator $passwordAuthenticator,
     ) {}
 
-    public function hash(#[SensitiveParameter] string $apiKey): string
+    public function authenticate(SubsonicCredentials $credentials): User
     {
-        return hash_hmac('sha256', $apiKey, $this->appKey);
+        foreach ([
+            $this->apiKeyAuthenticator,
+            $this->tokenAuthenticator,
+            $this->passwordAuthenticator,
+        ] as $authenticator) {
+            $user = $authenticator->attempt($credentials);
+
+            if ($user) {
+                return $user;
+            }
+        }
+
+        throw new RequiredParameterMissingException();
     }
 
     public function assignApiKey(User $user, #[SensitiveParameter] ?string $apiKey = null, bool $save = true): void
     {
         $apiKey ??= self::generateApiKey();
         $user->subsonic_api_key = $apiKey;
-        $user->subsonic_api_key_hash = $this->hash($apiKey);
+        $user->subsonic_api_key_hash = $this->apiKeyAuthenticator->hash($apiKey);
 
         if ($save) {
             $user->saveQuietly();
@@ -38,83 +50,5 @@ class AuthenticationService
     private static function generateApiKey(): string
     {
         return Uuid::generate();
-    }
-
-    public function authenticate(
-        #[SensitiveParameter]
-        string $apiKey,
-        string $username,
-        #[SensitiveParameter]
-        string $token,
-        #[SensitiveParameter]
-        string $salt,
-        #[SensitiveParameter]
-        string $password,
-    ): User {
-        $user =
-            $this->authenticateViaApiKey($apiKey) ?? $this->authenticateViaToken(
-                $username,
-                $token,
-                $salt,
-            ) ?? $this->authenticateViaPassword($username, $password);
-
-        throw_unless($user, RequiredParameterMissingException::class);
-
-        return $user;
-    }
-
-    public function authenticateViaApiKey(#[SensitiveParameter] string $apiKey): ?User
-    {
-        if (!$apiKey) {
-            return null;
-        }
-
-        $user = $this->userRepository->findOneBySubsonicApiKeyHash($this->hash($apiKey));
-        throw_unless($user, InvalidCredentialsException::class);
-
-        return $user;
-    }
-
-    public function authenticateViaToken(
-        string $username,
-        #[SensitiveParameter]
-        string $token,
-        #[SensitiveParameter]
-        string $salt,
-    ): ?User {
-        if (!$username || !$token) {
-            return null;
-        }
-
-        throw_unless($salt, RequiredParameterMissingException::class);
-
-        $user = $this->userRepository->findOneByEmail($username);
-        throw_unless(
-            hash_equals(md5(($user->subsonic_api_key ?? '') . $salt), Str::lower($token)),
-            InvalidCredentialsException::class,
-        );
-
-        return $user;
-    }
-
-    public function authenticateViaPassword(string $username, #[SensitiveParameter] string $password): ?User
-    {
-        if (!$username || !$password) {
-            return null;
-        }
-
-        $candidate = $password;
-
-        if (Str::startsWith($candidate, 'enc:')) {
-            $hex = Str::substr($candidate, 4);
-            throw_if(!$hex || (Str::length($hex) % 2) !== 0 || !ctype_xdigit($hex), InvalidCredentialsException::class);
-
-            $candidate = hex2bin($hex);
-        }
-
-        $user = $this->userRepository->findOneByEmail($username);
-        throw_unless($user && hash_equals($user->subsonic_api_key, $candidate), InvalidCredentialsException::class);
-
-        return $user;
     }
 }
