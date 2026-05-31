@@ -57,12 +57,12 @@ use App\Http\Controllers\API\PublicizeSongsController;
 use App\Http\Controllers\API\QueueStateController;
 use App\Http\Controllers\API\RadioStationController;
 use App\Http\Controllers\API\RadioStationNowPlayingController;
+use App\Http\Controllers\API\RateSongController;
 use App\Http\Controllers\API\RegisterPlayController;
 use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
 use App\Http\Controllers\API\SearchYouTubeController;
 use App\Http\Controllers\API\SetLastfmSessionKeyController;
-use App\Http\Controllers\API\SetSongRatingController;
 use App\Http\Controllers\API\Settings\UpdateBrandingController;
 use App\Http\Controllers\API\Settings\UpdateMediaPathController;
 use App\Http\Controllers\API\SongController;
@@ -183,7 +183,7 @@ Route::prefix('api')
             Route::get('songs/favorite', FetchFavoriteSongsController::class); // @deprecated
             Route::get('songs/favorites', FetchFavoriteSongsController::class);
 
-            Route::put('songs/{song}/rating', SetSongRatingController::class);
+            Route::put('songs/{song}/rating', RateSongController::class);
 
             Route::apiResource('playlist-folders', PlaylistFolderController::class);
             Route::apiResource('playlist-folders.playlists', PlaylistFolderPlaylistController::class)->except(

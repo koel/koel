@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 use function Tests\create_user;
 
-class SetSongRatingTest extends TestCase
+class RateSongTest extends TestCase
 {
     #[Test]
     public function ratesASong(): void
