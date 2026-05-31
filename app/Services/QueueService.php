@@ -7,6 +7,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Values\QueueState as QueueStateDTO;
+use SensitiveParameter;
 
 class QueueService
 {
@@ -26,6 +27,8 @@ class QueueService
             $this->songRepository->getMany(ids: $state->song_ids, preserveOrder: true, scopedUser: $user),
             $currentSong,
             $state->playback_position ?? 0,
+            $state->changed_by,
+            $state->updated_at,
         );
     }
 
@@ -41,6 +44,23 @@ class QueueService
         ], [
             'current_song_id' => $song->id,
             'playback_position' => $position,
+        ]);
+    }
+
+    /** @param array<string> $songIds */
+    public function savePlayQueue(
+        User $user,
+        array $songIds,
+        ?Song $currentSong,
+        int $position,
+        #[SensitiveParameter]
+        ?string $clientName = null,
+    ): void {
+        QueueState::query()->updateOrCreate(['user_id' => $user->id], [
+            'song_ids' => $songIds,
+            'current_song_id' => $currentSong?->id,
+            'playback_position' => $position,
+            'changed_by' => $clientName,
         ]);
     }
 }
