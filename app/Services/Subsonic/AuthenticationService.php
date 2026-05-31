@@ -86,11 +86,11 @@ class AuthenticationService
             return null;
         }
 
-        throw_if(!$salt, RequiredParameterMissingException::class);
+        throw_unless($salt, RequiredParameterMissingException::class);
 
         $user = $this->userRepository->findOneByEmail($username);
         throw_unless(
-            $user && hash_equals(md5($user->subsonic_api_key . $salt), Str::lower($token)),
+            hash_equals(md5(($user->subsonic_api_key ?? '') . $salt), Str::lower($token)),
             InvalidCredentialsException::class,
         );
 
