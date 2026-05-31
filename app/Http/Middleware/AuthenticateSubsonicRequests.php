@@ -17,7 +17,7 @@ class AuthenticateSubsonicRequests
 
     public function handle(Request $request, Closure $next): Response
     {
-        Auth::setUser($this->auth->authenticate(new SubsonicCredentials(
+        Auth::setUser($this->auth->authenticate(SubsonicCredentials::make(
             apiKey: self::stringInput($request, 'apiKey'),
             username: self::stringInput($request, 'u'),
             token: self::stringInput($request, 't'),

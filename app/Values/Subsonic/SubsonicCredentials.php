@@ -4,17 +4,31 @@ namespace App\Values\Subsonic;
 
 use SensitiveParameter;
 
-final class SubsonicCredentials
+final readonly class SubsonicCredentials
 {
-    public function __construct(
+    private function __construct(
         #[SensitiveParameter]
-        public readonly string $apiKey,
-        public readonly string $username,
+        public string $apiKey,
+        public string $username,
         #[SensitiveParameter]
-        public readonly string $token,
+        public string $token,
         #[SensitiveParameter]
-        public readonly string $salt,
+        public string $salt,
         #[SensitiveParameter]
-        public readonly string $password,
+        public string $password,
     ) {}
+
+    public static function make(
+        #[SensitiveParameter]
+        string $apiKey = '',
+        string $username = '',
+        #[SensitiveParameter]
+        string $token = '',
+        #[SensitiveParameter]
+        string $salt = '',
+        #[SensitiveParameter]
+        string $password = '',
+    ): self {
+        return new self(apiKey: $apiKey, username: $username, token: $token, salt: $salt, password: $password);
+    }
 }
