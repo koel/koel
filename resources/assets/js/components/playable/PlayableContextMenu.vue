@@ -74,7 +74,7 @@
 
     <template v-if="onlyOneSelected && isSong(playables[0])">
       <Separator />
-      <li class="px-4 py-2 flex justify-center">
+      <li class="px-4 py-2">
         <StarRating :rating="playables[0].rating" @rate="rate(playables[0] as Song, $event)" />
       </li>
       <Separator />
