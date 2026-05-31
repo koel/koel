@@ -9,8 +9,8 @@
       v-for="star in 5"
       :key="star"
       :title="`${star} star${star === 1 ? '' : 's'}`"
-      class="cursor-pointer text-k-fg-40 hover:text-k-fg transition-[color] duration-150"
-      :class="(hover || rating) >= star && 'text-k-fg-70 hover:text-k-fg'"
+      class="cursor-pointer text-k-fg-40 transition-[color] duration-150"
+      :class="(hover || rating) >= star && 'text-k-highlight'"
       @click="onClick($event, star)"
       @mouseenter="hover = star"
     >
