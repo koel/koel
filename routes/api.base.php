@@ -183,7 +183,7 @@ Route::prefix('api')
             Route::get('songs/favorite', FetchFavoriteSongsController::class); // @deprecated
             Route::get('songs/favorites', FetchFavoriteSongsController::class);
 
-            Route::put('songs/{song}/rating', RateSongController::class);
+            Route::put('songs/{song}/rating', RateSongController::class)->where(['song' => Uuid::REGEX]);
 
             Route::apiResource('playlist-folders', PlaylistFolderController::class);
             Route::apiResource('playlist-folders.playlists', PlaylistFolderPlaylistController::class)->except(

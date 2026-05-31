@@ -120,7 +120,7 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (playable.val
 const play = () => emit('play', playable.value)
 
 const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
-const rate = (rating: number) => playableStore.rate(playable.value, rating)
+const rate = (rating: number) => playableStore.rate(playable.value as Song, rating)
 </script>
 
 <style lang="postcss" scoped>
