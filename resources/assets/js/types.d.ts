@@ -620,7 +620,7 @@ interface PlayableListContext {
 type PlayableListSortField =
   | keyof Pick<
       Song,
-      'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'genre' | 'year' | 'created_at'
+      'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'genre' | 'year' | 'created_at' | 'rating'
     >
   | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
@@ -702,6 +702,7 @@ type PlayableListColumnName =
   | 'duration'
   | 'created_at'
   | 'play_count'
+  | 'rating'
   | 'year'
   | 'genre'
   | 'playlist_collaborator'

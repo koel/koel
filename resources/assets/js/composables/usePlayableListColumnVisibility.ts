@@ -17,6 +17,7 @@ export const usePlayableListColumnVisibility = () => {
       'album',
       'duration',
       'play_count',
+      'rating',
       'playlist_collaborator',
       'playlist_added_at',
     ]

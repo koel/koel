@@ -7,6 +7,7 @@ use App\Http\Resources\SongResource;
 use App\Jobs\DeleteSongFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Rating;
 use App\Models\Song;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
@@ -14,6 +15,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
+use function Tests\create_user;
 
 class SongTest extends TestCase
 {
@@ -24,6 +26,50 @@ class SongTest extends TestCase
 
         $this->getAs('api/songs')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
         $this->getAs('api/songs?sort=title&order=desc')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
+    }
+
+    #[Test]
+    public function indexSortedByRatingScopesToCurrentUser(): void
+    {
+        $user = create_user();
+        $other = create_user();
+
+        $low = Song::factory()->createOne(['title' => 'Low']);
+        $high = Song::factory()->createOne(['title' => 'High']);
+        $unrated = Song::factory()->createOne(['title' => 'Unrated']);
+
+        Rating::factory()->createOne([
+            'user_id' => $user->id,
+            'rateable_id' => $low->id,
+            'rateable_type' => $low->getMorphClass(),
+            'rating' => 2,
+        ]);
+
+        Rating::factory()->createOne([
+            'user_id' => $user->id,
+            'rateable_id' => $high->id,
+            'rateable_type' => $high->getMorphClass(),
+            'rating' => 5,
+        ]);
+
+        Rating::factory()->createOne([
+            'user_id' => $other->id,
+            'rateable_id' => $unrated->id,
+            'rateable_type' => $unrated->getMorphClass(),
+            'rating' => 5,
+        ]);
+
+        $descIds = $this->getAs('api/songs?sort=rating&order=desc', $user)->json('data.*.id');
+
+        self::assertSame($high->id, $descIds[0]);
+        self::assertSame($low->id, $descIds[1]);
+        self::assertSame($unrated->id, $descIds[2]);
+
+        $ascIds = $this->getAs('api/songs?sort=rating&order=asc', $user)->json('data.*.id');
+
+        self::assertSame($unrated->id, $ascIds[0]);
+        self::assertSame($low->id, $ascIds[1]);
+        self::assertSame($high->id, $ascIds[2]);
     }
 
     #[Test]
