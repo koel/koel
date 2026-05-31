@@ -3,17 +3,14 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Models\Podcast;
-use App\Models\User;
 use App\Services\Podcast\PodcastService;
-use Illuminate\Support\Arr;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
-use Tests\TestCase;
 
 use function Tests\create_user;
 
-class RefreshPodcastsTest extends TestCase
+class RefreshPodcastsTest extends SubsonicTestCase
 {
     #[Test]
     public function refreshesSubscribedPodcasts(): void
@@ -31,7 +28,7 @@ class RefreshPodcastsTest extends TestCase
             ->with(Mockery::on(static fn (Podcast $p) => $p->is($podcastA) || $p->is($podcastB)))
             ->andReturnUsing(static fn (Podcast $p) => $p);
 
-        $this->getJson(self::urlFor($user))->assertOk()->assertJsonPath('subsonic-response.status', 'ok');
+        $this->getSubsonic('refreshPodcasts.view', $user)->assertSubsonicOk();
     }
 
     #[Test]
@@ -46,23 +43,14 @@ class RefreshPodcastsTest extends TestCase
         $service = $this->mock(PodcastService::class);
         $service
             ->shouldReceive('refreshPodcast')
-            ->andReturnUsing(static function (Podcast $p) use ($brokenPodcast): Podcast {
-                if ($p->is($brokenPodcast)) {
+            ->andReturnUsing(static function (Podcast $podcast) use ($brokenPodcast): Podcast {
+                if ($podcast->is($brokenPodcast)) {
                     throw new RuntimeException('Feed unreachable');
                 }
 
-                return $p;
+                return $podcast;
             });
 
-        $this->getJson(self::urlFor($user))->assertOk()->assertJsonPath('subsonic-response.status', 'ok');
-    }
-
-    private static function urlFor(User $user): string
-    {
-        return '/rest/refreshPodcasts.view?'
-        . Arr::query([
-            'apiKey' => $user->subsonic_api_key,
-            'f' => 'json',
-        ]);
+        $this->getSubsonic('refreshPodcasts.view', $user)->assertSubsonicOk();
     }
 }

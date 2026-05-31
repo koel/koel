@@ -5,14 +5,11 @@ namespace Tests\Feature\Subsonic;
 use App\Http\Responses\Subsonic\Resources\PodcastEpisodeResource;
 use App\Models\Podcast;
 use App\Models\Song;
-use App\Models\User;
-use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
 use function Tests\create_user;
 
-class GetNewestPodcastsTest extends TestCase
+class GetNewestPodcastsTest extends SubsonicTestCase
 {
     #[Test]
     public function returnsNewestEpisodesAcrossSubscriptions(): void
@@ -40,8 +37,8 @@ class GetNewestPodcastsTest extends TestCase
             ]);
 
         $response = $this
-            ->getJson(self::urlFor($user))
-            ->assertOk()
+            ->getSubsonic('getNewestPodcasts.view', $user)
+            ->assertSubsonicOk()
             ->assertJsonStructure([
                 'subsonic-response' => [
                     'newestPodcasts' => [
@@ -64,7 +61,7 @@ class GetNewestPodcastsTest extends TestCase
         $otherUsersPodcast->subscribers()->attach($otherUser);
         Song::factory()->asEpisode()->createOne(['podcast_id' => $otherUsersPodcast->id]);
 
-        $response = $this->getJson(self::urlFor($user))->assertOk()->assertJsonPath('subsonic-response.status', 'ok');
+        $response = $this->getSubsonic('getNewestPodcasts.view', $user)->assertSubsonicOk();
 
         self::assertEmpty($response->json('subsonic-response.newestPodcasts.episode'));
     }
@@ -76,23 +73,14 @@ class GetNewestPodcastsTest extends TestCase
         $podcast = Podcast::factory()->createOne();
         $podcast->subscribers()->attach($user);
 
-        Song::factory()->asEpisode()->count(5)->create(['podcast_id' => $podcast->id]);
+        Song::factory()
+            ->asEpisode()
+            ->createMany(array_fill(0, 5, ['podcast_id' => $podcast->id]));
 
-        $episodes = $this
-            ->getJson(self::urlFor($user, ['count' => 2]))
-            ->assertOk()
-            ->json('subsonic-response.newestPodcasts.episode');
+        $episodes = $this->getSubsonic('getNewestPodcasts.view', $user, [
+            'count' => 2,
+        ])->json('subsonic-response.newestPodcasts.episode');
 
         self::assertCount(2, $episodes);
-    }
-
-    /** @param array<string, scalar> $extra */
-    private static function urlFor(User $user, array $extra = []): string
-    {
-        return '/rest/getNewestPodcasts.view?'
-        . Arr::query(array_merge([
-            'apiKey' => $user->subsonic_api_key,
-            'f' => 'json',
-        ], $extra));
     }
 }

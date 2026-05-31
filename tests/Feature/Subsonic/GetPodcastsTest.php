@@ -6,14 +6,11 @@ use App\Http\Responses\Subsonic\Resources\PodcastChannelResource;
 use App\Http\Responses\Subsonic\Resources\PodcastEpisodeResource;
 use App\Models\Podcast;
 use App\Models\Song;
-use App\Models\User;
-use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
 use function Tests\create_user;
 
-class GetPodcastsTest extends TestCase
+class GetPodcastsTest extends SubsonicTestCase
 {
     #[Test]
     public function listsSubscribedPodcasts(): void
@@ -26,15 +23,12 @@ class GetPodcastsTest extends TestCase
         $otherUsersPodcast->subscribers()->attach(create_user());
 
         $response = $this
-            ->getJson(self::urlFor($user, ['includeEpisodes' => 'false']))
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'ok')
+            ->getSubsonic('getPodcasts.view', $user, ['includeEpisodes' => 'false'])
+            ->assertSubsonicOk()
             ->assertJsonStructure([
                 'subsonic-response' => [
                     'podcasts' => [
-                        'channel' => [
-                            '*' => PodcastChannelResource::JSON_STRUCTURE,
-                        ],
+                        'channel' => ['*' => PodcastChannelResource::JSON_STRUCTURE],
                     ],
                 ],
             ]);
@@ -53,15 +47,15 @@ class GetPodcastsTest extends TestCase
         Song::factory()->asEpisode()->createOne(['podcast_id' => $podcast->id]);
 
         $response = $this
-            ->getJson(self::urlFor($user))
-            ->assertOk()
+            ->getSubsonic('getPodcasts.view', $user)
+            ->assertSubsonicOk()
             ->assertJsonStructure([
                 'subsonic-response' => [
                     'podcasts' => [
                         'channel' => [
-                            '*' => array_merge(PodcastChannelResource::JSON_STRUCTURE, ['episode' => [
-                                '*' => PodcastEpisodeResource::JSON_STRUCTURE,
-                            ]]),
+                            '*' => array_merge(PodcastChannelResource::JSON_STRUCTURE, [
+                                'episode' => ['*' => PodcastEpisodeResource::JSON_STRUCTURE],
+                            ]),
                         ],
                     ],
                 ],
@@ -79,22 +73,12 @@ class GetPodcastsTest extends TestCase
         $targetPodcast->subscribers()->attach($user);
         $otherPodcast->subscribers()->attach($user);
 
-        $channels = $this
-            ->getJson(self::urlFor($user, ['id' => $targetPodcast->id, 'includeEpisodes' => 'false']))
-            ->assertOk()
-            ->json('subsonic-response.podcasts.channel');
+        $channels = $this->getSubsonic('getPodcasts.view', $user, [
+            'id' => $targetPodcast->id,
+            'includeEpisodes' => 'false',
+        ])->json('subsonic-response.podcasts.channel');
 
         self::assertCount(1, $channels);
         self::assertSame($targetPodcast->id, $channels[0]['id']);
-    }
-
-    /** @param array<string, scalar> $extra */
-    private static function urlFor(User $user, array $extra = []): string
-    {
-        return '/rest/getPodcasts.view?'
-        . Arr::query(array_merge([
-            'apiKey' => $user->subsonic_api_key,
-            'f' => 'json',
-        ], $extra));
     }
 }

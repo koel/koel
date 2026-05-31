@@ -5,14 +5,12 @@ namespace Tests\Feature\Subsonic;
 use App\Models\Podcast;
 use App\Models\User;
 use App\Services\Podcast\PodcastService;
-use Illuminate\Support\Arr;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
 use function Tests\create_user;
 
-class CreatePodcastChannelTest extends TestCase
+class CreatePodcastChannelTest extends SubsonicTestCase
 {
     #[Test]
     public function subscribesUserToFeed(): void
@@ -27,10 +25,9 @@ class CreatePodcastChannelTest extends TestCase
             ->with('https://example.com/feed.rss', Mockery::on(static fn (User $u) => $u->is($user)))
             ->andReturn($podcast);
 
-        $this
-            ->getJson(self::urlFor($user, 'https://example.com/feed.rss'))
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'ok');
+        $this->getSubsonic('createPodcastChannel.view', $user, [
+            'url' => 'https://example.com/feed.rss',
+        ])->assertSubsonicOk();
     }
 
     #[Test]
@@ -38,11 +35,9 @@ class CreatePodcastChannelTest extends TestCase
     {
         $user = create_user();
 
-        $this
-            ->getJson(self::urlFor($user, 'not-a-real-url'))
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'failed')
-            ->assertJsonPath('subsonic-response.error.code', 10);
+        $this->getSubsonic('createPodcastChannel.view', $user, [
+            'url' => 'not-a-real-url',
+        ])->assertSubsonicErrorCode(10);
     }
 
     #[Test]
@@ -50,26 +45,6 @@ class CreatePodcastChannelTest extends TestCase
     {
         $user = create_user();
 
-        $this
-            ->getJson(
-                '/rest/createPodcastChannel.view?'
-                    . Arr::query([
-                        'apiKey' => $user->subsonic_api_key,
-                        'f' => 'json',
-                    ]),
-            )
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.status', 'failed')
-            ->assertJsonPath('subsonic-response.error.code', 10);
-    }
-
-    private static function urlFor(User $user, string $url): string
-    {
-        return '/rest/createPodcastChannel.view?'
-        . Arr::query([
-            'apiKey' => $user->subsonic_api_key,
-            'f' => 'json',
-            'url' => $url,
-        ]);
+        $this->getSubsonic('createPodcastChannel.view', $user)->assertSubsonicErrorCode(10);
     }
 }
