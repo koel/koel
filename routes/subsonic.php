@@ -49,12 +49,12 @@ use App\Http\Controllers\Subsonic\StreamController;
 use App\Http\Controllers\Subsonic\UnstarController;
 use App\Http\Controllers\Subsonic\UpdateInternetRadioStationController;
 use App\Http\Controllers\Subsonic\UpdatePlaylistController;
+use App\Http\Middleware\AuthenticateSubsonicRequests;
 use App\Http\Middleware\NormalizeSubsonicArrayParams;
-use App\Http\Middleware\SubsonicAuth;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('rest')
-    ->middleware([NormalizeSubsonicArrayParams::class, SubsonicAuth::class])
+    ->middleware([NormalizeSubsonicArrayParams::class, AuthenticateSubsonicRequests::class])
     ->group(static function (): void {
         Route::match(['get', 'post'], 'ping.view', PingController::class);
         Route::match(['get', 'post'], 'getLicense.view', GetLicenseController::class);

@@ -1,7 +1,7 @@
 <?php
 
 use App\Exceptions\SubsonicAwareErrorRenderer;
-use App\Http\Middleware\AudioAuthenticate;
+use App\Http\Middleware\AuthenticateAudioRequests;
 use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
 use App\Http\Middleware\ObjectStorageAuthenticate;
@@ -44,7 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'audio.auth' => AudioAuthenticate::class,
+            'audio.auth' => AuthenticateAudioRequests::class,
             'os.auth' => ObjectStorageAuthenticate::class,
         ]);
 
