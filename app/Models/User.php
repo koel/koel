@@ -104,17 +104,6 @@ class User extends Authenticatable implements AuditableContract
         ];
     }
 
-    public function setSubsonicApiKey(string $key): void
-    {
-        $this->subsonic_api_key = $key;
-        $this->subsonic_api_key_hash = self::hashSubsonicApiKey($key);
-    }
-
-    public static function hashSubsonicApiKey(string $key): string
-    {
-        return hash_hmac('sha256', $key, config('app.key'));
-    }
-
     // @mago-ignore lint:no-redundant-method-override
     public static function query(): UserBuilder
     {

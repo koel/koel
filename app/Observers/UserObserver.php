@@ -5,13 +5,15 @@ namespace App\Observers;
 use App\Helpers\Uuid;
 use App\Models\User;
 use App\Services\Image\ModelImageObserver;
+use App\Services\Subsonic\AuthenticationService as SubsonicAuthenticationService;
 
 class UserObserver
 {
     private ModelImageObserver $avatarObserver;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly SubsonicAuthenticationService $subsonicAuth,
+    ) {
         $this->avatarObserver = ModelImageObserver::make('avatar');
     }
 
@@ -20,7 +22,7 @@ class UserObserver
         $user->public_id ??= Uuid::generate();
 
         if (!$user->subsonic_api_key) {
-            $user->setSubsonicApiKey(Uuid::generate());
+            $this->subsonicAuth->assignApiKey($user, Uuid::generate());
         }
     }
 

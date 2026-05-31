@@ -6,6 +6,7 @@ use App\Exceptions\Subsonic\InvalidCredentialsException;
 use App\Exceptions\Subsonic\RequiredParameterMissingException;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\Subsonic\AuthenticationService as SubsonicAuthenticationService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,7 @@ class SubsonicAuth
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly SubsonicAuthenticationService $subsonicAuth,
     ) {}
 
     public function handle(Request $request, Closure $next): Response
@@ -51,7 +53,7 @@ class SubsonicAuth
             return null;
         }
 
-        $user = $this->userRepository->findOneBySubsonicApiKey($apiKey);
+        $user = $this->userRepository->findOneBySubsonicApiKeyHash($this->subsonicAuth->hash($apiKey));
         throw_unless($user, InvalidCredentialsException::class);
 
         return $user;

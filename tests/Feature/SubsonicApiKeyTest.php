@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Services\Subsonic\AuthenticationService as SubsonicAuthenticationService;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -55,6 +55,6 @@ class SubsonicApiKeyTest extends TestCase
         $row = DB::table('users')->where('id', $user->id)->first();
 
         self::assertNotSame($plaintext, $row->subsonic_api_key);
-        self::assertSame(User::hashSubsonicApiKey($plaintext), $row->subsonic_api_key_hash);
+        self::assertSame(app(SubsonicAuthenticationService::class)->hash($plaintext), $row->subsonic_api_key_hash);
     }
 }
