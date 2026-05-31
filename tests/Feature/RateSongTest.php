@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Rating;
 use App\Models\Song;
-use App\Services\RatingService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -63,9 +62,12 @@ class RateSongTest extends TestCase
         $bob = create_user();
         $song = Song::factory()->createOne();
 
-        // Bob pre-rates from outside the HTTP layer so we can verify Alice's
-        // write doesn't disturb Bob's rating.
-        app(RatingService::class)->setRating($song, $bob, 1);
+        Rating::factory()->createOne([
+            'user_id' => $bob->id,
+            'rateable_id' => $song->id,
+            'rateable_type' => $song->getMorphClass(),
+            'rating' => 1,
+        ]);
 
         $this->putAs("api/songs/$song->id/rating", ['rating' => 5], $alice)->assertOk()->assertJsonPath('rating', 5);
 
