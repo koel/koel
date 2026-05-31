@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API\Me;
 
-use App\Helpers\Uuid;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -18,8 +17,7 @@ class RegenerateSubsonicApiKeyController extends Controller
     /** @param User $user */
     public function __invoke(Authenticatable $user)
     {
-        $this->subsonicAuth->assignApiKey($user, Uuid::generate());
-        $user->saveQuietly();
+        $this->subsonicAuth->assignApiKey($user);
 
         return UserResource::make($user->refresh());
     }

@@ -4,6 +4,7 @@ namespace App\Services\Subsonic;
 
 use App\Exceptions\Subsonic\InvalidCredentialsException;
 use App\Exceptions\Subsonic\RequiredParameterMissingException;
+use App\Helpers\Uuid;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Container\Attributes\Config;
@@ -22,10 +23,20 @@ class AuthenticationService
         return hash_hmac('sha256', $apiKey, $this->appKey);
     }
 
-    public function assignApiKey(User $user, #[SensitiveParameter] string $apiKey): void
+    public function assignApiKey(User $user, #[SensitiveParameter] ?string $apiKey = null, bool $save = true): void
     {
+        $apiKey ??= self::generateApiKey();
         $user->subsonic_api_key = $apiKey;
         $user->subsonic_api_key_hash = $this->hash($apiKey);
+
+        if ($save) {
+            $user->saveQuietly();
+        }
+    }
+
+    private static function generateApiKey(): string
+    {
+        return Uuid::generate();
     }
 
     public function authenticate(

@@ -22,7 +22,7 @@ class UserObserver
         $user->public_id ??= Uuid::generate();
 
         if (!$user->subsonic_api_key) {
-            $this->subsonicAuth->assignApiKey($user, Uuid::generate());
+            $this->subsonicAuth->assignApiKey($user, save: false);
         }
     }
 
