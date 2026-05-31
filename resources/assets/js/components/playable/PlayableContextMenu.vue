@@ -74,7 +74,11 @@
 
     <template v-if="onlyOneSelected && isSong(playables[0])">
       <Separator />
-      <li class="px-4 py-2 hover:bg-k-highlight hover:text-k-highlight-fg">
+      <li
+        tabindex="-1"
+        class="px-4 py-2 focus:outline-hidden focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg"
+        @mouseover="($event.currentTarget as HTMLLIElement).focus()"
+      >
         <StarRating :rating="playables[0].rating" @rate="rate(playables[0] as Song, $event)" />
       </li>
       <Separator />
