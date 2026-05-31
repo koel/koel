@@ -28,7 +28,7 @@ class RefreshPodcastsTest extends SubsonicTestCase
             ->with(Mockery::on(static fn (Podcast $p) => $p->is($podcastA) || $p->is($podcastB)))
             ->andReturnUsing(static fn (Podcast $p) => $p);
 
-        $this->subsonic->assertOk($this->subsonic->get('refreshPodcasts.view', $user));
+        $this->getSubsonic('refreshPodcasts.view', $user)->assertSubsonicOk();
     }
 
     #[Test]
@@ -43,14 +43,14 @@ class RefreshPodcastsTest extends SubsonicTestCase
         $service = $this->mock(PodcastService::class);
         $service
             ->shouldReceive('refreshPodcast')
-            ->andReturnUsing(static function (Podcast $p) use ($brokenPodcast): Podcast {
-                if ($p->is($brokenPodcast)) {
+            ->andReturnUsing(static function (Podcast $podcast) use ($brokenPodcast): Podcast {
+                if ($podcast->is($brokenPodcast)) {
                     throw new RuntimeException('Feed unreachable');
                 }
 
-                return $p;
+                return $podcast;
             });
 
-        $this->subsonic->assertOk($this->subsonic->get('refreshPodcasts.view', $user));
+        $this->getSubsonic('refreshPodcasts.view', $user)->assertSubsonicOk();
     }
 }

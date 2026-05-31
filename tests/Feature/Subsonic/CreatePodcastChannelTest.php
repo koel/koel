@@ -25,9 +25,9 @@ class CreatePodcastChannelTest extends SubsonicTestCase
             ->with('https://example.com/feed.rss', Mockery::on(static fn (User $u) => $u->is($user)))
             ->andReturn($podcast);
 
-        $this->subsonic->assertOk($this->subsonic->get('createPodcastChannel.view', $user, [
+        $this->getSubsonic('createPodcastChannel.view', $user, [
             'url' => 'https://example.com/feed.rss',
-        ]));
+        ])->assertSubsonicOk();
     }
 
     #[Test]
@@ -35,9 +35,9 @@ class CreatePodcastChannelTest extends SubsonicTestCase
     {
         $user = create_user();
 
-        $this->subsonic->assertErrorCode($this->subsonic->get('createPodcastChannel.view', $user, [
+        $this->getSubsonic('createPodcastChannel.view', $user, [
             'url' => 'not-a-real-url',
-        ]), 10);
+        ])->assertSubsonicErrorCode(10);
     }
 
     #[Test]
@@ -45,6 +45,6 @@ class CreatePodcastChannelTest extends SubsonicTestCase
     {
         $user = create_user();
 
-        $this->subsonic->assertErrorCode($this->subsonic->get('createPodcastChannel.view', $user), 10);
+        $this->getSubsonic('createPodcastChannel.view', $user)->assertSubsonicErrorCode(10);
     }
 }
