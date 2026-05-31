@@ -31,18 +31,22 @@ final readonly class SubsonicCredentials
         #[SensitiveParameter]
         string $password = '',
     ): self {
-        return new self(apiKey: $apiKey, username: $username, token: $token, salt: $salt, password: $password);
+        return new self(
+            apiKey: $apiKey,
+            username: $username,
+            token: $token,
+            salt: $salt,
+            password: self::normalizePassword($password),
+        );
     }
 
-    public function decodedPassword(): string
+    private static function normalizePassword(#[SensitiveParameter] string $password): string
     {
-        return Str::startsWith($this->password, 'enc:')
-            ? self::decodeHex(Str::substr($this->password, 4))
-            : $this->password;
-    }
+        if (!Str::startsWith($password, 'enc:')) {
+            return $password;
+        }
 
-    private static function decodeHex(#[SensitiveParameter] string $hex): string
-    {
+        $hex = Str::substr($password, 4);
         throw_if(!$hex || (Str::length($hex) % 2) !== 0 || !ctype_xdigit($hex), InvalidCredentialsException::class);
 
         return hex2bin($hex);

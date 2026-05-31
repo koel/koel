@@ -23,7 +23,7 @@ final class PasswordAuthenticator implements Authenticator
         $user = $this->userRepository->findOneByEmail($credentials->username);
 
         throw_unless(
-            hash_equals($user->subsonic_api_key ?? '', $credentials->decodedPassword()),
+            hash_equals($user->subsonic_api_key ?? '', $credentials->password),
             InvalidCredentialsException::class,
         );
 
