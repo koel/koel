@@ -76,7 +76,7 @@
       <Separator />
       <li
         tabindex="-1"
-        class="px-4 py-2 focus:outline-hidden focus:bg-k-highlight focus:text-k-highlight-fg hover:bg-k-highlight hover:text-k-highlight-fg"
+        class="px-4 py-2 focus:outline-hidden"
         @mouseover="($event.currentTarget as HTMLLIElement).focus()"
       >
         <StarRating :rating="playables[0].rating" @rate="rate(playables[0] as Song, $event)" />
