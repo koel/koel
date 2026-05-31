@@ -36,7 +36,7 @@ abstract class SubsonicTestCase extends TestCase
         $response->assertOk()->assertJsonPath('subsonic-response.status', 'ok');
     }
 
-    protected static function assertSubsonicErrorCode(TestResponse $response, int $code): void
+    protected static function assertErrorCode(TestResponse $response, int $code): void
     {
         $response
             ->assertOk()

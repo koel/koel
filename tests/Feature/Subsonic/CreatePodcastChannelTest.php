@@ -35,7 +35,7 @@ class CreatePodcastChannelTest extends SubsonicTestCase
     {
         $user = create_user();
 
-        self::assertSubsonicErrorCode($this->getSubsonic('createPodcastChannel.view', $user, [
+        self::assertErrorCode($this->getSubsonic('createPodcastChannel.view', $user, [
             'url' => 'not-a-real-url',
         ]), 10);
     }
@@ -45,6 +45,6 @@ class CreatePodcastChannelTest extends SubsonicTestCase
     {
         $user = create_user();
 
-        self::assertSubsonicErrorCode($this->getSubsonic('createPodcastChannel.view', $user), 10);
+        self::assertErrorCode($this->getSubsonic('createPodcastChannel.view', $user), 10);
     }
 }

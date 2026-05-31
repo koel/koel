@@ -33,7 +33,7 @@ class DeletePodcastChannelTest extends SubsonicTestCase
     {
         $user = create_user();
 
-        self::assertSubsonicErrorCode($this->getSubsonic('deletePodcastChannel.view', $user, [
+        self::assertErrorCode($this->getSubsonic('deletePodcastChannel.view', $user, [
             'id' => 'nonexistent-id',
         ]), 70);
     }
@@ -46,7 +46,7 @@ class DeletePodcastChannelTest extends SubsonicTestCase
         $podcast = Podcast::factory()->createOne();
         $podcast->subscribers()->attach($otherUser);
 
-        self::assertSubsonicErrorCode($this->getSubsonic('deletePodcastChannel.view', $requestingUser, [
+        self::assertErrorCode($this->getSubsonic('deletePodcastChannel.view', $requestingUser, [
             'id' => $podcast->id,
         ]), 70);
 
