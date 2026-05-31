@@ -63,8 +63,7 @@
       <span v-if="shouldShowColumn('duration')" class="time text-[0.9rem] text-k-fg-50 tabular-nums">
         {{ fmtLength }}
       </span>
-      <span class="extra inline-flex items-center gap-3">
-        <StarRating v-if="isSong(playable)" :rating="playable.rating" @rate="rate" />
+      <span class="extra">
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
       </span>
     </article>
@@ -88,7 +87,6 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import OfflineMark from '@/components/ui/OfflineMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
-import StarRating from '@/components/ui/StarRating.vue'
 
 const props = withDefaults(defineProps<{ item: PlayableRow; showDisc?: boolean }>(), {
   showDisc: false,
@@ -120,7 +118,6 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (playable.val
 const play = () => emit('play', playable.value)
 
 const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
-const rate = (rating: number) => playableStore.rate(playable.value as Song, rating)
 </script>
 
 <style lang="postcss" scoped>
