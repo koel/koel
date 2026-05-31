@@ -17,13 +17,12 @@ abstract class SubsonicTestCase extends TestCase
      */
     protected static function urlFor(string $endpoint, User $user, array $extra = []): string
     {
-        return '/rest/'
-        . $endpoint
-        . '?'
-        . Arr::query(array_merge([
+        $query = Arr::query(array_merge([
             'apiKey' => $user->subsonic_api_key,
             'f' => 'json',
         ], $extra));
+
+        return "/rest/$endpoint?$query";
     }
 
     /** @param array<string, mixed> $extra */
