@@ -25,9 +25,8 @@ class GetPlayQueueTest extends SubsonicTestCase
             'changed_by' => 'Feishin',
         ]);
 
-        $response = $this->getSubsonic('getPlayQueue.view', $user);
+        $response = $this->subsonic->assertOk($this->subsonic->get('getPlayQueue.view', $user));
 
-        self::assertSubsonicOk($response);
         $response->assertJsonStructure([
             'subsonic-response' => [
                 'playQueue' => PlayQueueResource::JSON_STRUCTURE,
@@ -46,10 +45,9 @@ class GetPlayQueueTest extends SubsonicTestCase
     {
         $user = create_user();
 
-        $response = $this->getSubsonic('getPlayQueue.view', $user);
-
-        self::assertSubsonicOk($response);
-        $response->assertJsonMissingPath('subsonic-response.playQueue');
+        $this->subsonic
+            ->assertOk($this->subsonic->get('getPlayQueue.view', $user))
+            ->assertJsonMissingPath('subsonic-response.playQueue');
     }
 
     #[Test]
@@ -65,6 +63,9 @@ class GetPlayQueueTest extends SubsonicTestCase
             'playback_position' => 0,
         ]);
 
-        $this->getSubsonic('getPlayQueue.view', $user)->assertJsonPath('subsonic-response.playQueue.changedBy', 'koel');
+        $this->subsonic->get('getPlayQueue.view', $user)->assertJsonPath(
+            'subsonic-response.playQueue.changedBy',
+            'koel',
+        );
     }
 }

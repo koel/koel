@@ -28,7 +28,7 @@ class RefreshPodcastsTest extends SubsonicTestCase
             ->with(Mockery::on(static fn (Podcast $p) => $p->is($podcastA) || $p->is($podcastB)))
             ->andReturnUsing(static fn (Podcast $p) => $p);
 
-        self::assertSubsonicOk($this->getSubsonic('refreshPodcasts.view', $user));
+        $this->subsonic->assertOk($this->subsonic->get('refreshPodcasts.view', $user));
     }
 
     #[Test]
@@ -51,6 +51,6 @@ class RefreshPodcastsTest extends SubsonicTestCase
                 return $p;
             });
 
-        self::assertSubsonicOk($this->getSubsonic('refreshPodcasts.view', $user));
+        $this->subsonic->assertOk($this->subsonic->get('refreshPodcasts.view', $user));
     }
 }

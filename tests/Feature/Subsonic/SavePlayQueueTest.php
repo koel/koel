@@ -16,7 +16,7 @@ class SavePlayQueueTest extends SubsonicTestCase
         $user = create_user();
         $songs = Song::factory()->count(3)->create();
 
-        self::assertSubsonicOk($this->getSubsonic('savePlayQueue.view', $user, [
+        $this->subsonic->assertOk($this->subsonic->get('savePlayQueue.view', $user, [
             'id' => $songs->pluck('id')->all(),
             'current' => $songs[1]->id,
             'position' => 12_345, // ms
@@ -40,7 +40,7 @@ class SavePlayQueueTest extends SubsonicTestCase
             'playback_position' => 30,
         ]);
 
-        self::assertSubsonicOk($this->getSubsonic('savePlayQueue.view', $user));
+        $this->subsonic->assertOk($this->subsonic->get('savePlayQueue.view', $user));
 
         $state = QueueState::query()->where('user_id', $user->id)->firstOrFail();
         self::assertSame([], $state->song_ids);

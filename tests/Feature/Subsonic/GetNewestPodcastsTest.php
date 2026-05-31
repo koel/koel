@@ -36,8 +36,8 @@ class GetNewestPodcastsTest extends SubsonicTestCase
                 'title' => 'Newer episode',
             ]);
 
-        $response = $this->getSubsonic('getNewestPodcasts.view', $user);
-        self::assertSubsonicOk($response);
+        $response = $this->subsonic->get('getNewestPodcasts.view', $user);
+        $this->subsonic->assertOk($response);
         $response->assertJsonStructure([
             'subsonic-response' => [
                 'newestPodcasts' => [
@@ -60,8 +60,8 @@ class GetNewestPodcastsTest extends SubsonicTestCase
         $otherUsersPodcast->subscribers()->attach($otherUser);
         Song::factory()->asEpisode()->createOne(['podcast_id' => $otherUsersPodcast->id]);
 
-        $response = $this->getSubsonic('getNewestPodcasts.view', $user);
-        self::assertSubsonicOk($response);
+        $response = $this->subsonic->get('getNewestPodcasts.view', $user);
+        $this->subsonic->assertOk($response);
 
         self::assertEmpty($response->json('subsonic-response.newestPodcasts.episode'));
     }
@@ -75,7 +75,7 @@ class GetNewestPodcastsTest extends SubsonicTestCase
 
         Song::factory()->asEpisode()->count(5)->create(['podcast_id' => $podcast->id]);
 
-        $episodes = $this->getSubsonic('getNewestPodcasts.view', $user, [
+        $episodes = $this->subsonic->get('getNewestPodcasts.view', $user, [
             'count' => 2,
         ])->json('subsonic-response.newestPodcasts.episode');
 

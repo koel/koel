@@ -22,7 +22,7 @@ class DeletePodcastChannelTest extends SubsonicTestCase
 
         self::assertTrue($user->subscribedToPodcast($podcast));
 
-        self::assertSubsonicOk($this->getSubsonic('deletePodcastChannel.view', $user, ['id' => $podcast->id]));
+        $this->subsonic->assertOk($this->subsonic->get('deletePodcastChannel.view', $user, ['id' => $podcast->id]));
 
         self::assertFalse($user->fresh()->subscribedToPodcast($podcast));
         Event::assertDispatched(UserUnsubscribedFromPodcast::class);
@@ -33,7 +33,7 @@ class DeletePodcastChannelTest extends SubsonicTestCase
     {
         $user = create_user();
 
-        self::assertErrorCode($this->getSubsonic('deletePodcastChannel.view', $user, [
+        $this->subsonic->assertErrorCode($this->subsonic->get('deletePodcastChannel.view', $user, [
             'id' => 'nonexistent-id',
         ]), 70);
     }
@@ -46,7 +46,7 @@ class DeletePodcastChannelTest extends SubsonicTestCase
         $podcast = Podcast::factory()->createOne();
         $podcast->subscribers()->attach($otherUser);
 
-        self::assertErrorCode($this->getSubsonic('deletePodcastChannel.view', $requestingUser, [
+        $this->subsonic->assertErrorCode($this->subsonic->get('deletePodcastChannel.view', $requestingUser, [
             'id' => $podcast->id,
         ]), 70);
 
