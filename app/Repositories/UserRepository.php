@@ -42,9 +42,9 @@ class UserRepository extends Repository
         return User::query()->firstWhere('email', $email);
     }
 
-    public function findOneBySubsonicApiKey(#[SensitiveParameter] string $apiKey): ?User
+    public function findOneBySubsonicApiKeyHash(#[SensitiveParameter] string $hash): ?User
     {
-        return User::query()->firstWhere('subsonic_api_key', $apiKey);
+        return User::query()->firstWhere('subsonic_api_key_hash', $hash);
     }
 
     public function findOneBySso(SsoUser $ssoUser): ?User

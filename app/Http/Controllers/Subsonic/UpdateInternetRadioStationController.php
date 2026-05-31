@@ -34,6 +34,6 @@ class UpdateInternetRadioStationController extends Controller
             homepageUrl: $request->homepageUrl ?? $station->homepage_url,
         ));
 
-        return SubsonicResponse::ok([]);
+        return SubsonicResponse::ok();
     }
 }

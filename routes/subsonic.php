@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Subsonic\CreateInternetRadioStationController;
 use App\Http\Controllers\Subsonic\CreatePlaylistController;
+use App\Http\Controllers\Subsonic\CreatePodcastChannelController;
 use App\Http\Controllers\Subsonic\DeleteInternetRadioStationController;
 use App\Http\Controllers\Subsonic\DeletePlaylistController;
+use App\Http\Controllers\Subsonic\DeletePodcastChannelController;
 use App\Http\Controllers\Subsonic\DownloadController;
 use App\Http\Controllers\Subsonic\GetAlbumController;
 use App\Http\Controllers\Subsonic\GetAlbumInfo2Controller;
@@ -24,10 +26,13 @@ use App\Http\Controllers\Subsonic\GetLyricsBySongIdController;
 use App\Http\Controllers\Subsonic\GetLyricsController;
 use App\Http\Controllers\Subsonic\GetMusicDirectoryController;
 use App\Http\Controllers\Subsonic\GetMusicFoldersController;
+use App\Http\Controllers\Subsonic\GetNewestPodcastsController;
 use App\Http\Controllers\Subsonic\GetNowPlayingController;
 use App\Http\Controllers\Subsonic\GetOpenSubsonicExtensionsController;
 use App\Http\Controllers\Subsonic\GetPlaylistController;
 use App\Http\Controllers\Subsonic\GetPlaylistsController;
+use App\Http\Controllers\Subsonic\GetPlayQueueController;
+use App\Http\Controllers\Subsonic\GetPodcastsController;
 use App\Http\Controllers\Subsonic\GetRandomSongsController;
 use App\Http\Controllers\Subsonic\GetSongController;
 use App\Http\Controllers\Subsonic\GetSongsByGenreController;
@@ -35,6 +40,8 @@ use App\Http\Controllers\Subsonic\GetStarred2Controller;
 use App\Http\Controllers\Subsonic\GetStarredController;
 use App\Http\Controllers\Subsonic\GetUserController;
 use App\Http\Controllers\Subsonic\PingController;
+use App\Http\Controllers\Subsonic\RefreshPodcastsController;
+use App\Http\Controllers\Subsonic\SavePlayQueueController;
 use App\Http\Controllers\Subsonic\ScrobbleController;
 use App\Http\Controllers\Subsonic\Search2Controller;
 use App\Http\Controllers\Subsonic\Search3Controller;
@@ -44,12 +51,12 @@ use App\Http\Controllers\Subsonic\StreamController;
 use App\Http\Controllers\Subsonic\UnstarController;
 use App\Http\Controllers\Subsonic\UpdateInternetRadioStationController;
 use App\Http\Controllers\Subsonic\UpdatePlaylistController;
+use App\Http\Middleware\AuthenticateSubsonicRequests;
 use App\Http\Middleware\NormalizeSubsonicArrayParams;
-use App\Http\Middleware\SubsonicAuth;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('rest')
-    ->middleware([NormalizeSubsonicArrayParams::class, SubsonicAuth::class])
+    ->middleware([NormalizeSubsonicArrayParams::class, AuthenticateSubsonicRequests::class])
     ->group(static function (): void {
         Route::match(['get', 'post'], 'ping.view', PingController::class);
         Route::match(['get', 'post'], 'getLicense.view', GetLicenseController::class);
@@ -95,4 +102,11 @@ Route::prefix('rest')
         Route::match(['get', 'post'], 'getArtistInfo2.view', GetArtistInfo2Controller::class);
         Route::match(['get', 'post'], 'getAlbumInfo.view', GetAlbumInfoController::class);
         Route::match(['get', 'post'], 'getAlbumInfo2.view', GetAlbumInfo2Controller::class);
+        Route::match(['get', 'post'], 'getPodcasts.view', GetPodcastsController::class);
+        Route::match(['get', 'post'], 'getNewestPodcasts.view', GetNewestPodcastsController::class);
+        Route::match(['get', 'post'], 'refreshPodcasts.view', RefreshPodcastsController::class);
+        Route::match(['get', 'post'], 'createPodcastChannel.view', CreatePodcastChannelController::class);
+        Route::match(['get', 'post'], 'deletePodcastChannel.view', DeletePodcastChannelController::class);
+        Route::match(['get', 'post'], 'getPlayQueue.view', GetPlayQueueController::class);
+        Route::match(['get', 'post'], 'savePlayQueue.view', SavePlayQueueController::class);
     });
