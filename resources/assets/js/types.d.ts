@@ -168,6 +168,7 @@ interface BasePlayable extends IStreamable {
   readonly length: number
   play_count_registered?: boolean
   play_count: number
+  rating: number // 0-5, current user's rating; 0 = unrated
   play_start_time?: number
   preloaded?: boolean
   playback_state?: PlaybackState
