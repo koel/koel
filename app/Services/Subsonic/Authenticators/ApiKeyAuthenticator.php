@@ -25,6 +25,7 @@ final class ApiKeyAuthenticator implements Authenticator
         }
 
         $user = $this->userRepository->findOneBySubsonicApiKeyHash($this->hash($credentials->apiKey));
+
         throw_unless($user, InvalidCredentialsException::class);
 
         return $user;

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\Subsonic\Authenticators\ApiKeyAuthenticator;
 use App\Services\Subsonic\Authenticators\PasswordAuthenticator;
 use App\Services\Subsonic\Authenticators\TokenAuthenticator;
+use App\Services\Subsonic\Contracts\Authenticator;
 use App\Values\Subsonic\SubsonicCredentials;
 use SensitiveParameter;
 
@@ -21,11 +22,14 @@ class AuthenticationService
 
     public function authenticate(SubsonicCredentials $credentials): User
     {
-        foreach ([
+        /** @var array<Authenticator> $authenticators */
+        $authenticators = [
             $this->apiKeyAuthenticator,
             $this->tokenAuthenticator,
             $this->passwordAuthenticator,
-        ] as $authenticator) {
+        ];
+
+        foreach ($authenticators as $authenticator) {
             $user = $authenticator->attempt($credentials);
 
             if ($user) {

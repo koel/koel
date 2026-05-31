@@ -25,6 +25,7 @@ final class TokenAuthenticator implements Authenticator
         throw_unless($credentials->salt, RequiredParameterMissingException::class);
 
         $user = $this->userRepository->findOneByEmail($credentials->username);
+
         throw_unless(
             hash_equals(md5(($user->subsonic_api_key ?? '') . $credentials->salt), Str::lower($credentials->token)),
             InvalidCredentialsException::class,
