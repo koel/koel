@@ -73,7 +73,9 @@ class GetNewestPodcastsTest extends SubsonicTestCase
         $podcast = Podcast::factory()->createOne();
         $podcast->subscribers()->attach($user);
 
-        Song::factory()->asEpisode()->count(5)->create(['podcast_id' => $podcast->id]);
+        Song::factory()
+            ->asEpisode()
+            ->createMany(array_fill(0, 5, ['podcast_id' => $podcast->id]));
 
         $episodes = $this->getSubsonic('getNewestPodcasts.view', $user, [
             'count' => 2,
