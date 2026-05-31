@@ -35,6 +35,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property ?User $invitedBy
  * @property ?string $invitation_token
  * @property ?string $subsonic_api_key
+ * @property ?string $subsonic_api_key_hash
  * @property Collection<array-key, Playlist> $collaboratedPlaylists
  * @property Collection<array-key, Playlist> $playlists
  * @property Collection<array-key, PlaylistFolder> $playlistFolders
@@ -62,8 +63,16 @@ use Spatie\Permission\Traits\HasRoles;
  */
 #[ObservedBy(UserObserver::class)]
 #[UseEloquentBuilder(UserBuilder::class)]
-#[Guarded(['id', 'public_id', 'subsonic_api_key'])]
-#[Hidden(['password', 'remember_token', 'subsonic_api_key', 'created_at', 'updated_at', 'invitation_accepted_at'])]
+#[Guarded(['id', 'public_id', 'subsonic_api_key', 'subsonic_api_key_hash'])]
+#[Hidden([
+    'password',
+    'remember_token',
+    'subsonic_api_key',
+    'subsonic_api_key_hash',
+    'created_at',
+    'updated_at',
+    'invitation_accepted_at',
+])]
 #[Appends(['avatar'])]
 class User extends Authenticatable implements AuditableContract
 {
@@ -91,7 +100,19 @@ class User extends Authenticatable implements AuditableContract
     {
         return [
             'preferences' => UserPreferencesCast::class,
+            'subsonic_api_key' => 'encrypted',
         ];
+    }
+
+    public function setSubsonicApiKey(string $key): void
+    {
+        $this->subsonic_api_key = $key;
+        $this->subsonic_api_key_hash = self::hashSubsonicApiKey($key);
+    }
+
+    public static function hashSubsonicApiKey(string $key): string
+    {
+        return hash_hmac('sha256', $key, config('app.key'));
     }
 
     // @mago-ignore lint:no-redundant-method-override

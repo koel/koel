@@ -13,7 +13,8 @@ class RegenerateSubsonicApiKeyController extends Controller
     /** @param User $user */
     public function __invoke(Authenticatable $user)
     {
-        $user->forceFill(['subsonic_api_key' => Uuid::generate()])->saveQuietly();
+        $user->setSubsonicApiKey(Uuid::generate());
+        $user->saveQuietly();
 
         return UserResource::make($user->refresh());
     }

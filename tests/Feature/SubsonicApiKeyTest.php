@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -42,5 +44,17 @@ class SubsonicApiKeyTest extends TestCase
         self::assertNotSame($oldKey, $newKey);
         self::assertNotEmpty($newKey);
         self::assertSame($newKey, $user->refresh()->subsonic_api_key);
+    }
+
+    #[Test]
+    public function keyIsStoredEncryptedWithHashForLookup(): void
+    {
+        $user = create_user();
+        $plaintext = $user->subsonic_api_key;
+
+        $row = DB::table('users')->where('id', $user->id)->first();
+
+        self::assertNotSame($plaintext, $row->subsonic_api_key);
+        self::assertSame(User::hashSubsonicApiKey($plaintext), $row->subsonic_api_key_hash);
     }
 }
