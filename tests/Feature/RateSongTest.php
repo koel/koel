@@ -62,12 +62,7 @@ class RateSongTest extends TestCase
         $bob = create_user();
         $song = Song::factory()->createOne();
 
-        Rating::factory()->createOne([
-            'user_id' => $bob->id,
-            'rateable_id' => $song->id,
-            'rateable_type' => $song->getMorphClass(),
-            'rating' => 1,
-        ]);
+        Rating::factory()->for($bob)->for($song, 'rateable')->createOne(['rating' => 1]);
 
         $this->putAs("api/songs/$song->id/rating", ['rating' => 5], $alice)->assertOk()->assertJsonPath('rating', 5);
 

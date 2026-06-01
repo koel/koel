@@ -38,26 +38,9 @@ class SongTest extends TestCase
         $high = Song::factory()->createOne(['title' => 'High']);
         $unrated = Song::factory()->createOne(['title' => 'Unrated']);
 
-        Rating::factory()->createOne([
-            'user_id' => $user->id,
-            'rateable_id' => $low->id,
-            'rateable_type' => $low->getMorphClass(),
-            'rating' => 2,
-        ]);
-
-        Rating::factory()->createOne([
-            'user_id' => $user->id,
-            'rateable_id' => $high->id,
-            'rateable_type' => $high->getMorphClass(),
-            'rating' => 5,
-        ]);
-
-        Rating::factory()->createOne([
-            'user_id' => $other->id,
-            'rateable_id' => $unrated->id,
-            'rateable_type' => $unrated->getMorphClass(),
-            'rating' => 5,
-        ]);
+        Rating::factory()->for($user)->for($low, 'rateable')->createOne(['rating' => 2]);
+        Rating::factory()->for($user)->for($high, 'rateable')->createOne(['rating' => 5]);
+        Rating::factory()->for($other)->for($unrated, 'rateable')->createOne(['rating' => 5]);
 
         $descIds = $this->getAs('api/songs?sort=rating&order=desc', $user)->json('data.*.id');
 
