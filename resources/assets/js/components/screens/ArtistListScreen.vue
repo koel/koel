@@ -13,8 +13,8 @@
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
-                :icon="preferences.artists_favorites_only ? faStar : faEmptyStar"
-                :class="preferences.artists_favorites_only && 'text-k-highlight'"
+                :icon="preferences.artists_favorites_only ? faHeart : faEmptyHeart"
+                :class="preferences.artists_favorites_only && 'text-k-love'"
               />
             </Btn>
 
@@ -76,8 +76,8 @@
 </template>
 
 <script lang="ts" setup>
-import { faMicrophoneSlash, faStar } from '@fortawesome/free-solid-svg-icons'
-import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
+import { faMicrophoneSlash, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, nextTick, onMounted, ref, toRef } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'

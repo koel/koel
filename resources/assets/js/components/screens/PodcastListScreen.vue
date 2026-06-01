@@ -14,8 +14,8 @@
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
-                :icon="preferences.podcasts_favorites_only ? faStar : faEmptyStar"
-                :class="preferences.podcasts_favorites_only && 'text-k-highlight'"
+                :icon="preferences.podcasts_favorites_only ? faHeart : faEmptyHeart"
+                :class="preferences.podcasts_favorites_only && 'text-k-love'"
                 size="sm"
               />
             </Btn>
@@ -60,8 +60,8 @@
 </template>
 
 <script setup lang="ts">
-import { faAdd, faPodcast, faStar } from '@fortawesome/free-solid-svg-icons'
-import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
+import { faAdd, faPodcast, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { orderBy } from 'lodash-es'
 import { computed, onMounted, provide, ref } from 'vue'
 import { podcastStore } from '@/stores/podcastStore'

@@ -81,7 +81,6 @@
       >
         <StarRating :rating="playables[0].rating" @rate="rate(playables[0] as Song, $event)" />
       </li>
-      <Separator />
     </template>
 
     <template v-if="isQueueScreen">

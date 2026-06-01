@@ -15,8 +15,8 @@
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
-                :icon="preferences.radio_stations_favorites_only ? faStar : faEmptyStar"
-                :class="preferences.radio_stations_favorites_only && 'text-k-highlight'"
+                :icon="preferences.radio_stations_favorites_only ? faHeart : faEmptyHeart"
+                :class="preferences.radio_stations_favorites_only && 'text-k-love'"
                 size="sm"
               />
             </Btn>
@@ -73,9 +73,9 @@
 </template>
 
 <script setup lang="ts">
-import { faAdd, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faAdd, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { RadioIcon } from 'lucide-vue-next'
-import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
+import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 
 import { computed, onMounted, provide, ref } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
