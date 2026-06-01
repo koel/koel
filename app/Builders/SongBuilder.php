@@ -31,6 +31,7 @@ class SongBuilder extends FavoriteableBuilder
         'podcast_title' => 'podcasts.title',
         'podcast_author' => 'podcasts.author',
         'genre' => 'genres.name',
+        'rating' => 'user_ratings.rating',
     ];
 
     private const array VALID_SORT_COLUMNS = [
@@ -44,6 +45,7 @@ class SongBuilder extends FavoriteableBuilder
         'podcasts.title',
         'podcasts.author',
         'genres.name',
+        'user_ratings.rating',
     ];
 
     public function inDirectory(string $path): self
@@ -125,6 +127,10 @@ class SongBuilder extends FavoriteableBuilder
         Assert::oneOf($column, self::VALID_SORT_COLUMNS);
         Assert::oneOf(strtolower($direction), ['asc', 'desc']);
 
+        if ($column === 'user_ratings.rating') {
+            return $this->orderBy(DB::raw('COALESCE(user_ratings.rating, 0)'), $direction)->orderBy('songs.title');
+        }
+
         return $this
             ->orderBy($column, $direction)
             // Depending on the column, we might need to order by other columns as well.
@@ -145,14 +151,26 @@ class SongBuilder extends FavoriteableBuilder
 
     public function sort(array $columns, string $direction): self
     {
-        $this->when(
-            in_array('podcast_title', $columns, true) || in_array('podcast_author', $columns, true),
-            static fn (self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id'),
-        )->when(in_array('genre', $columns, true), static fn (self $query) => $query->leftJoin(
-            'genre_song',
-            'songs.id',
-            'genre_song.song_id',
-        )->leftJoin('genres', 'genre_song.genre_id', 'genres.id'));
+        $this
+            ->when(
+                in_array('podcast_title', $columns, true) || in_array('podcast_author', $columns, true),
+                static fn (self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id'),
+            )
+            ->when(in_array('genre', $columns, true), static fn (self $query) => $query->leftJoin(
+                'genre_song',
+                'songs.id',
+                'genre_song.song_id',
+            )->leftJoin('genres', 'genre_song.genre_id', 'genres.id'))
+            ->when(in_array('rating', $columns, true), function (self $query): void {
+                throw_unless($this->user, new LogicException('User must be set to sort by rating.'));
+
+                $query->leftJoin('ratings as user_ratings', function (JoinClause $join): void {
+                    $join->on('user_ratings.rateable_id', 'songs.id')->where(
+                        'user_ratings.rateable_type',
+                        'playable',
+                    )->where('user_ratings.user_id', $this->user->id);
+                });
+            });
 
         foreach ($columns as $column) {
             $this->sortByOneColumn($column, $direction);

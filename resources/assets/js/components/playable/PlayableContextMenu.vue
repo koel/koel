@@ -72,6 +72,18 @@
       </template>
     </MenuItem>
 
+    <template v-if="onlyOneSelected && isSong(playables[0])">
+      <Separator />
+      <li
+        tabindex="-1"
+        class="px-4 py-2 focus:outline-hidden"
+        @mouseover="($event.currentTarget as HTMLLIElement).focus()"
+      >
+        <StarRating :rating="playables[0].rating" @rate="rate(playables[0] as Song, $event)" />
+      </li>
+      <Separator />
+    </template>
+
     <template v-if="isQueueScreen">
       <Separator />
       <MenuItem @click="removeFromQueue">Remove from Queue</MenuItem>
@@ -158,6 +170,8 @@ import { useModal } from '@/composables/useModal'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { playback } from '@/services/playbackManager'
+
+import StarRating from '@/components/ui/StarRating.vue'
 
 const props = defineProps<{ playables: Playable[] }>()
 const { playables } = toRefs(props)
@@ -356,6 +370,8 @@ const copyUrl = () =>
 
 const showEmbedModal = () =>
   trigger(() => openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, { embeddable: playables.value[0] }))
+
+const rate = (song: Song, rating: number) => trigger(() => playableStore.rate(song, rating))
 
 const deleteFromFilesystem = () =>
   trigger(async () => {

@@ -357,6 +357,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Model Factories
 - Use `createOne()` to create a single model and `createMany()` to create a collection. Never use `create()` directly, as its return type is ambiguous (single model or collection depending on arguments).
+- Wire parent relationships with `->for($parent)` instead of passing foreign keys in the attributes array. For polymorphic relations, pass the relation name as the second argument: `->for($song, 'rateable')` (sets both `*_id` and `*_type`). Prefer `Rating::factory()->for($user)->for($song, 'rateable')->createOne(['rating' => 5])` over the equivalent `createOne(['user_id' => $user->id, 'rateable_id' => $song->id, 'rateable_type' => $song->getMorphClass(), 'rating' => 5])`.
 
 ## Frontend Testing
 - Prefer semantic queries (`getByRole`, `getByLabelText`, `getByText`) via `screen` from `@testing-library/vue`. Use `data-testid` only as a last resort when no semantic query is available.

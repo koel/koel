@@ -402,6 +402,19 @@ export const playableStore = {
       : differenceBy(this.state.favorites, arrayify(playable), 'id')
   },
 
+  async rate(song: Reactive<Song>, rating: number) {
+    const previous = song.rating
+    song.rating = rating
+
+    try {
+      const updated = await http.put<Song>(`songs/${song.id}/rating`, { rating })
+      song.rating = updated.rating
+    } catch (e) {
+      song.rating = previous
+      throw e
+    }
+  },
+
   async favorite(playables: MaybeArray<Playable>) {
     playables = arrayify(playables)
     playables.forEach(playable => (playable.favorite = true))

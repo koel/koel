@@ -121,6 +121,20 @@
       </template>
     </span>
     <span
+      v-if="shouldShowColumn('rating')"
+      class="rating"
+      data-testid="header-rating"
+      role="button"
+      title="Sort by rating"
+      @click="sort('rating')"
+    >
+      Rating
+      <template v-if="config.sortable">
+        <Icon v-if="sortField === 'rating' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+        <Icon v-if="sortField === 'rating' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
+      </template>
+    </span>
+    <span
       v-if="shouldShowColumn('duration')"
       class="time"
       data-testid="header-length"

@@ -60,6 +60,9 @@
         <span v-if="shouldShowColumn('genre')" class="genre">{{ playable.genre || '—' }}</span>
         <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
       </template>
+      <span v-if="shouldShowColumn('rating')" class="rating">
+        <StarRating v-if="isSong(playable)" :rating="playable.rating" size="xs" @rate="rate($event)" />
+      </span>
       <span v-if="shouldShowColumn('duration')" class="time text-[0.9rem] text-k-fg-50 tabular-nums">
         {{ fmtLength }}
       </span>
@@ -87,6 +90,7 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import OfflineMark from '@/components/ui/OfflineMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 
 const props = withDefaults(defineProps<{ item: PlayableRow; showDisc?: boolean }>(), {
   showDisc: false,
@@ -118,6 +122,13 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (playable.val
 const play = () => emit('play', playable.value)
 
 const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
+
+const rate = (rating: number) => {
+  const song = playable.value
+  if (isSong(song)) {
+    playableStore.rate(song, rating)
+  }
+}
 </script>
 
 <style lang="postcss" scoped>

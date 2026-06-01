@@ -386,6 +386,10 @@ onMounted(() => render())
       @apply basis-44 text-left;
     }
 
+    &.rating {
+      @apply basis-36 text-left overflow-visible;
+    }
+
     &.extra {
       @apply basis-12 text-center;
     }
@@ -431,8 +435,8 @@ onMounted(() => render())
       width: 200%;
     }
 
-    .song-item :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at),
-    .song-list-header :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at) {
+    .song-item :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at, .rating),
+    .song-list-header :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at, .rating) {
       display: none;
     }
 
