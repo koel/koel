@@ -6,6 +6,18 @@
       </h3>
       <nav class="flex gap-2">
         <button
+          v-if="onRefresh"
+          type="button"
+          class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          :class="{ 'animate-spin': refreshing }"
+          :disabled="refreshing"
+          title="Refresh"
+          @click="refresh"
+        >
+          <Icon :icon="faArrowsRotate" />
+          <span class="sr-only">Refresh</span>
+        </button>
+        <button
           type="button"
           class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
           title="Scroll left"
@@ -35,10 +47,13 @@
 </template>
 
 <script setup lang="ts">
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowsRotate, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 
+const props = defineProps<{ onRefresh?: () => Promise<unknown> | unknown }>()
+
 const scroller = ref<HTMLDivElement>()
+const refreshing = ref(false)
 
 const slide = (direction: 1 | -1) => {
   const el = scroller.value
@@ -48,6 +63,20 @@ const slide = (direction: 1 | -1) => {
   const max = el.scrollWidth - el.clientWidth
   const target = Math.max(0, Math.min(max, el.scrollLeft + direction * el.clientWidth))
   el.scrollTo({ left: target, behavior: 'smooth' })
+}
+
+const refresh = async () => {
+  if (!props.onRefresh || refreshing.value) {
+    return
+  }
+
+  refreshing.value = true
+
+  try {
+    await props.onRefresh()
+  } finally {
+    refreshing.value = false
+  }
 }
 </script>
 

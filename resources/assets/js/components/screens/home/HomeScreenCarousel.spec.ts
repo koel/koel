@@ -53,4 +53,22 @@ describe('homeScreenCarousel.vue', () => {
 
     expect(spy).toHaveBeenCalledWith({ left: 800, behavior: 'smooth' })
   })
+
+  it('omits the refresh button when no onRefresh prop is passed', () => {
+    h.render(Component, { slots: { header: 'Top', default: '<div>Card</div>' } })
+
+    expect(screen.queryByRole('button', { name: 'Refresh' })).toBeNull()
+  })
+
+  it('calls onRefresh when the refresh button is clicked', async () => {
+    const onRefresh = vi.fn().mockResolvedValue(undefined)
+    h.render(Component, {
+      props: { onRefresh },
+      slots: { header: 'Top', default: '<div>Card</div>' },
+    })
+
+    await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
+
+    expect(onRefresh).toHaveBeenCalled()
+  })
 })

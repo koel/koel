@@ -24,6 +24,8 @@ use App\Http\Controllers\API\FetchDemoCreditsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchOverviewController;
+use App\Http\Controllers\API\FetchRandomAlbumsController;
+use App\Http\Controllers\API\FetchRandomArtistsController;
 use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
 use App\Http\Controllers\API\FetchSongsByIdsController;
 use App\Http\Controllers\API\FetchSongsForQueueController;
@@ -137,9 +139,11 @@ Route::prefix('api')
 
             Route::get('download/check', CheckDownloadableCountController::class);
 
+            Route::get('albums/random', FetchRandomAlbumsController::class);
             Route::apiResource('albums', AlbumController::class);
             Route::apiResource('albums.songs', AlbumSongController::class);
 
+            Route::get('artists/random', FetchRandomArtistsController::class);
             Route::apiResource('artists', ArtistController::class);
             Route::apiResource('artists.albums', ArtistAlbumController::class);
             Route::apiResource('artists.songs', ArtistSongController::class);

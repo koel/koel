@@ -21,6 +21,8 @@
       <TopArtists :loading data-testid="most-played-artists" />
       <NewSongs :loading data-testid="recently-added-songs" />
       <NewArtists :loading data-testid="recently-added-artists" />
+      <RandomAlbums :loading data-testid="random-albums" />
+      <RandomArtists :loading data-testid="random-artists" />
       <LeastPlayedSongs :loading data-testid="least-played-songs" />
       <RandomSongs :loading data-testid="random-songs" />
       <BtnScrollToTop />
@@ -47,6 +49,8 @@ import NewSongs from '@/components/screens/home/NewSongs.vue'
 import TopArtists from '@/components/screens/home/TopArtists.vue'
 import TopAlbums from '@/components/screens/home/TopAlbums.vue'
 import NewArtists from '@/components/screens/home/NewArtists.vue'
+import RandomAlbums from '@/components/screens/home/RandomAlbums.vue'
+import RandomArtists from '@/components/screens/home/RandomArtists.vue'
 import LeastPlayedSongs from '@/components/screens/home/LeastPlayedSongs.vue'
 import RandomSongs from '@/components/screens/home/RandomSongs.vue'
 import SimilarSongs from '@/components/screens/home/SimilarSongs.vue'

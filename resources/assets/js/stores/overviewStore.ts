@@ -11,6 +11,8 @@ export const overviewStore = {
     mostPlayedAlbums: [] as Album[],
     mostPlayedArtists: [] as Artist[],
     mostPlayedSongs: [] as Song[],
+    randomAlbums: [] as Album[],
+    randomArtists: [] as Artist[],
     recentlyAddedAlbums: [] as Album[],
     recentlyAddedArtists: [] as Artist[],
     recentlyAddedSongs: [] as Song[],
@@ -25,6 +27,8 @@ export const overviewStore = {
       most_played_albums: Album[]
       most_played_artists: Artist[]
       most_played_songs: Song[]
+      random_albums: Album[]
+      random_artists: Artist[]
       recently_added_albums: Album[]
       recently_added_artists: Artist[]
       recently_added_songs: Song[]
@@ -38,6 +42,8 @@ export const overviewStore = {
 
     this.state.mostPlayedAlbums = albumStore.syncWithVault(resource.most_played_albums)
     this.state.mostPlayedArtists = artistStore.syncWithVault(resource.most_played_artists)
+    this.state.randomAlbums = albumStore.syncWithVault(resource.random_albums)
+    this.state.randomArtists = artistStore.syncWithVault(resource.random_artists)
     this.state.recentlyAddedAlbums = albumStore.syncWithVault(resource.recently_added_albums)
     this.state.recentlyAddedArtists = artistStore.syncWithVault(resource.recently_added_artists)
     this.state.recentlyAddedSongs = playableStore.syncWithVault(resource.recently_added_songs) as Song[]
@@ -56,6 +62,22 @@ export const overviewStore = {
     this.state.randomSongs = songs
 
     return songs
+  },
+
+  async refreshRandomAlbums() {
+    const albums = albumStore.syncWithVault(await http.get<Album[]>('albums/random'))
+
+    this.state.randomAlbums = albums
+
+    return albums
+  },
+
+  async refreshRandomArtists() {
+    const artists = artistStore.syncWithVault(await http.get<Artist[]>('artists/random'))
+
+    this.state.randomArtists = artists
+
+    return artists
   },
 
   refreshPlayStats() {

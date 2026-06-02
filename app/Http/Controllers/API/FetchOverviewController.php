@@ -27,6 +27,8 @@ class FetchOverviewController extends Controller
                 6,
                 type: PlayableType::SONG,
             )),
+            'random_albums' => AlbumResource::collection($albumRepository->getRandom(15)),
+            'random_artists' => ArtistResource::collection($artistRepository->getRandom(15)),
             'recently_added_albums' => AlbumResource::collection($albumRepository->getRecentlyAdded(15)),
             'recently_added_artists' => ArtistResource::collection($artistRepository->getRecentlyAdded(15)),
             'recently_added_songs' => SongResource::collection($songRepository->getRecentlyAdded(6)),

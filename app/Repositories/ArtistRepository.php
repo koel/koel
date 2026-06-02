@@ -55,6 +55,18 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** @return Collection<int, Artist> */
+    public function getRandom(int $limit, ?User $user = null): Collection
+    {
+        return Artist::query()
+            ->onlyStandard()
+            ->onlyAlbumArtists()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get();
+    }
+
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $artists = Artist::query()

@@ -19,6 +19,8 @@ describe('overviewStore', () => {
         mostPlayedAlbums: [],
         mostPlayedArtists: [],
         leastPlayedSongs: [],
+        randomAlbums: [],
+        randomArtists: [],
         randomSongs: [],
         similarSongs: [],
       }
