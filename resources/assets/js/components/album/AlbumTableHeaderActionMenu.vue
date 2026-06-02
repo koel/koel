@@ -72,7 +72,7 @@ const menuItems = computed<MenuItem[]>(() => [
 
 const sort = (field: AlbumListSortField) => {
   emit('sort', field)
-  popover.value?.hide()
+  button.value?.click()
 }
 </script>
 
