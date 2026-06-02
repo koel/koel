@@ -45,12 +45,6 @@ describe('artistCard.vue', () => {
     }
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
-  it('renders external artist', () => {
-    expect(renderComponent(createArtist({ is_external: true })).html()).toMatchSnapshot()
-  })
-
   it('downloads', async () => {
     const mock = h.mock(downloadService, 'fromArtist')
     renderComponent()

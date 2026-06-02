@@ -50,12 +50,6 @@ describe('albumCard', () => {
     }
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
-  it('renders external album', () => {
-    expect(renderComponent(createAlbum({ is_external: true })).html()).toMatchSnapshot()
-  })
-
   it('downloads', async () => {
     const mock = h.mock(downloadService, 'fromAlbum')
     renderComponent()

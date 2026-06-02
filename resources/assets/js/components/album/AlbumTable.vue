@@ -79,78 +79,26 @@
         <Icon v-if="field === 'favorite' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
       </span>
       <span class="extra">
-        <AlbumTableHeaderActionMenu :field="field" :order="order" @sort="onSort" />
+        <AlbumTableHeaderActionMenu :field :order @sort="onSort" />
       </span>
     </div>
 
     <VirtualScroller :items="albums" :item-height="64" @scrolled-to-end="$emit('scrolled-to-end')">
       <template #default="{ item }: { item: Album }">
-        <article
-          class="album-row group pl-2 flex items-center h-[64px] border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
-          data-testid="album-row"
-          :draggable="true"
-          @contextmenu.prevent="onContextMenu(item, $event)"
-          @dblclick.prevent.stop="goToAlbum(item)"
-          @dragstart="onDragStart(item, $event)"
-        >
-          <span class="name flex gap-3 items-center min-w-0">
-            <span
-              :style="{ backgroundImage: `url(${defaultCover})` }"
-              class="w-[48px] aspect-square rounded-sm bg-cover bg-center flex-none overflow-hidden"
-            >
-              <img
-                v-if="item.cover"
-                :src="item.cover"
-                alt=""
-                class="w-full aspect-square object-cover"
-                loading="lazy"
-              />
-            </span>
-            <a :href="url('albums.show', { id: item.id })" class="truncate">{{ item.name }}</a>
-          </span>
-          <span v-if="shouldShowColumn('artist')" class="artist truncate">
-            <a v-if="artistStore.isStandard(item.artist_id)" :href="url('artists.show', { id: item.artist_id })">
-              {{ item.artist_name }}
-            </a>
-            <template v-else>{{ item.artist_name }}</template>
-          </span>
-          <span v-if="shouldShowColumn('time')" class="time text-k-fg-50 tabular-nums">
-            {{ formatLength(item.length) }}
-          </span>
-          <span v-if="shouldShowColumn('year')" class="year text-k-fg-50 tabular-nums">{{ item.year ?? '—' }}</span>
-          <span v-if="shouldShowColumn('rating')" class="rating">
-            <StarRating :rateable="item" size="xs" />
-          </span>
-          <span v-if="shouldShowColumn('favorite')" class="favorite">
-            <FavoriteButton :favorite="item.favorite" @toggle="emit('toggle-favorite', item)" />
-          </span>
-          <span class="extra">
-            <button class="text-k-fg-50 hover:text-k-fg p-1" title="More actions" @click="onContextMenu(item, $event)">
-              <Icon :icon="faEllipsis" />
-            </button>
-          </span>
-        </article>
+        <AlbumRow :album="item" @toggle-favorite="emit('toggle-favorite', $event)" />
       </template>
     </VirtualScroller>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { faCaretDown, faCaretUp, faEllipsis, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
-import { artistStore } from '@/stores/artistStore'
-import { useDraggable } from '@/composables/useDragAndDrop'
-import { useRouter } from '@/composables/useRouter'
-import { useContextMenu } from '@/composables/useContextMenu'
-import { useBranding } from '@/composables/useBranding'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { albumTableColumnConfig } from '@/config/tables'
-import { secondsToHis } from '@/utils/formatters'
-import { defineAsyncComponent } from '@/utils/helpers'
 
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
-import StarRating from '@/components/ui/StarRating.vue'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import AlbumRow from '@/components/album/AlbumRow.vue'
 import AlbumTableHeaderActionMenu from '@/components/album/AlbumTableHeaderActionMenu.vue'
 
 const props = defineProps<{
@@ -165,34 +113,19 @@ const emit = defineEmits<{
   (e: 'scrolled-to-end'): void
 }>()
 
-const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
-
-const { go, url } = useRouter()
-const { openContextMenu } = useContextMenu()
-const { startDragging } = useDraggable('album')
-const { cover: defaultCover } = useBranding()
 const { shouldShowColumn } = useTableColumnVisibility(albumTableColumnConfig)
 const { field, order } = toRefs(props)
-
-const formatLength = (seconds: number) => (seconds > 0 ? secondsToHis(seconds) : '—')
 
 const onSort = (clicked: AlbumListSortField) => {
   const nextOrder: SortOrder = field.value === clicked && order.value === 'asc' ? 'desc' : 'asc'
   emit('sort', clicked, nextOrder)
 }
-
-const onContextMenu = (album: Album, event: MouseEvent) => openContextMenu<'ALBUM'>(AlbumContextMenu, event, { album })
-
-const goToAlbum = (album: Album) => go(url('albums.show', { id: album.id }))
-
-const onDragStart = (album: Album, event: DragEvent) => startDragging(event, album)
 </script>
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 .album-table-wrap {
-  .album-table-header > span,
-  .album-row > span {
+  .album-table-header > span {
     @apply text-left p-2 align-middle truncate;
 
     &.name {

@@ -6,14 +6,14 @@ import Component from './ViewModeSwitch.vue'
 describe('viewModeSwitch.vue', () => {
   const h = createHarness()
 
-  it.each<[ViewMode]>([['grid'], ['list']])('renders %s mode', mode => {
-    const { html } = h.render(Component, {
-      props: {
-        modelValue: mode,
-      },
-    })
+  it.each<[ViewMode, string, string]>([
+    ['grid', 'view-mode-grid', 'view-mode-list'],
+    ['list', 'view-mode-list', 'view-mode-grid'],
+  ])('marks the %s label active', (mode, activeTestId, inactiveTestId) => {
+    h.render(Component, { props: { modelValue: mode } })
 
-    expect(html()).toMatchSnapshot()
+    expect(screen.getByTestId(activeTestId).classList.contains('active')).toBe(true)
+    expect(screen.getByTestId(inactiveTestId).classList.contains('active')).toBe(false)
   })
 
   it('emits the correct event', async () => {

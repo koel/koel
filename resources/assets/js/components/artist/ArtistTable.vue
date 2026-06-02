@@ -40,66 +40,26 @@
         <Icon v-if="field === 'favorite' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
       </span>
       <span class="extra">
-        <ArtistTableHeaderActionMenu :field="field" :order="order" @sort="onSort" />
+        <ArtistTableHeaderActionMenu :field :order @sort="onSort" />
       </span>
     </div>
 
     <VirtualScroller :items="artists" :item-height="64" @scrolled-to-end="$emit('scrolled-to-end')">
       <template #default="{ item }: { item: Artist }">
-        <article
-          class="artist-row group pl-2 flex items-center h-[64px] border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
-          data-testid="artist-row"
-          :draggable="true"
-          @contextmenu.prevent="onContextMenu(item, $event)"
-          @dblclick.prevent.stop="goToArtist(item)"
-          @dragstart="onDragStart(item, $event)"
-        >
-          <span class="name flex gap-3 items-center min-w-0">
-            <span
-              :style="{ backgroundImage: `url(${defaultCover})` }"
-              class="w-[48px] aspect-square rounded-full bg-cover bg-center flex-none overflow-hidden"
-            >
-              <img
-                v-if="item.image"
-                :src="item.image"
-                alt=""
-                class="w-full aspect-square object-cover"
-                loading="lazy"
-              />
-            </span>
-            <a :href="url('artists.show', { id: item.id })" class="truncate">{{ item.name }}</a>
-          </span>
-          <span v-if="shouldShowColumn('rating')" class="rating">
-            <StarRating :rateable="item" size="xs" />
-          </span>
-          <span v-if="shouldShowColumn('favorite')" class="favorite">
-            <FavoriteButton :favorite="item.favorite" @toggle="emit('toggle-favorite', item)" />
-          </span>
-          <span class="extra">
-            <button class="text-k-fg-50 hover:text-k-fg p-1" title="More actions" @click="onContextMenu(item, $event)">
-              <Icon :icon="faEllipsis" />
-            </button>
-          </span>
-        </article>
+        <ArtistRow :artist="item" @toggle-favorite="emit('toggle-favorite', $event)" />
       </template>
     </VirtualScroller>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { faCaretDown, faCaretUp, faEllipsis, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
-import { useDraggable } from '@/composables/useDragAndDrop'
-import { useRouter } from '@/composables/useRouter'
-import { useContextMenu } from '@/composables/useContextMenu'
-import { useBranding } from '@/composables/useBranding'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { artistTableColumnConfig } from '@/config/tables'
-import { defineAsyncComponent } from '@/utils/helpers'
 
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
-import StarRating from '@/components/ui/StarRating.vue'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import ArtistRow from '@/components/artist/ArtistRow.vue'
 import ArtistTableHeaderActionMenu from '@/components/artist/ArtistTableHeaderActionMenu.vue'
 
 const props = defineProps<{
@@ -114,12 +74,6 @@ const emit = defineEmits<{
   (e: 'scrolled-to-end'): void
 }>()
 
-const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
-
-const { go, url } = useRouter()
-const { openContextMenu } = useContextMenu()
-const { startDragging } = useDraggable('artist')
-const { cover: defaultCover } = useBranding()
 const { shouldShowColumn } = useTableColumnVisibility(artistTableColumnConfig)
 const { field, order } = toRefs(props)
 
@@ -127,20 +81,12 @@ const onSort = (clicked: ArtistListSortField) => {
   const nextOrder: SortOrder = field.value === clicked && order.value === 'asc' ? 'desc' : 'asc'
   emit('sort', clicked, nextOrder)
 }
-
-const onContextMenu = (artist: Artist, event: MouseEvent) =>
-  openContextMenu<'ARTIST'>(ArtistContextMenu, event, { artist })
-
-const goToArtist = (artist: Artist) => go(url('artists.show', { id: artist.id }))
-
-const onDragStart = (artist: Artist, event: DragEvent) => startDragging(event, artist)
 </script>
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 .artist-table-wrap {
-  .artist-table-header > span,
-  .artist-row > span {
+  .artist-table-header > span {
     @apply text-left p-2 align-middle truncate;
 
     &.name {

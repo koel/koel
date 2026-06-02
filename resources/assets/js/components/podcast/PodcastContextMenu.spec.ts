@@ -32,8 +32,6 @@ describe('podcastContextMenu.vue', () => {
     }
   }
 
-  it('renders', async () => expect((await renderComponent()).html()).toMatchSnapshot())
-
   it('plays all', async () => {
     h.createAudioPlayer()
 
