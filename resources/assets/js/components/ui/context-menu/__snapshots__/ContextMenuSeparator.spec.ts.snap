@@ -1,3 +1,3 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`contextMenuSeparator.vue > renders 1`] = `<li class="separator"></li>`;
+exports[`contextMenuSeparator.vue > renders 1`] = `<li data-v-ef27d7f9="" class="separator"></li>`;
