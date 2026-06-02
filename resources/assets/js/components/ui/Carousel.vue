@@ -14,7 +14,7 @@
           title="Refresh"
           @click="refresh"
         >
-          <Icon :icon="faArrowsRotate" />
+          <Icon :icon="faRotateRight" />
           <span class="sr-only">Refresh</span>
         </button>
         <button
@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { faArrowsRotate, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft, faChevronRight, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 
 const props = defineProps<{ onRefresh?: () => Promise<unknown> | unknown }>()
