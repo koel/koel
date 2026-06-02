@@ -26,6 +26,7 @@
         @dragstart="onDragStart(item, $event)"
         @play="onPlay(item.playable)"
         @contextmenu.prevent="onContextMenu(item, $event)"
+        @request-context-menu="onContextMenu(item, $event)"
         @dragover.prevent="onDragOver"
         @drop.prevent="onDrop(item, $event)"
         @dragend.prevent="onDragEnd"
@@ -390,6 +391,10 @@ onMounted(() => render())
       @apply basis-36 text-left overflow-visible;
     }
 
+    &.favorite {
+      @apply basis-16 text-center;
+    }
+
     &.extra {
       @apply basis-12 text-center;
     }
@@ -435,8 +440,8 @@ onMounted(() => render())
       width: 200%;
     }
 
-    .song-item :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at, .rating),
-    .song-list-header :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at, .rating) {
+    .song-item :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at, .rating, .favorite),
+    .song-list-header :is(.track-number, .album, .time, .year, .genre, .collaborator, .added-at, .rating, .favorite) {
       display: none;
     }
 

@@ -7,6 +7,7 @@ use App\Http\Requests\API\RateSongRequest;
 use App\Http\Resources\SongResource;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\SongRepository;
 use App\Services\RatingService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -14,6 +15,7 @@ class RateSongController extends Controller
 {
     public function __construct(
         private readonly RatingService $ratingService,
+        private readonly SongRepository $songRepository,
     ) {}
 
     /** @param User $user */
@@ -23,6 +25,6 @@ class RateSongController extends Controller
 
         $this->ratingService->setRating($song, $user, $request->rating);
 
-        return SongResource::make($song->refresh())->for($user);
+        return SongResource::make($this->songRepository->getOne($song->id, $user))->for($user);
     }
 }

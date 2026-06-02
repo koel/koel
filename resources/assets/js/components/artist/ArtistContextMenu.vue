@@ -4,6 +4,15 @@
     <MenuItem @click="shuffle">Shuffle All</MenuItem>
     <Separator />
     <MenuItem @click="toggleFavorite">{{ artist.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
+    <Separator />
+    <li
+      tabindex="-1"
+      class="px-4 py-2 focus:outline-hidden"
+      @mouseover="($event.currentTarget as HTMLLIElement).focus()"
+    >
+      <StarRating :rateable="artist" />
+    </li>
+    <Separator />
     <MenuItem v-if="allowEdit" @click="requestEditForm">Edit…</MenuItem>
     <template v-if="isStandardArtist && allowDownload">
       <Separator />
@@ -26,6 +35,8 @@ import { useModal } from '@/composables/useModal'
 import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
 import { usePolicies } from '@/composables/usePolicies'
+
+import StarRating from '@/components/ui/StarRating.vue'
 
 const props = defineProps<{ artist: Artist }>()
 const { artist } = toRefs(props)

@@ -93,6 +93,19 @@ export const artistStore = {
     artist.favorite = Boolean(favorite)
   },
 
+  async rate(artist: Reactive<Artist>, rating: number) {
+    const previous = artist.rating
+    artist.rating = rating
+
+    try {
+      const updated = await http.put<Artist>(`artists/${artist.id}/rating`, { rating })
+      artist.rating = updated.rating
+    } catch (error) {
+      artist.rating = previous
+      throw error
+    }
+  },
+
   async fetchEvents(artist: Artist) {
     return await http.get<LiveEvent[]>(`artists/${artist.id}/events`)
   },

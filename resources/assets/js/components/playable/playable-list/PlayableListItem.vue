@@ -61,20 +61,29 @@
         <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
       </template>
       <span v-if="shouldShowColumn('rating')" class="rating">
-        <StarRating v-if="isSong(playable)" :rating="playable.rating" size="xs" @rate="rate($event)" />
+        <StarRating v-if="isSong(playable)" :rateable="playable" size="xs" />
       </span>
       <span v-if="shouldShowColumn('duration')" class="time text-[0.9rem] text-k-fg-50 tabular-nums">
         {{ fmtLength }}
       </span>
-      <span class="extra">
+      <span v-if="shouldShowColumn('favorite')" class="favorite">
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
+      </span>
+      <span class="extra">
+        <button
+          class="text-k-fg-50 hover:text-k-fg p-1"
+          title="More actions"
+          @click.stop="emit('request-context-menu', $event)"
+        >
+          <Icon :icon="faEllipsis" />
+        </button>
       </span>
     </article>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { faExclamationTriangle, faPodcast, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsis, faExclamationTriangle, faPodcast, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
@@ -96,7 +105,10 @@ const props = withDefaults(defineProps<{ item: PlayableRow; showDisc?: boolean }
   showDisc: false,
 })
 
-const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
+const emit = defineEmits<{
+  (e: 'play', playable: Playable): void
+  (e: 'request-context-menu', event: MouseEvent): void
+}>()
 
 const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])
 
@@ -122,13 +134,6 @@ const collaborator = computed<Pick<User, 'name' | 'avatar'>>(() => (playable.val
 const play = () => emit('play', playable.value)
 
 const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
-
-const rate = (rating: number) => {
-  const song = playable.value
-  if (isSong(song)) {
-    playableStore.rate(song, rating)
-  }
-}
 </script>
 
 <style lang="postcss" scoped>

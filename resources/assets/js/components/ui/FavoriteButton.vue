@@ -1,12 +1,6 @@
 <template>
-  <button
-    v-koel-tooltip
-    :title
-    class="relative transition-[color] duration-200 ease-in-out hover:text-k-love"
-    :class="favorite && 'text-k-love'"
-    @click.prevent.stop="emit('toggle')"
-  >
-    <Icon :icon="favorite ? faHeart : faEmptyHeart" size="sm" />
+  <button v-koel-tooltip :title class="relative" @click.prevent.stop="emit('toggle')">
+    <Icon :icon="favorite ? faHeart : faEmptyHeart" :size="iconSize" />
     <span class="sr-only">{{ title }}</span>
   </button>
 </template>
@@ -16,10 +10,11 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed } from 'vue'
 
-const props = defineProps<{ favorite: boolean }>()
+const props = withDefaults(defineProps<{ favorite: boolean; size?: 'sm' | 'md' }>(), { size: 'sm' })
 const emit = defineEmits<{ (e: 'toggle'): void }>()
 
 const title = computed(() => (props.favorite ? 'Undo Favorite' : 'Favorite'))
+const iconSize = computed(() => (props.size === 'md' ? undefined : props.size))
 </script>
 
 <style lang="postcss" scoped>

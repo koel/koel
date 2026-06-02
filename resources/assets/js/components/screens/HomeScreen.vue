@@ -12,7 +12,7 @@
       <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
     </ScreenEmptyState>
 
-    <div v-else class="home-sections space-y-12">
+    <div v-else class="home-sections space-y-12 w-full">
       <RecentlyPlayedPlayables :loading data-testid="recently-played-songs" />
       <NewAlbums :loading data-testid="recently-added-albums" />
       <SimilarSongs :loading data-testid="similar-songs" />
@@ -98,6 +98,12 @@ useRouter().onScreenActivated('Home', async () => {
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 .home-sections {
+  @apply min-w-0;
+
+  > * {
+    @apply min-w-0;
+  }
+
   > *:not(:first-child) {
     @apply pt-12 relative;
 

@@ -6,7 +6,7 @@ import Component from './ViewModeSwitch.vue'
 describe('viewModeSwitch.vue', () => {
   const h = createHarness()
 
-  it.each<[ViewMode]>([['thumbnails'], ['list']])('renders %s mode', mode => {
+  it.each<[ViewMode]>([['grid'], ['list']])('renders %s mode', mode => {
     const { html } = h.render(Component, {
       props: {
         modelValue: mode,
@@ -19,14 +19,14 @@ describe('viewModeSwitch.vue', () => {
   it('emits the correct event', async () => {
     const { emitted } = h.render(Component, {
       props: {
-        modelValue: 'thumbnails',
+        modelValue: 'grid',
       },
     })
 
     await h.user.click(screen.getByTestId('view-mode-list'))
     expect(emitted()['update:modelValue'][0]).toEqual(['list'])
 
-    await h.user.click(screen.getByTestId('view-mode-thumbnails'))
-    expect(emitted()['update:modelValue'][1]).toEqual(['thumbnails'])
+    await h.user.click(screen.getByTestId('view-mode-grid'))
+    expect(emitted()['update:modelValue'][1]).toEqual(['grid'])
   })
 })

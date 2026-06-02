@@ -9,6 +9,7 @@ export default (): Artist => {
     created_at: faker.date.past().toISOString(),
     is_external: false,
     favorite: faker.datatype.boolean(),
+    rating: faker.number.int({ min: 0, max: 5 }),
     permissions: {
       edit: faker.datatype.boolean(),
     },

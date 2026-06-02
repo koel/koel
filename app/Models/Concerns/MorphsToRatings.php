@@ -4,8 +4,12 @@ namespace App\Models\Concerns;
 
 use App\Models\Rating;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * @property Collection<int, Rating> $ratings
+ */
 trait MorphsToRatings
 {
     public function ratings(): MorphMany

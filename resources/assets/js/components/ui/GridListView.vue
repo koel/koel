@@ -8,7 +8,7 @@
 import { nextTick, ref, toRefs } from 'vue'
 
 const props = withDefaults(defineProps<{ viewMode?: ViewMode }>(), {
-  viewMode: 'thumbnails',
+  viewMode: 'grid',
 })
 
 const container = ref<HTMLDivElement>()

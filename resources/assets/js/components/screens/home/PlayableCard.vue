@@ -1,7 +1,7 @@
 <template>
   <li
     :class="{ playing }"
-    class="group flex items-center gap-4 px-6 py-4 cursor-pointer hover:bg-k-fg-5"
+    class="group flex items-center gap-4 px-6 py-4 hover:bg-k-fg-5"
     data-testid="song-card"
     draggable="true"
     tabindex="0"

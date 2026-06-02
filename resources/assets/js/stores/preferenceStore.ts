@@ -17,9 +17,9 @@ export const defaultPreferences: UserPreferences = {
     gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   },
   equalizer_presets: [],
-  albums_view_mode: 'thumbnails',
-  artists_view_mode: 'thumbnails',
-  radio_stations_view_mode: 'thumbnails',
+  albums_view_mode: 'grid',
+  artists_view_mode: 'grid',
+  radio_stations_view_mode: 'grid',
   albums_sort_field: 'name',
   artists_sort_field: 'name',
   genres_sort_field: 'name',
@@ -57,6 +57,19 @@ const preferenceStore = {
 
   init(preferences: UserPreferences = defaultPreferences) {
     Object.assign(this.state, preferences)
+
+    for (const key of ['albums_view_mode', 'artists_view_mode', 'radio_stations_view_mode'] as const) {
+      if ((this.state[key] as string) === 'thumbnails') {
+        this.state[key] = 'grid'
+      }
+    }
+    if (this.state.albums_view_mode === 'list') {
+      this.state.albums_view_mode = 'table'
+    }
+    if (this.state.artists_view_mode === 'list') {
+      this.state.artists_view_mode = 'table'
+    }
+
     this.setupProxy()
 
     this.initialized.value = true

@@ -18,6 +18,7 @@ export const usePlayableListColumnVisibility = () => {
       'duration',
       'play_count',
       'rating',
+      'favorite',
       'playlist_collaborator',
       'playlist_added_at',
     ]
@@ -28,6 +29,7 @@ export const usePlayableListColumnVisibility = () => {
       'artist',
       'album',
       'duration',
+      'favorite',
       'playlist_collaborator',
       'playlist_added_at',
     ]

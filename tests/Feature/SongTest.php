@@ -7,6 +7,7 @@ use App\Http\Resources\SongResource;
 use App\Jobs\DeleteSongFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Favorite;
 use App\Models\Rating;
 use App\Models\Song;
 use Illuminate\Support\Collection;
@@ -26,6 +27,25 @@ class SongTest extends TestCase
 
         $this->getAs('api/songs')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
         $this->getAs('api/songs?sort=title&order=desc')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
+    }
+
+    #[Test]
+    public function indexSortedByFavoriteScopesToCurrentUser(): void
+    {
+        $user = create_user();
+        $other = create_user();
+
+        $unfavorited = Song::factory()->createOne(['title' => 'Unfavorited']);
+        $mine = Song::factory()->createOne(['title' => 'Mine']);
+        $theirs = Song::factory()->createOne(['title' => 'Theirs']);
+
+        Favorite::factory()->for($user)->for($mine, 'favoriteable')->createOne();
+        Favorite::factory()->for($other)->for($theirs, 'favoriteable')->createOne();
+
+        $descIds = $this->getAs('api/songs?sort=favorite&order=desc', $user)->json('data.*.id');
+
+        // current user's favorited song comes first; other user's favorite is invisible to this sort
+        self::assertSame($mine->id, $descIds[0]);
     }
 
     #[Test]

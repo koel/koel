@@ -4,13 +4,13 @@
 
     <ul v-if="searching" class="results">
       <li v-for="i in 6" :key="i">
-        <ArtistCardSkeleton layout="compact" />
+        <ArtistCardSkeleton />
       </li>
     </ul>
     <template v-else>
       <ul v-if="artists.length" class="results">
         <li v-for="artist in artists" :key="artist.id">
-          <ArtistCard :artist layout="compact" />
+          <ArtistCard :artist />
         </li>
       </ul>
       <p v-else>None found.</p>

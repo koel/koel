@@ -13,8 +13,13 @@ const virtualGridStub = {
 }
 
 const albumCardStub = {
-  template: '<div data-testid="album-card" :data-layout="layout" />',
-  props: ['album', 'layout', 'showReleaseYear'],
+  template: '<div data-testid="album-card" />',
+  props: ['album', 'showReleaseYear'],
+}
+
+const albumTableStub = {
+  template: '<div data-testid="album-table" />',
+  props: ['albums', 'field', 'order'],
 }
 
 describe('albumListScreen.vue', () => {
@@ -38,6 +43,7 @@ describe('albumListScreen.vue', () => {
       global: {
         stubs: {
           AlbumCard: albumCardStub,
+          AlbumTable: albumTableStub,
           VirtualGridScroller: virtualGridStub,
         },
       },
@@ -63,28 +69,31 @@ describe('albumListScreen.vue', () => {
     await waitFor(() => screen.getByTestId('screen-empty-state'))
   })
 
-  it.each<[ViewMode, CardLayout]>([
-    ['thumbnails', 'full'],
-    ['list', 'compact'],
-  ])('passes correct card layout for %s view mode', async (mode, expectedLayout) => {
-    preferences.temporary.albums_view_mode = mode
+  it('renders the table when the view mode is table', async () => {
+    preferences.temporary.albums_view_mode = 'table'
     await renderComponent()
 
-    const cards = screen.getAllByTestId('album-card')
-    cards.forEach((card: HTMLElement) => expect(card.dataset.layout).toBe(expectedLayout))
+    expect(screen.queryByTestId('album-grid')).toBeNull()
+    screen.getByTestId('album-table')
   })
 
-  it('switches layout via view mode toggle', async () => {
+  it('switches between grid and table via the view mode toggle', async () => {
+    preferences.temporary.albums_view_mode = 'grid'
     await renderComponent()
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
+    screen.getByTestId('album-grid')
+    expect(screen.queryByTestId('album-table')).toBeNull()
+
+    await h.user.click(screen.getByRole('radio', { name: 'View as table' }))
     await waitFor(() => {
-      screen.getAllByTestId('album-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('compact'))
+      screen.getByTestId('album-table')
+      expect(screen.queryByTestId('album-grid')).toBeNull()
     })
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
+    await h.user.click(screen.getByRole('radio', { name: 'View as grid' }))
     await waitFor(() => {
-      screen.getAllByTestId('album-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('full'))
+      screen.getByTestId('album-grid')
+      expect(screen.queryByTestId('album-table')).toBeNull()
     })
   })
 
@@ -124,6 +133,7 @@ describe('albumListScreen.vue', () => {
       global: {
         stubs: {
           AlbumCard: albumCardStub,
+          AlbumTable: albumTableStub,
           VirtualGridScroller: virtualGridStub,
         },
       },
@@ -152,6 +162,7 @@ describe('albumListScreen.vue', () => {
       global: {
         stubs: {
           AlbumCard: albumCardStub,
+          AlbumTable: albumTableStub,
           VirtualGridScroller: virtualGridStub,
         },
       },

@@ -5,26 +5,28 @@
         Artists
         <template #controls>
           <div class="flex gap-2">
-            <Btn
-              v-koel-tooltip
-              :title="preferences.artists_favorites_only ? 'Show all' : 'Show favorites only'"
-              variant="ghost"
-              class="border border-k-fg-10"
-              @click.prevent="toggleFavoritesOnly"
-            >
-              <Icon
-                :icon="preferences.artists_favorites_only ? faHeart : faEmptyHeart"
-                :class="preferences.artists_favorites_only && 'text-k-love'"
+            <template v-if="preferences.artists_view_mode !== 'table'">
+              <Btn
+                v-koel-tooltip
+                :title="preferences.artists_favorites_only ? 'Show all' : 'Show favorites only'"
+                variant="ghost"
+                class="border border-k-fg-10"
+                @click.prevent="toggleFavoritesOnly"
+              >
+                <Icon
+                  :icon="preferences.artists_favorites_only ? faHeart : faEmptyHeart"
+                  :class="preferences.artists_favorites_only && 'text-k-love'"
+                />
+              </Btn>
+
+              <ArtistListSorter
+                :field="preferences.artists_sort_field"
+                :order="preferences.artists_sort_order"
+                @sort="sort"
               />
-            </Btn>
+            </template>
 
-            <ArtistListSorter
-              :field="preferences.artists_sort_field"
-              :order="preferences.artists_sort_order"
-              @sort="sort"
-            />
-
-            <ViewModeSwitch v-model="preferences.artists_view_mode" />
+            <ViewModeSwitch v-model="preferences.artists_view_mode" secondary="table" />
           </div>
         </template>
       </ScreenHeader>
@@ -47,27 +49,45 @@
 
     <template v-else>
       <div
-        v-if="showSkeletons"
+        v-if="showSkeletons && preferences.artists_view_mode === 'table'"
+        class="-m-6 flex flex-col"
+        role="status"
+        aria-busy="true"
+        aria-label="Loading"
+      >
+        <ArtistTableRowSkeleton v-for="i in 12" :key="i" />
+      </div>
+      <div
+        v-else-if="showSkeletons"
         class="grid gap-5 p-6"
         :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }"
         role="status"
         aria-busy="true"
         aria-label="Loading"
       >
-        <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
+        <ArtistCardSkeleton v-for="i in 10" :key="i" />
       </div>
       <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
+        <ArtistTable
+          v-if="preferences.artists_view_mode === 'table'"
+          :artists="displayedArtists"
+          :field="preferences.artists_sort_field"
+          :order="preferences.artists_sort_order"
+          @sort="sort"
+          @toggle-favorite="toggleFavorite"
+          @scrolled-to-end="fetchArtists"
+        />
         <VirtualGridScroller
+          v-else
           ref="grid"
           :items="displayedArtists"
-          :min-item-width="minItemWidth"
-          :class="itemLayout === 'full' ? 'gap-y-5' : 'gap-y-3'"
-          class="p-6 gap-x-5"
+          :min-item-width="240"
+          class="p-6 gap-x-5 gap-y-5"
           data-testid="artist-list"
           @scrolled-to-end="fetchArtists"
         >
           <template #default="{ item }">
-            <ArtistCard :artist="item" :layout="itemLayout" />
+            <ArtistCard :artist="item" />
           </template>
         </VirtualGridScroller>
       </div>
@@ -87,6 +107,8 @@ import { usePolicies } from '@/composables/usePolicies'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
+import ArtistTable from '@/components/artist/ArtistTable.vue'
+import ArtistTableRowSkeleton from '@/components/artist/ArtistTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -104,9 +126,6 @@ const loading = ref(false)
 const page = ref<number | null>(1)
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
-
-const itemLayout = computed<CardLayout>(() => (preferences.artists_view_mode === 'thumbnails' ? 'full' : 'compact'))
-const minItemWidth = computed(() => (preferences.artists_view_mode === 'thumbnails' ? 240 : 350))
 
 const displayedArtists = computed(() =>
   preferences.artists_favorites_only ? artists.value.filter((a: Artist) => a.favorite) : artists.value,
@@ -158,6 +177,8 @@ const sort = async (field: ArtistListSortField, order: SortOrder) => {
   await nextTick()
   await fetchArtists()
 }
+
+const toggleFavorite = (artist: Artist) => artistStore.toggleFavorite(artist)
 
 const toggleFavoritesOnly = async () => {
   preferences.artists_favorites_only = !preferences.artists_favorites_only

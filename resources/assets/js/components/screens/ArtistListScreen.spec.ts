@@ -13,8 +13,13 @@ const virtualGridStub = {
 }
 
 const artistCardStub = {
-  template: '<div data-testid="artist-card" :data-layout="layout" />',
-  props: ['artist', 'layout'],
+  template: '<div data-testid="artist-card" />',
+  props: ['artist'],
+}
+
+const artistTableStub = {
+  template: '<div data-testid="artist-table-stub" />',
+  props: ['artists', 'field', 'order'],
 }
 
 describe('artistListScreen.vue', () => {
@@ -39,6 +44,7 @@ describe('artistListScreen.vue', () => {
       global: {
         stubs: {
           ArtistCard: artistCardStub,
+          ArtistTable: artistTableStub,
           VirtualGridScroller: virtualGridStub,
         },
       },
@@ -65,28 +71,31 @@ describe('artistListScreen.vue', () => {
     await waitFor(() => screen.getByTestId('screen-empty-state'))
   })
 
-  it.each<[ViewMode, CardLayout]>([
-    ['thumbnails', 'full'],
-    ['list', 'compact'],
-  ])('passes correct card layout for %s view mode', async (mode, expectedLayout) => {
-    preferenceStore.temporary.artists_view_mode = mode
+  it('renders the table when the view mode is table', async () => {
+    preferenceStore.temporary.artists_view_mode = 'table'
     await renderComponent()
 
-    const cards = screen.getAllByTestId('artist-card')
-    cards.forEach((card: HTMLElement) => expect(card.dataset.layout).toBe(expectedLayout))
+    expect(screen.queryByTestId('artist-list')).toBeNull()
+    screen.getByTestId('artist-table-stub')
   })
 
-  it('switches layout via view mode toggle', async () => {
+  it('switches between grid and table via the view mode toggle', async () => {
+    preferenceStore.temporary.artists_view_mode = 'grid'
     await renderComponent()
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
+    screen.getByTestId('artist-list')
+    expect(screen.queryByTestId('artist-table-stub')).toBeNull()
+
+    await h.user.click(screen.getByRole('radio', { name: 'View as table' }))
     await waitFor(() => {
-      screen.getAllByTestId('artist-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('compact'))
+      screen.getByTestId('artist-table-stub')
+      expect(screen.queryByTestId('artist-list')).toBeNull()
     })
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
+    await h.user.click(screen.getByRole('radio', { name: 'View as grid' }))
     await waitFor(() => {
-      screen.getAllByTestId('artist-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('full'))
+      screen.getByTestId('artist-list')
+      expect(screen.queryByTestId('artist-table-stub')).toBeNull()
     })
   })
 
@@ -126,6 +135,7 @@ describe('artistListScreen.vue', () => {
       global: {
         stubs: {
           ArtistCard: artistCardStub,
+          ArtistTable: artistTableStub,
           VirtualGridScroller: virtualGridStub,
         },
       },
@@ -154,6 +164,7 @@ describe('artistListScreen.vue', () => {
       global: {
         stubs: {
           ArtistCard: artistCardStub,
+          ArtistTable: artistTableStub,
           VirtualGridScroller: virtualGridStub,
         },
       },
