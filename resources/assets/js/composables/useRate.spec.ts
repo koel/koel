@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
@@ -10,7 +10,7 @@ describe('useRate', () => {
 
   it('routes a song to playableStore.rate', async () => {
     const song = h.factory('song').make()
-    const spy = h.mock(playableStore, 'rate').mockResolvedValue()
+    const spy = vi.spyOn(playableStore, 'rate').mockResolvedValue()
 
     const { rate } = useRate()
     await rate(song, 4)
@@ -20,7 +20,7 @@ describe('useRate', () => {
 
   it('routes an album to albumStore.rate', async () => {
     const album = h.factory('album').make()
-    const spy = h.mock(albumStore, 'rate').mockResolvedValue()
+    const spy = vi.spyOn(albumStore, 'rate').mockResolvedValue()
 
     const { rate } = useRate()
     await rate(album, 3)
@@ -30,7 +30,7 @@ describe('useRate', () => {
 
   it('routes an artist to artistStore.rate', async () => {
     const artist = h.factory('artist').make()
-    const spy = h.mock(artistStore, 'rate').mockResolvedValue()
+    const spy = vi.spyOn(artistStore, 'rate').mockResolvedValue()
 
     const { rate } = useRate()
     await rate(artist, 5)
@@ -40,9 +40,9 @@ describe('useRate', () => {
 
   it('does not cross-dispatch between stores', async () => {
     const album = h.factory('album').make()
-    const albumSpy = h.mock(albumStore, 'rate').mockResolvedValue()
-    const artistSpy = h.mock(artistStore, 'rate').mockResolvedValue()
-    const songSpy = h.mock(playableStore, 'rate').mockResolvedValue()
+    const albumSpy = vi.spyOn(albumStore, 'rate').mockResolvedValue()
+    const artistSpy = vi.spyOn(artistStore, 'rate').mockResolvedValue()
+    const songSpy = vi.spyOn(playableStore, 'rate').mockResolvedValue()
 
     const { rate } = useRate()
     await rate(album, 2)

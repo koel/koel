@@ -158,8 +158,12 @@
     >
       <Icon :icon="faHeart" />
       <template v-if="config.sortable">
-        <Icon v-if="sortField === 'favorite' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-        <Icon v-if="sortField === 'favorite' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
+        <Icon v-if="sortField === 'favorite' && sortOrder === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
+        <Icon
+          v-if="sortField === 'favorite' && sortOrder === 'desc'"
+          :icon="faCaretDown"
+          class="ml-2 text-k-highlight"
+        />
       </template>
     </span>
     <span class="extra">
