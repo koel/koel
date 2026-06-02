@@ -16,7 +16,7 @@
           <label
             v-if="shouldShowColumnVisibilityCheckboxes()"
             class="w-4 mr-2.5 flex items-center"
-            @click.stop="item.visibilityToggleable && toggleColumn(item.column!)"
+            @click.stop="toggle(item)"
           >
             <input
               :checked="shouldShowColumn(item.column!)"
@@ -161,6 +161,15 @@ const menuItems = computed(() => {
 
 const sort = (field: MaybeArray<PlayableListSortField>) => {
   emit('sort', field)
+  popover.value?.hide()
+}
+
+const toggle = (item: MenuItem) => {
+  if (!item.visibilityToggleable || !item.column) {
+    return
+  }
+
+  toggleColumn(item.column)
   popover.value?.hide()
 }
 

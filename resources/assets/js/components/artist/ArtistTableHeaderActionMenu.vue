@@ -12,10 +12,7 @@
           class="cursor-pointer group flex justify-between pl-3! hover:bg-k-highlight! hover:text-k-highlight-fg!"
           @click="sort(item.field)"
         >
-          <label
-            class="w-4 mr-2.5 flex items-center"
-            @click.stop="isToggleable(item.column) && toggleColumn(item.column)"
-          >
+          <label class="w-4 mr-2.5 flex items-center" @click.stop="toggle(item.column)">
             <input
               :checked="shouldShowColumn(item.column)"
               :disabled="!isToggleable(item.column)"
@@ -69,7 +66,16 @@ const menuItems = computed<MenuItem[]>(() => [
 
 const sort = (field: ArtistListSortField) => {
   emit('sort', field)
-  button.value?.click()
+  popover.value?.hide()
+}
+
+const toggle = (column: ArtistTableColumnName) => {
+  if (!isToggleable(column)) {
+    return
+  }
+
+  toggleColumn(column)
+  popover.value?.hide()
 }
 </script>
 
