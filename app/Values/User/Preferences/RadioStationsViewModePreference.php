@@ -8,16 +8,11 @@ class RadioStationsViewModePreference extends Preference
 {
     public function getDefaultValue(): string
     {
-        return 'grid';
+        return 'thumbnails';
     }
 
     public function assert(): void
     {
-        Assert::oneOf($this->value, ['grid', 'list', 'table']);
-    }
-
-    protected function cast(mixed $value): mixed
-    {
-        return $value === 'thumbnails' ? 'grid' : $value;
+        Assert::oneOf($this->value, ['list', 'thumbnails']);
     }
 }

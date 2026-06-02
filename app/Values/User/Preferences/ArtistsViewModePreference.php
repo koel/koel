@@ -13,7 +13,7 @@ class ArtistsViewModePreference extends Preference
 
     public function assert(): void
     {
-        Assert::oneOf($this->value, ['grid', 'list', 'table']);
+        Assert::oneOf($this->value, ['grid', 'table']);
     }
 
     protected function cast(mixed $value): mixed
