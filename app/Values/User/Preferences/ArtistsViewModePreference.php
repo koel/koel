@@ -18,6 +18,10 @@ class ArtistsViewModePreference extends Preference
 
     protected function cast(mixed $value): mixed
     {
-        return $value === 'thumbnails' ? 'grid' : $value;
+        return match ($value) {
+            'thumbnails' => 'grid',
+            'list' => 'table',
+            default => $value,
+        };
     }
 }
