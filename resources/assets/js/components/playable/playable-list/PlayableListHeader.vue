@@ -187,7 +187,8 @@ import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-ico
 import { arrayify, requireInjection } from '@/utils/helpers'
 import { PlayableListConfigKey, PlayableListSortFieldKey, PlayableListSortOrderKey } from '@/config/symbols'
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
-import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
+import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
+import { playableListColumnConfig } from '@/config/tables'
 
 import PlayableListHeaderActionMenu from '@/components/playable/playable-list/PlayableListHeaderActionMenu.vue'
 
@@ -204,7 +205,7 @@ const emit = defineEmits<{
   (e: 'sort', field: MaybeArray<PlayableListSortField>, order: SortOrder): void
 }>()
 
-const { shouldShowColumn } = usePlayableListColumnVisibility()
+const { shouldShowColumn } = useTableColumnVisibility(playableListColumnConfig)
 
 const [sortField, setSortField] =
   requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)

@@ -88,9 +88,10 @@ import { computed, toRefs } from 'vue'
 import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
-import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
+import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { PlayableListConfigKey } from '@/config/symbols'
+import { playableListColumnConfig } from '@/config/tables'
 import { playableStore } from '@/stores/playableStore'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
@@ -112,7 +113,7 @@ const emit = defineEmits<{
 
 const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])
 
-const { shouldShowColumn } = usePlayableListColumnVisibility()
+const { shouldShowColumn } = useTableColumnVisibility(playableListColumnConfig)
 
 const { item } = toRefs(props)
 

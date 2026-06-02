@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 import { ref } from 'vue'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { logger } from '@/utils/logger'
 
@@ -8,6 +9,12 @@ interface Options<T extends string> {
   validColumns: readonly T[]
   defaultColumns: readonly T[]
   alwaysVisible: readonly T[]
+  /**
+   * When true, the column-visibility preference only applies at md+ breakpoints.
+   * Below md, all columns report visible (the caller is expected to hide them
+   * via CSS instead). Defaults to false.
+   */
+  responsive?: boolean
 }
 
 const stores: Record<string, Ref<string[]>> = {}
@@ -17,6 +24,7 @@ export const useTableColumnVisibility = <T extends string>({
   validColumns,
   defaultColumns,
   alwaysVisible,
+  responsive = false,
 }: Options<T>) => {
   if (!stores[storageKey]) {
     stores[storageKey] = ref([])
@@ -40,7 +48,21 @@ export const useTableColumnVisibility = <T extends string>({
     visibleColumns.value = collectVisibleColumns()
   }
 
-  const shouldShowColumn = (name: T) => visibleColumns.value.includes(name)
+  const isConfigurable = () => {
+    if (!responsive) {
+      return true
+    }
+
+    return useBreakpoints(breakpointsTailwind).isGreaterOrEqual('md')
+  }
+
+  const shouldShowColumn = (name: T) => {
+    if (!isConfigurable()) {
+      return true
+    }
+
+    return visibleColumns.value.includes(name)
+  }
 
   const toggleColumn = (column: T) => {
     if (alwaysVisible.includes(column)) {
@@ -70,5 +92,6 @@ export const useTableColumnVisibility = <T extends string>({
     shouldShowColumn,
     toggleColumn,
     isToggleable,
+    isConfigurable,
   }
 }

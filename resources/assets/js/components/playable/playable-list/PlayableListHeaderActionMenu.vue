@@ -44,7 +44,8 @@ import { faArrowDown, faArrowUp, faCheck, faEllipsis, faSort } from '@fortawesom
 import { computed, ref, toRefs } from 'vue'
 import { arrayify } from '@/utils/helpers'
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
-import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
+import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
+import { playableListColumnConfig } from '@/config/tables'
 
 import Popover from '@/components/ui/Popover.vue'
 
@@ -80,7 +81,7 @@ const {
   shouldShowColumn,
   toggleColumn,
   isConfigurable: shouldShowColumnVisibilityCheckboxes,
-} = usePlayableListColumnVisibility()
+} = useTableColumnVisibility(playableListColumnConfig)
 
 const { field, order, hasCustomOrderSort, contentType, collaborative } = toRefs(props)
 
