@@ -14,6 +14,7 @@
 <script lang="ts" setup>
 import { toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores/overviewStore'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
@@ -24,5 +25,11 @@ const { loading } = toRefs(props)
 
 const artists = toRef(overviewStore.state, 'randomArtists')
 
-const refresh = () => overviewStore.refreshRandomArtists()
+const refresh = async () => {
+  try {
+    await overviewStore.refreshRandomArtists()
+  } catch (error: unknown) {
+    useErrorHandler().handleHttpError(error)
+  }
+}
 </script>

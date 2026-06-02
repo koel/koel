@@ -51,15 +51,21 @@ class OverviewTest extends TestCase
         $user = create_user();
         Album::factory()->createMany(3);
 
-        $this->getAs('api/albums/random', $user)->assertJsonStructure(['*' => AlbumResource::JSON_STRUCTURE]);
+        $this
+            ->getAs('api/albums/random', $user)
+            ->assertJsonCount(3)
+            ->assertJsonStructure(['*' => AlbumResource::JSON_STRUCTURE]);
     }
 
     #[Test]
     public function fetchRandomArtists(): void
     {
         $user = create_user();
-        Artist::factory()->count(3)->has(Album::factory())->create();
+        Artist::factory()->has(Album::factory())->createMany(3);
 
-        $this->getAs('api/artists/random', $user)->assertJsonStructure(['*' => ArtistResource::JSON_STRUCTURE]);
+        $this
+            ->getAs('api/artists/random', $user)
+            ->assertJsonCount(3)
+            ->assertJsonStructure(['*' => ArtistResource::JSON_STRUCTURE]);
     }
 }
