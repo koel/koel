@@ -99,9 +99,15 @@ export const artistStore = {
 
     try {
       const updated = await http.put<Artist>(`artists/${artist.id}/rating`, { rating })
-      artist.rating = updated.rating
+
+      if (artist.rating === rating) {
+        artist.rating = updated.rating
+      }
     } catch (error) {
-      artist.rating = previous
+      if (artist.rating === rating) {
+        artist.rating = previous
+      }
+
       throw error
     }
   },

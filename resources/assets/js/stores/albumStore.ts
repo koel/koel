@@ -111,9 +111,15 @@ export const albumStore = {
 
     try {
       const updated = await http.put<Album>(`albums/${album.id}/rating`, { rating })
-      album.rating = updated.rating
+
+      if (album.rating === rating) {
+        album.rating = updated.rating
+      }
     } catch (error) {
-      album.rating = previous
+      if (album.rating === rating) {
+        album.rating = previous
+      }
+
       throw error
     }
   },

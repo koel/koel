@@ -27,8 +27,10 @@ describe('homeScreenCarousel.vue', () => {
 
     const scroller = container.querySelector('.home-carousel') as HTMLDivElement
     const spy = vi.fn()
-    scroller.scrollBy = spy as unknown as typeof scroller.scrollBy
+    scroller.scrollTo = spy as unknown as typeof scroller.scrollTo
     Object.defineProperty(scroller, 'clientWidth', { value: 800, configurable: true })
+    Object.defineProperty(scroller, 'scrollWidth', { value: 3200, configurable: true })
+    Object.defineProperty(scroller, 'scrollLeft', { value: 0, configurable: true, writable: true })
 
     await h.user.click(screen.getByRole('button', { name: 'Scroll right' }))
 
@@ -42,11 +44,13 @@ describe('homeScreenCarousel.vue', () => {
 
     const scroller = container.querySelector('.home-carousel') as HTMLDivElement
     const spy = vi.fn()
-    scroller.scrollBy = spy as unknown as typeof scroller.scrollBy
+    scroller.scrollTo = spy as unknown as typeof scroller.scrollTo
     Object.defineProperty(scroller, 'clientWidth', { value: 800, configurable: true })
+    Object.defineProperty(scroller, 'scrollWidth', { value: 3200, configurable: true })
+    Object.defineProperty(scroller, 'scrollLeft', { value: 1600, configurable: true, writable: true })
 
     await h.user.click(screen.getByRole('button', { name: 'Scroll left' }))
 
-    expect(spy).toHaveBeenCalledWith({ left: -800, behavior: 'smooth' })
+    expect(spy).toHaveBeenCalledWith({ left: 800, behavior: 'smooth' })
   })
 })

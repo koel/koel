@@ -35,7 +35,7 @@ class SongTest extends TestCase
         $user = create_user();
         $other = create_user();
 
-        $unfavorited = Song::factory()->createOne(['title' => 'Unfavorited']);
+        Song::factory()->createOne(['title' => 'Unfavorited']);
         $mine = Song::factory()->createOne(['title' => 'Mine']);
         $theirs = Song::factory()->createOne(['title' => 'Theirs']);
 

@@ -2,7 +2,7 @@
   <li class="separator" />
 </template>
 
-<style>
+<style scoped>
 .separator + .separator {
   display: none;
 }

@@ -5,26 +5,25 @@
         Albums
         <template #controls>
           <div class="flex gap-2">
-            <template v-if="preferences.albums_view_mode !== 'table'">
-              <Btn
-                v-koel-tooltip
-                :title="preferences.albums_favorites_only ? 'Show all' : 'Show favorites only'"
-                variant="ghost"
-                class="border border-k-fg-10"
-                @click.prevent="toggleFavoritesOnly"
-              >
-                <Icon
-                  :icon="preferences.albums_favorites_only ? faHeart : faEmptyHeart"
-                  :class="preferences.albums_favorites_only && 'text-k-love'"
-                />
-              </Btn>
-
-              <AlbumListSorter
-                :field="preferences.albums_sort_field"
-                :order="preferences.albums_sort_order"
-                @sort="sort"
+            <Btn
+              v-koel-tooltip
+              :title="preferences.albums_favorites_only ? 'Show all' : 'Show favorites only'"
+              variant="ghost"
+              class="border border-k-fg-10"
+              @click.prevent="toggleFavoritesOnly"
+            >
+              <Icon
+                :icon="preferences.albums_favorites_only ? faHeart : faEmptyHeart"
+                :class="preferences.albums_favorites_only && 'text-k-love'"
               />
-            </template>
+            </Btn>
+
+            <AlbumListSorter
+              v-if="preferences.albums_view_mode !== 'table'"
+              :field="preferences.albums_sort_field"
+              :order="preferences.albums_sort_order"
+              @sort="sort"
+            />
 
             <ViewModeSwitch v-model="preferences.albums_view_mode" secondary="table" />
           </div>

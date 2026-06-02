@@ -32,7 +32,7 @@ export const useTableColumnVisibility = <T extends string>({
       return Array.from(merged)
     } catch (error: unknown) {
       window.RUNNING_UNIT_TESTS || logger.error(`Failed to load columns for ${storageKey}`, error)
-      return [...defaultColumns]
+      return Array.from(new Set([...defaultColumns, ...alwaysVisible]))
     }
   }
 
@@ -56,7 +56,12 @@ export const useTableColumnVisibility = <T extends string>({
     }
 
     visibleColumns.value = next
-    useLocalStorage().set(storageKey, next)
+
+    try {
+      useLocalStorage().set(storageKey, next)
+    } catch (error: unknown) {
+      window.RUNNING_UNIT_TESTS || logger.error(`Failed to persist columns for ${storageKey}`, error)
+    }
   }
 
   const isToggleable = (column: T) => !alwaysVisible.includes(column)

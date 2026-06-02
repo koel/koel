@@ -5,26 +5,25 @@
         Artists
         <template #controls>
           <div class="flex gap-2">
-            <template v-if="preferences.artists_view_mode !== 'table'">
-              <Btn
-                v-koel-tooltip
-                :title="preferences.artists_favorites_only ? 'Show all' : 'Show favorites only'"
-                variant="ghost"
-                class="border border-k-fg-10"
-                @click.prevent="toggleFavoritesOnly"
-              >
-                <Icon
-                  :icon="preferences.artists_favorites_only ? faHeart : faEmptyHeart"
-                  :class="preferences.artists_favorites_only && 'text-k-love'"
-                />
-              </Btn>
-
-              <ArtistListSorter
-                :field="preferences.artists_sort_field"
-                :order="preferences.artists_sort_order"
-                @sort="sort"
+            <Btn
+              v-koel-tooltip
+              :title="preferences.artists_favorites_only ? 'Show all' : 'Show favorites only'"
+              variant="ghost"
+              class="border border-k-fg-10"
+              @click.prevent="toggleFavoritesOnly"
+            >
+              <Icon
+                :icon="preferences.artists_favorites_only ? faHeart : faEmptyHeart"
+                :class="preferences.artists_favorites_only && 'text-k-love'"
               />
-            </template>
+            </Btn>
+
+            <ArtistListSorter
+              v-if="preferences.artists_view_mode !== 'table'"
+              :field="preferences.artists_sort_field"
+              :order="preferences.artists_sort_order"
+              @sort="sort"
+            />
 
             <ViewModeSwitch v-model="preferences.artists_view_mode" secondary="table" />
           </div>
