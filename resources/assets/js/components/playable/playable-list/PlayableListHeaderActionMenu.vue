@@ -70,8 +70,10 @@ const props = withDefaults(
 
 const emit = defineEmits<{ (e: 'sort', field: MaybeArray<PlayableListSortField>): void }>()
 
+type ConfigurableColumn = (typeof playableListColumnConfig.validColumns)[number]
+
 interface MenuItem {
-  column?: PlayableListColumnName
+  column?: ConfigurableColumn
   label: string
   field: MaybeArray<PlayableListSortField>
   visibilityToggleable: boolean

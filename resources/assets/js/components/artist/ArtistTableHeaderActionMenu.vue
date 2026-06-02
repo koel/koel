@@ -69,7 +69,7 @@ const menuItems = computed<MenuItem[]>(() => [
 
 const sort = (field: ArtistListSortField) => {
   emit('sort', field)
-  setTimeout(() => popover.value?.hide(), 0)
+  popover.value?.hide()
 }
 </script>
 
