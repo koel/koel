@@ -52,7 +52,7 @@ describe('radioStationListScreen.vue', () => {
     await waitFor(() => screen.getByTestId('screen-empty-state'))
   })
 
-  it.each<[ViewMode]>([['list'], ['thumbnails']])('sets layout from preferences', async mode => {
+  it.each<[ViewMode]>([['list'], ['grid']])('sets layout from preferences', async mode => {
     preferences.temporary.radio_stations_view_mode = mode
 
     await renderComponent()
@@ -67,8 +67,8 @@ describe('radioStationListScreen.vue', () => {
     await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
     await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-list`)).toBe(true))
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
-    await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-thumbnails`)).toBe(true))
+    await h.user.click(screen.getByRole('radio', { name: 'View as grid' }))
+    await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-grid`)).toBe(true))
   })
 
   it('requests the Add Radio Station form', async () => {

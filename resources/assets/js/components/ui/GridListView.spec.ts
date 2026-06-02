@@ -5,12 +5,12 @@ import Component from './GridListView.vue'
 describe('gridListView', () => {
   const h = createHarness()
 
-  it('renders with thumbnails mode by default', () => {
+  it('renders with grid mode by default', () => {
     const { container } = h.render(Component, {
       slots: { default: '<div>Card</div>' },
     })
 
-    expect(container.querySelector('.as-thumbnails')).toBeTruthy()
+    expect(container.querySelector('.as-grid')).toBeTruthy()
   })
 
   it('renders with list mode', () => {

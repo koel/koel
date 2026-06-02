@@ -57,6 +57,8 @@ use App\Http\Controllers\API\PublicizeSongsController;
 use App\Http\Controllers\API\QueueStateController;
 use App\Http\Controllers\API\RadioStationController;
 use App\Http\Controllers\API\RadioStationNowPlayingController;
+use App\Http\Controllers\API\RateAlbumController;
+use App\Http\Controllers\API\RateArtistController;
 use App\Http\Controllers\API\RateSongController;
 use App\Http\Controllers\API\RegisterPlayController;
 use App\Http\Controllers\API\ResetPasswordController;
@@ -184,6 +186,8 @@ Route::prefix('api')
             Route::get('songs/favorites', FetchFavoriteSongsController::class);
 
             Route::put('songs/{song}/rating', RateSongController::class)->where(['song' => Uuid::REGEX]);
+            Route::put('albums/{album}/rating', RateAlbumController::class);
+            Route::put('artists/{artist}/rating', RateArtistController::class);
 
             Route::apiResource('playlist-folders', PlaylistFolderController::class);
             Route::apiResource('playlist-folders.playlists', PlaylistFolderPlaylistController::class)->except(

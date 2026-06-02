@@ -16,6 +16,9 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.png', type: 'image/x-png' }],
   ],
   cleanUrls: true,
+  sitemap: {
+    hostname: 'https://docs.koel.dev',
+  },
   vite: {
     plugins: [llmstxt()],
   },

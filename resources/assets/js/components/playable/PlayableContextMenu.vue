@@ -79,8 +79,9 @@
         class="px-4 py-2 focus:outline-hidden"
         @mouseover="($event.currentTarget as HTMLLIElement).focus()"
       >
-        <StarRating :rating="playables[0].rating" @rate="rate(playables[0] as Song, $event)" />
+        <StarRating :rateable="playables[0] as Song" />
       </li>
+      <Separator />
     </template>
 
     <template v-if="isQueueScreen">
@@ -369,8 +370,6 @@ const copyUrl = () =>
 
 const showEmbedModal = () =>
   trigger(() => openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, { embeddable: playables.value[0] }))
-
-const rate = (song: Song, rating: number) => trigger(() => playableStore.rate(song, rating))
 
 const deleteFromFilesystem = () =>
   trigger(async () => {

@@ -16,7 +16,7 @@
           <label
             v-if="shouldShowColumnVisibilityCheckboxes()"
             class="w-4 mr-2.5 flex items-center"
-            @click.stop="item.visibilityToggleable && toggleColumn(item.column!)"
+            @click.stop="toggle(item)"
           >
             <input
               :checked="shouldShowColumn(item.column!)"
@@ -44,7 +44,8 @@ import { faArrowDown, faArrowUp, faCheck, faEllipsis, faSort } from '@fortawesom
 import { computed, ref, toRefs } from 'vue'
 import { arrayify } from '@/utils/helpers'
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
-import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
+import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
+import { playableListColumnConfig } from '@/config/tables'
 
 import Popover from '@/components/ui/Popover.vue'
 
@@ -69,8 +70,10 @@ const props = withDefaults(
 
 const emit = defineEmits<{ (e: 'sort', field: MaybeArray<PlayableListSortField>): void }>()
 
+type ConfigurableColumn = (typeof playableListColumnConfig.validColumns)[number]
+
 interface MenuItem {
-  column?: PlayableListColumnName
+  column?: ConfigurableColumn
   label: string
   field: MaybeArray<PlayableListSortField>
   visibilityToggleable: boolean
@@ -80,7 +83,7 @@ const {
   shouldShowColumn,
   toggleColumn,
   isConfigurable: shouldShowColumnVisibilityCheckboxes,
-} = usePlayableListColumnVisibility()
+} = useTableColumnVisibility(playableListColumnConfig)
 
 const { field, order, hasCustomOrderSort, contentType, collaborative } = toRefs(props)
 
@@ -104,6 +107,7 @@ const menuItems = computed(() => {
   const genre: MenuItem = { column: 'genre', label: 'Genre', field: 'genre', visibilityToggleable: true }
   const year: MenuItem = { column: 'year', label: 'Year', field: 'year', visibilityToggleable: true }
   const rating: MenuItem = { column: 'rating', label: 'Rating', field: 'rating', visibilityToggleable: true }
+  const favorite: MenuItem = { column: 'favorite', label: 'Favorite', field: 'favorite', visibilityToggleable: true }
 
   const dateAdded: MenuItem = {
     label: 'Date Added',
@@ -136,12 +140,12 @@ const menuItems = computed(() => {
     visibilityToggleable: true,
   }
 
-  let items: MenuItem[] = [title, album, artist, track, genre, year, rating, time, dateAdded]
+  let items: MenuItem[] = [title, album, artist, track, genre, year, rating, time, favorite, dateAdded]
 
   if (contentType.value === 'episodes') {
-    items = [title, podcast, author, rating, time, dateAdded]
+    items = [title, podcast, author, rating, time, favorite, dateAdded]
   } else if (contentType.value === 'mixed') {
-    items = [title, albumOrPodcast, artistOrAuthor, rating, time, dateAdded]
+    items = [title, albumOrPodcast, artistOrAuthor, rating, time, favorite, dateAdded]
   }
 
   if (collaborative.value) {
@@ -157,6 +161,15 @@ const menuItems = computed(() => {
 
 const sort = (field: MaybeArray<PlayableListSortField>) => {
   emit('sort', field)
+  popover.value?.hide()
+}
+
+const toggle = (item: MenuItem) => {
+  if (!item.visibilityToggleable || !item.column) {
+    return
+  }
+
+  toggleColumn(item.column)
   popover.value?.hide()
 }
 

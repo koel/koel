@@ -148,6 +148,24 @@
         <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
       </template>
     </span>
+    <span
+      v-if="shouldShowColumn('favorite')"
+      class="favorite"
+      data-testid="header-favorite"
+      role="button"
+      title="Sort by favorite"
+      @click="sort('favorite')"
+    >
+      <Icon :icon="faHeart" />
+      <template v-if="config.sortable">
+        <Icon v-if="sortField === 'favorite' && sortOrder === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
+        <Icon
+          v-if="sortField === 'favorite' && sortOrder === 'desc'"
+          :icon="faCaretDown"
+          class="ml-2 text-k-highlight"
+        />
+      </template>
+    </span>
     <span class="extra">
       <PlayableListHeaderActionMenu
         :sortable="config.sortable"
@@ -165,11 +183,12 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { computed } from 'vue'
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { arrayify, requireInjection } from '@/utils/helpers'
 import { PlayableListConfigKey, PlayableListSortFieldKey, PlayableListSortOrderKey } from '@/config/symbols'
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
-import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
+import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
+import { playableListColumnConfig } from '@/config/tables'
 
 import PlayableListHeaderActionMenu from '@/components/playable/playable-list/PlayableListHeaderActionMenu.vue'
 
@@ -186,7 +205,7 @@ const emit = defineEmits<{
   (e: 'sort', field: MaybeArray<PlayableListSortField>, order: SortOrder): void
 }>()
 
-const { shouldShowColumn } = usePlayableListColumnVisibility()
+const { shouldShowColumn } = useTableColumnVisibility(playableListColumnConfig)
 
 const [sortField, setSortField] =
   requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)

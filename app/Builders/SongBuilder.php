@@ -46,6 +46,7 @@ class SongBuilder extends FavoriteableBuilder
         'podcasts.author',
         'genres.name',
         'user_ratings.rating',
+        'favorite',
     ];
 
     public function inDirectory(string $path): self
@@ -109,6 +110,19 @@ class SongBuilder extends FavoriteableBuilder
         });
     }
 
+    private function withRatingSubquery(): self
+    {
+        throw_unless($this->user, new LogicException('User must be set to query song ratings.'));
+
+        return $this->addSelect([
+            'rating' => DB::table('ratings')
+                ->where('rateable_type', 'playable')
+                ->where('user_id', $this->user->id)
+                ->whereColumn('rateable_id', 'songs.id')
+                ->selectRaw('COALESCE(MAX(rating), 0)'),
+        ]);
+    }
+
     public function withUserContext(
         bool $includeFavoriteStatus = true,
         bool $favoritesOnly = false,
@@ -117,7 +131,8 @@ class SongBuilder extends FavoriteableBuilder
         return $this
             ->accessible()
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
-            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount());
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount())
+            ->withRatingSubquery();
     }
 
     private function sortByOneColumn(string $column, string $direction): self

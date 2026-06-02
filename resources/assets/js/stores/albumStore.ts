@@ -105,6 +105,25 @@ export const albumStore = {
     album.favorite = Boolean(favorite)
   },
 
+  async rate(album: Reactive<Album>, rating: number) {
+    const previous = album.rating
+    album.rating = rating
+
+    try {
+      const updated = await http.put<Album>(`albums/${album.id}/rating`, { rating })
+
+      if (album.rating === rating) {
+        album.rating = updated.rating
+      }
+    } catch (error) {
+      if (album.rating === rating) {
+        album.rating = previous
+      }
+
+      throw error
+    }
+  },
+
   reset() {
     this.vault.clear()
     this.state.albums = []

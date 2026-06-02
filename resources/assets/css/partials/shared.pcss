@@ -39,16 +39,26 @@ textarea {
 
 body,
 html {
-  background-color: var(--color-bg);
-  background-image: var(--bg-image);
-  background-attachment: var(--bg-attachment);
-  background-size: var(--bg-size);
-  background-position: var(--bg-position);
-
   font-family: var(--font-family);
   font-size: var(--font-size);
 
   @apply h-screen text-k-fg font-light leading-6 overflow-hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--color-bg);
+  background-image: var(--bg-image);
+  background-size: var(--bg-size);
+  background-position: var(--bg-position);
+  background-repeat: no-repeat;
 }
 
 input,

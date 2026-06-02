@@ -30,6 +30,14 @@ class ArtistTest extends TestCase
         $this->getAs(
             'api/artists?sort=created_at&order=desc&page=2',
         )->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
+
+        $this->getAs(
+            'api/artists?sort=favorite&order=desc',
+        )->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
+
+        $this->getAs(
+            'api/artists?sort=rating&order=desc',
+        )->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
     }
 
     #[Test]

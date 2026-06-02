@@ -12,6 +12,8 @@ export default (): Album => {
     year: faker.date.past().getFullYear(),
     is_external: false,
     favorite: faker.datatype.boolean(),
+    rating: faker.number.int({ min: 0, max: 5 }),
+    length: faker.number.int({ min: 60, max: 7200 }),
     permissions: {
       edit: faker.datatype.boolean(),
     },

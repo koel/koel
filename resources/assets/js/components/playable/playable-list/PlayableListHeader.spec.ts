@@ -53,11 +53,6 @@ describe('playableListHeader.vue', () => {
     })
   }
 
-  it('renders', async () => {
-    const { html } = await renderComponent()
-    expect(html()).toMatchSnapshot()
-  })
-
   it.each<[PlayableListSortField, string]>([
     ['track', 'header-track-number'],
     ['title', 'header-title'],

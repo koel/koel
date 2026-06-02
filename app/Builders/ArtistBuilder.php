@@ -23,11 +23,14 @@ class ArtistBuilder extends FavoriteableBuilder
     public const array SORT_COLUMNS_NORMALIZE_MAP = [
         'name' => 'artists.name',
         'created_at' => 'artists.created_at',
+        'rating' => 'rating',
     ];
 
     private const array VALID_SORT_COLUMNS = [
         'artists.name',
         'artists.created_at',
+        'favorite', // alias column for favorite status
+        'rating', // alias column for the requesting user's rating
     ];
 
     public function onlyStandard(): self
@@ -105,6 +108,19 @@ class ArtistBuilder extends FavoriteableBuilder
         return $this->orderBy($column, $direction);
     }
 
+    private function withRatingSubquery(): self
+    {
+        throw_unless($this->user, new LogicException('User must be set to query artist ratings.'));
+
+        return $this->addSelect([
+            'rating' => DB::table('ratings')
+                ->where('rateable_type', 'artist')
+                ->where('user_id', $this->user->id)
+                ->whereColumn('rateable_id', 'artists.id')
+                ->selectRaw('COALESCE(MAX(rating), 0)'),
+        ]);
+    }
+
     public function withUserContext(
         User $user,
         bool $includeFavoriteStatus = true,
@@ -116,6 +132,7 @@ class ArtistBuilder extends FavoriteableBuilder
         return $this
             ->accessible()
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
-            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus))
+            ->withRatingSubquery();
     }
 }
