@@ -54,9 +54,10 @@ class PreferenceBehaviorTest extends TestCase
     }
 
     #[Test]
-    public function albumsViewModeNormalizesLegacyThumbnailsToGrid(): void
+    public function albumsViewModeNormalizesLegacyValues(): void
     {
         self::assertSame('grid', AlbumsViewModePreference::make('thumbnails')->getValue());
+        self::assertSame('table', AlbumsViewModePreference::make('list')->getValue());
     }
 
     #[Test]
