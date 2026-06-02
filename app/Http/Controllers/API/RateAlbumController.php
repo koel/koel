@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\RateAlbumRequest;
+use App\Http\Requests\API\RateRequest;
 use App\Http\Resources\AlbumResource;
 use App\Models\Album;
 use App\Models\User;
@@ -19,7 +19,7 @@ class RateAlbumController extends Controller
     ) {}
 
     /** @param User $user */
-    public function __invoke(RateAlbumRequest $request, Album $album, Authenticatable $user)
+    public function __invoke(RateRequest $request, Album $album, Authenticatable $user)
     {
         $this->authorize('access', $album);
 

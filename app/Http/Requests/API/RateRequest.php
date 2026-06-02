@@ -7,7 +7,7 @@ use App\Http\Requests\Request;
 /**
  * @property int $rating
  */
-class RateAlbumRequest extends Request
+class RateRequest extends Request
 {
     /** @inheritdoc */
     public function rules(): array
