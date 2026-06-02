@@ -8,11 +8,16 @@ class AlbumsViewModePreference extends Preference
 {
     public function getDefaultValue(): string
     {
-        return 'thumbnails';
+        return 'grid';
     }
 
     public function assert(): void
     {
-        Assert::oneOf($this->value, ['list', 'thumbnails']);
+        Assert::oneOf($this->value, ['grid', 'list', 'table']);
+    }
+
+    protected function cast(mixed $value): mixed
+    {
+        return $value === 'thumbnails' ? 'grid' : $value;
     }
 }
