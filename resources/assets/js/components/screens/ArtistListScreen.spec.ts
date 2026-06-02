@@ -6,15 +6,10 @@ import { commonStore } from '@/stores/commonStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import Component from './ArtistListScreen.vue'
 
-const virtualGridStub = {
-  template: '<div data-testid="artist-list"><slot v-for="(item, i) in items" :key="i" :item="item" /></div>',
-  props: ['items', 'minItemWidth'],
+const artistGridStub = {
+  template: '<div data-testid="artist-grid"><div v-for="(a, i) in artists" :key="i" data-testid="artist-card" /></div>',
+  props: ['artists'],
   methods: { scrollToTop() {} },
-}
-
-const artistCardStub = {
-  template: '<div data-testid="artist-card" />',
-  props: ['artist'],
 }
 
 const artistTableStub = {
@@ -43,9 +38,8 @@ describe('artistListScreen.vue', () => {
     const rendered = h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: artistCardStub,
+          ArtistGrid: artistGridStub,
           ArtistTable: artistTableStub,
-          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -75,7 +69,7 @@ describe('artistListScreen.vue', () => {
     preferenceStore.temporary.artists_view_mode = 'table'
     await renderComponent()
 
-    expect(screen.queryByTestId('artist-list')).toBeNull()
+    expect(screen.queryByTestId('artist-grid')).toBeNull()
     screen.getByTestId('artist-table-stub')
   })
 
@@ -83,18 +77,18 @@ describe('artistListScreen.vue', () => {
     preferenceStore.temporary.artists_view_mode = 'grid'
     await renderComponent()
 
-    screen.getByTestId('artist-list')
+    screen.getByTestId('artist-grid')
     expect(screen.queryByTestId('artist-table-stub')).toBeNull()
 
     await h.user.click(screen.getByRole('radio', { name: 'View as table' }))
     await waitFor(() => {
       screen.getByTestId('artist-table-stub')
-      expect(screen.queryByTestId('artist-list')).toBeNull()
+      expect(screen.queryByTestId('artist-grid')).toBeNull()
     })
 
     await h.user.click(screen.getByRole('radio', { name: 'View as grid' }))
     await waitFor(() => {
-      screen.getByTestId('artist-list')
+      screen.getByTestId('artist-grid')
       expect(screen.queryByTestId('artist-table-stub')).toBeNull()
     })
   })
@@ -134,9 +128,8 @@ describe('artistListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: artistCardStub,
+          ArtistGrid: artistGridStub,
           ArtistTable: artistTableStub,
-          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -163,9 +156,8 @@ describe('artistListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: artistCardStub,
+          ArtistGrid: artistGridStub,
           ArtistTable: artistTableStub,
-          VirtualGridScroller: virtualGridStub,
         },
       },
     })

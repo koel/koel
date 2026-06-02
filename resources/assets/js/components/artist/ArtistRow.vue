@@ -1,6 +1,6 @@
 <template>
   <article
-    class="artist-row group pl-2 flex items-center h-[64px] border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
+    class="artist-row group pl-5 flex items-center h-[64px] border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
     data-testid="artist-row"
     :draggable="true"
     @contextmenu.prevent="onContextMenu"

@@ -76,19 +76,13 @@
           @toggle-favorite="toggleFavorite"
           @scrolled-to-end="fetchAlbums"
         />
-        <VirtualGridScroller
+        <AlbumGrid
           v-else
           ref="grid"
-          :items="displayedAlbums"
-          :min-item-width="240"
-          class="p-6 gap-x-5 gap-y-5"
-          data-testid="album-grid"
+          :albums="displayedAlbums"
+          :show-release-year="preferences.albums_sort_field === 'year'"
           @scrolled-to-end="fetchAlbums"
-        >
-          <template #default="{ item }">
-            <AlbumCard :album="item" :show-release-year="preferences.albums_sort_field === 'year'" />
-          </template>
-        </VirtualGridScroller>
+        />
       </div>
     </template>
   </ScreenBase>
@@ -104,21 +98,20 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePolicies } from '@/composables/usePolicies'
 
-import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
+import AlbumGrid from '@/components/album/AlbumGrid.vue'
 import AlbumTable from '@/components/album/AlbumTable.vue'
 import AlbumTableRowSkeleton from '@/components/album/AlbumTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import VirtualGridScroller from '@/components/ui/VirtualGridScroller.vue'
 import AlbumListSorter from '@/components/album/AlbumListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { currentUserCan } = usePolicies()
 
-const grid = ref<InstanceType<typeof VirtualGridScroller>>()
+const grid = ref<InstanceType<typeof AlbumGrid>>()
 const albums = toRef(albumStore.state, 'albums')
 
 const loading = ref(false)

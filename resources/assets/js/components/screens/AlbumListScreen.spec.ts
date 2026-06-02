@@ -6,15 +6,10 @@ import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import Component from './AlbumListScreen.vue'
 
-const virtualGridStub = {
-  template: '<div data-testid="album-grid"><slot v-for="(item, i) in items" :key="i" :item="item" /></div>',
-  props: ['items', 'minItemWidth'],
+const albumGridStub = {
+  template: '<div data-testid="album-grid"><div v-for="(a, i) in albums" :key="i" data-testid="album-card" /></div>',
+  props: ['albums', 'showReleaseYear'],
   methods: { scrollToTop() {} },
-}
-
-const albumCardStub = {
-  template: '<div data-testid="album-card" />',
-  props: ['album', 'showReleaseYear'],
 }
 
 const albumTableStub = {
@@ -42,9 +37,8 @@ describe('albumListScreen.vue', () => {
     const rendered = h.render(Component, {
       global: {
         stubs: {
-          AlbumCard: albumCardStub,
+          AlbumGrid: albumGridStub,
           AlbumTable: albumTableStub,
-          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -132,9 +126,8 @@ describe('albumListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          AlbumCard: albumCardStub,
+          AlbumGrid: albumGridStub,
           AlbumTable: albumTableStub,
-          VirtualGridScroller: virtualGridStub,
         },
       },
     })
@@ -161,9 +154,8 @@ describe('albumListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          AlbumCard: albumCardStub,
+          AlbumGrid: albumGridStub,
           AlbumTable: albumTableStub,
-          VirtualGridScroller: virtualGridStub,
         },
       },
     })

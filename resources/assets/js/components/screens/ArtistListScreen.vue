@@ -76,19 +76,7 @@
           @toggle-favorite="toggleFavorite"
           @scrolled-to-end="fetchArtists"
         />
-        <VirtualGridScroller
-          v-else
-          ref="grid"
-          :items="displayedArtists"
-          :min-item-width="240"
-          class="p-6 gap-x-5 gap-y-5"
-          data-testid="artist-list"
-          @scrolled-to-end="fetchArtists"
-        >
-          <template #default="{ item }">
-            <ArtistCard :artist="item" />
-          </template>
-        </VirtualGridScroller>
+        <ArtistGrid v-else ref="grid" :artists="displayedArtists" @scrolled-to-end="fetchArtists" />
       </div>
     </template>
   </ScreenBase>
@@ -104,21 +92,20 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePolicies } from '@/composables/usePolicies'
 
-import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
+import ArtistGrid from '@/components/artist/ArtistGrid.vue'
 import ArtistTable from '@/components/artist/ArtistTable.vue'
 import ArtistTableRowSkeleton from '@/components/artist/ArtistTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import VirtualGridScroller from '@/components/ui/VirtualGridScroller.vue'
 import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { currentUserCan } = usePolicies()
 
-const grid = ref<InstanceType<typeof VirtualGridScroller>>()
+const grid = ref<InstanceType<typeof ArtistGrid>>()
 const artists = toRef(artistStore.state, 'artists')
 
 const loading = ref(false)
