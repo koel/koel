@@ -30,10 +30,15 @@
 </template>
 
 <script lang="ts" setup>
+import type { Reactive } from 'vue'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
 import { computed, ref, useId } from 'vue'
-import { useRate, type Rateable } from '@/composables/useRate'
+import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
+import { playableStore } from '@/stores/playableStore'
+
+type Rateable = Song | Album | Artist
 
 const props = withDefaults(
   defineProps<{
@@ -46,8 +51,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{ (e: 'rate', value: number): void }>()
 
-const { rate } = useRate()
-
 const hover = ref(0)
 const groupName = `rating-${useId()}`
 
@@ -56,9 +59,21 @@ const currentRating = computed(() => props.rateable?.rating ?? props.rating ?? 0
 const titleFor = (star: number) =>
   currentRating.value === star ? 'Remove rating' : `${star} star${star === 1 ? '' : 's'}`
 
+const persist = (entity: Rateable, value: number) => {
+  if (entity.type === 'songs') {
+    return playableStore.rate(entity as Reactive<Song>, value)
+  }
+
+  if (entity.type === 'albums') {
+    return albumStore.rate(entity as Reactive<Album>, value)
+  }
+
+  return artistStore.rate(entity as Reactive<Artist>, value)
+}
+
 const dispatch = (value: number) => {
   if (props.rateable) {
-    rate(props.rateable, value)
+    persist(props.rateable, value)
   }
   emit('rate', value)
 }
