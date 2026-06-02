@@ -50,7 +50,13 @@ class PreferenceBehaviorTest extends TestCase
     public function albumsViewModeRejectsUnknownValue(): void
     {
         $this->expectException(AssertException::class);
-        AlbumsViewModePreference::make('grid');
+        AlbumsViewModePreference::make('mosaic');
+    }
+
+    #[Test]
+    public function albumsViewModeNormalizesLegacyThumbnailsToGrid(): void
+    {
+        self::assertSame('grid', AlbumsViewModePreference::make('thumbnails')->getValue());
     }
 
     #[Test]
