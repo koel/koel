@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import Component from './HomeScreenCarousel.vue'
+import Component from './Carousel.vue'
 
-describe('homeScreenCarousel.vue', () => {
+describe('carousel.vue', () => {
   const h = createHarness()
 
   it('renders the header slot and both scroll buttons', () => {

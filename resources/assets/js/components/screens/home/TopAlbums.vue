@@ -1,5 +1,5 @@
 <template>
-  <HomeScreenCarousel>
+  <Carousel>
     <template #header>Top Albums</template>
     <template v-if="loading">
       <AlbumCardSkeleton v-for="i in 6" :key="i" />
@@ -8,7 +8,7 @@
       <AlbumCard v-for="album in albums" :key="album.id" :album />
     </template>
     <p v-else class="text-k-fg-50">No albums found.</p>
-  </HomeScreenCarousel>
+  </Carousel>
 </template>
 
 <script lang="ts" setup>
@@ -17,7 +17,7 @@ import { overviewStore } from '@/stores/overviewStore'
 
 import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
-import HomeScreenCarousel from '@/components/screens/home/HomeScreenCarousel.vue'
+import Carousel from '@/components/ui/Carousel.vue'
 
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
