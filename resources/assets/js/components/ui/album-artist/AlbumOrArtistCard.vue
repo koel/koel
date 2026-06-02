@@ -8,7 +8,7 @@
   >
     <article
       :class="layout"
-      class="relative group flex p-5 rounded-[inherit] flex-col gap-5"
+      class="relative group flex h-full p-5 rounded-[inherit] flex-col gap-5"
       data-testid="artist-album-card"
       :draggable="!isMobile.any"
       tabindex="0"
