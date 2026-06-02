@@ -21,10 +21,10 @@
       <TopArtists :loading data-testid="most-played-artists" />
       <NewSongs :loading data-testid="recently-added-songs" />
       <NewArtists :loading data-testid="recently-added-artists" />
-      <RandomAlbums :loading data-testid="random-albums" />
-      <RandomArtists :loading data-testid="random-artists" />
       <LeastPlayedSongs :loading data-testid="least-played-songs" />
       <RandomSongs :loading data-testid="random-songs" />
+      <RandomAlbums :loading data-testid="random-albums" />
+      <RandomArtists :loading data-testid="random-artists" />
       <BtnScrollToTop />
     </div>
   </ScreenBase>
