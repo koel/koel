@@ -75,4 +75,17 @@ class SafeUrlTest extends TestCase
 
         self::assertFalse($this->passes('https://8.8.8.8/feed'));
     }
+
+    #[Test]
+    public function rejectsUrlsRedirectingToPrivateHost(): void
+    {
+        // The 302 to a private host must be caught by the on_redirect validator
+        // before Guzzle issues the follow-up request to 127.0.0.1.
+        Http::fake([
+            'public.example.com/*' => Http::response('', 302, ['Location' => 'http://127.0.0.1/admin']),
+            '*' => Http::response('', 200),
+        ]);
+
+        self::assertFalse($this->passes('https://public.example.com/feed'));
+    }
 }

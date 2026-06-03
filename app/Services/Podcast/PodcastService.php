@@ -7,6 +7,7 @@ use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UnsafePodcastFeedUrlException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Helpers\Network;
+use App\Helpers\SafeHttp;
 use App\Helpers\Uuid;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
@@ -36,6 +37,7 @@ class PodcastService
         private readonly PodcastRepository $podcastRepository,
         private readonly SongRepository $songRepository,
         private readonly Network $network,
+        private readonly SafeHttp $safeHttp,
         private ?ClientInterface $client = null,
     ) {}
 
@@ -218,8 +220,14 @@ class PodcastService
             return false;
         }
 
+        if (!$this->network->isSafeUrl($podcast->url)) {
+            return true;
+        }
+
         try {
-            $lastModified = Http::head($podcast->url)->header('Last-Modified');
+            $lastModified = Http::withOptions($this->safeHttp->redirectOptions())
+                ->head($podcast->url)
+                ->header('Last-Modified');
 
             if (!$lastModified) {
                 return true;
@@ -246,7 +254,7 @@ class PodcastService
             return null;
         }
 
-        $client ??= new Client();
+        $client ??= $this->safeHttp->guzzleClient();
 
         try {
             $response = $client->request($method, $url, [
@@ -255,7 +263,10 @@ class PodcastService
                     'Origin' => '*',
                 ],
                 RequestOptions::HTTP_ERRORS => false,
-                RequestOptions::ALLOW_REDIRECTS => ['track_redirects' => true],
+                RequestOptions::ALLOW_REDIRECTS => [
+                    ...$this->safeHttp->redirectOptions()['allow_redirects'],
+                    'track_redirects' => true,
+                ],
             ]);
 
             $redirects = Arr::wrap($response->getHeader(RedirectMiddleware::HISTORY_HEADER));

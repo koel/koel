@@ -49,4 +49,23 @@ class HasAudioContentTypeTest extends TestCase
             fn () => $this->addToAssertionCount(1), // @phpstan-ignore-line
         );
     }
+
+    #[Test]
+    public function rejectsStreamRedirectingToPrivateHost(): void
+    {
+        // 302 from a public host to a private host: on_redirect must throw on the
+        // HEAD probe, the GET fallback must also redirect-throw, leaving the
+        // resolver with no content type — the rule fails with the "unreachable"
+        // message.
+        Http::fake([
+            'public.example.com/*' => Http::response('', 302, ['Location' => 'http://127.0.0.1/stream']),
+            '*' => Http::response('', 200),
+        ]);
+
+        (new HasAudioContentType())->validate(
+            'url',
+            'https://public.example.com/stream',
+            fn () => $this->addToAssertionCount(1), // @phpstan-ignore-line
+        );
+    }
 }

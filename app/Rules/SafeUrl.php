@@ -2,7 +2,9 @@
 
 namespace App\Rules;
 
+use App\Exceptions\UnsafeUrlException;
 use App\Helpers\Network;
+use App\Helpers\SafeHttp;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Http;
@@ -48,12 +50,22 @@ class SafeUrl implements ValidationRule
             return;
         }
 
+        $redirectOptions = app(SafeHttp::class)->redirectOptions();
+
         try {
-            $response = Http::head((string) $value);
+            $response = Http::withOptions($redirectOptions)->head((string) $value);
+        } catch (UnsafeUrlException) {
+            $fail('The :attribute must point to a public URL.');
+
+            return;
         } catch (Throwable) {
             // Some streaming servers don't support HEAD — try GET
             try {
-                $response = Http::withOptions(['stream' => true])->get((string) $value);
+                $response = Http::withOptions([...$redirectOptions, 'stream' => true])->get((string) $value);
+            } catch (UnsafeUrlException) {
+                $fail('The :attribute must point to a public URL.');
+
+                return;
             } catch (Throwable) {
                 $fail("The $attribute couldn't be reached.");
 
