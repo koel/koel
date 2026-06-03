@@ -243,11 +243,20 @@ Route::prefix('api')
             Route::put('songs/publicize', PublicizeSongsController::class);
             Route::put('songs/privatize', PrivatizeSongsController::class);
 Route::get('library/stats', function () {
+    $songs = Song::getTotalSongs();
+    $albums = Album::getTotalAlbums();
+    $artists = Artist::getTotalArtists();
+    $duration = Song::getTotalDuration();
+
     return response()->json([
-      'songs' => Song::count(),
-       'albums' => Album::getTotalAlbums(),
-       'artists' => Artist::getTotalArtists(),
-       'duration' => Song::getTotalDuration(),
+        'songs' => $songs,
+        'albums' => $albums,
+        'artists' => $artists,
+        'duration' => $duration,
+        'has_songs' => Song::hasSongs(),
+        'has_albums' => Album::hasAlbums(),
+        'has_artists' => Artist::hasArtists(),
+        'has_music' => $songs > 0 || $albums > 0 || $artists > 0,
     ]);
 });
             // License routes
