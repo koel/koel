@@ -5,6 +5,7 @@ namespace Tests\Feature\Subsonic;
 use App\Models\Podcast;
 use App\Models\User;
 use App\Services\Podcast\PodcastService;
+use Illuminate\Support\Facades\Http;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -12,6 +13,13 @@ use function Tests\create_user;
 
 class CreatePodcastChannelTest extends SubsonicTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        Http::fake(['*' => Http::response('', 200, ['Content-Type' => 'application/rss+xml'])]);
+    }
+
     #[Test]
     public function subscribesUserToFeed(): void
     {
@@ -46,5 +54,15 @@ class CreatePodcastChannelTest extends SubsonicTestCase
         $user = create_user();
 
         $this->getSubsonic('createPodcastChannel.view', $user)->assertSubsonicErrorCode(10);
+    }
+
+    #[Test]
+    public function unsafeUrlReturnsCode10(): void
+    {
+        $user = create_user();
+
+        $this->getSubsonic('createPodcastChannel.view', $user, [
+            'url' => 'http://127.0.0.1/internal/feed.rss',
+        ])->assertSubsonicErrorCode(10);
     }
 }

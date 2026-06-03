@@ -4,6 +4,7 @@ namespace App\Services\Podcast;
 
 use App\Events\UserUnsubscribedFromPodcast;
 use App\Exceptions\FailedToParsePodcastFeedException;
+use App\Exceptions\UnsafePodcastFeedUrlException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Helpers\Network;
 use App\Helpers\Uuid;
@@ -291,6 +292,10 @@ class PodcastService
 
     private function createParser(string $url): Poddle
     {
+        if (!$this->network->isSafeUrl($url)) {
+            throw UnsafePodcastFeedUrlException::create($url);
+        }
+
         return Poddle::fromUrl($url, 5 * 60, $this->client);
     }
 }

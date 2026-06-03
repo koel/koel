@@ -2,10 +2,15 @@
 
 namespace App\Services\Radio;
 
+use App\Helpers\Network;
 use App\Models\RadioStation;
 
 class RadioStreamProxy
 {
+    public function __construct(
+        private readonly Network $network,
+    ) {}
+
     /**
      * Open a stream to the radio station URL, requesting ICY metadata.
      * Falls back to a plain connection if ICY request fails.
@@ -14,6 +19,10 @@ class RadioStreamProxy
      */
     public function openStream(string $url)
     {
+        if (!$this->network->isSafeUrl($url)) {
+            return false;
+        }
+
         $context = stream_context_create([
             'http' => [
                 'header' => "Icy-MetaData: 1\r\n",
