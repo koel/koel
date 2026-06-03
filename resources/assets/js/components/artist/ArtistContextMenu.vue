@@ -18,8 +18,10 @@
       <Separator />
       <MenuItem @click="download">Download</MenuItem>
     </template>
-    <Separator />
-    <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+    <template v-if="allowEmbedding">
+      <Separator />
+      <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+    </template>
   </ul>
 </template>
 
@@ -50,6 +52,7 @@ const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
+const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
 const allowEdit = computed(() => currentUserCan.editArtist(artist.value))
 
 const isStandardArtist = computed(() => !artistStore.isUnknown(artist.value) && !artistStore.isVarious(artist.value))

@@ -2,6 +2,7 @@
 
 use App\Exceptions\SubsonicAwareErrorRenderer;
 use App\Http\Middleware\AuthenticateAudioRequests;
+use App\Http\Middleware\EnsureEmbedsEnabled;
 use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
 use App\Http\Middleware\ObjectStorageAuthenticate;
@@ -46,6 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'audio.auth' => AuthenticateAudioRequests::class,
             'os.auth' => ObjectStorageAuthenticate::class,
+            'embeds.enabled' => EnsureEmbedsEnabled::class,
         ]);
 
         // Koel is an SPA without a `login` route, so the Authenticate middleware would otherwise

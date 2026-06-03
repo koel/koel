@@ -38,6 +38,7 @@ class TestHarness {
 
       commonStore.state.song_length = 10
       commonStore.state.allows_download = true
+      commonStore.state.allows_embedding = true
       commonStore.state.uses_i_tunes = true
       commonStore.state.supports_batch_downloading = true
       commonStore.state.supports_transcoding = true

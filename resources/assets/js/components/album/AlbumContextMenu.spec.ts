@@ -118,4 +118,11 @@ describe('albumContextMenu.vue', () => {
 
     await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: album })
   })
+
+  it('does not have an option to embed when embedding is disabled', async () => {
+    commonStore.state.allows_embedding = false
+    await renderComponent()
+
+    expect(screen.queryByText('Embed…')).toBeNull()
+  })
 })
