@@ -3,6 +3,7 @@
 namespace Tests\Integration\Services\Podcast;
 
 use App\Events\UserUnsubscribedFromPodcast;
+use App\Exceptions\UnsafePodcastFeedUrlException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
@@ -38,6 +39,14 @@ class PodcastServiceTest extends TestCase
         $this->instance(ClientInterface::class, new Client(['handler' => $handlerStack]));
 
         $this->service = app(PodcastService::class);
+    }
+
+    #[Test]
+    public function addPodcastWithUnsafeUrlThrowsDistinctException(): void
+    {
+        $this->expectException(UnsafePodcastFeedUrlException::class);
+
+        $this->service->addPodcast('http://127.0.0.1/feed.xml', create_user());
     }
 
     #[Test]
