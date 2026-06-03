@@ -21,6 +21,7 @@ describe('radioStationListScreen.vue', () => {
     beforeEach: () => {
       openModalMock.mockClear()
       h.mock(radioStationStore, 'fetchAll')
+      preferences.temporary.radio_stations_view_mode = 'grid'
     },
   })
 
@@ -53,8 +54,6 @@ describe('radioStationListScreen.vue', () => {
   })
 
   it('renders the grid by default', async () => {
-    preferences.temporary.radio_stations_view_mode = 'grid'
-
     await renderComponent()
 
     await waitFor(() => screen.getByTestId('radio-station-grid'))
@@ -71,8 +70,6 @@ describe('radioStationListScreen.vue', () => {
   })
 
   it('switches between grid and table via the view mode toggle', async () => {
-    preferences.temporary.radio_stations_view_mode = 'grid'
-
     await renderComponent()
     await h.tick()
 
