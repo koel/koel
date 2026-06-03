@@ -8,7 +8,7 @@
         <li
           v-for="item in menuItems"
           :key="item.label"
-          :class="field === item.field && 'active'"
+          :class="item.field && field === item.field && 'active'"
           class="cursor-pointer group flex justify-between pl-3! hover:bg-k-highlight! hover:text-k-highlight-fg!"
           @click="sort(item.field)"
         >
@@ -50,7 +50,7 @@ const emit = defineEmits<{ (e: 'sort', field: RadioStationListSortField): void }
 interface MenuItem {
   column: RadioStationTableColumnName
   label: string
-  field: RadioStationListSortField
+  field?: RadioStationListSortField
 }
 
 const { shouldShowColumn, toggleColumn, isToggleable } = useTableColumnVisibility(radioStationTableColumnConfig)
@@ -60,12 +60,16 @@ const popover = ref<InstanceType<typeof Popover>>()
 
 const menuItems = computed<MenuItem[]>(() => [
   { column: 'name', label: 'Name', field: 'name' },
-  { column: 'description', label: 'Description', field: 'name' },
+  { column: 'description', label: 'Description' },
   { column: 'created_at', label: 'Date Added', field: 'created_at' },
   { column: 'favorite', label: 'Favorite', field: 'favorite' },
 ])
 
-const sort = (field: RadioStationListSortField) => {
+const sort = (field?: RadioStationListSortField) => {
+  if (!field) {
+    return
+  }
+
   emit('sort', field)
   popover.value?.hide()
 }

@@ -52,23 +52,44 @@ describe('radioStationListScreen.vue', () => {
     await waitFor(() => screen.getByTestId('screen-empty-state'))
   })
 
-  it.each<[ViewMode]>([['list'], ['grid']])('sets layout from preferences', async mode => {
-    preferences.temporary.radio_stations_view_mode = mode
+  it('renders the grid by default', async () => {
+    preferences.temporary.radio_stations_view_mode = 'grid'
 
     await renderComponent()
 
-    await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-${mode}`)).toBe(true))
+    await waitFor(() => screen.getByTestId('radio-station-grid'))
+    expect(screen.queryByTestId('radio-station-table')).toBeNull()
   })
 
-  it('switches layout', async () => {
+  it('renders the table when the view mode is table', async () => {
+    preferences.temporary.radio_stations_view_mode = 'table'
+
+    await renderComponent()
+
+    await waitFor(() => screen.getByTestId('radio-station-table'))
+    expect(screen.queryByTestId('radio-station-grid')).toBeNull()
+  })
+
+  it('switches between grid and table via the view mode toggle', async () => {
+    preferences.temporary.radio_stations_view_mode = 'grid'
+
     await renderComponent()
     await h.tick()
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
-    await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-list`)).toBe(true))
+    screen.getByTestId('radio-station-grid')
+    expect(screen.queryByTestId('radio-station-table')).toBeNull()
+
+    await h.user.click(screen.getByRole('radio', { name: 'View as table' }))
+    await waitFor(() => {
+      screen.getByTestId('radio-station-table')
+      expect(screen.queryByTestId('radio-station-grid')).toBeNull()
+    })
 
     await h.user.click(screen.getByRole('radio', { name: 'View as grid' }))
-    await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-grid`)).toBe(true))
+    await waitFor(() => {
+      screen.getByTestId('radio-station-grid')
+      expect(screen.queryByTestId('radio-station-table')).toBeNull()
+    })
   })
 
   it('requests the Add Radio Station form', async () => {
