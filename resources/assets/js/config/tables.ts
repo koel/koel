@@ -22,6 +22,18 @@ export const artistTableColumnConfig = {
   alwaysVisible: readonly ArtistTableColumnName[]
 }
 
+export const radioStationTableColumnConfig = {
+  storageKey: 'radio-station-table-columns',
+  validColumns: ['name', 'description', 'created_at', 'favorite'] as const,
+  defaultColumns: ['name', 'description', 'favorite'] as const,
+  alwaysVisible: ['name'] as const,
+} satisfies {
+  storageKey: string
+  validColumns: readonly RadioStationTableColumnName[]
+  defaultColumns: readonly RadioStationTableColumnName[]
+  alwaysVisible: readonly RadioStationTableColumnName[]
+}
+
 export const playableListColumnConfig = {
   storageKey: 'playable-list-columns',
   validColumns: [
