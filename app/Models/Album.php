@@ -138,4 +138,11 @@ public static function getAlbumCount(): int
 {
     return static::count();
 }
+public static function getLibraryAlbumSummary(): array
+{
+    return [
+        'total' => static::getTotalAlbums(),
+        'has_albums' => static::hasAlbums(),
+    ];
+}
 }
