@@ -166,7 +166,7 @@
         />
       </template>
     </span>
-    <span v-if="shouldShowActionMenu" class="extra">
+    <span v-if="shouldShowActionMenu" class="extra" data-testid="header-extra">
       <PlayableListHeaderActionMenu
         :sortable="config.sortable"
         :field="sortField"

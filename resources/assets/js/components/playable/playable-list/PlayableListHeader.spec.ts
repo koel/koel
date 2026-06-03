@@ -122,12 +122,8 @@ describe('playableListHeader.vue', () => {
   ])('action menu visibility — mobile=%s sortable=%s → visible=%s', async (mobile, sortable, expected) => {
     isMobile.any = mobile
 
-    try {
-      const { html } = await renderComponent({ sortable, reorderable: true })
+    await renderComponent({ sortable, reorderable: true })
 
-      expect(html().includes('class="extra"')).toBe(expected)
-    } finally {
-      isMobile.any = false
-    }
+    expect(screen.queryByTestId('header-extra') !== null).toBe(expected)
   })
 })
