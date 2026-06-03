@@ -87,7 +87,7 @@ class UserPreferencesCastTest extends TestCase
         self::assertSame('NO_REPEAT', $prefs->repeatMode);
         self::assertSame('grid', $prefs->albumsViewMode);
         self::assertSame('grid', $prefs->artistsViewMode);
-        self::assertSame('thumbnails', $prefs->radioStationsViewMode);
+        self::assertSame('grid', $prefs->radioStationsViewMode);
         self::assertSame('name', $prefs->albumsSortField);
         self::assertSame('name', $prefs->artistsSortField);
         self::assertSame('name', $prefs->genresSortField);

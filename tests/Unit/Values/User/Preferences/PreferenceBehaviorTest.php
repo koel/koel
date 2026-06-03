@@ -13,6 +13,7 @@ use App\Values\User\Preferences\CurrentEqualizerPresetPreference;
 use App\Values\User\Preferences\EqualizerPresetsPreference;
 use App\Values\User\Preferences\LastfmSessionKeyPreference;
 use App\Values\User\Preferences\MakeUploadsPublicPreference;
+use App\Values\User\Preferences\RadioStationsViewModePreference;
 use App\Values\User\Preferences\RepeatModePreference;
 use App\Values\User\Preferences\TranscodeQualityPreference;
 use App\Values\User\Preferences\VolumePreference;
@@ -58,6 +59,13 @@ class PreferenceBehaviorTest extends TestCase
     {
         self::assertSame('grid', AlbumsViewModePreference::make('thumbnails')->getValue());
         self::assertSame('table', AlbumsViewModePreference::make('list')->getValue());
+    }
+
+    #[Test]
+    public function radioStationsViewModeNormalizesLegacyValues(): void
+    {
+        self::assertSame('grid', RadioStationsViewModePreference::make('thumbnails')->getValue());
+        self::assertSame('table', RadioStationsViewModePreference::make('list')->getValue());
     }
 
     #[Test]

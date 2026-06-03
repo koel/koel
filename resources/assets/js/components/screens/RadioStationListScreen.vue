@@ -22,6 +22,7 @@
             </Btn>
 
             <RadioStationListSorter
+              v-if="preferences.radio_stations_view_mode !== 'table'"
               :field="preferences.radio_stations_sort_field"
               :order="preferences.radio_stations_sort_order"
               @sort="sort"
@@ -41,7 +42,7 @@
               <span class="sr-only">Add a new station</span>
             </Btn>
 
-            <ViewModeSwitch v-model="preferences.radio_stations_view_mode" />
+            <ViewModeSwitch v-model="preferences.radio_stations_view_mode" secondary="table" />
           </div>
         </template>
       </ScreenHeader>
@@ -58,6 +59,19 @@
       </template>
     </ScreenEmptyState>
 
+    <div v-else-if="preferences.radio_stations_view_mode === 'table'" class="-m-6 flex-1 flex flex-col min-h-0">
+      <div v-if="showSkeletons" class="flex flex-col" role="status" aria-busy="true" aria-label="Loading">
+        <RadioStationTableRowSkeleton v-for="i in 12" :key="i" />
+      </div>
+      <RadioStationTable
+        v-else
+        :stations
+        :field="preferences.radio_stations_sort_field"
+        :order="preferences.radio_stations_sort_order"
+        @sort="sort"
+        @toggle-favorite="toggleFavorite"
+      />
+    </div>
     <div v-else ref="gridContainer" class="scroll-mask-y -m-6 flex-1 overflow-auto">
       <GridListView ref="grid" :view-mode="preferences.radio_stations_view_mode" data-testid="radio-station-grid">
         <div v-if="showSkeletons" role="status" aria-busy="true" aria-label="Loading" class="contents">
@@ -93,6 +107,8 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
 import RadioStationListSorter from '@/components/radio/RadioStationListSorter.vue'
+import RadioStationTable from '@/components/radio/RadioStationTable.vue'
+import RadioStationTableRowSkeleton from '@/components/radio/RadioStationTableRowSkeleton.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import RadioStationCard from '@/components/radio/RadioStationCard.vue'
 import GridListView from '@/components/ui/GridListView.vue'
@@ -140,6 +156,8 @@ const fetchStations = async () => {
     loading.value = false
   }
 }
+
+const toggleFavorite = (station: RadioStation) => radioStationStore.toggleFavorite(station)
 
 const toggleFavoritesOnly = () => {
   preferences.radio_stations_favorites_only = !preferences.radio_stations_favorites_only

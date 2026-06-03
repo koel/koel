@@ -647,7 +647,9 @@ type AlbumListSortField = keyof Pick<
 type ArtistListSortField = keyof Pick<Artist, 'name' | 'created_at' | 'rating' | 'favorite'>
 type GenreListSortField = keyof Pick<Genre, 'name' | 'song_count'>
 type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
-type RadioStationListSortField = keyof Pick<RadioStation, 'name' | 'created_at'>
+type RadioStationListSortField = keyof Pick<RadioStation, 'name' | 'created_at' | 'favorite'>
+
+type RadioStationTableColumnName = 'name' | 'description' | 'created_at' | 'favorite'
 type SortField =
   | PodcastListSortField
   | AlbumListSortField
