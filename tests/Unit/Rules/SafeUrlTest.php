@@ -3,6 +3,7 @@
 namespace Tests\Unit\Rules;
 
 use App\Rules\SafeUrl;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
@@ -88,6 +89,6 @@ class SafeUrlTest extends TestCase
 
         self::assertFalse($this->passes('https://public.example.com/feed'));
 
-        Http::assertNotSent(static fn ($request): bool => str_contains($request->url(), '127.0.0.1'));
+        Http::assertNotSent(static fn (Request $request): bool => str_contains($request->url(), '127.0.0.1'));
     }
 }

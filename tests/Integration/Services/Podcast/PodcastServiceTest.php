@@ -13,6 +13,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -220,7 +221,7 @@ class PodcastServiceTest extends TestCase
 
         self::assertTrue($this->service->isPodcastObsolete($podcast));
 
-        Http::assertNotSent(static fn ($request): bool => str_contains($request->url(), '127.0.0.1'));
+        Http::assertNotSent(static fn (Request $request): bool => str_contains($request->url(), '127.0.0.1'));
     }
 
     #[Test]

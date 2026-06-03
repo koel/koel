@@ -3,6 +3,7 @@
 namespace Tests\Unit\Rules;
 
 use App\Rules\HasAudioContentType;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -68,6 +69,6 @@ class HasAudioContentTypeTest extends TestCase
             fn () => $this->addToAssertionCount(1), // @phpstan-ignore-line
         );
 
-        Http::assertNotSent(static fn ($request): bool => str_contains($request->url(), '127.0.0.1'));
+        Http::assertNotSent(static fn (Request $request): bool => str_contains($request->url(), '127.0.0.1'));
     }
 }
