@@ -38,17 +38,15 @@ class SafeHttp
      */
     public function redirectOptions(int $max = 5): array
     {
-        $network = $this->network;
-
         return [
             'allow_redirects' => [
                 'max' => $max,
-                'on_redirect' => static function (
+                'on_redirect' => function (
                     RequestInterface $request,
                     ResponseInterface $response,
                     UriInterface $uri,
-                ) use ($network): void {
-                    if (!$network->isSafeUrl((string) $uri)) {
+                ): void {
+                    if (!$this->network->isSafeUrl((string) $uri)) {
                         throw UnsafeUrlException::forUrl((string) $uri);
                     }
                 },
@@ -63,14 +61,10 @@ class SafeHttp
      */
     public function guzzleClient(int $timeoutInSeconds = 30): Client
     {
-        $network = $this->network;
-
         $stack = HandlerStack::create();
 
-        $stack->push(Middleware::mapRequest(static function (RequestInterface $request) use (
-            $network,
-        ): RequestInterface {
-            if (!$network->isSafeUrl((string) $request->getUri())) {
+        $stack->push(Middleware::mapRequest(function (RequestInterface $request): RequestInterface {
+            if (!$this->network->isSafeUrl((string) $request->getUri())) {
                 throw UnsafeUrlException::forUrl((string) $request->getUri());
             }
 
