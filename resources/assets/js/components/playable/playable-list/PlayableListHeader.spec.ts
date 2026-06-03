@@ -114,16 +114,23 @@ describe('playableListHeader.vue', () => {
     expect(emitted().sort).toBeUndefined()
   })
 
-  it.each<[boolean, boolean, boolean]>([
-    [false, true, true], // desktop + sortable → show
-    [false, false, true], // desktop + unsortable → show (column-toggle still useful)
-    [true, true, true], // mobile + sortable → show (sort still works)
-    [true, false, false], // mobile + unsortable (queue) → hide
-  ])('action menu visibility — mobile=%s sortable=%s → visible=%s', async (mobile, sortable, expected) => {
+  it.each<[boolean, boolean]>([
+    [false, true], // desktop + sortable
+    [false, false], // desktop + unsortable: column-toggle is still useful
+    [true, true], // mobile + sortable: sort still works
+  ])('shows action menu — mobile=%s sortable=%s', async (mobile, sortable) => {
     isMobile.any = mobile
 
     await renderComponent({ sortable, reorderable: true })
 
-    expect(screen.queryByTestId('header-extra') !== null).toBe(expected)
+    screen.getByTestId('header-extra')
+  })
+
+  it('hides action menu on mobile when not sortable', async () => {
+    isMobile.any = true
+
+    await renderComponent({ sortable: false, reorderable: true })
+
+    expect(screen.queryByTestId('header-extra')).toBeNull()
   })
 })
