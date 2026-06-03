@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/vue'
+import isMobile from 'ismobilejs'
 import { ref } from 'vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -111,5 +112,22 @@ describe('playableListHeader.vue', () => {
 
     await h.user.click(screen.getByTestId('header-track-number'))
     expect(emitted().sort).toBeUndefined()
+  })
+
+  it.each<[boolean, boolean, boolean]>([
+    [false, true, true], // desktop + sortable → show
+    [false, false, true], // desktop + unsortable → show (column-toggle still useful)
+    [true, true, true], // mobile + sortable → show (sort still works)
+    [true, false, false], // mobile + unsortable (queue) → hide
+  ])('action menu visibility — mobile=%s sortable=%s → visible=%s', async (mobile, sortable, expected) => {
+    isMobile.any = mobile
+
+    try {
+      const { html } = await renderComponent({ sortable, reorderable: true })
+
+      expect(html().includes('class="extra"')).toBe(expected)
+    } finally {
+      isMobile.any = false
+    }
   })
 })

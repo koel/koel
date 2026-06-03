@@ -166,7 +166,7 @@
         />
       </template>
     </span>
-    <span class="extra">
+    <span v-if="shouldShowActionMenu" class="extra">
       <PlayableListHeaderActionMenu
         :sortable="config.sortable"
         :field="sortField"
@@ -181,6 +181,7 @@
 </template>
 
 <script setup lang="ts">
+import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed } from 'vue'
 import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-icons'
@@ -228,4 +229,9 @@ const sortingByAlbumOrPodcast = computed(() => {
   const sortFields = arrayify(sortField.value)
   return sortFields[0] === 'album_name' || sortFields[0] === 'podcast_title'
 })
+
+// On mobile, the table columns collapse — sorting is the only thing the action
+// menu can do. If the list isn't sortable (e.g. the queue), the button would
+// just open an inert menu, so drop it entirely.
+const shouldShowActionMenu = computed(() => !isMobile.any || config.sortable)
 </script>
