@@ -222,7 +222,7 @@ const firstSongPlaying = computed(() =>
 )
 const normalPlaylists = computed(() => playlists.value.filter(({ is_smart }) => !is_smart))
 const canBeShared = computed(() => !isPlus.value || (isSong(playables.value[0]) && playables.value[0].is_public))
-const allowEmbedding = computed(() => commonStore.state.allows_embedding)
+const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
 const canShare = computed(() => onlyOneSelected.value && (canBeShared.value || allowEmbedding.value))
 
 const makePublic = () =>
