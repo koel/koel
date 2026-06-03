@@ -106,8 +106,10 @@ Route::prefix('api')
             Route::get('invitations', [UserInvitationController::class, 'get']);
             Route::post('invitations/accept', [UserInvitationController::class, 'accept']);
 
-            Route::get('embeds/{embed}/{options}', [EmbedController::class, 'getPayload'])->name('embeds.payload');
-            Route::post('embed-options', [EmbedOptionsController::class, 'encrypt']);
+            Route::middleware('embeds.enabled')->group(static function (): void {
+                Route::get('embeds/{embed}/{options}', [EmbedController::class, 'getPayload'])->name('embeds.payload');
+                Route::post('embed-options', [EmbedOptionsController::class, 'encrypt']);
+            });
         });
 
         Route::middleware('auth')->group(static function (): void {
@@ -287,7 +289,9 @@ Route::prefix('api')
             Route::apiResource('themes', ThemeController::class)->except('show', 'update');
 
             // Embed routes
-            Route::post('embeds/resolve', [EmbedController::class, 'resolveForEmbeddable']);
+            Route::middleware('embeds.enabled')->group(static function (): void {
+                Route::post('embeds/resolve', [EmbedController::class, 'resolveForEmbeddable']);
+            });
         });
 
         // Object-storage (S3) routes

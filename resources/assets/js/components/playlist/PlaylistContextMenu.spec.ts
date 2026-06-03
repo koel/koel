@@ -4,6 +4,7 @@ import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { screen, waitFor } from '@testing-library/vue'
+import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
 import { userStore } from '@/stores/userStore'
@@ -220,5 +221,12 @@ describe('playlistContextMenu.vue', () => {
     await h.user.click(screen.getByText('Embed…'))
 
     await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: playlist })
+  })
+
+  it('does not have an option to embed when embedding is disabled', async () => {
+    commonStore.state.allows_embedding = false
+    await renderComponent(h.factory('playlist').make())
+
+    expect(screen.queryByText('Embed…')).toBeNull()
   })
 })

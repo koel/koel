@@ -21,6 +21,7 @@ class InitialDataTest extends TestCase
             'uses_media_browser',
             'uses_ticketmaster',
             'allows_download',
+            'allows_embedding',
             'supports_transcoding',
             'cdn_url',
             'current_version',

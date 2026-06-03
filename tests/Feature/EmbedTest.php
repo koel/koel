@@ -66,4 +66,28 @@ class EmbedTest extends TestCase
 
         $this->getJson("api/embeds/{$embed->id}/$options")->assertNotFound();
     }
+
+    #[Test]
+    public function resolveReturnsNotFoundWhenEmbeddingDisabled(): void
+    {
+        config(['koel.embed.enabled' => false]);
+
+        $song = Song::factory()->createOne();
+
+        $this->postAs('api/embeds/resolve', [
+            'embeddable_id' => $song->id,
+            'embeddable_type' => 'playable',
+        ])->assertNotFound();
+    }
+
+    #[Test]
+    public function getPayloadReturnsNotFoundWhenEmbeddingDisabled(): void
+    {
+        config(['koel.embed.enabled' => false]);
+
+        $embed = Embed::factory()->createOne();
+        $options = EmbedOptions::make();
+
+        $this->getJson("api/embeds/{$embed->id}/$options")->assertNotFound();
+    }
 }

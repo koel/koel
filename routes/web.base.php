@@ -65,7 +65,7 @@ Route::middleware('web')->group(static function (): void {
 
     Route::get('embeds/{embed}/stream/{song}/{options}', StreamEmbedController::class)->name(
         'embeds.stream',
-    )->middleware('signed', 'throttle:10,1');
+    )->middleware('embeds.enabled', 'signed', 'throttle:10,1');
 });
 
 Route::middleware('web')

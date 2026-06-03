@@ -24,8 +24,10 @@
       <Separator />
       <MenuItem @click="toggleOffline">{{ allCached ? 'Remove Offline Versions' : 'Make Available Offline' }}</MenuItem>
     </template>
-    <Separator />
-    <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+    <template v-if="allowEmbedding">
+      <Separator />
+      <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+    </template>
   </ul>
 </template>
 
@@ -59,6 +61,7 @@ const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
+const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
 const allowEdit = computed(() => currentUserCan.editAlbum(album.value))
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))
