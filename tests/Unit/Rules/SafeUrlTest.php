@@ -87,5 +87,7 @@ class SafeUrlTest extends TestCase
         ]);
 
         self::assertFalse($this->passes('https://public.example.com/feed'));
+
+        Http::assertNotSent(static fn ($request): bool => str_contains($request->url(), '127.0.0.1'));
     }
 }

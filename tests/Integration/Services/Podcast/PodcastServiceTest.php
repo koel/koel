@@ -219,6 +219,8 @@ class PodcastServiceTest extends TestCase
         ]);
 
         self::assertTrue($this->service->isPodcastObsolete($podcast));
+
+        Http::assertNotSent(static fn ($request): bool => str_contains($request->url(), '127.0.0.1'));
     }
 
     #[Test]

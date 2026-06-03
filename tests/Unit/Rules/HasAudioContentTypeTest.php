@@ -67,5 +67,7 @@ class HasAudioContentTypeTest extends TestCase
             'https://public.example.com/stream',
             fn () => $this->addToAssertionCount(1), // @phpstan-ignore-line
         );
+
+        Http::assertNotSent(static fn ($request): bool => str_contains($request->url(), '127.0.0.1'));
     }
 }

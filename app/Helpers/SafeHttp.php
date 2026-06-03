@@ -67,7 +67,9 @@ class SafeHttp
 
         $stack = HandlerStack::create();
 
-        $stack->push(Middleware::mapRequest(static function (RequestInterface $request) use ($network) {
+        $stack->push(Middleware::mapRequest(static function (RequestInterface $request) use (
+            $network,
+        ): RequestInterface {
             if (!$network->isSafeUrl((string) $request->getUri())) {
                 throw UnsafeUrlException::forUrl((string) $request->getUri());
             }
@@ -78,18 +80,7 @@ class SafeHttp
         return new Client([
             'handler' => $stack,
             'timeout' => $timeoutInSeconds,
-            'allow_redirects' => [
-                'max' => 5,
-                'on_redirect' => static function (
-                    RequestInterface $request,
-                    ResponseInterface $response,
-                    UriInterface $uri,
-                ) use ($network): void {
-                    if (!$network->isSafeUrl((string) $uri)) {
-                        throw UnsafeUrlException::forUrl((string) $uri);
-                    }
-                },
-            ],
+            ...$this->redirectOptions(),
         ]);
     }
 }
