@@ -83,7 +83,7 @@ class PodcastService
 
                 return $podcast;
             });
-        } catch (UserAlreadySubscribedToPodcastException $exception) {
+        } catch (UserAlreadySubscribedToPodcastException|UnsafePodcastFeedUrlException $exception) {
             throw $exception;
         } catch (Throwable $exception) {
             Log::error($exception);
