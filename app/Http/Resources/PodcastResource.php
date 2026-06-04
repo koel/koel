@@ -39,7 +39,7 @@ class PodcastResource extends JsonResource
     public function toArray(Request $request): array
     {
         $data = [
-            'type' => 'podcast',
+            'type' => 'podcasts',
             'id' => $this->podcast->id,
             'url' => $this->podcast->url,
             'title' => $this->podcast->title,

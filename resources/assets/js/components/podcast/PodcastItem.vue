@@ -25,10 +25,11 @@
               @toggle="toggleFavorite"
             />
           </h3>
-          <p class="mt-2">
-            {{ podcast.author }}
+          <p class="mt-2 flex items-center gap-2 flex-wrap">
+            <span>{{ podcast.author }}</span>
+            <StarRating :rateable="podcast" size="xs" />
             <template v-if="lastPlayedAt">
-              •
+              <span>•</span>
               <span class="text-k-fg-50">
                 Last played
                 <time :datetime="podcast.last_played_at" :title="podcast.last_played_at">{{ lastPlayedAt }}</time>
@@ -49,6 +50,7 @@ import { formatTimeAgo } from '@vueuse/core'
 import { textToHsl } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 import { podcastStore } from '@/stores/podcastStore'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { defineAsyncComponent } from '@/utils/helpers'
