@@ -7,6 +7,7 @@ use App\Exceptions\DownloadLimitExceededException;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
+use App\Services\Network\SafeHttp;
 use App\Services\SongStorages\CloudStorage;
 use App\Services\SongStorages\SongStorageFactory;
 use App\Values\Downloadable;
@@ -20,6 +21,7 @@ class DownloadService
 {
     public function __construct(
         private readonly SongRepository $songRepository,
+        private readonly SafeHttp $http,
         #[Config('koel.download.limit')]
         private readonly int $downloadLimit = 0,
     ) {}
@@ -102,7 +104,7 @@ class DownloadService
         }
 
         if ($song->isEpisode()) {
-            return EpisodePlayable::getForEpisode($song)->path;
+            return EpisodePlayable::getForEpisode($song, $this->http)->path;
         }
 
         $localPath = SongStorageFactory::make($song->storage)->getLocalPath($song->path);

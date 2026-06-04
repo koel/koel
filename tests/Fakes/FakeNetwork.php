@@ -2,9 +2,7 @@
 
 namespace Tests\Fakes;
 
-use App\Helpers\Network;
-use Illuminate\Support\Uri;
-use Throwable;
+use App\Services\Network\Network;
 
 /**
  * Skips DNS resolution so tests don't need real internet connectivity.
@@ -13,33 +11,28 @@ use Throwable;
  */
 class FakeNetwork extends Network
 {
-    private const array SAFE_SCHEMES = ['http', 'https'];
-
-    public function isSafeUrl(string $url): bool
+    /**
+     * Return a synthetic public IP for any non-IP host that would otherwise
+     * require DNS, and apply the literal-IP privacy check inline (no recursion
+     * back into isPublicHost). The pinned IP is never actually contacted in
+     * tests because Http::fake intercepts before curl runs.
+     *
+     * @return list<string>
+     */
+    public function resolveToPublicIps(string $host): array
     {
-        try {
-            $uri = Uri::of($url);
-        } catch (Throwable) {
-            return false;
+        if ($host === '') {
+            return [];
         }
 
-        if (!in_array($uri->scheme(), self::SAFE_SCHEMES, true)) {
-            return false;
-        }
-
-        $host = $uri->host();
-
-        return $host !== '' && $this->isPublicHost($host);
-    }
-
-    public function isPublicHost(string $host): bool
-    {
         if (filter_var($host, FILTER_VALIDATE_IP)) {
             return (
-                filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false
+                filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)
+                    ? [$host]
+                    : []
             );
         }
 
-        return $host !== '';
+        return ['203.0.113.1'];
     }
 }

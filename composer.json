@@ -53,7 +53,8 @@
     "enshrined/svg-sanitize": "^0.22.0",
     "phanan/poddle": "^1.2.4",
     "laravel/ai": "^0.7.0",
-    "league/flysystem-webdav": "^3.0"
+    "league/flysystem-webdav": "^3.0",
+    "mlocati/ip-lib": "^1.22"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

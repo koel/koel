@@ -277,7 +277,10 @@ class PodcastServiceTest extends TestCase
         ]);
 
         $handlerStack = HandlerStack::create($mock);
-        $client = new Client(['handler' => $handlerStack]);
+        $client = new Client([
+            'handler' => $handlerStack,
+            'allow_redirects' => ['track_redirects' => true],
+        ]);
 
         self::assertSame('https://assets.example.com/episode.mp3', $this->service->getStreamableUrl(
             'https://example.com/episode.mp3',

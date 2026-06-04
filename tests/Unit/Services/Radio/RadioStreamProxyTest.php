@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Services\Radio;
 
-use App\Helpers\Network;
+use App\Services\Network\Network;
 use App\Services\Radio\RadioStreamProxy;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
