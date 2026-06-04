@@ -48,14 +48,14 @@ class FakeNetwork extends Network
      * isPublicHost, so the IP-pinning code path completes without hitting DNS.
      * The pinned IP is never actually contacted because Http::fake intercepts.
      *
-     * @return list<string>|null
+     * @return list<string>
      */
-    public function resolveToPublicIps(string $host): ?array
+    public function resolveToPublicIps(string $host): array
     {
         if (filter_var($host, FILTER_VALIDATE_IP)) {
-            return $this->isPublicHost($host) ? [$host] : null;
+            return $this->isPublicHost($host) ? [$host] : [];
         }
 
-        return $host !== '' ? ['203.0.113.1'] : null;
+        return $host !== '' ? ['203.0.113.1'] : [];
     }
 }

@@ -126,7 +126,7 @@ class SafeHttp
 
                 $ips = $network->resolveToPublicIps($host);
 
-                throw_if($ips === null, UnsafeUrlException::forUrl((string) $uri));
+                throw_if(!$ips, UnsafeUrlException::forUrl((string) $uri));
 
                 // IP literals don't trigger a DNS lookup, so nothing to pin.
                 if (!filter_var($host, FILTER_VALIDATE_IP)) {

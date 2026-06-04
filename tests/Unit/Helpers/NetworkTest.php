@@ -98,7 +98,7 @@ class NetworkTest extends TestCase
     public function rejectsIpv6TransitionWrappersOfPrivateIps(string $wrapper): void
     {
         self::assertFalse($this->network->isPublicHost($wrapper));
-        self::assertNull($this->network->resolveToPublicIps($wrapper));
+        self::assertSame([], $this->network->resolveToPublicIps($wrapper));
     }
 
     #[Test]
@@ -108,9 +108,9 @@ class NetworkTest extends TestCase
     }
 
     #[Test]
-    public function resolveToPublicIpsReturnsNullForPrivateIpLiteral(): void
+    public function resolveToPublicIpsReturnsEmptyForPrivateIpLiteral(): void
     {
-        self::assertNull($this->network->resolveToPublicIps('127.0.0.1'));
+        self::assertSame([], $this->network->resolveToPublicIps('127.0.0.1'));
     }
 
     #[Test]
@@ -118,7 +118,6 @@ class NetworkTest extends TestCase
     {
         $ips = $this->network->resolveToPublicIps('example.com');
 
-        self::assertNotNull($ips);
         self::assertNotEmpty($ips);
 
         foreach ($ips as $ip) {
@@ -127,8 +126,8 @@ class NetworkTest extends TestCase
     }
 
     #[Test]
-    public function resolveToPublicIpsReturnsNullForUnresolvableHost(): void
+    public function resolveToPublicIpsReturnsEmptyForUnresolvableHost(): void
     {
-        self::assertNull($this->network->resolveToPublicIps('this-host-does-not-exist.invalid'));
+        self::assertSame([], $this->network->resolveToPublicIps('this-host-does-not-exist.invalid'));
     }
 }
