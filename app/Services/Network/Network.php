@@ -40,14 +40,16 @@ class Network
     }
 
     /**
-     * Resolve a host to the subset of its DNS records (A + AAAA) whose IPs are
-     * public. Non-public records are dropped — only the public IPs come back.
-     * Returns an empty list when nothing public is left (host doesn't resolve,
-     * has no records, or every record is private/reserved).
+     * Resolve a host to its public IP addresses. Returns an empty list if the
+     * host can't be resolved, has no records, or has *any* non-public record —
+     * fail-closed semantics: a mixed public/private answer rejects the whole
+     * host. The strict behavior is needed by `isPublicHost()` consumers that
+     * don't go through curl (e.g. RadioStreamProxy uses fopen, which does its
+     * own DNS lookup and could land on the private record).
      *
-     * Callers feed the returned list to CURLOPT_RESOLVE to pin curl onto the
-     * validated IPs, closing the DNS-rebinding TOCTOU window between validation
-     * and connect.
+     * Callers that DO go through curl additionally feed the returned list to
+     * CURLOPT_RESOLVE to pin connect-time DNS onto the validated IPs, closing
+     * the DNS-rebinding TOCTOU window between validation and connect.
      *
      * "Public" means ip-lib's RangeType::T_PUBLIC — excludes private, loopback,
      * link-local, multicast, broadcast, reserved, documentation, NAT64
@@ -65,19 +67,28 @@ class Network
         }
 
         try {
-            $records = array_merge(dns_get_record($host, DNS_A) ?: [], dns_get_record($host, DNS_AAAA) ?: []);
+            $a = dns_get_record($host, DNS_A);
+            $aaaa = dns_get_record($host, DNS_AAAA);
         } catch (Throwable) {
+            return [];
+        }
+
+        if ($a === false || $aaaa === false) {
+            // dns_get_record returning false is a resolver failure — fail closed
+            // rather than treating it as "host has no records".
             return [];
         }
 
         $ips = [];
 
-        foreach ($records as $record) {
+        foreach (array_merge($a, $aaaa) as $record) {
             $ip = Arr::get($record, 'ip') ?? Arr::get($record, 'ipv6');
 
-            if ($ip && Factory::parseAddressString($ip)?->getRangeType() === RangeType::T_PUBLIC) {
-                $ips[] = $ip;
+            if (!$ip || Factory::parseAddressString($ip)?->getRangeType() !== RangeType::T_PUBLIC) {
+                return [];
             }
+
+            $ips[] = $ip;
         }
 
         return $ips;

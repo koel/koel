@@ -58,4 +58,15 @@ class SafeHttpTest extends TestCase
 
         self::assertTrue($this->safeHttp->head('https://8.8.8.8/feed')->successful());
     }
+
+    #[Test]
+    public function pinnedGuzzleClientRejectsPrivateIp(): void
+    {
+        // The pinned Guzzle client (used by Poddle, getStreamableUrl) shares
+        // the same pin-and-validate middleware. Verify the standalone branch
+        // throws on a private target, not just the Laravel Http path.
+        $this->expectException(UnsafeUrlException::class);
+
+        $this->safeHttp->getPinnedGuzzleClient('http://127.0.0.1/feed')->request('GET', 'http://127.0.0.1/feed');
+    }
 }
