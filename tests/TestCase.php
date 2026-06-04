@@ -3,13 +3,13 @@
 namespace Tests;
 
 use App\Facades\License;
-use App\Helpers\Network;
 use App\Helpers\Ulid;
 use App\Helpers\Uuid;
 use App\Models\Album;
 use App\Observers\AlbumObserver;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
+use App\Services\Network\Network;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;

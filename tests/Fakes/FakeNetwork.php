@@ -2,7 +2,7 @@
 
 namespace Tests\Fakes;
 
-use App\Helpers\Network;
+use App\Services\Network\Network;
 
 /**
  * Skips DNS resolution so tests don't need real internet connectivity.

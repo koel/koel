@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Unit\Helpers;
+namespace Tests\Unit\Services\Network;
 
-use App\Helpers\Network;
+use App\Services\Network\Network;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

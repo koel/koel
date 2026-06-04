@@ -3,7 +3,7 @@
 namespace App\Rules;
 
 use App\Exceptions\UnsafeUrlException;
-use App\Helpers\SafeHttp;
+use App\Services\Network\SafeHttp;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Uri;

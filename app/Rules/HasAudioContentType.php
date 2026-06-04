@@ -3,7 +3,7 @@
 namespace App\Rules;
 
 use App\Exceptions\UnsafeUrlException;
-use App\Helpers\SafeHttp;
+use App\Services\Network\SafeHttp;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Str;
@@ -17,9 +17,9 @@ use Throwable;
 class HasAudioContentType implements ValidationRule
 {
     public function __construct(
-        private ?SafeHttp $safeHttp = null,
+        private ?SafeHttp $http = null,
     ) {
-        $this->safeHttp ??= app(SafeHttp::class);
+        $this->http ??= app(SafeHttp::class);
     }
 
     /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */
@@ -55,7 +55,7 @@ class HasAudioContentType implements ValidationRule
         // (don't fall back to GET on safety failures — the URL is blocked, not
         // just HEAD-incompatible).
         try {
-            $response = $this->safeHttp->head($url);
+            $response = $this->http->head($url);
 
             if ($response->successful()) {
                 return $response->header('Content-Type');
@@ -66,7 +66,7 @@ class HasAudioContentType implements ValidationRule
         }
 
         // Fall back to GET as a stream with ICY headers — Shoutcast/Icecast only respond to GET
-        $response = $this->safeHttp->getAsStream($url, ['Icy-MetaData' => '1']);
+        $response = $this->http->getAsStream($url, ['Icy-MetaData' => '1']);
 
         return $response->header('Content-Type');
     }

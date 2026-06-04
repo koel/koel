@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Services\Network;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Uri;

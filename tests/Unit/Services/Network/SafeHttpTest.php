@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Unit\Helpers;
+namespace Tests\Unit\Services\Network;
 
 use App\Exceptions\UnsafeUrlException;
-use App\Helpers\SafeHttp;
+use App\Services\Network\SafeHttp;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

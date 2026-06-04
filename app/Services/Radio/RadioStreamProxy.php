@@ -2,8 +2,8 @@
 
 namespace App\Services\Radio;
 
-use App\Helpers\Network;
 use App\Models\RadioStation;
+use App\Services\Network\Network;
 
 class RadioStreamProxy
 {

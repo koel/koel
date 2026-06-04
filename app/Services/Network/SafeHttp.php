@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Services\Network;
 
 use App\Exceptions\UnsafeUrlException;
 use Closure;

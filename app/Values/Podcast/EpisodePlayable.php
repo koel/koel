@@ -2,8 +2,8 @@
 
 namespace App\Values\Podcast;
 
-use App\Helpers\SafeHttp;
 use App\Models\Song as Episode;
+use App\Services\Network\SafeHttp;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Facades\Cache;
@@ -26,20 +26,20 @@ final class EpisodePlayable implements Arrayable, Jsonable
         return File::isReadable($this->path) && $this->checksum === File::hash($this->path);
     }
 
-    public static function getForEpisode(Episode $episode): self
+    public static function getForEpisode(Episode $episode, SafeHttp $safeHttp): self
     {
         /** @var self|null $cached */
         $cached = Cache::get("episode-playable.{$episode->id}");
 
-        return $cached?->valid() ? $cached : self::createForEpisode($episode);
+        return $cached?->valid() ? $cached : self::createForEpisode($episode, $safeHttp);
     }
 
-    private static function createForEpisode(Episode $episode): self
+    private static function createForEpisode(Episode $episode, SafeHttp $safeHttp): self
     {
         $file = artifact_path("episodes/{$episode->id}.mp3");
 
         if (!File::exists($file)) {
-            app(SafeHttp::class)->download((string) $episode->path, $file)->throw();
+            $safeHttp->download((string) $episode->path, $file)->throw();
         }
 
         $playable = new self($file, File::hash($file));
