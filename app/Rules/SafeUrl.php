@@ -51,7 +51,7 @@ class SafeUrl implements ValidationRule
         }
 
         try {
-            $pinnedOptions = app(SafeHttp::class)->pinnedOptions((string) $value);
+            $pinnedOptions = app(SafeHttp::class)->getPinnedOptions((string) $value);
         } catch (UnsafeUrlException) {
             $fail('The :attribute must point to a public URL.');
 

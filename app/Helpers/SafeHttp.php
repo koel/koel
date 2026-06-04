@@ -19,8 +19,8 @@ use Psr\Http\Message\UriInterface;
  *    once at validation time and the resolved IPs are bound into curl, so an
  *    attacker can't flip the DNS record between validation and connect.
  *
- * Consumers using Laravel Http facade: `Http::withOptions(SafeHttp::pinnedOptions($url))`.
- * Consumers needing a PSR-18 client (e.g. Poddle): `SafeHttp::pinnedGuzzleClient($url)`.
+ * Consumers using Laravel Http facade: `Http::withOptions(SafeHttp::getPinnedOptions($url))`.
+ * Consumers needing a PSR-18 client (e.g. Poddle): `SafeHttp::getPinnedGuzzleClient($url)`.
  */
 class SafeHttp
 {
@@ -35,7 +35,7 @@ class SafeHttp
      *
      * @return array<string, mixed>
      */
-    public function redirectOptions(int $max = 5): array
+    public function getRedirectOptions(int $max = 5): array
     {
         return [
             'allow_redirects' => [
@@ -58,7 +58,7 @@ class SafeHttp
      * via Guzzle middleware. Use for libraries that take an injected client
      * (e.g. PhanAn\Poddle\Poddle::fromUrl()).
      */
-    public function guzzleClient(int $timeoutInSeconds = 30): Client
+    public function getGuzzleClient(int $timeoutInSeconds = 30): Client
     {
         $stack = HandlerStack::create();
 
@@ -73,7 +73,7 @@ class SafeHttp
         return new Client([
             'handler' => $stack,
             'timeout' => $timeoutInSeconds,
-            ...$this->redirectOptions(),
+            ...$this->getRedirectOptions(),
         ]);
     }
 
@@ -88,7 +88,7 @@ class SafeHttp
      *
      * @return array<string, mixed>
      */
-    public function pinnedOptions(string $url, int $max = 5): array
+    public function getPinnedOptions(string $url, int $max = 5): array
     {
         [$host, $port] = self::extractHostPort($url);
 
@@ -98,7 +98,7 @@ class SafeHttp
             throw UnsafeUrlException::forUrl($url);
         }
 
-        $options = $this->redirectOptions($max);
+        $options = $this->getRedirectOptions($max);
 
         if (filter_var($host, FILTER_VALIDATE_IP)) {
             // No DNS lookup happens for IP literals, so there's nothing to pin.
@@ -117,7 +117,7 @@ class SafeHttp
      * libraries that take an injected client AND target a known URL (e.g.
      * PhanAn\Poddle\Poddle::fromUrl($url, ..., $client)).
      */
-    public function pinnedGuzzleClient(string $url, int $timeoutInSeconds = 30): Client
+    public function getPinnedGuzzleClient(string $url, int $timeoutInSeconds = 30): Client
     {
         $stack = HandlerStack::create();
 
@@ -132,7 +132,7 @@ class SafeHttp
         return new Client([
             'handler' => $stack,
             'timeout' => $timeoutInSeconds,
-            ...$this->pinnedOptions($url),
+            ...$this->getPinnedOptions($url),
         ]);
     }
 

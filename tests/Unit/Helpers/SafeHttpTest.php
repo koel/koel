@@ -28,7 +28,7 @@ class SafeHttpTest extends TestCase
     {
         $this->expectException(UnsafeUrlException::class);
 
-        $this->safeHttp->guzzleClient()->request('GET', 'http://127.0.0.1/admin');
+        $this->safeHttp->getGuzzleClient()->request('GET', 'http://127.0.0.1/admin');
     }
 
     #[Test]
@@ -47,7 +47,7 @@ class SafeHttpTest extends TestCase
         $this->expectException(UnsafeUrlException::class);
 
         try {
-            $client->request('GET', 'https://public.example.com/feed', $this->safeHttp->redirectOptions());
+            $client->request('GET', 'https://public.example.com/feed', $this->safeHttp->getRedirectOptions());
         } catch (GuzzleException $e) {
             // Guzzle wraps middleware exceptions; unwrap to surface the real cause.
             if ($e->getPrevious() instanceof UnsafeUrlException) {
@@ -68,7 +68,7 @@ class SafeHttpTest extends TestCase
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);
 
-        $response = $client->request('GET', 'https://public.example.com/feed', $this->safeHttp->redirectOptions());
+        $response = $client->request('GET', 'https://public.example.com/feed', $this->safeHttp->getRedirectOptions());
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('ok', (string) $response->getBody());
@@ -77,7 +77,7 @@ class SafeHttpTest extends TestCase
     #[Test]
     public function pinnedOptionsEmitsCurlResolveForResolvedHost(): void
     {
-        $options = $this->safeHttp->pinnedOptions('https://example.com/feed');
+        $options = $this->safeHttp->getPinnedOptions('https://example.com/feed');
 
         self::assertArrayHasKey('curl', $options);
         self::assertArrayHasKey(CURLOPT_RESOLVE, $options['curl']);
@@ -90,7 +90,7 @@ class SafeHttpTest extends TestCase
     #[Test]
     public function pinnedOptionsSkipsResolveForIpLiteralUrl(): void
     {
-        $options = $this->safeHttp->pinnedOptions('https://8.8.8.8/');
+        $options = $this->safeHttp->getPinnedOptions('https://8.8.8.8/');
 
         self::assertArrayNotHasKey('curl', $options);
     }
@@ -100,6 +100,6 @@ class SafeHttpTest extends TestCase
     {
         $this->expectException(UnsafeUrlException::class);
 
-        $this->safeHttp->pinnedOptions('http://127.0.0.1/admin');
+        $this->safeHttp->getPinnedOptions('http://127.0.0.1/admin');
     }
 }

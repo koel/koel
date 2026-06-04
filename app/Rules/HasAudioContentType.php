@@ -41,7 +41,7 @@ class HasAudioContentType implements ValidationRule
      */
     private function resolveContentType(string $url): string
     {
-        $pinnedOptions = app(SafeHttp::class)->pinnedOptions($url);
+        $pinnedOptions = app(SafeHttp::class)->getPinnedOptions($url);
 
         // Try HEAD first — fast and lightweight
         try {
