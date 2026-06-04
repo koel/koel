@@ -42,4 +42,20 @@ class FakeNetwork extends Network
 
         return $host !== '';
     }
+
+    /**
+     * Return a synthetic public IP for any non-IP host that would pass
+     * isPublicHost, so the IP-pinning code path completes without hitting DNS.
+     * The pinned IP is never actually contacted because Http::fake intercepts.
+     *
+     * @return list<string>|null
+     */
+    public function resolveToPublicIps(string $host): ?array
+    {
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            return $this->isPublicHost($host) ? [$host] : null;
+        }
+
+        return $host !== '' ? ['203.0.113.1'] : null;
+    }
 }

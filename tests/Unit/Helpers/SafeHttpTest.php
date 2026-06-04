@@ -73,4 +73,33 @@ class SafeHttpTest extends TestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('ok', (string) $response->getBody());
     }
+
+    #[Test]
+    public function pinnedOptionsEmitsCurlResolveForResolvedHost(): void
+    {
+        $options = $this->safeHttp->pinnedOptions('https://example.com/feed');
+
+        self::assertArrayHasKey('curl', $options);
+        self::assertArrayHasKey(CURLOPT_RESOLVE, $options['curl']);
+
+        foreach ($options['curl'][CURLOPT_RESOLVE] as $entry) {
+            self::assertMatchesRegularExpression('/^example\.com:443:[0-9a-f.:]+$/i', $entry);
+        }
+    }
+
+    #[Test]
+    public function pinnedOptionsSkipsResolveForIpLiteralUrl(): void
+    {
+        $options = $this->safeHttp->pinnedOptions('https://8.8.8.8/');
+
+        self::assertArrayNotHasKey('curl', $options);
+    }
+
+    #[Test]
+    public function pinnedOptionsRejectsPrivateIpLiteral(): void
+    {
+        $this->expectException(UnsafeUrlException::class);
+
+        $this->safeHttp->pinnedOptions('http://127.0.0.1/admin');
+    }
 }

@@ -6,6 +6,7 @@ use App\Helpers\Ulid;
 use App\Http\Resources\RadioStationResource;
 use App\Models\Organization;
 use App\Models\RadioStation;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -21,6 +22,26 @@ class RadioStationTest extends TestCase
         parent::setUp();
 
         Http::fake(['*' => Http::response('', 200, ['Content-Type' => 'audio/mpeg'])]);
+    }
+
+    #[Test]
+    public function createWithPrivateUrlDoesNotProbeIt(): void
+    {
+        // bail on the validation rules must stop HasAudioContentType from probing
+        // a URL that SafeUrl has already rejected. Without bail, the HEAD/GET
+        // probe lands on the private host — SSRF (GHSA-jr4p-4xjh-fwvw).
+        $user = create_user();
+
+        $this->postAs(
+            '/api/radio/stations',
+            [
+                'url' => 'http://127.0.0.1/stream',
+                'name' => 'Internal',
+            ],
+            $user,
+        )->assertUnprocessable();
+
+        Http::assertNotSent(static fn (Request $request): bool => str_contains($request->url(), '127.0.0.1'));
     }
 
     #[Test]

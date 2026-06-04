@@ -50,10 +50,16 @@ class SafeUrl implements ValidationRule
             return;
         }
 
-        $redirectOptions = app(SafeHttp::class)->redirectOptions();
+        try {
+            $pinnedOptions = app(SafeHttp::class)->pinnedOptions((string) $value);
+        } catch (UnsafeUrlException) {
+            $fail('The :attribute must point to a public URL.');
+
+            return;
+        }
 
         try {
-            $response = Http::withOptions($redirectOptions)->head((string) $value);
+            $response = Http::withOptions($pinnedOptions)->head((string) $value);
         } catch (UnsafeUrlException) {
             $fail('The :attribute must point to a public URL.');
 
@@ -61,7 +67,7 @@ class SafeUrl implements ValidationRule
         } catch (Throwable) {
             // Some streaming servers don't support HEAD — try GET
             try {
-                $response = Http::withOptions([...$redirectOptions, 'stream' => true])->get((string) $value);
+                $response = Http::withOptions([...$pinnedOptions, 'stream' => true])->get((string) $value);
             } catch (UnsafeUrlException) {
                 $fail('The :attribute must point to a public URL.');
 

@@ -24,6 +24,7 @@ class RadioStationUpdateRequest extends Request
     {
         return [
             'url' => [
+                'bail',
                 'required',
                 'url',
                 Rule::unique('radio_stations')

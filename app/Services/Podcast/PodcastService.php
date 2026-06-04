@@ -225,7 +225,7 @@ class PodcastService
         }
 
         try {
-            $lastModified = Http::withOptions($this->safeHttp->redirectOptions())
+            $lastModified = Http::withOptions($this->safeHttp->pinnedOptions($podcast->url))
                 ->head($podcast->url)
                 ->header('Last-Modified');
 
@@ -254,7 +254,7 @@ class PodcastService
             return null;
         }
 
-        $client ??= $this->safeHttp->guzzleClient();
+        $client ??= $this->safeHttp->pinnedGuzzleClient($url);
 
         try {
             $response = $client->request($method, $url, [
@@ -307,6 +307,6 @@ class PodcastService
             throw UnsafePodcastFeedUrlException::create($url);
         }
 
-        return Poddle::fromUrl($url, 5 * 60, $this->client);
+        return Poddle::fromUrl($url, 5 * 60, $this->client ?? $this->safeHttp->pinnedGuzzleClient($url));
     }
 }

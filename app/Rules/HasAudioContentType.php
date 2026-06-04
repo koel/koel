@@ -41,11 +41,11 @@ class HasAudioContentType implements ValidationRule
      */
     private function resolveContentType(string $url): string
     {
-        $redirectOptions = app(SafeHttp::class)->redirectOptions();
+        $pinnedOptions = app(SafeHttp::class)->pinnedOptions($url);
 
         // Try HEAD first — fast and lightweight
         try {
-            $response = Http::withOptions($redirectOptions)->head($url);
+            $response = Http::withOptions($pinnedOptions)->head($url);
 
             if ($response->successful()) {
                 return $response->header('Content-Type');
@@ -55,7 +55,7 @@ class HasAudioContentType implements ValidationRule
 
         // Fall back to GET with ICY headers — streaming servers often only respond to GET
         $response = Http::withHeaders(['Icy-MetaData' => '1'])->withOptions([
-            ...$redirectOptions,
+            ...$pinnedOptions,
             'stream' => true,
         ])->get($url);
 
