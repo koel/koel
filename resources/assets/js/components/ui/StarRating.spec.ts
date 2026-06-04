@@ -4,6 +4,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
+import { podcastStore } from '@/stores/podcastStore'
 import Component from './StarRating.vue'
 
 describe('starRating.vue', () => {
@@ -70,6 +71,16 @@ describe('starRating.vue', () => {
     await h.user.click(screen.getByRole('radio', { name: 'Rate 3 of 5' }))
 
     expect(spy).toHaveBeenCalledWith(song, 3)
+  })
+
+  it('dispatches to podcastStore.rate when given a podcast rateable', async () => {
+    const podcast = h.factory('podcast').make({ rating: 0 })
+    const spy = vi.spyOn(podcastStore, 'rate').mockResolvedValue()
+
+    h.render(Component, { props: { rateable: podcast } })
+    await h.user.click(screen.getByRole('radio', { name: 'Rate 4 of 5' }))
+
+    expect(spy).toHaveBeenCalledWith(podcast, 4)
   })
 
   it('labels stars with their numeric value when they do not match the current rating', () => {

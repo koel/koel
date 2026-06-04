@@ -19,6 +19,8 @@ class PodcastResource extends JsonResource
         'link',
         'description',
         'author',
+        'favorite',
+        'rating',
     ];
 
     public function __construct(
@@ -37,7 +39,7 @@ class PodcastResource extends JsonResource
     public function toArray(Request $request): array
     {
         $data = [
-            'type' => 'podcast',
+            'type' => 'podcasts',
             'id' => $this->podcast->id,
             'url' => $this->podcast->url,
             'title' => $this->podcast->title,
@@ -46,6 +48,7 @@ class PodcastResource extends JsonResource
             'description' => $this->podcast->description,
             'author' => $this->podcast->author,
             'favorite' => $this->podcast->favorite,
+            'rating' => (int) ($this->podcast->rating ?? 0),
         ];
 
         if ($this->withSubscriptionData) {

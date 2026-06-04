@@ -6,7 +6,9 @@ use App\Builders\PodcastBuilder;
 use App\Casts\Podcast\CategoriesCast;
 use App\Casts\Podcast\PodcastMetadataCast;
 use App\Models\Concerns\MorphsToFavorites;
+use App\Models\Concerns\MorphsToRatings;
 use App\Models\Contracts\Favoriteable;
+use App\Models\Contracts\Rateable;
 use App\Models\Song as Episode;
 use Carbon\Carbon;
 use Database\Factories\PodcastFactory;
@@ -43,11 +45,12 @@ use PhanAn\Poddle\Values\ChannelMetadata;
 #[UseEloquentBuilder(PodcastBuilder::class)]
 #[Unguarded]
 #[Hidden(['created_at', 'updated_at'])]
-class Podcast extends Model implements Favoriteable
+class Podcast extends Model implements Favoriteable, Rateable
 {
     use HasFactory;
     use HasUuids;
     use MorphsToFavorites;
+    use MorphsToRatings;
     use Searchable;
 
     protected function casts(): array

@@ -6,6 +6,7 @@ use App\Models\Podcast;
 use App\Models\User;
 use App\Repositories\Contracts\ScoutableRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @extends Repository<Podcast>
@@ -18,15 +19,27 @@ class PodcastRepository extends Repository implements ScoutableRepository
         return $this->findOneBy(['url' => $url]);
     }
 
+    /** @param string $id */
+    public function getOne($id, ?User $user = null): Podcast
+    {
+        $user ??= $this->auth->user();
+
+        return Podcast::query()
+            ->with(['subscribers' => static fn (Relation $query) => $query->where('users.id', $user->id)])
+            ->setScopedUser($user)
+            ->withUserContext($user)
+            ->findOrFail($id);
+    }
+
     /** @return Collection<int, Podcast> */
     public function getAllSubscribedByUser(bool $favoritesOnly, ?User $user = null): Collection
     {
         $user ??= $this->auth->user();
 
         return Podcast::query()
-            ->with(['subscribers' => static fn ($query) => $query->where('users.id', $user->id)])
+            ->with(['subscribers' => static fn (Relation $query) => $query->where('users.id', $user->id)])
             ->setScopedUser($user)
-            ->withFavoriteStatus(favoritesOnly: $favoritesOnly)
+            ->withUserContext($user, favoritesOnly: $favoritesOnly)
             ->subscribed()
             ->get();
     }
@@ -37,8 +50,9 @@ class PodcastRepository extends Repository implements ScoutableRepository
         $user ??= $this->auth->user();
 
         $podcasts = Podcast::query()
-            ->with(['subscribers' => static fn ($query) => $query->where('users.id', $user->id)])
+            ->with(['subscribers' => static fn (Relation $query) => $query->where('users.id', $user->id)])
             ->setScopedUser($user)
+            ->withUserContext($user)
             ->subscribed()
             ->whereIn('podcasts.id', $ids)
             ->distinct()

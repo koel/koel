@@ -367,6 +367,7 @@ interface Podcast {
     progresses: Record<Playable['id'], number>
   }
   favorite: boolean
+  rating: number // 0-5, current user's rating; 0 = unrated
 }
 
 interface YouTubeVideo {
