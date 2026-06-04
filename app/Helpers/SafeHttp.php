@@ -3,30 +3,30 @@
 namespace App\Helpers;
 
 use App\Exceptions\UnsafeUrlException;
+use Closure;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Uri;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\UriInterface;
 
 /**
  * SSRF-hardened wrapper around Laravel's Http facade. Use it anywhere you fetch
  * a URL that came from outside your trust boundary. Both legs of the SSRF threat
- * model are closed:
+ * model are closed for every request including each redirect hop:
  *
- *  - Redirect SSRF: every redirect hop is re-validated against Network::isSafeUrl.
- *  - DNS rebinding (TOCTOU): DNS is resolved once at validation time and the
- *    resolved IPs are pinned into curl via CURLOPT_RESOLVE, so the connect-time
- *    DNS lookup can't return a different (private) IP.
+ *  - Redirect SSRF: every redirect target's host is re-resolved and re-validated.
+ *  - DNS rebinding (TOCTOU): the resolved IPs are pinned into curl via
+ *    CURLOPT_RESOLVE before each connect, so curl can't ask DNS again and get a
+ *    different (private) IP.
  *
- * Throws UnsafeUrlException at validation time (initial URL not public, or DNS
- * resolution fails) and at request time (any redirect hop points to a non-public
- * target). Callers that want a typed boundary should catch UnsafeUrlException.
+ * Both protections live in a single Guzzle middleware. Guzzle re-traverses the
+ * handler stack for each redirect hop, so the middleware fires on the initial
+ * request AND every redirect target — no manual redirect loop needed.
+ *
+ * Throws UnsafeUrlException whenever any request URL's host fails to resolve to
+ * public IPs (initial URL or any redirect target).
  *
  * For PSR-18 consumers (e.g. PhanAn\Poddle\Poddle::fromUrl()), use
  * SafeHttp::getPinnedGuzzleClient($url) instead.
@@ -40,13 +40,13 @@ class SafeHttp
     /** Issue a HEAD request against the URL with full SSRF protection. */
     public function head(string $url, array $headers = []): Response
     {
-        return $this->buildRequest($url, $headers)->head($url);
+        return $this->buildRequest($headers)->head($url);
     }
 
     /** Issue a GET request against the URL with full SSRF protection. */
     public function get(string $url, array $headers = []): Response
     {
-        return $this->buildRequest($url, $headers)->get($url);
+        return $this->buildRequest($headers)->get($url);
     }
 
     /**
@@ -56,109 +56,91 @@ class SafeHttp
      */
     public function getAsStream(string $url, array $headers = []): Response
     {
-        return $this->buildRequest($url, $headers, ['stream' => true])->get($url);
+        return $this->buildRequest($headers, ['stream' => true])->get($url);
     }
 
     /**
-     * Build a PSR-18 client pinned to the resolved IPs of `$url`'s host. Use for
-     * libraries that take an injected client AND target a known URL (e.g.
-     * PhanAn\Poddle\Poddle::fromUrl($url, ..., $client)).
+     * Build a PSR-18 client whose handler stack applies the same hop-by-hop
+     * pinning + validation as the Laravel Http methods above. Use for libraries
+     * that take an injected client (e.g. PhanAn\Poddle\Poddle::fromUrl()).
      */
     public function getPinnedGuzzleClient(string $url, bool $trackRedirects = false, int $timeoutInSeconds = 30): Client
     {
-        $stack = HandlerStack::create();
-
-        $stack->push(Middleware::mapRequest(function (RequestInterface $request): RequestInterface {
-            if (!$this->network->isSafeUrl((string) $request->getUri())) {
-                throw UnsafeUrlException::forUrl((string) $request->getUri());
-            }
-
-            return $request;
-        }));
-
-        $options = $this->buildPinnedOptions($url);
+        $allowRedirects = ['max' => 5];
 
         if ($trackRedirects) {
-            $options['allow_redirects']['track_redirects'] = true;
+            $allowRedirects['track_redirects'] = true;
         }
 
         return new Client([
-            'handler' => $stack,
+            'handler' => $this->buildHandlerStack(),
             'timeout' => $timeoutInSeconds,
-            ...$options,
+            'allow_redirects' => $allowRedirects,
         ]);
-    }
-
-    /**
-     * Returns Http facade options that pin the URL's host to its currently-resolved
-     * public IPs and re-validate each redirect hop.
-     *
-     * @return array<string, mixed>
-     */
-    private function buildPinnedOptions(string $url, int $maxRedirects = 5): array
-    {
-        [$host, $port] = self::extractHostAndPort($url);
-
-        $ips = $this->network->resolveToPublicIps($host);
-
-        throw_if($ips === null, UnsafeUrlException::forUrl($url));
-
-        $options = $this->buildRedirectOptions($maxRedirects);
-
-        if (filter_var($host, FILTER_VALIDATE_IP)) {
-            // No DNS lookup happens for IP literals, so there's nothing to pin.
-            return $options;
-        }
-
-        $options['curl'] = [
-            CURLOPT_RESOLVE => array_map(static fn (string $ip) => "{$host}:{$port}:{$ip}", $ips),
-        ];
-
-        return $options;
-    }
-
-    /**
-     * Returns the allow_redirects options that re-validate every redirect target
-     * via Network::isSafeUrl, throwing UnsafeUrlException on a private or reserved
-     * target.
-     *
-     * @return array<string, mixed>
-     */
-    private function buildRedirectOptions(int $maxRedirects = 5): array
-    {
-        return [
-            'allow_redirects' => [
-                'max' => $maxRedirects,
-                'on_redirect' => function (
-                    RequestInterface $request,
-                    ResponseInterface $response,
-                    UriInterface $uri,
-                ): void {
-                    $url = (string) $uri;
-                    throw_unless($this->network->isSafeUrl($url), UnsafeUrlException::forUrl($url));
-                },
-            ],
-        ];
     }
 
     /**
      * @param array<string, string> $headers
      * @param array<string, mixed> $extraOptions
      */
-    private function buildRequest(string $url, array $headers, array $extraOptions = []): PendingRequest
+    private function buildRequest(array $headers, array $extraOptions = []): PendingRequest
     {
-        $request = Http::withOptions([...$this->buildPinnedOptions($url), ...$extraOptions]);
+        // withMiddleware pushes onto Laravel's existing handler stack — required
+        // so Http::fake() in tests still intercepts. Setting `handler` via
+        // withOptions would *replace* Laravel's stack and break the fake.
+        $request = Http::withMiddleware($this->pinAndValidateMiddleware());
+
+        if ($extraOptions !== []) {
+            $request = $request->withOptions($extraOptions);
+        }
 
         return $headers === [] ? $request : $request->withHeaders($headers);
     }
 
-    /** @return array{0: string, 1: int} */
-    private static function extractHostAndPort(string $url): array
+    /**
+     * Guzzle handler stack with the pin-and-validate middleware. Used only by
+     * getPinnedGuzzleClient (no Laravel Http::fake involvement there).
+     */
+    private function buildHandlerStack(): HandlerStack
     {
-        $uri = Uri::of($url);
-        $host = $uri->host();
-        $port = $uri->port() ?? ($uri->scheme() === 'https' ? 443 : 80);
+        $stack = HandlerStack::create();
+        $stack->push($this->pinAndValidateMiddleware(), 'safe_http_pin');
 
-        return [$host, $port];
+        return $stack;
+    }
+
+    /**
+     * Middleware that, for every outbound request: resolves the host's public
+     * IPs, throws UnsafeUrlException if any are private/reserved or DNS fails,
+     * and appends CURLOPT_RESOLVE entries to the transfer options so curl uses
+     * the validated IPs instead of doing a fresh (rebindable) DNS lookup.
+     */
+    private function pinAndValidateMiddleware(): Closure
+    {
+        $network = $this->network;
+
+        return static function (callable $next) use ($network): Closure {
+            return static function (RequestInterface $request, array $options) use ($next, $network) {
+                $uri = $request->getUri();
+                $host = $uri->getHost();
+
+                $ips = $network->resolveToPublicIps($host);
+
+                throw_if($ips === null, UnsafeUrlException::forUrl((string) $uri));
+
+                // IP literals don't trigger a DNS lookup, so nothing to pin.
+                if (!filter_var($host, FILTER_VALIDATE_IP)) {
+                    $port = $uri->getPort() ?? ($uri->getScheme() === 'https' ? 443 : 80);
+
+                    $options['curl'] ??= [];
+                    $options['curl'][CURLOPT_RESOLVE] = [
+                        ...($options['curl'][CURLOPT_RESOLVE] ?? []),
+                        ...array_map(static fn (string $ip): string => "{$host}:{$port}:{$ip}", $ips),
+                    ];
+                }
+
+                return $next($request, $options);
+            };
+        };
     }
 }
