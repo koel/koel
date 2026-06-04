@@ -5,7 +5,6 @@ namespace App\Rules;
 use App\Helpers\SafeHttp;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Translation\PotentiallyTranslatedString;
 use Throwable;
@@ -47,11 +46,9 @@ class HasAudioContentType implements ValidationRule
      */
     private function resolveContentType(string $url): string
     {
-        $pinnedOptions = $this->safeHttp->getPinnedOptions($url);
-
         // Try HEAD first — fast and lightweight
         try {
-            $response = Http::withOptions($pinnedOptions)->head($url);
+            $response = $this->safeHttp->head($url);
 
             if ($response->successful()) {
                 return $response->header('Content-Type');
@@ -59,11 +56,8 @@ class HasAudioContentType implements ValidationRule
         } catch (Throwable) { // @mago-expect lint:no-empty-catch-clause -- HEAD may time out or fail on streaming servers; fall through to GET below.
         }
 
-        // Fall back to GET with ICY headers — streaming servers often only respond to GET
-        $response = Http::withHeaders(['Icy-MetaData' => '1'])->withOptions([
-            ...$pinnedOptions,
-            'stream' => true,
-        ])->get($url);
+        // Fall back to GET as a stream with ICY headers — Shoutcast/Icecast only respond to GET
+        $response = $this->safeHttp->getAsStream($url, ['Icy-MetaData' => '1']);
 
         return $response->header('Content-Type');
     }

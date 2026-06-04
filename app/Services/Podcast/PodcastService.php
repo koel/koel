@@ -21,7 +21,6 @@ use GuzzleHttp\RedirectMiddleware;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use PhanAn\Poddle\Poddle;
 use PhanAn\Poddle\Values\Episode as EpisodeValue;
@@ -225,9 +224,7 @@ class PodcastService
         }
 
         try {
-            $lastModified = Http::withOptions($this->safeHttp->getPinnedOptions($podcast->url))
-                ->head($podcast->url)
-                ->header('Last-Modified');
+            $lastModified = $this->safeHttp->head($podcast->url)->header('Last-Modified');
 
             if (!$lastModified) {
                 return true;
@@ -254,7 +251,7 @@ class PodcastService
             return null;
         }
 
-        $client ??= $this->safeHttp->getPinnedGuzzleClient($url);
+        $client ??= $this->safeHttp->getPinnedGuzzleClient($url, trackRedirects: true);
 
         try {
             $response = $client->request($method, $url, [
@@ -263,10 +260,6 @@ class PodcastService
                     'Origin' => '*',
                 ],
                 RequestOptions::HTTP_ERRORS => false,
-                RequestOptions::ALLOW_REDIRECTS => [
-                    ...$this->safeHttp->getRedirectOptions()['allow_redirects'],
-                    'track_redirects' => true,
-                ],
             ]);
 
             $redirects = Arr::wrap($response->getHeader(RedirectMiddleware::HISTORY_HEADER));

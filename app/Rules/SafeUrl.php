@@ -7,7 +7,6 @@ use App\Helpers\Network;
 use App\Helpers\SafeHttp;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Uri;
 use Illuminate\Translation\PotentiallyTranslatedString;
 use Throwable;
@@ -53,23 +52,15 @@ class SafeUrl implements ValidationRule
         }
 
         try {
-            $pinnedOptions = $this->safeHttp->getPinnedOptions((string) $value);
-        } catch (UnsafeUrlException) {
-            $fail('The :attribute must point to a public URL.');
-
-            return;
-        }
-
-        try {
-            $response = Http::withOptions($pinnedOptions)->head((string) $value);
+            $response = $this->safeHttp->head((string) $value);
         } catch (UnsafeUrlException) {
             $fail('The :attribute must point to a public URL.');
 
             return;
         } catch (Throwable) {
-            // Some streaming servers don't support HEAD — try GET
+            // Some streaming servers don't support HEAD — try GET as a stream.
             try {
-                $response = Http::withOptions([...$pinnedOptions, 'stream' => true])->get((string) $value);
+                $response = $this->safeHttp->getAsStream((string) $value);
             } catch (UnsafeUrlException) {
                 $fail('The :attribute must point to a public URL.');
 
