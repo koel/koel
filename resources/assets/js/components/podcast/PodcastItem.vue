@@ -18,18 +18,15 @@
         <header>
           <h3 class="text-3xl font-bold">
             {{ podcast.title }}
-            <FavoriteButton
-              v-if="podcast.favorite"
-              :favorite="podcast.favorite"
-              class="ml-2"
-              @toggle="toggleFavorite"
-            />
+            <span class="inline-flex items-center gap-2 align-middle text-base font-normal ml-2">
+              <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" @toggle="toggleFavorite" />
+              <StarRating v-if="podcast.rating" :rateable="podcast" size="xs" />
+            </span>
           </h3>
-          <p class="mt-2 flex items-center gap-2 flex-wrap">
-            <StarRating :rateable="podcast" size="xs" />
-            <span>{{ podcast.author }}</span>
+          <p class="mt-2">
+            {{ podcast.author }}
             <template v-if="lastPlayedAt">
-              <span>•</span>
+              •
               <span class="text-k-fg-50">
                 Last played
                 <time :datetime="podcast.last_played_at" :title="podcast.last_played_at">{{ lastPlayedAt }}</time>
