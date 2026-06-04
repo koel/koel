@@ -82,9 +82,7 @@ class Network
                 return null;
             }
 
-            $address = Factory::parseAddressString($ip);
-
-            if ($address === null || $address->getRangeType() !== RangeType::T_PUBLIC) {
+            if (Factory::parseAddressString($ip)?->getRangeType() !== RangeType::T_PUBLIC) {
                 return null;
             }
 
