@@ -54,30 +54,6 @@ class SafeHttp
     }
 
     /**
-     * Build a PSR-18 client that applies the same per-redirect-hop validation
-     * via Guzzle middleware. Use for libraries that take an injected client
-     * (e.g. PhanAn\Poddle\Poddle::fromUrl()).
-     */
-    public function getGuzzleClient(int $timeoutInSeconds = 30): Client
-    {
-        $stack = HandlerStack::create();
-
-        $stack->push(Middleware::mapRequest(function (RequestInterface $request): RequestInterface {
-            if (!$this->network->isSafeUrl((string) $request->getUri())) {
-                throw UnsafeUrlException::forUrl((string) $request->getUri());
-            }
-
-            return $request;
-        }));
-
-        return new Client([
-            'handler' => $stack,
-            'timeout' => $timeoutInSeconds,
-            ...$this->getRedirectOptions(),
-        ]);
-    }
-
-    /**
      * Returns Http facade options with both redirect validation and DNS-rebinding
      * protection: the given URL's host is resolved to its public IPs at this
      * moment and pinned into curl via CURLOPT_RESOLVE, so the connect-time DNS

@@ -24,14 +24,6 @@ class SafeHttpTest extends TestCase
     }
 
     #[Test]
-    public function guzzleClientRejectsPreflightUnsafeUrl(): void
-    {
-        $this->expectException(UnsafeUrlException::class);
-
-        $this->safeHttp->getGuzzleClient()->request('GET', 'http://127.0.0.1/admin');
-    }
-
-    #[Test]
     public function redirectOptionsRejectRedirectToPrivateHost(): void
     {
         // Build a Guzzle client that emits a 302 to a private host, then would
