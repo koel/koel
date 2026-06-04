@@ -18,6 +18,18 @@ class PodcastRepository extends Repository implements ScoutableRepository
         return $this->findOneBy(['url' => $url]);
     }
 
+    /** @param string $id */
+    public function getOne($id, ?User $user = null): Podcast
+    {
+        $user ??= $this->auth->user();
+
+        return Podcast::query()
+            ->with(['subscribers' => static fn ($query) => $query->where('users.id', $user->id)])
+            ->setScopedUser($user)
+            ->withUserContext($user)
+            ->findOrFail($id);
+    }
+
     /** @return Collection<int, Podcast> */
     public function getAllSubscribedByUser(bool $favoritesOnly, ?User $user = null): Collection
     {
@@ -26,7 +38,7 @@ class PodcastRepository extends Repository implements ScoutableRepository
         return Podcast::query()
             ->with(['subscribers' => static fn ($query) => $query->where('users.id', $user->id)])
             ->setScopedUser($user)
-            ->withFavoriteStatus(favoritesOnly: $favoritesOnly)
+            ->withUserContext($user, favoritesOnly: $favoritesOnly)
             ->subscribed()
             ->get();
     }
@@ -39,6 +51,7 @@ class PodcastRepository extends Repository implements ScoutableRepository
         $podcasts = Podcast::query()
             ->with(['subscribers' => static fn ($query) => $query->where('users.id', $user->id)])
             ->setScopedUser($user)
+            ->withUserContext($user)
             ->subscribed()
             ->whereIn('podcasts.id', $ids)
             ->distinct()

@@ -50,6 +50,8 @@
               @toggle="toggleFavorite"
             />
 
+            <StarRating :rateable="podcast" />
+
             <Btn variant="ghost" @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
               <span class="sr-only">More Actions</span>
@@ -101,6 +103,7 @@ import EpisodeItem from '@/components/podcast/EpisodeItem.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import EpisodeItemSkeleton from '@/components/podcast/EpisodeItemSkeleton.vue'
 
