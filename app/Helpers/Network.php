@@ -40,14 +40,19 @@ class Network
     }
 
     /**
-     * Resolve a host to its public IP addresses, or an empty list if the host
-     * can't be resolved, has no records, or has any non-public record. Callers
-     * use the list with CURLOPT_RESOLVE to pin the resolved IPs into the HTTP
-     * client, closing the DNS-rebinding TOCTOU window between validation and connect.
+     * Resolve a host to the subset of its DNS records (A + AAAA) whose IPs are
+     * public. Non-public records are dropped — only the public IPs come back.
+     * Returns an empty list when nothing public is left (host doesn't resolve,
+     * has no records, or every record is private/reserved).
      *
-     * "Public" means ip-lib's RangeType::T_PUBLIC — rejects private, loopback,
-     * link-local, multicast, broadcast, reserved, documentation, NAT64 (T_RESERVED),
-     * 6to4 wrappers of private IPv4 (classified by embedded v4), Teredo, CGNAT.
+     * Callers feed the returned list to CURLOPT_RESOLVE to pin curl onto the
+     * validated IPs, closing the DNS-rebinding TOCTOU window between validation
+     * and connect.
+     *
+     * "Public" means ip-lib's RangeType::T_PUBLIC — excludes private, loopback,
+     * link-local, multicast, broadcast, reserved, documentation, NAT64
+     * (T_RESERVED), 6to4 wrappers of private IPv4 (classified by embedded v4),
+     * Teredo, CGNAT.
      *
      * @return list<string>
      */
