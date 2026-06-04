@@ -1,5 +1,5 @@
 <template>
-  <div
+  <span
     role="radiogroup"
     :aria-label="`Rating: ${currentRating} of 5 stars`"
     class="inline-flex items-center gap-0.5"
@@ -26,7 +26,7 @@
       <Icon :icon="(hover || currentRating) >= star ? faStar : faEmptyStar" :size="size" />
       <span class="sr-only">Rate {{ star }} of 5</span>
     </label>
-  </div>
+  </span>
 </template>
 
 <script lang="ts" setup>

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Podcast;
 use App\Models\Rating;
+use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -11,7 +12,7 @@ use function Tests\create_user;
 
 class RatePodcastTest extends TestCase
 {
-    private function subscribedPodcast(\App\Models\User $user): Podcast
+    private function makeSubscribedPodcast(User $user): Podcast
     {
         $podcast = Podcast::factory()->createOne();
         $user->podcasts()->attach($podcast);
@@ -23,7 +24,7 @@ class RatePodcastTest extends TestCase
     public function ratesAPodcast(): void
     {
         $user = create_user();
-        $podcast = $this->subscribedPodcast($user);
+        $podcast = $this->makeSubscribedPodcast($user);
 
         $this
             ->putAs("api/podcasts/$podcast->id/rating", ['rating' => 4], $user)
@@ -43,7 +44,7 @@ class RatePodcastTest extends TestCase
     public function updatesAnExistingRating(): void
     {
         $user = create_user();
-        $podcast = $this->subscribedPodcast($user);
+        $podcast = $this->makeSubscribedPodcast($user);
 
         $this->putAs("api/podcasts/$podcast->id/rating", ['rating' => 2], $user)->assertOk();
         $this
@@ -58,7 +59,7 @@ class RatePodcastTest extends TestCase
     public function ratingZeroClearsExistingRating(): void
     {
         $user = create_user();
-        $podcast = $this->subscribedPodcast($user);
+        $podcast = $this->makeSubscribedPodcast($user);
         $this->putAs("api/podcasts/$podcast->id/rating", ['rating' => 3], $user)->assertOk();
 
         $this
@@ -101,7 +102,7 @@ class RatePodcastTest extends TestCase
     public function rejectsOutOfRangeRating(): void
     {
         $user = create_user();
-        $podcast = $this->subscribedPodcast($user);
+        $podcast = $this->makeSubscribedPodcast($user);
 
         $this->putAs("api/podcasts/$podcast->id/rating", ['rating' => 6], $user)->assertUnprocessable();
         $this->putAs("api/podcasts/$podcast->id/rating", ['rating' => -1], $user)->assertUnprocessable();
@@ -111,7 +112,7 @@ class RatePodcastTest extends TestCase
     public function rejectsMissingRating(): void
     {
         $user = create_user();
-        $podcast = $this->subscribedPodcast($user);
+        $podcast = $this->makeSubscribedPodcast($user);
 
         $this->putAs("api/podcasts/$podcast->id/rating", [], $user)->assertUnprocessable();
     }
