@@ -74,15 +74,9 @@ class Network
         foreach ($records as $record) {
             $ip = Arr::get($record, 'ip') ?? Arr::get($record, 'ipv6');
 
-            if (!$ip) {
-                return [];
+            if ($ip && Factory::parseAddressString($ip)?->getRangeType() === RangeType::T_PUBLIC) {
+                $ips[] = $ip;
             }
-
-            if (Factory::parseAddressString($ip)?->getRangeType() !== RangeType::T_PUBLIC) {
-                return [];
-            }
-
-            $ips[] = $ip;
         }
 
         return $ips;
