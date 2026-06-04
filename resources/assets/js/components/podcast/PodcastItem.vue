@@ -26,8 +26,8 @@
             />
           </h3>
           <p class="mt-2 flex items-center gap-2 flex-wrap">
-            <span>{{ podcast.author }}</span>
             <StarRating :rateable="podcast" size="xs" />
+            <span>{{ podcast.author }}</span>
             <template v-if="lastPlayedAt">
               <span>•</span>
               <span class="text-k-fg-50">

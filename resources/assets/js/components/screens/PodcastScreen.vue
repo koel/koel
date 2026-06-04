@@ -43,14 +43,10 @@
 
             <ListFilter v-if="episodes?.length" />
 
-            <FavoriteButton
-              v-if="podcast.favorite"
-              :favorite="podcast.favorite"
-              class="px-3.5 py-2"
-              @toggle="toggleFavorite"
-            />
-
-            <StarRating :rateable="podcast" />
+            <span class="inline-flex gap-3.5 px-2">
+              <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" @toggle="toggleFavorite" />
+              <StarRating :rateable="podcast" />
+            </span>
 
             <Btn variant="ghost" @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
