@@ -10,8 +10,6 @@ use Throwable;
 
 class Network
 {
-    private const array SAFE_URL_SCHEMES = ['http', 'https'];
-
     /**
      * Check if a URL is safe to reach: HTTP/HTTPS scheme + a public host.
      * Does NOT perform any network calls beyond DNS resolution.
@@ -25,22 +23,20 @@ class Network
             return false;
         }
 
-        if (!in_array($uri->scheme(), self::SAFE_URL_SCHEMES, true)) {
+        if (!in_array($uri->scheme(), ['http', 'https'], true)) {
             return false;
         }
 
-        $host = $uri->host();
-
-        return $host && $this->isPublicHost($host);
+        return $this->isPublicHost($uri->host());
     }
 
     /**
      * Check if a host resolves only to public (non-private, non-reserved) IP addresses.
      * Validates both A (IPv4) and AAAA (IPv6) records. All resolved IPs must be public.
      */
-    public function isPublicHost(string $host): bool
+    public function isPublicHost(?string $host): bool
     {
-        return (bool) $this->resolveToPublicIps($host);
+        return $host && $this->resolveToPublicIps($host);
     }
 
     /**

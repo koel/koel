@@ -3,8 +3,6 @@
 namespace Tests\Fakes;
 
 use App\Helpers\Network;
-use Illuminate\Support\Uri;
-use Throwable;
 
 /**
  * Skips DNS resolution so tests don't need real internet connectivity.
@@ -13,49 +11,28 @@ use Throwable;
  */
 class FakeNetwork extends Network
 {
-    private const array SAFE_SCHEMES = ['http', 'https'];
-
-    public function isSafeUrl(string $url): bool
-    {
-        try {
-            $uri = Uri::of($url);
-        } catch (Throwable) {
-            return false;
-        }
-
-        if (!in_array($uri->scheme(), self::SAFE_SCHEMES, true)) {
-            return false;
-        }
-
-        $host = $uri->host();
-
-        return $host !== '' && $this->isPublicHost($host);
-    }
-
-    public function isPublicHost(string $host): bool
-    {
-        if (filter_var($host, FILTER_VALIDATE_IP)) {
-            return (
-                filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false
-            );
-        }
-
-        return $host !== '';
-    }
-
     /**
-     * Return a synthetic public IP for any non-IP host that would pass
-     * isPublicHost, so the IP-pinning code path completes without hitting DNS.
-     * The pinned IP is never actually contacted because Http::fake intercepts.
+     * Return a synthetic public IP for any non-IP host that would otherwise
+     * require DNS, and apply the literal-IP privacy check inline (no recursion
+     * back into isPublicHost). The pinned IP is never actually contacted in
+     * tests because Http::fake intercepts before curl runs.
      *
      * @return list<string>
      */
     public function resolveToPublicIps(string $host): array
     {
-        if (filter_var($host, FILTER_VALIDATE_IP)) {
-            return $this->isPublicHost($host) ? [$host] : [];
+        if ($host === '') {
+            return [];
         }
 
-        return $host !== '' ? ['203.0.113.1'] : [];
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            return (
+                filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)
+                    ? [$host]
+                    : []
+            );
+        }
+
+        return ['203.0.113.1'];
     }
 }
