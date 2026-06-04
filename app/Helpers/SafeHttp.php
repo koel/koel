@@ -91,14 +91,11 @@ class SafeHttp
 
     /**
      * Returns Http facade options that pin the URL's host to its currently-resolved
-     * public IPs and re-validate each redirect hop. Exposed for granular tests and
-     * for the rare caller that needs to compose with extra Http options; production
-     * code should prefer head() / get() / getAsStream().
+     * public IPs and re-validate each redirect hop.
      *
-     * @internal
      * @return array<string, mixed>
      */
-    public function buildPinnedOptions(string $url, int $max = 5): array
+    private function buildPinnedOptions(string $url, int $maxRedirects = 5): array
     {
         [$host, $port] = self::extractHostAndPort($url);
 
@@ -106,7 +103,7 @@ class SafeHttp
 
         throw_if($ips === null, UnsafeUrlException::forUrl($url));
 
-        $options = $this->buildRedirectOptions($max);
+        $options = $this->buildRedirectOptions($maxRedirects);
 
         if (filter_var($host, FILTER_VALIDATE_IP)) {
             // No DNS lookup happens for IP literals, so there's nothing to pin.
@@ -137,9 +134,8 @@ class SafeHttp
                     ResponseInterface $response,
                     UriInterface $uri,
                 ): void {
-                    if (!$this->network->isSafeUrl((string) $uri)) {
-                        throw UnsafeUrlException::forUrl((string) $uri);
-                    }
+                    $url = (string) $uri;
+                    throw_unless($this->network->isSafeUrl($url), UnsafeUrlException::forUrl($url));
                 },
             ],
         ];

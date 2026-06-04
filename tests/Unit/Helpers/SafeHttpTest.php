@@ -4,11 +4,7 @@ namespace Tests\Unit\Helpers;
 
 use App\Exceptions\UnsafeUrlException;
 use App\Helpers\SafeHttp;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -24,82 +20,42 @@ class SafeHttpTest extends TestCase
     }
 
     #[Test]
-    public function redirectOptionsRejectRedirectToPrivateHost(): void
-    {
-        // Build a Guzzle client that emits a 302 to a private host, then would
-        // emit a 200 (which we must never reach). Apply only the redirect options
-        // — no pre-flight middleware — to isolate the on_redirect leg.
-        $mock = new MockHandler([
-            new Response(302, ['Location' => 'http://127.0.0.1/admin']),
-            new Response(200, [], 'should be unreachable'),
-        ]);
-
-        $client = new Client(['handler' => HandlerStack::create($mock)]);
-
-        $this->expectException(UnsafeUrlException::class);
-
-        try {
-            $client->request(
-                'GET',
-                'https://public.example.com/feed',
-                $this->safeHttp->buildPinnedOptions('https://public.example.com/feed'),
-            );
-        } catch (GuzzleException $e) {
-            // Guzzle wraps middleware exceptions; unwrap to surface the real cause.
-            if ($e->getPrevious() instanceof UnsafeUrlException) {
-                throw $e->getPrevious();
-            }
-
-            throw $e;
-        }
-    }
-
-    #[Test]
-    public function redirectOptionsAllowRedirectToPublicHost(): void
-    {
-        $mock = new MockHandler([
-            new Response(302, ['Location' => 'https://other.example.com/feed']),
-            new Response(200, [], 'ok'),
-        ]);
-
-        $client = new Client(['handler' => HandlerStack::create($mock)]);
-
-        $response = $client->request(
-            'GET',
-            'https://public.example.com/feed',
-            $this->safeHttp->buildPinnedOptions('https://public.example.com/feed'),
-        );
-
-        self::assertSame(200, $response->getStatusCode());
-        self::assertSame('ok', (string) $response->getBody());
-    }
-
-    #[Test]
-    public function pinnedOptionsEmitsCurlResolveForResolvedHost(): void
-    {
-        $options = $this->safeHttp->buildPinnedOptions('https://example.com/feed');
-
-        self::assertArrayHasKey('curl', $options);
-        self::assertArrayHasKey(CURLOPT_RESOLVE, $options['curl']);
-
-        foreach ($options['curl'][CURLOPT_RESOLVE] as $entry) {
-            self::assertMatchesRegularExpression('/^example\.com:443:[0-9a-f.:]+$/i', $entry);
-        }
-    }
-
-    #[Test]
-    public function pinnedOptionsSkipsResolveForIpLiteralUrl(): void
-    {
-        $options = $this->safeHttp->buildPinnedOptions('https://8.8.8.8/');
-
-        self::assertArrayNotHasKey('curl', $options);
-    }
-
-    #[Test]
-    public function pinnedOptionsRejectsPrivateIpLiteral(): void
+    public function headRejectsPrivateIpLiteral(): void
     {
         $this->expectException(UnsafeUrlException::class);
 
-        $this->safeHttp->buildPinnedOptions('http://127.0.0.1/admin');
+        $this->safeHttp->head('http://127.0.0.1/admin');
+    }
+
+    #[Test]
+    public function getRejectsPrivateIpLiteral(): void
+    {
+        $this->expectException(UnsafeUrlException::class);
+
+        $this->safeHttp->get('http://169.254.169.254/latest/meta-data/');
+    }
+
+    #[Test]
+    public function headRejectsRedirectToPrivateHost(): void
+    {
+        Http::fake([
+            '8.8.8.8/*' => Http::response('', 302, ['Location' => 'http://127.0.0.1/admin']),
+            '*' => Http::response('', 200),
+        ]);
+
+        $this->expectException(UnsafeUrlException::class);
+
+        $this->safeHttp->head('https://8.8.8.8/feed');
+    }
+
+    #[Test]
+    public function headFollowsRedirectsAcrossPublicHosts(): void
+    {
+        Http::fake([
+            '8.8.8.8/*' => Http::response('', 302, ['Location' => 'https://1.1.1.1/feed']),
+            '1.1.1.1/*' => Http::response('', 200),
+        ]);
+
+        self::assertTrue($this->safeHttp->head('https://8.8.8.8/feed')->successful());
     }
 }
