@@ -3,6 +3,11 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Uri;
+use IPLib\Address\AddressInterface;
+use IPLib\Address\IPv6;
+use IPLib\Factory;
+use IPLib\Range\Subnet;
+use IPLib\Range\Type as RangeType;
 use Throwable;
 
 // @mago-expect lint:cyclomatic-complexity -- SSRF guard inherently branches on host shape (IP literal vs DNS, IPv4 vs IPv6, NAT64/6to4 wrapper extraction); splitting further would scatter the safety story.
@@ -42,30 +47,6 @@ class Network
     }
 
     /**
-     * Public-IP test that closes IPv6-transition wrapper holes left open by
-     * filter_var's NO_PRIV_RANGE|NO_RES_RANGE flags: NAT64 well-known prefix
-     * (64:ff9b::/96, RFC 6052) and 6to4 (2002::/16, RFC 3056) deterministically
-     * embed an IPv4 the kernel will route to, so an IPv6 in those ranges must be
-     * re-checked against the embedded v4.
-     */
-    private static function isPublicIp(string $ip): bool
-    {
-        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
-            return false;
-        }
-
-        $embedded = self::extractEmbeddedIpv4($ip);
-
-        if ($embedded === null) {
-            return true;
-        }
-
-        return (
-            filter_var($embedded, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false
-        );
-    }
-
-    /**
      * Resolve a host to its public IP addresses. Returns null if the host can't
      * be resolved, has no records, or has any non-public record. Callers use the
      * returned list with CURLOPT_RESOLVE to pin the resolved IPs into the HTTP
@@ -75,8 +56,10 @@ class Network
      */
     public function resolveToPublicIps(string $host): ?array
     {
-        if (filter_var($host, FILTER_VALIDATE_IP)) {
-            return self::isPublicIp($host) ? [$host] : null;
+        $literal = Factory::parseAddressString($host);
+
+        if ($literal !== null) {
+            return self::isPublicAddress($literal) ? [$host] : null;
         }
 
         try {
@@ -94,7 +77,13 @@ class Network
         foreach ($records as $record) {
             $ip = $record['ip'] ?? $record['ipv6'] ?? null;
 
-            if (!$ip || !self::isPublicIp($ip)) {
+            if (!$ip) {
+                return null;
+            }
+
+            $address = Factory::parseAddressString($ip);
+
+            if ($address === null || !self::isPublicAddress($address)) {
                 return null;
             }
 
@@ -104,27 +93,47 @@ class Network
         return $ips;
     }
 
-    /** Return the IPv4 embedded inside a NAT64 or 6to4 IPv6 wrapper, or null if not a wrapper. */
-    private static function extractEmbeddedIpv4(string $ip): ?string
+    /**
+     * An address is public iff its range type is PUBLIC (rejects private,
+     * loopback, link-local, multicast, broadcast, reserved, documentation,
+     * Teredo, etc.) AND, if it's an IPv6 NAT64/6to4 wrapper, the embedded
+     * IPv4 is also public.
+     */
+    private static function isPublicAddress(AddressInterface $address): bool
     {
-        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
+        if ($address->getRangeType() !== RangeType::T_PUBLIC) {
+            return false;
+        }
+
+        if ($address instanceof IPv6) {
+            $embedded = self::extractEmbeddedIpv4($address);
+
+            if ($embedded !== null && !self::isPublicAddress($embedded)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Return the IPv4 embedded inside a NAT64 well-known (64:ff9b::/96) or 6to4
+     * (2002::/16) IPv6 wrapper, or null if not a wrapper.
+     */
+    private static function extractEmbeddedIpv4(IPv6 $address): ?AddressInterface
+    {
+        $bytes = inet_pton($address->toString());
+
+        if ($bytes === false || strlen($bytes) !== 16) {
             return null;
         }
 
-        $packed = inet_pton($ip);
-
-        if ($packed === false || strlen($packed) !== 16) {
-            return null;
+        if (Subnet::parseString('64:ff9b::/96')->contains($address)) {
+            return Factory::parseAddressString((string) inet_ntop(substr($bytes, 12, 4)));
         }
 
-        // NAT64 well-known prefix: 64:ff9b:: + 96 zero bits + 32-bit IPv4
-        if (str_starts_with($packed, "\x00\x64\xff\x9b" . str_repeat("\x00", 8))) {
-            return inet_ntop(substr($packed, 12, 4)) ?: null;
-        }
-
-        // 6to4: 2002:<v4-hi>:<v4-lo>::/48
-        if (str_starts_with($packed, "\x20\x02")) {
-            return inet_ntop(substr($packed, 2, 4)) ?: null;
+        if (Subnet::parseString('2002::/16')->contains($address)) {
+            return Factory::parseAddressString((string) inet_ntop(substr($bytes, 2, 4)));
         }
 
         return null;
