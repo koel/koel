@@ -39,7 +39,11 @@ class SafeHttpTest extends TestCase
         $this->expectException(UnsafeUrlException::class);
 
         try {
-            $client->request('GET', 'https://public.example.com/feed', $this->safeHttp->buildRedirectOptions());
+            $client->request(
+                'GET',
+                'https://public.example.com/feed',
+                $this->safeHttp->buildPinnedOptions('https://public.example.com/feed'),
+            );
         } catch (GuzzleException $e) {
             // Guzzle wraps middleware exceptions; unwrap to surface the real cause.
             if ($e->getPrevious() instanceof UnsafeUrlException) {
@@ -60,7 +64,11 @@ class SafeHttpTest extends TestCase
 
         $client = new Client(['handler' => HandlerStack::create($mock)]);
 
-        $response = $client->request('GET', 'https://public.example.com/feed', $this->safeHttp->buildRedirectOptions());
+        $response = $client->request(
+            'GET',
+            'https://public.example.com/feed',
+            $this->safeHttp->buildPinnedOptions('https://public.example.com/feed'),
+        );
 
         self::assertSame(200, $response->getStatusCode());
         self::assertSame('ok', (string) $response->getBody());

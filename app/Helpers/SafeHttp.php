@@ -40,13 +40,13 @@ class SafeHttp
     /** Issue a HEAD request against the URL with full SSRF protection. */
     public function head(string $url, array $headers = []): Response
     {
-        return $this->pendingFor($url, $headers)->head($url);
+        return $this->buildRequest($url, $headers)->head($url);
     }
 
     /** Issue a GET request against the URL with full SSRF protection. */
     public function get(string $url, array $headers = []): Response
     {
-        return $this->pendingFor($url, $headers)->get($url);
+        return $this->buildRequest($url, $headers)->get($url);
     }
 
     /**
@@ -56,7 +56,7 @@ class SafeHttp
      */
     public function getAsStream(string $url, array $headers = []): Response
     {
-        return $this->pendingFor($url, $headers, ['stream' => true])->get($url);
+        return $this->buildRequest($url, $headers, ['stream' => true])->get($url);
     }
 
     /**
@@ -100,13 +100,11 @@ class SafeHttp
      */
     public function buildPinnedOptions(string $url, int $max = 5): array
     {
-        [$host, $port] = self::extractHostPort($url);
+        [$host, $port] = self::extractHostAndPort($url);
 
         $ips = $this->network->resolveToPublicIps($host);
 
-        if ($ips === null) {
-            throw UnsafeUrlException::forUrl($url);
-        }
+        throw_if($ips === null, UnsafeUrlException::forUrl($url));
 
         $options = $this->buildRedirectOptions($max);
 
@@ -116,7 +114,7 @@ class SafeHttp
         }
 
         $options['curl'] = [
-            CURLOPT_RESOLVE => array_map(static fn (string $ip): string => "{$host}:{$port}:{$ip}", $ips),
+            CURLOPT_RESOLVE => array_map(static fn (string $ip) => "{$host}:{$port}:{$ip}", $ips),
         ];
 
         return $options;
@@ -127,14 +125,13 @@ class SafeHttp
      * via Network::isSafeUrl, throwing UnsafeUrlException on a private or reserved
      * target.
      *
-     * @internal
      * @return array<string, mixed>
      */
-    public function buildRedirectOptions(int $max = 5): array
+    private function buildRedirectOptions(int $maxRedirects = 5): array
     {
         return [
             'allow_redirects' => [
-                'max' => $max,
+                'max' => $maxRedirects,
                 'on_redirect' => function (
                     RequestInterface $request,
                     ResponseInterface $response,
@@ -152,7 +149,7 @@ class SafeHttp
      * @param array<string, string> $headers
      * @param array<string, mixed> $extraOptions
      */
-    private function pendingFor(string $url, array $headers, array $extraOptions = []): PendingRequest
+    private function buildRequest(string $url, array $headers, array $extraOptions = []): PendingRequest
     {
         $request = Http::withOptions([...$this->buildPinnedOptions($url), ...$extraOptions]);
 
@@ -160,7 +157,7 @@ class SafeHttp
     }
 
     /** @return array{0: string, 1: int} */
-    private static function extractHostPort(string $url): array
+    private static function extractHostAndPort(string $url): array
     {
         $uri = Uri::of($url);
         $host = $uri->host();
