@@ -16,6 +16,12 @@ use Throwable;
  */
 class HasAudioContentType implements ValidationRule
 {
+    public function __construct(
+        private ?SafeHttp $safeHttp = null,
+    ) {
+        $this->safeHttp ??= app(SafeHttp::class);
+    }
+
     /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -41,7 +47,7 @@ class HasAudioContentType implements ValidationRule
      */
     private function resolveContentType(string $url): string
     {
-        $pinnedOptions = app(SafeHttp::class)->getPinnedOptions($url);
+        $pinnedOptions = $this->safeHttp->getPinnedOptions($url);
 
         // Try HEAD first — fast and lightweight
         try {

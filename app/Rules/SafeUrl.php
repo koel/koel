@@ -23,8 +23,10 @@ class SafeUrl implements ValidationRule
 
     public function __construct(
         private ?Network $network = null,
+        private ?SafeHttp $safeHttp = null,
     ) {
         $this->network ??= app(Network::class);
+        $this->safeHttp ??= app(SafeHttp::class);
     }
 
     /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */
@@ -51,7 +53,7 @@ class SafeUrl implements ValidationRule
         }
 
         try {
-            $pinnedOptions = app(SafeHttp::class)->getPinnedOptions((string) $value);
+            $pinnedOptions = $this->safeHttp->getPinnedOptions((string) $value);
         } catch (UnsafeUrlException) {
             $fail('The :attribute must point to a public URL.');
 
