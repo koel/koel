@@ -132,6 +132,7 @@ interface Artist {
   created_at: string
   is_external: boolean
   favorite: boolean
+  rating: number
   permissions: {
     edit: boolean
   }
@@ -147,8 +148,10 @@ interface Album {
   thumbnail?: string | null
   created_at: string
   year: number | null
+  length: number
   is_external: boolean
   favorite: boolean
+  rating: number
   permissions: {
     edit: boolean
   }
@@ -168,6 +171,7 @@ interface BasePlayable extends IStreamable {
   readonly length: number
   play_count_registered?: boolean
   play_count: number
+  rating: number // 0-5, current user's rating; 0 = unrated
   play_start_time?: number
   preloaded?: boolean
   playback_state?: PlaybackState
@@ -585,7 +589,7 @@ interface Theme {
   is_custom?: boolean
 }
 
-type ViewMode = 'list' | 'thumbnails'
+type ViewMode = 'grid' | 'list' | 'table'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 
@@ -619,18 +623,33 @@ interface PlayableListContext {
 type PlayableListSortField =
   | keyof Pick<
       Song,
-      'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'genre' | 'year' | 'created_at'
+      | 'track'
+      | 'disc'
+      | 'title'
+      | 'album_name'
+      | 'length'
+      | 'artist_name'
+      | 'genre'
+      | 'year'
+      | 'created_at'
+      | 'rating'
+      | 'favorite'
     >
   | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
   | 'collaboration.user.name'
   | 'collaboration.added_at'
 
-type AlbumListSortField = keyof Pick<Album, 'name' | 'year' | 'artist_name' | 'created_at'>
-type ArtistListSortField = keyof Pick<Artist, 'name' | 'created_at'>
+type AlbumListSortField = keyof Pick<
+  Album,
+  'name' | 'year' | 'artist_name' | 'created_at' | 'length' | 'rating' | 'favorite'
+>
+type ArtistListSortField = keyof Pick<Artist, 'name' | 'created_at' | 'rating' | 'favorite'>
 type GenreListSortField = keyof Pick<Genre, 'name' | 'song_count'>
 type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
-type RadioStationListSortField = keyof Pick<RadioStation, 'name' | 'created_at'>
+type RadioStationListSortField = keyof Pick<RadioStation, 'name' | 'created_at' | 'favorite'>
+
+type RadioStationTableColumnName = 'name' | 'description' | 'created_at' | 'favorite'
 type SortField =
   | PodcastListSortField
   | AlbumListSortField
@@ -701,10 +720,16 @@ type PlayableListColumnName =
   | 'duration'
   | 'created_at'
   | 'play_count'
+  | 'rating'
+  | 'favorite'
   | 'year'
   | 'genre'
   | 'playlist_collaborator'
   | 'playlist_added_at'
+
+type AlbumTableColumnName = 'name' | 'artist' | 'time' | 'year' | 'rating' | 'favorite'
+
+type ArtistTableColumnName = 'name' | 'rating' | 'favorite'
 
 interface Folder {
   type: 'folders'

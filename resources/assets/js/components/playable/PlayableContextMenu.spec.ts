@@ -8,6 +8,7 @@ import { eventBus } from '@/utils/eventBus'
 import { screen, waitFor } from '@testing-library/vue'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
+import { commonStore } from '@/stores/commonStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
@@ -487,6 +488,13 @@ describe('playableContextMenu.vue', () => {
     await h.user.click(screen.getByText('Embed…'))
 
     await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: playables[0] })
+  })
+
+  it('does not have an option to embed when embedding is disabled', async () => {
+    commonStore.state.allows_embedding = false
+    await renderComponent(h.factory('song').make())
+
+    expect(screen.queryByText('Embed…')).toBeNull()
   })
 
   it('makes songs available offline', async () => {

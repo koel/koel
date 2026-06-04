@@ -4,6 +4,15 @@
     <MenuItem @click="shuffle">Shuffle All</MenuItem>
     <Separator />
     <MenuItem @click="toggleFavorite">{{ album.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
+    <Separator />
+    <li
+      tabindex="-1"
+      class="px-4 py-2 focus:outline-hidden"
+      @mouseover="($event.currentTarget as HTMLLIElement).focus()"
+    >
+      <StarRating :rateable="album" />
+    </li>
+    <Separator />
     <template v-if="allowEdit">
       <MenuItem @click="edit">Edit…</MenuItem>
     </template>
@@ -15,8 +24,10 @@
       <Separator />
       <MenuItem @click="toggleOffline">{{ allCached ? 'Remove Offline Versions' : 'Make Available Offline' }}</MenuItem>
     </template>
-    <Separator />
-    <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+    <template v-if="allowEmbedding">
+      <Separator />
+      <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+    </template>
   </ul>
 </template>
 
@@ -36,6 +47,8 @@ import { usePolicies } from '@/composables/usePolicies'
 import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
 
+import StarRating from '@/components/ui/StarRating.vue'
+
 const props = defineProps<{ album: Album }>()
 const { album } = toRefs(props)
 
@@ -48,6 +61,7 @@ const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
+const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
 const allowEdit = computed(() => currentUserCan.editAlbum(album.value))
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))

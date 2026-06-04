@@ -2,10 +2,15 @@
 
 namespace App\Services\Radio;
 
+use App\Helpers\Network;
 use App\Models\RadioStation;
 
 class RadioStreamProxy
 {
+    public function __construct(
+        private readonly Network $network,
+    ) {}
+
     /**
      * Open a stream to the radio station URL, requesting ICY metadata.
      * Falls back to a plain connection if ICY request fails.
@@ -14,10 +19,27 @@ class RadioStreamProxy
      */
     public function openStream(string $url)
     {
+        if (!$this->network->isSafeUrl($url)) {
+            return false;
+        }
+
+        // Disable redirect-following at the wrapper level. SafeUrl validates the
+        // initial URL, so the only way the stream socket could reach a private
+        // host is via a redirect at connect time — close that door entirely.
         $context = stream_context_create([
             'http' => [
                 'header' => "Icy-MetaData: 1\r\n",
                 'timeout' => 5,
+                'follow_location' => 0,
+                'max_redirects' => 0,
+            ],
+        ]);
+
+        $plainContext = stream_context_create([
+            'http' => [
+                'timeout' => 5,
+                'follow_location' => 0,
+                'max_redirects' => 0,
             ],
         ]);
 
@@ -30,7 +52,7 @@ class RadioStreamProxy
                 return $stream;
             }
 
-            return fopen($url, 'r');
+            return fopen($url, 'r', false, $plainContext);
         } finally {
             restore_error_handler();
         }

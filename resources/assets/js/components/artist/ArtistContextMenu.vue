@@ -4,13 +4,24 @@
     <MenuItem @click="shuffle">Shuffle All</MenuItem>
     <Separator />
     <MenuItem @click="toggleFavorite">{{ artist.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
+    <Separator />
+    <li
+      tabindex="-1"
+      class="px-4 py-2 focus:outline-hidden"
+      @mouseover="($event.currentTarget as HTMLLIElement).focus()"
+    >
+      <StarRating :rateable="artist" />
+    </li>
+    <Separator />
     <MenuItem v-if="allowEdit" @click="requestEditForm">Edit…</MenuItem>
     <template v-if="isStandardArtist && allowDownload">
       <Separator />
       <MenuItem @click="download">Download</MenuItem>
     </template>
-    <Separator />
-    <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+    <template v-if="allowEmbedding">
+      <Separator />
+      <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+    </template>
   </ul>
 </template>
 
@@ -27,6 +38,8 @@ import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
 import { usePolicies } from '@/composables/usePolicies'
 
+import StarRating from '@/components/ui/StarRating.vue'
+
 const props = defineProps<{ artist: Artist }>()
 const { artist } = toRefs(props)
 
@@ -39,6 +52,7 @@ const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
+const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
 const allowEdit = computed(() => currentUserCan.editArtist(artist.value))
 
 const isStandardArtist = computed(() => !artistStore.isUnknown(artist.value) && !artistStore.isVarious(artist.value))

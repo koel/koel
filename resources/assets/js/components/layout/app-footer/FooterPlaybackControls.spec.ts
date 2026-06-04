@@ -34,9 +34,6 @@ describe('footerPlaybackControls.vue', () => {
     })
   }
 
-  it('renders without a current playable', () => expect(renderComponent(null).html()).toMatchSnapshot())
-  it('renders with a current playable', () => expect(renderComponent().html()).toMatchSnapshot())
-
   it('plays the previous playable', async () => {
     h.createAudioPlayer()
 

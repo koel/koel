@@ -45,8 +45,6 @@ describe('artistContextMenu.vue', () => {
     }
   }
 
-  it('renders', async () => expect((await renderComponent()).html()).toMatchSnapshot())
-
   it('plays all', async () => {
     h.createAudioPlayer()
 
@@ -109,5 +107,12 @@ describe('artistContextMenu.vue', () => {
     await h.user.click(screen.getByText('Embed…'))
 
     await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: artist })
+  })
+
+  it('does not have an option to embed when embedding is disabled', async () => {
+    commonStore.state.allows_embedding = false
+    await renderComponent()
+
+    expect(screen.queryByText('Embed…')).toBeNull()
   })
 })

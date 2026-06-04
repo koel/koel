@@ -25,6 +25,8 @@ class AlbumBuilder extends FavoriteableBuilder
         'year' => 'albums.year',
         'created_at' => 'albums.created_at',
         'artist_name' => 'albums.artist_name',
+        'length' => 'length',
+        'rating' => 'rating',
     ];
 
     private const array VALID_SORT_COLUMNS = [
@@ -33,6 +35,8 @@ class AlbumBuilder extends FavoriteableBuilder
         'albums.created_at',
         'albums.artist_name',
         'favorite', // alias column for favorite status
+        'length', // alias column for total duration
+        'rating', // alias column for the requesting user's rating
     ];
 
     public function onlyStandard(): self
@@ -88,6 +92,28 @@ class AlbumBuilder extends FavoriteableBuilder
             ->addSelect(DB::raw('COALESCE(SUM(interactions.play_count), 0) as play_count'));
     }
 
+    private function withLengthSubquery(): self
+    {
+        return $this->addSelect([
+            'length' => DB::table('songs')
+                ->whereColumn('songs.album_id', 'albums.id')
+                ->selectRaw('COALESCE(SUM(length), 0)'),
+        ]);
+    }
+
+    private function withRatingSubquery(): self
+    {
+        throw_unless($this->user, new LogicException('User must be set to query album ratings.'));
+
+        return $this->addSelect([
+            'rating' => DB::table('ratings')
+                ->where('rateable_type', 'album')
+                ->where('user_id', $this->user->id)
+                ->whereColumn('rateable_id', 'albums.id')
+                ->selectRaw('COALESCE(MAX(rating), 0)'),
+        ]);
+    }
+
     public function withUserContext(
         User $user,
         bool $includeFavoriteStatus = true,
@@ -99,7 +125,9 @@ class AlbumBuilder extends FavoriteableBuilder
         return $this
             ->accessible()
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
-            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus));
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus))
+            ->withLengthSubquery()
+            ->withRatingSubquery();
     }
 
     private static function normalizeSortColumn(string $column): string

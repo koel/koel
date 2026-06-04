@@ -38,7 +38,7 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
   $tooltip.querySelector<HTMLDivElement>('.tooltip-content')!.textContent =
     binding.value || el.title || el.getAttribute('data-title') || el.textContent
 
-  if (el.title && !el.getAttribute('data-title')) {
+  if (el.title) {
     el.setAttribute('data-title', el.title)
     el.removeAttribute('title')
   }
@@ -64,8 +64,6 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
       $arrow,
     )
 
-  el.$cleanup = el.$cleanup || autoUpdate(el, $tooltip, update)
-
   if (el.$tooltipListenersAttached) {
     return
   }
@@ -74,10 +72,15 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
 
   const showTooltip = async () => {
     $tooltip.classList.add('show')
+    el.$cleanup = el.$cleanup || autoUpdate(el, $tooltip, update)
     await update()
   }
 
-  const hideTooltip = () => $tooltip.classList.remove('show')
+  const hideTooltip = () => {
+    $tooltip.classList.remove('show')
+    el.$cleanup?.()
+    el.$cleanup = undefined
+  }
 
   el.addEventListener('mouseenter', showTooltip)
   el.addEventListener('mouseleave', hideTooltip)

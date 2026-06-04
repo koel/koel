@@ -4,6 +4,7 @@ namespace Tests\Feature\Subsonic;
 
 use App\Models\RadioStation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -11,6 +12,13 @@ use function Tests\create_user;
 
 class UpdateInternetRadioStationTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        Http::fake(['*' => Http::response('', 200, ['Content-Type' => 'audio/mpeg'])]);
+    }
+
     #[Test]
     public function updatesAnOwnedStation(): void
     {
@@ -89,5 +97,27 @@ class UpdateInternetRadioStationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'failed')
             ->assertJsonPath('subsonic-response.error.code', 70);
+    }
+
+    #[Test]
+    public function unsafeStreamUrlReturnsCode10(): void
+    {
+        $user = create_user();
+        $station = RadioStation::factory()->createOne(['user_id' => $user->id]);
+
+        $this
+            ->getJson(
+                '/rest/updateInternetRadioStation.view?'
+                    . Arr::query([
+                        'apiKey' => $user->subsonic_api_key,
+                        'f' => 'json',
+                        'id' => $station->id,
+                        'name' => 'Internal',
+                        'streamUrl' => 'http://127.0.0.1/stream',
+                    ]),
+            )
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'failed')
+            ->assertJsonPath('subsonic-response.error.code', 10);
     }
 }

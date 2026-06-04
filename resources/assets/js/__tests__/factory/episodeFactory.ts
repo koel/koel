@@ -10,6 +10,7 @@ export default (): Episode => {
     playback_state: 'Stopped',
     favorite: faker.datatype.boolean(),
     play_count: 0,
+    rating: 0,
     episode_link: faker.internet.url(),
     episode_description: faker.lorem.paragraph(),
     episode_image: faker.image.url(),

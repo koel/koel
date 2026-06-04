@@ -13,18 +13,19 @@
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
-                :icon="preferences.albums_favorites_only ? faStar : faEmptyStar"
-                :class="preferences.albums_favorites_only && 'text-k-highlight'"
+                :icon="preferences.albums_favorites_only ? faHeart : faEmptyHeart"
+                :class="preferences.albums_favorites_only && 'text-k-love'"
               />
             </Btn>
 
             <AlbumListSorter
+              v-if="preferences.albums_view_mode !== 'table'"
               :field="preferences.albums_sort_field"
               :order="preferences.albums_sort_order"
               @sort="sort"
             />
 
-            <ViewModeSwitch v-model="preferences.albums_view_mode" />
+            <ViewModeSwitch v-model="preferences.albums_view_mode" secondary="table" />
           </div>
         </template>
       </ScreenHeader>
@@ -47,41 +48,49 @@
 
     <template v-else>
       <div
-        v-if="showSkeletons"
+        v-if="showSkeletons && preferences.albums_view_mode === 'table'"
+        class="-m-6 flex flex-col"
+        role="status"
+        aria-busy="true"
+        aria-label="Loading"
+      >
+        <AlbumTableRowSkeleton v-for="i in 12" :key="i" />
+      </div>
+      <div
+        v-else-if="showSkeletons"
         class="grid gap-5 p-6"
         :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }"
         role="status"
         aria-busy="true"
         aria-label="Loading"
       >
-        <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
+        <AlbumCardSkeleton v-for="i in 10" :key="i" />
       </div>
       <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
-        <VirtualGridScroller
-          ref="grid"
-          :items="displayedAlbums"
-          :min-item-width="minItemWidth"
-          :class="itemLayout === 'full' ? 'gap-y-5' : 'gap-y-3'"
-          class="p-6 gap-x-5"
-          data-testid="album-grid"
+        <AlbumTable
+          v-if="preferences.albums_view_mode === 'table'"
+          :albums="displayedAlbums"
+          :field="preferences.albums_sort_field"
+          :order="preferences.albums_sort_order"
+          @sort="sort"
+          @toggle-favorite="toggleFavorite"
           @scrolled-to-end="fetchAlbums"
-        >
-          <template #default="{ item }">
-            <AlbumCard
-              :album="item"
-              :layout="itemLayout"
-              :show-release-year="preferences.albums_sort_field === 'year'"
-            />
-          </template>
-        </VirtualGridScroller>
+        />
+        <AlbumGrid
+          v-else
+          ref="grid"
+          :albums="displayedAlbums"
+          :show-release-year="preferences.albums_sort_field === 'year'"
+          @scrolled-to-end="fetchAlbums"
+        />
       </div>
     </template>
   </ScreenBase>
 </template>
 
 <script lang="ts" setup>
-import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
-import { faCompactDisc, faStar } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
+import { faCompactDisc, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
@@ -89,28 +98,26 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePolicies } from '@/composables/usePolicies'
 
-import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
+import AlbumGrid from '@/components/album/AlbumGrid.vue'
+import AlbumTable from '@/components/album/AlbumTable.vue'
+import AlbumTableRowSkeleton from '@/components/album/AlbumTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import VirtualGridScroller from '@/components/ui/VirtualGridScroller.vue'
 import AlbumListSorter from '@/components/album/AlbumListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { currentUserCan } = usePolicies()
 
-const grid = ref<InstanceType<typeof VirtualGridScroller>>()
+const grid = ref<InstanceType<typeof AlbumGrid>>()
 const albums = toRef(albumStore.state, 'albums')
 
 const loading = ref(false)
 const page = ref<number | null>(1)
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
-
-const itemLayout = computed<CardLayout>(() => (preferences.albums_view_mode === 'thumbnails' ? 'full' : 'compact'))
-const minItemWidth = computed(() => (preferences.albums_view_mode === 'thumbnails' ? 240 : 350))
 
 const displayedAlbums = computed(() =>
   preferences.albums_favorites_only ? albums.value.filter((a: Album) => a.favorite) : albums.value,
@@ -162,6 +169,8 @@ const sort = async (field: AlbumListSortField, order: SortOrder) => {
   await nextTick()
   await fetchAlbums()
 }
+
+const toggleFavorite = (album: Album) => albumStore.toggleFavorite(album)
 
 const toggleFavoritesOnly = async () => {
   preferences.albums_favorites_only = !preferences.albums_favorites_only

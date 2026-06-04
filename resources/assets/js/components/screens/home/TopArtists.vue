@@ -1,26 +1,14 @@
 <template>
-  <HomeScreenSection>
+  <Carousel>
     <template #header>Top Artists</template>
-    <ol
-      v-if="loading"
-      class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3"
-      role="status"
-      aria-busy="true"
-      aria-label="Loading"
-    >
-      <li v-for="i in 4" :key="i">
-        <ArtistCardSkeleton layout="compact" />
-      </li>
-    </ol>
-    <template v-else>
-      <ol v-if="artists.length" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
-        <li v-for="artist in artists" :key="artist.id">
-          <ArtistCard :artist layout="compact" />
-        </li>
-      </ol>
-      <p v-else>No artists found.</p>
+    <template v-if="loading">
+      <ArtistCardSkeleton v-for="i in 6" :key="i" />
     </template>
-  </HomeScreenSection>
+    <template v-else-if="artists.length">
+      <ArtistCard v-for="artist in artists" :key="artist.id" :artist />
+    </template>
+    <p v-else class="text-k-fg-50">No artists found.</p>
+  </Carousel>
 </template>
 
 <script lang="ts" setup>
@@ -29,7 +17,7 @@ import { overviewStore } from '@/stores/overviewStore'
 
 import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
-import HomeScreenSection from '@/components/screens/home/HomeScreenBlock.vue'
+import Carousel from '@/components/ui/Carousel.vue'
 
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)

@@ -3,10 +3,10 @@
     <MenuItem @click="play">Play</MenuItem>
     <MenuItem @click="shuffle">Shuffle</MenuItem>
     <MenuItem @click="addToQueue">Add to Queue</MenuItem>
-    <MenuItem>
+    <MenuItem v-if="canShare">
       Share
       <template #subMenuItems>
-        <MenuItem @click="showEmbedModal">Embed…</MenuItem>
+        <MenuItem v-if="allowEmbedding" @click="showEmbedModal">Embed…</MenuItem>
         <MenuItem v-if="canShowCollaboration" @click="showCollaborationModal">Collaborate…</MenuItem>
       </template>
     </MenuItem>
@@ -67,10 +67,12 @@ const { currentUserCan } = usePolicies()
 const { showConfirmDialog } = useDialogBox()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
+const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
 
 const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value))
 const canDeletePlaylist = computed(() => currentUserCan.deletePlaylist(playlist.value))
 const canShowCollaboration = computed(() => isPlus.value && !playlist.value?.is_smart)
+const canShare = computed(() => allowEmbedding.value || canShowCollaboration.value)
 
 const edit = () =>
   trigger(() => {

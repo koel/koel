@@ -57,7 +57,7 @@
       No favorites yet.
       <span class="secondary block">
         Click the&nbsp;
-        <Icon :icon="faStar" />&nbsp; icon to mark a song as favorite.
+        <Icon :icon="faHeart" />&nbsp; icon to mark a song as favorite.
       </span>
     </ScreenEmptyState>
   </ScreenBase>
@@ -65,7 +65,7 @@
 
 <script lang="ts" setup>
 import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
-import { faStar } from '@fortawesome/free-regular-svg-icons'
+import { faHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, ref } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { playableStore } from '@/stores/playableStore'

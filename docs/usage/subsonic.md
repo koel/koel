@@ -14,7 +14,7 @@ Koel speaks the [Subsonic / OpenSubsonic API](https://opensubsonic.netlify.app/)
 2. Switch to the **Subsonic** tab.
 3. Reveal or copy the key.
 
-The key is created for you the first time you open this tab and stays the same until you regenerate it.
+Your Subsonic API key was generated automatically when your account was created. It stays the same until you regenerate it.
 
 ## Connect a Client
 

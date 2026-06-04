@@ -3,6 +3,7 @@
 namespace Tests\Integration\Services\Podcast;
 
 use App\Events\UserUnsubscribedFromPodcast;
+use App\Exceptions\UnsafePodcastFeedUrlException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
@@ -12,6 +13,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -38,6 +40,14 @@ class PodcastServiceTest extends TestCase
         $this->instance(ClientInterface::class, new Client(['handler' => $handlerStack]));
 
         $this->service = app(PodcastService::class);
+    }
+
+    #[Test]
+    public function addPodcastWithUnsafeUrlThrowsDistinctException(): void
+    {
+        $this->expectException(UnsafePodcastFeedUrlException::class);
+
+        $this->service->addPodcast('http://127.0.0.1/feed.xml', create_user());
     }
 
     #[Test]
@@ -180,6 +190,41 @@ class PodcastServiceTest extends TestCase
     }
 
     #[Test]
+    public function podcastObsoleteForcedWhenFeedUrlIsUnsafe(): void
+    {
+        // Even though the URL was somehow stored, isPodcastObsolete must refuse
+        // to probe it — returning true so the caller falls into refreshPodcast,
+        // which re-validates via createParser and throws UnsafePodcastFeedUrlException.
+        $podcast = Podcast::factory()->createOne([
+            'url' => 'http://127.0.0.1/feed.xml',
+            'last_synced_at' => now()->subDays(1),
+        ]);
+
+        self::assertTrue($this->service->isPodcastObsolete($podcast));
+    }
+
+    #[Test]
+    public function podcastObsoleteWhenFeedHeadRedirectsToPrivateHost(): void
+    {
+        // 302 to a private host on the HEAD probe — on_redirect throws, the
+        // method's catch block returns true (treat as obsolete) and refresh
+        // path will refuse to fetch from the private URL via createParser.
+        Http::fake([
+            'https://example.com/feed.xml' => Http::response('', 302, ['Location' => 'http://127.0.0.1/feed.xml']),
+            '*' => Http::response(),
+        ]);
+
+        $podcast = Podcast::factory()->createOne([
+            'url' => 'https://example.com/feed.xml',
+            'last_synced_at' => now()->subDays(1),
+        ]);
+
+        self::assertTrue($this->service->isPodcastObsolete($podcast));
+
+        Http::assertNotSent(static fn (Request $request): bool => str_contains($request->url(), '127.0.0.1'));
+    }
+
+    #[Test]
     public function updateEpisodeProgress(): void
     {
         $episode = Song::factory()->asEpisode()->createOne();
@@ -279,6 +324,21 @@ class PodcastServiceTest extends TestCase
     public function getStreamableUrlRejectsUnsafeUrl(string $url): void
     {
         self::assertNull($this->service->getStreamableUrl($url));
+    }
+
+    #[Test]
+    public function getStreamableUrlRejectsRedirectToPrivateHost(): void
+    {
+        // Initial URL is public, but the server 302s to 127.0.0.1. The on_redirect
+        // validator must throw before the follow-up request is issued, and the
+        // method returns null instead of leaking the internal target.
+        $mock = new MockHandler([
+            new Response(302, ['Location' => 'http://127.0.0.1/episode.mp3']),
+        ]);
+
+        $client = new Client(['handler' => HandlerStack::create($mock)]);
+
+        self::assertNull($this->service->getStreamableUrl('https://example.com/episode.mp3', $client));
     }
 
     #[Test]

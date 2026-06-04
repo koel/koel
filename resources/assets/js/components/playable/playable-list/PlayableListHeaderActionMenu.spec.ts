@@ -119,6 +119,7 @@ describe('playableListHeaderActionMenu.vue', () => {
       'title',
       'artist',
       'duration',
+      'favorite',
       'playlist_collaborator',
       'playlist_added_at',
     ])

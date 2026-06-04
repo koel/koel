@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use App\Rules\HasAudioContentType;
+use App\Rules\SafeUrl;
 
 /**
  * @property string $id
@@ -17,7 +19,7 @@ class UpdateInternetRadioStationRequest extends Request
     {
         return [
             'id' => ['required', 'string'],
-            'streamUrl' => ['required', 'string'],
+            'streamUrl' => ['required', 'url', new SafeUrl(), new HasAudioContentType()],
             'name' => ['required', 'string'],
             'homepageUrl' => ['nullable', 'string'],
         ];

@@ -72,6 +72,18 @@
       </template>
     </MenuItem>
 
+    <template v-if="onlyOneSelected && isSong(playables[0])">
+      <Separator />
+      <li
+        tabindex="-1"
+        class="px-4 py-2 focus:outline-hidden"
+        @mouseover="($event.currentTarget as HTMLLIElement).focus()"
+      >
+        <StarRating :rateable="playables[0] as Song" />
+      </li>
+      <Separator />
+    </template>
+
     <template v-if="isQueueScreen">
       <Separator />
       <MenuItem @click="removeFromQueue">Remove from Queue</MenuItem>
@@ -90,7 +102,7 @@
       </MenuItem>
     </template>
 
-    <MenuItem v-if="onlyOneSelected">
+    <MenuItem v-if="canShare">
       Share
       <template #subMenuItems>
         <MenuItem v-if="canBeShared" @click="copyUrl">
@@ -99,7 +111,7 @@
           </template>
           Copy URL
         </MenuItem>
-        <MenuItem @click="showEmbedModal">
+        <MenuItem v-if="allowEmbedding" @click="showEmbedModal">
           <template #icon>
             <Icon :icon="faCode" fixed-width />
           </template>
@@ -159,6 +171,8 @@ import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { playback } from '@/services/playbackManager'
 
+import StarRating from '@/components/ui/StarRating.vue'
+
 const props = defineProps<{ playables: Playable[] }>()
 const { playables } = toRefs(props)
 
@@ -208,6 +222,8 @@ const firstSongPlaying = computed(() =>
 )
 const normalPlaylists = computed(() => playlists.value.filter(({ is_smart }) => !is_smart))
 const canBeShared = computed(() => !isPlus.value || (isSong(playables.value[0]) && playables.value[0].is_public))
+const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
+const canShare = computed(() => onlyOneSelected.value && (canBeShared.value || allowEmbedding.value))
 
 const makePublic = () =>
   trigger(async () => {

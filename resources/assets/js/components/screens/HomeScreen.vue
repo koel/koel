@@ -12,7 +12,7 @@
       <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
     </ScreenEmptyState>
 
-    <div v-else class="home-sections space-y-12">
+    <div v-else class="home-sections space-y-12 w-full">
       <RecentlyPlayedPlayables :loading data-testid="recently-played-songs" />
       <NewAlbums :loading data-testid="recently-added-albums" />
       <SimilarSongs :loading data-testid="similar-songs" />
@@ -23,6 +23,8 @@
       <NewArtists :loading data-testid="recently-added-artists" />
       <LeastPlayedSongs :loading data-testid="least-played-songs" />
       <RandomSongs :loading data-testid="random-songs" />
+      <RandomAlbums :loading data-testid="random-albums" />
+      <RandomArtists :loading data-testid="random-artists" />
       <BtnScrollToTop />
     </div>
   </ScreenBase>
@@ -47,6 +49,8 @@ import NewSongs from '@/components/screens/home/NewSongs.vue'
 import TopArtists from '@/components/screens/home/TopArtists.vue'
 import TopAlbums from '@/components/screens/home/TopAlbums.vue'
 import NewArtists from '@/components/screens/home/NewArtists.vue'
+import RandomAlbums from '@/components/screens/home/RandomAlbums.vue'
+import RandomArtists from '@/components/screens/home/RandomArtists.vue'
 import LeastPlayedSongs from '@/components/screens/home/LeastPlayedSongs.vue'
 import RandomSongs from '@/components/screens/home/RandomSongs.vue'
 import SimilarSongs from '@/components/screens/home/SimilarSongs.vue'
@@ -98,6 +102,12 @@ useRouter().onScreenActivated('Home', async () => {
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 .home-sections {
+  @apply min-w-0;
+
+  > * {
+    @apply min-w-0;
+  }
+
   > *:not(:first-child) {
     @apply pt-12 relative;
 

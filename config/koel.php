@@ -178,6 +178,10 @@ return [
         'enabled' => env('MEDIA_BROWSER_ENABLED', false),
     ],
 
+    'embed' => [
+        'enabled' => env('EMBED_ENABLED', true),
+    ],
+
     /*
      |--------------------------------------------------------------------------
      | Ignore Dot Files

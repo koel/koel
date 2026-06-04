@@ -22,7 +22,7 @@ class GetAlbumInfo2Controller extends Controller
         $info = $this->encyclopedia->getAlbumInformation($album);
 
         return SubsonicResponse::ok([
-            'albumInfo' => $info === null ? [] : AlbumInfoResource::toArray($info),
+            'albumInfo' => $info ? AlbumInfoResource::toArray($info) : [],
         ]);
     }
 }
