@@ -59,6 +59,12 @@ class SafeHttp
         return $this->buildRequest($headers, ['stream' => true])->get($url);
     }
 
+    /** Download the URL into a file path on disk, with full SSRF protection. */
+    public function download(string $url, string $sinkPath, array $headers = []): Response
+    {
+        return $this->buildRequest($headers)->sink($sinkPath)->get($url);
+    }
+
     /**
      * Build a PSR-18 client whose handler stack applies the same hop-by-hop
      * pinning + validation as the Laravel Http methods above. Use for libraries
