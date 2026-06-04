@@ -3,6 +3,7 @@
 namespace App\Services\Streamer\Adapters;
 
 use App\Models\Song as Episode;
+use App\Services\Network\SafeHttp;
 use App\Services\Podcast\PodcastService;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Values\Podcast\EpisodePlayable;
@@ -15,6 +16,7 @@ class PodcastStreamerAdapter implements StreamerAdapter
 
     public function __construct(
         private readonly PodcastService $podcastService,
+        private readonly SafeHttp $http,
     ) {}
 
     /** @inheritDoc */
@@ -28,6 +30,6 @@ class PodcastStreamerAdapter implements StreamerAdapter
             return response()->redirectTo($streamableUrl);
         }
 
-        $this->streamLocalPath(EpisodePlayable::getForEpisode($song)->path);
+        $this->streamLocalPath(EpisodePlayable::getForEpisode($song, $this->http)->path);
     }
 }

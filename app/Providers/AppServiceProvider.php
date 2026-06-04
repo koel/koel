@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Enums\Acl\Role;
-use App\Helpers\SafeHttp;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
@@ -34,7 +33,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Psr\Http\Client\ClientInterface;
 use SpotifyWebAPI\Session as SpotifySession;
 
 class AppServiceProvider extends ServiceProvider
@@ -76,11 +74,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(LicenseServiceInterface::class, LicenseService::class);
-
-        // PSR-18 client used by libraries that fetch external URLs (e.g. Poddle).
-        // Backed by SafeHttp so every redirect hop is re-validated against the
-        // SafeUrl rules — closes the redirect-SSRF leg of GHSA-6qvr-wjmv-v8mm.
-        $this->app->bind(ClientInterface::class, static fn (): ClientInterface => app(SafeHttp::class)->guzzleClient());
 
         $this->app->bind(ScannerCacheStrategyContract::class, static function () {
             // Use a no-cache strategy for unit tests to ensure consistent results

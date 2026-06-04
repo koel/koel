@@ -6,8 +6,6 @@ use App\Events\UserUnsubscribedFromPodcast;
 use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UnsafePodcastFeedUrlException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
-use App\Helpers\Network;
-use App\Helpers\SafeHttp;
 use App\Helpers\Uuid;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
@@ -15,13 +13,14 @@ use App\Models\Song as Episode;
 use App\Models\User;
 use App\Repositories\PodcastRepository;
 use App\Repositories\SongRepository;
+use App\Services\Network\Network;
+use App\Services\Network\SafeHttp;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\RedirectMiddleware;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use PhanAn\Poddle\Poddle;
 use PhanAn\Poddle\Values\Episode as EpisodeValue;
@@ -225,9 +224,7 @@ class PodcastService
         }
 
         try {
-            $lastModified = Http::withOptions($this->safeHttp->redirectOptions())
-                ->head($podcast->url)
-                ->header('Last-Modified');
+            $lastModified = $this->safeHttp->head($podcast->url)->header('Last-Modified');
 
             if (!$lastModified) {
                 return true;
@@ -254,7 +251,7 @@ class PodcastService
             return null;
         }
 
-        $client ??= $this->safeHttp->guzzleClient();
+        $client ??= $this->safeHttp->getPinnedGuzzleClient($url, trackRedirects: true);
 
         try {
             $response = $client->request($method, $url, [
@@ -263,10 +260,6 @@ class PodcastService
                     'Origin' => '*',
                 ],
                 RequestOptions::HTTP_ERRORS => false,
-                RequestOptions::ALLOW_REDIRECTS => [
-                    ...$this->safeHttp->redirectOptions()['allow_redirects'],
-                    'track_redirects' => true,
-                ],
             ]);
 
             $redirects = Arr::wrap($response->getHeader(RedirectMiddleware::HISTORY_HEADER));
@@ -307,6 +300,6 @@ class PodcastService
             throw UnsafePodcastFeedUrlException::create($url);
         }
 
-        return Poddle::fromUrl($url, 5 * 60, $this->client);
+        return Poddle::fromUrl($url, 5 * 60, $this->client ?? $this->safeHttp->getPinnedGuzzleClient($url));
     }
 }

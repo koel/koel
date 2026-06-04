@@ -17,7 +17,7 @@ class CreateInternetRadioStationRequest extends Request
     public function rules(): array
     {
         return [
-            'streamUrl' => ['required', 'url', new SafeUrl(), new HasAudioContentType()],
+            'streamUrl' => ['bail', 'required', 'url', new SafeUrl(), new HasAudioContentType()],
             'name' => ['required', 'string'],
             'homepageUrl' => ['nullable', 'string'],
         ];

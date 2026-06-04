@@ -43,6 +43,7 @@ class AddRadioStation implements Tool
 
         $validator = Validator::make(['url' => $request['url']], [
             'url' => [
+                'bail',
                 'required',
                 'url',
                 Rule::unique('radio_stations')->where(static fn (Builder $query) => $query->where('user_id', $userId)),
