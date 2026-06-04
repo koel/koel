@@ -2,15 +2,12 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Uri;
-use IPLib\Address\AddressInterface;
-use IPLib\Address\IPv6;
 use IPLib\Factory;
-use IPLib\Range\Subnet;
 use IPLib\Range\Type as RangeType;
 use Throwable;
 
-// @mago-expect lint:cyclomatic-complexity -- SSRF guard inherently branches on host shape (IP literal vs DNS, IPv4 vs IPv6, NAT64/6to4 wrapper extraction); splitting further would scatter the safety story.
 class Network
 {
     private const array SAFE_URL_SCHEMES = ['http', 'https'];
@@ -52,6 +49,10 @@ class Network
      * returned list with CURLOPT_RESOLVE to pin the resolved IPs into the HTTP
      * client, closing the DNS-rebinding TOCTOU window between validation and connect.
      *
+     * "Public" means ip-lib's RangeType::T_PUBLIC — rejects private, loopback,
+     * link-local, multicast, broadcast, reserved, documentation, NAT64 (T_RESERVED),
+     * 6to4 wrappers of private IPv4 (classified by embedded v4), Teredo, CGNAT.
+     *
      * @return list<string>|null
      */
     public function resolveToPublicIps(string $host): ?array
@@ -59,7 +60,7 @@ class Network
         $literal = Factory::parseAddressString($host);
 
         if ($literal !== null) {
-            return self::isPublicAddress($literal) ? [$host] : null;
+            return $literal->getRangeType() === RangeType::T_PUBLIC ? [$host] : null;
         }
 
         try {
@@ -75,7 +76,7 @@ class Network
         $ips = [];
 
         foreach ($records as $record) {
-            $ip = $record['ip'] ?? $record['ipv6'] ?? null;
+            $ip = Arr::get($record, 'ip') ?? Arr::get($record, 'ipv6');
 
             if (!$ip) {
                 return null;
@@ -83,7 +84,7 @@ class Network
 
             $address = Factory::parseAddressString($ip);
 
-            if ($address === null || !self::isPublicAddress($address)) {
+            if ($address === null || $address->getRangeType() !== RangeType::T_PUBLIC) {
                 return null;
             }
 
@@ -91,51 +92,5 @@ class Network
         }
 
         return $ips;
-    }
-
-    /**
-     * An address is public iff its range type is PUBLIC (rejects private,
-     * loopback, link-local, multicast, broadcast, reserved, documentation,
-     * Teredo, etc.) AND, if it's an IPv6 NAT64/6to4 wrapper, the embedded
-     * IPv4 is also public.
-     */
-    private static function isPublicAddress(AddressInterface $address): bool
-    {
-        if ($address->getRangeType() !== RangeType::T_PUBLIC) {
-            return false;
-        }
-
-        if ($address instanceof IPv6) {
-            $embedded = self::extractEmbeddedIpv4($address);
-
-            if ($embedded !== null && !self::isPublicAddress($embedded)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Return the IPv4 embedded inside a NAT64 well-known (64:ff9b::/96) or 6to4
-     * (2002::/16) IPv6 wrapper, or null if not a wrapper.
-     */
-    private static function extractEmbeddedIpv4(IPv6 $address): ?AddressInterface
-    {
-        $bytes = inet_pton($address->toString());
-
-        if ($bytes === false || strlen($bytes) !== 16) {
-            return null;
-        }
-
-        if (Subnet::parseString('64:ff9b::/96')->contains($address)) {
-            return Factory::parseAddressString((string) inet_ntop(substr($bytes, 12, 4)));
-        }
-
-        if (Subnet::parseString('2002::/16')->contains($address)) {
-            return Factory::parseAddressString((string) inet_ntop(substr($bytes, 2, 4)));
-        }
-
-        return null;
     }
 }
