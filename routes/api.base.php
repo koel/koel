@@ -81,6 +81,9 @@ use App\Http\Controllers\Download\CheckDownloadableCountController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Pusher\Pusher;
+use App\Models\Song;
+use App\Models\Album;
+use App\Models\Artist;
 
 Route::prefix('api')
     ->middleware('api')
@@ -239,7 +242,23 @@ Route::prefix('api')
 
             Route::put('songs/publicize', PublicizeSongsController::class);
             Route::put('songs/privatize', PrivatizeSongsController::class);
+Route::get('library/stats', function () {
+    $songs = Song::getTotalSongs();
+    $albums = Album::getTotalAlbums();
+    $artists = Artist::getTotalArtists();
+    $duration = Song::getTotalDuration();
 
+    return response()->json([
+        'songs' => $songs,
+        'albums' => $albums,
+        'artists' => $artists,
+        'duration' => $duration,
+        'has_songs' => Song::hasSongs(),
+        'has_albums' => Album::hasAlbums(),
+        'has_artists' => Artist::hasArtists(),
+        'has_music' => $songs > 0 || $albums > 0 || $artists > 0,
+    ]);
+});
             // License routes
             Route::post('licenses/activate', ActivateLicenseController::class);
 
