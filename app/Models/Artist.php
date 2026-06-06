@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -113,15 +114,22 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
             $where['user_id'] = $user->id;
         }
 
-        return static::query()
-            ->where($where)
-            ->firstOr(static function () use ($user, $name): Artist {
-                return static::query()
-                    ->create([
-                        'user_id' => $user->id,
-                        'name' => $name,
-                    ]);
-            });
+        $created = static::query()
+            ->insertOrIgnore([
+                'id' => (string) Str::ulid(),
+                'user_id' => $user->id,
+                'name' => $name,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+        $artist = static::query()->where($where)->firstOrFail();
+
+        if ($created === 1) {
+            $artist->searchable();
+        }
+
+        return $artist;
     }
 
     /** @return array<mixed> */

@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -89,13 +90,26 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
      */
     public static function getOrCreate(Artist $artist, ?string $name = null): static
     {
-        return static::query() // @phpstan-ignore-line
-            ->firstOrCreate([
+        $name = trim($name) ?: self::UNKNOWN_NAME;
+
+        $created = static::query()
+            ->insertOrIgnore([
+                'id' => (string) Str::ulid(),
                 'artist_id' => $artist->id,
                 'artist_name' => $artist->name,
                 'user_id' => $artist->user_id,
-                'name' => trim($name) ?: self::UNKNOWN_NAME,
+                'name' => $name,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
+
+        $album = static::query()->where('artist_id', $artist->id)->where('name', $name)->firstOrFail();
+
+        if ($created === 1) {
+            $album->searchable();
+        }
+
+        return $album; // @phpstan-ignore-line
     }
 
     public function artist(): BelongsTo

@@ -22,12 +22,13 @@ use App\Values\Song\SongUpdateData;
 use App\Values\Song\SongUpdateResult;
 use App\Values\Transcoding\TranscodeFileInfo;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
-// @mago-ignore lint:cyclomatic-complexity
+// @mago-ignore lint:cyclomatic-complexity,kan-defect
 class SongService
 {
     public function __construct(
@@ -213,6 +214,7 @@ class SongService
         event(new LibraryChanged());
     }
 
+    // @mago-ignore lint:halstead
     public function createOrUpdateSongFromScan(
         ScanInformation $info,
         ScanConfiguration $config,
@@ -268,8 +270,21 @@ class SongService
         if ($isFileNew) {
             // Only set the owner if the song is new, i.e., don't override the owner if the song is being updated.
             $data['owner_id'] = $config->owner->id;
-            /** @var Song $song */
-            $song = Song::query()->create($data);
+
+            try {
+                /** @var Song $song */
+                $song = Song::query()->create($data);
+            } catch (UniqueConstraintViolationException) {
+                // Lost the race against another concurrent scan that already inserted this path.
+                // Re-fetch the winning row and apply our freshly-tagged metadata on top.
+                $song = $this->songRepository->findOneByPath($info->path);
+
+                if (!$song) {
+                    return null;
+                }
+
+                $song->update(Arr::except($data, ['owner_id']));
+            }
         } else {
             $song->update($data);
         }

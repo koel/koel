@@ -3,7 +3,10 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Artist;
+use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -53,6 +56,46 @@ class ArtistTest extends TestCase
         $artist = Artist::getOrCreate(create_user(), $name);
 
         self::assertTrue(Artist::getOrCreate($artist->user, $name)->is($artist));
+    }
+
+    #[Test]
+    public function getOrCreateReturnsExistingRowInsertedOutsideEloquent(): void
+    {
+        // A parallel scan chunk inserts via raw DB (or insertOrIgnore) without
+        // firing Eloquent events. getOrCreate must still find that row instead
+        // of trying to create a duplicate.
+        $user = create_user();
+        $winnerId = (string) Str::ulid();
+
+        DB::table('artists')->insert([
+            'id' => $winnerId,
+            'user_id' => $user->id,
+            'name' => 'Skid Row',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $found = Artist::getOrCreate($user, 'Skid Row');
+
+        self::assertSame($winnerId, $found->id);
+        self::assertSame(1, Artist::query()->where('user_id', $user->id)->where('name', 'Skid Row')->count());
+    }
+
+    #[Test]
+    public function uniqueIndexRejectsDuplicateInserts(): void
+    {
+        $user = create_user();
+        Artist::factory()->for($user)->createOne(['name' => 'Pearl Jam']);
+
+        $this->expectException(UniqueConstraintViolationException::class);
+
+        DB::table('artists')->insert([
+            'id' => (string) Str::ulid(),
+            'user_id' => $user->id,
+            'name' => 'Pearl Jam',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     #[Test]
