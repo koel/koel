@@ -214,7 +214,6 @@ class SongService
         event(new LibraryChanged());
     }
 
-    // @mago-ignore lint:halstead
     public function createOrUpdateSongFromScan(
         ScanInformation $info,
         ScanConfiguration $config,
@@ -275,15 +274,13 @@ class SongService
                 /** @var Song $song */
                 $song = Song::query()->create($data);
             } catch (UniqueConstraintViolationException) {
-                // Lost the race against another concurrent scan that already inserted this path.
-                // Re-fetch the winning row and apply our freshly-tagged metadata on top.
+                // A concurrent scan already inserted this exact path with the same metadata.
+                // Defer to the winner — both racers parsed identical bytes off disk.
                 $song = $this->songRepository->findOneByPath($info->path);
 
                 if (!$song) {
                     return null;
                 }
-
-                $song->update(Arr::except($data, ['owner_id']));
             }
         } else {
             $song->update($data);
