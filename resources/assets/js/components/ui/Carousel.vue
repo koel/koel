@@ -83,6 +83,8 @@ const refresh = async () => {
 <style lang="postcss">
 .home-carousel {
   scrollbar-width: none;
+  --scroll-mask-fade-from-l: calc(100% - 40px);
+  --scroll-mask-fade-from-r: calc(100% - 40px);
 }
 
 .home-carousel::-webkit-scrollbar {
