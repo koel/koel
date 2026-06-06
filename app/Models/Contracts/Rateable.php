@@ -16,7 +16,7 @@ interface Rateable
     /**
  * Check if the user has rated this item.
  */
-public function hasStarRating(User $user): bool;
+public function hasStarRatingFor(User $user): bool;
 
 /**
  * Get the normalized star rating.
