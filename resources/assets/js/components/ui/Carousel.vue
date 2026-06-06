@@ -38,7 +38,10 @@
       </nav>
     </header>
 
-    <div ref="scroller" class="home-carousel scroll-mask-x overflow-x-auto overflow-y-hidden w-full">
+    <div
+      ref="scroller"
+      class="home-carousel scroll-mask-x-from-[calc(100%-2rem)] overflow-x-auto overflow-y-hidden w-full"
+    >
       <div class="home-carousel-track flex gap-4">
         <slot />
       </div>
@@ -83,8 +86,6 @@ const refresh = async () => {
 <style lang="postcss">
 .home-carousel {
   scrollbar-width: none;
-  --scroll-mask-fade-from-l: calc(100% - 40px);
-  --scroll-mask-fade-from-r: calc(100% - 40px);
 }
 
 .home-carousel::-webkit-scrollbar {
