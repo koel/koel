@@ -25,4 +25,23 @@ trait MorphsToRatings
 
         return (int) $this->ratings()->where('user_id', $user->id)->value('rating');
     }
+    public function getStarRatingFor(User $user): int
+{
+    return max(0, min(5, $this->getRatingFor($user)));
+}
+
+public function hasStarRatingFor(User $user): bool
+{
+    return $this->getStarRatingFor($user) > 0;
+}
+
+public function isHighlyRatedBy(User $user): bool
+{
+    return $this->getStarRatingFor($user) >= 4;
+}
+
+public function shouldAvoidPlaybackFor(User $user): bool
+{
+    return $this->getStarRatingFor($user) === 1;
+}
 }
