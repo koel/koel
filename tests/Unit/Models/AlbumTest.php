@@ -57,12 +57,13 @@ class AlbumTest extends TestCase
         self::assertSame('Unknown Album', $album->name);
     }
 
+    /**
+     * A parallel scan chunk inserts via raw DB (or insertOrIgnore) without firing Eloquent events.
+     * getOrCreate must still find that row instead of trying to create a duplicate.
+     */
     #[Test]
     public function getOrCreateReturnsExistingRowInsertedOutsideEloquent(): void
     {
-        // A parallel scan chunk inserts via raw DB (or insertOrIgnore) without
-        // firing Eloquent events. getOrCreate must still find that row instead
-        // of trying to create a duplicate.
         $artist = Artist::factory()->createOne();
         $winnerId = (string) Str::ulid();
 

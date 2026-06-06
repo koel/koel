@@ -58,12 +58,13 @@ class ArtistTest extends TestCase
         self::assertTrue(Artist::getOrCreate($artist->user, $name)->is($artist));
     }
 
+    /**
+     * A parallel scan chunk inserts via raw DB (or insertOrIgnore) without firing Eloquent events.
+     * getOrCreate must still find that row instead of trying to create a duplicate.
+     */
     #[Test]
     public function getOrCreateReturnsExistingRowInsertedOutsideEloquent(): void
     {
-        // A parallel scan chunk inserts via raw DB (or insertOrIgnore) without
-        // firing Eloquent events. getOrCreate must still find that row instead
-        // of trying to create a duplicate.
         $user = create_user();
         $winnerId = (string) Str::ulid();
 
