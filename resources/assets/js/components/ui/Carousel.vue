@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import { faChevronLeft, faChevronRight, faRotateRight } from '@fortawesome/free-solid-svg-icons'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps<{ onRefresh?: () => Promise<unknown> | unknown }>()
 
@@ -62,7 +62,7 @@ let resizeObserver: ResizeObserver | undefined
 
 const updateOverflow = () => {
   const el = scroller.value
-  hasOverflow.value = !!el && el.scrollWidth > el.clientWidth
+  hasOverflow.value = !!el && el.scrollWidth > el.clientWidth + 1
 }
 
 const observeOverflow = (el: HTMLDivElement | undefined) => {
@@ -83,6 +83,8 @@ onMounted(() => {
   observeOverflow(scroller.value)
   window.addEventListener('resize', updateOverflow)
 })
+
+onUpdated(updateOverflow)
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
