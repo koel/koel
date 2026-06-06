@@ -21,8 +21,8 @@ describe('usePlaylistContentManagement', () => {
   const h = createHarness()
 
   it('adds content to a playlist', async () => {
-    const playlist = h.factory('playlist', { is_smart: false })
-    const songs = [h.factory('song')]
+    const playlist = h.factory('playlist').make({ is_smart: false })
+    const songs = [h.factory('song').make()]
     const emitMock = h.mock(eventBus, 'emit')
     h.mock(playlistStore, 'addContent').mockResolvedValue(undefined)
 
@@ -34,8 +34,8 @@ describe('usePlaylistContentManagement', () => {
   })
 
   it('does not add to smart playlists', async () => {
-    const playlist = h.factory('playlist', { is_smart: true })
-    const songs = [h.factory('song')]
+    const playlist = h.factory('playlist').make({ is_smart: true })
+    const songs = [h.factory('song').make()]
     h.mock(playlistStore, 'addContent')
 
     const { addToPlaylist } = usePlaylistContentManagement()
@@ -45,8 +45,8 @@ describe('usePlaylistContentManagement', () => {
   })
 
   it('removes content from a playlist', async () => {
-    const playlist = h.factory('playlist', { is_smart: false })
-    const songs = [h.factory('song')]
+    const playlist = h.factory('playlist').make({ is_smart: false })
+    const songs = [h.factory('song').make()]
     const emitMock = h.mock(eventBus, 'emit')
     h.mock(playlistStore, 'removeContent').mockResolvedValue(undefined)
 

@@ -3,6 +3,7 @@
 namespace Tests\Unit\Rules;
 
 use App\Rules\SafeUrl;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
@@ -74,5 +75,24 @@ class SafeUrlTest extends TestCase
         Http::fake(static fn () => throw new RuntimeException('Connection refused'));
 
         self::assertFalse($this->passes('https://8.8.8.8/feed'));
+    }
+
+    #[Test]
+    public function rejectsUrlsRedirectingToPrivateHost(): void
+    {
+        // The 302 to a private host must be caught by the on_redirect validator
+        // before Guzzle issues the follow-up request to 127.0.0.1.
+        //
+        // Use 8.8.8.8 as the initial host so Network::isPublicHost short-circuits
+        // on the IP-literal path and never touches DNS — the test must not depend
+        // on whether 'public.example.com' resolves in the test environment.
+        Http::fake([
+            '8.8.8.8/*' => Http::response('', 302, ['Location' => 'http://127.0.0.1/admin']),
+            '*' => Http::response('', 200),
+        ]);
+
+        self::assertFalse($this->passes('https://8.8.8.8/feed'));
+
+        Http::assertNotSent(static fn (Request $request): bool => str_contains($request->url(), '127.0.0.1'));
     }
 }

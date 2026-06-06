@@ -1,4 +1,3 @@
-import { clone } from 'lodash'
 import { screen } from '@testing-library/vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -26,7 +25,7 @@ describe('addToMenu.vue', () => {
   })
 
   const renderComponent = (customConfig: Partial<AddToMenuConfig> = {}) => {
-    const playables = h.factory('song', 5)
+    const playables = h.factory('song').make(5)
 
     const config: AddToMenuConfig = {
       queue: true,
@@ -36,7 +35,7 @@ describe('addToMenu.vue', () => {
     const rendered = h.render(Component, {
       props: {
         playables,
-        config: Object.assign(clone(config), customConfig),
+        config: { ...config, ...customConfig },
         showing: true,
       },
       global: {
@@ -54,9 +53,9 @@ describe('addToMenu.vue', () => {
 
   it('renders', () => {
     playlistStore.state.playlists = [
-      h.factory('playlist', { name: 'Foo' }),
-      h.factory('playlist', { name: 'Bar' }),
-      h.factory('playlist', { name: 'Baz' }),
+      h.factory('playlist').make({ name: 'Foo' }),
+      h.factory('playlist').make({ name: 'Bar' }),
+      h.factory('playlist').make({ name: 'Baz' }),
     ]
 
     expect(renderComponent().html()).toMatchSnapshot()
@@ -75,7 +74,7 @@ describe('addToMenu.vue', () => {
     ['to top', 'queue-top', 'queueToTop'],
     ['to bottom', 'queue-bottom', 'queue'],
   ])('queues songs %s', async (_: string, testId: string, queueMethod: MethodOf<typeof queueStore>) => {
-    queueStore.state.playables = h.factory('song', 5)
+    queueStore.state.playables = h.factory('song').make(5)
     playableStore.syncWithVault(queueStore.state.playables)
     queueStore.state.playables[2].playback_state = 'Playing'
 
@@ -98,7 +97,7 @@ describe('addToMenu.vue', () => {
 
   it('adds songs to existing playlist', async () => {
     const mock = h.mock(playlistStore, 'addContent')
-    playlistStore.state.playlists = h.factory('playlist', 3)
+    playlistStore.state.playlists = h.factory('playlist').make(3)
     const { playables } = renderComponent()
 
     await h.user.click(screen.getAllByTestId('add-to-playlist')[1])

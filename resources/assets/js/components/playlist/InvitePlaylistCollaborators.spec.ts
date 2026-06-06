@@ -9,7 +9,7 @@ describe('invitePlaylistCollaborators.vue', () => {
 
   it('works', async () => {
     h.mock(playlistCollaborationService, 'createInviteLink').mockResolvedValue('http://localhost:3000/invite/1234')
-    const playlist = h.factory('playlist')
+    const playlist = h.factory('playlist').make()
 
     h.render(Component, {
       props: {

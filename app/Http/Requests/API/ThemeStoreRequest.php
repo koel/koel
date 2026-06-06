@@ -12,13 +12,13 @@ class ThemeStoreRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:191',
-            'fg_color' => 'string|sometimes|nullable',
-            'bg_color' => 'string|sometimes|nullable',
-            'font_family' => 'string|sometimes|nullable',
-            'font_size' => 'numeric|sometimes|nullable',
+            'name' => ['required', 'string', 'max:191'],
+            'fg_color' => ['string', 'sometimes', 'nullable'],
+            'bg_color' => ['string', 'sometimes', 'nullable'],
+            'font_family' => ['string', 'sometimes', 'nullable'],
+            'font_size' => ['numeric', 'sometimes', 'nullable'],
             'bg_image' => ['string', 'sometimes', 'nullable', new ValidImageData()],
-            'highlight_color' => 'string|sometimes|nullable',
+            'highlight_color' => ['string', 'sometimes', 'nullable'],
         ];
     }
 

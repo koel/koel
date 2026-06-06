@@ -51,27 +51,31 @@ interface CompositeToken {
   token: string
 }
 
-type SSOProvider = 'Google' | 'Reverse Proxy'
+type SSOProvider = 'Google' | 'OpenID Connect' | 'Reverse Proxy'
 
-interface Window {
-  BASE_URL: string
-  MAILER_CONFIGURED: boolean
-  IS_DEMO: boolean
-
-  DEMO_ACCOUNT?: {
+interface KoelGlobals {
+  base_url: string
+  is_demo: boolean
+  pusher: {
+    readonly app_key: string
+    readonly app_cluster: string
+  }
+  branding: Branding
+  mailer_configured: boolean
+  sso_providers: SSOProvider[]
+  sso_oidc_label?: string
+  accepted_audio_extensions: string[]
+  demo_account?: {
     email: string
     password: string
   }
+  auth_token?: CompositeToken | null
+}
 
-  SSO_PROVIDERS: SSOProvider[]
-  AUTH_TOKEN: CompositeToken | null
-  ACCEPTED_AUDIO_EXTENSIONS: string[]
+interface Window {
+  KOEL: KoelGlobals
+
   RUNNING_UNIT_TESTS?: boolean
-
-  BRANDING: Branding
-
-  readonly PUSHER_APP_KEY: string
-  readonly PUSHER_APP_CLUSTER: string
 
   readonly MediaMetadata: Constructable<Record<string, any>>
   createLemonSqueezy?: () => Closure
@@ -128,6 +132,7 @@ interface Artist {
   created_at: string
   is_external: boolean
   favorite: boolean
+  rating: number
   permissions: {
     edit: boolean
   }
@@ -143,8 +148,10 @@ interface Album {
   thumbnail?: string | null
   created_at: string
   year: number | null
+  length: number
   is_external: boolean
   favorite: boolean
+  rating: number
   permissions: {
     edit: boolean
   }
@@ -164,6 +171,7 @@ interface BasePlayable extends IStreamable {
   readonly length: number
   play_count_registered?: boolean
   play_count: number
+  rating: number // 0-5, current user's rating; 0 = unrated
   play_start_time?: number
   preloaded?: boolean
   playback_state?: PlaybackState
@@ -211,6 +219,7 @@ interface RadioStation extends IStreamable {
   readonly type: 'radio-stations'
   name: string
   url: string
+  homepage_url: string | null
   logo: string | null
   description: string
   is_public: boolean
@@ -358,6 +367,7 @@ interface Podcast {
     progresses: Record<Playable['id'], number>
   }
   favorite: boolean
+  rating: number // 0-5, current user's rating; 0 = unrated
 }
 
 interface YouTubeVideo {
@@ -382,7 +392,8 @@ interface UserPreferences extends Record<string, any> {
   repeat_mode: RepeatMode
   confirm_before_closing: boolean
   continuous_playback: boolean
-  equalizer: EqualizerPreset
+  current_equalizer_preset: EqualizerPreset
+  equalizer_presets: EqualizerPreset[]
   albums_view_mode: ViewMode
   artists_view_mode: ViewMode
   radio_stations_view_mode: ViewMode
@@ -416,7 +427,7 @@ interface UserPreferences extends Record<string, any> {
 }
 
 type Ability = 'manage settings' | 'manage users' | 'manage songs' | 'manage podcasts' | 'manage radio stations'
-type Role = ('admin' | 'manager' | 'user') & string
+type Role = ('admin' | 'manager' | 'user' | 'guest') & string
 
 interface User {
   type: 'users'
@@ -438,6 +449,11 @@ interface User {
    */
   abilities?: Ability[]
   /**
+   * The user's personal Subsonic API key. Only populated for the current user
+   * (their own /me response); never leaked through user listings.
+   */
+  subsonic_api_key?: string
+  /**
    * What the *current user* (the one making the request) is permitted to do
    * *to this user* — the result of running UserPolicy from their perspective.
    * Distinct from `abilities` above, which is the user's own globally-granted
@@ -452,6 +468,7 @@ interface User {
 type CurrentUser = User & {
   preferences: UserPreferences
   abilities: Ability[]
+  subsonic_api_key: string
 }
 
 interface Settings {
@@ -495,6 +512,8 @@ interface PlayableRow {
 }
 
 interface EqualizerPreset {
+  /** Present when this is a user-saved custom preset; absent on built-ins and on the modified-but-unsaved state. */
+  id?: string
   name: string | null
   preamp: number
   gains: number[]
@@ -571,7 +590,7 @@ interface Theme {
   is_custom?: boolean
 }
 
-type ViewMode = 'list' | 'thumbnails'
+type ViewMode = 'grid' | 'list' | 'table'
 
 type RepeatMode = 'NO_REPEAT' | 'REPEAT_ALL' | 'REPEAT_ONE'
 
@@ -605,18 +624,33 @@ interface PlayableListContext {
 type PlayableListSortField =
   | keyof Pick<
       Song,
-      'track' | 'disc' | 'title' | 'album_name' | 'length' | 'artist_name' | 'genre' | 'year' | 'created_at'
+      | 'track'
+      | 'disc'
+      | 'title'
+      | 'album_name'
+      | 'length'
+      | 'artist_name'
+      | 'genre'
+      | 'year'
+      | 'created_at'
+      | 'rating'
+      | 'favorite'
     >
   | keyof Pick<Episode, 'podcast_author' | 'podcast_title'>
   | 'position'
   | 'collaboration.user.name'
   | 'collaboration.added_at'
 
-type AlbumListSortField = keyof Pick<Album, 'name' | 'year' | 'artist_name' | 'created_at'>
-type ArtistListSortField = keyof Pick<Artist, 'name' | 'created_at'>
+type AlbumListSortField = keyof Pick<
+  Album,
+  'name' | 'year' | 'artist_name' | 'created_at' | 'length' | 'rating' | 'favorite'
+>
+type ArtistListSortField = keyof Pick<Artist, 'name' | 'created_at' | 'rating' | 'favorite'>
 type GenreListSortField = keyof Pick<Genre, 'name' | 'song_count'>
 type PodcastListSortField = keyof Pick<Podcast, 'title' | 'last_played_at' | 'subscribed_at' | 'author'>
-type RadioStationListSortField = keyof Pick<RadioStation, 'name' | 'created_at'>
+type RadioStationListSortField = keyof Pick<RadioStation, 'name' | 'created_at' | 'favorite'>
+
+type RadioStationTableColumnName = 'name' | 'description' | 'created_at' | 'favorite'
 type SortField =
   | PodcastListSortField
   | AlbumListSortField
@@ -687,17 +721,23 @@ type PlayableListColumnName =
   | 'duration'
   | 'created_at'
   | 'play_count'
+  | 'rating'
+  | 'favorite'
   | 'year'
   | 'genre'
   | 'playlist_collaborator'
   | 'playlist_added_at'
 
+type AlbumTableColumnName = 'name' | 'artist' | 'time' | 'year' | 'rating' | 'favorite'
+
+type ArtistTableColumnName = 'name' | 'rating' | 'favorite'
+
 interface Folder {
   type: 'folders'
   id: string
   parent_id: string | null
-  path: string
   name: string
+  is_uploads: boolean
 }
 
 interface MediaRow {
@@ -705,7 +745,7 @@ interface MediaRow {
   selected: boolean
 }
 
-type MediaReference = Pick<Folder, 'type' | 'path'> | Pick<Song, 'type' | 'id'>
+type MediaReference = Pick<Folder, 'type' | 'id'> | Pick<Song, 'type' | 'id'>
 
 interface LiveEvent {
   type: 'live-events'

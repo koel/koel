@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Song;
+use App\Services\Auth\TokenManager;
 use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
-use App\Services\TokenManager;
 use App\Values\CompositeToken;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

@@ -1,7 +1,7 @@
 <template>
   <a
     :href="url"
-    class="rounded px-2 py-0 h-6 flex items-center itunes-gradient focus:itunes-gradient"
+    class="rounded-sm px-2 py-0 h-6 flex items-center itunes-gradient focus:itunes-gradient"
     target="_blank"
     title="Preview and buy this song on Apple Music"
   >
@@ -31,12 +31,8 @@ const { url } = toRefs(props)
 </script>
 
 <style lang="postcss" scoped>
-@tailwind utilities;
-
-@layer utilities {
-  .itunes-gradient {
-    background: linear-gradient(27deg, #fe5c52 0%, #c74bd5 50%, #2daaff 100%);
-  }
+.itunes-gradient {
+  background: linear-gradient(27deg, #fe5c52 0%, #c74bd5 50%, #2daaff 100%);
 }
 
 a {

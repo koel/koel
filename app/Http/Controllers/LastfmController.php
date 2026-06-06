@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\API\LastfmCallbackRequest;
 use App\Models\User;
-use App\Services\LastfmService;
-use App\Services\TokenManager;
+use App\Services\Auth\TokenManager;
+use App\Services\Integrations\LastfmService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 

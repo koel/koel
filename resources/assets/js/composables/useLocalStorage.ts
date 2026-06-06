@@ -1,5 +1,21 @@
 import { useAuthorization } from '@/composables/useAuthorization'
-import { get as baseGet, remove as baseRemove, set as baseSet } from 'local-storage'
+
+const baseGet = <T>(key: string): T | null => {
+  const raw = localStorage.getItem(key)
+
+  if (raw === null) {
+    return null
+  }
+
+  try {
+    return JSON.parse(raw) as T
+  } catch {
+    return null
+  }
+}
+
+const baseSet = (key: string, value: unknown) => localStorage.setItem(key, JSON.stringify(value))
+const baseRemove = (key: string) => localStorage.removeItem(key)
 
 export const useLocalStorage = (namespaced = true, user?: User) => {
   let namespace = ''

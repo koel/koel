@@ -24,6 +24,8 @@ parameters:
         - '#should return App\\Models\\.*(\|null)? but returns .*Illuminate\\Database\\Eloquent\\Model(\|null)?#'
         # Laravel factories allow declaration of dynamic methods as "states"
         - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Factories\\Factory::#'
+        # Subsonic test macros registered in Tests\Feature\Subsonic\SubsonicTestCase
+        - '#Call to an undefined method Illuminate\\Testing\\TestResponse::assertSubsonic(Ok|ErrorCode)\(\)#'
         - '#expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Collection\|Illuminate\\Database\\Eloquent\\Model given#'
         - '#expects App\\Models\\[a-zA-Z]*, Illuminate\\Database\\Eloquent\\Model\|null given#'
         - '#Method App\\Models\\.*::query\(\) should return App\\Builders\\.*Builder but returns Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model>#'
@@ -38,9 +40,11 @@ parameters:
         -
           message: '#expects .*, Mockery\\MockInterface given#'
           path: tests/*
+        -
+          message: '#Call to an undefined static method Illuminate\\Support\\Facades\\Log::shouldHaveReceived\(\)#'
+          path: tests/*
 
     excludePaths:
         - ./routes/console.php
-        - ./app/Services/Util.php
 
     reportUnmatchedIgnoredErrors: false

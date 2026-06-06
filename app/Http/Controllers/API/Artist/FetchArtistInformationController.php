@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\Artist;
 
 use App\Http\Controllers\Controller;
 use App\Models\Artist;
-use App\Services\EncyclopediaService;
+use App\Services\Integrations\EncyclopediaService;
 
 class FetchArtistInformationController extends Controller
 {

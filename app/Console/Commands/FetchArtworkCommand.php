@@ -6,9 +6,9 @@ use App\Builders\AlbumBuilder;
 use App\Builders\ArtistBuilder;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Services\EncyclopediaService;
-use App\Services\MusicBrainzService;
-use App\Services\SpotifyService;
+use App\Services\Integrations\EncyclopediaService;
+use App\Services\Integrations\MusicBrainzService;
+use App\Services\Integrations\SpotifyService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 

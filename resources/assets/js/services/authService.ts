@@ -1,4 +1,4 @@
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { http } from '@/services/http'
 import { userStore } from '@/stores/userStore'
 import { useLocalStorage } from '@/composables/useLocalStorage'

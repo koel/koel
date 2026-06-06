@@ -2,7 +2,7 @@
   <li
     :class="{ droppable }"
     class="playlist-folder relative"
-    draggable="true"
+    :draggable="!isMobile.any"
     tabindex="0"
     @dragleave="onDragLeave"
     @dragover="onDragOver"
@@ -42,6 +42,7 @@
 
 <script lang="ts" setup>
 import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons'
+import isMobile from 'ismobilejs'
 import { computed, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
@@ -149,6 +150,7 @@ const onContextMenu = (event: MouseEvent) =>
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .droppable {
   @apply ring-1 ring-offset-0 ring-k-highlight rounded-md cursor-copy;
 }

@@ -4,7 +4,7 @@
     :class="{ droppable }"
     :href="href"
     class="playlist select-none"
-    draggable="true"
+    :draggable="!isMobile.any"
     :active
     @dblclick="onDblClick"
     @contextmenu="onContextMenu"
@@ -15,7 +15,7 @@
   >
     <template #icon>
       <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" fixed-width />
-      <Icon v-else-if="isFavoriteList(list)" :icon="faStar" fixed-width />
+      <Icon v-else-if="isFavoriteList(list)" :icon="faHeart" fixed-width />
       <Icon v-else-if="list.is_smart" :icon="faWandMagicSparkles" fixed-width />
       <Icon v-else-if="list.is_collaborative" :icon="faUsers" fixed-width />
       <ListMusicIcon v-else :size="16" />
@@ -25,7 +25,8 @@
 </template>
 
 <script lang="ts" setup>
-import { faClockRotateLeft, faStar, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import { faClockRotateLeft, faHeart, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
+import isMobile from 'ismobilejs'
 import { ListMusicIcon } from 'lucide-vue-next'
 import { computed, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
@@ -163,6 +164,7 @@ const onDrop = async (event: DragEvent) => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .droppable {
   @apply ring-1 ring-offset-0 ring-k-highlight rounded-md cursor-copy;
 }

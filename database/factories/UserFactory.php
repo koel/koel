@@ -16,8 +16,8 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
-            'email' => $this->faker->email,
+            'name' => fake()->name,
+            'email' => fake()->unique()->safeEmail,
             'password' => Hash::make('secret'),
             'preferences' => [
                 'lastfm_session_key' => Str::random(),
@@ -35,6 +35,11 @@ class UserFactory extends Factory
     public function manager(): self
     {
         return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::MANAGER)); // @phpstan-ignore-line
+    }
+
+    public function guest(): self
+    {
+        return $this->afterCreating(static fn (User $user) => $user->syncRoles(Role::GUEST)); // @phpstan-ignore-line
     }
 
     public function prospect(): self

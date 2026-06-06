@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 
 vi.hoisted(() => {
-  window.ACCEPTED_AUDIO_EXTENSIONS = ['mp3', 'flac', 'ogg', 'wav']
+  window.KOEL.accepted_audio_extensions = ['mp3', 'flac', 'ogg', 'wav']
 })
 
 import { acceptsFile } from './mediaHelper'

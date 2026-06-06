@@ -60,7 +60,7 @@ onChange(files => {
   })
 })
 
-const removeAvatar = () => emit('changed', gravatar(userStore.current.email))
+const removeAvatar = async () => emit('changed', await gravatar(userStore.current.email))
 
 const resetAvatar = () => {
   emit('changed', userStore.current.avatar)
@@ -78,15 +78,13 @@ const onCancel = () => (cropperSource.value = null)
 </script>
 
 <style lang="postcss" scoped>
-@tailwind utilities;
+@reference '@css/app.pcss';
 
-@layer utilities {
-  .control {
-    @apply bg-black/5 w-[28px] aspect-square rounded-full px-2 py-1 hover:bg-black/70;
-  }
+.control {
+  @apply bg-black/5 w-[28px] aspect-square rounded-full px-2 py-1 hover:bg-black/70;
+}
 
-  .avatar-width {
-    @apply w-[105px];
-  }
+.avatar-width {
+  @apply w-[105px];
 }
 </style>

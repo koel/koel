@@ -8,6 +8,13 @@ description: Reference for all Koel artisan CLI commands including scanning, syn
 Koel comes with a set of handy CLI commands to help you manage your installation.
 These commands are available via Laravel’s `artisan` command line interface.
 
+::: tip Standalone Binary users
+If you installed Koel via the [Standalone Binary](/guide/standalone-binary), replace `php artisan` with
+`./artisan` (run from the bundle directory) in every command below. `./artisan` is a thin shortcut for
+`./koel php-cli artisan` that re-execs the launcher so the bundle's PHP runtime stays in scope.
+Otherwise the commands below are identical.
+:::
+
 You can run `php artisan list` from your Koel installation directory and pipe the output to `grep` to filter out those under the `koel` namespace:
 
 ```bash
@@ -293,22 +300,21 @@ php artisan koel:tags:collect
 ## Command Scheduling
 
 Some commands, such as `koel:scan`, `koel:prune`, and `koel:clean-up-temp-files` can be scheduled to run at regular intervals.
-Instead of setting up individual cron jobs, you can use Koel’s built-in scheduler to automatically handle the commands for you.
+Instead of setting up individual cron jobs, you can use Koel’s built-in scheduler to handle them automatically.
 
-To set up the scheduler, run the `koel:scheduler:install` command as the web server user (e.g. `www-data` or `nginx`):
+Every install method sets the scheduler up for you, so most users have nothing more to do. `koel:init` runs `koel:scheduler:install` for the pre-compiled archive and build-from-source paths; the [Standalone Binary](/guide/standalone-binary) launcher writes its own cron entry on every `./koel php-server` start.
+
+If you ran `koel:init` with `--no-scheduler` and want to install it on its own, run as the web server user (e.g. `www-data` or `nginx`):
 
 ```bash
 php artisan koel:scheduler:install
 ```
 
-Alternatively, you can manually add the following cron entry into the crontab of the webserver user (for example, if it's `www-data`, run `sudo crontab -u www-data -e`):
+If you'd rather edit the crontab directly (for example, with `sudo crontab -u www-data -e`), add this line:
 
 ```bash
 * * * * * cd /path-to-koel-installation && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-Either way, the scheduler will run every minute once installed, executing any scheduled commands as needed.
-By default, `koel:scan`, `koel:prune`, and `koel:podcasts:sync` are set to run every day at midnight.
-
-Though you can still manually set up cron jobs for individual commands, the scheduler is the recommended approach to do command scheduling in Koel,
-as it will automatically cover any commands that may be added in the future.
+Either way, the scheduler runs every minute and executes any scheduled commands as needed.
+By default, `koel:scan`, `koel:prune`, and `koel:podcasts:sync` run every day at midnight.

@@ -7,7 +7,7 @@ use App\Helpers\Ulid;
 use App\Models\Album;
 use App\Models\Song;
 use App\Services\AlbumService;
-use App\Services\ImageStorage;
+use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -36,10 +36,7 @@ class AlbumServiceTest extends TestCase
             'year' => 2020,
         ]);
 
-        $songs = Song::factory()
-            ->for($album)
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for($album)->count(2)->create();
 
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023);
 
@@ -61,18 +58,12 @@ class AlbumServiceTest extends TestCase
             'year' => 2020,
         ]);
 
-        $songs = Song::factory()
-            ->for($album)
-            ->count(2)
-            ->create();
+        $songs = Song::factory()->for($album)->count(2)->create();
 
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023, cover: minimal_base64_encoded_image());
 
         $ulid = Ulid::freeze();
-        $this->imageStorage
-            ->expects('storeImage')
-            ->with(minimal_base64_encoded_image())
-            ->andReturn("$ulid.webp");
+        $this->imageStorage->expects('storeImage')->with(minimal_base64_encoded_image())->andReturn("$ulid.webp");
 
         $updatedAlbum = $this->service->updateAlbum($album, $data);
 
@@ -116,10 +107,7 @@ class AlbumServiceTest extends TestCase
     {
         $album = Album::factory()->createOne();
 
-        $this->imageStorage
-            ->expects('storeImage')
-            ->with('dummy-src')
-            ->andReturn('foo.webp');
+        $this->imageStorage->expects('storeImage')->with('dummy-src')->andReturn('foo.webp');
 
         $this->service->storeAlbumCover($album, 'dummy-src');
 

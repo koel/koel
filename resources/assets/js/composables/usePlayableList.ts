@@ -1,4 +1,5 @@
-import { differenceBy, orderBy, take, throttle } from 'lodash'
+import { differenceBy, orderBy } from 'lodash-es'
+import { useThrottleFn } from '@vueuse/core'
 import type { Ref } from 'vue'
 import { computed, provide, reactive, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
@@ -127,7 +128,7 @@ export const usePlayableList = (
 
     const sampleCovers = playablesWithCover.slice(0, 100).map(p => getPlayableProp(p, 'album_cover', 'episode_image'))
 
-    return take(Array.from(new Set(sampleCovers)), 4)
+    return Array.from(new Set(sampleCovers)).slice(0, 4)
   })
 
   const getPlayablesToPlay = () => playableList.value!.getAllPlayablesWithSort()
@@ -139,7 +140,7 @@ export const usePlayableList = (
 
   const playSelected = (shuffle: boolean) => playback().queueAndPlay(selectedPlayables.value, shuffle)
 
-  const applyFilter = throttle((keywords: string) => (filterKeywords.value = keywords), 200)
+  const applyFilter = useThrottleFn((keywords: string) => (filterKeywords.value = keywords), 200, true)
 
   const filteredPlayables = computed(() => {
     // This manually accesses playables.value, forcing Vue to properly track playables.value changes and re-compute.

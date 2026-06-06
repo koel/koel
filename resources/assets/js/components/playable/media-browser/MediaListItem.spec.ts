@@ -7,7 +7,7 @@ describe('mediaListItem.vue', () => {
   const h = createHarness()
 
   it('renders a playable', async () => {
-    const item = h.factory('song', {
+    const item = h.factory('song').make({
       basename: 'whatever.mp3',
     })
 
@@ -23,7 +23,7 @@ describe('mediaListItem.vue', () => {
   })
 
   it('renders a folder', async () => {
-    const item = h.factory('folder')
+    const item = h.factory('folder').make()
 
     const { emitted } = h.render(Component, {
       props: {

@@ -15,7 +15,6 @@
 </template>
 
 <script lang="ts" setup>
-import { take } from 'lodash'
 import { computed, ref, toRefs, watch } from 'vue'
 import { useBranding } from '@/composables/useBranding'
 
@@ -32,9 +31,9 @@ watch(
     if (thumbnails.value.length === 0) {
       displayedThumbnails.value = [defaultCover]
     } else {
-      displayedThumbnails.value = take(thumbnails.value, thumbnails.value.length < 4 ? 1 : 4).map(
-        url => url || defaultCover,
-      )
+      displayedThumbnails.value = thumbnails.value
+        .slice(0, thumbnails.value.length < 4 ? 1 : 4)
+        .map(url => url || defaultCover)
     }
   },
   { immediate: true },
@@ -44,6 +43,7 @@ const layout = computed(() => (displayedThumbnails.value.length < 4 ? 'single' :
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 article {
   background-image: v-bind(defaultBackgroundImage);
 

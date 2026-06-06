@@ -4,16 +4,20 @@ namespace App\Models;
 
 use App\Builders\ArtistBuilder;
 use App\Facades\License;
-use App\Facades\Util;
+use App\Helpers\Encoding\Bom;
 use App\Models\Concerns\Artists\HasArtistAttributes;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
+use App\Models\Concerns\MorphsToRatings;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
+use App\Models\Contracts\Rateable;
 use App\Observers\ArtistObserver;
 use Carbon\Carbon;
 use Database\Factories\ArtistFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
@@ -42,7 +46,9 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  */
 #[ObservedBy(ArtistObserver::class)]
 #[UseEloquentBuilder(ArtistBuilder::class)]
-class Artist extends Model implements AuditableContract, Embeddable, Favoriteable
+#[Guarded(['id'])]
+#[Hidden(['created_at', 'updated_at'])]
+class Artist extends Model implements AuditableContract, Embeddable, Favoriteable, Rateable
 {
     use Auditable;
     use HasArtistAttributes;
@@ -50,14 +56,20 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
     use HasUlids;
     use MorphsToEmbeds;
     use MorphsToFavorites;
+    use MorphsToRatings;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
 
     public const string UNKNOWN_NAME = 'Unknown Artist';
     public const string VARIOUS_NAME = 'Various Artists';
 
-    protected $guarded = ['id'];
-    protected $hidden = ['created_at', 'updated_at'];
+    /** @inheritDoc */
+    protected function casts(): array
+    {
+        return [
+            'favorite' => 'boolean',
+        ];
+    }
 
     public static function query(): ArtistBuilder
     {
@@ -91,14 +103,7 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
      */
     public static function getOrCreate(User $user, ?string $name = null): self
     {
-        // Remove the BOM from UTF-8/16/32, as it will mess up the database constraints.
-        $encoding = Util::detectUTFEncoding($name);
-
-        if ($encoding) {
-            $name = mb_convert_encoding($name, 'UTF-8', $encoding);
-        }
-
-        $name = trim($name) ?: self::UNKNOWN_NAME;
+        $name = trim(Bom::strip($name) ?? '') ?: self::UNKNOWN_NAME;
 
         // In the Community license, all artists are shared, so we determine the first artist by the name only.
         // In the Plus license, artists are user-specific, so we create or return the artist for the given user.

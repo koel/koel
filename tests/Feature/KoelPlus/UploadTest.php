@@ -8,6 +8,7 @@ use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_guest;
 use function Tests\create_user;
 use function Tests\test_path;
 
@@ -36,5 +37,15 @@ class UploadTest extends PlusTestCase
         $song = Song::query()->latest()->first();
         self::assertSame($song->owner_id, $user->id);
         self::assertFalse($song->is_public);
+    }
+
+    #[Test]
+    public function guestsCannotUpload(): void
+    {
+        $guest = create_guest();
+
+        $this->postAs('api/upload', ['file' => $this->file], $guest)->assertForbidden();
+
+        $this->assertDatabaseMissing(Song::class, ['owner_id' => $guest->id]);
     }
 }

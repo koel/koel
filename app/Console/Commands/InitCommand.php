@@ -7,6 +7,7 @@ use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\DotenvEditor;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
@@ -16,7 +17,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
 // @mago-ignore lint:too-many-methods,cyclomatic-complexity,kan-defect
@@ -52,15 +52,16 @@ class InitCommand extends Command
 
         try {
             $this->clearCaches();
-            $this->loadEnvFile();
+            $this->ensureEnvFileExists();
             $this->maybeGenerateAppKey();
             $this->maybeSetUpDatabase();
             $this->migrateDatabase();
             $this->maybeSeedDatabase();
+            $this->linkStorage();
+            $this->migrateLegacyImages();
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
             $this->maybeCopyManifests();
-            $this->dotenvEditor->save();
             $this->tryInstallingScheduler();
         } catch (Throwable $e) {
             Log::error($e);
@@ -109,7 +110,7 @@ class InitCommand extends Command
         });
     }
 
-    private function loadEnvFile(): void
+    private function ensureEnvFileExists(): void
     {
         if (!File::exists(base_path('.env'))) {
             $this->components->task('Copying .env file', static function (): void {
@@ -118,8 +119,6 @@ class InitCommand extends Command
         } else {
             $this->components->task('.env file exists -- skipping');
         }
-
-        $this->dotenvEditor->load(base_path('.env'));
     }
 
     private function maybeGenerateAppKey(): void
@@ -172,7 +171,6 @@ class InitCommand extends Command
         }
 
         $this->dotenvEditor->setKeys($config);
-        $this->dotenvEditor->save();
 
         // Set the config so that the next DB attempt uses refreshed credentials
         config([
@@ -265,6 +263,65 @@ class InitCommand extends Command
         $this->components->task('Migrating database', static function (): void {
             Artisan::call('migrate', ['--force' => true, '--quiet' => true]);
         });
+    }
+
+    private function linkStorage(): void
+    {
+        $result = self::SUCCESS;
+
+        $this->components->task('Linking storage', static function () use (&$result): void {
+            $result = Artisan::call('storage:link', ['--quiet' => true]);
+        });
+
+        if ($result !== self::SUCCESS) {
+            $this->components->warn('Failed to link storage. Album and artist images may not load until you run '
+            . '`php artisan storage:link` manually.');
+        }
+    }
+
+    private function migrateLegacyImages(): void
+    {
+        $legacyDir = public_path('img/storage');
+
+        if (!File::isDirectory($legacyDir)) {
+            return;
+        }
+
+        $files = File::files($legacyDir);
+
+        if (!count($files)) {
+            File::deleteDirectory($legacyDir);
+
+            return;
+        }
+
+        $allMigrated = true;
+
+        $this->components->task(
+            sprintf('Migrating %d legacy image(s) to storage/app/public/images/', count($files)),
+            static function () use ($files, &$allMigrated): void {
+                $destDir = storage_path('app/public/images');
+                File::ensureDirectoryExists($destDir);
+
+                foreach ($files as $file) {
+                    $dest = $destDir . DIRECTORY_SEPARATOR . $file->getFilename();
+
+                    $ok = File::exists($dest)
+                        ? File::delete($file->getPathname())
+                        : File::move($file->getPathname(), $dest);
+
+                    $allMigrated = $allMigrated && $ok;
+                }
+            },
+        );
+
+        if ($allMigrated) {
+            File::deleteDirectory($legacyDir);
+        } else {
+            $this->components->warn(
+                'Some legacy images could not be migrated. Keeping public/img/storage for manual recovery.',
+            );
+        }
     }
 
     private function maybeSetMediaPath(): void

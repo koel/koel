@@ -3,7 +3,7 @@
     <section class="existing-playlists">
       <p class="mb-2 text-[0.9rem]">Add {{ pluralize(playables, 'item') }} to</p>
 
-      <ul v-koel-overflow-fade class="relative max-h-48 overflow-y-scroll space-y-1.5">
+      <ul class="scroll-mask-y relative max-h-48 overflow-y-scroll space-y-1.5">
         <template v-if="config.queue">
           <template v-if="queue.length">
             <li
@@ -44,7 +44,7 @@
       </ul>
     </section>
 
-    <Btn variant="ghost" class="!w-full !border !border-solid !border-white/20" @click.prevent="addToNewPlaylist">
+    <Btn variant="ghost" class="w-full! border! border-solid! border-white/20!" @click.prevent="addToNewPlaylist">
       New Playlist…
     </Btn>
   </div>
@@ -79,8 +79,9 @@ watch(playables, () => playables.value.length || close())
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 li {
-  @apply h-9 leading-9 py-0 px-3 truncate rounded bg-k-fg-5 cursor-pointer
+  @apply h-9 leading-9 py-0 px-3 truncate rounded-sm bg-k-fg-5 cursor-pointer
   hover:bg-k-highlight hover:text-k-highlight-fg;
 }
 </style>

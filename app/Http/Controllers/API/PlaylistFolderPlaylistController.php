@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistFolder\PlaylistFolderPlaylistDestroyRequest;
 use App\Http\Requests\API\PlaylistFolder\PlaylistFolderPlaylistStoreRequest;
 use App\Models\PlaylistFolder;
-use App\Services\PlaylistFolderService;
+use App\Services\Playlist\PlaylistFolderService;
 use Illuminate\Support\Arr;
 
 class PlaylistFolderPlaylistController extends Controller

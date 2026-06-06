@@ -9,7 +9,9 @@ use App\Observers\RadioStationObserver;
 use Carbon\Carbon;
 use Database\Factories\RadioStationFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +25,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property int $user_id
  * @property User $user
  * @property string $url
+ * @property ?string $homepage_url The station's homepage URL
  * @property ?string $logo The station's logo file name
  * @property ?string $description
  * @property boolean $is_public
@@ -34,6 +37,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  */
 #[ObservedBy(RadioStationObserver::class)]
 #[UseEloquentBuilder(RadioStationBuilder::class)]
+#[Unguarded]
+#[WithoutIncrementing]
 class RadioStation extends Model implements AuditableContract, Favoriteable
 {
     use Auditable;
@@ -41,9 +46,6 @@ class RadioStation extends Model implements AuditableContract, Favoriteable
     use HasUlids;
     use MorphsToFavorites;
     use Searchable;
-
-    protected $guarded = [];
-    public $incrementing = false;
 
     protected $with = ['user'];
 

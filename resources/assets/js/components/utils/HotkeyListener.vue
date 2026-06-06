@@ -46,7 +46,7 @@ onKeyStroke('q', () => go(isCurrentScreen('Queue') ? -1 : url('queue')))
 onKeyStroke('h', () => go(url('home')))
 
 onKeyStroke('ArrowRight', () => playback('current')?.forward(10))
-onKeyStroke('ArrowLeft', () => playback('current')?.rewind(-10))
+onKeyStroke('ArrowLeft', () => playback('current')?.rewind(10))
 onKeyStroke('ArrowUp', () => volumeManager.increase())
 onKeyStroke('ArrowDown', () => volumeManager.decrease())
 onKeyStroke('m', () => volumeManager.toggleMute())

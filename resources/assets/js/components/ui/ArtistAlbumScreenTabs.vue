@@ -10,12 +10,13 @@
 </template>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 :deep(.tabs) {
   @apply flex flex-col overflow-hidden flex-1;
 }
 
 :deep(header ul) {
-  @apply flex flex-nowrap bg-k-fg-5 overflow-x-auto overflow-y-hidden flex-shrink-0 border-b-k-fg-5;
+  @apply flex flex-nowrap bg-k-fg-5 overflow-x-auto overflow-y-hidden shrink-0 border-b-k-fg-5;
 
   li {
     @apply text-base relative uppercase tracking-wider opacity-50 cursor-pointer;

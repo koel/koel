@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Demo;
 
+use App\Enums\Acl\Role;
+use App\Models\User;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -33,7 +35,7 @@ class DemoSessionTest extends TestCase
         $demoAccount = $this
             ->get('/')
             ->assertSuccessful()
-            ->assertSee('window.DEMO_ACCOUNT')
+            ->assertSee('window.KOEL.demo_account', false)
             ->viewData('demo_account');
 
         self::assertStringEndsWith('@demo.koel.dev', $demoAccount['email']);
@@ -45,9 +47,21 @@ class DemoSessionTest extends TestCase
     {
         $this->mock(CrawlerDetect::class)->expects('isCrawler')->andReturnTrue();
 
-        $this->get('/')->assertSee('window.DEMO_ACCOUNT')->assertViewHas('demo_account', [
+        $this->get('/')->assertSee('window.KOEL.demo_account', false)->assertViewHas('demo_account', [
             'email' => 'demo@koel.dev',
             'password' => 'demo',
         ]);
+    }
+
+    #[Test]
+    public function demoAccountIsProvisionedAsUserNotAdmin(): void
+    {
+        $this->mock(CrawlerDetect::class)->expects('isCrawler')->andReturnFalse();
+
+        $this->get('/')->assertSuccessful();
+
+        $demoUser = User::query()->where('email', 'like', '%@demo.koel.dev')->latest('id')->first();
+
+        self::assertSame(Role::USER, $demoUser->role);
     }
 }

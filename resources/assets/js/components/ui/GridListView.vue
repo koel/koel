@@ -8,7 +8,7 @@
 import { nextTick, ref, toRefs } from 'vue'
 
 const props = withDefaults(defineProps<{ viewMode?: ViewMode }>(), {
-  viewMode: 'thumbnails',
+  viewMode: 'grid',
 })
 
 const container = ref<HTMLDivElement>()
@@ -30,6 +30,7 @@ defineExpose({
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 div {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   content-visibility: auto;

@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Artist;
-use App\Services\ModelImageObserver;
+use App\Services\Image\ModelImageObserver;
 
 class ArtistObserver
 {

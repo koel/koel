@@ -30,7 +30,9 @@
 </template>
 
 <script lang="ts" setup>
-import { cloneDeep, pick } from 'lodash'
+import { pick } from 'lodash-es'
+import { toRaw } from 'vue'
+
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
@@ -57,7 +59,7 @@ const close = () => emit('close')
 const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
   initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
   onSubmit: async data => {
-    const formData = cloneDeep(data)
+    const formData = structuredClone(toRaw(data))
 
     if (formData.cover === playlist.cover) {
       delete formData.cover

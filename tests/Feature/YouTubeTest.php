@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Song;
-use App\Services\YouTubeService;
+use App\Services\Integrations\YouTubeService;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;

@@ -11,7 +11,7 @@ describe('acceptInvitation.vue', () => {
   it('accepts invitation', async () => {
     const getProspectMock = h
       .mock(invitationService, 'getUserProspect')
-      .mockResolvedValue(factory.states('prospect')('user'))
+      .mockResolvedValue(factory('user').state('prospect').make())
 
     const acceptMock = h.mock(invitationService, 'accept').mockResolvedValue({
       token: 'my-api-token',

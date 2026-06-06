@@ -12,7 +12,10 @@ use App\Observers\PlaylistObserver;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Carbon\Carbon;
 use Database\Factories\PlaylistFactory;
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -44,6 +47,9 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @method static PlaylistFactory factory(...$parameters)
  */
 #[ObservedBy(PlaylistObserver::class)]
+#[Unguarded]
+#[Hidden(['created_at', 'updated_at'])]
+#[Appends(['is_smart'])]
 class Playlist extends Model implements AuditableContract, Embeddable
 {
     use Auditable;
@@ -54,9 +60,6 @@ class Playlist extends Model implements AuditableContract, Embeddable
     use MorphsToEmbeds;
     use Searchable;
 
-    protected $hidden = ['created_at', 'updated_at'];
-    protected $guarded = [];
-
     protected function casts(): array
     {
         return [
@@ -64,16 +67,11 @@ class Playlist extends Model implements AuditableContract, Embeddable
         ];
     }
 
-    protected $appends = ['is_smart'];
     protected $with = ['users', 'collaborators', 'folders'];
 
     public function playables(): BelongsToMany
     {
-        return $this
-            ->belongsToMany(Playable::class)
-            ->withTimestamps()
-            ->withPivot('position')
-            ->orderByPivot('position');
+        return $this->belongsToMany(Playable::class)->withTimestamps()->withPivot('position')->orderByPivot('position');
     }
 
     public function users(): BelongsToMany

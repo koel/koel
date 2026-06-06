@@ -24,7 +24,7 @@ describe('radioStationContextMenu.vue', () => {
   const renderComponent = async (station?: RadioStation, manageable = true) => {
     station =
       station ||
-      h.factory('radio-station', {
+      h.factory('radio-station').make({
         favorite: false,
         permissions: { edit: manageable, delete: manageable },
       })
@@ -60,14 +60,14 @@ describe('radioStationContextMenu.vue', () => {
   })
 
   it('hides Edit when only delete is permitted', async () => {
-    await renderComponent(h.factory('radio-station', { permissions: { edit: false, delete: true } }))
+    await renderComponent(h.factory('radio-station').make({ permissions: { edit: false, delete: true } }))
 
     expect(screen.queryByText('Edit…')).toBeNull()
     screen.getByText('Delete')
   })
 
   it('hides Delete when only edit is permitted', async () => {
-    await renderComponent(h.factory('radio-station', { permissions: { edit: true, delete: false } }))
+    await renderComponent(h.factory('radio-station').make({ permissions: { edit: true, delete: false } }))
 
     expect(screen.queryByText('Delete')).toBeNull()
     screen.getByText('Edit…')
@@ -89,7 +89,7 @@ describe('radioStationContextMenu.vue', () => {
 
     const stopMock = h.mock(playbackService, 'stop')
 
-    await renderComponent(h.factory('radio-station', { playback_state: 'Playing' }))
+    await renderComponent(h.factory('radio-station').make({ playback_state: 'Playing' }))
     await h.user.click(screen.getByText('Stop'))
 
     expect(stopMock).toHaveBeenCalled()
@@ -97,7 +97,7 @@ describe('radioStationContextMenu.vue', () => {
 
   it('favorites', async () => {
     const toggleMock = h.mock(radioStationStore, 'toggleFavorite')
-    const { station } = await renderComponent(h.factory('radio-station', { favorite: false }))
+    const { station } = await renderComponent(h.factory('radio-station').make({ favorite: false }))
 
     await h.user.click(screen.getByText('Favorite'))
     expect(toggleMock).toHaveBeenCalledWith(station)
@@ -105,7 +105,7 @@ describe('radioStationContextMenu.vue', () => {
 
   it('undoes favorite', async () => {
     const toggleMock = h.mock(radioStationStore, 'toggleFavorite')
-    const { station } = await renderComponent(h.factory('radio-station', { favorite: true }))
+    const { station } = await renderComponent(h.factory('radio-station').make({ favorite: true }))
 
     await h.user.click(screen.getByText('Undo Favorite'))
     expect(toggleMock).toHaveBeenCalledWith(station)

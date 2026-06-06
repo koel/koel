@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Song;
 use App\Models\User;
-use App\Services\LastfmService;
+use App\Services\Integrations\LastfmService;
 
 class ScrobbleJob extends QueuedJob
 {

@@ -2,22 +2,29 @@
 
 namespace App\Rules;
 
-use App\Helpers\Network;
+use App\Exceptions\UnsafeUrlException;
+use App\Services\Network\SafeHttp;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Uri;
 use Illuminate\Translation\PotentiallyTranslatedString;
 use Throwable;
 
 /**
- * Validates that a URL does not resolve to a private or reserved IP address,
- * preventing SSRF attacks against internal services.
- * Also follows redirects and validates the effective URL.
+ * Validates that a URL is safe to fetch — its host (and every redirect target's
+ * host) resolves only to public IP addresses. Delegates the SSRF guarantees to
+ * SafeHttp; the rule itself just translates UnsafeUrlException into the
+ * appropriate validation failure message.
  */
 class SafeUrl implements ValidationRule
 {
     private const array ALLOWED_SCHEMES = ['http', 'https'];
+
+    public function __construct(
+        private ?SafeHttp $safeHttp = null,
+    ) {
+        $this->safeHttp ??= app(SafeHttp::class);
+    }
 
     /** @param Closure(string, ?string=): PotentiallyTranslatedString $fail */
     public function validate(string $attribute, mixed $value, Closure $fail): void
@@ -36,29 +43,19 @@ class SafeUrl implements ValidationRule
             return;
         }
 
-        if (!Network::isPublicHost($uri->host())) {
-            $fail('The :attribute must point to a public URL.');
-
-            return;
-        }
-
         try {
-            $response = Http::head((string) $value);
+            $this->safeHttp->head((string) $value);
+        } catch (UnsafeUrlException) {
+            $fail('The :attribute must point to a public URL.');
         } catch (Throwable) {
-            // Some streaming servers don't support HEAD — try GET
+            // Some streaming servers don't support HEAD — try GET as a stream.
             try {
-                $response = Http::withOptions(['stream' => true])->get((string) $value);
+                $this->safeHttp->getAsStream((string) $value);
+            } catch (UnsafeUrlException) {
+                $fail('The :attribute must point to a public URL.');
             } catch (Throwable) {
                 $fail("The $attribute couldn't be reached.");
-
-                return;
             }
-        }
-
-        $effectiveHost = $response->effectiveUri()?->getHost();
-
-        if ($effectiveHost && !Network::isPublicHost($effectiveHost)) {
-            $fail('The :attribute must point to a public URL.');
         }
     }
 }

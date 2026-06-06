@@ -8,13 +8,13 @@ describe('albumTrackList.vue', () => {
   const h = createHarness()
 
   it('displays the tracks', async () => {
-    const album = h.factory('album')
-    const fetchMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(h.factory('song', 5))
+    const album = h.factory('album').make()
+    const fetchMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(h.factory('song').make(5))
 
     h.render(Component, {
       props: {
         album,
-        tracks: h.factory('album-track', 3),
+        tracks: h.factory('album-track').make(3),
       },
     })
 

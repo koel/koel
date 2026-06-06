@@ -32,6 +32,8 @@ class LibraryManager
             ];
 
             if (!$dryRun) {
+                $results['albums']->unsearchable(); // @phpstan-ignore-line
+                $results['artists']->unsearchable(); // @phpstan-ignore-line
                 $albumQuery->delete();
                 $artistQuery->delete();
             }

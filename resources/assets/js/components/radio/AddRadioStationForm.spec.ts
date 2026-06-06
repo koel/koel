@@ -8,7 +8,7 @@ describe('addRadioStationForm.vue', () => {
   const h = createHarness()
 
   it('adds a radio station without a logo', async () => {
-    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station'))
+    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station').make())
 
     h.render(Component)
     await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')
@@ -20,6 +20,7 @@ describe('addRadioStationForm.vue', () => {
     expect(storeMock).toHaveBeenCalledWith({
       name: 'Beethoven Goes Metal',
       url: 'https://beet.stream/metal',
+      homepage_url: null,
       description: 'Heavy af',
       logo: null,
       is_public: false,
@@ -27,7 +28,7 @@ describe('addRadioStationForm.vue', () => {
   })
 
   it('adds a radio station with a logo', async () => {
-    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station'))
+    const storeMock = h.mock(radioStationStore, 'store').mockResolvedValue(h.factory('radio-station').make())
 
     h.render(Component)
     await h.type(screen.getByPlaceholderText('My Favorite Radio Station'), 'Beethoven Goes Metal')
@@ -41,12 +42,13 @@ describe('addRadioStationForm.vue', () => {
 
     await waitFor(() => screen.getByRole('img'))
 
-    await h.user.click(screen.getByLabelText('Make this station public'))
+    await h.user.click(screen.getByLabelText('Accessible to all users'))
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(storeMock).toHaveBeenCalledWith({
       name: 'Beethoven Goes Metal',
       url: 'https://beet.stream/metal',
+      homepage_url: null,
       description: 'Heavy af',
       logo: 'data:image/png;base64,Ynl0ZXM=',
       is_public: true,

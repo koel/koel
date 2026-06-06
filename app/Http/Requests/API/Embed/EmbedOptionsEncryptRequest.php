@@ -16,9 +16,9 @@ class EmbedOptionsEncryptRequest extends Request
     {
         return [
             // we can't really validate the theme id, but we'll make sure it's not too long
-            'theme' => 'required|string|max:32',
-            'layout' => 'required|string|in:full,compact',
-            'preview' => 'sometimes|bool',
+            'theme' => ['required', 'string', 'max:32'],
+            'layout' => ['required', 'string', 'in:full,compact'],
+            'preview' => ['sometimes', 'bool'],
         ];
     }
 }

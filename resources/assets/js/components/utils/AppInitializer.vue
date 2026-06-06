@@ -19,6 +19,7 @@ const emits = defineEmits<{
 
 const { showOverlay, hideOverlay } = useOverlay()
 const { currentUser } = useAuthorization()
+const { handleHttpError } = useErrorHandler()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.
@@ -64,7 +65,7 @@ onMounted(async () => {
 
     emits('success')
   } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error)
+    handleHttpError(error)
     emits('error', error)
   } finally {
     hideOverlay()

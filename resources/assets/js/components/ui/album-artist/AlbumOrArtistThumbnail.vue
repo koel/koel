@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { computed, toRefs } from 'vue'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
@@ -60,6 +60,7 @@ const playOrQueue = async (event: MouseEvent) => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .droppable {
   @apply border-2 border-dotted border-white brightness-50;
 

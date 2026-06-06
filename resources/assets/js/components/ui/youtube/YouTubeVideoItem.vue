@@ -1,7 +1,7 @@
 <template>
   <a
     :href="href"
-    class="flex gap-3 text-k-fg-70 hover:!text-k-fg focus:text-k-fg active:text-k-fg"
+    class="flex gap-3 text-k-fg-70 hover:text-k-fg! focus:text-k-fg active:text-k-fg"
     data-testid="youtube-search-result"
     role="button"
     @click.prevent="play"
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { unescape } from 'lodash'
+import { unescape } from 'lodash-es'
 import { toRefs } from 'vue'
 import { youTubeService } from '@/services/youTubeService'
 import { useRouter } from '@/composables/useRouter'

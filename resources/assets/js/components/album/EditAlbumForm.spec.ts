@@ -8,7 +8,7 @@ describe('editAlbumForm.vue', () => {
   const h = createHarness()
 
   const renderComponent = (album?: Album) => {
-    album = album ?? h.factory('album')
+    album = album ?? h.factory('album').make()
     albumStore.state.albums = [album]
 
     const rendered = h.render(Component, {
@@ -41,7 +41,7 @@ describe('editAlbumForm.vue', () => {
 
   it('submits with a new cover', async () => {
     const updateMock = h.mock(albumStore, 'update')
-    const { album } = renderComponent(h.factory('album'))
+    const { album } = renderComponent(h.factory('album').make())
 
     await h.type(screen.getByTitle('Album name'), 'Not So Good Actually')
     await h.type(screen.getByTitle('Release year'), '2022')
@@ -63,7 +63,7 @@ describe('editAlbumForm.vue', () => {
   })
 
   it('removes cover and submits', async () => {
-    const { album } = renderComponent(h.factory('album'))
+    const { album } = renderComponent(h.factory('album').make())
     const updateMock = h.mock(albumStore, 'update')
 
     await h.user.click(screen.getByRole('button', { name: 'Remove' }))

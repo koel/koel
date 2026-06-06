@@ -3,8 +3,7 @@
 namespace App\Observers;
 
 use App\Models\RadioStation;
-use App\Services\ModelImageObserver;
-use Illuminate\Support\Facades\File;
+use App\Services\Image\ModelImageObserver;
 
 class RadioStationObserver
 {

@@ -15,7 +15,7 @@ describe('albumExcerptResultsBlock.vue', () => {
   })
 
   it('renders album cards when albums are provided', () => {
-    const albums = h.factory('album', 3)
+    const albums = h.factory('album').make(3)
 
     h.render(Component, {
       props: { albums, searching: false },

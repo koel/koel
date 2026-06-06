@@ -8,7 +8,7 @@ describe('playlistCollaborationService', () => {
   const h = createHarness()
 
   it('creates invite link', async () => {
-    const playlist = h.factory('playlist', { is_smart: false })
+    const playlist = h.factory('playlist').make({ is_smart: false })
     const postMock = h.mock(http, 'post').mockResolvedValue({ token: 'abc123' })
 
     const link = await service.createInviteLink(playlist)
@@ -18,7 +18,7 @@ describe('playlistCollaborationService', () => {
   })
 
   it('throws if trying to create invite link for smart playlist', async () => {
-    const playlist = h.factory('playlist', { is_smart: true })
+    const playlist = h.factory('playlist').make({ is_smart: true })
 
     await expect(service.createInviteLink(playlist)).rejects.toThrow('Smart playlists are not collaborative.')
   })
@@ -32,8 +32,8 @@ describe('playlistCollaborationService', () => {
   })
 
   it('fetches collaborators', async () => {
-    const playlist = h.factory('playlist')
-    const collaborators = h.factory('playlist-collaborator', 2)
+    const playlist = h.factory('playlist').make()
+    const collaborators = h.factory('playlist-collaborator').make(2)
     const getMock = h.mock(http, 'get').mockResolvedValue(collaborators)
 
     const received = await service.fetchCollaborators(playlist)
@@ -43,8 +43,8 @@ describe('playlistCollaborationService', () => {
   })
 
   it('removes collaborator', async () => {
-    const playlist = h.factory('playlist')
-    const collaborator = h.factory('playlist-collaborator')
+    const playlist = h.factory('playlist').make()
+    const collaborator = h.factory('playlist-collaborator').make()
     const deleteMock = h.mock(http, 'delete').mockResolvedValue({})
     const removeCacheMock = h.mock(cache, 'remove')
 

@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Resources\PlaylistFolderResource;
 use App\Models\PlaylistFolder;
-use App\Services\PlaylistFolderService;
+use App\Services\Playlist\PlaylistFolderService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -26,10 +26,7 @@ class PlaylistFolderTest extends TestCase
     public function listing(): void
     {
         $user = create_user();
-        PlaylistFolder::factory()
-            ->for($user)
-            ->count(2)
-            ->create();
+        PlaylistFolder::factory()->for($user)->count(2)->create();
 
         $this
             ->getAs('api/playlist-folders', $user)

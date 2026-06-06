@@ -23,7 +23,7 @@ describe('streamableDetails.vue', () => {
 
   it('renders a song', () => {
     const { html } = renderComponent(
-      h.factory('song', {
+      h.factory('song').make({
         title: 'Afraid to Shoot Strangers',
         album_name: 'Fear of the Dark',
         artist_name: 'Iron Maiden',
@@ -36,7 +36,7 @@ describe('streamableDetails.vue', () => {
 
   it('renders an episode', () => {
     const { html } = renderComponent(
-      h.factory('episode', {
+      h.factory('episode').make({
         title: 'Brahms Piano Concerto No. 1',
         podcast_title: 'The Sticky Notes podcast',
         podcast_author: 'Some random dudes',

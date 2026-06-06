@@ -17,8 +17,8 @@ class AlbumUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => 'string|required',
-            'year' => 'integer|nullable',
+            'name' => ['string', 'required'],
+            'year' => ['integer', 'nullable'],
             'cover' => ['string', 'sometimes', 'nullable', new ValidImageData()],
         ];
     }

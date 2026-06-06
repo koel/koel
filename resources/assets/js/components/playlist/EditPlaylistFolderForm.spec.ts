@@ -8,7 +8,7 @@ describe('editPlaylistFolderForm.vue', () => {
   const h = createHarness()
 
   it('submits', async () => {
-    const folder = h.factory('playlist-folder', { name: 'My folder' })
+    const folder = h.factory('playlist-folder').make({ name: 'My folder' })
     const renameMock = h.mock(playlistFolderStore, 'rename')
     h.render(Component, {
       props: {

@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\NewPlaylistCollaboratorJoined;
-use App\Services\PlaylistService;
+use App\Services\Playlist\PlaylistService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 readonly class MakePlaylistSongsPublic implements ShouldQueue

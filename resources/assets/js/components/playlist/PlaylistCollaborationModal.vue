@@ -16,7 +16,7 @@
           <span class="flex-1">Current Collaborators</span>
           <InviteCollaborators v-if="canManageCollaborators" :playlist />
         </h2>
-        <div v-koel-overflow-fade class="collaborators-wrapper overflow-auto">
+        <div class="scroll-mask-y collaborators-wrapper overflow-auto">
           <CollaboratorList :playlist />
         </div>
       </section>

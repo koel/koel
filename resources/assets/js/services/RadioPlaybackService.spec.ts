@@ -19,9 +19,9 @@ describe('playbackService', () => {
   })
 
   it('plays a radio station', async () => {
-    const currentStation = h.factory('radio-station')
+    const currentStation = h.factory('radio-station').make()
     currentStation.playback_state = 'Playing'
-    const toBePlayedStation = h.factory('radio-station')
+    const toBePlayedStation = h.factory('radio-station').make()
     toBePlayedStation.playback_state = 'Stopped'
 
     radioStationStore.state.stations = [currentStation, toBePlayedStation]
@@ -43,7 +43,7 @@ describe('playbackService', () => {
   })
 
   it('pauses a radio station playback', async () => {
-    const currentStation = h.factory('radio-station')
+    const currentStation = h.factory('radio-station').make()
     currentStation.playback_state = 'Playing'
     radioStationStore.state.stations = [currentStation]
 

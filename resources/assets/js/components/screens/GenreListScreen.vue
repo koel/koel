@@ -53,7 +53,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { FilterKeywordsKey } from '@/config/symbols'
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { usePolicies } from '@/composables/usePolicies'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'

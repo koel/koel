@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\SongStorageType;
 use Carbon\Carbon;
 use Database\Factories\DuplicateUploadFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,13 +24,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @method static DuplicateUploadFactory factory(...$parameters)
  */
+#[Guarded(['id'])]
+#[Hidden(['updated_at'])]
 class DuplicateUpload extends Model
 {
     use HasFactory;
     use HasUuids;
 
-    protected $guarded = ['id'];
-    protected $hidden = ['updated_at'];
     protected $with = ['user'];
 
     /** @return array<string, mixed> */

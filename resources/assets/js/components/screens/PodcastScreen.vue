@@ -43,12 +43,10 @@
 
             <ListFilter v-if="episodes?.length" />
 
-            <FavoriteButton
-              v-if="podcast.favorite"
-              :favorite="podcast.favorite"
-              class="px-3.5 py-2"
-              @toggle="toggleFavorite"
-            />
+            <span class="inline-flex gap-3.5 px-2">
+              <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" @toggle="toggleFavorite" />
+              <StarRating :rateable="podcast" />
+            </span>
 
             <Btn variant="ghost" @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
@@ -78,7 +76,7 @@
 
 <script setup lang="ts">
 import DOMPurify from 'dompurify'
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { faEllipsis, faPause, faPlay, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, provide, reactive, ref } from 'vue'
 import { useRouter } from '@/composables/useRouter'
@@ -101,6 +99,7 @@ import EpisodeItem from '@/components/podcast/EpisodeItem.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import EpisodeItemSkeleton from '@/components/podcast/EpisodeItemSkeleton.vue'
 
@@ -289,6 +288,7 @@ eventBus.on('PODCAST_UNSUBSCRIBED', ({ id }) => id === podcast.value?.id && go(u
 </script>
 
 <style scoped lang="postcss">
+@reference '@css/app.pcss';
 :deep(.items-wrapper) {
   @apply divide-y divide-k-fg-10;
 }

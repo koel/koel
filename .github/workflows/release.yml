@@ -13,7 +13,7 @@ jobs:
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -25,19 +25,20 @@ jobs:
         with:
           composer-options: "--prefer-dist --no-dev --optimize-autoloader"
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v6
         with:
           node-version: 22
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
       - name: Build project
         run: |
           sudo apt install pngquant zip unzip
           sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=sqlite/' .env
+          sed -i 's|^DB_DATABASE=.*$|DB_DATABASE=:memory:|' .env
           php artisan koel:init --no-interaction
       - name: Create archives
         run: |
           sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=sqlite-persistent/' .env
-          sed -i 's/DB_DATABASE=koel/DB_DATABASE=koel.db/' .env
+          sed -i 's|^DB_DATABASE=.*$|DB_DATABASE=koel.db|' .env
           rm -rf .git ./node_modules ./storage/search-indexes/*.index ./koel.db ./.env
           cd ../
           zip -r /tmp/koel-${{ steps.get_version.outputs.VERSION }}.zip koel/

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Database\Factories\EmbedFactory;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,12 +21,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *
  * @method static EmbedFactory factory(...$parameters)
  */
+#[Unguarded]
 class Embed extends Model
 {
     use HasFactory;
     use HasUlids;
 
-    protected $guarded = [];
     protected $with = ['user', 'embeddable'];
 
     public function embeddable(): MorphTo

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Album;
-use App\Services\ImageStorage;
+use App\Services\Image\ImageStorage;
 use App\Values\ImageWritingConfig;
 use Mockery;
 use Mockery\MockInterface;

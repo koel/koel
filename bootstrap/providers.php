@@ -9,18 +9,16 @@ use App\Providers\ITunesServiceProvider;
 use App\Providers\LicenseServiceProvider;
 use App\Providers\MacroProvider;
 use App\Providers\ObjectStorageServiceProvider;
+use App\Providers\SocialiteServiceProvider;
 use App\Providers\SongStorageServiceProvider;
 use App\Providers\StreamerServiceProvider;
-use App\Providers\UtilServiceProvider;
 use App\Providers\YouTubeServiceProvider;
 use Intervention\Image\ImageServiceProvider;
-use Jackiedo\DotenvEditor\DotenvEditorServiceProvider;
 use Laravel\Scout\ScoutServiceProvider;
 use OwenIt\Auditing\AuditingServiceProvider;
 use TeamTNT\Scout\TNTSearchScoutServiceProvider;
 
 return [
-    DotenvEditorServiceProvider::class,
     ImageServiceProvider::class,
 
     ScoutServiceProvider::class,
@@ -30,7 +28,6 @@ return [
     AppServiceProvider::class,
     AuthServiceProvider::class,
     EventServiceProvider::class,
-    UtilServiceProvider::class,
     YouTubeServiceProvider::class,
     DownloadServiceProvider::class,
     BroadcastServiceProvider::class,
@@ -40,4 +37,5 @@ return [
     ObjectStorageServiceProvider::class,
     MacroProvider::class,
     LicenseServiceProvider::class,
+    SocialiteServiceProvider::class,
 ];

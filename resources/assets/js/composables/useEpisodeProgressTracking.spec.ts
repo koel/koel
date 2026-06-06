@@ -25,14 +25,14 @@ describe('useEpisodeProgressTracking', () => {
   })
 
   it('updates progress on tracked episode', async () => {
-    const podcast = h.factory('podcast')
+    const podcast = h.factory('podcast').make()
     podcast.state.current_episode = null
     podcast.state.progresses = {}
     mockResolve.mockResolvedValue(podcast)
 
     const { trackEpisode } = useEpisodeProgressTracking()
 
-    const episode = h.factory('episode')
+    const episode = h.factory('episode').make()
     trackEpisode(episode)
 
     eventBus.emit('EPISODE_PROGRESS_UPDATED', episode, 0.75)
@@ -46,8 +46,8 @@ describe('useEpisodeProgressTracking', () => {
   it('ignores progress for non-tracked episode', async () => {
     const { trackEpisode } = useEpisodeProgressTracking()
 
-    const tracked = h.factory('episode')
-    const other = h.factory('episode')
+    const tracked = h.factory('episode').make()
+    const other = h.factory('episode').make()
 
     trackEpisode(tracked)
 

@@ -14,6 +14,10 @@
         <TextInput v-model="data.url" type="url" name="url" placeholder="https://radio.example.com/stream" required />
       </FormRow>
       <FormRow>
+        <template #label>Homepage URL</template>
+        <TextInput v-model="data.homepage_url" type="url" name="homepage_url" placeholder="https://radio.example.com" />
+      </FormRow>
+      <FormRow>
         <template #label>Description</template>
         <TextArea
           v-model="data.description"
@@ -26,7 +30,7 @@
       <FormRow>
         <label>
           <CheckBox v-model="data.is_public" name="is_public" />
-          <span class="ml-2">Make this station public</span>
+          <span class="ml-2">Accessible to all users</span>
         </label>
       </FormRow>
     </main>
@@ -39,12 +43,15 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep, pick } from 'lodash'
+import { pick } from 'lodash-es'
+import { toRaw } from 'vue'
+
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import type { RadioStationData } from '@/stores/radioStationStore'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { useForm } from '@/composables/useForm'
+import { playback } from '@/services/playbackManager'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -64,15 +71,22 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
-  initialValues: { ...pick(station, 'name', 'url', 'description', 'is_public', 'logo') },
+  initialValues: { ...pick(station, 'name', 'url', 'homepage_url', 'description', 'is_public', 'logo') },
   onSubmit: async data => {
-    const formData = cloneDeep(data)
+    const formData = structuredClone(toRaw(data))
 
     if (formData.logo === station.logo) {
       delete formData.logo
     }
 
-    await radioStationStore.update(station, formData)
+    const current = radioStationStore.current
+    const onAirUrl = current?.id === station.id && current.playback_state === 'Playing' ? station.url : null
+
+    const updated = await radioStationStore.update(station, formData)
+
+    if (onAirUrl && onAirUrl !== updated.url) {
+      await playback('radio').play(updated)
+    }
   },
   onSuccess: () => {
     close()

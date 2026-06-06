@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Services\LastfmService;
-use App\Services\TokenManager;
+use App\Services\Auth\TokenManager;
+use App\Services\Integrations\LastfmService;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 use Mockery;

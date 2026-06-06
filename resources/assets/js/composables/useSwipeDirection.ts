@@ -1,5 +1,5 @@
 import { onBeforeUnmount, onMounted } from 'vue'
-import { throttle } from 'lodash'
+import { useThrottleFn } from '@vueuse/core'
 
 export type SwipeDirection = 'up' | 'down'
 
@@ -27,7 +27,7 @@ export function useSwipeDirection(
     }
   }
 
-  const onWheel = throttle((e: WheelEvent) => {
+  const onWheel = useThrottleFn((e: WheelEvent) => {
     if (Math.abs(e.deltaY) < wheelThreshold) {
       return
     }

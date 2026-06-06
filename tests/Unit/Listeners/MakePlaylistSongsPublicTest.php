@@ -5,7 +5,7 @@ namespace Tests\Unit\Listeners;
 use App\Events\NewPlaylistCollaboratorJoined;
 use App\Listeners\MakePlaylistSongsPublic;
 use App\Models\PlaylistCollaborationToken;
-use App\Services\PlaylistService;
+use App\Services\Playlist\PlaylistService;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

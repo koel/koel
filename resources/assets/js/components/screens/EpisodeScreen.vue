@@ -11,7 +11,7 @@
         <h2 class="text-2xl">
           <a
             :href="url('podcasts.show', { id: episode.podcast_id })"
-            class="!text-k-fg hover:!text-k-highlight font-normal"
+            class="text-k-fg! hover:text-k-highlight! font-normal"
           >
             {{ episode.podcast_title }}
           </a>
@@ -65,7 +65,7 @@
 <script setup lang="ts">
 import { faEllipsis, faExternalLink, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import DOMPurify from 'dompurify'
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import { queueStore } from '@/stores/queueStore'
@@ -167,6 +167,7 @@ onScreenActivated('Episode', () => (episodeId.value = getRouteParam('id')!))
 </script>
 
 <style scoped lang="postcss">
+@reference '@css/app.pcss';
 .description {
   :deep(p) {
     @apply mb-3;

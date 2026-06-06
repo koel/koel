@@ -1,6 +1,6 @@
 import type { Reactive } from 'vue'
 import { reactive } from 'vue'
-import { differenceBy, unionBy } from 'lodash'
+import { differenceBy, unionBy } from 'lodash-es'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import { flattenParams } from '@/utils/helpers'
@@ -91,6 +91,25 @@ export const artistStore = {
     })
 
     artist.favorite = Boolean(favorite)
+  },
+
+  async rate(artist: Reactive<Artist>, rating: number) {
+    const previous = artist.rating
+    artist.rating = rating
+
+    try {
+      const updated = await http.put<Artist>(`artists/${artist.id}/rating`, { rating })
+
+      if (artist.rating === rating) {
+        artist.rating = updated.rating
+      }
+    } catch (error) {
+      if (artist.rating === rating) {
+        artist.rating = previous
+      }
+
+      throw error
+    }
   },
 
   async fetchEvents(artist: Artist) {

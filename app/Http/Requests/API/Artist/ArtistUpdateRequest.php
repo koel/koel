@@ -16,7 +16,7 @@ class ArtistUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => 'string|required',
+            'name' => ['string', 'required'],
             'image' => ['string', 'sometimes', 'nullable', new ValidImageData()],
         ];
     }

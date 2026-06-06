@@ -29,7 +29,7 @@ describe('userListScreen.vue', () => {
 
   const renderComponent = async (users: User[] = []) => {
     if (users.length === 0) {
-      users = h.factory('user', 6)
+      users = h.factory('user').make(6)
     }
 
     const fetchMock = h.mock(http, 'get').mockResolvedValue(users)
@@ -57,7 +57,7 @@ describe('userListScreen.vue', () => {
   })
 
   it('displays a list of user prospects', async () => {
-    const users = [...factory.states('prospect')('user', 2), ...h.factory('user', 3)]
+    const users = [...factory('user').state('prospect').make(2), ...h.factory('user').make(3)]
     await renderComponent(users)
 
     expect(screen.getAllByTestId('user-card')).toHaveLength(5)

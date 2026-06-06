@@ -1,0 +1,210 @@
+name: Proxy Auth E2E
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - app/Services/Auth/ProxyAuthService.php
+      - app/Values/User/SsoUser.php
+      - app/Exceptions/ProxyAuth*.php
+      - app/Http/Controllers/IndexController.php
+      - config/koel.php
+      - tests/Feature/KoelPlus/ProxyAuthTest.php
+      - .github/workflows/test-proxy-auth-e2e.yml
+  push:
+    branches:
+      - master
+    paths:
+      - app/Services/Auth/ProxyAuthService.php
+      - app/Values/User/SsoUser.php
+      - app/Exceptions/ProxyAuth*.php
+      - app/Http/Controllers/IndexController.php
+      - config/koel.php
+      - tests/Feature/KoelPlus/ProxyAuthTest.php
+      - .github/workflows/test-proxy-auth-e2e.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: Reverse-proxy auth flow
+    runs-on: ubuntu-latest
+    # Skip on fork PRs — secrets.KOEL_PLUS_LICENSE_KEY isn't available there.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          tools: composer:v2
+          extensions: pdo_sqlite, sqlite3, zip, gd
+
+      - name: Install PHP dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          composer-options: --prefer-dist
+
+      - name: Configure Koel for proxy auth
+        run: |
+          cp .env.example .env
+          php artisan key:generate --quiet
+          touch database/database.sqlite
+
+          # Replace the key if present, otherwise append. Defends against the test silently
+          # no-op'ing if .env.example ever loses one of these lines.
+          set_env() {
+              local key=$1 value=$2
+              if grep -q "^${key}=" .env; then
+                  sed -i "s|^${key}=.*|${key}=${value}|" .env
+              else
+                  echo "${key}=${value}" >> .env
+              fi
+          }
+
+          set_env DB_CONNECTION sqlite
+          sed -i '/^DB_HOST=/d;/^DB_PORT=/d;/^DB_DATABASE=/d;/^DB_USERNAME=/d;/^DB_PASSWORD=/d' .env
+          set_env PROXY_AUTH_ENABLED true
+          set_env PROXY_AUTH_USER_HEADER remote-user
+          set_env PROXY_AUTH_PREFERRED_NAME_HEADER remote-preferred-name
+          set_env PROXY_AUTH_ALLOW_LIST 127.0.0.1
+
+          php artisan migrate --force
+
+      - name: Stub Vite manifest
+        # We don't need a real frontend build for this test — just enough manifest entries so blade's @vite()
+        # call resolves and the HTML response renders without throwing.
+        run: |
+          mkdir -p public/build
+          cat > public/build/manifest.json <<'EOF'
+          {
+            "resources/assets/js/app.ts": {
+              "file": "assets/app.js",
+              "src": "resources/assets/js/app.ts",
+              "isEntry": true
+            }
+          }
+          EOF
+
+      - name: Activate Koel Plus license
+        env:
+          KOEL_PLUS_LICENSE_KEY: ${{ secrets.KOEL_PLUS_LICENSE_KEY }}
+        # Output is swallowed because the command prints the licensee's name and email on success.
+        # The secret value itself is auto-masked by GitHub Actions in any log output.
+        run: |
+          if [ -z "$KOEL_PLUS_LICENSE_KEY" ]; then
+              echo "KOEL_PLUS_LICENSE_KEY secret is not set."
+              exit 1
+          fi
+          php artisan koel:license:activate "$KOEL_PLUS_LICENSE_KEY" >/dev/null 2>&1 || {
+              echo "License activation failed (network or invalid key)."
+              exit 1
+          }
+
+      - name: Install Caddy
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends debian-keyring debian-archive-keyring apt-transport-https curl
+          curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+          curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list >/dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y caddy
+          sudo systemctl stop caddy || true
+
+      - name: Write Caddyfile
+        run: |
+          PASS_HASH=$(caddy hash-password --plaintext 'koeltest')
+          cat > /tmp/Caddyfile <<EOF
+          {
+              admin off
+              auto_https off
+          }
+          :8001 {
+              basic_auth {
+                  alice ${PASS_HASH}
+              }
+              reverse_proxy 127.0.0.1:8000 {
+                  header_up remote-user {http.auth.user.id}
+                  header_up remote-preferred-name "Alice (CI)"
+              }
+          }
+          EOF
+
+      - name: Start Koel
+        run: nohup php artisan serve --host=127.0.0.1 --port=8000 > /tmp/koel.log 2>&1 &
+
+      - name: Start Caddy
+        run: nohup caddy run --config /tmp/Caddyfile > /tmp/caddy.log 2>&1 &
+
+      - name: Wait for services
+        run: |
+          for attempt in $(seq 1 30); do
+              koel_ok=$(curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/ 2>/dev/null || echo 0)
+              caddy_ok=$(curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:8001/ 2>/dev/null || echo 0)
+              if [ "$koel_ok" = "200" ] && [ "$caddy_ok" = "401" ]; then
+                  echo "Koel ready on :8000, Caddy ready on :8001 (challenging basic auth as expected)"
+                  exit 0
+              fi
+              sleep 1
+          done
+          echo "Services did not come up in time (last koel=$koel_ok caddy=$caddy_ok). Koel log:"
+          cat /tmp/koel.log
+          echo "Caddy log:"
+          cat /tmp/caddy.log
+          exit 1
+
+      - name: Verify proxy-auth round-trip
+        run: |
+          set -e
+          # Wrong password — Caddy must reject before reaching Koel.
+          status=$(curl -s -o /dev/null -w '%{http_code}' -u 'alice:wrong' http://127.0.0.1:8001/)
+          if [ "$status" != "401" ]; then
+              echo "Expected 401 for wrong credentials, got $status"
+              exit 1
+          fi
+          echo "✓ Caddy rejects wrong credentials"
+
+          # Correct password — Caddy forwards with remote-user header set.
+          status=$(curl -s -o /dev/null -w '%{http_code}' -u 'alice:koeltest' http://127.0.0.1:8001/)
+          if [ "$status" != "200" ]; then
+              echo "Expected 200 from successful basic auth + proxy forward, got $status"
+              exit 1
+          fi
+          echo "✓ Caddy forwards authenticated request to Koel"
+
+          # Koel must have provisioned the user via proxy auth.
+          row=$(sqlite3 database/database.sqlite "select email, name, sso_provider from users where sso_provider = 'Reverse Proxy';")
+          expected="alice@reverse.proxy|Alice (CI)|Reverse Proxy"
+          if [ "$row" != "$expected" ]; then
+              echo "User row mismatch. Expected: '$expected', got: '$row'"
+              echo "Koel log tail:"
+              tail -50 storage/logs/laravel.log 2>/dev/null || true
+              exit 1
+          fi
+          echo "✓ Koel provisioned user $row"
+
+          # Hitting Koel directly (bypassing Caddy) with the same header but from a non-allowlisted IP must NOT trigger provisioning.
+          # We can't easily forge REMOTE_ADDR, so instead assert the allow-list rejection by sending without the header through Caddy is impossible
+          # (Caddy always sets it), so we cover this in the unit/feature tests.
+
+      - name: Deactivate Koel Plus license
+        if: always()
+        # Free up the activation slot on LemonSqueezy so repeated CI runs don't exhaust the license's seat limit.
+        # `yes |` feeds the interactive confirm prompt; `|| true` ensures cleanup failures don't fail the job.
+        run: yes | php artisan koel:license:deactivate >/dev/null 2>&1 || true
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: proxy-auth-e2e-logs-${{ github.run_id }}
+          path: |
+            storage/logs
+            /tmp/koel.log
+            /tmp/caddy.log

@@ -65,4 +65,25 @@ describe('useNewVersionNotification', () => {
     const { latestVersionReleaseUrl } = useNewVersionNotification()
     expect(latestVersionReleaseUrl.value).toBe('https://github.com/koel/koel/releases/tag/7.0.0')
   })
+
+  it('handles leading v prefix on either side', () => {
+    commonStore.state.latest_version = 'v9.2.1'
+    commonStore.state.current_version = 'v9.2.0'
+    const { shouldNotifyNewVersion } = useNewVersionNotification()
+    expect(shouldNotifyNewVersion.value).toBe(true)
+  })
+
+  it('compares double-digit segments numerically, not lexicographically', () => {
+    commonStore.state.latest_version = '9.10.0'
+    commonStore.state.current_version = '9.9.0'
+    const { shouldNotifyNewVersion } = useNewVersionNotification()
+    expect(shouldNotifyNewVersion.value).toBe(true)
+  })
+
+  it('treats pre-release suffix as not newer than the base release', () => {
+    commonStore.state.latest_version = '9.2.0-beta.1'
+    commonStore.state.current_version = '9.2.0'
+    const { shouldNotifyNewVersion } = useNewVersionNotification()
+    expect(shouldNotifyNewVersion.value).toBe(false)
+  })
 })

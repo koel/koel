@@ -4,7 +4,7 @@ namespace App\Http\Controllers\SSO;
 
 use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
-use App\Services\AuthenticationService;
+use App\Services\Auth\AuthenticationService;
 use App\Services\UserService;
 use App\Values\User\SsoUser;
 use Laravel\Socialite\Facades\Socialite;

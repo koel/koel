@@ -23,6 +23,8 @@ const items: { label: string; field: AlbumListSortField }[] = [
   { label: 'Artist', field: 'artist_name' },
   { label: 'Release Year', field: 'year' },
   { label: 'Date Added', field: 'created_at' },
+  { label: 'Rating', field: 'rating' },
+  { label: 'Favorite', field: 'favorite' },
 ]
 
 const sort = (field: AlbumListSortField, order: SortOrder) => emit('sort', field, order)

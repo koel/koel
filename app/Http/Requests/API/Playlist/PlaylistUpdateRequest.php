@@ -25,7 +25,7 @@ class PlaylistUpdateRequest extends Request
     {
         return [
             'name' => 'required',
-            'description' => 'string|sometimes|nullable',
+            'description' => ['string', 'sometimes', 'nullable'],
             'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
             'folder_id' => [
                 'nullable',

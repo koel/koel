@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Upload;
 
+use App\Attributes\DisabledInDemo;
 use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\MediaPathNotSetException;
 use App\Exceptions\SongUploadFailedException;
@@ -21,6 +22,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
 
+#[DisabledInDemo]
 class UploadSongController extends Controller
 {
     /** @param User $user */

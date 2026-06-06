@@ -21,10 +21,7 @@ class FetchDuplicateUploadsTest extends TestCase
     public function fetchDuplicateUploadsForCurrentUser(): void
     {
         $user = create_user();
-        DuplicateUpload::factory()
-            ->count(3)
-            ->for($user)
-            ->create();
+        DuplicateUpload::factory()->count(3)->for($user)->create();
 
         $this
             ->getAs('api/duplicate-uploads', $user)
@@ -39,14 +36,8 @@ class FetchDuplicateUploadsTest extends TestCase
         $user = create_user();
         $otherUser = create_user();
 
-        DuplicateUpload::factory()
-            ->count(2)
-            ->for($user)
-            ->create();
-        DuplicateUpload::factory()
-            ->count(3)
-            ->for($otherUser)
-            ->create();
+        DuplicateUpload::factory()->count(2)->for($user)->create();
+        DuplicateUpload::factory()->count(3)->for($otherUser)->create();
 
         $this->getAs('api/duplicate-uploads', $user)->assertSuccessful()->assertJsonCount(2);
     }

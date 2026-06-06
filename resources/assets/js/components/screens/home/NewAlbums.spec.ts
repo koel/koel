@@ -7,7 +7,7 @@ describe('newAlbums.vue', () => {
   const h = createHarness()
 
   it('displays the albums', () => {
-    overviewStore.state.recentlyAddedAlbums = h.factory('album', 6)
+    overviewStore.state.recentlyAddedAlbums = h.factory('album').make(6)
     expect(
       h
         .render(Component, {

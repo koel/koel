@@ -27,7 +27,7 @@ describe('footerPlayButton.vue', () => {
     h.createAudioPlayer()
 
     const toggleMock = h.mock(playbackService, 'toggle')
-    renderComponent(h.factory('song'))
+    renderComponent(h.factory('song').make())
 
     await h.user.click(screen.getByRole('button'))
 
@@ -42,7 +42,7 @@ describe('footerPlayButton.vue', () => {
     h.createAudioPlayer()
 
     commonStore.state.song_count = 10
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const fetchMock = h.mock(playableStore, fetchMethod).mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
@@ -66,7 +66,7 @@ describe('footerPlayButton.vue', () => {
     h.createAudioPlayer()
 
     commonStore.state.song_count = 10
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const fetchMock = h.mock(store, fetchMethod).mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')

@@ -1,9 +1,17 @@
 <template>
   <HomeScreenBlock>
     <template #header>
-      Something Random
-      <Btn size="small" variant="ghost" v-if="playables.length" class="float-right" rounded @click.prevent="refresh">
-        <Icon :icon="faRotateRight" />
+      Random Songs
+      <Btn
+        v-if="playables.length"
+        size="small"
+        variant="ghost"
+        rounded
+        :disabled="refreshing"
+        class="float-right"
+        @click.prevent="refresh"
+      >
+        <Icon :icon="faRotateRight" :class="{ 'animate-spin': refreshing }" />
         <span class="sr-only">Refresh</span>
       </Btn>
     </template>
@@ -43,6 +51,7 @@ const refresh = async () => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 :deep([aria-busy='true']) {
   @apply opacity-70 transition-opacity;
 }

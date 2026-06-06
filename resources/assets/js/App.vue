@@ -120,8 +120,8 @@ onMounted(() => {
 
   // If the user is authenticated via a proxy, we have the token in the window object.
   // Simply forward it to the authService and continue with the normal flow.
-  if (window.AUTH_TOKEN) {
-    authService.setTokensUsingCompositeToken(window.AUTH_TOKEN)
+  if (window.KOEL.auth_token) {
+    authService.setTokensUsingCompositeToken(window.KOEL.auth_token)
   }
 
   // The app has just been initialized, check if we can get the user data with an already existing token
@@ -184,6 +184,7 @@ provide(
 </script>
 
 <style lang="postcss">
+@reference '@css/app.pcss';
 #dragGhost {
   @apply hidden py-2 pl-8 pr-3 rounded-md text-base fixed bg-k-bg border border-k-fg-10
   text-k-fg pointer-events-none z-50 whitespace-nowrap;

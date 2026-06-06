@@ -5,6 +5,7 @@ namespace App\Models\Concerns;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Laravel\Scout\Searchable;
 
 /**
  * With reference to GitHub issue #463.
@@ -29,20 +30,16 @@ trait SupportsDeleteWhereValueNotIn
         $maxChunkSize = DB::getDriverName() === 'sqlite' ? 999 : 65_535;
 
         if (count($values) <= $maxChunkSize) {
-            $queryModifier(static::query())->whereNotIn($field, $values)->delete();
+            self::deleteAndUnsearch($queryModifier(static::query())->whereNotIn($field, $values));
 
             return;
         }
 
-        $allIds = static::query()
-            ->select($field)
-            ->get()
-            ->pluck($field)
-            ->all();
+        $allIds = static::query()->select($field)->get()->pluck($field)->all();
         $deletableIds = array_diff($allIds, $values);
 
         if (count($deletableIds) < $maxChunkSize) {
-            $queryModifier(static::query())->whereIn($field, $deletableIds)->delete();
+            self::deleteAndUnsearch($queryModifier(static::query())->whereIn($field, $deletableIds));
 
             return;
         }
@@ -56,8 +53,17 @@ trait SupportsDeleteWhereValueNotIn
 
         DB::transaction(static function () use ($values, $field, $chunkSize): void {
             foreach (array_chunk($values, $chunkSize) as $chunk) {
-                static::query()->whereIn($field, $chunk)->delete();
+                self::deleteAndUnsearch(static::query()->whereIn($field, $chunk));
             }
         });
+    }
+
+    private static function deleteAndUnsearch(Builder $query): void
+    {
+        if (in_array(Searchable::class, class_uses_recursive(static::class), true)) {
+            $query->unsearchable(); // @phpstan-ignore-line
+        }
+
+        $query->delete();
     }
 }

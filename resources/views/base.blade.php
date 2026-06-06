@@ -11,6 +11,8 @@
     <meta name="theme-color" content="#282828">
     <meta name="msapplication-navbutton-color" content="#282828">
 
+    <link rel="stylesheet" href="{{ static_url('css/layer-order.css') }}">
+
     <link rel="manifest" href="{{ static_url('manifest.json') }}" />
     <meta name="msapplication-config" content="{{ static_url('browserconfig.xml') }}" />
     <link rel="icon" type="image/x-icon" href="{{ koel_branding('logo') ?? static_url('img/favicon.ico') }}" />
@@ -30,13 +32,18 @@
 <div id="app"></div>
 
 <script>
-    window.BASE_URL = @json(base_url());
-    window.IS_DEMO = @json(config('koel.misc.demo'));
-
-    window.PUSHER_APP_KEY = @json(config('broadcasting.connections.pusher.key'));
-    window.PUSHER_APP_CLUSTER = @json(config('broadcasting.connections.pusher.options.cluster'));
-
-    window.BRANDING = @json(koel_branding());
+    @php
+        $koelGlobals = [
+            'base_url' => base_url(),
+            'is_demo' => config('koel.misc.demo'),
+            'pusher' => [
+                'app_key' => config('broadcasting.connections.pusher.key'),
+                'app_cluster' => config('broadcasting.connections.pusher.options.cluster'),
+            ],
+            'branding' => koel_branding(),
+        ];
+    @endphp
+    window.KOEL = @json($koelGlobals);
 </script>
 
 @stack('scripts')

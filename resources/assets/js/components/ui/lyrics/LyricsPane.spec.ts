@@ -22,7 +22,7 @@ describe('lyricsPane.vue', () => {
   const renderComponent = (song?: Song) => {
     song =
       song ||
-      h.factory('song', {
+      h.factory('song').make({
         lyrics: 'Foo bar baz qux',
       })
 
@@ -48,7 +48,7 @@ describe('lyricsPane.vue', () => {
 
   it('renders plain text lyrics when lyrics are not synced', () => {
     renderComponent(
-      h.factory('song', {
+      h.factory('song').make({
         lyrics: 'Plain lyrics\nLine 2\nLine 3',
       }),
     )
@@ -58,7 +58,7 @@ describe('lyricsPane.vue', () => {
   })
 
   it('renders LRC pane when lyrics are in LRC format', () => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       lyrics: '[00:12.00]First line\n[00:17.20]Second line\n[00:21.00]Third line',
     })
 
@@ -69,7 +69,7 @@ describe('lyricsPane.vue', () => {
   })
 
   it('provides a button to add lyrics if current user is admin', async () => {
-    const song = h.factory('song', { lyrics: null })
+    const song = h.factory('song').make({ lyrics: null })
 
     h.actingAsAdmin()
     renderComponent(song)
@@ -81,7 +81,7 @@ describe('lyricsPane.vue', () => {
 
   it('does not have a button to add lyrics if current user is not an admin', async () => {
     h.actingAsUser()
-    renderComponent(h.factory('song', { lyrics: null }))
+    renderComponent(h.factory('song').make({ lyrics: null }))
     expect(screen.queryByRole('button', { name: 'Click here' })).toBeNull()
   })
 })

@@ -3,7 +3,7 @@
 namespace App\Http\Integrations\Spotify;
 
 use App\Exceptions\SpotifyIntegrationDisabledException;
-use App\Services\SpotifyService;
+use App\Services\Integrations\SpotifyService;
 use Illuminate\Cache\Repository as Cache;
 use SpotifyWebAPI\Session;
 use SpotifyWebAPI\SpotifyWebAPI;

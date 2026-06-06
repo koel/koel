@@ -28,7 +28,7 @@ describe('createThemeForm.vue', () => {
   }
 
   it('submits', async () => {
-    const createdTheme = h.factory('theme')
+    const createdTheme = h.factory('theme').make()
     const storeMock = h.mock(themeStore, 'store').mockResolvedValueOnce(createdTheme)
     const setThemeMock = h.mock(themeStore, 'setTheme')
 

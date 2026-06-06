@@ -1,45 +1,53 @@
 <template>
   <ul class="text-base" :class="disabled && 'disabled'">
-    <li v-for="crumb in crumbs" :key="String(crumb.path)" class="inline-block">
-      <a v-if="crumb.path !== null" :href="url('media-browser', { path: crumb.path })" class="text-k-fg-70 font-normal">
+    <li v-for="(crumb, idx) in crumbs" :key="String(crumb.id ?? `ellipsis-${idx}`)" class="inline-block">
+      <a v-if="crumb.kind === 'root'" :href="url('media-browser')" class="text-k-fg-70 font-normal">Library</a>
+      <a
+        v-else-if="crumb.kind === 'ancestor'"
+        :href="url('media-browser', { folder: crumb.id })"
+        class="text-k-fg-70 font-normal"
+      >
         {{ crumb.name }}
       </a>
-      <span v-else>
-        {{ crumb.name }}
-      </span>
+      <span v-else>{{ crumb.name }}</span>
     </li>
   </ul>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from '@/composables/useRouter'
 import { computed, toRefs } from 'vue'
-import { mediaBrowser } from '@/services/mediaBrowser'
+import { useRouter } from '@/composables/useRouter'
 
-const props = withDefaults(defineProps<{ path: string; disabled?: boolean }>(), {
+type Crumb =
+  | { kind: 'root'; id: null; name: 'Library' }
+  | { kind: 'ancestor'; id: string; name: string }
+  | { kind: 'current' | 'ellipsis'; id: null; name: string }
+
+const props = withDefaults(defineProps<{ current: Folder | null; ancestors: Folder[]; disabled?: boolean }>(), {
   disabled: false,
 })
 
-const { path } = toRefs(props)
-
+const { current, ancestors } = toRefs(props)
 const { url } = useRouter()
 
-const crumbs = computed(() => {
-  const all = mediaBrowser.generateBreadcrumbs(path.value)
+const crumbs = computed<Crumb[]>(() => {
+  const full: Crumb[] = [
+    { kind: 'root', id: null, name: 'Library' },
+    ...ancestors.value.map<Crumb>(a => ({ kind: 'ancestor', id: a.id, name: a.name })),
+    ...(current.value ? [{ kind: 'current', id: null, name: current.value.name } as Crumb] : []),
+  ]
 
-  if (all.length <= 3) {
-    return all
+  if (full.length <= 4) {
+    return full
   }
 
-  // truncate the middle part of the path
-  const start = all.slice(0, 1)
-  const end = all.slice(-2)
-
-  return [...start, { name: '…', path: null }, ...end]
+  // Truncate middle: keep "Library > … > [direct parent] > [current]"
+  return [full[0], { kind: 'ellipsis', id: null, name: '…' }, ...full.slice(-2)]
 })
 </script>
 
 <style scoped lang="postcss">
+@reference '@css/app.pcss';
 .disabled {
   @apply opacity-50 cursor-not-allowed pointer-events-none;
 }
@@ -49,7 +57,7 @@ li:not(:first-of-type)::before {
   @apply font-normal opacity-50 inline-block mx-1.5;
 }
 
-li:last-of-type a {
+li:last-of-type span {
   @apply font-semibold text-k-fg cursor-default;
 }
 </style>

@@ -1,4 +1,4 @@
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import type { Reactive } from 'vue'
 import { reactive } from 'vue'
 import { arrayify } from '@/utils/helpers'

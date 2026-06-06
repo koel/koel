@@ -5,6 +5,7 @@
 </template>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .btn-group {
   :deep(button) {
     &:not(:first-child) {
@@ -20,7 +21,7 @@
     }
 
     &:only-of-type {
-      @apply rounded;
+      @apply rounded-sm;
     }
   }
 

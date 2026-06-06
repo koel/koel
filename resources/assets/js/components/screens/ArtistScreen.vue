@@ -30,6 +30,7 @@
               class="px-3.5 py-2"
               @toggle="toggleFavorite"
             />
+            <StarRating :rateable="artist" class="px-2" />
             <Btn variant="ghost" @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
               <span class="sr-only">More Actions</span>
@@ -71,12 +72,12 @@
       </div>
 
       <div v-show="activeTab === 'albums'" class="albums-pane">
-        <GridListView v-koel-overflow-fade view-mode="list">
+        <GridListView class="scroll-mask-y" view-mode="list">
           <template v-if="albums">
-            <AlbumCard v-for="album in albums" :key="album.id" :album :show-release-year="true" layout="compact" />
+            <AlbumCard v-for="album in albums" :key="album.id" :album :show-release-year="true" />
           </template>
           <template v-else>
-            <AlbumCardSkeleton v-for="i in 6" :key="i" layout="compact" />
+            <AlbumCardSkeleton v-for="i in 6" :key="i" />
           </template>
         </GridListView>
       </div>
@@ -123,6 +124,7 @@ const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCar
 const ArtistEventList = defineAsyncComponent(() => import('@/components/artist/ArtistEventList.vue'))
 const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'))
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
+const StarRating = defineAsyncComponent(() => import('@/components/ui/StarRating.vue'))
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 
 const validTabs = ['songs', 'albums', 'information', 'events'] as const
@@ -227,6 +229,7 @@ eventBus.on('SONGS_UPDATED', result => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .screen-header :deep(.play-icon) {
   @apply scale-[2];
 }

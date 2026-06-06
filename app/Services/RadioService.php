@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\RadioStation;
 use App\Models\User;
 use App\Repositories\RadioStationRepository;
+use App\Services\Image\ImageStorage;
 use App\Values\Radio\RadioStationCreateData;
 use App\Values\Radio\RadioStationUpdateData;
 
@@ -29,6 +30,7 @@ class RadioService
             'logo' => $logoFileName,
             'description' => $dto->description,
             'is_public' => $dto->isPublic,
+            'homepage_url' => $dto->homepageUrl,
         ]);
 
         return $this->repository->findOneWithUserContext($station->id, $user);
@@ -41,6 +43,7 @@ class RadioService
             'name' => $dto->name,
             'description' => $dto->description,
             'is_public' => $dto->isPublic,
+            'homepage_url' => $dto->homepageUrl,
         ];
 
         if (is_string($dto->logo)) {

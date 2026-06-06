@@ -1,7 +1,7 @@
 <template>
   <li
     :class="{ playing }"
-    class="group flex items-center gap-4 px-6 py-4 cursor-pointer hover:bg-k-fg-5"
+    class="group flex items-center gap-4 px-6 py-4 hover:bg-k-fg-5"
     data-testid="song-card"
     draggable="true"
     tabindex="0"
@@ -16,7 +16,7 @@
         <Icon
           v-if="cachingOffline"
           :icon="faSpinner"
-          class="!opacity-50"
+          class="opacity-50!"
           spin
           title="Caching for offline playback"
           aria-label="Caching for offline playback"
@@ -24,7 +24,7 @@
         <Icon
           v-else-if="cachingFailed"
           :icon="faExclamationTriangle"
-          class="text-k-danger !opacity-75"
+          class="text-k-danger opacity-75!"
           :title="`Error: ${cachingErrorMessage}`"
         />
         <OfflineMark v-else-if="cachedOffline" />
@@ -61,7 +61,7 @@ const { startDragging } = useDraggable('playables')
 const { openContextMenu } = useContextMenu()
 const { isCached, isCaching, hasCachingError, getCachingError } = useOfflinePlayback()
 
-const artist = computed(() => getPlayableProp<string>(playable.value, 'artist_name', 'podcast_author') || '')
+const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author') || '')
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 const cachedOffline = computed(() => isSong(playable.value) && isCached(playable.value))
 const cachingOffline = computed(() => isSong(playable.value) && isCaching(playable.value))
@@ -87,6 +87,7 @@ const onContextMenu = (event: MouseEvent) => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 li.playing .title {
   @apply text-k-highlight;
 }

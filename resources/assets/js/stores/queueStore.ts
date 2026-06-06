@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { differenceBy, unionBy } from 'lodash'
+import { differenceBy, unionBy } from 'lodash-es'
 import { arrayify, moveItemsInList } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
 import { isSong } from '@/utils/typeGuards'

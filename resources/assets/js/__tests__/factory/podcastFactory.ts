@@ -13,6 +13,7 @@ export default (): Podcast => {
     subscribed_at: faker.date.past().toISOString(),
     last_played_at: faker.date.past().toISOString(),
     favorite: faker.datatype.boolean(),
+    rating: faker.number.int({ min: 0, max: 5 }),
     state: {
       current_episode: null,
       progresses: {},

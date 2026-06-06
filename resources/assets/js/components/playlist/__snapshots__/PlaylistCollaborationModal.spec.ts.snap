@@ -11,9 +11,9 @@ exports[`playlistCollaborationModal.vue > renders the modal 1`] = `
       <h2 data-v-886145d2="" class="flex text-xl mt-6 mb-1 items-center"><span data-v-886145d2="" class="flex-1">Current Collaborators</span>
         <!--v-if-->
       </h2>
-      <div data-v-886145d2="" class="collaborators-wrapper overflow-auto"><br data-v-886145d2="" data-testid="CollaboratorList" playlist="[object Object]"></div>
+      <div data-v-886145d2="" class="scroll-mask-y collaborators-wrapper overflow-auto"><br data-v-886145d2="" data-testid="CollaboratorList" playlist="[object Object]"></div>
     </section>
   </main>
-  <footer data-v-886145d2=""><button data-v-8943c846="" data-v-886145d2="" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer" type="button">Close</button></footer>
+  <footer data-v-886145d2=""><button data-v-8943c846="" data-v-886145d2="" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded-sm cursor-pointer" type="button">Close</button></footer>
 </div>
 `;

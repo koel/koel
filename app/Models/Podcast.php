@@ -6,10 +6,14 @@ use App\Builders\PodcastBuilder;
 use App\Casts\Podcast\CategoriesCast;
 use App\Casts\Podcast\PodcastMetadataCast;
 use App\Models\Concerns\MorphsToFavorites;
+use App\Models\Concerns\MorphsToRatings;
 use App\Models\Contracts\Favoriteable;
+use App\Models\Contracts\Rateable;
 use App\Models\Song as Episode;
 use Carbon\Carbon;
 use Database\Factories\PodcastFactory;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -31,7 +35,7 @@ use PhanAn\Poddle\Values\ChannelMetadata;
  * @property string $image
  * @property string $link
  * @property Collection<User> $subscribers
- * @property Collection<Episode> $episodes
+ * @property Collection<int, Episode> $episodes
  * @property int $added_by
  * @property Carbon $last_synced_at
  * @property ?string $author
@@ -39,15 +43,15 @@ use PhanAn\Poddle\Values\ChannelMetadata;
  * @method static PodcastFactory factory(...$parameters)
  */
 #[UseEloquentBuilder(PodcastBuilder::class)]
-class Podcast extends Model implements Favoriteable
+#[Unguarded]
+#[Hidden(['created_at', 'updated_at'])]
+class Podcast extends Model implements Favoriteable, Rateable
 {
     use HasFactory;
     use HasUuids;
     use MorphsToFavorites;
+    use MorphsToRatings;
     use Searchable;
-
-    protected $hidden = ['created_at', 'updated_at'];
-    protected $guarded = [];
 
     protected function casts(): array
     {
@@ -56,6 +60,7 @@ class Podcast extends Model implements Favoriteable
             'metadata' => PodcastMetadataCast::class,
             'last_synced_at' => 'datetime',
             'explicit' => 'boolean',
+            'favorite' => 'boolean',
         ];
     }
 
@@ -72,11 +77,7 @@ class Podcast extends Model implements Favoriteable
 
     public function subscribers(): BelongsToMany
     {
-        return $this
-            ->belongsToMany(User::class)
-            ->using(PodcastUserPivot::class)
-            ->withPivot('state')
-            ->withTimestamps();
+        return $this->belongsToMany(User::class)->using(PodcastUserPivot::class)->withPivot('state')->withTimestamps();
     }
 
     /** @return array<mixed> */

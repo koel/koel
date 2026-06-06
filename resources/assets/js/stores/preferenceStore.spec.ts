@@ -9,7 +9,7 @@ describe('preferenceStore', () => {
   })
 
   it('sets preferences and saves the state', () => {
-    const user = h.factory('user')
+    const user = h.factory('user').make()
     user.preferences = defaultPreferences
     const mock = h.mock(http, 'patch')
     preferenceStore.set('volume', 5)

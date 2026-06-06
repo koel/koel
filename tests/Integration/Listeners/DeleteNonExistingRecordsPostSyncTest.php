@@ -5,10 +5,14 @@ namespace Tests\Integration\Listeners;
 use App\Enums\SongStorageType;
 use App\Events\MediaScanCompleted;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
+use App\Models\Album;
 use App\Models\Song;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Database\Eloquent\Collection;
+use Laravel\Scout\EngineManager;
+use Laravel\Scout\Engines\Engine;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -62,5 +66,56 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $this->assertModelExists($songs[3]);
         $this->assertModelMissing($songs[1]);
         $this->assertModelMissing($songs[2]);
+    }
+
+    #[Test]
+    public function prunesAlbumsAndArtistsLeftEmptyByTheScan(): void
+    {
+        $album = Album::factory()->createOne();
+        $artist = $album->artist;
+        $song = Song::factory()->for($album)->for($artist)->createOne();
+
+        $unaffectedAlbum = Album::factory()->createOne();
+        Song::factory()->for($unaffectedAlbum)->for($unaffectedAlbum->artist)->createOne();
+
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($unaffectedAlbum->songs->first()->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        self::assertModelMissing($song);
+        self::assertModelMissing($album);
+        self::assertModelMissing($artist);
+        self::assertModelExists($unaffectedAlbum);
+    }
+
+    #[Test]
+    public function prunesAlbumsAndArtistsOrphanedByPriorSongDeletions(): void
+    {
+        $album = Album::factory()->createOne();
+        $artist = $album->artist;
+
+        $syncResult = ScanResultCollection::create();
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        self::assertModelMissing($album);
+        self::assertModelMissing($artist);
+    }
+
+    #[Test]
+    public function flushesOrphanedSongsFromSearchIndex(): void
+    {
+        $engine = Mockery::spy(Engine::class);
+        $manager = Mockery::mock(EngineManager::class);
+        $manager->shouldReceive('engine')->andReturn($engine);
+        $this->app->instance(EngineManager::class, $manager);
+
+        $orphan = Song::factory()->createOne();
+
+        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+
+        self::assertModelMissing($orphan);
+        $engine->shouldHaveReceived('delete')->atLeast()->once(); // @phpstan-ignore-line
     }
 }

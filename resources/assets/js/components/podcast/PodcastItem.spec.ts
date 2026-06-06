@@ -10,7 +10,7 @@ describe('podcastItem.vue', () => {
   const renderComponent = (podcast?: Podcast) => {
     podcast =
       podcast ||
-      h.factory('podcast', {
+      h.factory('podcast').make({
         title: 'A Brief History of Time',
         author: 'Stephen Hawking',
         favorite: false,
@@ -47,7 +47,7 @@ describe('podcastItem.vue', () => {
 
   it('if a favorite podcast, shows the favorite button which toggles favorite state', async () => {
     const toggleFavoriteMock = h.mock(podcastStore, 'toggleFavorite')
-    const podcast = h.factory('podcast', { favorite: true })
+    const podcast = h.factory('podcast').make({ favorite: true })
 
     renderComponent(podcast)
     await fireEvent(screen.getByTestId('favorite-button'), new CustomEvent('toggle'))

@@ -8,7 +8,7 @@ describe('recentlyPlayedStore', () => {
   const h = createHarness()
 
   it('fetches the recently played songs', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const getMock = h.mock(http, 'get').mockResolvedValue(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
 
@@ -21,17 +21,17 @@ describe('recentlyPlayedStore', () => {
 
   it('fetches when attempting to add a new song and the state is empty', async () => {
     recentlyPlayedStore.state.playables = []
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const fetchMock = h.mock(recentlyPlayedStore, 'fetch').mockResolvedValue(songs)
 
-    await recentlyPlayedStore.add(h.factory('song'))
+    await recentlyPlayedStore.add(h.factory('song').make())
 
     expect(fetchMock).toHaveBeenCalled()
   })
 
   it('adds a song to the state', async () => {
-    const newSong = h.factory('song')
-    const songs = h.factory('song', 10)
+    const newSong = h.factory('song').make()
+    const songs = h.factory('song').make(10)
     const exceptSongs = songs.slice(0, 6)
 
     // We don't want to keep the reference to the original songs
@@ -45,7 +45,7 @@ describe('recentlyPlayedStore', () => {
   })
 
   it('deduplicates when adding a song to the state', async () => {
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const newSong = songs[1]
     const exceptSongs = songs.slice(0, 6)
 

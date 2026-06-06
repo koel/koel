@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/vue'
-import { merge, take } from 'lodash'
+import { merge } from 'lodash-es'
 import { ref } from 'vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -10,7 +10,7 @@ describe('playableListControls.vue', () => {
   const h = createHarness()
 
   const renderComponent = (selectedCount = 1, configOverrides: Partial<PlayableListControlsConfig> = {}) => {
-    const songs = h.factory('song', 5)
+    const songs = h.factory('song').make(5)
     const config: PlayableListControlsConfig = merge(
       {
         addTo: {
@@ -30,7 +30,7 @@ describe('playableListControls.vue', () => {
         provide: {
           [<symbol>PlayablesKey]: [ref(songs)],
           [<symbol>FilteredPlayablesKey]: [ref(songs)],
-          [<symbol>SelectedPlayablesKey]: [ref(take(songs, selectedCount))],
+          [<symbol>SelectedPlayablesKey]: [ref(songs.slice(0, selectedCount))],
         },
       },
       props: {

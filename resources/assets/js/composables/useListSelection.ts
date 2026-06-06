@@ -1,6 +1,6 @@
 import type { Reactive, Ref } from 'vue'
 import { computed, ref } from 'vue'
-import { findIndex, findLastIndex, get } from 'lodash'
+import { get } from 'lodash-es'
 
 type Selectable<T> = Reactive<T & { selected: boolean }>
 
@@ -46,12 +46,12 @@ export const useListSelection = <T>(
   const selectBetween = (first: Selectable<T>, second: Selectable<T>) => {
     const firstIndex = Math.max(
       0,
-      findIndex(selectables.value, s => get(s, resolveIdPath(s)) === get(first, resolveIdPath(first))),
+      selectables.value.findIndex(s => get(s, resolveIdPath(s)) === get(first, resolveIdPath(first))),
     )
 
     const secondIndex = Math.max(
       0,
-      findIndex(selectables.value, s => get(s, resolveIdPath(s)) === get(second, resolveIdPath(second))),
+      selectables.value.findIndex(s => get(s, resolveIdPath(s)) === get(second, resolveIdPath(second))),
     )
 
     const indexes = [firstIndex, secondIndex]
@@ -67,13 +67,12 @@ export const useListSelection = <T>(
       return false
     }
 
-    const index = findIndex(
-      selectables.value,
+    const index = selectables.value.findIndex(
       s => get(s, resolveIdPath(s)) === get(selectable, resolveIdPath(selectable)),
     )
 
-    const firstSelectedIndex = Math.max(0, findIndex(selectables.value, isSelected))
-    const lastSelectedIndex = Math.max(0, findLastIndex(selectables.value, isSelected))
+    const firstSelectedIndex = Math.max(0, selectables.value.findIndex(isSelected))
+    const lastSelectedIndex = Math.max(0, selectables.value.findLastIndex(isSelected))
 
     if (index < firstSelectedIndex || index > lastSelectedIndex) {
       return false

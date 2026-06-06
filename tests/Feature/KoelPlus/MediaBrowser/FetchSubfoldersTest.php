@@ -24,16 +24,16 @@ class FetchSubfoldersTest extends PlusTestCase
         $folder = Folder::factory()->createOne();
 
         /** @var Collection $subfolders */
-        $subfolders = Folder::factory()
-            ->for($folder, 'parent')
-            ->count(2)
-            ->create();
+        $subfolders = Folder::factory()->for($folder, 'parent')->count(2)->create();
 
-        $response = $this->getAs('/api/browse/folders?path=' . $folder->path)->assertJsonStructure([
-            0 => FolderResource::JSON_STRUCTURE,
+        $response = $this->getAs('/api/browse/folders?folder=' . $folder->id)->assertJsonStructure([
+            'current' => FolderResource::JSON_STRUCTURE,
+            'ancestors' => [],
+            'subfolders' => [0 => FolderResource::JSON_STRUCTURE],
         ]);
 
-        static::assertEqualsCanonicalizing($subfolders->pluck('id')->toArray(), $response->json('*.id'));
+        static::assertSame($folder->id, $response->json('current.id'));
+        static::assertEqualsCanonicalizing($subfolders->pluck('id')->toArray(), $response->json('subfolders.*.id'));
     }
 
     #[Test]
@@ -41,8 +41,25 @@ class FetchSubfoldersTest extends PlusTestCase
     {
         $subfolders = Folder::factory()->createMany(2);
 
-        $response = $this->getAs('/api/browse/folders')->assertJsonStructure([0 => FolderResource::JSON_STRUCTURE]);
+        $response = $this->getAs('/api/browse/folders')->assertJsonStructure([
+            'current',
+            'ancestors',
+            'subfolders' => [0 => FolderResource::JSON_STRUCTURE],
+        ]);
 
-        static::assertEqualsCanonicalizing($subfolders->pluck('id')->toArray(), $response->json('*.id'));
+        static::assertNull($response->json('current'));
+        static::assertEqualsCanonicalizing($subfolders->pluck('id')->toArray(), $response->json('subfolders.*.id'));
+    }
+
+    #[Test]
+    public function fetchReturnsAncestorChain(): void
+    {
+        $grandparent = Folder::factory()->createOne(['path' => 'Music']);
+        $parent = Folder::factory()->for($grandparent, 'parent')->createOne(['path' => 'Music/Rock']);
+        $folder = Folder::factory()->for($parent, 'parent')->createOne(['path' => 'Music/Rock/PinkFloyd']);
+
+        $response = $this->getAs('/api/browse/folders?folder=' . $folder->id)->assertOk();
+
+        static::assertSame([$grandparent->id, $parent->id], $response->json('ancestors.*.id'));
     }
 }

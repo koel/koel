@@ -29,7 +29,7 @@ describe('embedAudioPlayerPlayButton.vue', async () => {
     const playable =
       playbackState === undefined
         ? undefined
-        : h.factory('song', {
+        : h.factory('song').make({
             playback_state: playbackState,
           })
 
@@ -42,7 +42,7 @@ describe('embedAudioPlayerPlayButton.vue', async () => {
   })
 
   it('applies a .preview-wrapper class in Preview mode', () => {
-    renderComponent(h.factory('song'), true)
+    renderComponent(h.factory('song').make(), true)
     expect(screen.getByTestId('wrapper').classList.contains('preview-wrapper')).toBe(true)
   })
 })

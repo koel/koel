@@ -3,11 +3,11 @@
 namespace App\Console\Commands\Storage;
 
 use App\Facades\License;
+use App\Services\DotenvEditor;
 use App\Services\SongStorages\DropboxStorage;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
-use Jackiedo\DotenvEditor\DotenvEditor;
 use Throwable;
 
 class SetupDropboxStorageCommand extends Command
@@ -64,8 +64,7 @@ class SetupDropboxStorageCommand extends Command
 
         $config['DROPBOX_REFRESH_TOKEN'] = $response->json('refresh_token');
 
-        $this->dotenvEditor->setKeys($config);
-        $this->dotenvEditor->save();
+        $this->dotenvEditor->backup()->setKeys($config);
 
         config()->set('filesystems.disks.dropbox', [
             'app_key' => $config['DROPBOX_APP_KEY'],

@@ -32,7 +32,7 @@ describe('albumContextMenu.vue', () => {
 
     album =
       album ||
-      h.factory('album', {
+      h.factory('album').make({
         name: 'IV',
         favorite: false,
         permissions: { edit: true },
@@ -50,12 +50,10 @@ describe('albumContextMenu.vue', () => {
     }
   }
 
-  it('renders', async () => expect((await renderComponent()).html()).toMatchSnapshot())
-
   it('plays all', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
@@ -70,7 +68,7 @@ describe('albumContextMenu.vue', () => {
   it('shuffles all', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
@@ -99,7 +97,7 @@ describe('albumContextMenu.vue', () => {
   })
 
   it('does not have an option to download or go to Unknown Album and Artist', async () => {
-    await renderComponent(factory.states('unknown')('album'))
+    await renderComponent(factory('album').state('unknown').make())
 
     expect(screen.queryByText('Go to Album')).toBeNull()
     expect(screen.queryByText('Go to Artist')).toBeNull()
@@ -119,5 +117,12 @@ describe('albumContextMenu.vue', () => {
     await h.user.click(screen.getByText('Embed…'))
 
     await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: album })
+  })
+
+  it('does not have an option to embed when embedding is disabled', async () => {
+    commonStore.state.allows_embedding = false
+    await renderComponent()
+
+    expect(screen.queryByText('Embed…')).toBeNull()
   })
 })

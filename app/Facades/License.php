@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static bool isPlus()
  * @method static bool isCommunity()
- * @see \App\Services\LicenseService
+ * @see \App\Services\License\LicenseService
  */
 class License extends Facade
 {

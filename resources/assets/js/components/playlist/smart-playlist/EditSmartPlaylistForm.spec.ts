@@ -26,7 +26,7 @@ describe('editSmartPlaylistForm', () => {
 
   const createSmartPlaylist = (overrides: Partial<Playlist> = {}): Playlist => {
     return {
-      ...h.factory('playlist'),
+      ...h.factory('playlist').make(),
       is_smart: true,
       rules: [createValidRuleGroup()],
       ...overrides,
@@ -35,7 +35,7 @@ describe('editSmartPlaylistForm', () => {
 
   const renderComponent = (playlist?: Playlist) => {
     playlist = playlist ?? createSmartPlaylist()
-    playlistFolderStore.state.folders = h.factory('playlist-folder', 2)
+    playlistFolderStore.state.folders = h.factory('playlist-folder').make(2)
     playlistStore.state.playlists = [playlist]
 
     return {

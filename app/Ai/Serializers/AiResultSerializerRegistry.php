@@ -25,13 +25,7 @@ class AiResultSerializerRegistry
     /** @return array<class-string<AiResultSerializer>> */
     private static function collectSerializers(): array
     {
-        return self::$serializers ??= collect(
-            Finder::create()
-                ->files()
-                ->name('*.php')
-                ->depth(0)
-                ->in(__DIR__),
-        )
+        return self::$serializers ??= collect(Finder::create()->files()->name('*.php')->depth(0)->in(__DIR__))
             ->map(static fn ($file) => __NAMESPACE__ . '\\' . $file->getBasename('.php'))
             ->filter(static fn (string $class) => is_subclass_of($class, AiResultSerializer::class))
             ->values()

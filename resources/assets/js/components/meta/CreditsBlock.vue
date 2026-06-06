@@ -1,5 +1,5 @@
 <template>
-  <div v-koel-overflow-fade class="max-h-[9rem] overflow-auto" data-testid="demo-credits">
+  <div class="scroll-mask-y max-h-36 overflow-auto" data-testid="demo-credits">
     Music by
     <ul class="inline">
       <li v-for="credit in credits" :key="credit.name" class="inline">
@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { orderBy } from 'lodash'
+import { orderBy } from 'lodash-es'
 import { onMounted, ref } from 'vue'
 import { http } from '@/services/http'
 
@@ -22,7 +22,7 @@ interface DemoCredits {
 const credits = ref<DemoCredits[]>([])
 
 onMounted(async () => {
-  credits.value = window.IS_DEMO ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : []
+  credits.value = window.KOEL.is_demo ? orderBy(await http.get<DemoCredits[]>('demo/credits'), 'name') : []
 })
 </script>
 

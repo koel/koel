@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\PlaylistCollaboration\PlaylistCollaboratorDestroyRequest;
 use App\Models\Playlist;
 use App\Repositories\UserRepository;
-use App\Services\PlaylistCollaborationService;
+use App\Services\Playlist\PlaylistCollaborationService;
 use Illuminate\Http\Response;
 
 #[RequiresPlus]

@@ -3,7 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\PlaylistFolder;
-use App\Services\PlaylistFolderService;
+use App\Services\Playlist\PlaylistFolderService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 

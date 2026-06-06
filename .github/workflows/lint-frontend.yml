@@ -28,12 +28,14 @@ jobs:
       matrix:
         node-version: [ 22 ]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Check (format + lint)
         run: pnpm exec vp check resources/assets
+      - name: Type check
+        run: pnpm typecheck

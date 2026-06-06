@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Attributes\DisabledInDemo;
 use App\Facades\License;
-use App\Services\AuthenticationService;
-use App\Services\ProxyAuthService;
+use App\Services\Auth\AuthenticationService;
+use App\Services\Auth\ProxyAuthService;
 use Illuminate\Http\Request;
 
 #[DisabledInDemo]

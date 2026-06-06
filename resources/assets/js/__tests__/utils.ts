@@ -2,7 +2,7 @@
 // - supports symbols as keys (_.merge doesn't)
 // - supports Vue's Ref type without losing reactivity (deepmerge doesn't)
 // Credit: https://stackoverflow.com/a/60598589/794641
-import { isObject, mergeWith } from 'lodash'
+import { isObject, mergeWith } from 'lodash-es'
 
 export const deepMerge = (first: object, second: object) => {
   return mergeWith(first, second, (a, b) => {

@@ -8,7 +8,7 @@ describe('themeCard.vue', () => {
   const h = createHarness()
 
   const renderComponent = () => {
-    const theme = h.factory('theme', {
+    const theme = h.factory('theme').make({
       name: 'Sample',
     })
 

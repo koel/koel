@@ -1,5 +1,5 @@
 import isMobile from 'ismobilejs'
-import { throttle } from 'lodash'
+import { useThrottleFn } from '@vueuse/core'
 import { watch } from 'vue'
 import { volumeManager } from '@/services/volumeManager'
 
@@ -60,7 +60,7 @@ export abstract class BasePlaybackService {
     listen('error', this.onError.bind(this), true)
     listen('ended', this.onEnded.bind(this))
 
-    const timeUpdateHandler = window.RUNNING_UNIT_TESTS ? this.onTimeUpdate : throttle(this.onTimeUpdate, 1000)
+    const timeUpdateHandler = window.RUNNING_UNIT_TESTS ? this.onTimeUpdate : useThrottleFn(this.onTimeUpdate, 1000)
     listen('timeupdate', timeUpdateHandler.bind(this))
   }
 

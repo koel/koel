@@ -7,7 +7,7 @@ describe('topAlbums.vue', () => {
   const h = createHarness()
 
   it('displays the albums', () => {
-    overviewStore.state.mostPlayedAlbums = h.factory('album', 6)
+    overviewStore.state.mostPlayedAlbums = h.factory('album').make(6)
     expect(
       h
         .render(TopAlbums, {

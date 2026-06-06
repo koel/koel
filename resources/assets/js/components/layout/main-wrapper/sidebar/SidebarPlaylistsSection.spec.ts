@@ -24,9 +24,9 @@ describe('sidebarPlaylistsSection.vue', () => {
 
   it('displays orphan playlists', () => {
     playlistStore.state.playlists = [
-      factory.states('orphan')('playlist', { name: 'Foo Playlist' }),
-      factory.states('orphan')('playlist', { name: 'Bar Playlist' }),
-      factory.states('smart', 'orphan')('playlist', { name: 'Smart Playlist' }),
+      factory('playlist').state('orphan').make({ name: 'Foo Playlist' }),
+      factory('playlist').state('orphan').make({ name: 'Bar Playlist' }),
+      factory('playlist').state('smart', 'orphan').make({ name: 'Smart Playlist' }),
     ]
 
     renderComponent()
@@ -38,8 +38,8 @@ describe('sidebarPlaylistsSection.vue', () => {
 
   it('displays playlist folders', () => {
     playlistFolderStore.state.folders = [
-      h.factory('playlist-folder', { name: 'Foo Folder' }),
-      h.factory('playlist-folder', { name: 'Bar Folder' }),
+      h.factory('playlist-folder').make({ name: 'Foo Folder' }),
+      h.factory('playlist-folder').make({ name: 'Bar Folder' }),
     ]
 
     renderComponent()

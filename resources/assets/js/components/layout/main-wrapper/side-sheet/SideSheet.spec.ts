@@ -32,10 +32,10 @@ describe('sideSheet.vue', () => {
   })
 
   const renderComponent = (songRef: Ref<Song | null> = ref(null)) => {
-    const artist = h.factory('artist')
+    const artist = h.factory('artist').make()
     const resolveArtistMock = h.mock(artistStore, 'resolve').mockResolvedValue(artist)
 
-    const album = h.factory('album')
+    const album = h.factory('album').make()
     const resolveAlbumMock = h.mock(albumStore, 'resolve').mockResolvedValue(album)
 
     const rendered = h.render(Component, {
@@ -70,7 +70,7 @@ describe('sideSheet.vue', () => {
 
   it('gets active tab from the preference', async () => {
     preferenceStore.active_extra_panel_tab = 'Lyrics'
-    renderComponent(ref(h.factory('song')))
+    renderComponent(ref(h.factory('song').make()))
 
     await waitFor(() => {
       expect(screen.getByTestId<HTMLElement>('side-sheet-lyrics').style.display).toBe('')
@@ -79,7 +79,7 @@ describe('sideSheet.vue', () => {
 
   it('activates and sets active tab to the preference', async () => {
     preferenceStore.active_extra_panel_tab = 'Lyrics'
-    renderComponent(ref(h.factory('song')))
+    renderComponent(ref(h.factory('song').make()))
     await h.tick()
     await h.user.click(screen.getByTestId('side-sheet-album-tab-header'))
 
@@ -92,7 +92,7 @@ describe('sideSheet.vue', () => {
 
   it('persists collapsed state when closing a tab', async () => {
     preferenceStore.active_extra_panel_tab = 'Lyrics'
-    renderComponent(ref(h.factory('song')))
+    renderComponent(ref(h.factory('song').make()))
     await h.tick()
 
     // Click the same tab again to collapse
@@ -111,7 +111,7 @@ describe('sideSheet.vue', () => {
     const { resolveAlbumMock } = renderComponent(songRef)
 
     // trigger the side sheet to show album info
-    songRef.value = h.factory('song')
+    songRef.value = h.factory('song').make()
 
     await waitFor(() => {
       screen.getByTestId('side-sheet-album')
@@ -128,7 +128,7 @@ describe('sideSheet.vue', () => {
     const { resolveArtistMock } = renderComponent(songRef)
 
     // trigger the side sheet to show artist info
-    songRef.value = h.factory('song')
+    songRef.value = h.factory('song').make()
 
     await waitFor(() => {
       screen.getByTestId('side-sheet-artist')

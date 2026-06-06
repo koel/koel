@@ -7,7 +7,7 @@ use App\Ai\AiRequestContext;
 use App\Enums\SmartPlaylistModel;
 use App\Enums\SmartPlaylistOperator;
 use App\Helpers\Uuid;
-use App\Services\PlaylistService;
+use App\Services\Playlist\PlaylistService;
 use App\Values\Playlist\PlaylistCreateData;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Contracts\JsonSchema\JsonSchema;

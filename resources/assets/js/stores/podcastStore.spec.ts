@@ -11,7 +11,7 @@ describe('podcastStore', () => {
   })
 
   it('gets a podcast by id', () => {
-    const podcast = h.factory('podcast')
+    const podcast = h.factory('podcast').make()
     podcastStore.state.podcasts.push(podcast)
 
     const foundPodcast = podcastStore.byId(podcast.id)
@@ -19,7 +19,7 @@ describe('podcastStore', () => {
   })
 
   it('resolves to a local podcast if available', async () => {
-    const podcast = h.factory('podcast')
+    const podcast = h.factory('podcast').make()
     podcastStore.state.podcasts.push(podcast)
 
     const resolvedPodcast = await podcastStore.resolve(podcast.id)
@@ -27,7 +27,7 @@ describe('podcastStore', () => {
   })
 
   it('fetches a podcast by id if not found locally', async () => {
-    const podcast = h.factory('podcast')
+    const podcast = h.factory('podcast').make()
     const getMock = h.mock(podcastStore, 'fetchOne').mockResolvedValue(podcast)
 
     const resolvedPodcast = await podcastStore.resolve(podcast.id)
@@ -36,7 +36,7 @@ describe('podcastStore', () => {
   })
 
   it('stores a new podcast', async () => {
-    const podcast = h.factory('podcast')
+    const podcast = h.factory('podcast').make()
     const postMock = h.mock(http, 'post').mockResolvedValue(podcast)
 
     const storedPodcast = await podcastStore.store('https://example.com/podcast')
@@ -46,7 +46,7 @@ describe('podcastStore', () => {
   })
 
   it('fetches all podcasts', async () => {
-    const podcasts = h.factory('podcast', 3)
+    const podcasts = h.factory('podcast').make(3)
     const getMock = h.mock(http, 'get').mockResolvedValue(podcasts)
 
     await podcastStore.fetchAll()
@@ -56,7 +56,7 @@ describe('podcastStore', () => {
   })
 
   it('fetches favorite podcasts only', async () => {
-    const podcasts = h.factory('podcast', 3)
+    const podcasts = h.factory('podcast').make(3)
     const getMock = h.mock(http, 'get').mockResolvedValue(podcasts)
 
     await podcastStore.fetchAll(true)
@@ -66,7 +66,7 @@ describe('podcastStore', () => {
   })
 
   it('fetches a single podcast', async () => {
-    const podcast = h.factory('podcast')
+    const podcast = h.factory('podcast').make()
     const getMock = h.mock(http, 'get').mockResolvedValue(podcast)
 
     const fetchedPodcast = await podcastStore.fetchOne(podcast.id)
@@ -76,7 +76,7 @@ describe('podcastStore', () => {
   })
 
   it('unsubscribes from a podcast', async () => {
-    const podcast = h.factory('podcast')
+    const podcast = h.factory('podcast').make()
     podcastStore.state.podcasts.push(podcast)
     const deleteMock = h.mock(http, 'delete').mockResolvedValue({})
 
@@ -87,7 +87,7 @@ describe('podcastStore', () => {
   })
 
   it('resets the podcast store', () => {
-    podcastStore.state.podcasts.push(...h.factory('podcast', 3))
+    podcastStore.state.podcasts.push(...h.factory('podcast').make(3))
 
     podcastStore.reset()
 
@@ -95,11 +95,11 @@ describe('podcastStore', () => {
   })
 
   it('toggles a podcast favorite status', async () => {
-    const podcast = h.factory('podcast', { favorite: false })
+    const podcast = h.factory('podcast').make({ favorite: false })
     podcastStore.state.podcasts.push(podcast)
 
     const postMock = h.mock(http, 'post').mockResolvedValueOnce(
-      h.factory('favorite', {
+      h.factory('favorite').make({
         favoriteable_type: 'podcast',
         favoriteable_id: podcast.id,
       }),

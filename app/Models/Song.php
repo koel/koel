@@ -11,14 +11,18 @@ use App\Enums\PlayableType;
 use App\Enums\SongStorageType;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
+use App\Models\Concerns\MorphsToRatings;
 use App\Models\Concerns\Songs\HasSongAttributes;
 use App\Models\Concerns\Songs\HasSongRelationships;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
+use App\Models\Contracts\Rateable;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
 use Database\Factories\SongFactory;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -82,7 +86,9 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @method static SongFactory factory(...$parameters)
  */
 #[UseEloquentBuilder(SongBuilder::class)]
-class Song extends Model implements AuditableContract, Favoriteable, Embeddable
+#[Unguarded]
+#[Hidden(['updated_at', 'path', 'mtime'])]
+class Song extends Model implements AuditableContract, Favoriteable, Embeddable, Rateable
 {
     use Auditable;
     use HasFactory;
@@ -91,11 +97,9 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
     use HasUuids;
     use MorphsToEmbeds;
     use MorphsToFavorites;
+    use MorphsToRatings;
     use Searchable;
     use SupportsDeleteWhereValueNotIn;
-
-    protected $guarded = [];
-    protected $hidden = ['updated_at', 'path', 'mtime'];
 
     protected function casts(): array
     {
@@ -108,10 +112,10 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable
             'track' => 'int',
             'disc' => 'int',
             'year' => 'int',
-            'is_public' => 'bool',
+            'is_public' => 'boolean',
             'storage' => SongStorageCast::class,
             'episode_metadata' => EpisodeMetadataCast::class,
-            'favorite' => 'bool',
+            'favorite' => 'boolean',
         ];
     }
 

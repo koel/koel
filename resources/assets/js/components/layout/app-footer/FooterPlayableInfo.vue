@@ -24,6 +24,7 @@
 </template>
 
 <script lang="ts" setup>
+import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, ref } from 'vue'
 import { getPlayableProp, requireInjection, use } from '@/utils/helpers'
@@ -61,7 +62,7 @@ const artistOrPodcastName = computed(() =>
 )
 
 const coverBackgroundImage = computed(() => `url(${cover.value ?? defaultCover})`)
-const draggable = computed(() => Boolean(playable.value))
+const draggable = computed(() => Boolean(playable.value) && !isMobile.any)
 
 const onDragStart = (event: DragEvent) => use(playable.value, p => startDragging(event, [p]))
 
@@ -76,6 +77,7 @@ const scrollToCurrentInQueue = () => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 .song-info {
   :fullscreen & {
     @apply pl-0;
@@ -104,14 +106,7 @@ const scrollToCurrentInQueue = () => {
   }
 
   &.playing .album-thumb {
-    @apply motion-reduce:animate-none;
-    animation: spin 30s linear infinite;
-  }
-}
-
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
+    @apply motion-reduce:animate-none animate-vinyl-spin;
   }
 }
 </style>

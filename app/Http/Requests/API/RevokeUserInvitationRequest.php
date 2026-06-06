@@ -10,6 +10,6 @@ class RevokeUserInvitationRequest extends Request
     /** @inheritdoc */
     public function rules(): array
     {
-        return ['email' => 'required|email'];
+        return ['email' => ['required', 'email']];
     }
 }

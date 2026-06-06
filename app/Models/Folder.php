@@ -4,7 +4,10 @@ namespace App\Models;
 
 use App\Observers\FolderObserver;
 use Database\Factories\FolderFactory;
+use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -23,20 +26,20 @@ use Illuminate\Support\Arr;
  * @property-read string $name
  * @property-read bool $is_uploads_folder Where the folder is the uploads folder by any user
  * @property-read ?int $uploader_id
+ * @property-read ?User $uploader
  * @property ?string $parent_id
  * @property string $hash
  *
  * @method static FolderFactory factory(...$parameters)
  */
 #[ObservedBy(FolderObserver::class)]
+#[Unguarded]
+#[WithoutTimestamps]
+#[Appends(['name'])]
 class Folder extends Model
 {
     use HasFactory;
     use HasUuids;
-
-    protected $guarded = [];
-    public $timestamps = false;
-    protected $appends = ['name'];
 
     public function songs(): HasMany
     {
@@ -46,6 +49,11 @@ class Folder extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(__CLASS__);
+    }
+
+    public function uploader(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'uploader_id');
     }
 
     public function subfolders(): HasMany

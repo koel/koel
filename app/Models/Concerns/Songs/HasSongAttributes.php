@@ -10,6 +10,7 @@ use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 use App\Values\SongStorageMetadata\S3LambdaMetadata;
 use App\Values\SongStorageMetadata\SftpMetadata;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
+use App\Values\SongStorageMetadata\WebDAVMetadata;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -48,6 +49,10 @@ trait HasSongAttributes
                         preg_match('/^dropbox:\\/\\/(.*)/', $this->path, $matches);
                         return DropboxMetadata::make($matches[1]);
 
+                    case SongStorageType::WEBDAV:
+                        preg_match('/^webdav:\\/\\/(.*)/', $this->path, $matches);
+                        return WebDAVMetadata::make($matches[1]);
+
                     default:
                         return LocalMetadata::make($this->path);
                 }
@@ -68,11 +73,6 @@ trait HasSongAttributes
 
     protected function genre(): Attribute
     {
-        return Attribute::get(
-            fn () => $this->genres
-                ->pluck('name')
-                ->sort()
-                ->implode(', '),
-        )->shouldCache();
+        return Attribute::get(fn () => $this->genres->pluck('name')->sort()->implode(', '))->shouldCache();
     }
 }

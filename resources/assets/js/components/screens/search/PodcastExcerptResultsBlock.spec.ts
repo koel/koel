@@ -15,7 +15,7 @@ describe('podcastExcerptResultsBlock.vue', () => {
   })
 
   it('renders podcast cards when podcasts are provided', () => {
-    const podcasts = h.factory('podcast', 3)
+    const podcasts = h.factory('podcast').make(3)
 
     h.render(Component, {
       props: { podcasts, searching: false },

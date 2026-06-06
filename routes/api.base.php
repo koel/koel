@@ -15,6 +15,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
 use App\Http\Controllers\API\Embed\EmbedController;
 use App\Http\Controllers\API\Embed\EmbedOptionsController;
+use App\Http\Controllers\API\EqualizerPresetController;
 use App\Http\Controllers\API\ExcerptSearchController;
 use App\Http\Controllers\API\FavoriteController;
 use App\Http\Controllers\API\FetchAlbumInformationController;
@@ -23,6 +24,8 @@ use App\Http\Controllers\API\FetchDemoCreditsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchOverviewController;
+use App\Http\Controllers\API\FetchRandomAlbumsController;
+use App\Http\Controllers\API\FetchRandomArtistsController;
 use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
 use App\Http\Controllers\API\FetchSongsByIdsController;
 use App\Http\Controllers\API\FetchSongsForQueueController;
@@ -32,6 +35,7 @@ use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GetOneTimeTokenController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
+use App\Http\Controllers\API\Me\RegenerateSubsonicApiKeyController;
 use App\Http\Controllers\API\MediaBrowser\FetchFolderSongsController;
 use App\Http\Controllers\API\MediaBrowser\FetchRecursiveFolderSongsController;
 use App\Http\Controllers\API\MediaBrowser\FetchSubfoldersController;
@@ -55,6 +59,10 @@ use App\Http\Controllers\API\PublicizeSongsController;
 use App\Http\Controllers\API\QueueStateController;
 use App\Http\Controllers\API\RadioStationController;
 use App\Http\Controllers\API\RadioStationNowPlayingController;
+use App\Http\Controllers\API\RateAlbumController;
+use App\Http\Controllers\API\RateArtistController;
+use App\Http\Controllers\API\RatePodcastController;
+use App\Http\Controllers\API\RateSongController;
 use App\Http\Controllers\API\RegisterPlayController;
 use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
@@ -102,8 +110,10 @@ Route::prefix('api')
             Route::get('invitations', [UserInvitationController::class, 'get']);
             Route::post('invitations/accept', [UserInvitationController::class, 'accept']);
 
-            Route::get('embeds/{embed}/{options}', [EmbedController::class, 'getPayload'])->name('embeds.payload');
-            Route::post('embed-options', [EmbedOptionsController::class, 'encrypt']);
+            Route::middleware('embeds.enabled')->group(static function (): void {
+                Route::get('embeds/{embed}/{options}', [EmbedController::class, 'getPayload'])->name('embeds.payload');
+                Route::post('embed-options', [EmbedOptionsController::class, 'encrypt']);
+            });
         });
 
         Route::middleware('auth')->group(static function (): void {
@@ -135,9 +145,11 @@ Route::prefix('api')
 
             Route::get('download/check', CheckDownloadableCountController::class);
 
+            Route::get('albums/random', FetchRandomAlbumsController::class);
             Route::apiResource('albums', AlbumController::class);
             Route::apiResource('albums.songs', AlbumSongController::class);
 
+            Route::get('artists/random', FetchRandomArtistsController::class);
             Route::apiResource('artists', ArtistController::class);
             Route::apiResource('artists.albums', ArtistAlbumController::class);
             Route::apiResource('artists.songs', ArtistSongController::class);
@@ -183,6 +195,11 @@ Route::prefix('api')
             Route::get('songs/favorite', FetchFavoriteSongsController::class); // @deprecated
             Route::get('songs/favorites', FetchFavoriteSongsController::class);
 
+            Route::put('songs/{song}/rating', RateSongController::class)->where(['song' => Uuid::REGEX]);
+            Route::put('albums/{album}/rating', RateAlbumController::class);
+            Route::put('artists/{artist}/rating', RateArtistController::class);
+            Route::put('podcasts/{podcast}/rating', RatePodcastController::class)->where(['podcast' => Uuid::REGEX]);
+
             Route::apiResource('playlist-folders', PlaylistFolderController::class);
             Route::apiResource('playlist-folders.playlists', PlaylistFolderPlaylistController::class)->except(
                 'destroy',
@@ -211,6 +228,9 @@ Route::prefix('api')
             Route::get('me', [ProfileController::class, 'show']);
             Route::put('me', [ProfileController::class, 'update']);
             Route::patch('me/preferences', UpdateUserPreferenceController::class);
+            Route::post('me/equalizer-presets', [EqualizerPresetController::class, 'store']);
+            Route::delete('me/equalizer-presets/{id}', [EqualizerPresetController::class, 'destroy']);
+            Route::post('me/subsonic-api-key/regenerate', RegenerateSubsonicApiKeyController::class);
 
             // Last.fm-related routes
             Route::post('lastfm/session-key', SetLastfmSessionKeyController::class);
@@ -290,7 +310,9 @@ Route::get('library/stats', function () {
             Route::apiResource('themes', ThemeController::class)->except('show', 'update');
 
             // Embed routes
-            Route::post('embeds/resolve', [EmbedController::class, 'resolveForEmbeddable']);
+            Route::middleware('embeds.enabled')->group(static function (): void {
+                Route::post('embeds/resolve', [EmbedController::class, 'resolveForEmbeddable']);
+            });
         });
 
         // Object-storage (S3) routes

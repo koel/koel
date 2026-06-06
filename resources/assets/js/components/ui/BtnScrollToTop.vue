@@ -37,6 +37,7 @@ onMounted(() => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 button {
   @apply border border-k-fg-50 text-k-fg;
   bottom: calc(var(--footer-height) + 26px);

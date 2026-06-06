@@ -3,9 +3,9 @@ import koelBirdCover from '@/../img/covers/default.svg'
 
 export const useBranding = () => {
   const currentBranding: Branding = {
-    name: window.BRANDING.name,
-    logo: window.BRANDING.logo || koelBirdLogo,
-    cover: window.BRANDING.cover || koelBirdCover,
+    name: window.KOEL.branding.name,
+    logo: window.KOEL.branding.logo || koelBirdLogo,
+    cover: window.KOEL.branding.cover || koelBirdCover,
   }
 
   const isKoelBirdLogo = (logo: string) => logo === koelBirdLogo

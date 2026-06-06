@@ -8,7 +8,7 @@
     <Icon v-if="isCurrentTheme" :icon="faBookmark" class="absolute z-10 -top-1 right-3 text-k-highlight" size="xl" />
 
     <button
-      class="opacity-0 hover:opacity-100 absolute h-full rounded-lg w-full top-0 left-0 flex items-center justify-center text-lg transition-opacity bg-k-bg-70 !text-k-fg"
+      class="opacity-0 hover:opacity-100 absolute h-full rounded-lg w-full top-0 left-0 flex items-center justify-center text-lg transition-opacity bg-k-bg-70 text-k-fg!"
       type="button"
       @click="onClick"
     >

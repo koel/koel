@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RadioStation;
 use App\Models\User;
-use App\Services\RadioStreamService;
+use App\Services\Radio\RadioStreamService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class StreamRadioController extends Controller

@@ -53,4 +53,23 @@ export const podcastStore = {
 
     podcast.favorite = Boolean(favorite)
   },
+
+  async rate(podcast: Reactive<Podcast>, rating: number) {
+    const previous = podcast.rating
+    podcast.rating = rating
+
+    try {
+      const updated = await http.put<Podcast>(`podcasts/${podcast.id}/rating`, { rating })
+
+      if (podcast.rating === rating) {
+        podcast.rating = updated.rating
+      }
+    } catch (error) {
+      if (podcast.rating === rating) {
+        podcast.rating = previous
+      }
+
+      throw error
+    }
+  },
 }

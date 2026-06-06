@@ -87,11 +87,7 @@ class UserInvitationServiceTest extends TestCase
     public function accept(): void
     {
         $admin = create_admin();
-        $prospect = User::factory()
-            ->for($admin, 'invitedBy')
-            ->admin()
-            ->prospect()
-            ->createOne();
+        $prospect = User::factory()->for($admin, 'invitedBy')->admin()->prospect()->createOne();
 
         $user = $this->service->accept($prospect->invitation_token, 'Bruce Dickinson', 'SuperSecretPassword');
 

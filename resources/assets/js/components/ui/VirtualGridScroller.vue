@@ -1,8 +1,7 @@
 <template>
   <div
     ref="scroller"
-    v-koel-overflow-fade
-    class="virtual-grid-scroller will-change-transform overflow-scroll h-full"
+    class="scroll-mask-y virtual-grid-scroller will-change-transform overflow-scroll h-full"
     @scroll.passive="onScroll"
   >
     <!-- Measuring phase: render one item to measure height, gap, and padding -->
@@ -154,6 +153,21 @@ onBeforeUnmount(() => {
 const scrollToTop = () => scroller.value?.scrollTo({ top: 0, behavior: 'smooth' })
 
 watch(minItemWidth, () => measure())
+
+watch(
+  [() => items.value.length, scrollerHeight, measuring],
+  () => {
+    if (
+      !measuring.value &&
+      items.value.length > 0 &&
+      measuredItemHeight.value > 0 &&
+      totalHeight.value <= scrollerHeight.value
+    ) {
+      emit('scrolled-to-end')
+    }
+  },
+  { flush: 'post' },
+)
 
 watch(
   () => items.value.length,

@@ -71,7 +71,7 @@ describe('playlistStore', () => {
   })
 
   it('sets up a smart playlist with properly unserialized rules', () => {
-    const playlist = h.factory('playlist', {
+    const playlist = h.factory('playlist').make({
       is_smart: true,
       rules: serializedRuleGroups as unknown as SmartPlaylistRuleGroup[],
     })
@@ -82,9 +82,9 @@ describe('playlistStore', () => {
   })
 
   it('stores a playlist', async () => {
-    const songs = h.factory('song', 3)
-    const playlist = h.factory('playlist')
-    const folder = h.factory('playlist-folder')
+    const songs = h.factory('song').make(3)
+    const playlist = h.factory('playlist').make()
+    const folder = h.factory('playlist-folder').make()
     const postMock = h.mock(http, 'post').mockResolvedValue(playlist)
     h.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', null)
 
@@ -111,9 +111,9 @@ describe('playlistStore', () => {
   })
 
   it('deletes a playlist', async () => {
-    const playlist = h.factory('playlist')
+    const playlist = h.factory('playlist').make()
     const deleteMock = h.mock(http, 'delete')
-    playlistStore.state.playlists = [h.factory('playlist'), playlist]
+    playlistStore.state.playlists = [h.factory('playlist').make(), playlist]
 
     await playlistStore.delete(playlist)
 
@@ -123,8 +123,8 @@ describe('playlistStore', () => {
   })
 
   it('adds songs to a playlist', async () => {
-    const playlist = h.factory('playlist')
-    const songs = h.factory('song', 3)
+    const playlist = h.factory('playlist').make()
+    const songs = h.factory('song').make(3)
     const postMock = h.mock(http, 'post').mockResolvedValue(playlist)
     const removeMock = h.mock(cache, 'remove')
 
@@ -138,8 +138,8 @@ describe('playlistStore', () => {
   })
 
   it('removes songs from a playlist', async () => {
-    const playlist = h.factory('playlist')
-    const songs = h.factory('song', 3)
+    const playlist = h.factory('playlist').make()
+    const songs = h.factory('song').make(3)
     const deleteMock = h.mock(http, 'delete').mockResolvedValue(playlist)
     const removeMock = h.mock(cache, 'remove')
 
@@ -153,20 +153,20 @@ describe('playlistStore', () => {
   })
 
   it('does not modify a smart playlist content', async () => {
-    const playlist = factory.states('smart')('playlist')
+    const playlist = factory('playlist').state('smart').make()
     const postMock = h.mock(http, 'post')
 
-    await playlistStore.addContent(playlist, h.factory('song', 3))
+    await playlistStore.addContent(playlist, h.factory('song').make(3))
     expect(postMock).not.toHaveBeenCalled()
 
-    await playlistStore.removeContent(playlist, h.factory('song', 3))
+    await playlistStore.removeContent(playlist, h.factory('song').make(3))
     expect(postMock).not.toHaveBeenCalled()
   })
 
   it('updates a standard playlist', async () => {
-    const playlist = h.factory('playlist')
+    const playlist = h.factory('playlist').make()
     playlistStore.state.playlists = [playlist]
-    const folder = h.factory('playlist-folder')
+    const folder = h.factory('playlist-folder').make()
 
     const putMock = h.mock(http, 'put').mockResolvedValue(playlist)
 
@@ -187,9 +187,9 @@ describe('playlistStore', () => {
   })
 
   it('updates a smart playlist', async () => {
-    const playlist = factory.states('smart')('playlist')
+    const playlist = factory('playlist').state('smart').make()
     playlistStore.state.playlists = [playlist]
-    const rules = h.factory('smart-playlist-rule-group', 2)
+    const rules = h.factory('smart-playlist-rule-group').make(2)
     const serializeMock = h.mock(playlistStore, 'serializeSmartPlaylistRulesForStorage', ['Whatever'])
     const putMock = h.mock(http, 'put').mockResolvedValue(playlist)
     const removeMock = h.mock(cache, 'remove')

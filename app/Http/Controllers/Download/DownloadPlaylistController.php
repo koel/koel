@@ -7,7 +7,7 @@ use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Services\DownloadService;
-use App\Services\SmartPlaylistService;
+use App\Services\Playlist\SmartPlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class DownloadPlaylistController extends Controller

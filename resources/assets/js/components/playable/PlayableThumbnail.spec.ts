@@ -7,7 +7,7 @@ describe('playableThumbnail.vue', () => {
   const h = createHarness()
 
   const renderComponent = (playbackState: PlaybackState = 'Stopped') => {
-    const playable = h.factory('song', {
+    const playable = h.factory('song').make({
       playback_state: playbackState,
       play_count: 10,
       title: 'Foo bar',

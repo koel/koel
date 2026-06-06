@@ -6,7 +6,7 @@ describe('profileAvatar.vue', () => {
   const h = createHarness()
 
   it('renders', () => {
-    const user = h.factory('user', {
+    const user = h.factory('user').make({
       name: 'John Doe',
       avatar: 'https://example.com/avatar.jpg',
     })

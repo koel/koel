@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full fixed top-0 left-0 flex items-center justify-center z-[99] bg-black/70">
+  <div class="w-full h-full fixed top-0 left-0 flex items-center justify-center z-99 bg-black/70">
     <div class="relative max-w-full max-h-full rounded-md flex">
       <Cropper
         ref="cropper"

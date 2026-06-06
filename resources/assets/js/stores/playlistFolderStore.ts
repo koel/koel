@@ -1,7 +1,7 @@
 import type { UnwrapNestedRefs } from 'vue'
 import { reactive } from 'vue'
 import { http } from '@/services/http'
-import { differenceBy, orderBy } from 'lodash'
+import { differenceBy, orderBy } from 'lodash-es'
 import { playlistStore } from '@/stores/playlistStore'
 
 export const playlistFolderStore = {

@@ -6,20 +6,20 @@ export const socketService = {
   channel: null as any,
 
   async init() {
-    if (!window.PUSHER_APP_KEY) {
+    if (!window.KOEL.pusher.app_key) {
       return false
     }
 
     const { default: PusherLib } = await import('pusher-js')
 
-    this.pusher = new PusherLib(window.PUSHER_APP_KEY, {
-      authEndpoint: `${window.BASE_URL}api/broadcasting/auth`,
+    this.pusher = new PusherLib(window.KOEL.pusher.app_key, {
+      authEndpoint: `${window.KOEL.base_url}api/broadcasting/auth`,
       auth: {
         headers: {
           Authorization: `Bearer ${authService.getApiToken()}`,
         },
       },
-      cluster: window.PUSHER_APP_CLUSTER,
+      cluster: window.KOEL.pusher.app_cluster,
       encrypted: true,
     })
 

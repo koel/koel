@@ -1,30 +1,27 @@
+import { reactive } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { equalizerPresets as presets } from '@/config/audio'
+import { equalizerPresets as builtInPresets } from '@/config/audio'
+import { http } from '@/services/http'
+
+const state = reactive({
+  customPresets: [] as EqualizerPreset[],
+})
+
+const byName = (a: EqualizerPreset, b: EqualizerPreset) =>
+  (a.name ?? '').localeCompare(b.name ?? '', undefined, { sensitivity: 'base' })
 
 export const equalizerStore = {
-  getPresetByName: (name: string) => presets.find(preset => preset.name === name),
+  state,
 
-  /**
-   * Get the current equalizer config.
-   */
-  getConfig() {
-    let config: EqualizerPreset | undefined
-
-    if (this.isCustom(preferences.equalizer)) {
-      return preferences.equalizer
-    }
-
-    if (preferences.equalizer.name !== null) {
-      config = this.getPresetByName(preferences.equalizer.name)
-    }
-
-    return config || presets[0]
+  init() {
+    state.customPresets = [...(preferences.equalizer_presets ?? [])].sort(byName)
   },
 
-  isCustom(preset: any) {
+  isModified(preset: any) {
     return (
       typeof preset === 'object' &&
       preset !== null &&
+      !preset.id &&
       preset.name === null &&
       typeof preset.preamp === 'number' &&
       Array.isArray(preset.gains) &&
@@ -33,16 +30,38 @@ export const equalizerStore = {
     )
   },
 
-  /**
-   * Save the current equalizer config.
-   */
-  saveConfig(name: EqualizerPreset['name'] | null, preamp: number, gains: number[]) {
-    const preset = name ? this.getPresetByName(name) : null
+  getPresetById: (id: string) => builtInPresets.find(p => p.id === id) ?? state.customPresets.find(p => p.id === id),
 
-    preferences.equalizer = preset || {
-      preamp,
-      gains,
-      name: null,
+  getConfig(): EqualizerPreset {
+    const current = preferences.current_equalizer_preset
+
+    if (current.id) {
+      // If the saved preset was deleted elsewhere, keep the user's slider
+      // state by demoting to a modified preset.
+      return this.getPresetById(current.id) ?? { name: null, preamp: current.preamp, gains: [...current.gains] }
     }
+
+    // Backwards-compat: legacy data persisted name without id.
+    if (current.name !== null) {
+      return builtInPresets.find(p => p.name === current.name) ?? builtInPresets[0]
+    }
+
+    return current
+  },
+
+  saveConfig(preset: EqualizerPreset | null, preamp: number, gains: number[]) {
+    preferences.current_equalizer_preset = preset ?? { name: null, preamp, gains }
+  },
+
+  async saveCustomPreset(name: string, preamp: number, gains: number[]): Promise<EqualizerPreset> {
+    const preset = await http.post<EqualizerPreset>('me/equalizer-presets', { name, preamp, gains })
+    state.customPresets = [...state.customPresets, preset].sort(byName)
+
+    return preset
+  },
+
+  async deleteCustomPreset(id: string) {
+    await http.delete(`me/equalizer-presets/${id}`)
+    state.customPresets = state.customPresets.filter(p => p.id !== id)
   },
 }

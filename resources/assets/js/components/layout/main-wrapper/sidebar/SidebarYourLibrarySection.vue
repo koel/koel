@@ -62,7 +62,7 @@
 <script lang="ts" setup>
 import { faCloudArrowDown, faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { GuitarIcon, MicVocalIcon, RadioIcon } from 'lucide-vue-next'
-import { unescape } from 'lodash'
+import { unescape } from 'lodash-es'
 import { computed, ref, toRef } from 'vue'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { eventBus } from '@/utils/eventBus'
@@ -81,7 +81,7 @@ const { url, isCurrentScreen } = useRouter()
 const usesMediaBrowser = toRef(commonStore.state, 'uses_media_browser')
 const { swReady, cachedSongCount } = useOfflinePlayback()
 const supportsOffline = computed(() => swReady.value && cachedSongCount.value > 0)
-const isDemo = window.IS_DEMO
+const isDemo = window.KOEL.is_demo
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => (youtubeVideoTitle.value = unescape(payload.title)))
 </script>

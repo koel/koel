@@ -7,7 +7,7 @@
   >
     <a
       :href="url('podcasts.show', { id: podcast.id })"
-      class="flex gap-5 p-5 rounded-[inherit] bg-k-fg-5 hover:bg-k-fg-10 !text-k-fg !hover:text-k-fg"
+      class="flex gap-5 p-5 rounded-[inherit] bg-k-fg-5 hover:bg-k-fg-10 text-k-fg! hover:text-k-fg!"
       data-testid="podcast-item"
       @contextmenu.prevent="onContextMenu"
     >
@@ -18,12 +18,10 @@
         <header>
           <h3 class="text-3xl font-bold">
             {{ podcast.title }}
-            <FavoriteButton
-              v-if="podcast.favorite"
-              :favorite="podcast.favorite"
-              class="ml-2"
-              @toggle="toggleFavorite"
-            />
+            <span class="inline-flex items-center gap-2 align-middle text-base font-normal ml-2">
+              <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" @toggle="toggleFavorite" />
+              <StarRating v-if="podcast.rating" :rateable="podcast" size="xs" />
+            </span>
           </h3>
           <p class="mt-2">
             {{ podcast.author }}
@@ -49,6 +47,7 @@ import { formatTimeAgo } from '@vueuse/core'
 import { textToHsl } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 import { podcastStore } from '@/stores/podcastStore'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { defineAsyncComponent } from '@/utils/helpers'
@@ -76,6 +75,7 @@ const onContextMenu = (event: MouseEvent) =>
 </script>
 
 <style scoped lang="postcss">
+@reference '@css/app.pcss';
 .description {
   :deep(p) {
     @apply mb-3;

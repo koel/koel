@@ -1,10 +1,10 @@
 import isMobile from 'ismobilejs'
-import { differenceBy, orderBy, sumBy, take, unionBy, uniqBy } from 'lodash'
+import { differenceBy, orderBy, unionBy, uniqBy } from 'lodash-es'
 import { Reactive, reactive, watch } from 'vue'
 import { arrayify, flattenParams, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
-import { md5 } from '@/utils/crypto'
+import { sha256 } from '@/utils/crypto'
 import { normalizeForComparison, secondsToHumanReadable } from '@/utils/formatters'
 import { authService } from '@/services/authService'
 import { cache } from '@/services/cache'
@@ -62,7 +62,8 @@ export const playableStore = {
     favorites: [],
   }),
 
-  getFormattedLength: (playables: MaybeArray<Playable>) => secondsToHumanReadable(sumBy(arrayify(playables), 'length')),
+  getFormattedLength: (playables: MaybeArray<Playable>) =>
+    secondsToHumanReadable(arrayify(playables).reduce((total, p) => total + p.length, 0)),
 
   findPlaying() {
     for (const playable of this.vault.values()) {
@@ -195,7 +196,7 @@ export const playableStore = {
       : `${commonStore.state.cdn_url}play/${playable.id}?t=${authService.getAudioToken()}`
   },
 
-  getShareableUrl: (song: Playable) => `${window.BASE_URL}#/songs/${song.id}`,
+  getShareableUrl: (song: Playable) => `${window.KOEL.base_url}#/songs/${song.id}`,
 
   ensureNotDeleted: (songs: MaybeArray<Song>) => arrayify(songs).filter(({ deleted }) => !deleted),
 
@@ -207,6 +208,11 @@ export const playableStore = {
         this.syncWithVault(await http.get<Song[]>(`albums/${id}/songs`)),
       )) as Song[],
     )
+  },
+
+  invalidateAlbumAndArtistSongCaches(song: Song) {
+    cache.remove(['album.songs', song.album_id])
+    cache.remove(['artist.songs', song.artist_id])
   },
 
   async fetchSongsForArtist(artist: Artist | Artist['id']) {
@@ -297,16 +303,13 @@ export const playableStore = {
   },
 
   getMostPlayedSongs(count: number) {
-    return take(
-      orderBy(
-        Array.from(this.vault.values()).filter(
-          playable => isSong(playable) && !playable.deleted && playable.play_count > 0,
-        ),
-        'play_count',
-        'desc',
+    return orderBy(
+      Array.from(this.vault.values()).filter(
+        playable => isSong(playable) && !playable.deleted && playable.play_count > 0,
       ),
-      count,
-    ) as Song[]
+      'play_count',
+      'desc',
+    ).slice(0, count) as Song[]
   },
 
   async deleteSongsFromFilesystem(songs: Song[]) {
@@ -353,18 +356,17 @@ export const playableStore = {
     const songReferences = data.filter(item => item.type === 'songs') as Array<Pick<Song, 'type' | 'id'>>
     const songs = this.byIds(songReferences.map(item => item.id)) as Song[]
 
-    const folderReferences = data.filter(item => item.type === 'folders') as Array<Pick<Folder, 'type' | 'path'>>
+    const folderReferences = data.filter(item => item.type === 'folders') as Array<Pick<Folder, 'type' | 'id'>>
 
     if (!folderReferences.length) {
       return songs
     }
 
-    const paths = folderReferences.map(item => item.path).sort()
+    const folders = folderReferences.map(item => item.id).sort()
 
-    // since paths can be long, we use a hash instead
-    const cacheKey = ['folders', md5(paths.join(''))]
+    const cacheKey = ['folders', await sha256(JSON.stringify(folders))]
 
-    const fetcher = () => http.post<Song[]>(`songs/by-folders?shuffle=${shuffle}`, { paths })
+    const fetcher = () => http.post<Song[]>(`songs/by-folders?shuffle=${shuffle}`, { folders })
 
     const songsFromFolders = this.syncWithVault(
       shuffle ? await fetcher() : await cache.remember(cacheKey, async () => await fetcher()),
@@ -373,8 +375,9 @@ export const playableStore = {
     return unionBy(songs, songsFromFolders as Song[], 'id')
   },
 
-  async fetchSongsInFolder(path: Folder['path']) {
-    return this.syncWithVault(await http.get<Song[]>(`songs/in-folder?path=${path}`))
+  async fetchSongsInFolder(folderId: Folder['id'] | null) {
+    const query = folderId ? `?folder=${folderId}` : ''
+    return this.syncWithVault(await http.get<Song[]>(`songs/in-folder${query}`))
   },
 
   async fetchFavorites() {
@@ -397,6 +400,19 @@ export const playableStore = {
     this.state.favorites = playable.favorite
       ? unionBy(this.state.favorites, arrayify(playable), 'id')
       : differenceBy(this.state.favorites, arrayify(playable), 'id')
+  },
+
+  async rate(song: Reactive<Song>, rating: number) {
+    const previous = song.rating
+    song.rating = rating
+
+    try {
+      const updated = await http.put<Song>(`songs/${song.id}/rating`, { rating })
+      song.rating = updated.rating
+    } catch (e) {
+      song.rating = previous
+      throw e
+    }
   },
 
   async favorite(playables: MaybeArray<Playable>) {

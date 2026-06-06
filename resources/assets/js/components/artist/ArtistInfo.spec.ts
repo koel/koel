@@ -10,8 +10,8 @@ describe('artistInfo.vue', () => {
 
   const renderComponent = async (mode: EncyclopediaDisplayMode = 'aside', info?: ArtistInfo) => {
     commonStore.state.uses_last_fm = true
-    info = info ?? h.factory('artist-info')
-    const artist = h.factory('artist', { name: 'Led Zeppelin' })
+    info = info ?? h.factory('artist-info').make()
+    const artist = h.factory('artist').make({ name: 'Led Zeppelin' })
 
     const fetchMock = h.mock(encyclopediaService, 'fetchForArtist').mockResolvedValue(info)
 

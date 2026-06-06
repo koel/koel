@@ -8,9 +8,9 @@
   >
     <article
       :class="layout"
-      class="relative group flex p-5 rounded-[inherit] flex-col gap-5"
+      class="relative group flex h-full p-5 rounded-[inherit] flex-col gap-5"
       data-testid="artist-album-card"
-      draggable="true"
+      :draggable="!isMobile.any"
       tabindex="0"
       @dblclick="onDblClick"
       @dragstart="onDragStart"
@@ -35,6 +35,7 @@
 </template>
 
 <script lang="ts" setup>
+import isMobile from 'ismobilejs'
 import { computed, toRefs } from 'vue'
 import { textToHsl } from '@/utils/formatters'
 
@@ -51,8 +52,8 @@ const emit = defineEmits<{
   (e: 'contextmenu', event: MouseEvent): void
 }>()
 
-const hasThumbnail = (entity: Artist | Album | Podcast | RadioStation): entity is Artist | Album | Podcast =>
-  entity.type !== 'radio-stations'
+const hasThumbnail = (entity: Artist | Album | Podcast | RadioStation): entity is Artist | Album =>
+  entity.type !== 'radio-stations' && entity.type !== 'podcasts'
 
 const { layout } = toRefs(props)
 const gradientColor = computed(() => textToHsl(String(props.entity.id)))
@@ -63,6 +64,7 @@ const onContextMenu = (e: MouseEvent) => emit('contextmenu', e)
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 article {
   @apply bg-k-fg-5;
 

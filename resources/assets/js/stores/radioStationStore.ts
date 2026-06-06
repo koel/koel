@@ -3,13 +3,14 @@ import { reactive, ref } from 'vue'
 import { http } from '@/services/http'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import { arrayify } from '@/utils/helpers'
 import { commonStore } from '@/stores/commonStore'
 
 export interface RadioStationData {
   name: RadioStation['name']
   url: RadioStation['url']
+  homepage_url: RadioStation['homepage_url']
   description: RadioStation['description']
   is_public: RadioStation['is_public']
   logo?: RadioStation['logo']

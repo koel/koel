@@ -27,14 +27,24 @@ function base_url(): string
     return app()->runningUnitTests() ? config('app.url') : asset('');
 }
 
-function image_storage_path(?string $fileName, ?string $default = null): ?string
+function image_storage_path(?string $fileName, ?string $default = null, bool $ensureDirectoryExists = true): ?string
 {
-    return $fileName ? public_path(config('koel.image_storage_dir') . $fileName) : $default;
+    if (!$fileName) {
+        return $default;
+    }
+
+    $path = public_path(config('koel.image_storage_dir') . DIRECTORY_SEPARATOR . $fileName);
+
+    if ($ensureDirectoryExists && !is_dir(dirname($path))) {
+        File::ensureDirectoryExists(dirname($path));
+    }
+
+    return $path;
 }
 
 function image_storage_url(?string $fileName, ?string $default = null): ?string
 {
-    return $fileName ? static_url(config('koel.image_storage_dir') . $fileName) : $default;
+    return $fileName ? static_url(config('koel.image_storage_dir') . '/' . $fileName) : $default;
 }
 
 function artifact_path(?string $subPath = null, $ensureDirectoryExists = true): string
@@ -112,6 +122,10 @@ function collect_sso_providers(): array
         && config('services.google.hd')
     ) {
         $providers[] = 'Google';
+    }
+
+    if (config('services.oidc.issuer') && config('services.oidc.client_id') && config('services.oidc.client_secret')) {
+        $providers[] = 'OpenID Connect';
     }
 
     return $providers;

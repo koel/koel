@@ -11,6 +11,52 @@ use function Tests\create_user;
 class UserPreferencesCastTest extends TestCase
 {
     #[Test]
+    public function serializedArrayContainsExactlyTheRegisteredPreferenceKeys(): void
+    {
+        $expected = [
+            'active_extra_panel_tab',
+            'albums_favorites_only',
+            'albums_sort_field',
+            'albums_sort_order',
+            'albums_view_mode',
+            'artists_favorites_only',
+            'artists_sort_field',
+            'artists_sort_order',
+            'artists_view_mode',
+            'confirm_before_closing',
+            'continuous_playback',
+            'crossfade_duration',
+            'current_equalizer_preset',
+            'detect_duplicate_uploads',
+            'equalizer_presets',
+            'genres_sort_field',
+            'genres_sort_order',
+            'include_public_media',
+            'lastfm_session_key',
+            'lyrics_zoom_level',
+            'make_uploads_public',
+            'podcasts_favorites_only',
+            'podcasts_sort_field',
+            'podcasts_sort_order',
+            'radio_stations_favorites_only',
+            'radio_stations_sort_field',
+            'radio_stations_sort_order',
+            'radio_stations_view_mode',
+            'repeat_mode',
+            'show_album_art_overlay',
+            'show_now_playing_notification',
+            'support_bar_no_bugging',
+            'theme',
+            'transcode_on_mobile',
+            'transcode_quality',
+            'visualizer',
+            'volume',
+        ];
+
+        self::assertEqualsCanonicalizing($expected, array_keys(UserPreferences::fromArray([])->toArray()));
+    }
+
+    #[Test]
     public function cast(): void
     {
         $user = create_user([
@@ -39,9 +85,9 @@ class UserPreferencesCastTest extends TestCase
 
         self::assertSame(7.0, $prefs->volume);
         self::assertSame('NO_REPEAT', $prefs->repeatMode);
-        self::assertSame('thumbnails', $prefs->albumsViewMode);
-        self::assertSame('thumbnails', $prefs->artistsViewMode);
-        self::assertSame('thumbnails', $prefs->radioStationsViewMode);
+        self::assertSame('grid', $prefs->albumsViewMode);
+        self::assertSame('grid', $prefs->artistsViewMode);
+        self::assertSame('grid', $prefs->radioStationsViewMode);
         self::assertSame('name', $prefs->albumsSortField);
         self::assertSame('name', $prefs->artistsSortField);
         self::assertSame('name', $prefs->genresSortField);
@@ -130,13 +176,13 @@ class UserPreferencesCastTest extends TestCase
     {
         $user = create_user([
             'preferences' => [
-                'albums_view_mode' => 'list',
-                'artists_view_mode' => 'list',
+                'albums_view_mode' => 'table',
+                'artists_view_mode' => 'table',
             ],
         ]);
 
-        self::assertSame('list', $user->preferences->albumsViewMode);
-        self::assertSame('list', $user->preferences->artistsViewMode);
+        self::assertSame('table', $user->preferences->albumsViewMode);
+        self::assertSame('table', $user->preferences->artistsViewMode);
     }
 
     #[Test]
@@ -162,6 +208,76 @@ class UserPreferencesCastTest extends TestCase
         $user->preferences->activeExtraPanelTab = null;
         $user->save();
         self::assertNull($user->refresh()->preferences->activeExtraPanelTab);
+    }
+
+    #[Test]
+    public function fallsBackToLegacyEqualizerKeyForBackwardsCompat(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'equalizer' => [
+                    'name' => 'Rock',
+                    'preamp' => 2,
+                    'gains' => [4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                ],
+            ],
+        ]);
+
+        self::assertSame('Rock', $user->preferences->currentEqualizerPreset->name);
+        self::assertSame(2.0, $user->preferences->currentEqualizerPreset->preamp);
+    }
+
+    #[Test]
+    public function defaultsEqualizerPresetsToEmptyCollection(): void
+    {
+        $user = create_user();
+
+        self::assertCount(0, $user->preferences->equalizerPresets);
+    }
+
+    #[Test]
+    public function roundTripsEqualizerPresets(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'equalizer_presets' => [
+                    [
+                        'id' => '01J0000000000000000000ABCD',
+                        'name' => 'My Bass Boost',
+                        'preamp' => 3.0,
+                        'gains' => [6, 5, 4, 3, 2, 1, 0, 0, 0, 0],
+                    ],
+                ],
+            ],
+        ]);
+
+        $presets = $user->refresh()->preferences->equalizerPresets;
+
+        self::assertCount(1, $presets);
+        self::assertSame('01J0000000000000000000ABCD', $presets->first()->id);
+        self::assertSame('My Bass Boost', $presets->first()->name);
+        self::assertSame(3.0, $presets->first()->preamp);
+        self::assertSame([6.0, 5.0, 4.0, 3.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0], $presets->first()->gains);
+    }
+
+    #[Test]
+    public function dropsMalformedEqualizerPresets(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'equalizer_presets' => [
+                    ['id' => 'valid', 'name' => 'Good', 'preamp' => 0, 'gains' => array_fill(0, 10, 0)],
+                    ['id' => 'no-name', 'preamp' => 0, 'gains' => array_fill(0, 10, 0)],
+                    ['id' => 'short-gains', 'name' => 'Bad', 'preamp' => 0, 'gains' => [0, 0, 0]],
+                    'totally-not-an-array',
+                ],
+            ],
+        ]);
+
+        $presets = $user->preferences->equalizerPresets;
+
+        self::assertCount(1, $presets);
+        self::assertSame('Good', $presets->first()->name);
     }
 
     #[Test]

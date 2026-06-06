@@ -1,5 +1,5 @@
 import Sketch from 'sketch-js'
-import { random, sample } from 'lodash'
+import { random, sample } from 'lodash-es'
 import { audioService } from '@/services/audioService'
 import { noop } from '@/utils/helpers'
 

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Database\Factories\InteractionFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +20,8 @@ use Illuminate\Support\Carbon;
  *
  * @method static InteractionFactory factory(...$parameters)
  */
+#[Guarded(['id'])]
+#[Hidden(['id', 'user_id', 'created_at', 'updated_at', 'last_played_at'])]
 class Interaction extends Model
 {
     use HasFactory;
@@ -28,9 +32,6 @@ class Interaction extends Model
             'play_count' => 'integer',
         ];
     }
-
-    protected $guarded = ['id'];
-    protected $hidden = ['id', 'user_id', 'created_at', 'updated_at', 'last_played_at'];
 
     public function user(): BelongsTo
     {

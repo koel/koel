@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UpdatePlaybackStatusRequest;
 use App\Models\User;
 use App\Repositories\SongRepository;
-use App\Services\PodcastService;
+use App\Services\Podcast\PodcastService;
 use App\Services\QueueService;
 use Illuminate\Contracts\Auth\Authenticatable;
 

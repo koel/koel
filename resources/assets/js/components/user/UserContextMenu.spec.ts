@@ -11,7 +11,7 @@ describe('userContextMenu.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (user?: User) => {
-    user = user || h.factory('user')
+    user = user || h.factory('user').make()
 
     const rendered = h.render(Component, {
       props: {
@@ -27,7 +27,7 @@ describe('userContextMenu.vue', () => {
 
   it('deletes user if confirmed', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(true)
-    const { user } = await renderComponent(h.factory('user', { permissions: { edit: true, delete: true } }))
+    const { user } = await renderComponent(h.factory('user').make({ permissions: { edit: true, delete: true } }))
     const destroyMock = h.mock(userStore, 'destroy')
 
     await h.user.click(screen.getByText('Delete'))
@@ -37,7 +37,7 @@ describe('userContextMenu.vue', () => {
 
   it('does not delete user if not confirmed', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(false)
-    await renderComponent(h.factory('user', { permissions: { edit: true, delete: true } }))
+    await renderComponent(h.factory('user').make({ permissions: { edit: true, delete: true } }))
     const destroyMock = h.mock(userStore, 'destroy')
 
     await h.user.click(screen.getByText('Delete'))
@@ -47,7 +47,9 @@ describe('userContextMenu.vue', () => {
 
   it('revokes invite for prospects', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(true)
-    const prospect = factory.states('prospect')('user', { permissions: { edit: false, delete: true } })
+    const prospect = factory('user')
+      .state('prospect')
+      .make({ permissions: { edit: false, delete: true } })
     await renderComponent(prospect)
     const revokeMock = h.mock(invitationService, 'revoke')
 
@@ -58,7 +60,11 @@ describe('userContextMenu.vue', () => {
 
   it('does not revoke invite for prospects if not confirmed', async () => {
     h.mock(DialogBoxStub.value, 'confirm').mockResolvedValue(false)
-    await renderComponent(factory.states('prospect')('user', { permissions: { edit: false, delete: true } }))
+    await renderComponent(
+      factory('user')
+        .state('prospect')
+        .make({ permissions: { edit: false, delete: true } }),
+    )
     await h.user.click(screen.getByText('Revoke Invitation'))
     const revokeMock = h.mock(invitationService, 'revoke')
 
@@ -68,7 +74,7 @@ describe('userContextMenu.vue', () => {
   })
 
   it('respects the permissions', async () => {
-    await renderComponent(h.factory('user', { permissions: { edit: false, delete: false } }))
+    await renderComponent(h.factory('user').make({ permissions: { edit: false, delete: false } }))
     expect(screen.queryByText('Edit')).toBeNull()
     expect(screen.queryByText('Delete')).toBeNull()
   })

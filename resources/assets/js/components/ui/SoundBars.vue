@@ -5,9 +5,10 @@
 </template>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 span {
   @apply w-[3px] h-full bg-current rounded-full origin-bottom;
-  animation: bounce 2.2s ease-out infinite alternate;
+  animation: sound-bars-bounce 2.2s ease-out infinite alternate;
 
   &:nth-of-type(2) {
     animation-delay: -2.2s;
@@ -18,7 +19,7 @@ span {
   }
 }
 
-@keyframes bounce {
+@keyframes sound-bars-bounce {
   10% {
     transform: scaleY(0.2);
   }

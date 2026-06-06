@@ -7,7 +7,7 @@ describe('artistEvent.vue', () => {
   const h = createHarness()
 
   const renderComponent = (event?: LiveEvent) => {
-    event = event ?? h.factory('live-event')
+    event = event ?? h.factory('live-event').make()
 
     const rendered = h.render(ArtistEventItem, {
       props: {
@@ -23,7 +23,7 @@ describe('artistEvent.vue', () => {
 
   it('renders', () => {
     renderComponent(
-      h.factory('live-event', {
+      h.factory('live-event').make({
         id: 'foo',
         name: 'Metalfest',
         url: 'https://www.metalfest.com/tix',

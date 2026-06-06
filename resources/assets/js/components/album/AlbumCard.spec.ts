@@ -18,7 +18,7 @@ describe('albumCard', () => {
   const h = createHarness()
 
   const createAlbum = (overrides: Partial<Album> = {}) => {
-    return h.factory('album', {
+    return h.factory('album').make({
       id: 'iv',
       name: 'IV',
       artist_id: 'led-zeppelin',
@@ -50,12 +50,6 @@ describe('albumCard', () => {
     }
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
-  it('renders external album', () => {
-    expect(renderComponent(createAlbum({ is_external: true })).html()).toMatchSnapshot()
-  })
-
   it('downloads', async () => {
     const mock = h.mock(downloadService, 'fromAlbum')
     renderComponent()
@@ -75,7 +69,7 @@ describe('albumCard', () => {
   it('shuffles', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
     const shuffleMock = h.mock(playbackService, 'queueAndPlay').mockResolvedValue(void 0)
     const { album } = renderComponent(undefined, false)

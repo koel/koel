@@ -6,7 +6,7 @@ use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistResource;
 use App\Models\User;
-use App\Services\PlaylistCollaborationService;
+use App\Services\Playlist\PlaylistCollaborationService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 #[RequiresPlus]

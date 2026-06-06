@@ -12,17 +12,18 @@ use App\Models\RadioStation;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\Contracts\Encyclopedia;
+use App\Services\DotenvEditor;
 use App\Services\Geolocation\Contracts\GeolocationService;
 use App\Services\Geolocation\IPinfoService;
-use App\Services\LastfmService;
+use App\Services\Integrations\LastfmService;
+use App\Services\Integrations\MusicBrainzService;
+use App\Services\Integrations\NullEncyclopedia;
+use App\Services\Integrations\SpotifyService;
 use App\Services\License\Contracts\LicenseServiceInterface;
-use App\Services\LicenseService;
-use App\Services\MusicBrainzService;
-use App\Services\NullEncyclopedia;
+use App\Services\License\LicenseService;
 use App\Services\Scanners\Contracts\ScannerCacheStrategy as ScannerCacheStrategyContract;
 use App\Services\Scanners\ScannerCacheStrategy;
 use App\Services\Scanners\ScannerNoCacheStrategy;
-use App\Services\SpotifyService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -99,6 +100,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(GeolocationService::class, static function (): GeolocationService {
             return app(IPinfoService::class);
         });
+
+        $this->app
+            ->when(DotenvEditor::class)
+            ->needs('$path')
+            ->give(static fn () => app()->environmentFilePath());
     }
 
     public function register(): void

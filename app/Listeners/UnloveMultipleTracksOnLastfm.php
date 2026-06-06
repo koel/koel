@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\MultipleSongsUnliked;
-use App\Services\LastfmService;
+use App\Services\Integrations\LastfmService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 readonly class UnloveMultipleTracksOnLastfm implements ShouldQueue

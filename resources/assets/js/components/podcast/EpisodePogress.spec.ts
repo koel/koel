@@ -8,7 +8,7 @@ describe('episodeProgress.vue', () => {
   it('renders', () => {
     const { html } = h.render(Component, {
       props: {
-        episode: h.factory('episode', {
+        episode: h.factory('episode').make({
           length: 300,
         }),
         position: 60,

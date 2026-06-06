@@ -1,6 +1,6 @@
 import type { Reactive } from 'vue'
 import { reactive, ref, toRaw } from 'vue'
-import { cloneDeep, isEqual } from 'lodash'
+import { isEqual } from 'lodash-es'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useOverlay as useOverlayComposable } from '@/composables/useOverlay'
 
@@ -23,7 +23,7 @@ export const useForm = <T extends Record<string, any>>(config: UseFormConfig<T>)
 
   const loading = ref(false)
   const data = reactive<T>(config.initialValues)
-  const rawOriginalData = cloneDeep(toRaw(data)) as T
+  const rawOriginalData = structuredClone(toRaw(data)) as T
 
   const isPristine = () =>
     config.isPristine ? config.isPristine(rawOriginalData, toRaw(data)) : isEqual(rawOriginalData, toRaw(data))

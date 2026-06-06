@@ -1,4 +1,3 @@
-import { without } from 'lodash'
 import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
@@ -50,7 +49,7 @@ export const uploadService = {
 
   remove(file: UploadFile) {
     this.abortHandles.delete(file.id)
-    this.state.files = without(this.state.files, file)
+    this.state.files = this.state.files.filter(f => f !== file)
     this.proceed()
   },
 
@@ -126,20 +125,22 @@ export const uploadService = {
 
       const err = error as {
         status?: number
-        responseData?: DuplicateUpload | { message?: string }
+        responseData?: unknown
       }
 
-      if (err.status === 409 && err.responseData) {
-        this.state.duplicatedSongs.push(err.responseData as DuplicateUpload)
+      const responseData = err.responseData
+      const isObjectResponse = responseData !== null && typeof responseData === 'object'
+
+      if (err.status === 409 && isObjectResponse) {
+        this.state.duplicatedSongs.push(responseData as DuplicateUpload)
         this.remove(file)
         return
       }
 
-      if (err.responseData && 'message' in err.responseData && err.responseData.message) {
-        file.message = `Upload failed: ${err.responseData.message}`
-      } else {
-        file.message = 'Upload failed: Unknown error.'
-      }
+      const message =
+        isObjectResponse && 'message' in responseData ? (responseData as { message?: unknown }).message : undefined
+
+      file.message = typeof message === 'string' && message ? `Upload failed: ${message}` : 'Server error.'
 
       this.proceed() // upload the next file
     } finally {
@@ -175,6 +176,7 @@ export const uploadService = {
 
   handleUploadResult: (result: UploadResult) => {
     playableStore.syncWithVault(result.song)
+    playableStore.invalidateAlbumAndArtistSongCaches(result.song)
     albumStore.syncWithVault(result.album)
     commonStore.state.song_length += 1
     eventBus.emit('SONG_UPLOADED', result.song)

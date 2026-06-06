@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Helpers\Ulid;
 use App\Http\Resources\ArtistResource;
+use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Embed;
+use App\Models\Song;
 use App\Values\EmbedOptions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -28,6 +30,64 @@ class ArtistTest extends TestCase
         $this->getAs(
             'api/artists?sort=created_at&order=desc&page=2',
         )->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
+
+        $this->getAs(
+            'api/artists?sort=favorite&order=desc',
+        )->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
+
+        $this->getAs(
+            'api/artists?sort=rating&order=desc',
+        )->assertJsonStructure(ArtistResource::PAGINATION_JSON_STRUCTURE);
+    }
+
+    #[Test]
+    public function indexExcludesArtistsWithoutAlbums(): void
+    {
+        $albumArtist = Artist::factory()->createOne();
+        Album::factory()->for($albumArtist)->createOne();
+
+        $perTrackOnly = Artist::factory()->createOne();
+
+        $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
+
+        self::assertContains($albumArtist->id, $ids);
+        self::assertNotContains($perTrackOnly->id, $ids);
+    }
+
+    #[Test]
+    public function indexExcludesFeaturedArtistsOnSomeoneElsesAlbum(): void
+    {
+        // Album owned by `albumOwner`, with a track credited to `featuredArtist`.
+        // featuredArtist has no album of their own → must be excluded.
+        $albumOwner = Artist::factory()->createOne();
+        $album = Album::factory()->for($albumOwner)->createOne();
+
+        $featuredArtist = Artist::factory()->createOne();
+        Song::factory()->for($album)->for($featuredArtist)->createOne();
+
+        $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
+
+        self::assertContains($albumOwner->id, $ids);
+        self::assertNotContains($featuredArtist->id, $ids);
+    }
+
+    #[Test]
+    public function indexIncludesCompilationCuratorEvenWithoutOwnTracks(): void
+    {
+        // The curator owns a compilation album but contributes no tracks themselves;
+        // every song on the comp is credited to a different track artist. Curator
+        // is still the album_artist → must be included. Track artist with no album
+        // of their own → excluded.
+        $curator = Artist::factory()->createOne();
+        $compilation = Album::factory()->for($curator)->createOne();
+
+        $trackArtist = Artist::factory()->createOne();
+        Song::factory()->for($compilation)->for($trackArtist)->createOne();
+
+        $ids = collect($this->getAs('api/artists')->json('data'))->pluck('id')->all();
+
+        self::assertContains($curator->id, $ids);
+        self::assertNotContains($trackArtist->id, $ids);
     }
 
     #[Test]

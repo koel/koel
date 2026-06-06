@@ -1,4 +1,5 @@
-css
+css/*
+!css/layer-order.css
 fonts
 
 # Ignore all (generated) images under img/, but keep the folder structure

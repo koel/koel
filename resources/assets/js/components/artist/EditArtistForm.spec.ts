@@ -8,7 +8,7 @@ describe('editArtistForm.vue', () => {
   const h = createHarness()
 
   const renderComponent = (artist?: Artist) => {
-    artist = artist ?? h.factory('artist')
+    artist = artist ?? h.factory('artist').make()
     artistStore.state.artists = [artist]
 
     const rendered = h.render(Component, {
@@ -39,7 +39,7 @@ describe('editArtistForm.vue', () => {
 
   it('submits with a new image', async () => {
     const updateMock = h.mock(artistStore, 'update')
-    const { artist } = renderComponent(h.factory('artist', { image: '' }))
+    const { artist } = renderComponent(h.factory('artist').make({ image: '' }))
 
     await h.type(screen.getByTitle('Artist name'), 'Dude')
 
@@ -59,7 +59,7 @@ describe('editArtistForm.vue', () => {
   })
 
   it('removes image and submits', async () => {
-    const { artist } = renderComponent(h.factory('artist'))
+    const { artist } = renderComponent(h.factory('artist').make())
     const updateMock = h.mock(artistStore, 'update')
 
     await h.user.click(screen.getByRole('button', { name: 'Remove' }))

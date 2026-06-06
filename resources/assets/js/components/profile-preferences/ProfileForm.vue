@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { pick } from 'lodash'
+import { pick } from 'lodash-es'
 import type { UpdateCurrentProfileData } from '@/services/authService'
 import { authService } from '@/services/authService'
 import { useAuthorization } from '@/composables/useAuthorization'
@@ -86,7 +86,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 const { toastSuccess } = useMessageToaster()
 const { currentUser } = useAuthorization()
 
-const isDemo = window.IS_DEMO
+const isDemo = window.KOEL.is_demo
 
 const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
   initialValues: {

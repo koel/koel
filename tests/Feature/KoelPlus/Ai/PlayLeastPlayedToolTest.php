@@ -38,16 +38,10 @@ class PlayLeastPlayedToolTest extends PlusTestCase
         $neverPlayed = Song::factory()->for($this->user, 'owner')->createOne();
 
         $rarelyPlayed = Song::factory()->for($this->user, 'owner')->createOne();
-        Interaction::factory()
-            ->for($this->user)
-            ->for($rarelyPlayed)
-            ->createOne(['play_count' => 1]);
+        Interaction::factory()->for($this->user)->for($rarelyPlayed)->createOne(['play_count' => 1]);
 
         $heavilyPlayed = Song::factory()->for($this->user, 'owner')->createOne();
-        Interaction::factory()
-            ->for($this->user)
-            ->for($heavilyPlayed)
-            ->createOne(['play_count' => 100]);
+        Interaction::factory()->for($this->user)->for($heavilyPlayed)->createOne(['play_count' => 100]);
 
         $response = $this->tool->handle(new Request(['limit' => 2]));
 
@@ -73,10 +67,7 @@ class PlayLeastPlayedToolTest extends PlusTestCase
     #[Test]
     public function queuesInsteadOfPlaying(): void
     {
-        Song::factory()
-            ->count(3)
-            ->for($this->user, 'owner')
-            ->create();
+        Song::factory()->count(3)->for($this->user, 'owner')->create();
 
         $response = $this->tool->handle(new Request(['queue' => true]));
 

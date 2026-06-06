@@ -6,13 +6,13 @@ describe('PlaylistThumbnail', () => {
   const h = createHarness()
 
   it('renders the thumbnail article', () => {
-    const playlist = h.factory('playlist')
+    const playlist = h.factory('playlist').make()
     const { getByTestId } = h.render(Component, { props: { playlist } })
     expect(getByTestId('playlist-thumbnail')).toBeTruthy()
   })
 
   it('renders slot content', () => {
-    const playlist = h.factory('playlist')
+    const playlist = h.factory('playlist').make()
     const { getByTestId } = h.render(Component, {
       props: { playlist },
       slots: { default: '<span>Overlay</span>' },

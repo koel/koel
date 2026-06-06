@@ -18,7 +18,7 @@ class InviteUserRequest extends Request
     public function rules(): array
     {
         return [
-            'emails.*' => 'required|email|unique:users,email',
+            'emails.*' => ['required', 'email', 'unique:users,email'],
             'role' => [
                 'required',
                 Rule::enum(Role::class),

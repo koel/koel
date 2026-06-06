@@ -1,11 +1,11 @@
-import { clone, uniqBy } from 'lodash'
-import Color from 'color'
+import { uniqBy } from 'lodash-es'
 import StyleObserver from 'style-observer'
 import { reactive } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { http } from '@/services/http'
 import themes from '@/config/themes'
 import { cache } from '@/services/cache'
+import { isDarkColor } from '@/utils/color'
 
 export interface ThemeData {
   name: string
@@ -41,7 +41,7 @@ export const themeStore = {
 
     // calculate and set the highlight foreground color
     const observer = new StyleObserver(([{ value }]) => {
-      document.body.style.setProperty('--color-highlight-fg', Color(value).isDark() ? '#ffffff' : '#111111')
+      document.body.style.setProperty('--color-highlight-fg', isDarkColor(value) ? '#ffffff' : '#111111')
     })
 
     observer.observe(document.body, '--color-highlight')
@@ -68,7 +68,7 @@ export const themeStore = {
     }
 
     document.documentElement.setAttribute('data-theme', theme.id)
-    const properties = Object.assign(clone(this.defaultProperties), theme.properties ?? {})
+    const properties = { ...this.defaultProperties, ...(theme.properties ?? {}) }
 
     for (const key in properties) {
       document.body.style.setProperty(key, properties[key]) // overriding :root

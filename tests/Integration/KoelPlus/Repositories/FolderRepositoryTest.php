@@ -4,6 +4,7 @@ namespace Tests\Integration\KoelPlus\Repositories;
 
 use App\Models\Folder;
 use App\Repositories\FolderRepository;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -33,5 +34,42 @@ class FolderRepositoryTest extends PlusTestCase
         $results = $this->repository->getByPaths(['foo', 'foo/bar', '__KOEL_UPLOADS_$1__'], $user);
 
         self::assertEqualsCanonicalizing($results->pluck('id')->toArray(), [$foo->id, $bar->id]);
+    }
+
+    #[Test]
+    public function getAncestorsReturnsChainOrderedRootFirst(): void
+    {
+        $music = Folder::factory()->createOne(['path' => 'Music']);
+        $rock = Folder::factory()->for($music, 'parent')->createOne(['path' => 'Music/Rock']);
+        $floyd = Folder::factory()->for($rock, 'parent')->createOne(['path' => 'Music/Rock/PinkFloyd']);
+        $wall = Folder::factory()->for($floyd, 'parent')->createOne(['path' => 'Music/Rock/PinkFloyd/TheWall']);
+
+        $ancestors = $this->repository->getAncestors($wall);
+
+        self::assertSame([$music->id, $rock->id, $floyd->id], $ancestors->pluck('id')->all());
+    }
+
+    #[Test]
+    public function getAncestorsRunsExactlyOneQuery(): void
+    {
+        $music = Folder::factory()->createOne(['path' => 'Music']);
+        $rock = Folder::factory()->for($music, 'parent')->createOne(['path' => 'Music/Rock']);
+        $floyd = Folder::factory()->for($rock, 'parent')->createOne(['path' => 'Music/Rock/PinkFloyd']);
+        $wall = Folder::factory()->for($floyd, 'parent')->createOne(['path' => 'Music/Rock/PinkFloyd/TheWall']);
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+
+        $this->repository->getAncestors($wall);
+
+        self::assertCount(1, DB::getQueryLog());
+    }
+
+    #[Test]
+    public function getAncestorsReturnsEmptyForRootLevelFolder(): void
+    {
+        $root = Folder::factory()->createOne(['path' => 'Music']);
+
+        self::assertTrue($this->repository->getAncestors($root)->isEmpty());
     }
 }

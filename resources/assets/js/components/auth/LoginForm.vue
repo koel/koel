@@ -32,6 +32,7 @@
 
     <div v-if="ssoProviders.length" v-show="!showingForgotPasswordForm" class="flex gap-3 items-center">
       <GoogleLoginButton v-if="ssoProviders.includes('Google')" @error="onSSOError" @success="onSSOSuccess" />
+      <OpenIDLoginButton v-if="ssoProviders.includes('OpenID Connect')" @error="onSSOError" @success="onSSOSuccess" />
     </div>
 
     <ForgotPasswordForm v-if="showingForgotPasswordForm" @cancel="showingForgotPasswordForm = false" />
@@ -50,6 +51,7 @@ import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm.vue'
 import GoogleLoginButton from '@/components/auth/sso/GoogleLoginButton.vue'
+import OpenIDLoginButton from '@/components/auth/sso/OpenIDLoginButton.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
@@ -58,20 +60,20 @@ const emit = defineEmits<{ (e: 'loggedin'): void }>()
 const { toastWarning, toastError } = useMessageToaster()
 const { logo } = useBranding()
 
-const demoAccount = window.DEMO_ACCOUNT || {
+const demoAccount = window.KOEL.demo_account || {
   email: 'demo@koel.dev',
   password: 'demo',
 }
 
 const failed = ref(false)
 const showingForgotPasswordForm = ref(false)
-const canResetPassword = window.MAILER_CONFIGURED && !window.IS_DEMO
-const ssoProviders = window.SSO_PROVIDERS || []
-const emailPlaceholder = window.IS_DEMO ? demoAccount.email : 'Your email address'
-const passwordPlaceholder = window.IS_DEMO ? demoAccount.password : 'Your password'
+const canResetPassword = window.KOEL.mailer_configured && !window.KOEL.is_demo
+const ssoProviders = window.KOEL.sso_providers || []
+const emailPlaceholder = window.KOEL.is_demo ? demoAccount.email : 'Your email address'
+const passwordPlaceholder = window.KOEL.is_demo ? demoAccount.password : 'Your password'
 
 const { data, handleSubmit } = useForm<{ email: string; password: string }>({
-  initialValues: window.IS_DEMO
+  initialValues: window.KOEL.is_demo
     ? demoAccount
     : {
         email: '',
@@ -111,6 +113,7 @@ onMounted(() => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 /**
  * I like to move it move it
  * I like to move it move it

@@ -12,6 +12,7 @@ enum Role: string implements Arrayable
     case ADMIN = 'admin';
     case MANAGER = 'manager';
     case USER = 'user';
+    case GUEST = 'guest';
 
     public function label(): string
     {
@@ -19,6 +20,7 @@ enum Role: string implements Arrayable
             self::ADMIN => 'Admin',
             self::MANAGER => 'Manager',
             self::USER => 'User',
+            self::GUEST => 'Guest',
         };
     }
 
@@ -33,6 +35,7 @@ enum Role: string implements Arrayable
             self::ADMIN => 3,
             self::MANAGER => 2,
             self::USER => 1,
+            self::GUEST => 0,
         };
     }
 
@@ -56,7 +59,7 @@ enum Role: string implements Arrayable
         return match ($this) {
             self::ADMIN, self::USER => true,
             // @mago-ignore lint:prefer-first-class-callable
-            self::MANAGER => once(static fn () => License::isPlus()),
+            self::MANAGER, self::GUEST => once(static fn () => License::isPlus()),
         };
     }
 
@@ -84,6 +87,8 @@ enum Role: string implements Arrayable
             self::USER => $isCommunity
                 ? 'Users can play music and manage their own playlists.'
                 : 'Users can upload and manage their own music.',
+            self::GUEST
+                => 'Guests can only play music shared by others; they cannot upload or manage their own library.',
         };
     }
 

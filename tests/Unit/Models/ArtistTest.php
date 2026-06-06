@@ -54,4 +54,13 @@ class ArtistTest extends TestCase
 
         self::assertTrue(Artist::getOrCreate($artist->user, $name)->is($artist));
     }
+
+    #[Test]
+    public function nameAccessorIsNullSafe(): void
+    {
+        // Scout's database engine calls toSearchableArray() on a fresh model instance
+        // to introspect searchable columns; that read of $this->name hits the accessor
+        // with a null value.
+        self::assertSame(Artist::UNKNOWN_NAME, (new Artist())->name);
+    }
 }

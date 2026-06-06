@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class AuthenticateAudioRequests
+{
+    public function handle(Request $request, Closure $next)
+    {
+        abort_unless($request->user()?->tokenCan('audio'), Response::HTTP_UNAUTHORIZED);
+
+        return $next($request);
+    }
+}

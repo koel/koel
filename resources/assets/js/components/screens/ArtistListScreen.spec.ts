@@ -6,15 +6,15 @@ import { commonStore } from '@/stores/commonStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import Component from './ArtistListScreen.vue'
 
-const virtualGridStub = {
-  template: '<div data-testid="artist-list"><slot v-for="(item, i) in items" :key="i" :item="item" /></div>',
-  props: ['items', 'minItemWidth'],
+const artistGridStub = {
+  template: '<div data-testid="artist-grid"><div v-for="(a, i) in artists" :key="i" data-testid="artist-card" /></div>',
+  props: ['artists'],
   methods: { scrollToTop() {} },
 }
 
-const artistCardStub = {
-  template: '<div data-testid="artist-card" :data-layout="layout" />',
-  props: ['artist', 'layout'],
+const artistTableStub = {
+  template: '<div data-testid="artist-table-stub" />',
+  props: ['artists', 'field', 'order'],
 }
 
 describe('artistListScreen.vue', () => {
@@ -22,7 +22,7 @@ describe('artistListScreen.vue', () => {
 
   const renderComponent = async () => {
     const paginator: PaginatorResource<Artist> = {
-      data: h.factory('artist', 9),
+      data: h.factory('artist').make(9),
       links: {
         next: '?page=1',
       },
@@ -38,8 +38,8 @@ describe('artistListScreen.vue', () => {
     const rendered = h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: artistCardStub,
-          VirtualGridScroller: virtualGridStub,
+          ArtistGrid: artistGridStub,
+          ArtistTable: artistTableStub,
         },
       },
     })
@@ -65,28 +65,31 @@ describe('artistListScreen.vue', () => {
     await waitFor(() => screen.getByTestId('screen-empty-state'))
   })
 
-  it.each<[ViewMode, CardLayout]>([
-    ['thumbnails', 'full'],
-    ['list', 'compact'],
-  ])('passes correct card layout for %s view mode', async (mode, expectedLayout) => {
-    preferenceStore.temporary.artists_view_mode = mode
+  it('renders the table when the view mode is table', async () => {
+    preferenceStore.temporary.artists_view_mode = 'table'
     await renderComponent()
 
-    const cards = screen.getAllByTestId('artist-card')
-    cards.forEach((card: HTMLElement) => expect(card.dataset.layout).toBe(expectedLayout))
+    expect(screen.queryByTestId('artist-grid')).toBeNull()
+    screen.getByTestId('artist-table-stub')
   })
 
-  it('switches layout via view mode toggle', async () => {
+  it('switches between grid and table via the view mode toggle', async () => {
+    preferenceStore.temporary.artists_view_mode = 'grid'
     await renderComponent()
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
+    screen.getByTestId('artist-grid')
+    expect(screen.queryByTestId('artist-table-stub')).toBeNull()
+
+    await h.user.click(screen.getByRole('radio', { name: 'View as table' }))
     await waitFor(() => {
-      screen.getAllByTestId('artist-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('compact'))
+      screen.getByTestId('artist-table-stub')
+      expect(screen.queryByTestId('artist-grid')).toBeNull()
     })
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
+    await h.user.click(screen.getByRole('radio', { name: 'View as grid' }))
     await waitFor(() => {
-      screen.getAllByTestId('artist-card').forEach((card: HTMLElement) => expect(card.dataset.layout).toBe('full'))
+      screen.getByTestId('artist-grid')
+      expect(screen.queryByTestId('artist-table-stub')).toBeNull()
     })
   })
 
@@ -117,7 +120,7 @@ describe('artistListScreen.vue', () => {
   })
 
   it('filters out unfavorited artists in favorites mode', async () => {
-    const artists = h.factory('artist', 5, { favorite: true })
+    const artists = h.factory('artist').make({ favorite: true }, 5)
     artistStore.state.artists = artists
 
     h.mock(artistStore, 'paginate').mockResolvedValue(null)
@@ -125,8 +128,8 @@ describe('artistListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: artistCardStub,
-          VirtualGridScroller: virtualGridStub,
+          ArtistGrid: artistGridStub,
+          ArtistTable: artistTableStub,
         },
       },
     })
@@ -153,8 +156,8 @@ describe('artistListScreen.vue', () => {
     h.render(Component, {
       global: {
         stubs: {
-          ArtistCard: artistCardStub,
-          VirtualGridScroller: virtualGridStub,
+          ArtistGrid: artistGridStub,
+          ArtistTable: artistTableStub,
         },
       },
     })

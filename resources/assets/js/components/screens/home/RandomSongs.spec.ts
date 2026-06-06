@@ -8,13 +8,13 @@ describe('randomSongs.vue', () => {
   const h = createHarness()
 
   it('displays the songs', async () => {
-    overviewStore.state.randomSongs = h.factory('song', 6)
+    overviewStore.state.randomSongs = h.factory('song').make(6)
     h.render(Component)
     await waitFor(() => expect(screen.getAllByTestId('song-card')).toHaveLength(6))
   })
 
   it('refreshes random songs on button click', async () => {
-    overviewStore.state.randomSongs = h.factory('song', 6)
+    overviewStore.state.randomSongs = h.factory('song').make(6)
     const refreshMock = h.mock(overviewStore, 'refreshRandomSongs')
     h.render(Component)
 
@@ -24,7 +24,7 @@ describe('randomSongs.vue', () => {
   })
 
   it('marks grid as busy during refresh', async () => {
-    overviewStore.state.randomSongs = h.factory('song', 6)
+    overviewStore.state.randomSongs = h.factory('song').make(6)
     h.mock(overviewStore, 'refreshRandomSongs').mockReturnValue(new Promise(() => {}))
     h.render(Component)
 

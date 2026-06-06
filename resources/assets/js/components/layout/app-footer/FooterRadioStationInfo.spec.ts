@@ -13,7 +13,7 @@ describe('footerRadioStationInfo.vue', () => {
   })
 
   it('renders with current radio', () => {
-    const station = h.factory('radio-station', {
+    const station = h.factory('radio-station').make({
       name: 'Classic Rock',
       logo: 'https://via.placeholder.com/150',
       description: 'The best classic rock hits',
@@ -34,7 +34,7 @@ describe('footerRadioStationInfo.vue', () => {
   })
 
   it('shows now-playing info when available', async () => {
-    const station = h.factory('radio-station', {
+    const station = h.factory('radio-station').make({
       name: 'Classic Rock',
       description: 'The best classic rock hits',
       playback_state: 'Playing',
@@ -55,7 +55,7 @@ describe('footerRadioStationInfo.vue', () => {
   })
 
   it('shows description when no now-playing info', () => {
-    const station = h.factory('radio-station', {
+    const station = h.factory('radio-station').make({
       name: 'Classic Rock',
       description: 'The best classic rock hits',
       playback_state: 'Playing',

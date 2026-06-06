@@ -9,7 +9,7 @@ describe('embedWidgetTrackList.vue', async () => {
   it('renders the track list', () => {
     h.render(Component, {
       props: {
-        playables: h.factory('song', 10),
+        playables: h.factory('song').make(10),
       },
       global: {
         stubs: {

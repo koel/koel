@@ -7,7 +7,7 @@
       title="View and buy tickets for this event"
     >
       <aside class="w-44 min-w-44 p-4 flex items-center justify-center">
-        <img :src="event.image" alt="" class="w-full aspect-[3/2] object-cover rounded-md" />
+        <img :src="event.image" alt="" class="w-full aspect-3/2 object-cover rounded-md" />
       </aside>
       <dl class="flex-1 flex flex-col justify-center border-l border-white/20 border-dashed p-4 overflow-hidden">
         <dt class="sr-only">Name</dt>

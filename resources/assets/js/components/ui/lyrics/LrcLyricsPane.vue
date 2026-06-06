@@ -1,12 +1,12 @@
 <template>
-  <article ref="lyricsContainer" v-koel-overflow-fade class="overflow-y-auto space-y-2">
+  <article ref="lyricsContainer" class="scroll-mask-y overflow-y-auto space-y-2">
     <LrcLyricsLine
       v-for="(line, index) in lyrics"
       :key="index"
       :is-active="index === currentLineIndex"
       :line
       :style="{ opacity: Math.max(0.1, 1 - Math.abs(index - currentLineIndex) / 4) }"
-      class="hover:!opacity-100"
+      class="hover:opacity-100!"
       @click="seekToLine(line)"
     />
   </article>

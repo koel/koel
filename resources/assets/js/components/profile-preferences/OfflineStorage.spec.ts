@@ -46,7 +46,7 @@ describe('offlineStorage.vue', () => {
   })
 
   it('shows cached songs count', () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     songs.forEach(s => {
       cachedSongIds.value.add(s.id)
       h.mock(playableStore, 'byId').mockImplementation((id: string) => songs.find(song => song.id === id))
@@ -57,7 +57,7 @@ describe('offlineStorage.vue', () => {
   })
 
   it('clears all offline songs with confirmation', async () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     cachedSongIds.value.add(song.id)
     h.mock(playableStore, 'byId').mockReturnValue(song)
 

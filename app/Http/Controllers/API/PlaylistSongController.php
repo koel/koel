@@ -11,7 +11,7 @@ use App\Http\Resources\SongResource;
 use App\Models\Playlist;
 use App\Models\User;
 use App\Repositories\SongRepository;
-use App\Services\PlaylistService;
+use App\Services\Playlist\PlaylistService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;

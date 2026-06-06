@@ -15,7 +15,7 @@ describe('artistExcerptResultsBlock.vue', () => {
   })
 
   it('renders artist cards when artists are provided', () => {
-    const artists = h.factory('artist', 3)
+    const artists = h.factory('artist').make(3)
 
     h.render(Component, {
       props: { artists, searching: false },

@@ -35,7 +35,7 @@ describe('playableListItem.vue', () => {
   })
 
   const renderComponent = (playable?: Playable, showDisc = false) => {
-    playable = playable ?? h.factory('song', { favorite: false })
+    playable = playable ?? h.factory('song').make({ favorite: false })
 
     const row = {
       playable,
@@ -56,7 +56,7 @@ describe('playableListItem.vue', () => {
   }
 
   it('renders song details', () => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       title: 'Test Song',
       album_name: 'Test Album',
       artist_name: 'Test Artist',
@@ -82,7 +82,7 @@ describe('playableListItem.vue', () => {
   })
 
   it('renders disc info when showDisc is true', async () => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       disc: 2,
       title: 'Test Song',
     })
@@ -93,7 +93,7 @@ describe('playableListItem.vue', () => {
   })
 
   it('shows collaboration info when collaborative', () => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       collaboration: {
         user: { name: 'Alice', avatar: 'https://example.com/alice.jpg' },
         added_at: '2025-01-01',
@@ -116,7 +116,7 @@ describe('playableListItem.vue', () => {
   })
 
   it('does not show collaboration info when not collaborative', () => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       collaboration: {
         user: { name: 'Alice', avatar: 'https://example.com/alice.jpg' },
         added_at: '2025-01-01',

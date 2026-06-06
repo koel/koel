@@ -3,10 +3,10 @@
 namespace App\Console\Commands\Storage;
 
 use App\Models\Setting;
+use App\Services\DotenvEditor;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
-use Jackiedo\DotenvEditor\DotenvEditor;
 
 class SetupLocalStorageCommand extends Command
 {
@@ -28,7 +28,6 @@ class SetupLocalStorageCommand extends Command
         Setting::set('media_path', $this->askForMediaPath());
 
         $this->dotenvEditor->setKey('STORAGE_DRIVER', 'local');
-        $this->dotenvEditor->save();
         Artisan::call('config:clear', ['--quiet' => true]);
 
         $this->components->info('Local storage has been set up.');

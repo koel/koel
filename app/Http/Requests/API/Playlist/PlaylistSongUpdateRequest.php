@@ -15,7 +15,7 @@ class PlaylistSongUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => 'present|array',
+            'songs' => ['present', 'array'],
             'songs.*' => [Rule::exists(Song::class, 'id')],
         ];
     }

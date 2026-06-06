@@ -1,11 +1,11 @@
 ---
-description: Setting up SFTP, Amazon S3, DigitalOcean Spaces, Cloudflare R2, and Dropbox as Koel storage drivers.
+description: Setting up SFTP, Amazon S3, DigitalOcean Spaces, Cloudflare R2, Dropbox, and WebDAV (NextCloud, Owncloud) as Koel storage drivers.
 ---
 
 # Cloud Storage Support
 
 In addition to storing your music on the same server as Koel’s installation via the `local` storage drivers,
-Koel Plus offers several different file storage options, including SFTP, Amazon S3, S3-compatible services, Dropbox, and likely more in the future.
+Koel Plus offers several different file storage options, including SFTP, Amazon S3, S3-compatible services, Dropbox, WebDAV, and likely more in the future.
 This page will guide you through the process of setting up these storage options.
 
 :::warning Warning
@@ -145,6 +145,30 @@ Now when you upload music files to Koel, they'll be stored in your Dropbox app's
 
 :::warning Two-way sync not supported
 Koel does not support two-way sync with Dropbox — at least not yet. This means manual changes made to your Dropbox folder will not be reflected in Koel.
+:::
+
+## WebDAV (NextCloud, Owncloud, …)
+
+Koel Plus can use any WebDAV server as a storage backend, including [NextCloud](https://nextcloud.com/), [Owncloud](https://owncloud.com/), or a plain WebDAV server.
+
+Add the following to your `.env` file:
+
+```dotenv
+STORAGE_DRIVER=webdav
+
+# For NextCloud, the base URL looks like:
+#   https://your-nextcloud.example/remote.php/dav/files/<username>/
+WEBDAV_BASE_URL=
+WEBDAV_USERNAME=
+WEBDAV_PASSWORD=
+
+# Optional path prefix beneath the base URL where Koel stores its media (no leading or trailing slash).
+# For example: Music
+WEBDAV_PATH_PREFIX=
+```
+
+:::warning Use an app password
+For NextCloud, consider creating a dedicated [app password](https://docs.nextcloud.com/server/latest/user_manual/en/session_management.html#managing-devices) instead of using your account password, so you can revoke Koel's access without affecting other clients.
 :::
 
 <script lang="ts" setup>

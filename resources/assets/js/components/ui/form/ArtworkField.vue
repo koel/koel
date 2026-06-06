@@ -1,7 +1,7 @@
 <template>
   <article class="space-y-3" @paste="onPaste">
     <span v-if="model" class="block size-24 aspect-square relative">
-      <img :src="model" alt="" class="w-24 h-24 rounded object-cover" />
+      <img :src="model" alt="" class="w-24 h-24 rounded-sm object-cover" />
       <button
         class="absolute inset-0 opacity-0 hover:opacity-100 bg-black/70 active:bg-black/85 active:text-[.9rem] transition-opacity"
         type="button"
@@ -56,6 +56,8 @@ const onPaste = (event: ClipboardEvent) => {
 
   // Create a fresh FileReader per paste to avoid accumulating listeners on a shared instance.
   const { readAsDataUrl } = useFileReader()
-  readAsDataUrl(file, dataUrl => (model.value = dataUrl))
+  readAsDataUrl(file, dataUrl => {
+    model.value = dataUrl
+  })
 }
 </script>

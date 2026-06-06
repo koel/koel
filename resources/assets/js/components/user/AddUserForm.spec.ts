@@ -20,7 +20,7 @@ describe('addUserForm.vue', () => {
 
   it('creates a new user', async () => {
     const storeMock = h.mock(userStore, 'store').mockResolvedValue(
-      h.factory('user', {
+      h.factory('user').make({
         name: 'John Doe',
         email: 'john@doe.com',
       }),

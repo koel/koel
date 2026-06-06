@@ -14,13 +14,13 @@ describe('albumStore', () => {
   })
 
   it('gets an album by ID', () => {
-    const album = h.factory('album')
+    const album = h.factory('album').make()
     albumStore.vault.set(album.id, album)
     expect(albumStore.byId(album.id)).toEqual(album)
   })
 
   it('removes albums by IDs', () => {
-    const albums = h.factory('album', 3)
+    const albums = h.factory('album').make(3)
     albums.forEach(album => albumStore.vault.set(album.id, album))
     albumStore.state.albums = albums
 
@@ -33,14 +33,14 @@ describe('albumStore', () => {
   })
 
   it('identifies an unknown album', () => {
-    const album = factory.states('unknown')('album')
+    const album = factory('album').state('unknown').make()
 
     expect(albumStore.isUnknown(album)).toBe(true)
-    expect(albumStore.isUnknown(h.factory('album'))).toBe(false)
+    expect(albumStore.isUnknown(h.factory('album').make())).toBe(false)
   })
 
   it('syncs albums with the vault', () => {
-    const album = h.factory('album', { name: 'IV' })
+    const album = h.factory('album').make({ name: 'IV' })
 
     albumStore.syncWithVault(album)
     expect(albumStore.vault.get(album.id)).toEqual(album)
@@ -54,7 +54,7 @@ describe('albumStore', () => {
 
   it('fetches an album thumbnail', async () => {
     const getMock = h.mock(http, 'get').mockResolvedValue({ thumbnailUrl: 'http://test/thumbnail.jpg' })
-    const album = h.factory('album')
+    const album = h.factory('album').make()
 
     const url = await albumStore.fetchThumbnail(album.id)
 
@@ -63,7 +63,7 @@ describe('albumStore', () => {
   })
 
   it('resolves an album', async () => {
-    const album = h.factory('album')
+    const album = h.factory('album').make()
     const getMock = h.mock(http, 'get').mockResolvedValueOnce(album)
 
     expect(await albumStore.resolve(album.id)).toEqual(album)
@@ -75,7 +75,7 @@ describe('albumStore', () => {
   })
 
   it('paginates', async () => {
-    const albums = h.factory('album', 3)
+    const albums = h.factory('album').make(3)
 
     h.mock(http, 'get').mockResolvedValueOnce({
       data: albums,
@@ -101,7 +101,7 @@ describe('albumStore', () => {
   })
 
   it('updates', async () => {
-    const album = h.factory('album', { name: 'IV' })
+    const album = h.factory('album').make({ name: 'IV' })
     albumStore.syncWithVault(album)
 
     const updateData = {
@@ -122,11 +122,11 @@ describe('albumStore', () => {
   })
 
   it('toggles favorite', async () => {
-    const album = h.factory('album', { favorite: false })
+    const album = h.factory('album').make({ favorite: false })
     albumStore.syncWithVault(album)
 
     const postMock = h.mock(http, 'post').mockResolvedValueOnce(
-      h.factory('favorite', {
+      h.factory('favorite').make({
         favoriteable_type: 'album',
         favoriteable_id: album.id,
       }),

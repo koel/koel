@@ -10,8 +10,8 @@ describe('encyclopediaService', () => {
   const h = createHarness()
 
   it('fetches the artist info', async () => {
-    const artist = artistStore.syncWithVault(h.factory('artist'))[0]
-    const artistInfo = h.factory('artist-info')
+    const artist = artistStore.syncWithVault(h.factory('artist').make())[0]
+    const artistInfo = h.factory('artist-info').make()
     const getMock = h.mock(http, 'get').mockResolvedValue(artistInfo)
     const hasCacheMock = h.mock(cache, 'has', false)
     const setCacheMock = h.mock(cache, 'set')
@@ -25,12 +25,12 @@ describe('encyclopediaService', () => {
   })
 
   it('gets the artist info from cache', async () => {
-    const artistInfo = h.factory('artist-info')
+    const artistInfo = h.factory('artist-info').make()
     const hasCacheMock = h.mock(cache, 'has', true)
     const getCacheMock = h.mock(cache, 'get', artistInfo)
     const getMock = h.mock(http, 'get')
 
-    const artist = artistStore.syncWithVault(h.factory('artist'))[0]
+    const artist = artistStore.syncWithVault(h.factory('artist').make())[0]
 
     expect(await encyclopediaService.fetchForArtist(artist)).toBe(artistInfo)
     expect(hasCacheMock).toHaveBeenCalledWith(['artist.info', artist.id])
@@ -39,8 +39,8 @@ describe('encyclopediaService', () => {
   })
 
   it('fetches the album info', async () => {
-    const album = albumStore.syncWithVault(h.factory('album'))[0]
-    const albumInfo = h.factory('album-info')
+    const album = albumStore.syncWithVault(h.factory('album').make())[0]
+    const albumInfo = h.factory('album-info').make()
     const getMock = h.mock(http, 'get').mockResolvedValue(albumInfo)
     const hasCacheMock = h.mock(cache, 'has', false)
     const setCacheMock = h.mock(cache, 'set')
@@ -54,8 +54,8 @@ describe('encyclopediaService', () => {
   })
 
   it('gets the album info from cache', async () => {
-    const album = albumStore.syncWithVault(h.factory('album'))[0]
-    const albumInfo = h.factory('album-info')
+    const album = albumStore.syncWithVault(h.factory('album').make())[0]
+    const albumInfo = h.factory('album-info').make()
     const hasCacheMock = h.mock(cache, 'has', true)
     const getCacheMock = h.mock(cache, 'get', albumInfo)
     const getMock = h.mock(http, 'get')

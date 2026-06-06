@@ -19,4 +19,16 @@ class EmbedOptionsTest extends TestCase
             ->assertSuccessful()
             ->assertJsonStructure(['encrypted']);
     }
+
+    #[Test]
+    public function encryptReturnsNotFoundWhenEmbeddingDisabled(): void
+    {
+        config(['koel.embed.enabled' => false]);
+
+        $this->post('api/embed-options', [
+            'theme' => 'cat',
+            'layout' => 'compact',
+            'preview' => true,
+        ])->assertNotFound();
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Facades\License;
 use App\Models\Setting;
+use App\Services\Image\ImageStorage;
 use App\Values\Branding;
 use Illuminate\Support\Arr;
 
@@ -22,10 +23,27 @@ class SettingService
 
     public function updateMediaPath(string $path): string
     {
-        $path = rtrim($path, DIRECTORY_SEPARATOR);
+        $path = self::canonicalizeMediaPath($path);
         Setting::set('media_path', $path);
 
         return $path;
+    }
+
+    private static function canonicalizeMediaPath(string $path): string
+    {
+        $path = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
+        $sep = preg_quote(DIRECTORY_SEPARATOR, '#');
+        $path = preg_replace('#' . $sep . '+#', DIRECTORY_SEPARATOR, $path);
+
+        if ($path === DIRECTORY_SEPARATOR) {
+            return DIRECTORY_SEPARATOR;
+        }
+
+        $path = rtrim($path, DIRECTORY_SEPARATOR);
+
+        $real = realpath($path);
+
+        return $real ?: $path;
     }
 
     public function updateBranding(string $name, ?string $logo, ?string $cover): void

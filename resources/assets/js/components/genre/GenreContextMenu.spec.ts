@@ -13,7 +13,7 @@ describe('genreContextMenu.vue', () => {
   const renderComponent = async (genre?: Genre) => {
     genre =
       genre ||
-      h.factory('genre', {
+      h.factory('genre').make({
         name: 'Classical',
       })
 
@@ -34,7 +34,7 @@ describe('genreContextMenu.vue', () => {
   it('plays all', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsByGenre').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
@@ -51,7 +51,7 @@ describe('genreContextMenu.vue', () => {
   it('shuffles all', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsByGenre').mockResolvedValue(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
@@ -66,7 +66,7 @@ describe('genreContextMenu.vue', () => {
   })
 
   it('adds to queue', async () => {
-    const songs = h.factory('song', 10)
+    const songs = h.factory('song').make(10)
     const fetchMock = h.mock(playableStore, 'fetchSongsByGenre').mockResolvedValue(songs)
     const queueMock = h.mock(queueStore, 'queue')
 

@@ -30,10 +30,7 @@ class InteractionTest extends PlusTestCase
         $this->postAs('api/interaction/play', ['song' => $externalPublicSong->id], $owner)->assertSuccessful();
 
         // Can increase play count of a private song that belongs to the user
-        $ownPrivateSong = Song::factory()
-            ->private()
-            ->for($owner, 'owner')
-            ->createOne();
+        $ownPrivateSong = Song::factory()->private()->for($owner, 'owner')->createOne();
         $this->postAs(
             'api/interaction/play',
             ['song' => $ownPrivateSong->id],
@@ -57,10 +54,7 @@ class InteractionTest extends PlusTestCase
         $this->postAs('api/interaction/like', ['song' => $externalPublicSong->id], $owner)->assertSuccessful();
 
         // Can like a private song that belongs to the user
-        $ownPrivateSong = Song::factory()
-            ->private()
-            ->for($owner, 'owner')
-            ->createOne();
+        $ownPrivateSong = Song::factory()->private()->for($owner, 'owner')->createOne();
         $this->postAs('api/interaction/like', ['song' => $ownPrivateSong->id], $owner)->assertSuccessful();
     }
 
@@ -72,10 +66,7 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't batch like private songs that don't belong to the user
-        $externalPrivateSongs = Song::factory()
-            ->count(2)
-            ->private()
-            ->create();
+        $externalPrivateSongs = Song::factory()->count(2)->private()->create();
         $this->postAs(
             'api/interaction/batch/like',
             ['songs' => $externalPrivateSongs->modelKeys()],
@@ -83,10 +74,7 @@ class InteractionTest extends PlusTestCase
         )->assertForbidden();
 
         // Can batch like public songs that don't belong to the user
-        $externalPublicSongs = Song::factory()
-            ->count(1)
-            ->public()
-            ->create();
+        $externalPublicSongs = Song::factory()->count(1)->public()->create();
         $this->postAs(
             'api/interaction/batch/like',
             ['songs' => $externalPublicSongs->modelKeys()],
@@ -94,11 +82,7 @@ class InteractionTest extends PlusTestCase
         )->assertSuccessful();
 
         // Can batch like private songs that belong to the user
-        $ownPrivateSongs = Song::factory()
-            ->count(2)
-            ->private()
-            ->for($owner, 'owner')
-            ->create();
+        $ownPrivateSongs = Song::factory()->count(2)->private()->for($owner, 'owner')->create();
         $this->postAs(
             'api/interaction/batch/like',
             ['songs' => $ownPrivateSongs->modelKeys()],
@@ -118,10 +102,7 @@ class InteractionTest extends PlusTestCase
         $owner = create_user();
 
         // Can't batch unlike private songs that don't belong to the user
-        $externalPrivateSongs = Song::factory()
-            ->count(2)
-            ->private()
-            ->create();
+        $externalPrivateSongs = Song::factory()->count(2)->private()->create();
         $this->postAs(
             'api/interaction/batch/unlike',
             ['songs' => $externalPrivateSongs->modelKeys()],
@@ -129,10 +110,7 @@ class InteractionTest extends PlusTestCase
         )->assertForbidden();
 
         // Can batch unlike public songs that don't belong to the user
-        $externalPublicSongs = Song::factory()
-            ->count(1)
-            ->public()
-            ->create();
+        $externalPublicSongs = Song::factory()->count(1)->public()->create();
         $this->postAs(
             'api/interaction/batch/unlike',
             ['songs' => $externalPublicSongs->modelKeys()],
@@ -140,11 +118,7 @@ class InteractionTest extends PlusTestCase
         )->assertSuccessful();
 
         // Can batch unlike private songs that belong to the user
-        $ownPrivateSongs = Song::factory()
-            ->count(2)
-            ->private()
-            ->for($owner, 'owner')
-            ->create();
+        $ownPrivateSongs = Song::factory()->count(2)->private()->for($owner, 'owner')->create();
         $this->postAs(
             'api/interaction/batch/unlike',
             ['songs' => $ownPrivateSongs->modelKeys()],

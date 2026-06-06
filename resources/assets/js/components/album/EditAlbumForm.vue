@@ -30,7 +30,9 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep, pick } from 'lodash'
+import { pick } from 'lodash-es'
+import { toRaw } from 'vue'
+
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
 import type { AlbumUpdateData } from '@/stores/albumStore'
@@ -55,7 +57,7 @@ const close = () => emit('close')
 const { data, isPristine, handleSubmit } = useForm<AlbumUpdateData>({
   initialValues: { ...pick(album, 'name', 'year', 'cover') },
   onSubmit: async data => {
-    const formData = cloneDeep(data)
+    const formData = structuredClone(toRaw(data))
 
     if (formData.cover === album.cover) {
       // If the image is the same, don't send it (the image URL) to the server.

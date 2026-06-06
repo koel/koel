@@ -4,7 +4,7 @@ namespace Tests\Unit\Jobs;
 
 use App\Jobs\ScrobbleJob;
 use App\Models\Song;
-use App\Services\LastfmService;
+use App\Services\Integrations\LastfmService;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

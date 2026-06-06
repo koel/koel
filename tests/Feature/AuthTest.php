@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\AuthenticationService;
+use App\Services\Auth\AuthenticationService;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -50,6 +50,21 @@ class AuthTest extends TestCase
                 'token',
                 'audio-token',
             ]);
+    }
+
+    #[Test]
+    public function unauthenticatedNavigateRequestRedirectsToRootInsteadOfThrowing(): void
+    {
+        // Without redirectGuestsTo configured, Laravel 12's Authenticate middleware would try
+        // to resolve route('login') and blow up with RouteNotFoundException because koel has
+        // no login route. See issue #2164.
+        $this->get('api/data', ['Accept' => 'text/html'])->assertRedirect('/');
+    }
+
+    #[Test]
+    public function unauthenticatedJsonRequestReturnsCleanUnauthorized(): void
+    {
+        $this->getJson('api/data')->assertUnauthorized()->assertJson(['error' => 'Unauthenticated.']);
     }
 
     #[Test]

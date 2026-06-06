@@ -15,7 +15,7 @@ describe('userCard.vue', () => {
   })
 
   const renderComponent = (user?: User) => {
-    user = user ?? h.factory('user')
+    user = user ?? h.factory('user').make()
 
     const rendered = h.render(Component, {
       props: {
@@ -30,7 +30,7 @@ describe('userCard.vue', () => {
   }
 
   it('shows the profile link for the current user', () => {
-    const user = h.factory.states('current')('user') as CurrentUser
+    const user = h.factory('user').state('current').make() as CurrentUser
     h.actingAsUser(user)
     renderComponent(user)
 
@@ -39,8 +39,8 @@ describe('userCard.vue', () => {
   })
 
   it('does not show profile link for other users', () => {
-    h.actingAsUser(h.factory.states('current')('user') as CurrentUser)
-    renderComponent(h.factory('user'))
+    h.actingAsUser(h.factory('user').state('current').make() as CurrentUser)
+    renderComponent(h.factory('user').make())
 
     expect(screen.queryByRole('link', { name: 'Your Profile' })).toBeNull()
   })
@@ -62,7 +62,7 @@ describe('userCard.vue', () => {
   })
 
   it('does not show the More Actions button for the current user', () => {
-    const user = h.factory.states('current')('user') as CurrentUser
+    const user = h.factory('user').state('current').make() as CurrentUser
     h.actingAsUser(user)
     renderComponent(user)
 

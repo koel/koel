@@ -16,6 +16,9 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.png', type: 'image/x-png' }],
   ],
   cleanUrls: true,
+  sitemap: {
+    hostname: 'https://docs.koel.dev',
+  },
   vite: {
     plugins: [llmstxt()],
   },
@@ -55,6 +58,8 @@ export default defineConfig({
         items: [
           { text: 'What Is Koel?', link: '/guide/what-is-koel' },
           { text: 'Getting Started', link: '/guide/getting-started' },
+          { text: 'Standalone Binary', link: '/guide/standalone-binary' },
+          { text: 'Running with FrankenPHP', link: '/guide/running-with-frankenphp' },
         ],
       },
       {
@@ -73,6 +78,7 @@ export default defineConfig({
           { text: 'User Management', link: '/usage/user-management' },
           { text: 'Profile & Preferences', link: '/usage/profile-preferences' },
           { text: 'Remote Controller', link: '/usage/remote-controller' },
+          { text: 'Subsonic Clients', link: '/usage/subsonic' },
           { text: 'Embedding', link: '/usage/embedding' },
         ],
       },

@@ -10,7 +10,7 @@ use App\Http\Resources\PodcastResource;
 use App\Models\Podcast;
 use App\Models\User;
 use App\Repositories\PodcastRepository;
-use App\Services\PodcastService;
+use App\Services\Podcast\PodcastService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

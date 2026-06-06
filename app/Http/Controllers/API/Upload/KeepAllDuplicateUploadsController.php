@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Upload;
 
+use App\Attributes\DisabledInDemo;
 use App\Http\Controllers\Controller;
 use App\Models\Song;
 use App\Models\User;
@@ -9,9 +10,10 @@ use App\Repositories\AlbumRepository;
 use App\Repositories\DuplicateUploadRepository;
 use App\Repositories\SongRepository;
 use App\Responses\SongUploadResponse;
-use App\Services\DuplicateUploadService;
+use App\Services\Upload\DuplicateUploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
+#[DisabledInDemo]
 class KeepAllDuplicateUploadsController extends Controller
 {
     /** @param User $user */
@@ -22,7 +24,7 @@ class KeepAllDuplicateUploadsController extends Controller
         AlbumRepository $albumRepository,
         Authenticatable $user,
     ) {
-        return $service->keep($repository->getAllForUser($user))->map(function (Song $song) use (
+        return $service->keep($repository->getAllForUser($user))->map(static function (Song $song) use (
             $songRepository,
             $albumRepository,
         ): SongUploadResponse {

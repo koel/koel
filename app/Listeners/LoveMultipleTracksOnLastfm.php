@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Events\MultipleSongsLiked;
 use App\Models\Song;
-use App\Services\LastfmService;
+use App\Services\Integrations\LastfmService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 readonly class LoveMultipleTracksOnLastfm implements ShouldQueue

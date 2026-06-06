@@ -10,9 +10,9 @@ describe('embedWidget.vue', async () => {
 
   const renderComponent = async (embed?: WidgetReadyEmbed, options?: EmbedOptions, getWidgetPayloadMock?: any) => {
     embed = embed ?? {
-      ...h.factory('embed'),
-      embeddable: h.factory('playlist'),
-      playables: h.factory('song', 5),
+      ...h.factory('embed').make(),
+      embeddable: h.factory('playlist').make(),
+      playables: h.factory('song').make(5),
     }
 
     options = options ?? {

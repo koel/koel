@@ -21,14 +21,16 @@ class FetchOverviewController extends Controller
         $recentlyPlayed = $songRepository->getRecentlyPlayed(6, type: PlayableType::SONG);
 
         return response()->json([
-            'most_played_albums' => AlbumResource::collection($albumRepository->getMostPlayed()),
-            'most_played_artists' => ArtistResource::collection($artistRepository->getMostPlayed()),
+            'most_played_albums' => AlbumResource::collection($albumRepository->getMostPlayed(15)),
+            'most_played_artists' => ArtistResource::collection($artistRepository->getMostPlayed(15)),
             'most_played_songs' => SongResource::collection($songRepository->getMostPlayed(
                 6,
                 type: PlayableType::SONG,
             )),
-            'recently_added_albums' => AlbumResource::collection($albumRepository->getRecentlyAdded()),
-            'recently_added_artists' => ArtistResource::collection($artistRepository->getRecentlyAdded()),
+            'random_albums' => AlbumResource::collection($albumRepository->getRandom(15)),
+            'random_artists' => ArtistResource::collection($artistRepository->getRandom(15)),
+            'recently_added_albums' => AlbumResource::collection($albumRepository->getRecentlyAdded(15)),
+            'recently_added_artists' => ArtistResource::collection($artistRepository->getRecentlyAdded(15)),
             'recently_added_songs' => SongResource::collection($songRepository->getRecentlyAdded(6)),
             'recently_played_songs' => SongResource::collection($recentlyPlayed),
             'least_played_songs' => SongResource::collection($songRepository->getLeastPlayed(

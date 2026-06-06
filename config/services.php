@@ -4,16 +4,16 @@ use App\Models\User;
 
 return [
     /*
-    |--------------------------------------------------------------------------
-    | Third Party Services
-    |--------------------------------------------------------------------------
-    |
-    | This file is for storing the credentials for third party services such
-    | as Stripe, Mailgun, Mandrill, and others. This file provides a sane
-    | default location for this type of information, allowing packages
-    | to have a conventional place to find your various credentials.
-    |
-    */
+     |--------------------------------------------------------------------------
+     | Third Party Services
+     |--------------------------------------------------------------------------
+     |
+     | This file is for storing the credentials for third party services such
+     | as Stripe, Mailgun, Mandrill, and others. This file provides a sane
+     | default location for this type of information, allowing packages
+     | to have a conventional place to find your various credentials.
+     |
+     */
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
@@ -34,6 +34,14 @@ return [
         'model' => User::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
+    ],
+
+    'oidc' => [
+        'issuer' => env('SSO_OIDC_ISSUER'),
+        'client_id' => env('SSO_OIDC_CLIENT_ID'),
+        'client_secret' => env('SSO_OIDC_CLIENT_SECRET'),
+        'redirect' => '/auth/oidc/callback',
+        'button_label' => env('SSO_OIDC_BUTTON_LABEL', 'OpenID Connect'),
     ],
 
     'google' => [

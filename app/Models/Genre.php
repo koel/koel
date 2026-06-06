@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Builders\GenreBuilder;
 use App\Observers\GenreObserver;
 use Database\Factories\GenreFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,8 +21,10 @@ use Laravel\Scout\Searchable;
  *
  * @method static GenreFactory factory(...$parameters)
  */
+#[Fillable(['public_id', 'name'])]
 #[ObservedBy(GenreObserver::class)]
 #[UseEloquentBuilder(GenreBuilder::class)]
+#[WithoutTimestamps]
 class Genre extends Model
 {
     use HasFactory;
@@ -28,13 +32,6 @@ class Genre extends Model
 
     public const string NO_GENRE_PUBLIC_ID = 'no-genre';
     public const string NO_GENRE_NAME = '';
-
-    public $timestamps = false;
-
-    protected $fillable = [
-        'public_id',
-        'name',
-    ];
 
     // @mago-ignore lint:no-redundant-method-override
     public static function query(): GenreBuilder

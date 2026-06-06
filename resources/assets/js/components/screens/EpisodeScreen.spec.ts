@@ -14,7 +14,7 @@ describe('episodeScreen.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (episode?: Episode) => {
-    episode = episode || h.factory('episode')
+    episode = episode || h.factory('episode').make()
 
     const resolveEpisodeMock = h.mock(episodeStore, 'resolve').mockResolvedValue(episode)
 
@@ -32,7 +32,7 @@ describe('episodeScreen.vue', () => {
   }
 
   it('has a Favorite button if episode is favorite', async () => {
-    const { episode } = await renderComponent(h.factory('episode', { favorite: true }))
+    const { episode } = await renderComponent(h.factory('episode').make({ favorite: true }))
     const favoriteMock = h.mock(episodeStore, 'toggleFavorite')
 
     await waitFor(async () => {
@@ -42,7 +42,7 @@ describe('episodeScreen.vue', () => {
   })
 
   it('does not have a Favorite button if episode is not favorite', async () => {
-    await renderComponent(h.factory('episode', { favorite: false }))
+    await renderComponent(h.factory('episode').make({ favorite: false }))
     expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
   })
 

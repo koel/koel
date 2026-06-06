@@ -46,7 +46,6 @@ class EventServiceProvider extends BaseServiceProvider
 
         MediaScanCompleted::class => [
             DeleteNonExistingRecordsPostScan::class,
-            PruneLibrary::class,
             WriteScanLog::class,
         ],
 

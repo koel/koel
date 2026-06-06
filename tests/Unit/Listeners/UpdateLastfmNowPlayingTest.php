@@ -5,7 +5,7 @@ namespace Tests\Unit\Listeners;
 use App\Events\PlaybackStarted;
 use App\Listeners\UpdateLastfmNowPlaying;
 use App\Models\Song;
-use App\Services\LastfmService;
+use App\Services\Integrations\LastfmService;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

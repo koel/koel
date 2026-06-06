@@ -26,15 +26,13 @@ class RadioStationRepository extends Repository implements ScoutableRepository
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: RadioStation::search($keywords)
-                ->take($limit)
-                ->get()
-                ->modelKeys(),
+            ids: RadioStation::search($keywords)->take($limit)->get()->modelKeys(),
             preserveOrder: true,
             user: $user,
         );
     }
 
+    /** @return Collection<int, RadioStation> */
     public function getAllForUser(User $user): Collection
     {
         return RadioStation::query()->withUserContext(user: $user)->get();

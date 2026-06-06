@@ -2,6 +2,7 @@
 
 namespace App\Values\Scanning;
 
+use App\Helpers\Encoding\TagFixer;
 use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Contracts\Support\Arrayable;
@@ -42,7 +43,7 @@ class ScanInformation implements Arrayable
 
         $comments = Arr::get($info, 'comments', []);
 
-        $albumArtistName = self::getTag($tags, ['albumartist', 'album_artist', 'band']);
+        $albumArtistName = TagFixer::fix(self::getTag($tags, ['albumartist', 'album_artist', 'band']));
 
         // If the song is explicitly marked as a compilation but there's no album artist name, use the umbrella
         // "Various Artists" artist.
@@ -56,22 +57,22 @@ class ScanInformation implements Arrayable
             $cover = self::getTag($comments, 'picture', []);
         }
 
-        $lyrics = html_entity_decode(self::getTag($tags, [
+        $lyrics = html_entity_decode(TagFixer::fix(self::getTag($tags, [
             'unsynchronised_lyric',
             'unsychronised_lyric',
             'unsyncedlyrics',
             'lyrics',
-        ]));
+        ])));
 
         return new self(
-            title: html_entity_decode(self::getTag($tags, 'title', pathinfo($path, PATHINFO_FILENAME))),
-            albumName: html_entity_decode(self::getTag($tags, 'album', Album::UNKNOWN_NAME)),
-            artistName: html_entity_decode(self::getTag($tags, 'artist', Artist::UNKNOWN_NAME)),
+            title: html_entity_decode(TagFixer::fix(self::getTag($tags, 'title', pathinfo($path, PATHINFO_FILENAME)))),
+            albumName: html_entity_decode(TagFixer::fix(self::getTag($tags, 'album', Album::UNKNOWN_NAME))),
+            artistName: html_entity_decode(TagFixer::fix(self::getTag($tags, 'artist', Artist::UNKNOWN_NAME))),
             albumArtistName: html_entity_decode($albumArtistName),
             track: (int) self::getTag($tags, ['track', 'tracknumber', 'track_number']),
             disc: (int) self::getTag($tags, ['discnumber', 'part_of_a_set'], 1),
             year: (int) self::getTag($tags, 'year') ?: null,
-            genre: self::getTag($tags, 'genre'),
+            genre: TagFixer::fix(self::getTag($tags, 'genre')),
             lyrics: $lyrics,
             length: (float) Arr::get($info, 'playtime_seconds'),
             cover: $cover,

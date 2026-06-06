@@ -15,6 +15,7 @@ class ArtistResource extends JsonResource
         'name',
         'image',
         'created_at',
+        'rating',
         'permissions' => [
             'edit',
         ],
@@ -70,6 +71,7 @@ class ArtistResource extends JsonResource
             'created_at' => $this->unless($embedding, $this->artist->created_at),
             'is_external' => $this->unless($embedding, fn () => $isPlus && $this->artist->user_id !== $user->id),
             'favorite' => $this->unless($embedding, $this->artist->favorite),
+            'rating' => $this->unless($embedding, fn () => (int) ($this->artist->rating ?? 0)),
             'permissions' => $this->unless($embedding, fn () => [
                 'edit' => $user->can('edit', $this->artist),
             ]),

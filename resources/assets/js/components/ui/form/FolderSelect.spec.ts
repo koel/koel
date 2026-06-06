@@ -8,7 +8,7 @@ describe('folderSelect', () => {
   const h = createHarness()
 
   const renderComponent = (folderId: PlaylistFolder['id'] | null = null) => {
-    playlistFolderStore.state.folders = h.factory('playlist-folder', 3)
+    playlistFolderStore.state.folders = h.factory('playlist-folder').make(3)
 
     return h.render(Component, {
       props: {
@@ -82,7 +82,7 @@ describe('folderSelect', () => {
   })
 
   it('clears folder name when selecting an existing folder', async () => {
-    playlistFolderStore.state.folders = h.factory('playlist-folder', 3)
+    playlistFolderStore.state.folders = h.factory('playlist-folder').make(3)
     const folders = playlistFolderStore.state.folders
 
     const { emitted } = h.render(Component, {

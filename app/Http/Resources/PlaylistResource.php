@@ -3,8 +3,8 @@
 namespace App\Http\Resources;
 
 use App\Models\Playlist;
-use App\Services\PlaylistFolderService;
-use App\Services\PlaylistService;
+use App\Services\Playlist\PlaylistFolderService;
+use App\Services\Playlist\PlaylistService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { sortBy } from 'lodash'
+import { sortBy } from 'lodash-es'
 import type { Ref } from 'vue'
 import { computed, onMounted, ref, toRefs } from 'vue'
 import { playlistCollaborationService } from '@/services/playlistCollaborationService'

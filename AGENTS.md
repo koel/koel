@@ -8,7 +8,7 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 ## Foundational Context
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.3.28
+- php - 8.4.20
 - laravel/framework (LARAVEL) - v12
 - laravel/nightwatch (NIGHTWATCH) - v1
 - laravel/prompts (PROMPTS) - v0
@@ -20,7 +20,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - phpunit/phpunit (PHPUNIT) - v11
 - vue (VUE) - v3
 - laravel-echo (ECHO) - v2
-- tailwindcss (TAILWINDCSS) - v3
+- tailwindcss (TAILWINDCSS) - v4
 
 ## Conventions
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
@@ -179,8 +179,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ### Database
 - When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
-- Never write `down()` methods in migrations. They are never used.
-- This project supports MySQL, SQLite, and PostgreSQL. All custom SQL (e.g. `DB::raw()`) must work across all three databases.
 - Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
 
 ### Models
@@ -208,7 +206,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Tailwind CSS
 
 - Use Tailwind CSS classes to style HTML; check and use existing Tailwind conventions within the project before writing your own.
-- Only use colors defined in the project's CSS custom properties (`vars.pcss`) or derived from them (e.g. `k-highlight/20`). Never use arbitrary Tailwind color classes like `amber-500` or `blue-400`.
 - Offer to extract repeated patterns into components that match the project's conventions (i.e. Blade, JSX, Vue, etc.).
 - Think through class placement, order, priority, and defaults. Remove redundant classes, add classes to parent or child carefully to limit repetition, and group elements logically.
 - You can use the `search-docs` tool to get exact examples from the official documentation when needed.
@@ -227,11 +224,46 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ### Dark Mode
 - If existing pages and components support dark mode, new pages and components must support dark mode in a similar way, typically using `dark:`.
 
-=== tailwindcss/v3 rules ===
+=== tailwindcss/v4 rules ===
 
-## Tailwind CSS 3
+## Tailwind CSS 4
 
-- Always use Tailwind CSS v3; verify you're using only classes supported by this version.
+- Always use Tailwind CSS v4; do not use the deprecated utilities.
+- `corePlugins` is not supported in Tailwind v4.
+- In Tailwind v4, configuration is CSS-first using the `@theme` directive — no separate `tailwind.config.js` file is needed.
+
+<code-snippet name="Extending Theme in CSS" lang="css">
+@theme {
+  --color-brand: oklch(0.72 0.11 178);
+}
+</code-snippet>
+
+- In Tailwind v4, you import Tailwind using a regular CSS `@import` statement, not using the `@tailwind` directives used in v3:
+
+<code-snippet name="Tailwind v4 Import Tailwind Diff" lang="diff">
+   - @tailwind base;
+   - @tailwind components;
+   - @tailwind utilities;
+   + @import "tailwindcss";
+</code-snippet>
+
+### Replaced Utilities
+- Tailwind v4 removed deprecated utilities. Do not use the deprecated option; use the replacement.
+- Opacity values are still numeric.
+
+| Deprecated |	Replacement |
+|------------+--------------|
+| bg-opacity-* | bg-black/* |
+| text-opacity-* | text-black/* |
+| border-opacity-* | border-black/* |
+| divide-opacity-* | divide-black/* |
+| ring-opacity-* | ring-black/* |
+| placeholder-opacity-* | placeholder-black/* |
+| flex-shrink-* | shrink-* |
+| flex-grow-* | grow-* |
+| overflow-ellipsis | text-ellipsis |
+| decoration-slice | box-decoration-slice |
+| decoration-clone | box-decoration-clone |
 </laravel-boost-guidelines>
 
 ## Architecture
@@ -240,6 +272,14 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Code Organization
 - Traits must be placed in a `Concerns` subfolder (namespace) relative to their consumers (e.g. `App\Ai\Tools\Concerns\PlaysMusic`).
 - Interfaces must be placed in a `Contracts` subfolder (namespace) relative to their consumers (e.g. `App\Ai\Tools\Contracts\SomeInterface`).
+
+## Spelling
+- Use US English spelling for all identifiers (PHP method/class/property names, TS/Vue variables and components), comments, docstrings, doc pages, and user-visible strings: `serialize` / `serializer` (not `serialise`), `color` (not `colour`), `initialize` (not `initialise`), `behavior` (not `behaviour`), `organize` / `organization`, `favorite`, `analyze`. Koel's codebase — and PHP's SPL (`JsonSerializable`) — is uniformly American; don't drift British by reflex.
+
+## Self-Explanatory Code
+- Code should read on its own. If a piece of code needs a comment to be understood, that's a signal the code is wrong, not that the comment is needed — refactor it: extract a named helper, rename a variable to encode intent, lift a condition into a named flag, pull a block into a small function. Use a comment only when refactoring genuinely can't carry the intent (a hidden invariant, a workaround tied to a specific external bug, behaviour a reader would otherwise misjudge). Never write comments that narrate the next line, summarise the surrounding block, or restate what well-named identifiers already say.
+- Don't use single-letter variable names. The only allowed ones are `i` / `j` for loop counters, `h` for the test harness, and `$e` for the exception variable in `catch (Throwable|Exception|Error $e)` blocks (PHP's universal idiom — analogous to `e` for events in JS/TS event handlers). For everything else (callback params, destructured fields, lambda args, etc.) pick a name that says what it is.
+- Never combine assignment with return. Always `$x = expr;` then `return $x;` on a separate line — `return $x = expr;` cramming two effects into one statement is forbidden in PHP, TS, and JS.
 
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
@@ -254,6 +294,8 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - All closure parameters must be type-hinted. Never use untyped closure arguments (e.g. `function (Builder $query)`, not `function ($query)`).
 - When parsing or manipulating URLs, use `Illuminate\Support\Uri` instead of `parse_url()`.
 - Do not add return type declarations to controller methods — controller responses are too dynamic/flexible for strict return types.
+- Keep controllers thin. A controller method's job is: parse input → authorize → delegate → shape the response (resources/JSON). When a method starts accumulating data-loading orchestration, eager-load bookkeeping, multi-collection merges, or any multi-step domain logic, push that work into a service. Prefer extending an existing service in the same domain (e.g. `MediaBrowser` for browse-side folder operations) over creating a new one. Services return raw domain objects (Collections, Models) — Resource/JSON wrapping stays in the controller. Authorization stays in the controller too, so unauthorized requests fail before expensive data loads.
+- Value objects in `app/Values/` must use a `final readonly class` with a `private __construct(...)` and a `public static function make(...): self` factory. Call sites construct them via `Foo::make(...)`, never `new Foo(...)`. The reference shape is `App\Values\Radio\RadioStationCreateData`.
 
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.
@@ -262,11 +304,14 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Every doc page under `docs/` must have a `description` in its YAML frontmatter. When creating or editing a doc page, ensure the description accurately summarizes the page content.
 - The docs use `vitepress-plugin-llms` to generate `llms.txt` and `llms-full.txt` on build; descriptions are surfaced there.
 - Run `bash docs/.vitepress/check-frontmatter.sh` to verify all pages have descriptions.
+- **Write docs for users, not engineers.** Be concise, use simple words, be friendly. Lead with the action ("To upgrade: 1. Download. 2. Extract. 3. Restart."), not the rationale. Don't explain how launcher scripts or commands work internally — users want to know *what to do*, not *how the script reasons about it*. Cut corporate-speak ("turnkey path", "conceptually immutable", "provisions with the conventional layout"), nerdy parentheticals ("(`migrate` is idempotent — Laravel skips already-applied ones)"), and redundant warnings already covered elsewhere on the page.
+- **Don't inject your own judgment into docs.** No "isn't straightforward", "is usually easier", "you'd need to", "this is the recommended path", "for most users", "if you really want to". Don't editorialize difficulty, opinion-rate alternatives, or steer the reader toward what *you* think they should do. Users decided to read this section; just give them the steps.
+- **No clever bash one-liners for trivial tasks.** Don't reach for `diff <(grep -oE … | sort -u) <(…)` when the instruction is "compare two files" — users can eyeball them. Process substitution, awk, sed pipelines, and similar are nerd-bait. If the task is "look at the difference between A and B", say that in English. Reserve shell snippets for things the user actually needs the exact incantation for.
 
 ## Git Commits
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).
 - Focus on the feature/purpose, not implementation details. For example, prefer "feat: show current playing song during radio stream" over "feat: radio station ICY metadata now-playing". Same applies to PR titles.
-- Never mention Claude Code in commits, PR descriptions, or any generated content. No "Generated with Claude Code" footers, no Co-Authored-By lines referencing Claude.
+- Never attribute work to AI in any artifact: no "Generated with Claude Code", "Assisted by AI", "Co-Authored-By: Claude/ChatGPT/Copilot/AI" lines, no AI-tool mentions in commits, PR titles, PR descriptions, issue comments, code comments, or doc pages. The author is the human running the tool.
 - When the implementation of a PR changes (e.g. during code review), always update the PR title and description to reflect the current state of the changes.
 
 ## Releasing
@@ -279,7 +324,8 @@ protected function isAccessible(User $user, ?string $path = null): bool
     - Body matches GitHub's auto-generated format. Easiest way: `gh api repos/koel/koel/releases/generate-notes -F tag_name=vX.Y.Z -F previous_tag_name=vPREV --jq .body` to fetch the auto-generated body, then apply it with `gh release edit vX.Y.Z --repo koel/koel --notes-file -`.
     - Required structure: a `## What's Changed` section with bullets in the form `* <full conventional-commit subject> by @<author> in <PR or commit URL>`, optionally a `## New Contributors` section, and a trailing `**Full Changelog**: https://github.com/koel/koel/compare/vPREV...vX.Y.Z` line.
     - Do not rewrite or summarize commit subjects — keep them verbatim. Direct-to-master commits without PRs link to the commit SHA URL instead of a PR URL.
-    - Leave the release as a draft after editing notes; do not publish unless explicitly told to.
+    - **Publish (un-draft) the release before tagging koel/franken or koel/docker.** Both downstream build scripts `curl https://github.com/koel/koel/releases/download/vX.Y.Z/koel-vX.Y.Z.tar.gz`, and that URL returns 404 for draft releases — the build fails. Apply notes and publish in one shot: `gh release edit vX.Y.Z --repo koel/koel --notes-file /tmp/notes.md --draft=false`. Only leave it as a draft if you're releasing koel/koel in isolation (no franken/docker companion).
+- If a downstream build fails because koel/koel was still a draft at the time, recover with: `gh workflow run release.yml --repo koel/franken -f koel_version=vX.Y.Z` for franken, and `gh workflow run release.yml --repo koel/docker -f koel_version=vX.Y.Z` for docker (the docker dispatch input was added in koel/docker#222 — fallback for pre-#222 docker builds is `gh run rerun <failed-run-id> --repo koel/docker`).
 
 ## AI Assistant Tools
 - When AI assistant tool capabilities change (added, removed, or updated), always update the sample prompts in `AiSamplePrompts.vue` to reflect the current abilities.
@@ -295,6 +341,12 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Vue Template Conventions
 - Always use Vue's same-name shorthand for bindings: `:foo` instead of `:foo="foo"`. This applies to props, components, and any v-bind where the attribute name matches the variable name.
 
+## Vue Forms
+- Any Vue surface that takes user input and commits it on submit must use the `useForm` composable from `@/composables/useForm` — including inline composers, popovers, and mini name-prompts that aren't named `*Form.vue`. Don't roll your own `ref<string>('')` + manual submit handling.
+- Pair it with the canonical wiring: `<form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">`, inputs use `v-koel-focus` (not manual `onMounted` focus) and `required` (not manual `:disabled`), Save is `<Btn type="submit">`, Cancel is `<Btn type="button" @click.prevent="maybeClose">`, and `maybeClose` does `if (isPristine() || (await showConfirmDialog(...))) emit('cancel')`.
+- For purely-local submits (no server call), pass `useOverlay: false` and have `onSubmit` just emit. Use the optional `validator` callback for non-HTML5 rules (e.g. trim/whitespace).
+- Read `resources/assets/js/components/playlist/CreatePlaylistFolderForm.vue` before writing a new form — that's the reference shape.
+
 ## Vue Component Styling
 - Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.
 - For variant-specific styles (e.g. modes, states), use custom CSS classes (`.initial`, `.chat`, `.user`, `.error`, etc.) with `@apply` in a scoped `<style>` block.
@@ -305,6 +357,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Model Factories
 - Use `createOne()` to create a single model and `createMany()` to create a collection. Never use `create()` directly, as its return type is ambiguous (single model or collection depending on arguments).
+- Wire parent relationships with `->for($parent)` instead of passing foreign keys in the attributes array. For polymorphic relations, pass the relation name as the second argument: `->for($song, 'rateable')` (sets both `*_id` and `*_type`). Prefer `Rating::factory()->for($user)->for($song, 'rateable')->createOne(['rating' => 5])` over the equivalent `createOne(['user_id' => $user->id, 'rateable_id' => $song->id, 'rateable_type' => $song->getMorphClass(), 'rating' => 5])`.
 
 ## Frontend Testing
 - Prefer semantic queries (`getByRole`, `getByLabelText`, `getByText`) via `screen` from `@testing-library/vue`. Use `data-testid` only as a last resort when no semantic query is available.
@@ -319,6 +372,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Linting & Static Analysis
 - When running lint or static analysis (backend or frontend), fix ALL warnings and errors to ensure 100% clean output — even pre-existing issues unrelated to current changes.
+- **Before creating or updating any PR that touches PHP files**, run all backend gates locally and confirm green: `composer cs` (format check), `composer lint` (mago lint), `composer analyze` (phpstan). Do NOT rely on the pre-commit hook alone — it only catches formatting. Lint and static-analysis failures must be caught locally, not by CI, so the PR isn't created/updated red.
 
 ## Vite+ Toolchain
 

@@ -18,8 +18,8 @@ describe('playlistScreen.vue', () => {
   const h = createHarness()
 
   const renderComponent = async (songs: Playable[] = []) => {
-    const playlist = h.factory('playlist')
-    h.actingAsUser(h.factory.states('current')('user', { id: playlist.owner_id }) as CurrentUser)
+    const playlist = h.factory('playlist').make()
+    h.actingAsUser(h.factory('user').state('current').make({ id: playlist.owner_id }) as CurrentUser)
 
     playlistStore.state.playlists = []
     playlistStore.init([playlist])
@@ -47,7 +47,7 @@ describe('playlistScreen.vue', () => {
   }
 
   it('renders the playlist', async () => {
-    await renderComponent(h.factory('song', 10))
+    await renderComponent(h.factory('song').make(10))
 
     await waitFor(() => {
       screen.getByTestId('song-list')
@@ -66,7 +66,7 @@ describe('playlistScreen.vue', () => {
 
   it('refreshes the playlist', async () => {
     const { playlist, fetchSongsMock } = await renderComponent()
-    fetchSongsMock.mockResolvedValue(h.factory('song', 5))
+    fetchSongsMock.mockResolvedValue(h.factory('song').make(5))
 
     await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
 
@@ -97,7 +97,7 @@ describe('playlistScreen.vue', () => {
     'refreshes upon %s event trigger',
     async eventKey => {
       const { playlist, fetchSongsMock } = await renderComponent()
-      fetchSongsMock.mockResolvedValueOnce(h.factory('song', 5))
+      fetchSongsMock.mockResolvedValueOnce(h.factory('song').make(5))
 
       eventBus.emit(eventKey, playlist)
 

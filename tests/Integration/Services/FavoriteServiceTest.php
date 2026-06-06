@@ -6,10 +6,12 @@ use App\Events\MultipleSongsLiked;
 use App\Events\MultipleSongsUnliked;
 use App\Events\SongFavoriteToggled;
 use App\Models\Album;
+use App\Models\Contracts\Favoriteable;
 use App\Models\Favorite;
 use App\Models\Song;
 use App\Services\FavoriteService;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -58,11 +60,7 @@ class FavoriteServiceTest extends TestCase
         $this->service->toggleFavorite($songs[1], $user);
         $this->service->toggleFavorite($songs[2], $user);
 
-        $positions = Favorite::query()
-            ->where('user_id', $user->id)
-            ->orderBy('position')
-            ->pluck('position')
-            ->toArray();
+        $positions = Favorite::query()->where('user_id', $user->id)->orderBy('position')->pluck('position')->toArray();
 
         self::assertSame([0, 1, 2], $positions);
     }
@@ -132,15 +130,14 @@ class FavoriteServiceTest extends TestCase
         $user = create_user();
 
         /** @var Collection<int, Favorite> $favorites */
-        $favorites = Favorite::factory()
-            ->for($user)
-            ->count(2)
-            ->create();
+        $favorites = Favorite::factory()->for($user)->count(2)->create();
 
-        $this->service->batchUndoFavorite(
-            $favorites->map(static fn (Favorite $favorite) => $favorite->favoriteable),
-            $user,
-        );
+        $this->service->batchUndoFavorite($favorites->map(static function (Favorite $favorite): Favoriteable&Model {
+            $entity = $favorite->favoriteable;
+            self::assertInstanceOf(Model::class, $entity);
+
+            return $entity;
+        }), $user);
 
         foreach ($favorites as $favorite) {
             $this->assertDatabaseMissing(Favorite::class, ['id' => $favorite->id]);

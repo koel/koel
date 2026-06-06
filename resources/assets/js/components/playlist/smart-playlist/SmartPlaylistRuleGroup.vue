@@ -17,7 +17,7 @@
       />
     </div>
 
-    <div class="text-center absolute w-full left-0 -mt-[2px]">
+    <div class="text-center absolute w-full left-0 mt-[-2px]">
       <Btn
         size="small"
         variant="success"

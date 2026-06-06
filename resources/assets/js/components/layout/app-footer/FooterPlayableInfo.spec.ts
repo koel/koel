@@ -12,7 +12,7 @@ describe('footerPlayableInfo.vue', () => {
   it('renders with no current playable', () => expect(h.render(Component).html()).toMatchSnapshot())
 
   it('renders with current playable', () => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       title: 'Fahrstuhl zum Mond',
       album_cover: 'https://via.placeholder.com/150',
       playback_state: 'Playing',
@@ -34,7 +34,7 @@ describe('footerPlayableInfo.vue', () => {
   })
 
   it('navigates to queue and sets scroll intent on thumbnail click', async () => {
-    const song = h.factory('song', {
+    const song = h.factory('song').make({
       title: 'Test Song',
       album_cover: 'https://via.placeholder.com/150',
       playback_state: 'Playing',

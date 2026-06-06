@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { pick } from 'lodash'
+import { pick } from 'lodash-es'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'

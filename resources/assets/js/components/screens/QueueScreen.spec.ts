@@ -22,7 +22,7 @@ describe('queueScreen.vue', () => {
   }
 
   it('renders the queue', () => {
-    renderComponent(h.factory('song', 3))
+    renderComponent(h.factory('song').make(3))
 
     expect(screen.queryByTestId('song-list')).toBeTruthy()
     expect(screen.queryByTestId('screen-empty-state')).toBeNull()
@@ -54,7 +54,7 @@ describe('queueScreen.vue', () => {
   it('shuffles all', async () => {
     h.createAudioPlayer()
 
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     renderComponent(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 

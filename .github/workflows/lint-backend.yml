@@ -22,7 +22,7 @@ jobs:
       matrix:
         php-version: [ 8.3 ]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v6
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:

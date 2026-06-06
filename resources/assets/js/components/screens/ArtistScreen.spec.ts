@@ -22,13 +22,13 @@ describe('artistScreen.vue', () => {
 
     artist =
       artist ||
-      h.factory('artist', {
+      h.factory('artist').make({
         name: 'Led Zeppelin',
       })
 
     const resolveArtistMock = h.mock(artistStore, 'resolve').mockResolvedValue(artist)
 
-    const songs = h.factory('song', 13)
+    const songs = h.factory('song').make(13)
     const fetchSongsMock = h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
 
     const rendered = h.visit(`artists/${artist.id}/${tab}`).render(Component, {
@@ -94,7 +94,7 @@ describe('artistScreen.vue', () => {
   })
 
   it('has a Favorite button if artist is favorite', async () => {
-    const { artist } = await renderComponent('songs', h.factory('artist', { favorite: true }))
+    const { artist } = await renderComponent('songs', h.factory('artist').make({ favorite: true }))
     const favoriteMock = h.mock(artistStore, 'toggleFavorite')
 
     await waitFor(async () => {
@@ -104,7 +104,7 @@ describe('artistScreen.vue', () => {
   })
 
   it('does not have a Favorite button if artist is not favorite', async () => {
-    await renderComponent('songs', h.factory('artist', { favorite: false }))
+    await renderComponent('songs', h.factory('artist').make({ favorite: false }))
     expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
   })
 

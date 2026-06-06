@@ -9,6 +9,7 @@ use App\Models\Album;
 use App\Observers\AlbumObserver;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
+use App\Services\Network\Network;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\File;
 use Tests\Concerns\AssertsArraySubset;
 use Tests\Concerns\CreatesApplication;
 use Tests\Concerns\MakesHttpRequests;
+use Tests\Fakes\FakeNetwork;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -36,6 +38,7 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         License::swap($this->app->make(CommunityLicenseService::class));
+        $this->app->instance(Network::class, new FakeNetwork());
         $this->fileSystem = File::getFacadeRoot();
 
         // Replace the AlbumObserver with a partial that skips the `saved` event (which dispatches
@@ -66,7 +69,7 @@ abstract class TestCase extends BaseTestCase
     private static function createSandbox(): void
     {
         config([
-            'koel.image_storage_dir' => 'sandbox/img/storage/',
+            'koel.image_storage_dir' => 'sandbox/img/storage',
             'koel.artifacts_path' => public_path('sandbox/artifacts/'),
         ]);
 

@@ -1,7 +1,7 @@
 <template>
   <section>
     <h3 class="text-2xl mb-2">
-      <span class="mr-2 text-[var(--lastfm-color)]">
+      <span class="mr-2 text-(--lastfm-color)">
         <Icon :icon="faLastfm" />
       </span>
       Last.fm Integration
@@ -19,7 +19,7 @@
         <a href="https://www.last.fm/about/trackmymusic" rel="noopener" target="_blank">scrobbling</a>.
       </p>
       <div class="buttons mt-4 space-x-2">
-        <Btn class="!bg-[var(--lastfm-color)]" @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
+        <Btn class="bg-(--lastfm-color)!" @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
         <Btn variant="ghost" v-if="connected" class="disconnect" @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>
@@ -65,7 +65,7 @@ const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_se
  */
 const connect = () =>
   window.open(
-    `${window.BASE_URL}lastfm/connect?api_token=${authService.getApiToken()}`,
+    `${window.KOEL.base_url}lastfm/connect?api_token=${authService.getApiToken()}`,
     '_blank',
     'toolbar=no,titlebar=no,location=no,width=1024,height=640',
   )

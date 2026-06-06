@@ -3,13 +3,13 @@
     <div :class="cssClass" class="h-full w-full min-h-[32px] bg-k-fg-5 relative rounded-lg overflow-hidden">
       <div class="absolute z-1 h-full w-full flex items-center">
         <span class="name px-4 flex-1 flex items-center">{{ file.name }}</span>
-        <Btn variant="ghost" v-if="canRetry" class="!px-3" icon-only title="Retry" unrounded @click="retry">
+        <Btn variant="ghost" v-if="canRetry" class="px-3!" icon-only title="Retry" unrounded @click="retry">
           <Icon :icon="faRotateBack" />
         </Btn>
-        <Btn variant="ghost" v-if="canAbort" class="!px-3" icon-only title="Abort" unrounded @click="abort">
+        <Btn variant="ghost" v-if="canAbort" class="px-3!" icon-only title="Abort" unrounded @click="abort">
           <Icon :icon="faXmark" />
         </Btn>
-        <Btn variant="ghost" v-if="canRemove" class="!px-3" icon-only title="Remove" unrounded @click="remove">
+        <Btn variant="ghost" v-if="canRemove" class="px-3!" icon-only title="Remove" unrounded @click="remove">
           <Icon :icon="faTrashCan" />
         </Btn>
       </div>
@@ -76,6 +76,7 @@ const abort = async () => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 article > div::before {
   width: v-bind(progressBarWidth);
   content: '';

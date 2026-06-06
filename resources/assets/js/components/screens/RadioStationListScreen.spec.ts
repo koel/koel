@@ -21,11 +21,12 @@ describe('radioStationListScreen.vue', () => {
     beforeEach: () => {
       openModalMock.mockClear()
       h.mock(radioStationStore, 'fetchAll')
+      preferences.temporary.radio_stations_view_mode = 'grid'
     },
   })
 
   const renderComponent = async (stations?: RadioStation[]) => {
-    radioStationStore.state.stations = stations || h.factory('radio-station', 9)
+    radioStationStore.state.stations = stations || h.factory('radio-station').make(9)
 
     const rendered = h.render(Component, {
       global: {
@@ -52,23 +53,40 @@ describe('radioStationListScreen.vue', () => {
     await waitFor(() => screen.getByTestId('screen-empty-state'))
   })
 
-  it.each<[ViewMode]>([['list'], ['thumbnails']])('sets layout from preferences', async mode => {
-    preferences.temporary.radio_stations_view_mode = mode
+  it('renders the grid by default', async () => {
+    await renderComponent()
+
+    await waitFor(() => screen.getByTestId('radio-station-grid'))
+    expect(screen.queryByTestId('radio-station-table')).toBeNull()
+  })
+
+  it('renders the table when the view mode is table', async () => {
+    preferences.temporary.radio_stations_view_mode = 'table'
 
     await renderComponent()
 
-    await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-${mode}`)).toBe(true))
+    await waitFor(() => screen.getByTestId('radio-station-table'))
+    expect(screen.queryByTestId('radio-station-grid')).toBeNull()
   })
 
-  it('switches layout', async () => {
+  it('switches between grid and table via the view mode toggle', async () => {
     await renderComponent()
     await h.tick()
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as list' }))
-    await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-list`)).toBe(true))
+    screen.getByTestId('radio-station-grid')
+    expect(screen.queryByTestId('radio-station-table')).toBeNull()
 
-    await h.user.click(screen.getByRole('radio', { name: 'View as thumbnails' }))
-    await waitFor(() => expect(screen.getByTestId('radio-station-grid').classList.contains(`as-thumbnails`)).toBe(true))
+    await h.user.click(screen.getByRole('radio', { name: 'View as table' }))
+    await waitFor(() => {
+      screen.getByTestId('radio-station-table')
+      expect(screen.queryByTestId('radio-station-grid')).toBeNull()
+    })
+
+    await h.user.click(screen.getByRole('radio', { name: 'View as grid' }))
+    await waitFor(() => {
+      screen.getByTestId('radio-station-grid')
+      expect(screen.queryByTestId('radio-station-table')).toBeNull()
+    })
   })
 
   it('requests the Add Radio Station form', async () => {
@@ -100,8 +118,8 @@ describe('radioStationListScreen.vue', () => {
 
   it('shows all or only favorites upon toggling the button', async () => {
     await renderComponent([
-      ...h.factory('radio-station', 3, { favorite: true }),
-      ...h.factory('radio-station', 6, { favorite: false }),
+      ...h.factory('radio-station').make({ favorite: true }, 3),
+      ...h.factory('radio-station').make({ favorite: false }, 6),
     ])
 
     expect(screen.getAllByTestId('radio-station-card')).toHaveLength(9)
@@ -114,7 +132,7 @@ describe('radioStationListScreen.vue', () => {
   })
 
   it('shows contextual empty state when no favorite stations', async () => {
-    await renderComponent(h.factory('radio-station', 3, { favorite: false }))
+    await renderComponent(h.factory('radio-station').make({ favorite: false }, 3))
 
     await h.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
 

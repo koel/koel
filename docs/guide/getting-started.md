@@ -1,5 +1,5 @@
 ---
-description: Requirements, installation methods (pre-compiled, source, Docker), configuration, upgrading, and downgrading Koel.
+description: Requirements, installation methods (pre-compiled, source, Docker), configuration, running with FrankenPHP (binary + systemd), upgrading, and downgrading Koel.
 ---
 
 # Getting Started
@@ -25,7 +25,22 @@ The requirements for each part are as follows:
 
 ## Installation
 
-There are three methods to install and start using Koel:
+There are four methods to install and start using Koel:
+
+### Using the Standalone Binary
+
+The single-archive distribution from [koel/franken](https://github.com/koel/franken/releases) packages
+[FrankenPHP](https://frankenphp.dev) (Caddy + the PHP runtime) with the compiled Koel application.
+No Composer, Node, or system PHP needed on the host. SQLite by default for zero-setup operation.
+
+```bash
+tar -xzf koel-franken-v9.3.2-linux-x86_64.tar.gz
+cd koel-franken-v9.3.2-linux-x86_64
+./koel php-server --listen :8000
+```
+
+See the [Standalone Binary](/guide/standalone-binary) page for the full setup, conventions, MySQL/Postgres
+override, and systemd service unit.
 
 ### Using a Pre-Compiled Archive
 
@@ -63,10 +78,10 @@ In both cases, you should now be able to visit http://localhost:8000 in your bro
 
 ::: warning Use a proper webserver
 http://localhost:8000 is only the _development_ server for Koel (or rather, Laravel).
-For optimal performance, you'll want to set up a production server (Apache, nginx, Caddy etc.) and point it to the
-`public` directory of Koel.
-Koel provides a sample configuration for nginx in `nginx.conf.example`,
-but the process shouldn't be any different from that of a standard PHP application.
+For production, point a proper server (Apache, nginx, Caddy, etc.) at Koel's `public/`
+directory — the process is no different from any standard PHP application.
+Koel ships starter configs at the project root: `nginx.conf.example` for nginx + PHP-FPM,
+and `Caddyfile.example` for [FrankenPHP](/guide/running-with-frankenphp).
 :::
 
 ### Using Docker
@@ -91,6 +106,13 @@ Any non-empty value other than `log` or `array` is considered a proper mailer.
 As such, if you don't need email-required features, you can simply set `MAIL_MAILER` to `log` or `array` and leave the
 rest of the mailer-related values empty,
 and Koel will know to remove/disable these features.
+
+## Running with FrankenPHP
+
+Koel works well with [FrankenPHP](https://frankenphp.dev), a modern PHP application server that bundles a webserver
+(Caddy) and the PHP runtime into a single binary, with automatic HTTPS out of the box. See
+[Running with FrankenPHP](/guide/running-with-frankenphp) for the full setup guide — install, Caddyfile, artisan
+commands, systemd service, and reverse-proxy mode.
 
 ## Upgrade
 

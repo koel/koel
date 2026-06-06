@@ -33,15 +33,9 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongByQuery(): void
     {
-        $songs = Song::factory()
-            ->for($this->user, 'owner')
-            ->count(1)
-            ->create(['title' => 'Bohemian Rhapsody']);
+        $songs = Song::factory()->for($this->user, 'owner')->count(1)->create(['title' => 'Bohemian Rhapsody']);
 
-        $this->songRepository
-            ->shouldReceive('search')
-            ->with('bohemian', 1, $this->user)
-            ->andReturn($songs);
+        $this->songRepository->shouldReceive('search')->with('bohemian', 1, $this->user)->andReturn($songs);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSong(new Request(['query' => 'bohemian']), $context);
@@ -54,10 +48,7 @@ class SongRequestResolverTest extends TestCase
     {
         $song = Song::factory()->for($this->user, 'owner')->createOne();
 
-        $this->songRepository
-            ->shouldReceive('findOne')
-            ->with($song->id, $this->user)
-            ->andReturn($song);
+        $this->songRepository->shouldReceive('findOne')->with($song->id, $this->user)->andReturn($song);
 
         $context = new AiRequestContext($this->user, currentSongId: $song->id);
         $result = $this->resolver->resolveSong(new Request([]), $context);
@@ -78,15 +69,9 @@ class SongRequestResolverTest extends TestCase
     public function resolveSongPrefersQueryOverCurrentSong(): void
     {
         $currentSong = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Current']);
-        $queriedSongs = Song::factory()
-            ->for($this->user, 'owner')
-            ->count(1)
-            ->create(['title' => 'Queried']);
+        $queriedSongs = Song::factory()->for($this->user, 'owner')->count(1)->create(['title' => 'Queried']);
 
-        $this->songRepository
-            ->shouldReceive('search')
-            ->with('queried', 1, $this->user)
-            ->andReturn($queriedSongs);
+        $this->songRepository->shouldReceive('search')->with('queried', 1, $this->user)->andReturn($queriedSongs);
 
         $context = new AiRequestContext($this->user, currentSongId: $currentSong->id);
         $result = $this->resolver->resolveSong(new Request(['query' => 'queried']), $context);
@@ -97,15 +82,9 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongWithCustomQueryKey(): void
     {
-        $songs = Song::factory()
-            ->for($this->user, 'owner')
-            ->count(1)
-            ->create();
+        $songs = Song::factory()->for($this->user, 'owner')->count(1)->create();
 
-        $this->songRepository
-            ->shouldReceive('search')
-            ->with('test', 1, $this->user)
-            ->andReturn($songs);
+        $this->songRepository->shouldReceive('search')->with('test', 1, $this->user)->andReturn($songs);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSong(new Request(['song_title' => 'test']), $context, 'song_title');
@@ -116,15 +95,9 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongsByQuery(): void
     {
-        $songs = Song::factory()
-            ->for($this->user, 'owner')
-            ->count(3)
-            ->create();
+        $songs = Song::factory()->for($this->user, 'owner')->count(3)->create();
 
-        $this->songRepository
-            ->shouldReceive('search')
-            ->with('rock', 10, $this->user)
-            ->andReturn($songs);
+        $this->songRepository->shouldReceive('search')->with('rock', 10, $this->user)->andReturn($songs);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSongs(new Request(['song_query' => 'rock']), $context);
@@ -137,10 +110,7 @@ class SongRequestResolverTest extends TestCase
     {
         $song = Song::factory()->for($this->user, 'owner')->createOne();
 
-        $this->songRepository
-            ->shouldReceive('findOne')
-            ->with($song->id, $this->user)
-            ->andReturn($song);
+        $this->songRepository->shouldReceive('findOne')->with($song->id, $this->user)->andReturn($song);
 
         $context = new AiRequestContext($this->user, currentSongId: $song->id);
         $result = $this->resolver->resolveSongs(new Request([]), $context);
@@ -161,10 +131,7 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongsReturnsEmptyCollectionWhenCurrentSongNotFound(): void
     {
-        $this->songRepository
-            ->shouldReceive('findOne')
-            ->with('nonexistent', $this->user)
-            ->andReturn(null);
+        $this->songRepository->shouldReceive('findOne')->with('nonexistent', $this->user)->andReturn(null);
 
         $context = new AiRequestContext($this->user, currentSongId: 'nonexistent');
         $result = $this->resolver->resolveSongs(new Request([]), $context);
@@ -175,15 +142,9 @@ class SongRequestResolverTest extends TestCase
     #[Test]
     public function resolveSongsWithCustomLimit(): void
     {
-        $songs = Song::factory()
-            ->for($this->user, 'owner')
-            ->count(5)
-            ->create();
+        $songs = Song::factory()->for($this->user, 'owner')->count(5)->create();
 
-        $this->songRepository
-            ->shouldReceive('search')
-            ->with('jazz', 5, $this->user)
-            ->andReturn($songs);
+        $this->songRepository->shouldReceive('search')->with('jazz', 5, $this->user)->andReturn($songs);
 
         $context = new AiRequestContext($this->user);
         $result = $this->resolver->resolveSongs(new Request(['song_query' => 'jazz']), $context, limit: 5);

@@ -13,18 +13,19 @@
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
-                :icon="preferences.artists_favorites_only ? faStar : faEmptyStar"
-                :class="preferences.artists_favorites_only && 'text-k-highlight'"
+                :icon="preferences.artists_favorites_only ? faHeart : faEmptyHeart"
+                :class="preferences.artists_favorites_only && 'text-k-love'"
               />
             </Btn>
 
             <ArtistListSorter
+              v-if="preferences.artists_view_mode !== 'table'"
               :field="preferences.artists_sort_field"
               :order="preferences.artists_sort_order"
               @sort="sort"
             />
 
-            <ViewModeSwitch v-model="preferences.artists_view_mode" />
+            <ViewModeSwitch v-model="preferences.artists_view_mode" secondary="table" />
           </div>
         </template>
       </ScreenHeader>
@@ -47,37 +48,43 @@
 
     <template v-else>
       <div
-        v-if="showSkeletons"
+        v-if="showSkeletons && preferences.artists_view_mode === 'table'"
+        class="-m-6 flex flex-col"
+        role="status"
+        aria-busy="true"
+        aria-label="Loading"
+      >
+        <ArtistTableRowSkeleton v-for="i in 12" :key="i" />
+      </div>
+      <div
+        v-else-if="showSkeletons"
         class="grid gap-5 p-6"
         :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }"
         role="status"
         aria-busy="true"
         aria-label="Loading"
       >
-        <ArtistCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
+        <ArtistCardSkeleton v-for="i in 10" :key="i" />
       </div>
       <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
-        <VirtualGridScroller
-          ref="grid"
-          :items="displayedArtists"
-          :min-item-width="minItemWidth"
-          :class="itemLayout === 'full' ? 'gap-y-5' : 'gap-y-3'"
-          class="p-6 gap-x-5"
-          data-testid="artist-list"
+        <ArtistTable
+          v-if="preferences.artists_view_mode === 'table'"
+          :artists="displayedArtists"
+          :field="preferences.artists_sort_field"
+          :order="preferences.artists_sort_order"
+          @sort="sort"
+          @toggle-favorite="toggleFavorite"
           @scrolled-to-end="fetchArtists"
-        >
-          <template #default="{ item }">
-            <ArtistCard :artist="item" :layout="itemLayout" />
-          </template>
-        </VirtualGridScroller>
+        />
+        <ArtistGrid v-else ref="grid" :artists="displayedArtists" @scrolled-to-end="fetchArtists" />
       </div>
     </template>
   </ScreenBase>
 </template>
 
 <script lang="ts" setup>
-import { faMicrophoneSlash, faStar } from '@fortawesome/free-solid-svg-icons'
-import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
+import { faMicrophoneSlash, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, nextTick, onMounted, ref, toRef } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
@@ -85,28 +92,26 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePolicies } from '@/composables/usePolicies'
 
-import ArtistCard from '@/components/artist/ArtistCard.vue'
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
+import ArtistGrid from '@/components/artist/ArtistGrid.vue'
+import ArtistTable from '@/components/artist/ArtistTable.vue'
+import ArtistTableRowSkeleton from '@/components/artist/ArtistTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import VirtualGridScroller from '@/components/ui/VirtualGridScroller.vue'
 import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { currentUserCan } = usePolicies()
 
-const grid = ref<InstanceType<typeof VirtualGridScroller>>()
+const grid = ref<InstanceType<typeof ArtistGrid>>()
 const artists = toRef(artistStore.state, 'artists')
 
 const loading = ref(false)
 const page = ref<number | null>(1)
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
-
-const itemLayout = computed<CardLayout>(() => (preferences.artists_view_mode === 'thumbnails' ? 'full' : 'compact'))
-const minItemWidth = computed(() => (preferences.artists_view_mode === 'thumbnails' ? 240 : 350))
 
 const displayedArtists = computed(() =>
   preferences.artists_favorites_only ? artists.value.filter((a: Artist) => a.favorite) : artists.value,
@@ -158,6 +163,8 @@ const sort = async (field: ArtistListSortField, order: SortOrder) => {
   await nextTick()
   await fetchArtists()
 }
+
+const toggleFavorite = (artist: Artist) => artistStore.toggleFavorite(artist)
 
 const toggleFavoritesOnly = async () => {
   preferences.artists_favorites_only = !preferences.artists_favorites_only

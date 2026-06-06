@@ -1,5 +1,5 @@
 <template>
-  <div :class="config.sortable ? 'sortable' : 'unsortable'" class="song-list-header flex z-[2] bg-k-fg-3 pl-5">
+  <div :class="config.sortable ? 'sortable' : 'unsortable'" class="song-list-header flex z-2 bg-k-fg-3 pl-5">
     <span
       v-if="shouldShowColumn('track')"
       class="track-number"
@@ -121,6 +121,20 @@
       </template>
     </span>
     <span
+      v-if="shouldShowColumn('rating')"
+      class="rating"
+      data-testid="header-rating"
+      role="button"
+      title="Sort by rating"
+      @click="sort('rating')"
+    >
+      Rating
+      <template v-if="config.sortable">
+        <Icon v-if="sortField === 'rating' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
+        <Icon v-if="sortField === 'rating' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
+      </template>
+    </span>
+    <span
       v-if="shouldShowColumn('duration')"
       class="time"
       data-testid="header-length"
@@ -134,7 +148,25 @@
         <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
       </template>
     </span>
-    <span class="extra">
+    <span
+      v-if="shouldShowColumn('favorite')"
+      class="favorite"
+      data-testid="header-favorite"
+      role="button"
+      title="Sort by favorite"
+      @click="sort('favorite')"
+    >
+      <Icon :icon="faHeart" />
+      <template v-if="config.sortable">
+        <Icon v-if="sortField === 'favorite' && sortOrder === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
+        <Icon
+          v-if="sortField === 'favorite' && sortOrder === 'desc'"
+          :icon="faCaretDown"
+          class="ml-2 text-k-highlight"
+        />
+      </template>
+    </span>
+    <span v-if="shouldShowActionMenu" class="extra" data-testid="header-extra">
       <PlayableListHeaderActionMenu
         :sortable="config.sortable"
         :field="sortField"
@@ -149,13 +181,15 @@
 </template>
 
 <script setup lang="ts">
+import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed } from 'vue'
-import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { arrayify, requireInjection } from '@/utils/helpers'
 import { PlayableListConfigKey, PlayableListSortFieldKey, PlayableListSortOrderKey } from '@/config/symbols'
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
-import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
+import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
+import { playableListColumnConfig } from '@/config/tables'
 
 import PlayableListHeaderActionMenu from '@/components/playable/playable-list/PlayableListHeaderActionMenu.vue'
 
@@ -172,7 +206,7 @@ const emit = defineEmits<{
   (e: 'sort', field: MaybeArray<PlayableListSortField>, order: SortOrder): void
 }>()
 
-const { shouldShowColumn } = usePlayableListColumnVisibility()
+const { shouldShowColumn } = useTableColumnVisibility(playableListColumnConfig)
 
 const [sortField, setSortField] =
   requireInjection<[Ref<MaybeArray<PlayableListSortField>>, Closure]>(PlayableListSortFieldKey)
@@ -195,4 +229,9 @@ const sortingByAlbumOrPodcast = computed(() => {
   const sortFields = arrayify(sortField.value)
   return sortFields[0] === 'album_name' || sortFields[0] === 'podcast_title'
 })
+
+// On mobile, the table columns collapse — sorting is the only thing the action
+// menu can do. If the list isn't sortable (e.g. the queue), the button would
+// just open an inert menu, so drop it entirely.
+const shouldShowActionMenu = computed(() => !isMobile.any || config.sortable)
 </script>

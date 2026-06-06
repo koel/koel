@@ -12,10 +12,10 @@ describe('albumInfo.vue', () => {
     commonStore.state.uses_last_fm = true
 
     if (info === undefined) {
-      info = h.factory('album-info')
+      info = h.factory('album-info').make()
     }
 
-    const album = h.factory('album', { name: 'IV' })
+    const album = h.factory('album').make({ name: 'IV' })
     const fetchMock = h.mock(encyclopediaService, 'fetchForAlbum').mockResolvedValue(info)
 
     const rendered = h.render(Component, {

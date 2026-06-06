@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UserLoginRequest;
-use App\Services\AuthenticationService;
+use App\Services\Auth\AuthenticationService;
 use App\Values\CompositeToken;
 use Closure;
 use Illuminate\Foundation\Auth\ThrottlesLogins;

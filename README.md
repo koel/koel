@@ -4,9 +4,17 @@
 
 ## Intro
 
-**Koel** (also stylized as **koel**, with a lowercase k) is a simple web-based personal audio streaming service written
-in [Vue](http://vuejs.org/) on the client side and [Laravel](http://laravel.com/) on the server side. Targeting web
-developers, Koel embraces some of the more modern web technologies to do its job.
+**Koel** (also stylized as **koel**, with a lowercase k) is a free, open-source music streaming solution
+that turns your personal collection into a sleek, web-based listening experience.
+
+Built on [Laravel](https://laravel.com/) and [Vue](https://vuejs.org/), it scans your music library and 
+serves it back through a fast, modern interface that works in any browser. Beyond playback, Koel handles 
+playlists, smart playlists, scrobbling, podcasts, radio, Last.fm/Spotify/MusicBrainz integrations, and 
+an AI assistant that responds to natural-language commands. 
+
+The premium Koel Plus adds multi-user libraries, collaboration, SSO, cloud storage drivers, custom themes, 
+and white-labeling for organizations that want to host their own Spotify-style experience without paying
+anyone else.
 
 ## Install and Upgrade Guide
 
@@ -36,7 +44,6 @@ visit [its repository](https://github.com/koel/player).
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/whatthediff.svg" height="32" alt="What The Diff logo" title="What The Diff — AI assistant for your pull requests">](https://whatthediff.ai/)
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/do.svg" height="32" alt="DigitalOcean logo" title="DigitalOcean">](https://www.digitalocean.com)
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/ray.svg" height="32" alt="Ray logo" title="Understand and fix bugs faster using Ray">](https://myray.app/)
-[<img style="margin-right: 5px" src="./.github/assets/sponsors/follower-boerse.svg" height="32" alt="Follower Börse logo" title="TikTok Views Kaufen">](https://follower-boerse.de/produkt/tiktok-views-kaufen/)
 [<img style="margin-right: 5px" src="./.github/assets/sponsors/codespect.png" height="32" alt="CodeSpect logo" title="CodeSpect - AI Code Review Tool">](https://codespect.io/?ref=koel)
 
 [Support me on OpenCollective](https://opencollective.com/koel#backer) with a monthly donation and help me continue

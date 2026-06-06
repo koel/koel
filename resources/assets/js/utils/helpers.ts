@@ -1,5 +1,4 @@
-import select from 'select'
-import { isObject, without } from 'lodash'
+import { isObject } from 'lodash-es'
 import type { AsyncComponentLoader, Component, DeepReadonly, InjectionKey } from 'vue'
 import {
   defineAsyncComponent as baseDefineAsyncComponent,
@@ -11,7 +10,7 @@ import {
 } from 'vue'
 import type { ReadonlyInjectionKey } from '@/config/symbols'
 import { logger } from '@/utils/logger'
-import { md5 } from '@/utils/crypto'
+import { sha256 } from '@/utils/crypto'
 import { isSong } from '@/utils/typeGuards'
 
 import LoadingComponent from '@/components/ui/Loading.vue'
@@ -72,15 +71,15 @@ export const moveItemsInList = <T>(list: T[], items: T | T[], target: T, placeme
     return list
   }
 
-  const updatedList = without(list, ...subset)
+  const updatedList = list.filter(item => !subset.includes(item))
   const targetIndex = updatedList.indexOf(target)
   updatedList.splice(placement === 'before' ? targetIndex : targetIndex + 1, 0, ...subset)
 
   return updatedList
 }
 
-export const gravatar = (email: string, size = 192) => {
-  const hash = md5(email.trim().toLowerCase())
+export const gravatar = async (email: string, size = 192) => {
+  const hash = await sha256(email.trim().toLowerCase())
   return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=robohash`
 }
 
@@ -120,9 +119,12 @@ export const copyText = async (text: string) => {
       document.body.appendChild(copyArea)
     }
 
+    copyArea.style.position = 'absolute'
+    copyArea.style.left = '0'
     copyArea.style.top = `${window.scrollY || document.documentElement.scrollTop}px`
     copyArea.value = text
-    select(copyArea)
+    copyArea.focus()
+    copyArea.select()
     document.execCommand('copy')
   }
 }

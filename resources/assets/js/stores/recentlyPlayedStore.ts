@@ -1,5 +1,4 @@
 import { reactive } from 'vue'
-import { remove } from 'lodash'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
 
@@ -25,8 +24,7 @@ export const recentlyPlayedStore = {
     }
 
     ;[this.state, this.excerptState].forEach(state => {
-      // make sure there's no duplicate
-      remove(state.playables, s => s.id === playable.id)
+      state.playables = state.playables.filter(s => s.id !== playable.id)
       state.playables.unshift(playable)
     })
 

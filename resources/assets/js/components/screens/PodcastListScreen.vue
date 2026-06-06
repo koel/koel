@@ -14,8 +14,8 @@
               @click.prevent="toggleFavoritesOnly"
             >
               <Icon
-                :icon="preferences.podcasts_favorites_only ? faStar : faEmptyStar"
-                :class="preferences.podcasts_favorites_only && 'text-k-highlight'"
+                :icon="preferences.podcasts_favorites_only ? faHeart : faEmptyHeart"
+                :class="preferences.podcasts_favorites_only && 'text-k-love'"
                 size="sm"
               />
             </Btn>
@@ -48,7 +48,7 @@
       </template>
     </ScreenEmptyState>
 
-    <div v-else v-koel-overflow-fade class="-m-6 p-6 flex-1 overflow-auto space-y-3">
+    <div v-else class="scroll-mask-y -m-6 p-6 flex-1 overflow-auto space-y-3">
       <div v-if="loading" role="status" aria-busy="true" aria-label="Loading" class="contents">
         <PodcastItemSkeleton v-for="i in 5" :key="i" />
       </div>
@@ -60,9 +60,9 @@
 </template>
 
 <script setup lang="ts">
-import { faAdd, faPodcast, faStar } from '@fortawesome/free-solid-svg-icons'
-import { faStar as faEmptyStar } from '@fortawesome/free-regular-svg-icons'
-import { orderBy } from 'lodash'
+import { faAdd, faPodcast, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
+import { orderBy } from 'lodash-es'
 import { computed, onMounted, provide, ref } from 'vue'
 import { podcastStore } from '@/stores/podcastStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'

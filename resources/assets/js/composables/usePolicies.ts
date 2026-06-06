@@ -30,11 +30,18 @@ export const usePolicies = () => {
     deleteRadioStation: (station: RadioStation) => station.permissions.delete,
 
     // If the user has the permission, they can always add a radio station, even in demo mode.
-    addRadioStation: () => !window.IS_DEMO || currentUser.value.abilities.includes('manage radio stations'),
+    addRadioStation: () => !window.KOEL.is_demo || currentUser.value.abilities.includes('manage radio stations'),
 
     manageSettings: () => currentUser.value.abilities.includes('manage settings'),
     manageUsers: () => currentUser.value.abilities.includes('manage users'),
-    uploadSongs: () => isPlus.value || currentUser.value.abilities.includes('manage songs'),
+    uploadSongs: () => {
+      if (currentUser.value.abilities.includes('manage songs')) {
+        return true
+      }
+
+      // On Plus, every user has their own library to upload to — except Guests, who don't.
+      return isPlus.value && currentUser.value.role !== 'guest'
+    },
   }
 
   return {

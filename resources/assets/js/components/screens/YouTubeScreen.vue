@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { faYoutube } from '@fortawesome/free-brands-svg-icons'
-import { unescape } from 'lodash'
+import { unescape } from 'lodash-es'
 import createYouTubePlayer from 'youtube-player'
 import { ref, watch } from 'vue'
 import type { YouTubePlayer } from 'youtube-player/dist/types'
@@ -71,6 +71,7 @@ eventBus.on('PLAY_YOUTUBE_VIDEO', payload => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 :deep(iframe#player) {
   /* this is the iframe created by the YouTubePlayer plugin, not the div element! */
   @apply -m-6 w-auto h-auto flex-1 flex flex-col;

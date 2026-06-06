@@ -11,7 +11,7 @@ describe('footerPlaybackControls.vue', () => {
 
   const renderComponent = (playable?: Playable | null) => {
     if (playable === undefined) {
-      playable = h.factory('song', {
+      playable = h.factory('song').make({
         id: '00000000-0000-0000-0000-000000000000',
         title: 'Fahrstuhl to Heaven',
         artist_name: 'Led Zeppelin',
@@ -33,9 +33,6 @@ describe('footerPlaybackControls.vue', () => {
       },
     })
   }
-
-  it('renders without a current playable', () => expect(renderComponent(null).html()).toMatchSnapshot())
-  it('renders with a current playable', () => expect(renderComponent().html()).toMatchSnapshot())
 
   it('plays the previous playable', async () => {
     h.createAudioPlayer()

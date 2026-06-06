@@ -7,7 +7,7 @@
     @mousemove="showControls"
   >
     <div
-      class="controls absolute z-[1] w-full h-full top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out"
+      class="controls absolute z-1 w-full h-full top-0 left-0 opacity-0 transition-opacity duration-300 ease-in-out"
       :class="{ 'hover:opacity-100': !isFullscreen, 'show-controls': !controlsHidden && isFullscreen }"
     >
       <div v-if="selectedVisualizer" class="absolute bottom-8 left-8 px-6 py-4 bg-black/30 rounded-md">
@@ -21,7 +21,7 @@
       </div>
 
       <div class="absolute bottom-8 right-8 border border-white/30 rounded-md">
-        <SelectBox v-model="selectedId" class="!bg-black/20 !text-white block">
+        <SelectBox v-model="selectedId" class="bg-black/20! text-white! block">
           <option disabled value="-1">Pick a visualizer</option>
           <option v-for="v in visualizers" :key="v.id" :value="v.id">{{ v.name }}</option>
         </SelectBox>
@@ -36,7 +36,7 @@
 import { faUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useFullscreen } from '@vueuse/core'
-import { throttle } from 'lodash'
+import { useThrottleFn } from '@vueuse/core'
 import { logger } from '@/utils/logger'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { visualizerStore } from '@/stores/visualizerStore'
@@ -60,7 +60,7 @@ const setupControlHidingTimer = () => {
   hideControlsTimeout = window.setTimeout(() => (controlsHidden.value = true), 5000)
 }
 
-const showControls = throttle(() => {
+const showControls = useThrottleFn(() => {
   if (!isFullscreen.value) {
     return
   }
@@ -74,7 +74,6 @@ watch(isFullscreen, fullscreen => {
     setupControlHidingTimer()
   } else {
     window.clearTimeout(hideControlsTimeout)
-    showControls.cancel()
     controlsHidden.value = false
   }
 })
@@ -118,12 +117,12 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.clearTimeout(hideControlsTimeout)
-  showControls.cancel()
   freeUp()
 })
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 :deep(canvas) {
   @apply transition-opacity duration-300 h-full w-full;
 }

@@ -21,7 +21,7 @@ class UserStoreRequest extends Request
     {
         return [
             'name' => 'required',
-            'email' => 'required|email|unique:users',
+            'email' => ['required', 'email', 'unique:users'],
             'password' => ['required', Password::defaults()],
             'role' => [
                 'required',

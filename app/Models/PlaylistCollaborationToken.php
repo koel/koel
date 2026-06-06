@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Observers\PlaylistCollaborationTokenObserver;
 use Carbon\Carbon;
 use Database\Factories\PlaylistCollaborationTokenFactory;
+use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static PlaylistCollaborationTokenFactory factory(...$parameters)
  */
 #[ObservedBy(PlaylistCollaborationTokenObserver::class)]
+#[Guarded(['id'])]
 class PlaylistCollaborationToken extends Model
 {
     use HasFactory;

@@ -61,7 +61,7 @@ describe('playableList.vue', () => {
   }
 
   it('renders', async () => {
-    const { html } = await renderComponent(h.factory('song', 5))
+    const { html } = await renderComponent(h.factory('song').make(5))
     expect(html()).toMatchSnapshot()
   })
 })

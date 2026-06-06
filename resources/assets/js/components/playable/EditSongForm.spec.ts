@@ -45,7 +45,7 @@ describe('editSongForm.vue', () => {
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
     const { songs, html } = await renderComponent(
-      h.factory('song', {
+      h.factory('song').make({
         title: 'Rocket to Heaven',
         artist_name: 'Led Zeppelin',
         album_name: 'IV',
@@ -99,7 +99,7 @@ describe('editSongForm.vue', () => {
     const emitMock = h.mock(eventBus, 'emit')
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-    const { songs, html } = await renderComponent(h.factory('song', 3))
+    const { songs, html } = await renderComponent(h.factory('song').make(3))
 
     expect(html()).toMatchSnapshot()
     expect(screen.queryByTestId('title-input')).toBeNull()
@@ -131,12 +131,15 @@ describe('editSongForm.vue', () => {
 
   it('displays artist name if all songs have the same artist', async () => {
     await renderComponent(
-      h.factory('song', 4, {
-        artist_id: 'led-zeppelin',
-        artist_name: 'Led Zeppelin',
-        album_id: 'iv',
-        album_name: 'IV',
-      }),
+      h.factory('song').make(
+        {
+          artist_id: 'led-zeppelin',
+          artist_name: 'Led Zeppelin',
+          album_id: 'iv',
+          album_name: 'IV',
+        },
+        4,
+      ),
     )
 
     expect(screen.getByTestId('displayed-artist-name').textContent).toBe('Led Zeppelin')

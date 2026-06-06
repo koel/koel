@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { differenceBy } from 'lodash'
+import { differenceBy } from 'lodash-es'
 import { http } from '@/services/http'
 import { useVault } from '@/composables/useVault'
 
@@ -75,5 +75,11 @@ export const userStore = {
   remove(user: User) {
     this.state.users = differenceBy(this.state.users, [user], 'id')
     this.vault.delete(user.id)
+  },
+
+  async regenerateSubsonicApiKey() {
+    const updated = await http.post<CurrentUser>('me/subsonic-api-key/regenerate')
+    this.state.current.subsonic_api_key = updated.subsonic_api_key
+    return updated.subsonic_api_key
   },
 }

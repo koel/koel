@@ -38,7 +38,7 @@
 
 <script lang="ts" setup>
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { intersectionBy } from 'lodash'
+import { intersectionBy } from 'lodash-es'
 import { ref, toRef } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { searchStore } from '@/stores/searchStore'

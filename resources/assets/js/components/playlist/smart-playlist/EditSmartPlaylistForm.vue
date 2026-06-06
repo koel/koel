@@ -55,7 +55,7 @@
             aria-labelledby="createSmartPlaylistTabRules"
             class="space-y-5"
           >
-            <div v-koel-overflow-fade class="group-container space-y-5 overflow-auto max-h-[480px]">
+            <div class="scroll-mask-y group-container space-y-5 overflow-auto max-h-[480px]">
               <RuleGroup
                 v-for="(group, index) in collectedRuleGroups"
                 :key="group.id"
@@ -89,7 +89,9 @@
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { cloneDeep, isEqual, pick } from 'lodash'
+import { isEqual, pick } from 'lodash-es'
+import { toRaw } from 'vue'
+
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { eventBus } from '@/utils/eventBus'
@@ -118,7 +120,7 @@ const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const { Btn, RuleGroup, activateTab, isTabActive, collectedRuleGroups, addGroup, onGroupChanged } =
-  useSmartPlaylistForm(cloneDeep(playlist.rules))
+  useSmartPlaylistForm(structuredClone(toRaw(playlist.rules)))
 
 const close = () => emit('close')
 
@@ -127,7 +129,7 @@ const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
   isPristine: (original, current) => isEqual(original, current) && isEqual(collectedRuleGroups.value, playlist.rules),
   onSubmit: async data => {
     const formData = {
-      ...cloneDeep(data),
+      ...structuredClone(toRaw(data)),
       rules: collectedRuleGroups.value,
     }
 

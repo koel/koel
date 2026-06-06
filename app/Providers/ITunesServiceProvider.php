@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\ITunesService;
+use App\Services\Integrations\ITunesService;
 use Illuminate\Support\ServiceProvider;
 
 class ITunesServiceProvider extends ServiceProvider

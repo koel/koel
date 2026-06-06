@@ -11,7 +11,7 @@ describe('queueStore', () => {
   const h = createHarness({
     beforeEach: () => {
       playableStore.vault.clear()
-      songs = playableStore.syncWithVault(h.factory('song', 3)) as Song[]
+      songs = playableStore.syncWithVault(h.factory('song').make(3)) as Song[]
       queueStore.state.playables = reactive(songs)
     },
   })
@@ -23,7 +23,7 @@ describe('queueStore', () => {
   it('returns the last queued song', () => expect(queueStore.last).toEqual(songs[2]))
 
   it('queues to bottom', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     const putMock = h.mock(http, 'put')
     queueStore.queue(song)
 
@@ -33,7 +33,7 @@ describe('queueStore', () => {
   })
 
   it('queues to top', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     const putMock = h.mock(http, 'put')
     queueStore.queueToTop(song)
 
@@ -43,7 +43,7 @@ describe('queueStore', () => {
   })
 
   it('replaces the whole queue', () => {
-    const newSongs = h.factory('song', 2)
+    const newSongs = h.factory('song').make(2)
     const putMock = h.mock(http, 'put')
     queueStore.replaceQueueWith(newSongs)
 
@@ -101,7 +101,7 @@ describe('queueStore', () => {
   })
 
   it('fetches random songs to queue', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const getMock = h.mock(http, 'get').mockResolvedValue(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
     const putMock = h.mock(http, 'put')
@@ -115,7 +115,7 @@ describe('queueStore', () => {
   })
 
   it('fetches random songs to queue with a custom order', async () => {
-    const songs = h.factory('song', 3)
+    const songs = h.factory('song').make(3)
     const getMock = h.mock(http, 'get').mockResolvedValue(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
     const putMock = h.mock(http, 'put')

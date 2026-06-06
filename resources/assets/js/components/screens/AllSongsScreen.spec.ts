@@ -13,7 +13,7 @@ describe('allSongsScreen.vue', () => {
     beforeEach: () => {
       commonStore.state.song_count = 420
       commonStore.state.song_length = 123_456
-      playableStore.state.playables = h.factory('song', 20)
+      playableStore.state.playables = h.factory('song').make(20)
       h.actingAsUser()
     },
   })

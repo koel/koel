@@ -3,6 +3,7 @@ node_modules
 Homestead.yaml
 Homestead.json
 .env
+/Caddyfile
 .idea
 /_ide_helper.php
 /config.testing
@@ -90,3 +91,5 @@ docs/.vitepress/cache
 demo-credits.json
 
 public/sandbox
+public/storage
+build/

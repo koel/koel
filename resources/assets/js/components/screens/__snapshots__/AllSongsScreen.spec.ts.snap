@@ -3,7 +3,7 @@
 exports[`allSongsScreen.vue > renders 1`] = `
 <section data-v-dcfb8776="" data-v-8ea4eaa5="" class="max-h-full min-h-full w-full flex flex-col transform-gpu overflow-hidden">
   <!--v-if-->
-  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded screen-header gap-4 min-h-0 md:min-h-full flex items-end flex-shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-fg-5">
+  <header data-v-5691beb5="" data-v-8ea4eaa5="" class="expanded screen-header gap-4 min-h-0 md:min-h-full flex items-end shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-fg-5">
     <aside data-v-5691beb5="" class="thumbnail-wrapper hidden md:flex items-end overflow-hidden rounded-md">
       <!---->
     </aside>
@@ -13,7 +13,7 @@ exports[`allSongsScreen.vue > renders 1`] = `
       </div>
       <div data-v-8ea4eaa5="" class="controls w-full flex justify-between items-center gap-4">
         <div data-v-8ea4eaa5="" class="relative" data-testid="song-list-controls">
-          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-flex relative flex-nowrap" uppercase=""><button data-v-8943c846="" data-variant="highlight" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
+          <div class="flex gap-2 flex-wrap"><span data-v-cf9b67d8="" class="btn-group inline-flex relative flex-nowrap" uppercase=""><button data-v-8943c846="" data-variant="highlight" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded-sm cursor-pointer btn-shuffle-all" type="button" data-testid="btn-shuffle-all" title="Shuffle all. Press Alt/⌥ to change mode."><br data-testid="Icon" icon="[object Object]" fixed-width=""> All </button><!--v-if--><!--v-if--><!--v-if--></span>
             <!--v-if-->
             <!--v-if-->
           </div>
@@ -22,6 +22,6 @@ exports[`allSongsScreen.vue > renders 1`] = `
       </div>
     </main>
   </header>
-  <main data-v-dcfb8776="" class="overflow-scroll flex flex-col b-16 md:b-6 p-6 flex-1 place-content-start"><br data-v-8ea4eaa5="" data-testid="song-list" class="-m-6"></main>
+  <main data-v-dcfb8776="" class="scroll-mask-y overflow-scroll flex flex-col b-16 md:b-6 p-6 flex-1 place-content-start"><br data-v-8ea4eaa5="" data-testid="song-list" class="-m-6"></main>
 </section>
 `;

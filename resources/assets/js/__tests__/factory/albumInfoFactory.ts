@@ -7,6 +7,6 @@ export default (): AlbumInfo => ({
     summary: faker.lorem.sentence(),
     full: faker.lorem.sentences(4),
   },
-  tracks: factory('album-track', 8) as unknown as AlbumTrack[],
+  tracks: factory('album-track').make(8) as unknown as AlbumTrack[],
   url: faker.internet.url(),
 })

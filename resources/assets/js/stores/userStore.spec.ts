@@ -14,7 +14,7 @@ describe('userStore', () => {
     },
   })
 
-  currentUser = h.factory.states('current')('user') as CurrentUser
+  currentUser = h.factory('user').state('current').make() as CurrentUser
 
   it('initializes with current user', () => {
     expect(userStore.current).toEqual(currentUser)
@@ -22,7 +22,7 @@ describe('userStore', () => {
   })
 
   it('syncs with vault', () => {
-    const user = h.factory('user')
+    const user = h.factory('user').make()
 
     expect(userStore.syncWithVault(user)).toEqual([user])
     expect(userStore.vault.size).toBe(2)
@@ -30,7 +30,7 @@ describe('userStore', () => {
   })
 
   it('fetches users', async () => {
-    const users = h.factory('user', 3)
+    const users = h.factory('user').make(3)
     const getMock = h.mock(http, 'get').mockResolvedValue(users)
 
     await userStore.fetch()
@@ -40,7 +40,7 @@ describe('userStore', () => {
   })
 
   it('gets user by id', () => {
-    const user = h.factory('user')
+    const user = h.factory('user').make()
     userStore.syncWithVault(user)
 
     expect(userStore.byId(user.id)).toEqual(user)
@@ -54,7 +54,7 @@ describe('userStore', () => {
       email: 'jane@doe.com',
     }
 
-    const user = h.factory('user', data)
+    const user = h.factory('user').make(data)
     const postMock = h.mock(http, 'post').mockResolvedValue(user)
 
     expect(await userStore.store(data)).toEqual(user)
@@ -64,7 +64,7 @@ describe('userStore', () => {
   })
 
   it('updates a user', async () => {
-    const user = h.factory('user')
+    const user = h.factory('user').make()
     userStore.state.users.push(...userStore.syncWithVault(user))
 
     const data: UpdateUserData = {
@@ -86,7 +86,7 @@ describe('userStore', () => {
   it('deletes a user', async () => {
     const deleteMock = h.mock(http, 'delete')
 
-    const user = h.factory('user')
+    const user = h.factory('user').make()
     userStore.state.users.push(...userStore.syncWithVault(user))
     expect(userStore.vault.has(user.id)).toBe(true)
 

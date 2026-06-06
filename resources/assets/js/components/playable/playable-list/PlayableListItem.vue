@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h4 v-if="isSong(playable) && showDisc && playable.disc" class="title text-k-fg !flex gap-2 p-2 uppercase pl-5">
+    <h4 v-if="isSong(playable) && showDisc && playable.disc" class="title text-k-fg flex! gap-2 p-2 uppercase pl-5">
       Disc {{ playable.disc }}
     </h4>
 
@@ -22,12 +22,12 @@
         <PlayableThumbnail :playable @clicked="play" />
       </span>
       <span class="title-artist flex flex-col gap-1 overflow-hidden">
-        <span class="title text-k-fg !flex gap-2 items-center">
+        <span class="title text-k-fg flex! gap-2 items-center">
           <ExternalMark v-if="external" />
           <Icon
             v-if="cachingOffline"
             :icon="faSpinner"
-            class="!opacity-50"
+            class="opacity-50!"
             spin
             title="Caching for offline playback"
             aria-label="Caching for offline playback"
@@ -35,7 +35,7 @@
           <Icon
             v-else-if="cachingFailed"
             :icon="faExclamationTriangle"
-            class="text-k-danger !opacity-75"
+            class="text-k-danger opacity-75!"
             :title="`Error: ${cachingErrorMessage}`"
           />
           <OfflineMark v-else-if="cachedOffline" />
@@ -60,25 +60,38 @@
         <span v-if="shouldShowColumn('genre')" class="genre">{{ playable.genre || '—' }}</span>
         <span v-if="shouldShowColumn('year')" class="year">{{ playable.year || '—' }}</span>
       </template>
+      <span v-if="shouldShowColumn('rating')" class="rating">
+        <StarRating v-if="isSong(playable)" :rateable="playable" size="xs" />
+      </span>
       <span v-if="shouldShowColumn('duration')" class="time text-[0.9rem] text-k-fg-50 tabular-nums">
         {{ fmtLength }}
       </span>
-      <span class="extra">
+      <span v-if="shouldShowColumn('favorite')" class="favorite">
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
+      </span>
+      <span class="extra">
+        <button
+          class="text-k-fg-50 hover:text-k-fg p-1"
+          title="More actions"
+          @click.stop="emit('request-context-menu', $event)"
+        >
+          <Icon :icon="faEllipsis" />
+        </button>
       </span>
     </article>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { faExclamationTriangle, faPodcast, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsis, faExclamationTriangle, faPodcast, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
-import { usePlayableListColumnVisibility } from '@/composables/usePlayableListColumnVisibility'
+import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { PlayableListConfigKey } from '@/config/symbols'
+import { playableListColumnConfig } from '@/config/tables'
 import { playableStore } from '@/stores/playableStore'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
@@ -87,16 +100,20 @@ import UserAvatar from '@/components/user/UserAvatar.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import OfflineMark from '@/components/ui/OfflineMark.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 
 const props = withDefaults(defineProps<{ item: PlayableRow; showDisc?: boolean }>(), {
   showDisc: false,
 })
 
-const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
+const emit = defineEmits<{
+  (e: 'play', playable: Playable): void
+  (e: 'request-context-menu', event: MouseEvent): void
+}>()
 
 const [config] = requireInjection<[Partial<PlayableListConfig>]>(PlayableListConfigKey, [{}])
 
-const { shouldShowColumn } = usePlayableListColumnVisibility()
+const { shouldShowColumn } = useTableColumnVisibility(playableListColumnConfig)
 
 const { item } = toRefs(props)
 
@@ -121,9 +138,10 @@ const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
 article {
   &.droppable {
-    @apply relative transition-none after:absolute after:w-full after:h-[3px] after:rounded after:bg-k-success after:top-0;
+    @apply relative transition-none after:absolute after:w-full after:h-[3px] after:rounded-sm after:bg-k-success after:top-0;
 
     &.dragover-bottom {
       @apply after:top-auto after:bottom-0;
@@ -134,7 +152,7 @@ article {
     .title,
     .track-number,
     .favorite {
-      @apply text-k-highlight !important;
+      @apply text-k-highlight!;
     }
   }
 

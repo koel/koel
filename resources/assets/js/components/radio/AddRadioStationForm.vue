@@ -14,6 +14,10 @@
         <TextInput v-model="data.url" type="url" name="url" placeholder="https://radio.example.com/stream" required />
       </FormRow>
       <FormRow>
+        <template #label>Homepage URL</template>
+        <TextInput v-model="data.homepage_url" type="url" name="homepage_url" placeholder="https://radio.example.com" />
+      </FormRow>
+      <FormRow>
         <template #label>Description</template>
         <TextArea
           v-model="data.description"
@@ -26,7 +30,7 @@
       <FormRow>
         <label>
           <CheckBox v-model="data.is_public" name="is_public" />
-          <span class="ml-2">Make this station public</span>
+          <span class="ml-2">Accessible to all users</span>
         </label>
       </FormRow>
     </main>
@@ -64,6 +68,7 @@ const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
     name: '',
     logo: null,
     url: '',
+    homepage_url: null,
     description: '',
     is_public: false,
   },

@@ -2,18 +2,19 @@
   <BaseCard
     v-if="showing"
     :entity="artist"
-    :layout="layout"
     :title="artist.name"
     @contextmenu="requestContextMenu"
     @dblclick="shuffle"
     @dragstart="onDragStart"
   >
+    <template #thumbnail>
+      <CardThumbnail :entity="artist" @toggle-favorite="toggleFavorite" @context-menu="requestContextMenu" />
+    </template>
+
     <template #name>
       <a :href="url('artists.show', { id: artist.id })" class="font-medium" data-testid="name">
         <ExternalMark v-if="artist.is_external" class="mr-1" />
         {{ artist.name }}
-
-        <FavoriteButton v-if="artist.favorite" :favorite="artist.favorite" class="ml-1" @toggle="toggleFavorite" />
       </a>
     </template>
     <template #meta>
@@ -38,10 +39,10 @@ import { playback } from '@/services/playbackManager'
 import { useContextMenu } from '@/composables/useContextMenu'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
+import CardThumbnail from '@/components/ui/album-artist/AlbumOrArtistCardThumbnail.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
-import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
-const props = withDefaults(defineProps<{ artist: Artist; layout?: CardLayout }>(), { layout: 'full' })
+const props = defineProps<{ artist: Artist }>()
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 
@@ -49,7 +50,7 @@ const { go, url } = useRouter()
 const { startDragging } = useDraggable('artist')
 const { openContextMenu } = useContextMenu()
 
-const { artist, layout } = toRefs(props)
+const { artist } = toRefs(props)
 
 // We're not checking for supports_batch_downloading here, as the number of songs by the artist is not yet known.
 const allowDownload = toRef(commonStore.state, 'allows_download')

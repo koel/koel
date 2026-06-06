@@ -7,55 +7,55 @@ describe('useBranding', () => {
 
   it('returns branding name from window', () => {
     const { name } = useBranding()
-    expect(name).toBe(window.BRANDING.name)
+    expect(name).toBe(window.KOEL.branding.name)
   })
 
   it('falls back to default logo when none set', () => {
-    const originalLogo = window.BRANDING.logo
-    window.BRANDING.logo = ''
+    const originalLogo = window.KOEL.branding.logo
+    window.KOEL.branding.logo = ''
 
     const { logo, koelBirdLogo, isKoelBirdLogo } = useBranding()
     expect(logo).toBe(koelBirdLogo)
     expect(isKoelBirdLogo(logo)).toBe(true)
 
-    window.BRANDING.logo = originalLogo
+    window.KOEL.branding.logo = originalLogo
   })
 
   it('falls back to default cover when none set', () => {
-    const originalCover = window.BRANDING.cover
-    window.BRANDING.cover = ''
+    const originalCover = window.KOEL.branding.cover
+    window.KOEL.branding.cover = ''
 
     const { cover, koelBirdCover, isKoelBirdCover } = useBranding()
     expect(cover).toBe(koelBirdCover)
     expect(isKoelBirdCover(cover)).toBe(true)
 
-    window.BRANDING.cover = originalCover
+    window.KOEL.branding.cover = originalCover
   })
 
   it('detects custom branding when logo is custom', () => {
-    const originalLogo = window.BRANDING.logo
-    window.BRANDING.logo = 'https://example.com/custom-logo.png'
+    const originalLogo = window.KOEL.branding.logo
+    window.KOEL.branding.logo = 'https://example.com/custom-logo.png'
 
     const { hasCustomBranding } = useBranding()
     expect(hasCustomBranding).toBe(true)
 
-    window.BRANDING.logo = originalLogo
+    window.KOEL.branding.logo = originalLogo
   })
 
   it('detects no custom branding with defaults', () => {
-    const originalLogo = window.BRANDING.logo
-    const originalCover = window.BRANDING.cover
-    const originalName = window.BRANDING.name
-    window.BRANDING.logo = ''
-    window.BRANDING.cover = ''
-    window.BRANDING.name = 'Koel'
+    const originalLogo = window.KOEL.branding.logo
+    const originalCover = window.KOEL.branding.cover
+    const originalName = window.KOEL.branding.name
+    window.KOEL.branding.logo = ''
+    window.KOEL.branding.cover = ''
+    window.KOEL.branding.name = 'Koel'
 
     const { hasCustomBranding } = useBranding()
     expect(hasCustomBranding).toBe(false)
 
-    window.BRANDING.logo = originalLogo
-    window.BRANDING.cover = originalCover
-    window.BRANDING.name = originalName
+    window.KOEL.branding.logo = originalLogo
+    window.KOEL.branding.cover = originalCover
+    window.KOEL.branding.name = originalName
   })
 
   it('identifies koel bird logo correctly', () => {

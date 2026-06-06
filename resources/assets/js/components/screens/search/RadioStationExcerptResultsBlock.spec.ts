@@ -15,7 +15,7 @@ describe('radioStationExcerptResultsBlock.vue', () => {
   })
 
   it('renders station cards when stations are provided', () => {
-    const stations = h.factory('radio-station', 3)
+    const stations = h.factory('radio-station').make(3)
 
     h.render(Component, {
       props: { stations, searching: false },

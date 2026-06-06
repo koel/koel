@@ -8,8 +8,8 @@ describe('createPlaylistForm.vue', () => {
   const h = createHarness()
 
   const renderComponent = (folder?: PlaylistFolder, playables?: Playable[]) => {
-    folder = folder ?? h.factory('playlist-folder')
-    playables = playables ?? h.factory('song', 2)
+    folder = folder ?? h.factory('playlist-folder').make()
+    playables = playables ?? h.factory('song').make(2)
 
     const rendered = h.render(Component, {
       props: {
@@ -27,7 +27,7 @@ describe('createPlaylistForm.vue', () => {
 
   it('creates playlist with no playables', async () => {
     const { folder } = renderComponent(undefined, [])
-    const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(h.factory('playlist'))
+    const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(h.factory('playlist').make())
     expect(screen.queryByTestId('from-playables')).toBeNull()
 
     await h.type(screen.getByRole('textbox', { name: 'name' }), 'My playlist')
@@ -47,7 +47,7 @@ describe('createPlaylistForm.vue', () => {
   })
 
   it('creates playlist with playables', async () => {
-    const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(h.factory('playlist'))
+    const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(h.factory('playlist').make())
     const { folder, playables } = renderComponent()
 
     screen.getByText(`from ${playables.length} songs`)
@@ -70,7 +70,7 @@ describe('createPlaylistForm.vue', () => {
 
   it('creates playlist with a cover', async () => {
     const { folder } = renderComponent(undefined, [])
-    const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(h.factory('playlist'))
+    const storeMock = h.mock(playlistStore, 'store').mockResolvedValue(h.factory('playlist').make())
 
     await h.user.upload(
       screen.getByLabelText('Pick or paste a cover (optional)'),

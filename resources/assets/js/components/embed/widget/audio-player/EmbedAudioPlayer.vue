@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, toRefs } from 'vue'
-import { throttle } from 'lodash'
+import { useThrottleFn } from '@vueuse/core'
 import { secondsToHis } from '@/utils/formatters'
 
 import ProgressBar from '@/components/embed/widget/audio-player/EmbedAudioPlayerProgressBar.vue'
@@ -117,7 +117,7 @@ const setupAudioEvents = (audio: HTMLAudioElement) => {
 
   audio.addEventListener(
     'timeupdate',
-    throttle(() => {
+    useThrottleFn(() => {
       progress.value = (audio.currentTime / maxDuration.value!) * 100
 
       const timeRemaining = secondsToHis(maxDuration.value - audio.currentTime)

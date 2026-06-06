@@ -38,6 +38,7 @@ class TestHarness {
 
       commonStore.state.song_length = 10
       commonStore.state.allows_download = true
+      commonStore.state.allows_embedding = true
       commonStore.state.uses_i_tunes = true
       commonStore.state.supports_batch_downloading = true
       commonStore.state.supports_transcoding = true
@@ -61,7 +62,7 @@ class TestHarness {
   }
 
   private setDefaultBranding() {
-    window.BRANDING = {
+    window.KOEL.branding = {
       name: 'Koel',
       logo: '',
       cover: '',
@@ -71,13 +72,13 @@ class TestHarness {
   public readonly auth = (user?: CurrentUser) => this.actingAsUser(user)
 
   public actingAsUser(user?: CurrentUser) {
-    userStore.state.current = user || (factory.states('current')('user') as CurrentUser)
+    userStore.state.current = user || (factory('user').state('current').make() as CurrentUser)
     preferenceStore.init(userStore.state.current.preferences)
     return this
   }
 
   public actingAsAdmin() {
-    return this.actingAsUser(factory.states('admin')('user') as CurrentUser)
+    return this.actingAsUser(factory('user').state('admin').make() as CurrentUser)
   }
 
   public mock<T, M extends MethodOf<Required<T>>>(obj: T, methodName: M, implementation?: any) {
@@ -165,16 +166,16 @@ class TestHarness {
   public async withCustomBranding(branding: Branding, cb: Closure) {
     // Custom branding implicitly requires Plus edition.
     return await this.withPlusEdition(async () => {
-      window.BRANDING = branding
+      window.KOEL.branding = branding
       await cb()
       this.setDefaultBranding()
     })
   }
 
   public async withDemoMode(cb: Closure) {
-    window.IS_DEMO = true
+    window.KOEL.is_demo = true
     await cb()
-    window.IS_DEMO = false
+    window.KOEL.is_demo = false
 
     return this
   }

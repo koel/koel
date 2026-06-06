@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\API\ViewSongOnITunesRequest;
 use App\Models\Album;
-use App\Services\ITunesService;
-use App\Services\TokenManager;
+use App\Services\Auth\TokenManager;
+use App\Services\Integrations\ITunesService;
 use Illuminate\Http\Response;
 
 class ViewSongOnITunesController extends Controller

@@ -13,7 +13,7 @@ describe('genreCard.vue', () => {
   const h = createHarness()
 
   const createGenre = (overrides: Partial<Genre> = {}): Genre => {
-    return h.factory('genre', {
+    return h.factory('genre').make({
       id: 'foo',
       name: 'Classical',
       song_count: 99,

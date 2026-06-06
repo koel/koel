@@ -62,7 +62,7 @@ export const downloadService = {
 
   trigger: (uri: string) => {
     const sep = uri.includes('?') ? '&' : '?'
-    const url = `${window.BASE_URL}download/${uri}${sep}t=${authService.getAudioToken()}`
+    const url = `${window.KOEL.base_url}download/${uri}${sep}t=${authService.getAudioToken()}`
 
     open(url)
   },

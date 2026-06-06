@@ -21,12 +21,12 @@ describe('podcastScreen.vue', () => {
   const renderComponent = async (podcast?: Podcast, episodes?: Episode[]) => {
     podcast =
       podcast ||
-      h.factory('podcast', {
+      h.factory('podcast').make({
         title: 'A Brief History of Time',
         favorite: false,
       })
 
-    episodes = episodes || h.factory('episode', 9, { podcast_id: podcast.id })
+    episodes = episodes || h.factory('episode').make({ podcast_id: podcast.id }, 9)
 
     const resolvePodcastMock = h.mock(podcastStore, 'resolve').mockResolvedValue(podcast)
     const fetchEpisodesMock = h.mock(episodeStore, 'fetchEpisodesInPodcast').mockResolvedValue(episodes)
@@ -99,8 +99,8 @@ describe('podcastScreen.vue', () => {
 
     const playMock = h.mock(playbackService, 'play')
 
-    const podcast = h.factory('podcast')
-    const episodes = h.factory('episode', 2, { podcast_id: podcast.id })
+    const podcast = h.factory('podcast').make()
+    const episodes = h.factory('episode').make({ podcast_id: podcast.id }, 2)
     podcast.state.current_episode = episodes[0].id
     podcast.state.progresses = {
       [episodes[0].id]: 123,
@@ -123,7 +123,7 @@ describe('podcastScreen.vue', () => {
   })
 
   it('has a Favorite button if podcast is favorite', async () => {
-    const { podcast } = await renderComponent(h.factory('podcast', { favorite: true }))
+    const { podcast } = await renderComponent(h.factory('podcast').make({ favorite: true }))
     const toggleFavoriteMock = h.mock(podcastStore, 'toggleFavorite')
 
     await waitFor(async () => await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' })))
@@ -132,7 +132,7 @@ describe('podcastScreen.vue', () => {
   })
 
   it('does not have a Favorite button if podcast is not favorite', async () => {
-    await renderComponent(h.factory('podcast', { favorite: false }))
+    await renderComponent(h.factory('podcast').make({ favorite: false }))
     expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
   })
 

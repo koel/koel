@@ -62,7 +62,7 @@ describe('useOfflinePlayback', () => {
   })
 
   it('sends CACHE_AUDIO message to SW', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     const sourceUrl = 'http://localhost/play/abc123?t=token'
     h.mock(playableStore, 'getSourceUrl').mockReturnValue(sourceUrl)
 
@@ -76,7 +76,7 @@ describe('useOfflinePlayback', () => {
   })
 
   it('sends DELETE_AUDIO_CACHE message to SW', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     const sourceUrl = 'http://localhost/play/abc123?t=token'
     h.mock(playableStore, 'getSourceUrl').mockReturnValue(sourceUrl)
 
@@ -90,7 +90,7 @@ describe('useOfflinePlayback', () => {
   })
 
   it('tracks caching progress from SW messages', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
 
     cachingProgress.value.set(song.id, 0)
     expect(isCaching(song)).toBe(true)
@@ -107,7 +107,7 @@ describe('useOfflinePlayback', () => {
   })
 
   it('marks song as cached on CACHE_AUDIO_COMPLETE and persists to manifest', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     h.mock(playableStore, 'byId').mockReturnValue(song)
 
     cachingProgress.value.set(song.id, 0.5)
@@ -127,7 +127,7 @@ describe('useOfflinePlayback', () => {
   })
 
   it('removes song from cached set and manifest on DELETE_AUDIO_CACHE_COMPLETE', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
 
     cachedSongIds.value.add(song.id)
     expect(isCached(song)).toBe(true)
@@ -142,7 +142,7 @@ describe('useOfflinePlayback', () => {
   })
 
   it('cleans up progress on CACHE_AUDIO_ERROR', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
 
     cachingProgress.value.set(song.id, 0.3)
 
@@ -156,7 +156,7 @@ describe('useOfflinePlayback', () => {
   })
 
   it('sends GET_CACHE_STATUS message to SW', () => {
-    const songs = [h.factory('song'), h.factory('song')]
+    const songs = [h.factory('song').make(), h.factory('song').make()]
     const urls = ['http://localhost/play/a?t=t1', 'http://localhost/play/b?t=t2']
     h.mock(playableStore, 'getSourceUrl').mockReturnValueOnce(urls[0]).mockReturnValueOnce(urls[1])
 
@@ -169,7 +169,7 @@ describe('useOfflinePlayback', () => {
   })
 
   it('returns caching progress value', () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     expect(getCachingProgress(song)).toBe(0)
 
     cachingProgress.value.set(song.id, 0.75)
@@ -184,7 +184,7 @@ describe('useOfflinePlayback', () => {
   })
 
   it('clears all offline cache', async () => {
-    const song = h.factory('song')
+    const song = h.factory('song').make()
     const sourceUrl = 'http://localhost/play/x?t=token'
     h.mock(playableStore, 'byId').mockReturnValue(song)
     h.mock(playableStore, 'getSourceUrl').mockReturnValue(sourceUrl)
