@@ -86,6 +86,7 @@ onBeforeUnmount(() => {
   resizeObserver?.disconnect()
   window.removeEventListener('resize', updateOverflow)
 })
+
 watch(scroller, observeOverflow)
 
 const slide = (direction: 1 | -1) => {
