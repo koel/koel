@@ -1,6 +1,6 @@
 <template>
   <article
-    class="album-row group pl-5 flex items-center h-[64px] border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
+    class="album-row group h-[64px] pl-5 flex items-center border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
     data-testid="album-row"
     :draggable="true"
     @contextmenu.prevent="onContextMenu"
@@ -8,11 +8,8 @@
     @dragstart="onDragStart"
   >
     <span class="name flex gap-3 items-center min-w-0">
-      <span
-        :style="{ backgroundImage: `url(${defaultCover})` }"
-        class="w-[48px] aspect-square rounded-sm bg-cover bg-center flex-none overflow-hidden"
-      >
-        <img v-if="album.cover" :src="album.cover" alt="" class="w-full aspect-square object-cover" loading="lazy" />
+      <span class="size-[48px] flex-none">
+        <AlbumOrArtistThumbnail :entity="album" size="sm" />
       </span>
       <a :href="url('albums.show', { id: album.id })" class="truncate">{{ album.name }}</a>
     </span>
@@ -46,7 +43,6 @@ import { artistStore } from '@/stores/artistStore'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
-import { useBranding } from '@/composables/useBranding'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { albumTableColumnConfig } from '@/config/tables'
 import { secondsToHis } from '@/utils/formatters'
@@ -54,6 +50,7 @@ import { defineAsyncComponent } from '@/utils/helpers'
 
 import StarRating from '@/components/ui/StarRating.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import AlbumOrArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 
 const props = defineProps<{ album: Album }>()
 
@@ -66,7 +63,6 @@ const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/A
 const { go, url } = useRouter()
 const { openContextMenu } = useContextMenu()
 const { startDragging } = useDraggable('album')
-const { cover: defaultCover } = useBranding()
 const { shouldShowColumn } = useTableColumnVisibility(albumTableColumnConfig)
 
 const formatLength = (seconds: number) => (seconds > 0 ? secondsToHis(seconds) : '—')
