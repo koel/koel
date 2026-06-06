@@ -71,6 +71,7 @@ export default defineConfig({
   ],
   build: {
     cssMinify: 'esbuild',
+    assetsInlineLimit: 0,
   },
   resolve: {
     alias: {
