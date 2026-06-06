@@ -1,12 +1,20 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen, waitFor } from '@testing-library/vue'
+import { nextTick } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './Carousel.vue'
+
+const setOverflow = async (scroller: HTMLDivElement, clientWidth: number, scrollWidth: number) => {
+  Object.defineProperty(scroller, 'clientWidth', { value: clientWidth, configurable: true })
+  Object.defineProperty(scroller, 'scrollWidth', { value: scrollWidth, configurable: true })
+  window.dispatchEvent(new Event('resize'))
+  await nextTick()
+}
 
 describe('carousel.vue', () => {
   const h = createHarness()
 
-  it('renders the header slot and both scroll buttons', () => {
+  it('renders the header slot and renders content', () => {
     h.render(Component, {
       slots: {
         header: 'Most Played',
@@ -15,9 +23,28 @@ describe('carousel.vue', () => {
     })
 
     screen.getByText('Most Played')
+    screen.getByTestId('card')
+  })
+
+  it('hides the scroll buttons when the track fits within the scroller', () => {
+    h.render(Component, {
+      slots: { header: 'Top', default: '<div data-testid="card">Card</div>' },
+    })
+
+    expect(screen.queryByRole('button', { name: 'Scroll left' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Scroll right' })).toBeNull()
+  })
+
+  it('shows the scroll buttons when the track overflows the scroller', async () => {
+    const { container } = h.render(Component, {
+      slots: { header: 'Top', default: '<div>Card</div>' },
+    })
+
+    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
+    await setOverflow(scroller, 800, 3200)
+
     screen.getByRole('button', { name: 'Scroll left' })
     screen.getByRole('button', { name: 'Scroll right' })
-    screen.getByTestId('card')
   })
 
   it('slides right by the scroller width when the right chevron is clicked', async () => {
@@ -28,9 +55,8 @@ describe('carousel.vue', () => {
     const scroller = container.querySelector('.home-carousel') as HTMLDivElement
     const spy = vi.fn()
     scroller.scrollTo = spy as unknown as typeof scroller.scrollTo
-    Object.defineProperty(scroller, 'clientWidth', { value: 800, configurable: true })
-    Object.defineProperty(scroller, 'scrollWidth', { value: 3200, configurable: true })
     Object.defineProperty(scroller, 'scrollLeft', { value: 0, configurable: true, writable: true })
+    await setOverflow(scroller, 800, 3200)
 
     await h.user.click(screen.getByRole('button', { name: 'Scroll right' }))
 
@@ -45,9 +71,8 @@ describe('carousel.vue', () => {
     const scroller = container.querySelector('.home-carousel') as HTMLDivElement
     const spy = vi.fn()
     scroller.scrollTo = spy as unknown as typeof scroller.scrollTo
-    Object.defineProperty(scroller, 'clientWidth', { value: 800, configurable: true })
-    Object.defineProperty(scroller, 'scrollWidth', { value: 3200, configurable: true })
     Object.defineProperty(scroller, 'scrollLeft', { value: 1600, configurable: true, writable: true })
+    await setOverflow(scroller, 800, 3200)
 
     await h.user.click(screen.getByRole('button', { name: 'Scroll left' }))
 
