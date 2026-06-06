@@ -62,7 +62,7 @@ let resizeObserver: ResizeObserver | undefined
 
 const updateOverflow = () => {
   const el = scroller.value
-  hasOverflow.value = !!el && el.scrollWidth > el.clientWidth + 1
+  hasOverflow.value = Boolean(el) && el.scrollWidth > el.clientWidth + 1
 }
 
 const observeOverflow = (el: HTMLDivElement | undefined) => {
