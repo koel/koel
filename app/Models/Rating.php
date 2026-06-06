@@ -37,4 +37,18 @@ class Rating extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function isPositive(): bool
+{
+    return $this->rating > 0;
+}
+
+public function isFiveStar(): bool
+{
+    return $this->rating === 5;
+}
+
+public function isLowRating(): bool
+{
+    return $this->rating === 1;
+}
 }
