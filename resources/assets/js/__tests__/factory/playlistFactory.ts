@@ -7,7 +7,7 @@ export default (): Playlist => ({
   id: faker.string.uuid(),
   description: faker.lorem.sentence(),
   folder_id: faker.string.uuid(),
-  name: faker.word.sample(),
+  name: faker.word.words(2),
   is_smart: false,
   rules: [],
   is_collaborative: false,
