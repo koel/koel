@@ -68,9 +68,11 @@ const updateOverflow = () => {
 const observeOverflow = (el: HTMLDivElement | undefined) => {
   resizeObserver?.disconnect()
   resizeObserver = undefined
+
   if (!el) {
     return
   }
+
   resizeObserver = new ResizeObserver(updateOverflow)
   resizeObserver.observe(el)
   resizeObserver.observe(el.firstElementChild ?? el)
