@@ -81,6 +81,7 @@ onMounted(() => {
   observeOverflow(scroller.value)
   window.addEventListener('resize', updateOverflow)
 })
+
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
   window.removeEventListener('resize', updateOverflow)
