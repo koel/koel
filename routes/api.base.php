@@ -284,3 +284,16 @@ Route::prefix('api')
 
         Route::get('demo/credits', FetchDemoCreditsController::class);
     });
+
+// NEXTCLOUD INTEGRATION ROUTES - SWE PROJECT 2026
+// Vue.js arayüzünden Nextcloud'u yönetebilmek için gerekli API uç noktaları
+Route::middleware('auth:sanctum')->prefix('nextcloud')->group(function () {
+    // Nextcloud sunucusu ile bağlantıyı test eder
+    Route::post('/test-connection', [\App\Http\Controllers\API\Settings\UpdateMediaPathController::class, 'testNextcloudConnection']);
+    
+    // Nextcloud üzerindeki müzik dosyalarını Koel'e senkronize eder
+    Route::post('/sync', [\App\Http\Controllers\API\Settings\UpdateMediaPathController::class, 'syncNextcloud']);
+    
+    // Güncel senkronizasyon durumunu ve son işlem tarihini getirir
+    Route::get('/status', [\App\Http\Controllers\API\Settings\UpdateMediaPathController::class, 'getNextcloudStatus']);
+});

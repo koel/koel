@@ -16,7 +16,27 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @method static SettingFactory factory(...$parameters)
  */
 class Setting extends Model implements AuditableContract
-{
+{   
+
+// NEXTCLOUD INTEGRATION - SWE PROJECT 2026
+    public const NEXTCLOUD_URL = 'nextcloud_url';
+    public const NEXTCLOUD_USERNAME = 'nextcloud_username';
+    public const NEXTCLOUD_PASSWORD = 'nextcloud_password';
+
+    /**
+     * Get the Nextcloud configuration values.
+     * This will be used by the media sync service to connect to the external share.
+     */
+    public static function getNextcloudConfig(): array
+    {
+        return [
+            'url' => self::get(self::NEXTCLOUD_URL),
+            'username' => self::get(self::NEXTCLOUD_USERNAME),
+            'password' => self::get(self::NEXTCLOUD_PASSWORD),
+        ];
+    }
+
+
     use Auditable;
     use HasFactory;
 

@@ -23,3 +23,20 @@ export const settingStore = {
     await http.put('settings/branding', data)
   },
 }
+// NEXTCLOUD INTEGRATION STATE - SWE PROJECT 2026
+// Frontend'de Nextcloud'un senkronizasyon durumunu takip eden veri deposu
+export const nextcloudStore = {
+  state: {
+    isSyncing: false,
+    lastSyncDate: null as string | null,
+    connectionStatus: 'disconnected'
+  },
+  
+  setSyncStatus(status: boolean) {
+    this.state.isSyncing = status;
+  },
+  
+  updateLastSync(date: string) {
+    this.state.lastSyncDate = date;
+  }
+};
