@@ -40,7 +40,7 @@
 
     <div
       ref="scroller"
-      class="home-carousel scroll-mask-x-from-[calc(100%-1rem)] md:scroll-mask-x overflow-x-auto overflow-y-hidden w-full"
+      class="home-carousel scroll-mask-x-from-[calc(100%-2rem)] md:scroll-mask-x overflow-x-auto overflow-y-hidden w-full"
     >
       <div class="home-carousel-track flex gap-4">
         <slot />
