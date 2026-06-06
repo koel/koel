@@ -82,6 +82,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property ?string $episode_guid
  * @property ?string $podcast_id
  * @property ?Podcast $podcast
+ * * @property int $rating
  *
  * @method static SongFactory factory(...$parameters)
  */
@@ -116,6 +117,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
             'storage' => SongStorageCast::class,
             'episode_metadata' => EpisodeMetadataCast::class,
             'favorite' => 'boolean',
+            
         ];
     }
 
@@ -230,27 +232,53 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
      * This is done by comparing the stored hash or mtime with the corresponding
      * value from the scan information.
      */
+public function isFileModified(int $lastModified): bool
+{
+    throw_if($this->isEpisode(), new LogicException('Podcast episodes do not have associated files.'));
+
+    return $this->mtime !== $lastModified;
+}
+
 public function __toString(): string
 {
     return $this->id;
 }
-
-public static function getTotalDuration(): int
+public function hasStarRating(): bool
 {
-    return (int) static::sum('length');
-}
-public static function getTotalSongs(): int
-{
-    return static::count();
+    return $this->rating > 0;
 }
 
-public static function getTotalDuration(): int
+public function isHighlyRated(): bool
 {
-    return (int) static::sum('length');
+    return $this->rating >= 4;
 }
 
-public static function hasSongs(): bool
+public function shouldAvoidPlayback(): bool
 {
-    return static::count() > 0;
+    return $this->rating === 1;
+}
+
+public function normalizedRating(): int
+{
+    return max(0, min(5, (int) $this->rating));
+}
+public function hasStarRating(User $user): bool
+{
+    return $this->getRatingFor($user) > 0;
+}
+
+public function getStarRatingFor(User $user): int
+{
+    return max(0, min(5, $this->getRatingFor($user)));
+}
+
+public function isHighlyRatedBy(User $user): bool
+{
+    return $this->getStarRatingFor($user) >= 4;
+}
+
+public function shouldAvoidPlaybackFor(User $user): bool
+{
+    return $this->getStarRatingFor($user) === 1;
 }
 }
