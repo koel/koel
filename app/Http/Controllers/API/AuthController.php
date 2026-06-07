@@ -31,7 +31,7 @@ class AuthController extends Controller
             ), $request);
         } catch (RequiresTwoFactorException $e) {
             return response()->json([
-                'requires_two_factor' => true,
+                'two_factor' => true,
                 'login_token' => $this->auth->generateTwoFactorLoginToken($e->user),
                 'message' =>
                     'This account has two-factor authentication enabled. '

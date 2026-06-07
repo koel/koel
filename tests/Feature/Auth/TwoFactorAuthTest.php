@@ -33,7 +33,7 @@ class TwoFactorAuthTest extends TestCase
             ->assertOk()
             ->json();
 
-        self::assertArrayNotHasKey('requires_two_factor', $response);
+        self::assertArrayNotHasKey('two_factor', $response);
         self::assertNotEmpty($response['token']);
     }
 }
