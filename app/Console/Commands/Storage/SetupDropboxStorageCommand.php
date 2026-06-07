@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use Throwable;
 
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
+
 class SetupDropboxStorageCommand extends Command
 {
     protected $signature = 'koel:storage:dropbox';
@@ -36,14 +39,26 @@ class SetupDropboxStorageCommand extends Command
         }
 
         $config = ['STORAGE_DRIVER' => 'dropbox'];
-        $config['DROPBOX_APP_KEY'] = $this->ask('Enter your Dropbox app key', env('DROPBOX_APP_KEY'));
-        $config['DROPBOX_APP_SECRET'] = $this->ask('Enter your Dropbox app secret', env('DROPBOX_APP_SECRET'));
 
-        $this->comment('Visit the following link to authorize Koel to access your Dropbox account.');
-        $this->comment('After you have authorized Koel, enter the access code below.');
-        $this->info(route('dropbox.authorize', ['key' => $config['DROPBOX_APP_KEY']]));
+        $config['DROPBOX_APP_KEY'] = text(
+            label: 'Enter your Dropbox app key',
+            default: (string) env('DROPBOX_APP_KEY'),
+        );
 
-        $accessCode = $this->ask('Access code');
+        $config['DROPBOX_APP_SECRET'] = password(
+            label: 'Enter your Dropbox app secret',
+            hint: 'Leave blank to keep the current secret.',
+        );
+        $config['DROPBOX_APP_SECRET'] = $config['DROPBOX_APP_SECRET'] !== ''
+            ? $config['DROPBOX_APP_SECRET']
+            : (string) env('DROPBOX_APP_SECRET');
+
+        $accessCode = text(
+            label: 'Access code',
+            hint: 'Visit '
+            . route('dropbox.authorize', ['key' => $config['DROPBOX_APP_KEY']])
+            . ' to authorize Koel, then paste the access code here.',
+        );
 
         $response = Http::asForm()
             ->withBasicAuth($config['DROPBOX_APP_KEY'], $config['DROPBOX_APP_SECRET'])
@@ -75,9 +90,7 @@ class SetupDropboxStorageCommand extends Command
         $this->comment('Uploading a test file to make sure everything is working...');
 
         try {
-            /** @var DropboxStorage $storage */
-            $storage = app()->build(DropboxStorage::class); // build instead of make to avoid singleton issues
-            $storage->testSetup();
+            app()->build(DropboxStorage::class)->testSetup(); // build instead of make to avoid singleton issues
         } catch (Throwable $e) {
             $this->error('Failed to upload test file: ' . $e->getMessage() . '.');
             $this->comment('Please make sure the app has the correct permissions and try again.');

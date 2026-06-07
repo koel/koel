@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 return [
     /*
      |--------------------------------------------------------------------------
@@ -96,7 +98,7 @@ return [
 
         'webdav' => [
             'driver' => 'webdav',
-            'baseUri' => rtrim((string) env('WEBDAV_BASE_URL', ''), '/') . '/',
+            'baseUri' => Str::finish(trim((string) env('WEBDAV_BASE_URL', '')), '/'),
             'userName' => env('WEBDAV_USERNAME', ''),
             'password' => env('WEBDAV_PASSWORD', ''),
             'pathPrefix' => trim((string) env('WEBDAV_PATH_PREFIX', ''), '/'),
