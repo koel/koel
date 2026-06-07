@@ -8,11 +8,8 @@
     @dragstart="onDragStart"
   >
     <span class="name flex gap-3 items-center min-w-0">
-      <span
-        :style="{ backgroundImage: `url(${defaultCover})` }"
-        class="w-[48px] aspect-square rounded-full bg-cover bg-center flex-none overflow-hidden"
-      >
-        <img v-if="artist.image" :src="artist.image" alt="" class="w-full aspect-square object-cover" loading="lazy" />
+      <span class="size-[48px] flex-none">
+        <AlbumOrArtistThumbnail :entity="artist" size="sm" />
       </span>
       <a :href="url('artists.show', { id: artist.id })" class="truncate">{{ artist.name }}</a>
     </span>
@@ -35,13 +32,13 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
-import { useBranding } from '@/composables/useBranding'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { artistTableColumnConfig } from '@/config/tables'
 import { defineAsyncComponent } from '@/utils/helpers'
 
 import StarRating from '@/components/ui/StarRating.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
+import AlbumOrArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 
 const props = defineProps<{ artist: Artist }>()
 
@@ -54,7 +51,6 @@ const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist
 const { go, url } = useRouter()
 const { openContextMenu } = useContextMenu()
 const { startDragging } = useDraggable('artist')
-const { cover: defaultCover } = useBranding()
 const { shouldShowColumn } = useTableColumnVisibility(artistTableColumnConfig)
 
 const onContextMenu = (event: MouseEvent) =>

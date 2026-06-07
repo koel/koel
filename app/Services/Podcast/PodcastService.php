@@ -4,7 +4,6 @@ namespace App\Services\Podcast;
 
 use App\Events\UserUnsubscribedFromPodcast;
 use App\Exceptions\FailedToParsePodcastFeedException;
-use App\Exceptions\UnsafePodcastFeedUrlException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Helpers\Uuid;
 use App\Models\Podcast;
@@ -36,8 +35,8 @@ class PodcastService
         private readonly PodcastRepository $podcastRepository,
         private readonly SongRepository $songRepository,
         private readonly Network $network,
-        private readonly SafeHttp $safeHttp,
-        private ?ClientInterface $client = null,
+        private readonly SafeHttp $http,
+        private readonly ?ClientInterface $client = null,
     ) {}
 
     public function addPodcast(string $url, User $user): Podcast
@@ -84,7 +83,7 @@ class PodcastService
 
                 return $podcast;
             });
-        } catch (UserAlreadySubscribedToPodcastException|UnsafePodcastFeedUrlException $exception) {
+        } catch (UserAlreadySubscribedToPodcastException $exception) {
             throw $exception;
         } catch (Throwable $exception) {
             Log::error($exception);
@@ -224,7 +223,7 @@ class PodcastService
         }
 
         try {
-            $lastModified = $this->safeHttp->head($podcast->url)->header('Last-Modified');
+            $lastModified = $this->http->head($podcast->url)->header('Last-Modified');
 
             if (!$lastModified) {
                 return true;
@@ -251,7 +250,7 @@ class PodcastService
             return null;
         }
 
-        $client ??= $this->safeHttp->getPinnedGuzzleClient($url, trackRedirects: true);
+        $client ??= $this->http->getPinnedGuzzleClient($url, trackRedirects: true);
 
         try {
             $response = $client->request($method, $url, [
@@ -287,19 +286,15 @@ class PodcastService
 
     private static function parseFeedDate(?string $date): ?Carbon
     {
-        if (!$date) {
-            return null;
-        }
-
-        return rescue(static fn (): Carbon => Carbon::parse($date));
+        return $date ? rescue(static fn (): Carbon => Carbon::parse($date)) : null;
     }
 
     private function createParser(string $url): Poddle
     {
-        if (!$this->network->isSafeUrl($url)) {
-            throw UnsafePodcastFeedUrlException::create($url);
+        if ($this->client) {
+            return Poddle::fromUrl($url, 5 * 60, $this->client);
         }
 
-        return Poddle::fromUrl($url, 5 * 60, $this->client ?? $this->safeHttp->getPinnedGuzzleClient($url));
+        return Poddle::fromXml($this->http->get($url)->body());
     }
 }

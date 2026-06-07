@@ -1,5 +1,5 @@
 <template>
-  <div
+  <span
     role="radiogroup"
     :aria-label="`Rating: ${currentRating} of 5 stars`"
     class="inline-flex items-center gap-0.5"
@@ -26,7 +26,7 @@
       <Icon :icon="(hover || currentRating) >= star ? faStar : faEmptyStar" :size="size" />
       <span class="sr-only">Rate {{ star }} of 5</span>
     </label>
-  </div>
+  </span>
 </template>
 
 <script lang="ts" setup>
@@ -37,8 +37,9 @@ import { computed, ref, useId } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
+import { podcastStore } from '@/stores/podcastStore'
 
-type Rateable = Song | Album | Artist
+type Rateable = Song | Album | Artist | Podcast
 
 const props = withDefaults(
   defineProps<{
@@ -66,6 +67,10 @@ const persist = (entity: Rateable, value: number) => {
 
   if (entity.type === 'albums') {
     return albumStore.rate(entity as Reactive<Album>, value)
+  }
+
+  if (entity.type === 'podcasts') {
+    return podcastStore.rate(entity as Reactive<Podcast>, value)
   }
 
   return artistStore.rate(entity as Reactive<Artist>, value)

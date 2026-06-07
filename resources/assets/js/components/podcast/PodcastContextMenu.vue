@@ -5,6 +5,14 @@
     <Separator />
     <MenuItem @click="toggleFavorite">{{ podcast.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
     <Separator />
+    <li
+      tabindex="-1"
+      class="px-4 py-2 focus:outline-hidden"
+      @mouseover="($event.currentTarget as HTMLLIElement).focus()"
+    >
+      <StarRating :rateable="podcast" />
+    </li>
+    <Separator />
     <MenuItem @click="visitWebsite">Visit Website</MenuItem>
     <Separator />
     <MenuItem @click="unsubscribe">Unsubscribe</MenuItem>
@@ -21,6 +29,8 @@ import { podcastStore } from '@/stores/podcastStore'
 import { playback } from '@/services/playbackManager'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
+
+import StarRating from '@/components/ui/StarRating.vue'
 
 const props = defineProps<{ podcast: Podcast }>()
 const { podcast } = toRefs(props)

@@ -43,12 +43,10 @@
 
             <ListFilter v-if="episodes?.length" />
 
-            <FavoriteButton
-              v-if="podcast.favorite"
-              :favorite="podcast.favorite"
-              class="px-3.5 py-2"
-              @toggle="toggleFavorite"
-            />
+            <span class="inline-flex gap-3.5 px-2">
+              <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" @toggle="toggleFavorite" />
+              <StarRating :rateable="podcast" />
+            </span>
 
             <Btn variant="ghost" @click="requestContextMenu">
               <Icon :icon="faEllipsis" fixed-width />
@@ -101,6 +99,7 @@ import EpisodeItem from '@/components/podcast/EpisodeItem.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import EpisodeItemSkeleton from '@/components/podcast/EpisodeItemSkeleton.vue'
 

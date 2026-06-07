@@ -18,12 +18,10 @@
         <header>
           <h3 class="text-3xl font-bold">
             {{ podcast.title }}
-            <FavoriteButton
-              v-if="podcast.favorite"
-              :favorite="podcast.favorite"
-              class="ml-2"
-              @toggle="toggleFavorite"
-            />
+            <span class="inline-flex items-center gap-2 align-middle text-base font-normal ml-2">
+              <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" @toggle="toggleFavorite" />
+              <StarRating v-if="podcast.rating" :rateable="podcast" size="xs" />
+            </span>
           </h3>
           <p class="mt-2">
             {{ podcast.author }}
@@ -49,6 +47,7 @@ import { formatTimeAgo } from '@vueuse/core'
 import { textToHsl } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
+import StarRating from '@/components/ui/StarRating.vue'
 import { podcastStore } from '@/stores/podcastStore'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { defineAsyncComponent } from '@/utils/helpers'

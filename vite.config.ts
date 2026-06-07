@@ -57,26 +57,28 @@ export default defineConfig({
   plugins: [
     vue(),
     tailwindcss(),
-    laravel({
-      input: [
-        'resources/assets/js/app.ts',
-        'resources/assets/js/remote/app.ts'
-      ],
-      refresh: true
-    }),
-    visualizer({
-      filename: 'stats.html'
-    })
+    ...(process.env.VITEST
+      ? []
+      : [
+          laravel({
+            input: ['resources/assets/js/app.ts', 'resources/assets/js/remote/app.ts'],
+            refresh: true,
+          }),
+          visualizer({
+            filename: 'stats.html',
+          }),
+        ]),
   ],
   build: {
-    cssMinify: 'esbuild'
+    cssMinify: 'esbuild',
+    assetsInlineLimit: 0,
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, './resources/assets/js'),
       '@modules': resolve(__dirname, './node_modules'),
-      'lodash': 'lodash-es'
-    }
+      lodash: 'lodash-es',
+    },
   },
   test: {
     environment: 'jsdom',
@@ -86,5 +88,5 @@ export default defineConfig({
         cacheDir: resolve(__dirname, 'node_modules/.vitest'),
       },
     },
-  }
+  },
 })

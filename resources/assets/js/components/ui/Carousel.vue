@@ -17,28 +17,33 @@
           <Icon :icon="faRotateRight" />
           <span class="sr-only">Refresh</span>
         </button>
-        <button
-          type="button"
-          class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-          title="Scroll left"
-          @click="slide(-1)"
-        >
-          <Icon :icon="faChevronLeft" />
-          <span class="sr-only">Scroll left</span>
-        </button>
-        <button
-          type="button"
-          class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-          title="Scroll right"
-          @click="slide(1)"
-        >
-          <Icon :icon="faChevronRight" />
-          <span class="sr-only">Scroll right</span>
-        </button>
+        <template v-if="hasOverflow">
+          <button
+            type="button"
+            class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
+            title="Scroll left"
+            @click="slide(-1)"
+          >
+            <Icon :icon="faChevronLeft" />
+            <span class="sr-only">Scroll left</span>
+          </button>
+          <button
+            type="button"
+            class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
+            title="Scroll right"
+            @click="slide(1)"
+          >
+            <Icon :icon="faChevronRight" />
+            <span class="sr-only">Scroll right</span>
+          </button>
+        </template>
       </nav>
     </header>
 
-    <div ref="scroller" class="home-carousel scroll-mask-x overflow-x-auto overflow-y-hidden w-full">
+    <div
+      ref="scroller"
+      class="home-carousel scroll-mask-x-from-[calc(100%-2rem)] md:scroll-mask-x overflow-x-auto overflow-y-hidden w-full"
+    >
       <div class="home-carousel-track flex gap-4">
         <slot />
       </div>
@@ -48,12 +53,54 @@
 
 <script setup lang="ts">
 import { faChevronLeft, faChevronRight, faRotateRight } from '@fortawesome/free-solid-svg-icons'
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps<{ onRefresh?: () => Promise<unknown> | unknown }>()
 
 const scroller = ref<HTMLDivElement>()
 const refreshing = ref(false)
+const hasOverflow = ref(false)
+
+let resizeObserver: ResizeObserver | undefined
+
+const updateOverflow = () => {
+  const el = scroller.value
+
+  if (!el) {
+    hasOverflow.value = false
+    return
+  }
+
+  hasOverflow.value = el.scrollWidth > el.clientWidth + 1
+}
+
+const observeOverflow = (el: HTMLDivElement | undefined) => {
+  resizeObserver?.disconnect()
+  resizeObserver = undefined
+
+  if (!el) {
+    return
+  }
+
+  resizeObserver = new ResizeObserver(updateOverflow)
+  resizeObserver.observe(el)
+  resizeObserver.observe(el.firstElementChild ?? el)
+  updateOverflow()
+}
+
+onMounted(() => {
+  observeOverflow(scroller.value)
+  window.addEventListener('resize', updateOverflow)
+})
+
+onUpdated(updateOverflow)
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
+  window.removeEventListener('resize', updateOverflow)
+})
+
+watch(scroller, observeOverflow)
 
 const slide = (direction: 1 | -1) => {
   const el = scroller.value

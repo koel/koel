@@ -27,6 +27,7 @@ class StorageCommand extends Command
                 'local' => 'This server',
                 's3' => 'Amazon S3 or compatible services (DO Spaces, Cloudflare R2, etc.)',
                 'dropbox' => 'Dropbox',
+                'webdav' => 'WebDAV (NextCloud, ownCloud, etc.)',
             ];
 
             $driver = $this->choice(
