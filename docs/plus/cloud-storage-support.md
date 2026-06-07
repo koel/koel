@@ -151,7 +151,21 @@ Koel does not support two-way sync with Dropbox — at least not yet. This means
 
 Koel Plus can use any WebDAV server as a storage backend, including [NextCloud](https://nextcloud.com/), [Owncloud](https://owncloud.com/), or a plain WebDAV server.
 
-Add the following to your `.env` file:
+### Interactive setup
+
+From the root folder of your Koel installation, run:
+
+```bash
+php artisan koel:storage:webdav
+```
+
+You'll be prompted for the base URL, username, password, and optional path prefix. Koel writes the values to your `.env` file and uploads a test file to confirm the connection. For NextCloud, the base URL looks like `https://your-nextcloud.example/remote.php/dav/files/<username>/`.
+
+If the test fails, Koel restores your previous `.env` and exits. Fix the credentials and run the command again.
+
+### Manual setup
+
+Alternatively, add the following to your `.env` file:
 
 ```dotenv
 STORAGE_DRIVER=webdav
