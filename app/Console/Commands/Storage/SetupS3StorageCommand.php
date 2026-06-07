@@ -9,6 +9,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Throwable;
 
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
+
 class SetupS3StorageCommand extends Command
 {
     protected $signature = 'koel:storage:s3';
@@ -33,12 +36,22 @@ class SetupS3StorageCommand extends Command
         $this->components->warn('Consider backing up your data before proceeding.');
 
         $config = ['STORAGE_DRIVER' => 's3'];
+        $config['AWS_ACCESS_KEY_ID'] = text(label: 'Enter the access key ID', hint: 'AWS_ACCESS_KEY_ID');
 
-        $config['AWS_ACCESS_KEY_ID'] = $this->ask('Enter the access key ID (AWS_ACCESS_KEY_ID)');
-        $config['AWS_SECRET_ACCESS_KEY'] = $this->ask('Enter the  secret access key (AWS_SECRET_ACCESS_KEY)');
-        $config['AWS_REGION'] = $this->ask('Enter the region (AWS_REGION). For Cloudflare R2, use "auto".');
-        $config['AWS_ENDPOINT'] = $this->ask('Enter the endpoint (AWS_ENDPOINT)');
-        $config['AWS_BUCKET'] = $this->ask('Enter the bucket name (AWS_BUCKET)');
+        $existingSecret = (string) env('AWS_SECRET_ACCESS_KEY');
+
+        $enteredSecret = password(
+            label: 'Enter the secret access key',
+            hint: $existingSecret === ''
+                ? 'AWS_SECRET_ACCESS_KEY'
+                : 'AWS_SECRET_ACCESS_KEY. Leave blank to keep the current secret.',
+        );
+
+        $config['AWS_SECRET_ACCESS_KEY'] = $enteredSecret !== '' ? $enteredSecret : $existingSecret;
+
+        $config['AWS_REGION'] = text(label: 'Enter the region', hint: 'AWS_REGION. For Cloudflare R2, use "auto".');
+        $config['AWS_ENDPOINT'] = text(label: 'Enter the endpoint', hint: 'AWS_ENDPOINT');
+        $config['AWS_BUCKET'] = text(label: 'Enter the bucket name', hint: 'AWS_BUCKET');
 
         $this->dotenvEditor->backup()->setKeys($config);
 

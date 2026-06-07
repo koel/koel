@@ -8,6 +8,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\text;
+
 class SetupLocalStorageCommand extends Command
 {
     protected $signature = 'koel:storage:local';
@@ -32,7 +35,7 @@ class SetupLocalStorageCommand extends Command
 
         $this->components->info('Local storage has been set up.');
 
-        if ($this->components->confirm('Would you want to initialize a scan now?', true)) {
+        if (confirm(label: 'Would you want to initialize a scan now?')) {
             $this->call('koel:scan');
         }
 
@@ -41,7 +44,11 @@ class SetupLocalStorageCommand extends Command
 
     private function askForMediaPath(): string
     {
-        $mediaPath = $this->components->ask('Enter the absolute path to your media files', Setting::get('media_path'));
+        $mediaPath = text(
+            label: 'Enter the absolute path to your media files',
+            default: (string) Setting::get('media_path'),
+            hint: 'The path must exist and be readable and writable by the web server user.',
+        );
 
         if (File::isReadable($mediaPath) && File::isWritable($mediaPath)) {
             return $mediaPath;

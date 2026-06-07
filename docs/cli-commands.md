@@ -283,8 +283,18 @@ Set up Amazon S3 or a compatible service (DigitalOcean Spaces, Cloudflare R2, et
 php artisan koel:storage:s3
 ```
 
+### `koel:storage:webdav` <PlusBadge />
+
+Set up WebDAV (NextCloud, ownCloud, or a plain WebDAV server) as the storage driver for Koel.
+
+#### Usage
+
+```bash
+php artisan koel:storage:webdav
+```
+
 :::tip
-To set up the storage driver for Koel, simply use `koel:storage`. Internally, it calls `koel:storage:local`, `koel:storage:s3`, or `koel:storage:dropbox` based on your input.
+To set up the storage driver for Koel, simply use `koel:storage`. Internally, it calls `koel:storage:local`, `koel:storage:s3`, `koel:storage:dropbox`, or `koel:storage:webdav` based on your input.
 :::
 
 ### `koel:tags:collect`
