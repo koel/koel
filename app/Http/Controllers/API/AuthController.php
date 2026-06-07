@@ -45,10 +45,14 @@ class AuthController extends Controller
 
     public function twoFactorChallenge(Request $request): JsonResponse
     {
-        $compositeToken = $this->throttleLoginRequest(fn () => $this->auth->loginViaTwoFactorChallenge(
-            (string) $request->input('login_token'),
-            (string) $request->input('code'),
-        ), $request);
+        try {
+            $compositeToken = $this->auth->loginViaTwoFactorChallenge(
+                (string) $request->input('login_token'),
+                (string) $request->input('code'),
+            );
+        } catch (Throwable) {
+            abort(Response::HTTP_UNAUTHORIZED, 'Invalid credentials');
+        }
 
         return response()->json($compositeToken->toArray());
     }
