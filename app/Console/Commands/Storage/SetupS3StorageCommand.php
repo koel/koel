@@ -36,22 +36,21 @@ class SetupS3StorageCommand extends Command
         $this->components->warn('Consider backing up your data before proceeding.');
 
         $config = ['STORAGE_DRIVER' => 's3'];
-
         $config['AWS_ACCESS_KEY_ID'] = text(label: 'Enter the access key ID', hint: 'AWS_ACCESS_KEY_ID');
 
         $existingSecret = (string) env('AWS_SECRET_ACCESS_KEY');
+
         $enteredSecret = password(
             label: 'Enter the secret access key',
             hint: $existingSecret === ''
                 ? 'AWS_SECRET_ACCESS_KEY'
                 : 'AWS_SECRET_ACCESS_KEY. Leave blank to keep the current secret.',
         );
+
         $config['AWS_SECRET_ACCESS_KEY'] = $enteredSecret !== '' ? $enteredSecret : $existingSecret;
 
         $config['AWS_REGION'] = text(label: 'Enter the region', hint: 'AWS_REGION. For Cloudflare R2, use "auto".');
-
         $config['AWS_ENDPOINT'] = text(label: 'Enter the endpoint', hint: 'AWS_ENDPOINT');
-
         $config['AWS_BUCKET'] = text(label: 'Enter the bucket name', hint: 'AWS_BUCKET');
 
         $this->dotenvEditor->backup()->setKeys($config);

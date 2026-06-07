@@ -49,6 +49,7 @@ class SetupDropboxStorageCommand extends Command
             label: 'Enter your Dropbox app secret',
             hint: 'Leave blank to keep the current secret.',
         );
+
         $config['DROPBOX_APP_SECRET'] = $config['DROPBOX_APP_SECRET'] !== ''
             ? $config['DROPBOX_APP_SECRET']
             : (string) env('DROPBOX_APP_SECRET');
