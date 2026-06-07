@@ -7,9 +7,8 @@ use RuntimeException;
 
 class RequiresTwoFactorException extends RuntimeException
 {
-    public function __construct(
-        public readonly User $user,
-    ) {
+    public function __construct()
+    {
         parent::__construct('Two-factor authentication is required.');
     }
 }
