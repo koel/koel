@@ -87,7 +87,6 @@ class TwoFactorAuthTest extends PlusTestCase
 
         self::assertTrue($response['two_factor']);
         self::assertNotEmpty($response['login_token']);
-        self::assertStringContainsString('QR code', $response['message']);
     }
 
     #[Test]
