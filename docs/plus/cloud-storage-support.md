@@ -17,6 +17,16 @@ The screenshots and instructions on this page may not be 100% up-to-date as 3rd-
 The general idea, however, should remain the same.
 :::
 
+## Local Storage
+
+The default storage driver stores media files on the same server Koel is installed on. Most installations are configured this way automatically by `koel:init`, but you can re-run the setup at any time:
+
+```bash
+php artisan koel:storage:local
+```
+
+You'll be prompted for the absolute path to your media files (the path must already exist and be readable and writable by the web server user). Koel saves the path to its settings, writes `STORAGE_DRIVER=local` to your `.env`, and then offers to run `koel:scan` so the directory is indexed right away.
+
 ## SFTP
 
 To use SFTP as your storage driver, you need to have an SFTP server set up and running. Many cloud hosting providers offer SFTP access to their storage services.
@@ -47,6 +57,18 @@ After reloading, Koel will start using SFTP as its storage driver. You can now u
 
 Since Amazon S3 and S3-compatible services share the same API, you can use the same configuration (`AWS_*`) for both.
 Koel has been tested with Amazon S3, [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces), and [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/), but it should work with any S3-compatible service given the right configuration.
+
+### Interactive setup
+
+From the root folder of your Koel installation, run:
+
+```bash
+php artisan koel:storage:s3
+```
+
+You'll be prompted for the access key ID, secret access key, region, endpoint, and bucket name. Koel writes the values to your `.env` file and uploads a test file to confirm the connection. The secret access key is hidden as you type; leave it blank on a re-run to keep the existing value.
+
+If the test fails, Koel restores your previous `.env` and exits. Fix the credentials and run the command again.
 
 ### Amazon S3
 
