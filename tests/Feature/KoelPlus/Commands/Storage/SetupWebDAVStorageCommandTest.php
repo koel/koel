@@ -31,11 +31,9 @@ class SetupWebDAVStorageCommandTest extends PlusTestCase
 
         $this
             ->artisan('koel:storage:webdav')
-            // Base URL missing the trailing slash: the command should normalize it on the way to .env.
             ->expectsQuestion('Enter your WebDAV base URL', 'https://nc.example.com/remote.php/dav/files/me')
             ->expectsQuestion('Enter your WebDAV username', 'me')
             ->expectsQuestion('Enter your WebDAV password', 'app-password')
-            // Path prefix with leading/trailing slashes: the command should trim them.
             ->expectsQuestion('Optional path prefix beneath the base URL', '/Music/')
             ->assertSuccessful();
     }
