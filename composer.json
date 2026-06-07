@@ -54,7 +54,8 @@
     "phanan/poddle": "^1.2.4",
     "laravel/ai": "^0.7.0",
     "league/flysystem-webdav": "^3.0",
-    "mlocati/ip-lib": "^1.22"
+    "mlocati/ip-lib": "^1.22",
+    "robthree/twofactorauth": "^3.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

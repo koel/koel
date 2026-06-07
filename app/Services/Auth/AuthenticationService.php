@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Exceptions\InvalidCredentialsException;
+use App\Exceptions\RequiresTwoFactorException;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Values\CompositeToken;
@@ -21,6 +22,7 @@ class AuthenticationService
         private readonly UserRepository $userRepository,
         private readonly TokenManager $tokenManager,
         private readonly PasswordBroker $passwordBroker,
+        private readonly TwoFactorAuthService $twoFactorAuth,
     ) {}
 
     public function login(string $email, #[SensitiveParameter] string $password): CompositeToken
@@ -34,6 +36,52 @@ class AuthenticationService
         if (Hash::needsRehash($user->password)) {
             $user->password = Hash::make($password);
             $user->save();
+        }
+
+        if ($user->hasTwoFactorEnabled()) {
+            throw new RequiresTwoFactorException($user);
+        }
+
+        return $this->logUserIn($user);
+    }
+
+    public function generateTwoFactorLoginToken(User $user): string
+    {
+        $token = bin2hex(random_bytes(16));
+        Cache::set(cache_key('two-factor login token', $token), encrypt($user->id), 60 * 5);
+
+        return $token;
+    }
+
+    public function loginViaTwoFactorChallenge(
+        #[SensitiveParameter]
+        string $loginToken,
+        #[SensitiveParameter]
+        string $code,
+    ): CompositeToken {
+        $cacheKey = cache_key('two-factor login token', $loginToken);
+        $encryptedUserId = Cache::pull($cacheKey);
+
+        if (!$encryptedUserId) {
+            throw new InvalidArgumentException('Two-factor login token not found or expired.');
+        }
+
+        try {
+            $userId = decrypt($encryptedUserId);
+        } catch (Throwable $e) {
+            throw new InvalidArgumentException('Invalid two-factor login token.', previous: $e);
+        }
+
+        $user = $this->userRepository->getOne($userId);
+
+        $verified =
+            $user->two_factor_secret !== null && $this->twoFactorAuth->verifyCode($user->two_factor_secret, $code)
+            || $this->twoFactorAuth->consumeRecoveryCode($user, $code);
+
+        if (!$verified) {
+            Cache::set($cacheKey, $encryptedUserId, 60 * 5);
+
+            throw new InvalidCredentialsException();
         }
 
         return $this->logUserIn($user);

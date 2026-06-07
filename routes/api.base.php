@@ -74,6 +74,7 @@ use App\Http\Controllers\API\SongController;
 use App\Http\Controllers\API\SongSearchController;
 use App\Http\Controllers\API\ThemeController;
 use App\Http\Controllers\API\ToggleLikeSongController;
+use App\Http\Controllers\API\TwoFactorAuthController;
 use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
 use App\Http\Controllers\API\UpdateUserPreferenceController;
@@ -98,6 +99,7 @@ Route::prefix('api')
         Route::middleware('throttle:10,1')->group(static function (): void {
             Route::post('me', [AuthController::class, 'login'])->name('auth.login');
             Route::post('me/otp', [AuthController::class, 'loginUsingOneTimeToken']);
+            Route::post('me/two-factor-challenge', [AuthController::class, 'twoFactorChallenge']);
 
             Route::delete('me', [AuthController::class, 'logout']);
 
@@ -228,6 +230,11 @@ Route::prefix('api')
             Route::post('me/equalizer-presets', [EqualizerPresetController::class, 'store']);
             Route::delete('me/equalizer-presets/{id}', [EqualizerPresetController::class, 'destroy']);
             Route::post('me/subsonic-api-key/regenerate', RegenerateSubsonicApiKeyController::class);
+
+            Route::post('me/two-factor', [TwoFactorAuthController::class, 'setup']);
+            Route::post('me/two-factor/confirm', [TwoFactorAuthController::class, 'confirm']);
+            Route::post('me/two-factor/recovery-codes', [TwoFactorAuthController::class, 'regenerateRecoveryCodes']);
+            Route::delete('me/two-factor', [TwoFactorAuthController::class, 'destroy']);
 
             // Last.fm-related routes
             Route::post('lastfm/session-key', SetLastfmSessionKeyController::class);

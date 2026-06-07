@@ -5,6 +5,7 @@ namespace Tests\Unit\Services\Auth;
 use App\Repositories\UserRepository;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\TokenManager;
+use App\Services\Auth\TwoFactorAuthService;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Password;
 use Mockery\MockInterface;
@@ -16,6 +17,7 @@ class AuthenticationServiceTest extends TestCase
     private UserRepository|MockInterface $userRepository;
     private TokenManager|MockInterface $tokenManager;
     private PasswordBroker|MockInterface $passwordBroker;
+    private TwoFactorAuthService|MockInterface $twoFactorAuth;
     private AuthenticationService $service;
 
     public function setUp(): void
@@ -25,8 +27,14 @@ class AuthenticationServiceTest extends TestCase
         $this->userRepository = $this->mock(UserRepository::class);
         $this->tokenManager = $this->mock(TokenManager::class);
         $this->passwordBroker = $this->mock(PasswordBroker::class);
+        $this->twoFactorAuth = $this->mock(TwoFactorAuthService::class);
 
-        $this->service = new AuthenticationService($this->userRepository, $this->tokenManager, $this->passwordBroker);
+        $this->service = new AuthenticationService(
+            $this->userRepository,
+            $this->tokenManager,
+            $this->passwordBroker,
+            $this->twoFactorAuth,
+        );
     }
 
     #[Test]
