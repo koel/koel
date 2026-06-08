@@ -40,7 +40,7 @@ export const authService = {
     this.maybeRedirect()
   },
 
-  setupTwoFactor: async () => await http.post<{ provisioning_uri: string }>('me/two-factor'),
+  enrollTwoFactor: async () => await http.post<{ provisioning_uri: string }>('me/two-factor'),
 
   confirmTwoFactor: async (code: string) =>
     await http.post<{ recovery_codes: string[] }>('me/two-factor/confirm', { code }),

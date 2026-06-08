@@ -23,7 +23,7 @@ class TwoFactorAuthenticator
         $this->totp = $totp ?? new Totp(new NullQrCodeProvider(), $issuer);
     }
 
-    public function setUp(User $user): string
+    public function enroll(User $user): string
     {
         $secret = $this->totp->createSecret();
 

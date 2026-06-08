@@ -28,7 +28,7 @@ class TwoFactorAuthenticatorTest extends TestCase
     }
 
     #[Test]
-    public function setUpReturnsProvisioningUriAndResetsState(): void
+    public function enrollReturnsProvisioningUriAndResetsState(): void
     {
         $user = create_user();
         $user->two_factor_secret = 'OLDSECRET';
@@ -39,7 +39,7 @@ class TwoFactorAuthenticatorTest extends TestCase
         $this->totp->expects('createSecret')->andReturn('NEWSECRET');
         $this->totp->expects('getQRText')->with($user->email, 'NEWSECRET')->andReturn('otpauth://totp/test');
 
-        $uri = $this->authenticator->setUp($user);
+        $uri = $this->authenticator->enroll($user);
 
         self::assertSame('otpauth://totp/test', $uri);
 

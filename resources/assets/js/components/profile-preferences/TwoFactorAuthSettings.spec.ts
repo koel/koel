@@ -18,8 +18,8 @@ describe('twoFactorAuthSettings.vue', () => {
     screen.getByRole('button', { name: 'Enable Two-Factor Authentication' })
   })
 
-  it('starts setup and renders the QR code on enable', async () => {
-    h.mock(authService, 'setupTwoFactor').mockResolvedValue({
+  it('starts enrollment and renders the QR code on enable', async () => {
+    h.mock(authService, 'enrollTwoFactor').mockResolvedValue({
       provisioning_uri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel',
     })
     renderDisabled()
@@ -31,7 +31,7 @@ describe('twoFactorAuthSettings.vue', () => {
   })
 
   it('confirms the code and reveals recovery codes', async () => {
-    h.mock(authService, 'setupTwoFactor').mockResolvedValue({
+    h.mock(authService, 'enrollTwoFactor').mockResolvedValue({
       provisioning_uri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel',
     })
     h.mock(authService, 'confirmTwoFactor').mockResolvedValue({

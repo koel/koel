@@ -41,7 +41,7 @@ class TwoFactorAuthTest extends TestCase
     }
 
     #[Test]
-    public function setupReturnsProvisioningUriAndUnconfirmedSecret(): void
+    public function enrollmentReturnsProvisioningUriAndUnconfirmedSecret(): void
     {
         $user = create_user();
 
@@ -56,7 +56,7 @@ class TwoFactorAuthTest extends TestCase
     }
 
     #[Test]
-    public function setupIsDeniedWhenTwoFactorIsAlreadyEnabled(): void
+    public function enrollmentIsDeniedWhenTwoFactorIsAlreadyEnabled(): void
     {
         $user = self::createUserWithTwoFactorEnabled();
         $previousSecret = $user->two_factor_secret;
@@ -213,7 +213,7 @@ class TwoFactorAuthTest extends TestCase
         $user = create_user(['password' => Hash::make('secret')]);
 
         $service = app(TwoFactorAuthenticator::class);
-        $service->setUp($user);
+        $service->enroll($user);
         $service->confirm($user, $service->generateRecoveryCodes());
 
         return $user->refresh();
