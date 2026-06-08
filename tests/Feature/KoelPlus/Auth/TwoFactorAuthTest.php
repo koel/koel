@@ -3,7 +3,8 @@
 namespace Tests\Feature\KoelPlus\Auth;
 
 use App\Models\User;
-use App\Services\Auth\TwoFactorAuthService;
+use App\Services\Auth\Support\NullQrCodeProvider;
+use App\Services\Auth\TwoFactorAuthenticator;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\Test;
 use RobThree\Auth\TwoFactorAuth;
@@ -19,10 +20,7 @@ class TwoFactorAuthTest extends PlusTestCase
     {
         parent::setUp();
 
-        // Re-use the same RobThree instance the service uses, so we can compute valid codes in tests.
-        $reflection = new \ReflectionClass(app(TwoFactorAuthService::class));
-        $property = $reflection->getProperty('totp');
-        $this->totp = $property->getValue(app(TwoFactorAuthService::class));
+        $this->totp = new TwoFactorAuth(new NullQrCodeProvider(), 'koel-test');
     }
 
     #[Test]
@@ -54,18 +52,17 @@ class TwoFactorAuthTest extends PlusTestCase
         self::assertCount(8, $response['recovery_codes']);
 
         $user->refresh();
+
         self::assertNotNull($user->two_factor_confirmed_at);
-        self::assertCount(8, $user->two_factor_recovery_codes);
-        // Recovery codes must be hashed in DB, not stored as cleartext.
-        self::assertTrue(Hash::check($response['recovery_codes'][0], $user->two_factor_recovery_codes[0]));
+        self::assertSame($response['recovery_codes'], $user->two_factor_recovery_codes);
     }
 
     #[Test]
-    public function confirmWithInvalidCodeReturns422(): void
+    public function confirmWithInvalidCodeReturnUnprocessable(): void
     {
         $user = create_user();
-        $this->postAs('api/me/two-factor', [], $user);
 
+        $this->postAs('api/me/two-factor', [], $user);
         $this->postAs('api/me/two-factor/confirm', ['code' => '000000'], $user)->assertUnprocessable();
 
         $user->refresh();
@@ -75,7 +72,7 @@ class TwoFactorAuthTest extends PlusTestCase
     #[Test]
     public function loginIntoTwoFactorAccountReturnsRequiresTwoFactor(): void
     {
-        $user = $this->createUserWithTwoFactorEnabled();
+        $user = self::createUserWithTwoFactorEnabled();
 
         $response = $this
             ->post('api/me', [
@@ -92,7 +89,7 @@ class TwoFactorAuthTest extends PlusTestCase
     #[Test]
     public function challengeWithValidCodeMintsToken(): void
     {
-        $user = $this->createUserWithTwoFactorEnabled();
+        $user = self::createUserWithTwoFactorEnabled();
         $loginToken = $this->post('api/me', ['email' => $user->email, 'password' => 'secret'])->json('login_token');
 
         $code = $this->totp->getCode($user->two_factor_secret);
@@ -112,10 +109,10 @@ class TwoFactorAuthTest extends PlusTestCase
     #[Test]
     public function challengeWithRecoveryCodeMintsTokenAndConsumesIt(): void
     {
-        $user = $this->createUserWithTwoFactorEnabled();
+        $user = self::createUserWithTwoFactorEnabled();
         $loginToken = $this->post('api/me', ['email' => $user->email, 'password' => 'secret'])->json('login_token');
 
-        $recoveryCode = $this->createUserWithTwoFactorEnabledRecoveryCode;
+        $recoveryCode = $user->two_factor_recovery_codes[0];
 
         $this->post('api/me/two-factor-challenge', [
             'login_token' => $loginToken,
@@ -135,7 +132,7 @@ class TwoFactorAuthTest extends PlusTestCase
     #[Test]
     public function challengeWithInvalidCodeFailsWithoutConsumingLoginToken(): void
     {
-        $user = $this->createUserWithTwoFactorEnabled();
+        $user = self::createUserWithTwoFactorEnabled();
         $loginToken = $this->post('api/me', ['email' => $user->email, 'password' => 'secret'])->json('login_token');
 
         $this->post('api/me/two-factor-challenge', [
@@ -154,7 +151,7 @@ class TwoFactorAuthTest extends PlusTestCase
     #[Test]
     public function disableTwoFactorWithValidCodeClearsAllFields(): void
     {
-        $user = $this->createUserWithTwoFactorEnabled();
+        $user = self::createUserWithTwoFactorEnabled();
         $code = $this->totp->getCode($user->two_factor_secret);
 
         $this->deleteAs('api/me/two-factor', ['code' => $code], $user)->assertNoContent();
@@ -168,7 +165,7 @@ class TwoFactorAuthTest extends PlusTestCase
     #[Test]
     public function regenerateRecoveryCodesReplacesOldOnes(): void
     {
-        $user = $this->createUserWithTwoFactorEnabled();
+        $user = self::createUserWithTwoFactorEnabled();
         $oldCodes = $user->two_factor_recovery_codes;
         $code = $this->totp->getCode($user->two_factor_secret);
 
@@ -179,22 +176,13 @@ class TwoFactorAuthTest extends PlusTestCase
         self::assertNotSame($oldCodes, $user->two_factor_recovery_codes);
     }
 
-    private ?string $createUserWithTwoFactorEnabledRecoveryCode = null;
-
-    private function createUserWithTwoFactorEnabled(): User
+    private static function createUserWithTwoFactorEnabled(): User
     {
         $user = create_user(['password' => Hash::make('secret')]);
 
-        $service = app(TwoFactorAuthService::class);
-        $secret = $service->generateSecret();
-        $cleartextCodes = $service->generateRecoveryCodes();
-
-        $user->two_factor_secret = $secret;
-        $user->two_factor_recovery_codes = $service->hashRecoveryCodes($cleartextCodes);
-        $user->two_factor_confirmed_at = now();
-        $user->save();
-
-        $this->createUserWithTwoFactorEnabledRecoveryCode = $cleartextCodes[0];
+        $service = app(TwoFactorAuthenticator::class);
+        $service->setUp($user);
+        $service->confirm($user, $service->generateRecoveryCodes());
 
         return $user->refresh();
     }

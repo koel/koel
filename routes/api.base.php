@@ -11,7 +11,14 @@ use App\Http\Controllers\API\Artist\ArtistController;
 use App\Http\Controllers\API\Artist\ArtistSongController;
 use App\Http\Controllers\API\Artist\FetchArtistEventsController;
 use App\Http\Controllers\API\Artist\FetchArtistInformationController;
-use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\Auth\LoginWithCredentialsController;
+use App\Http\Controllers\API\Auth\LoginWithOneTimeTokenController;
+use App\Http\Controllers\API\Auth\LogoutController;
+use App\Http\Controllers\API\Auth\TwoFactor\ConfirmController as ConfirmTwoFactorController;
+use App\Http\Controllers\API\Auth\TwoFactor\DisableController as DisableTwoFactorController;
+use App\Http\Controllers\API\Auth\TwoFactor\RegenerateRecoveryCodesController;
+use App\Http\Controllers\API\Auth\TwoFactor\SetupController as SetupTwoFactorController;
+use App\Http\Controllers\API\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
 use App\Http\Controllers\API\Embed\EmbedController;
 use App\Http\Controllers\API\Embed\EmbedOptionsController;
@@ -74,7 +81,6 @@ use App\Http\Controllers\API\SongController;
 use App\Http\Controllers\API\SongSearchController;
 use App\Http\Controllers\API\ThemeController;
 use App\Http\Controllers\API\ToggleLikeSongController;
-use App\Http\Controllers\API\TwoFactorAuthController;
 use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
 use App\Http\Controllers\API\UpdateUserPreferenceController;
@@ -97,11 +103,11 @@ Route::prefix('api')
         Route::get('ping', static fn () => null);
 
         Route::middleware('throttle:10,1')->group(static function (): void {
-            Route::post('me', [AuthController::class, 'login'])->name('auth.login');
-            Route::post('me/otp', [AuthController::class, 'loginUsingOneTimeToken']);
-            Route::post('me/two-factor-challenge', [AuthController::class, 'twoFactorChallenge']);
+            Route::post('me', LoginWithCredentialsController::class)->name('auth.login');
+            Route::post('me/otp', LoginWithOneTimeTokenController::class);
+            Route::post('me/two-factor-challenge', TwoFactorChallengeController::class);
 
-            Route::delete('me', [AuthController::class, 'logout']);
+            Route::delete('me', LogoutController::class);
 
             Route::post('forgot-password', ForgotPasswordController::class);
             Route::post('reset-password', ResetPasswordController::class);
@@ -231,10 +237,10 @@ Route::prefix('api')
             Route::delete('me/equalizer-presets/{id}', [EqualizerPresetController::class, 'destroy']);
             Route::post('me/subsonic-api-key/regenerate', RegenerateSubsonicApiKeyController::class);
 
-            Route::post('me/two-factor', [TwoFactorAuthController::class, 'setup']);
-            Route::post('me/two-factor/confirm', [TwoFactorAuthController::class, 'confirm']);
-            Route::post('me/two-factor/recovery-codes', [TwoFactorAuthController::class, 'regenerateRecoveryCodes']);
-            Route::delete('me/two-factor', [TwoFactorAuthController::class, 'destroy']);
+            Route::post('me/two-factor', SetupTwoFactorController::class);
+            Route::post('me/two-factor/confirm', ConfirmTwoFactorController::class);
+            Route::post('me/two-factor/recovery-codes', RegenerateRecoveryCodesController::class);
+            Route::delete('me/two-factor', DisableTwoFactorController::class);
 
             // Last.fm-related routes
             Route::post('lastfm/session-key', SetLastfmSessionKeyController::class);

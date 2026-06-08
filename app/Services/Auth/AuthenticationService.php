@@ -12,6 +12,7 @@ use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use SensitiveParameter;
 use Throwable;
@@ -22,7 +23,7 @@ class AuthenticationService
         private readonly UserRepository $userRepository,
         private readonly TokenManager $tokenManager,
         private readonly PasswordBroker $passwordBroker,
-        private readonly TwoFactorAuthService $twoFactorAuth,
+        private readonly TwoFactorAuthenticator $twoFactorAuth,
     ) {}
 
     public function login(string $email, #[SensitiveParameter] string $password): CompositeToken
@@ -47,7 +48,7 @@ class AuthenticationService
 
     public function generateTwoFactorLoginToken(User $user): string
     {
-        $token = bin2hex(random_bytes(16));
+        $token = Str::random(32);
         Cache::set(cache_key('two-factor login token', $token), encrypt($user->id), 60 * 5);
 
         return $token;
@@ -73,10 +74,7 @@ class AuthenticationService
         }
 
         $user = $this->userRepository->getOne($userId);
-
-        $verified =
-            $user->two_factor_secret !== null && $this->twoFactorAuth->verifyCode($user->two_factor_secret, $code)
-            || $this->twoFactorAuth->consumeRecoveryCode($user, $code);
+        $verified = $this->twoFactorAuth->verify($user, $code);
 
         if (!$verified) {
             Cache::set($cacheKey, $encryptedUserId, 60 * 5);
@@ -131,7 +129,7 @@ class AuthenticationService
 
     public function generateOneTimeToken(User $user): string
     {
-        $token = bin2hex(random_bytes(12));
+        $token = Str::random(24);
         Cache::set(cache_key('one-time token', $token), encrypt($user->id), 60 * 10);
 
         return $token;
