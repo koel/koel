@@ -32,10 +32,13 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property ?Carbon $invitation_accepted_at
  * @property ?Carbon $invited_at
+ * @property ?Carbon $two_factor_confirmed_at
  * @property ?User $invitedBy
+ * @property ?array<int, string> $two_factor_recovery_codes
  * @property ?string $invitation_token
  * @property ?string $subsonic_api_key
  * @property ?string $subsonic_api_key_hash
+ * @property ?string $two_factor_secret
  * @property Collection<array-key, Playlist> $collaboratedPlaylists
  * @property Collection<array-key, Playlist> $playlists
  * @property Collection<array-key, PlaylistFolder> $playlistFolders
@@ -63,12 +66,23 @@ use Spatie\Permission\Traits\HasRoles;
  */
 #[ObservedBy(UserObserver::class)]
 #[UseEloquentBuilder(UserBuilder::class)]
-#[Guarded(['id', 'public_id', 'subsonic_api_key', 'subsonic_api_key_hash'])]
+#[Guarded([
+    'id',
+    'public_id',
+    'subsonic_api_key',
+    'subsonic_api_key_hash',
+    'two_factor_secret',
+    'two_factor_recovery_codes',
+    'two_factor_confirmed_at',
+])]
 #[Hidden([
     'password',
     'remember_token',
     'subsonic_api_key',
     'subsonic_api_key_hash',
+    'two_factor_secret',
+    'two_factor_recovery_codes',
+    'two_factor_confirmed_at',
     'created_at',
     'updated_at',
     'invitation_accepted_at',
@@ -101,7 +115,15 @@ class User extends Authenticatable implements AuditableContract
         return [
             'preferences' => UserPreferencesCast::class,
             'subsonic_api_key' => 'encrypted',
+            'two_factor_secret' => 'encrypted',
+            'two_factor_recovery_codes' => 'encrypted:array',
+            'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return (bool) $this->two_factor_confirmed_at;
     }
 
     // @mago-ignore lint:no-redundant-method-override

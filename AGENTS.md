@@ -283,6 +283,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
+- For guard clauses that throw on a condition, always reach for `throw_if($condition, ExceptionClass::class, ...$args)` / `throw_unless($condition, ExceptionClass::class, ...$args)` before writing `if (…) { throw new …; }`. The Laravel helpers read as a single declarative line, and the extra args are forwarded to the exception constructor. Plain `if`/`throw` is only correct when the throw branch has to do additional work (logging, side effects) before throwing.
 - All methods must have explicit visibility (`public`, `protected`, or `private`). Never omit the visibility keyword, even on interface methods or static methods.
 - Methods that don't reference `$this` must be declared `static`, unless the class is injectable (DI service) — in that case, prefer instance methods for better testability and decoupling.
 - Always use the least visibility possible. Use `private` by default; only use `protected` or `public` when required by inheritance or external access.
@@ -354,6 +355,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Testing Assertions
 - When asserting two Eloquent models are the same, use `assertTrue($modelA->is($modelB))` instead of comparing IDs.
+- Never resort to `ReflectionClass` / `ReflectionProperty` / `ReflectionMethod` in tests to peek at private state, instantiate classes with private constructors, or invoke private methods. If a test "needs" reflection, the smell is the test or the code: the production class should expose what's necessary via a public factory, the dependency should be injectable, or the test should construct the dependency itself (TOTP and similar deterministic primitives need no shared instance). Refactor instead of reaching for reflection.
 
 ## Model Factories
 - Use `createOne()` to create a single model and `createMany()` to create a collection. Never use `create()` directly, as its return type is ambiguous (single model or collection depending on arguments).

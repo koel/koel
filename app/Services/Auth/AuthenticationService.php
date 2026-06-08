@@ -3,6 +3,8 @@
 namespace App\Services\Auth;
 
 use App\Exceptions\InvalidCredentialsException;
+use App\Exceptions\InvalidLoginTokenException;
+use App\Exceptions\RequiresTwoFactorException;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Values\CompositeToken;
@@ -11,7 +13,7 @@ use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use InvalidArgumentException;
+use Illuminate\Support\Str;
 use SensitiveParameter;
 use Throwable;
 
@@ -21,20 +23,50 @@ class AuthenticationService
         private readonly UserRepository $userRepository,
         private readonly TokenManager $tokenManager,
         private readonly PasswordBroker $passwordBroker,
+        private readonly TwoFactorAuthenticator $twoFactorAuth,
     ) {}
 
-    public function login(string $email, #[SensitiveParameter] string $password): CompositeToken
+    public function authenticate(string $email, #[SensitiveParameter] string $password): User
     {
         $user = $this->userRepository->findFirstWhere('email', $email);
-
-        if (!$user || !Hash::check($password, $user->password)) {
-            throw new InvalidCredentialsException();
-        }
+        throw_unless($user && Hash::check($password, $user->password), InvalidCredentialsException::class);
 
         if (Hash::needsRehash($user->password)) {
             $user->password = Hash::make($password);
             $user->save();
         }
+
+        return $user;
+    }
+
+    public function login(string $email, #[SensitiveParameter] string $password): CompositeToken
+    {
+        $user = $this->authenticate($email, $password);
+        throw_if($user->hasTwoFactorEnabled(), RequiresTwoFactorException::class);
+
+        return $this->logUserIn($user);
+    }
+
+    public function generateTwoFactorLoginToken(User $user): string
+    {
+        $token = Str::random(32);
+        Cache::set(cache_key('two-factor login token', $token), encrypt($user->id), 60 * 5);
+
+        return $token;
+    }
+
+    public function loginViaTwoFactorChallenge(
+        #[SensitiveParameter]
+        string $loginToken,
+        #[SensitiveParameter]
+        string $code,
+    ): CompositeToken {
+        $cacheKey = cache_key('two-factor login token', $loginToken);
+
+        $user = $this->userRepository->getOne(self::decryptUserIdFromCache($cacheKey));
+        throw_unless($this->twoFactorAuth->verify($user, $code), InvalidCredentialsException::class);
+
+        Cache::forget($cacheKey);
 
         return $this->logUserIn($user);
     }
@@ -83,7 +115,7 @@ class AuthenticationService
 
     public function generateOneTimeToken(User $user): string
     {
-        $token = bin2hex(random_bytes(12));
+        $token = Str::random(24);
         Cache::set(cache_key('one-time token', $token), encrypt($user->id), 60 * 10);
 
         return $token;
@@ -92,18 +124,21 @@ class AuthenticationService
     public function loginViaOneTimeToken(#[SensitiveParameter] string $token): CompositeToken
     {
         $cacheKey = cache_key('one-time token', $token);
-        $encryptedUserId = Cache::pull($cacheKey);
-
-        if (!$encryptedUserId) {
-            throw new InvalidArgumentException(message: 'One-time token not found or expired.');
-        }
-
-        try {
-            $userId = decrypt($encryptedUserId);
-        } catch (Throwable $e) {
-            throw new InvalidArgumentException(message: 'Invalid one-time token.', previous: $e);
-        }
+        $userId = self::decryptUserIdFromCache($cacheKey);
+        Cache::forget($cacheKey);
 
         return $this->logUserIn($this->userRepository->getOne($userId));
+    }
+
+    private static function decryptUserIdFromCache(string $cacheKey): int
+    {
+        $encryptedUserId = Cache::get($cacheKey);
+        throw_unless($encryptedUserId, InvalidLoginTokenException::create());
+
+        try {
+            return decrypt($encryptedUserId);
+        } catch (Throwable $e) {
+            throw InvalidLoginTokenException::create($e);
+        }
     }
 }
