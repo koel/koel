@@ -5,11 +5,6 @@ namespace App\Services\Auth\Support;
 use LogicException;
 use RobThree\Auth\Providers\Qr\IQRCodeProvider;
 
-/**
- * Required by RobThree\Auth\TwoFactorAuth's constructor but never invoked —
- * Koel renders QR codes on the frontend (via @vueuse/integrations/useQRCode)
- * from the otpauth:// URI returned by TwoFactorAuthenticator::setUp.
- */
 class NullQrCodeProvider implements IQRCodeProvider
 {
     public function getQRCodeImage(string $qrText, int $size): string
