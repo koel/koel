@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\Auth\TwoFactorAuthenticator;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 #[RequiresPlus]
 class SetupController extends Controller
@@ -19,6 +20,12 @@ class SetupController extends Controller
     /** @param User $user */
     public function __invoke(Authenticatable $user): JsonResponse
     {
+        if ($user->hasTwoFactorEnabled()) {
+            return response()->json([
+                'message' => 'Two-factor authentication is already enabled. Disable it first to re-configure.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         return response()->json([
             'provisioning_uri' => $this->twoFactorAuth->setUp($user),
         ]);

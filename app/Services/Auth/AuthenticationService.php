@@ -26,7 +26,7 @@ class AuthenticationService
         private readonly TwoFactorAuthenticator $twoFactorAuth,
     ) {}
 
-    public function login(string $email, #[SensitiveParameter] string $password): CompositeToken
+    public function authenticate(string $email, #[SensitiveParameter] string $password): User
     {
         $user = $this->userRepository->findFirstWhere('email', $email);
 
@@ -39,8 +39,15 @@ class AuthenticationService
             $user->save();
         }
 
+        return $user;
+    }
+
+    public function login(string $email, #[SensitiveParameter] string $password): CompositeToken
+    {
+        $user = $this->authenticate($email, $password);
+
         if ($user->hasTwoFactorEnabled()) {
-            throw new RequiresTwoFactorException($user);
+            throw new RequiresTwoFactorException();
         }
 
         return $this->logUserIn($user);
@@ -62,14 +69,13 @@ class AuthenticationService
     ): CompositeToken {
         $cacheKey = cache_key('two-factor login token', $loginToken);
 
-        $user = $this->userRepository->getOne(self::getAndDecryptUserIdFromCache($cacheKey));
-        $verified = $this->twoFactorAuth->verify($user, $code);
+        $user = $this->userRepository->getOne(self::peekAndDecryptUserIdFromCache($cacheKey));
 
-        if (!$verified) {
-            Cache::set($cacheKey, encrypt($user->id), 60 * 5);
-
+        if (!$this->twoFactorAuth->verify($user, $code)) {
             throw new InvalidCredentialsException();
         }
+
+        Cache::forget($cacheKey);
 
         return $this->logUserIn($user);
     }
@@ -127,13 +133,15 @@ class AuthenticationService
     public function loginViaOneTimeToken(#[SensitiveParameter] string $token): CompositeToken
     {
         $cacheKey = cache_key('one-time token', $token);
+        $userId = self::peekAndDecryptUserIdFromCache($cacheKey);
+        Cache::forget($cacheKey);
 
-        return $this->logUserIn($this->userRepository->getOne(self::getAndDecryptUserIdFromCache($cacheKey)));
+        return $this->logUserIn($this->userRepository->getOne($userId));
     }
 
-    private static function getAndDecryptUserIdFromCache(string $cacheKey): int
+    private static function peekAndDecryptUserIdFromCache(string $cacheKey): int
     {
-        $encryptedUserId = Cache::pull($cacheKey);
+        $encryptedUserId = Cache::get($cacheKey);
 
         throw_unless($encryptedUserId, InvalidLoginTokenException::create());
 

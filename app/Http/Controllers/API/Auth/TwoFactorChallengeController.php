@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\API\Auth;
 
+use App\Exceptions\InvalidCredentialsException;
+use App\Exceptions\InvalidLoginTokenException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Auth\TwoFactorChallengeRequest;
 use App\Services\Auth\AuthenticationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Throwable;
 
 class TwoFactorChallengeController extends Controller
 {
@@ -19,7 +20,7 @@ class TwoFactorChallengeController extends Controller
     {
         try {
             $compositeToken = $this->auth->loginViaTwoFactorChallenge($request->login_token, $request->code);
-        } catch (Throwable) {
+        } catch (InvalidLoginTokenException|InvalidCredentialsException) {
             abort(Response::HTTP_UNAUTHORIZED, 'Invalid credentials');
         }
 

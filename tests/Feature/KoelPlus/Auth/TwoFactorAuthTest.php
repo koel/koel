@@ -39,6 +39,22 @@ class TwoFactorAuthTest extends PlusTestCase
     }
 
     #[Test]
+    public function setupIsDeniedWhenTwoFactorIsAlreadyEnabled(): void
+    {
+        $user = self::createUserWithTwoFactorEnabled();
+        $previousSecret = $user->two_factor_secret;
+        $previousConfirmedAt = $user->two_factor_confirmed_at;
+        $previousCodes = $user->two_factor_recovery_codes;
+
+        $this->postAs('api/me/two-factor', [], $user)->assertUnprocessable();
+
+        $user->refresh();
+        self::assertSame($previousSecret, $user->two_factor_secret);
+        self::assertEquals($previousConfirmedAt, $user->two_factor_confirmed_at);
+        self::assertSame($previousCodes, $user->two_factor_recovery_codes);
+    }
+
+    #[Test]
     public function confirmWithValidCodeSetsConfirmedAtAndReturnsRecoveryCodes(): void
     {
         $user = create_user();

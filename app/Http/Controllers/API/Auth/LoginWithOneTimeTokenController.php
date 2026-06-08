@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\API\Auth;
 
+use App\Exceptions\InvalidLoginTokenException;
 use App\Http\Controllers\Controller;
 use App\Services\Auth\AuthenticationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Throwable;
 
 class LoginWithOneTimeTokenController extends Controller
 {
@@ -19,7 +19,7 @@ class LoginWithOneTimeTokenController extends Controller
     {
         try {
             $compositeToken = $this->auth->loginViaOneTimeToken((string) $request->input('token'));
-        } catch (Throwable) {
+        } catch (InvalidLoginTokenException) {
             abort(Response::HTTP_UNAUTHORIZED, 'Invalid credentials');
         }
 
