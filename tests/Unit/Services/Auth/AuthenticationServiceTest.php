@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services\Auth;
 
 use App\Exceptions\InvalidCredentialsException;
+use App\Exceptions\InvalidTwoFactorLoginTokenException;
 use App\Exceptions\RequiresTwoFactorException;
 use App\Repositories\UserRepository;
 use App\Services\Auth\AuthenticationService;
@@ -12,7 +13,6 @@ use App\Values\CompositeToken;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Password;
-use InvalidArgumentException;
 use Laravel\Sanctum\NewAccessToken;
 use Laravel\Sanctum\PersonalAccessToken;
 use Mockery\MockInterface;
@@ -109,7 +109,7 @@ class AuthenticationServiceTest extends TestCase
     #[Test]
     public function loginViaTwoFactorChallengeThrowsOnMissingToken(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidTwoFactorLoginTokenException::class);
 
         $this->service->loginViaTwoFactorChallenge('nonexistent', '123456');
     }
@@ -120,7 +120,7 @@ class AuthenticationServiceTest extends TestCase
         $token = 'corrupted-token';
         Cache::set(cache_key('two-factor login token', $token), 'not-valid-ciphertext', 300);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidTwoFactorLoginTokenException::class);
 
         $this->service->loginViaTwoFactorChallenge($token, '123456');
     }

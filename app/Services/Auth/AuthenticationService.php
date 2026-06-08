@@ -3,6 +3,8 @@
 namespace App\Services\Auth;
 
 use App\Exceptions\InvalidCredentialsException;
+use App\Exceptions\InvalidOneTimeTokenException;
+use App\Exceptions\InvalidTwoFactorLoginTokenException;
 use App\Exceptions\RequiresTwoFactorException;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -13,7 +15,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use InvalidArgumentException;
 use SensitiveParameter;
 use Throwable;
 
@@ -64,13 +65,13 @@ class AuthenticationService
         $encryptedUserId = Cache::pull($cacheKey);
 
         if (!$encryptedUserId) {
-            throw new InvalidArgumentException('Two-factor login token not found or expired.');
+            throw InvalidTwoFactorLoginTokenException::create();
         }
 
         try {
             $userId = decrypt($encryptedUserId);
         } catch (Throwable $e) {
-            throw new InvalidArgumentException('Invalid two-factor login token.', previous: $e);
+            throw InvalidTwoFactorLoginTokenException::create($e);
         }
 
         $user = $this->userRepository->getOne($userId);
@@ -141,13 +142,13 @@ class AuthenticationService
         $encryptedUserId = Cache::pull($cacheKey);
 
         if (!$encryptedUserId) {
-            throw new InvalidArgumentException(message: 'One-time token not found or expired.');
+            throw InvalidOneTimeTokenException::create();
         }
 
         try {
             $userId = decrypt($encryptedUserId);
         } catch (Throwable $e) {
-            throw new InvalidArgumentException(message: 'Invalid one-time token.', previous: $e);
+            throw InvalidOneTimeTokenException::create($e);
         }
 
         return $this->logUserIn($this->userRepository->getOne($userId));
