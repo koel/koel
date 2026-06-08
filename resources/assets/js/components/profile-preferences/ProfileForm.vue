@@ -13,18 +13,6 @@
 
     <div class="flex flex-col gap-3 md:flex-row md:gap-8 w-full md:w-[640px]">
       <div class="flex-1 space-y-5">
-        <FormRow v-if="!currentUser.sso_provider">
-          <template #label>Current Password</template>
-          <PasswordField
-            v-model="data.current_password"
-            v-koel-focus
-            data-testid="currentPassword"
-            name="current_password"
-            placeholder="Required to update your profile"
-            required
-          />
-        </FormRow>
-
         <FormRow>
           <template #label>Name</template>
           <TextInput v-model="data.name" data-testid="name" name="name" />
@@ -41,18 +29,6 @@
             required
             type="email"
           />
-        </FormRow>
-
-        <FormRow v-if="!currentUser.sso_provider">
-          <template #label>New Password</template>
-          <PasswordField
-            v-model="data.new_password"
-            autocomplete="new-password"
-            data-testid="newPassword"
-            minlength="10"
-            placeholder="Leave empty to keep current password"
-          />
-          <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
         </FormRow>
       </div>
 
@@ -77,7 +53,6 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
-import PasswordField from '@/components/ui/form/PasswordField.vue'
 import EditableProfileAvatar from '@/components/profile-preferences/EditableProfileAvatar.vue'
 import AlertBox from '@/components/ui/AlertBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -91,29 +66,15 @@ const isDemo = window.KOEL.is_demo
 const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
   initialValues: {
     ...pick(currentUser.value, 'name', 'email', 'avatar'),
-    current_password: '',
-    new_password: '',
   },
   onSubmit: async data => {
     if (isDemo) {
       return
     }
 
-    const formattedData = { ...data }
-
-    // if the new_password field is empty, remove the field entirely
-    // to ensure the field doesn't get sent to the server.
-    if (!formattedData.new_password) {
-      delete formattedData.new_password
-    }
-
-    await authService.updateProfile(formattedData)
+    await authService.updateProfile(data)
   },
-  onSuccess: () => {
-    data.current_password = ''
-    data.new_password = ''
-    toastSuccess('Profile updated.')
-  },
+  onSuccess: () => toastSuccess('Profile updated.'),
 })
 
 const onAvatarChanged = (avatar: string) => {

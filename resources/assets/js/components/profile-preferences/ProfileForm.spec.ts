@@ -22,17 +22,13 @@ describe('profileForm.vue', () => {
       }) as CurrentUser,
     )
 
-    await h.type(screen.getByTestId('currentPassword'), 'old-password')
     await h.type(screen.getByTestId('email'), 'koel@example.com')
     await h.type(screen.getByTestId('name'), 'Koel User')
-    await h.type(screen.getByTestId('newPassword'), 'new-password')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(updateMock).toHaveBeenCalledWith({
       name: 'Koel User',
       email: 'koel@example.com',
-      current_password: 'old-password',
-      new_password: 'new-password',
       avatar: 'https://gravatar.com/foo',
     })
 

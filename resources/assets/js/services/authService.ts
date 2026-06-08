@@ -5,11 +5,9 @@ import { useLocalStorage } from '@/composables/useLocalStorage'
 import { use } from '@/utils/helpers'
 
 export interface UpdateCurrentProfileData {
-  current_password: string
   name: string
   email: string
   avatar?: string
-  new_password?: string
 }
 
 const API_TOKEN_STORAGE_KEY = 'api-token'
@@ -61,6 +59,10 @@ export const authService = {
 
   updateProfile: async (data: UpdateCurrentProfileData) => {
     merge(userStore.current, await http.put<User>('me', data))
+  },
+
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    await http.put('me/password', { current_password: currentPassword, new_password: newPassword })
   },
 
   getApiToken: () => lsGet<string>(API_TOKEN_STORAGE_KEY),

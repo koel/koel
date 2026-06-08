@@ -90,7 +90,10 @@
         </TabPanel>
 
         <TabPanel v-if="currentTab === 'security'" id="profilePaneSecurity" aria-labelledby="profilePaneSecurity">
-          <TwoFactorAuthSettings />
+          <div class="space-y-10">
+            <ChangePasswordForm />
+            <TwoFactorAuthSettings />
+          </div>
         </TabPanel>
 
         <TabPanel v-if="currentTab === 'qr'" id="profilePaneQr" aria-labelledby="profilePaneQr">
@@ -123,6 +126,7 @@ const OfflineStorage = defineAsyncComponent(() => import('@/components/profile-p
 const SubsonicCredentials = defineAsyncComponent(
   () => import('@/components/profile-preferences/SubsonicCredentials.vue'),
 )
+const ChangePasswordForm = defineAsyncComponent(() => import('@/components/profile-preferences/ChangePasswordForm.vue'))
 const TwoFactorAuthSettings = defineAsyncComponent(
   () => import('@/components/profile-preferences/TwoFactorAuthSettings.vue'),
 )
