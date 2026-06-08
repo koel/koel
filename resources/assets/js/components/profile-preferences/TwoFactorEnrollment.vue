@@ -13,7 +13,7 @@
       </FormRow>
       <div class="flex gap-2">
         <Btn :disabled="submitting" type="submit">Confirm</Btn>
-        <Btn type="button" variant="outline" @click.prevent="$emit('cancel')">Cancel</Btn>
+        <Btn type="button" variant="ghost" @click.prevent="$emit('cancel')">Cancel</Btn>
       </div>
     </form>
   </div>

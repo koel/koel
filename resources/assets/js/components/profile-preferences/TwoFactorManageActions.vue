@@ -12,7 +12,7 @@
       </FormRow>
       <div class="flex gap-2">
         <Btn :disabled="submitting" type="submit">Submit</Btn>
-        <Btn type="button" variant="outline" @click.prevent="cancel">Cancel</Btn>
+        <Btn type="button" variant="ghost" @click.prevent="cancel">Cancel</Btn>
       </div>
     </form>
 

@@ -14,7 +14,7 @@
 
     <div class="flex gap-2">
       <Btn type="button" @click.prevent="copy"> <CopyIcon :size="16" /> Copy </Btn>
-      <Btn type="button" variant="outline" @click.prevent="$emit('dismiss')">I've saved them</Btn>
+      <Btn type="button" variant="ghost" @click.prevent="$emit('dismiss')">I've saved them</Btn>
     </div>
   </div>
 </template>

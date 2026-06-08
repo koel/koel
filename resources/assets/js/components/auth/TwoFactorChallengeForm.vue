@@ -28,15 +28,13 @@
     </FormRow>
 
     <FormRow>
-      <a class="text-right text-[.95rem] text-k-fg-70" role="button" @click.prevent="$emit('cancel')">
-        Back to login
-      </a>
+      <Btn class="w-full" type="button" variant="ghost" @click.prevent="$emit('cancel')">Back to login</Btn>
     </FormRow>
   </form>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import { useBranding } from '@/composables/useBranding'
@@ -52,6 +50,14 @@ const emit = defineEmits<{ (e: 'verified'): void; (e: 'cancel'): void }>()
 const { logo } = useBranding()
 
 const failed = ref(false)
+let errorResetTimer: number | null = null
+
+const clearErrorResetTimer = () => {
+  if (errorResetTimer !== null) {
+    window.clearTimeout(errorResetTimer)
+    errorResetTimer = null
+  }
+}
 
 const { data, handleSubmit } = useForm<{ code: string }>({
   initialValues: { code: '' },
@@ -63,9 +69,15 @@ const { data, handleSubmit } = useForm<{ code: string }>({
   onError: (error: unknown) => {
     failed.value = true
     logger.error(error)
-    window.setTimeout(() => (failed.value = false), 2000)
+    clearErrorResetTimer()
+    errorResetTimer = window.setTimeout(() => {
+      failed.value = false
+      errorResetTimer = null
+    }, 2000)
   },
 })
+
+onBeforeUnmount(clearErrorResetTimer)
 </script>
 
 <style lang="postcss" scoped>
