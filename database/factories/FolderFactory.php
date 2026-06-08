@@ -12,7 +12,7 @@ class FolderFactory extends Factory
     private static function generateRandomPath(): string
     {
         return implode(DIRECTORY_SEPARATOR, [
-            bin2hex(random_bytes(5)),
+            Str::random(10),
             Str::ulid(),
         ]);
     }
