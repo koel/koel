@@ -44,6 +44,13 @@
         >
           Subsonic
         </TabButton>
+        <TabButton
+          :selected="currentTab === 'security'"
+          aria-controls="profilePaneSecurity"
+          @click="currentTab = 'security'"
+        >
+          Security
+        </TabButton>
         <TabButton :selected="currentTab === 'qr'" aria-controls="profilePaneQr" @click="currentTab = 'qr'">
           <QrCodeIcon :size="16" />
         </TabButton>
@@ -82,6 +89,10 @@
           <SubsonicCredentials />
         </TabPanel>
 
+        <TabPanel v-if="currentTab === 'security'" id="profilePaneSecurity" aria-labelledby="profilePaneSecurity">
+          <TwoFactorAuthSettings />
+        </TabPanel>
+
         <TabPanel v-if="currentTab === 'qr'" id="profilePaneQr" aria-labelledby="profilePaneQr">
           <QRLogin />
         </TabPanel>
@@ -112,12 +123,15 @@ const OfflineStorage = defineAsyncComponent(() => import('@/components/profile-p
 const SubsonicCredentials = defineAsyncComponent(
   () => import('@/components/profile-preferences/SubsonicCredentials.vue'),
 )
+const TwoFactorAuthSettings = defineAsyncComponent(
+  () => import('@/components/profile-preferences/TwoFactorAuthSettings.vue'),
+)
 const QRLogin = defineAsyncComponent(() => import('@/components/profile-preferences/QRLogin.vue'))
 
 const { get, set } = useLocalStorage()
 
 const currentTab = ref(
-  get<'profile' | 'preferences' | 'themes' | 'integrations' | 'offline' | 'subsonic' | 'qr'>(
+  get<'profile' | 'preferences' | 'themes' | 'integrations' | 'offline' | 'subsonic' | 'security' | 'qr'>(
     'profileScreenTab',
     'profile',
   ),
