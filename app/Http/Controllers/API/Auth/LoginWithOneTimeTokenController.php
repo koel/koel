@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API\Auth;
 use App\Exceptions\InvalidLoginTokenException;
 use App\Http\Controllers\Controller;
 use App\Services\Auth\AuthenticationService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -15,7 +14,7 @@ class LoginWithOneTimeTokenController extends Controller
         private readonly AuthenticationService $auth,
     ) {}
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request)
     {
         try {
             $compositeToken = $this->auth->loginViaOneTimeToken((string) $request->input('token'));

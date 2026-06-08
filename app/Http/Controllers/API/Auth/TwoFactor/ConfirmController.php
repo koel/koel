@@ -8,7 +8,6 @@ use App\Http\Requests\API\Auth\TwoFactor\CodeBearingRequest;
 use App\Models\User;
 use App\Services\Auth\TwoFactorAuthenticator;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 #[RequiresPlus]
@@ -19,7 +18,7 @@ class ConfirmController extends Controller
     ) {}
 
     /** @param User $user */
-    public function __invoke(CodeBearingRequest $request, Authenticatable $user): JsonResponse
+    public function __invoke(CodeBearingRequest $request, Authenticatable $user)
     {
         if (!$this->twoFactorAuth->verify($user, $request->code)) {
             return response()->json(['message' => 'Invalid code.'], Response::HTTP_UNPROCESSABLE_ENTITY);

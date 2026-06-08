@@ -6,7 +6,6 @@ use App\Exceptions\InvalidCredentialsException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\LoginWithCredentialsRequest;
 use App\Services\Auth\AuthenticationService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class LoginWithCredentialsController extends Controller
@@ -15,7 +14,7 @@ class LoginWithCredentialsController extends Controller
         private readonly AuthenticationService $auth,
     ) {}
 
-    public function __invoke(LoginWithCredentialsRequest $request): JsonResponse
+    public function __invoke(LoginWithCredentialsRequest $request)
     {
         try {
             $user = $this->auth->authenticate($request->email, $request->password);

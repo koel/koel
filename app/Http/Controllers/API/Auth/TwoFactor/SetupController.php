@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Auth\TwoFactorAuthenticator;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 #[RequiresPlus]
@@ -18,7 +17,7 @@ class SetupController extends Controller
     ) {}
 
     /** @param User $user */
-    public function __invoke(Authenticatable $user): JsonResponse
+    public function __invoke(Authenticatable $user)
     {
         abort_if($user->hasTwoFactorEnabled(), Response::HTTP_UNPROCESSABLE_ENTITY);
 
