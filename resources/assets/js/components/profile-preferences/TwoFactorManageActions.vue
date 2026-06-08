@@ -11,7 +11,7 @@
         <TextInput v-model="data.code" v-koel-focus autocomplete="one-time-code" placeholder="123 456" required />
       </FormRow>
       <div class="flex gap-2">
-        <Btn :disabled="submitting" type="submit">Submit</Btn>
+        <Btn type="submit">Submit</Btn>
         <Btn type="button" variant="ghost" @click.prevent="cancel">Cancel</Btn>
       </div>
     </form>
@@ -25,7 +25,10 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { authService } from '@/services/authService'
+import { useDialogBox } from '@/composables/useDialogBox'
 import { useForm } from '@/composables/useForm'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
@@ -33,25 +36,45 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 
 type Action = 'regenerate' | 'disable'
 
-defineProps<{ submitting?: boolean }>()
-const emit = defineEmits<{ (e: 'regenerate', code: string): void; (e: 'disable', code: string): void }>()
+const emit = defineEmits<{ (e: 'regenerated', codes: string[]): void; (e: 'disabled'): void }>()
+
+const { toastSuccess, toastError } = useMessageToaster()
+const { showConfirmDialog } = useDialogBox()
 
 const action = ref<Action | null>(null)
-
-const { data, handleSubmit } = useForm<{ code: string }>({
-  initialValues: { code: '' },
-  useOverlay: false,
-  onSubmit: form => {
-    if (action.value) {
-      emit(action.value, form.code)
-    }
-  },
-})
 
 const cancel = () => {
   action.value = null
   data.code = ''
 }
 
-defineExpose({ reset: cancel })
+const { data, handleSubmit } = useForm<{ code: string }>({
+  initialValues: { code: '' },
+  useOverlay: false,
+  onSubmit: async ({ code }) => {
+    if (action.value === 'regenerate') {
+      const result = await authService.regenerateRecoveryCodes(code)
+      return { kind: 'regenerated' as const, codes: result.recovery_codes }
+    }
+
+    if (!(await showConfirmDialog('Disable two-factor authentication?'))) {
+      return { kind: 'cancelled' as const }
+    }
+
+    await authService.disableTwoFactor(code)
+    return { kind: 'disabled' as const }
+  },
+  onSuccess: result => {
+    if (result.kind === 'regenerated') {
+      toastSuccess('Recovery codes regenerated.')
+      emit('regenerated', result.codes)
+    } else if (result.kind === 'disabled') {
+      toastSuccess('Two-factor authentication disabled.')
+      emit('disabled')
+    }
+
+    cancel()
+  },
+  onError: () => toastError('Invalid code.'),
+})
 </script>

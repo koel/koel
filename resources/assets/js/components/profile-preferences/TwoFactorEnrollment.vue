@@ -2,7 +2,7 @@
   <div class="space-y-4">
     <p>Scan this QR code with your authenticator app (1Password, Authy, Google Authenticator, etc.).</p>
 
-    <div class="block w-fit rounded-md overflow-hidden bg-white p-2">
+    <div v-if="provisioningUri" class="block w-fit rounded-md overflow-hidden bg-white p-2">
       <img :src="qrCodeUrl" alt="Two-factor authentication QR code" height="192" width="192" />
     </div>
 
@@ -12,7 +12,7 @@
         <TextInput v-model="data.code" v-koel-focus autocomplete="one-time-code" placeholder="123 456" required />
       </FormRow>
       <div class="flex gap-2">
-        <Btn :disabled="submitting" type="submit">Confirm</Btn>
+        <Btn :disabled="!provisioningUri" type="submit">Confirm</Btn>
         <Btn type="button" variant="ghost" @click.prevent="$emit('cancel')">Cancel</Btn>
       </div>
     </form>
@@ -20,25 +20,45 @@
 </template>
 
 <script lang="ts" setup>
-import { toRef } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useQRCode } from '@vueuse/integrations/useQRCode'
+import { authService } from '@/services/authService'
 import { useForm } from '@/composables/useForm'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 
-const props = defineProps<{ provisioningUri: string; submitting?: boolean }>()
-const emit = defineEmits<{ (e: 'cancel'): void; (e: 'submit', code: string): void }>()
+const emit = defineEmits<{ (e: 'cancel'): void; (e: 'enrolled', codes: string[]): void }>()
 
-const qrCodeUrl = useQRCode(toRef(props, 'provisioningUri'), {
+const { toastSuccess, toastError } = useMessageToaster()
+
+const provisioningUri = ref('')
+
+const qrCodeUrl = useQRCode(provisioningUri, {
   width: window.devicePixelRatio === 1 ? 192 : 384,
   height: window.devicePixelRatio === 1 ? 192 : 384,
+})
+
+onMounted(async () => {
+  try {
+    const { provisioning_uri } = await authService.enrollTwoFactor()
+    provisioningUri.value = provisioning_uri
+  } catch {
+    toastError('Failed to start two-factor enrollment.')
+    emit('cancel')
+  }
 })
 
 const { data, handleSubmit } = useForm<{ code: string }>({
   initialValues: { code: '' },
   useOverlay: false,
-  onSubmit: form => emit('submit', form.code),
+  onSubmit: async ({ code }) => await authService.confirmTwoFactor(code),
+  onSuccess: result => {
+    toastSuccess('Two-factor authentication enabled.')
+    emit('enrolled', result.recovery_codes)
+  },
+  onError: () => toastError('Invalid code.'),
 })
 </script>

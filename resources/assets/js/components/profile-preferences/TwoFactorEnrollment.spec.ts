@@ -1,38 +1,58 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { authService } from '@/services/authService'
 import Component from './TwoFactorEnrollment.vue'
 
 describe('twoFactorEnrollment.vue', () => {
   const h = createHarness()
 
-  it('renders the QR code and code input', () => {
-    h.render(Component, {
-      props: { provisioningUri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel' },
+  it('starts enrollment on mount and renders the QR code', async () => {
+    const enrollMock = h.mock(authService, 'enrollTwoFactor').mockResolvedValue({
+      provisioning_uri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel',
     })
 
-    screen.getByAltText('Two-factor authentication QR code')
-    screen.getByPlaceholderText('123 456')
+    h.render(Component)
+
+    await waitFor(() => screen.getByAltText('Two-factor authentication QR code'))
+    expect(enrollMock).toHaveBeenCalled()
   })
 
-  it('emits submit with the typed code', async () => {
-    const { emitted } = h.render(Component, {
-      props: { provisioningUri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel' },
+  it('emits enrolled with the recovery codes on a valid confirmation', async () => {
+    h.mock(authService, 'enrollTwoFactor').mockResolvedValue({
+      provisioning_uri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel',
     })
+    h.mock(authService, 'confirmTwoFactor').mockResolvedValue({
+      recovery_codes: ['AAAA BBBB', 'CCCC DDDD'],
+    })
+
+    const { emitted } = h.render(Component)
+    await waitFor(() => screen.getByAltText('Two-factor authentication QR code'))
 
     await h.type(screen.getByPlaceholderText('123 456'), '123456')
     await h.user.click(screen.getByRole('button', { name: 'Confirm' }))
 
-    expect(emitted().submit).toEqual([['123456']])
+    await waitFor(() => expect(emitted().enrolled).toEqual([[['AAAA BBBB', 'CCCC DDDD']]]))
   })
 
-  it('emits cancel when the cancel button is clicked', async () => {
-    const { emitted } = h.render(Component, {
-      props: { provisioningUri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel' },
+  it('emits cancel on Cancel click', async () => {
+    h.mock(authService, 'enrollTwoFactor').mockResolvedValue({
+      provisioning_uri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel',
     })
+
+    const { emitted } = h.render(Component)
+    await waitFor(() => screen.getByAltText('Two-factor authentication QR code'))
 
     await h.user.click(screen.getByRole('button', { name: 'Cancel' }))
 
     expect(emitted().cancel).toBeTruthy()
+  })
+
+  it('cancels and toasts if enroll request fails', async () => {
+    h.mock(authService, 'enrollTwoFactor').mockRejectedValue(new Error('boom'))
+
+    const { emitted } = h.render(Component)
+
+    await waitFor(() => expect(emitted().cancel).toBeTruthy())
   })
 })

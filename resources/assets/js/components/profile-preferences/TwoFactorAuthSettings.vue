@@ -8,42 +8,30 @@
     </p>
 
     <div class="mt-4">
-      <Btn
-        v-if="stage === 'idle' && !currentUser.two_factor"
-        :disabled="submitting"
-        type="button"
-        @click.prevent="startEnrollment"
-      >
+      <Btn v-if="stage === 'idle' && !currentUser.two_factor" type="button" @click.prevent="stage = 'enrolling'">
         Enable Two-Factor Authentication
       </Btn>
 
       <TwoFactorManageActions
         v-else-if="stage === 'idle' && currentUser.two_factor"
-        ref="manageActions"
-        :submitting="submitting"
-        @disable="onDisable"
-        @regenerate="onRegenerate"
+        @disabled="onDisabled"
+        @regenerated="onShowCodes"
       />
 
-      <TwoFactorEnrollment
-        v-else-if="stage === 'enrolling'"
-        :provisioning-uri="provisioningUri"
-        :submitting="submitting"
-        @cancel="resetState"
-        @submit="onConfirm"
-      />
+      <TwoFactorEnrollment v-else-if="stage === 'enrolling'" @cancel="stage = 'idle'" @enrolled="onEnrolled" />
 
-      <TwoFactorRecoveryCodes v-else-if="stage === 'showing-codes'" :codes="recoveryCodes" @dismiss="resetState" />
+      <TwoFactorRecoveryCodes
+        v-else-if="stage === 'showing-codes'"
+        :codes="recoveryCodes"
+        @dismiss="finishShowingCodes"
+      />
     </div>
   </section>
 </template>
 
 <script lang="ts" setup>
-import { ref, useTemplateRef } from 'vue'
-import { authService } from '@/services/authService'
+import { ref } from 'vue'
 import { useAuthorization } from '@/composables/useAuthorization'
-import { useDialogBox } from '@/composables/useDialogBox'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { userStore } from '@/stores/userStore'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -54,83 +42,26 @@ import TwoFactorRecoveryCodes from '@/components/profile-preferences/TwoFactorRe
 type Stage = 'idle' | 'enrolling' | 'showing-codes'
 
 const { currentUser } = useAuthorization()
-const { toastSuccess, toastError } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
 const stage = ref<Stage>('idle')
-const provisioningUri = ref('')
 const recoveryCodes = ref<string[]>([])
-const submitting = ref(false)
-const manageActions = useTemplateRef<InstanceType<typeof TwoFactorManageActions>>('manageActions')
 
-const resetState = () => {
-  stage.value = 'idle'
-  provisioningUri.value = ''
+const onShowCodes = (codes: string[]) => {
+  recoveryCodes.value = codes
+  stage.value = 'showing-codes'
+}
+
+const onEnrolled = (codes: string[]) => {
+  userStore.state.current.two_factor = true
+  onShowCodes(codes)
+}
+
+const onDisabled = () => {
+  userStore.state.current.two_factor = false
+}
+
+const finishShowingCodes = () => {
   recoveryCodes.value = []
-}
-
-const startEnrollment = async () => {
-  submitting.value = true
-
-  try {
-    const { provisioning_uri } = await authService.enrollTwoFactor()
-    provisioningUri.value = provisioning_uri
-    stage.value = 'enrolling'
-  } catch {
-    toastError('Failed to start two-factor enrollment.')
-  } finally {
-    submitting.value = false
-  }
-}
-
-const onConfirm = async (code: string) => {
-  submitting.value = true
-
-  try {
-    const { recovery_codes } = await authService.confirmTwoFactor(code)
-    recoveryCodes.value = recovery_codes
-    userStore.state.current.two_factor = true
-    stage.value = 'showing-codes'
-    toastSuccess('Two-factor authentication enabled.')
-  } catch {
-    toastError('Invalid code.')
-  } finally {
-    submitting.value = false
-  }
-}
-
-const onRegenerate = async (code: string) => {
-  submitting.value = true
-
-  try {
-    const { recovery_codes } = await authService.regenerateRecoveryCodes(code)
-    recoveryCodes.value = recovery_codes
-    stage.value = 'showing-codes'
-    manageActions.value?.reset()
-    toastSuccess('Recovery codes regenerated.')
-  } catch {
-    toastError('Invalid code.')
-  } finally {
-    submitting.value = false
-  }
-}
-
-const onDisable = async (code: string) => {
-  if (!(await showConfirmDialog('Disable two-factor authentication?'))) {
-    return
-  }
-
-  submitting.value = true
-
-  try {
-    await authService.disableTwoFactor(code)
-    userStore.state.current.two_factor = false
-    manageActions.value?.reset()
-    toastSuccess('Two-factor authentication disabled.')
-  } catch {
-    toastError('Invalid code.')
-  } finally {
-    submitting.value = false
-  }
+  stage.value = 'idle'
 }
 </script>
