@@ -34,13 +34,4 @@ describe('profileForm.vue', () => {
 
     expect(alertMock).toHaveBeenCalledWith('Profile updated.')
   })
-
-  it('disables save in demo mode', async () => {
-    await h.withDemoMode(async () => {
-      h.actingAsUser(h.factory('user').make() as CurrentUser).render(Component)
-
-      expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Save' }).disabled).toBe(true)
-      screen.getByText('Profile updates are disabled in the demo version.')
-    })
-  })
 })

@@ -61,5 +61,8 @@ class ChangePasswordTest extends TestCase
             ['current_password' => 'old-secret', 'new_password' => 'new-secret-1234'],
             $user,
         )->assertNoContent();
+
+        $user->refresh();
+        self::assertTrue(Hash::check('old-secret', $user->password));
     }
 }

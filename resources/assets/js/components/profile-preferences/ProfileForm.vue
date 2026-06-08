@@ -38,8 +38,8 @@
     </div>
 
     <footer class="mt-8">
-      <Btn class="btn-submit" :disabled="isDemo" type="submit">Save</Btn>
-      <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2">Profile updates are disabled in the demo version.</span>
+      <Btn class="btn-submit" type="submit">Save</Btn>
+      <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2">Changes will not be saved in the demo version.</span>
     </footer>
   </form>
 </template>
@@ -67,7 +67,13 @@ const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
   initialValues: {
     ...pick(currentUser.value, 'name', 'email', 'avatar'),
   },
-  onSubmit: async data => await authService.updateProfile(data),
+  onSubmit: async data => {
+    if (isDemo) {
+      return
+    }
+
+    await authService.updateProfile(data)
+  },
   onSuccess: () => toastSuccess('Profile updated.'),
 })
 

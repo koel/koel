@@ -74,7 +74,7 @@ class ProfileTest extends TestCase
     public function disabledInDemo(): void
     {
         config(['koel.misc.demo' => true]);
-        $user = create_user();
+        $user = create_user(['name' => 'Original', 'email' => 'original@example.com']);
 
         $this->putAs(
             'api/me',
@@ -84,5 +84,9 @@ class ProfileTest extends TestCase
             ],
             $user,
         )->assertNoContent();
+
+        $user->refresh();
+        self::assertSame('Original', $user->name);
+        self::assertSame('original@example.com', $user->email);
     }
 }

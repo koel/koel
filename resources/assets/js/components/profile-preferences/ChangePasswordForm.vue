@@ -31,6 +31,7 @@
       </FormRow>
 
       <Btn type="submit">Update Password</Btn>
+      <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2">Changes will not be saved in the demo version.</span>
     </form>
   </section>
 </template>
@@ -49,9 +50,15 @@ import PasswordField from '@/components/ui/form/PasswordField.vue'
 const { currentUser } = useAuthorization()
 const { toastSuccess } = useMessageToaster()
 
+const isDemo = window.KOEL.is_demo
+
 const { data, handleSubmit } = useForm<{ current_password: string; new_password: string }>({
   initialValues: { current_password: '', new_password: '' },
   onSubmit: async ({ current_password, new_password }) => {
+    if (isDemo) {
+      return
+    }
+
     await authService.changePassword(current_password, new_password)
   },
   onSuccess: () => {
