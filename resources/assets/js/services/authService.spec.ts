@@ -104,7 +104,6 @@ describe('authService', () => {
     const putMock = h.mock(http, 'put').mockResolvedValue(updated)
 
     const data: UpdateCurrentProfileData = {
-      current_password: 'curry-wurst',
       name: 'Jane Doe',
       email: 'jane@doe.com',
     }

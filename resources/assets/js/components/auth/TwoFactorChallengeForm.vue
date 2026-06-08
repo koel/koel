@@ -1,7 +1,7 @@
 <template>
   <form
     :class="{ error: failed }"
-    class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-k-fg-10 space-y-3"
+    class="sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-k-fg-10 space-y-3"
     data-testid="two-factor-challenge-form"
     @submit.prevent="handleSubmit"
   >

@@ -2,6 +2,7 @@
   <div class="flex items-center justify-center min-h-screen my-0 mx-auto flex-col gap-5">
     <TwoFactorChallengeForm
       v-if="twoFactorLoginToken"
+      class="w-full sm:w-[288px]"
       :login-token="twoFactorLoginToken"
       @cancel="twoFactorLoginToken = ''"
       @verified="$emit('loggedin')"
