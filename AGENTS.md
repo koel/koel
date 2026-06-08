@@ -283,6 +283,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
+- For guard clauses that throw on a condition, always reach for `throw_if($condition, ExceptionClass::class, ...$args)` / `throw_unless($condition, ExceptionClass::class, ...$args)` before writing `if (…) { throw new …; }`. The Laravel helpers read as a single declarative line, and the extra args are forwarded to the exception constructor. Plain `if`/`throw` is only correct when the throw branch has to do additional work (logging, side effects) before throwing.
 - All methods must have explicit visibility (`public`, `protected`, or `private`). Never omit the visibility keyword, even on interface methods or static methods.
 - Methods that don't reference `$this` must be declared `static`, unless the class is injectable (DI service) — in that case, prefer instance methods for better testability and decoupling.
 - Always use the least visibility possible. Use `private` by default; only use `protected` or `public` when required by inheritance or external access.
