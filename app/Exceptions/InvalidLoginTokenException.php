@@ -5,10 +5,10 @@ namespace App\Exceptions;
 use RuntimeException;
 use Throwable;
 
-final class InvalidOneTimeTokenException extends RuntimeException
+final class InvalidLoginTokenException extends RuntimeException
 {
     public static function create(?Throwable $previous = null): self
     {
-        return new self('Invalid or expired one-time token.', previous: $previous);
+        return new self('Invalid or expired login token.', previous: $previous);
     }
 }

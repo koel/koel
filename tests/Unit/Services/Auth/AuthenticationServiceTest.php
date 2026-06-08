@@ -3,7 +3,7 @@
 namespace Tests\Unit\Services\Auth;
 
 use App\Exceptions\InvalidCredentialsException;
-use App\Exceptions\InvalidTwoFactorLoginTokenException;
+use App\Exceptions\InvalidLoginTokenException;
 use App\Exceptions\RequiresTwoFactorException;
 use App\Repositories\UserRepository;
 use App\Services\Auth\AuthenticationService;
@@ -109,7 +109,7 @@ class AuthenticationServiceTest extends TestCase
     #[Test]
     public function loginViaTwoFactorChallengeThrowsOnMissingToken(): void
     {
-        $this->expectException(InvalidTwoFactorLoginTokenException::class);
+        $this->expectException(InvalidLoginTokenException::class);
 
         $this->service->loginViaTwoFactorChallenge('nonexistent', '123456');
     }
@@ -120,7 +120,7 @@ class AuthenticationServiceTest extends TestCase
         $token = 'corrupted-token';
         Cache::set(cache_key('two-factor login token', $token), 'not-valid-ciphertext', 300);
 
-        $this->expectException(InvalidTwoFactorLoginTokenException::class);
+        $this->expectException(InvalidLoginTokenException::class);
 
         $this->service->loginViaTwoFactorChallenge($token, '123456');
     }

@@ -3,8 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Exceptions\InvalidCredentialsException;
-use App\Exceptions\InvalidOneTimeTokenException;
-use App\Exceptions\InvalidTwoFactorLoginTokenException;
+use App\Exceptions\InvalidLoginTokenException;
 use App\Exceptions\RequiresTwoFactorException;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -62,23 +61,12 @@ class AuthenticationService
         string $code,
     ): CompositeToken {
         $cacheKey = cache_key('two-factor login token', $loginToken);
-        $encryptedUserId = Cache::pull($cacheKey);
 
-        if (!$encryptedUserId) {
-            throw InvalidTwoFactorLoginTokenException::create();
-        }
-
-        try {
-            $userId = decrypt($encryptedUserId);
-        } catch (Throwable $e) {
-            throw InvalidTwoFactorLoginTokenException::create($e);
-        }
-
-        $user = $this->userRepository->getOne($userId);
+        $user = $this->userRepository->getOne(self::getAndDecryptUserIdFromCache($cacheKey));
         $verified = $this->twoFactorAuth->verify($user, $code);
 
         if (!$verified) {
-            Cache::set($cacheKey, $encryptedUserId, 60 * 5);
+            Cache::set($cacheKey, encrypt($user->id), 60 * 5);
 
             throw new InvalidCredentialsException();
         }
@@ -139,18 +127,20 @@ class AuthenticationService
     public function loginViaOneTimeToken(#[SensitiveParameter] string $token): CompositeToken
     {
         $cacheKey = cache_key('one-time token', $token);
+
+        return $this->logUserIn($this->userRepository->getOne(self::getAndDecryptUserIdFromCache($cacheKey)));
+    }
+
+    private static function getAndDecryptUserIdFromCache(string $cacheKey): int
+    {
         $encryptedUserId = Cache::pull($cacheKey);
 
-        if (!$encryptedUserId) {
-            throw InvalidOneTimeTokenException::create();
-        }
+        throw_unless($encryptedUserId, InvalidLoginTokenException::create());
 
         try {
-            $userId = decrypt($encryptedUserId);
+            return decrypt($encryptedUserId);
         } catch (Throwable $e) {
-            throw InvalidOneTimeTokenException::create($e);
+            throw InvalidLoginTokenException::create($e);
         }
-
-        return $this->logUserIn($this->userRepository->getOne($userId));
     }
 }
