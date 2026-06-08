@@ -91,7 +91,7 @@ class TwoFactorAuthTest extends TestCase
     }
 
     #[Test]
-    public function confirmWithInvalidCodeReturnUnprocessable(): void
+    public function confirmWithInvalidCodeReturnsUnprocessable(): void
     {
         $user = create_user();
 
