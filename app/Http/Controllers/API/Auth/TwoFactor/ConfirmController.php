@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API\Auth\TwoFactor;
 
-use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Auth\TwoFactor\CodeBearingRequest;
 use App\Models\User;
@@ -10,7 +9,6 @@ use App\Services\Auth\TwoFactorAuthenticator;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 
-#[RequiresPlus]
 class ConfirmController extends Controller
 {
     public function __construct(
