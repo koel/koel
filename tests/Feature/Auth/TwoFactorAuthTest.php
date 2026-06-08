@@ -152,7 +152,6 @@ class TwoFactorAuthTest extends TestCase
             'code' => $recoveryCode,
         ])->assertOk();
 
-        // Same recovery code can't be reused.
         $secondLoginToken = $this->post('api/me', ['email' => $user->email, 'password' => 'secret'])->json(
             'login_token',
         );
