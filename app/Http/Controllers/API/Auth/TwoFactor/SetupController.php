@@ -20,11 +20,7 @@ class SetupController extends Controller
     /** @param User $user */
     public function __invoke(Authenticatable $user): JsonResponse
     {
-        if ($user->hasTwoFactorEnabled()) {
-            return response()->json([
-                'message' => 'Two-factor authentication is already enabled. Disable it first to re-configure.',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        abort_if($user->hasTwoFactorEnabled(), Response::HTTP_UNPROCESSABLE_ENTITY);
 
         return response()->json([
             'provisioning_uri' => $this->twoFactorAuth->setUp($user),

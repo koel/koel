@@ -123,7 +123,7 @@ class User extends Authenticatable implements AuditableContract
 
     public function hasTwoFactorEnabled(): bool
     {
-        return $this->two_factor_confirmed_at !== null;
+        return (bool) $this->two_factor_confirmed_at;
     }
 
     // @mago-ignore lint:no-redundant-method-override
