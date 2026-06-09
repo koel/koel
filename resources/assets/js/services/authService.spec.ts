@@ -57,9 +57,88 @@ describe('authService', () => {
       token: 'bar',
     })
 
-    await authService.login('john@doe.com', 'curry-wurst')
+    const result = await authService.login('john@doe.com', 'curry-wurst')
 
     expect(postMock).toHaveBeenCalledWith('me', { email: 'john@doe.com', password: 'curry-wurst' })
+    expect(result).toBeNull()
+    expect(lsGet('api-token')).toBe('bar')
+    expect(lsGet('audio-token')).toBe('foo')
+  })
+
+  it('returns the two-factor challenge payload from login without stashing a token', async () => {
+    authService.destroy()
+    h.mock(http, 'post').mockResolvedValue({
+      two_factor: true,
+      login_token: 'pending-login-token',
+    })
+
+    const result = await authService.login('john@doe.com', 'curry-wurst')
+
+    expect(result).toEqual({ two_factor: true, login_token: 'pending-login-token' })
+    expect(lsGet('api-token')).toBeNull()
+    expect(lsGet('audio-token')).toBeNull()
+  })
+
+  it('submits the two-factor challenge and stashes the returned composite token', async () => {
+    const postMock = h.mock(http, 'post').mockResolvedValue({
+      'audio-token': 'foo',
+      token: 'bar',
+    })
+
+    await authService.submitTwoFactorChallenge('pending-login-token', '123456')
+
+    expect(postMock).toHaveBeenCalledWith('me/two-factor-challenge', {
+      login_token: 'pending-login-token',
+      code: '123456',
+    })
+    expect(lsGet('api-token')).toBe('bar')
+    expect(lsGet('audio-token')).toBe('foo')
+  })
+
+  it('enrolls in two-factor authentication', async () => {
+    const postMock = h.mock(http, 'post').mockResolvedValue({ provisioning_uri: 'otpauth://totp/...' })
+
+    const result = await authService.enrollTwoFactor()
+
+    expect(postMock).toHaveBeenCalledWith('me/two-factor')
+    expect(result).toEqual({ provisioning_uri: 'otpauth://totp/...' })
+  })
+
+  it('confirms two-factor enrollment and returns the recovery codes', async () => {
+    const postMock = h.mock(http, 'post').mockResolvedValue({ recovery_codes: ['AAAA BBBB', 'CCCC DDDD'] })
+
+    const result = await authService.confirmTwoFactor('123456')
+
+    expect(postMock).toHaveBeenCalledWith('me/two-factor/confirm', { code: '123456' })
+    expect(result).toEqual({ recovery_codes: ['AAAA BBBB', 'CCCC DDDD'] })
+  })
+
+  it('disables two-factor authentication', async () => {
+    const deleteMock = h.mock(http, 'delete')
+
+    await authService.disableTwoFactor('654321')
+
+    expect(deleteMock).toHaveBeenCalledWith('me/two-factor', { code: '654321' })
+  })
+
+  it('regenerates two-factor recovery codes', async () => {
+    const postMock = h.mock(http, 'post').mockResolvedValue({ recovery_codes: ['NEW1 NEW2', 'NEW3 NEW4'] })
+
+    const result = await authService.regenerateRecoveryCodes('123456')
+
+    expect(postMock).toHaveBeenCalledWith('me/two-factor/recovery-codes', { code: '123456' })
+    expect(result).toEqual({ recovery_codes: ['NEW1 NEW2', 'NEW3 NEW4'] })
+  })
+
+  it('changes the password', async () => {
+    const putMock = h.mock(http, 'put')
+
+    await authService.changePassword('old-secret', 'new-secret-1234')
+
+    expect(putMock).toHaveBeenCalledWith('me/password', {
+      current_password: 'old-secret',
+      new_password: 'new-secret-1234',
+    })
   })
 
   it('redirects after login', async () => {

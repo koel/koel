@@ -74,4 +74,29 @@ class OpenIDConnectTest extends PlusTestCase
         $response->assertViewIs('sso-callback');
         $response->assertViewHas('token');
     }
+
+    #[Test]
+    public function callbackBypassesTwoFactorChallenge(): void
+    {
+        create_user([
+            'sso_provider' => 'OpenID Connect',
+            'sso_id' => '123',
+            'email' => 'bruce@iron.com',
+            'two_factor_confirmed_at' => now(),
+        ]);
+
+        $oidcUser = Mockery::mock(OidcUser::class, [
+            'getEmail' => 'bruce@iron.com',
+            'getName' => 'Bruce Dickinson',
+            'getAvatar' => null,
+            'getId' => '123',
+        ]);
+
+        Socialite::expects('driver->user')->andReturn($oidcUser);
+
+        $response = $this->get('auth/oidc/callback');
+        $response->assertOk();
+        $response->assertViewIs('sso-callback');
+        $response->assertViewHas('token');
+    }
 }

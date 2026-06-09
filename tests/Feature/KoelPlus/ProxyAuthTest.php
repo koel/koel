@@ -68,6 +68,31 @@ class ProxyAuthTest extends PlusTestCase
     }
 
     #[Test]
+    public function proxyAuthenticatedUserBypassesTwoFactorChallenge(): void
+    {
+        $user = create_user([
+            'sso_id' => '123456',
+            'sso_provider' => 'Reverse Proxy',
+            'two_factor_confirmed_at' => now(),
+        ]);
+
+        $response = $this->get('/', [
+            'REMOTE_ADDR' => '192.168.1.127',
+            'remote-user' => '123456',
+            'remote-preferred-name' => 'Bruce Dickinson',
+        ]);
+
+        $response->assertOk();
+        $response->assertViewHas('token');
+
+        /** @var array $token */
+        $token = $response->viewData('token');
+
+        self::assertNotNull(PersonalAccessToken::findToken($token['token']));
+        self::assertTrue($user->is(PersonalAccessToken::findToken($token['token'])->tokenable));
+    }
+
+    #[Test]
     public function proxyAuthenticateExistingUser(): void
     {
         $user = create_user([
