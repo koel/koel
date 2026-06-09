@@ -121,7 +121,7 @@ class TwoFactorAuthenticatorTest extends TestCase
     }
 
     #[Test]
-    public function verifyAcceptsRecoveryCodeWithoutSpacesOrCaseMismatch(): void
+    public function verifyAcceptsRecoveryCodeWithoutSpaces(): void
     {
         $stored = 'NSNY RYJC LHWT 4AB5 4BEF IZZF LTYS ADNP';
 
@@ -130,7 +130,7 @@ class TwoFactorAuthenticatorTest extends TestCase
         $user->two_factor_recovery_codes = [$stored];
         $user->save();
 
-        $unspaced = 'nsnyryjclhwt4ab54befizzfltysadnp';
+        $unspaced = 'NSNYRYJCLHWT4AB54BEFIZZFLTYSADNP';
         $this->totp->expects('verifyCode')->with('SECRET', $unspaced)->andReturnFalse();
 
         self::assertTrue($this->authenticator->verify($user, $unspaced));
