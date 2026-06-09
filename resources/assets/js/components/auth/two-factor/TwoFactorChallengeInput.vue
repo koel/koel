@@ -5,14 +5,14 @@
 
       <OneTimeCodeInput ref="totpInput" v-model="totpModel" @complete="$emit('complete', $event)" />
 
-      <a
-        class="text-[.95rem] text-k-fg-70 cursor-pointer hover:text-k-highlight focus-visible:text-k-highlight"
+      <button
+        class="text-[.95rem] text-k-fg-70 cursor-pointer hover:text-k-highlight focus-visible:text-k-highlight self-start"
         data-testid="use-recovery-code"
-        role="button"
+        type="button"
         @click.prevent="switchMode('recovery')"
       >
         Use a recovery code
-      </a>
+      </button>
     </template>
 
     <template v-else>
@@ -29,14 +29,14 @@
         spellcheck="false"
       />
 
-      <a
-        class="block text-[.95rem] text-k-fg-70 cursor-pointer hover:text-k-highlight focus-visible:text-k-highlight"
+      <button
+        class="text-[.95rem] text-k-fg-70 cursor-pointer hover:text-k-highlight focus-visible:text-k-highlight self-start"
         data-testid="use-totp-code"
-        role="button"
+        type="button"
         @click.prevent="switchMode('totp')"
       >
         Use authenticator code instead
-      </a>
+      </button>
     </template>
   </div>
 </template>

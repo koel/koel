@@ -4,7 +4,7 @@
 
     <div class="group relative max-w-md">
       <ul
-        class="font-mono text-sm rounded-md border border-k-fg-10 bg-k-bg-50 p-4 space-y-1 select-all"
+        class="flex flex-col gap-1 font-mono text-sm rounded-md border border-k-fg-10 bg-k-bg-50 p-4 select-all"
         data-testid="recovery-codes"
       >
         <li v-for="code in codes" :key="code">{{ code }}</li>
