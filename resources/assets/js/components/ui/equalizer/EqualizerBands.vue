@@ -1,6 +1,14 @@
 <template>
   <div class="t-4 b-5 x-4 p-4 flex gap-1 rounded-md bg-black/20">
-    <EqualizerBand ref="preampBandEl" v-model="preampGain" type="preamp" @commit="emit('commit')">Preamp</EqualizerBand>
+    <EqualizerBand
+      ref="preampBandEl"
+      v-model="preampGain"
+      type="preamp"
+      @commit="emit('commit')"
+      @update:model-value="onPreampChange"
+    >
+      Preamp
+    </EqualizerBand>
 
     <span class="text-sm h-[100px] w-[20px] flex flex-col justify-between items-center opacity-50">
       <span class="leading-none text-k-fg">+20</span>
@@ -28,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, ref } from 'vue'
 import type { Band } from '@/services/audioService'
 import { audioService } from '@/services/audioService'
 
@@ -113,13 +121,13 @@ const loadPreset = async (preset: EqualizerPreset, audioBands: Band[]) => {
 
 const getPreamp = () => preampGain.value
 
-watch(preampGain, value => {
+const onPreampChange = (value: number) => {
   audioService.changePreampGain(value)
 
   if (!applyingPreset) {
     emit('user-change')
   }
-})
+}
 
 const onBandChange = (band: Band) => {
   audioService.changeFilterGain(band.node, band.db)
