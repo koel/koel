@@ -103,25 +103,50 @@ class TwoFactorAuthenticatorTest extends TestCase
     #[Test]
     public function verifyConsumesRecoveryCodeWhenTotpFails(): void
     {
+        $codeA = 'AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH';
+        $codeB = 'IIII JJJJ KKKK LLLL MMMM NNNN OOOO PPPP';
+        $codeC = 'QQQQ RRRR SSSS TTTT UUUU VVVV WWWW XXXX';
+
         $user = create_user();
         $user->two_factor_secret = 'SECRET';
-        $user->two_factor_recovery_codes = ['CODE_A', 'CODE_B', 'CODE_C'];
+        $user->two_factor_recovery_codes = [$codeA, $codeB, $codeC];
         $user->save();
 
-        $this->totp->expects('verifyCode')->with('SECRET', 'CODE_B')->andReturnFalse();
+        $this->totp->expects('verifyCode')->with('SECRET', $codeB)->andReturnFalse();
 
-        self::assertTrue($this->authenticator->verify($user, 'CODE_B'));
+        self::assertTrue($this->authenticator->verify($user, $codeB));
 
         $user->refresh();
-        self::assertSame(['CODE_A', 'CODE_C'], $user->two_factor_recovery_codes);
+        self::assertSame([$codeA, $codeC], $user->two_factor_recovery_codes);
+    }
+
+    #[Test]
+    public function verifyAcceptsRecoveryCodeWithoutSpacesOrCaseMismatch(): void
+    {
+        $stored = 'NSNY RYJC LHWT 4AB5 4BEF IZZF LTYS ADNP';
+
+        $user = create_user();
+        $user->two_factor_secret = 'SECRET';
+        $user->two_factor_recovery_codes = [$stored];
+        $user->save();
+
+        $unspaced = 'nsnyryjclhwt4ab54befizzfltysadnp';
+        $this->totp->expects('verifyCode')->with('SECRET', $unspaced)->andReturnFalse();
+
+        self::assertTrue($this->authenticator->verify($user, $unspaced));
+
+        $user->refresh();
+        self::assertSame([], $user->two_factor_recovery_codes);
     }
 
     #[Test]
     public function verifyRejectsCodeMatchingNeitherTotpNorRecovery(): void
     {
+        $codeA = 'AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH';
+
         $user = create_user();
         $user->two_factor_secret = 'SECRET';
-        $user->two_factor_recovery_codes = ['CODE_A'];
+        $user->two_factor_recovery_codes = [$codeA];
         $user->save();
 
         $this->totp->expects('verifyCode')->with('SECRET', 'WRONG')->andReturnFalse();
@@ -129,7 +154,7 @@ class TwoFactorAuthenticatorTest extends TestCase
         self::assertFalse($this->authenticator->verify($user, 'WRONG'));
 
         $user->refresh();
-        self::assertSame(['CODE_A'], $user->two_factor_recovery_codes);
+        self::assertSame([$codeA], $user->two_factor_recovery_codes);
     }
 
     #[Test]

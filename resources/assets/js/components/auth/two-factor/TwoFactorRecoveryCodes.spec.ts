@@ -25,7 +25,7 @@ describe('twoFactorRecoveryCodes.vue', () => {
 
     h.render(Component, { props: { codes: ['AAAA BBBB', 'CCCC DDDD'] } })
 
-    await h.user.click(screen.getByRole('button', { name: 'Copy' }))
+    await h.user.click(screen.getByRole('button', { name: 'Copy recovery codes' }))
 
     expect(copyText).toHaveBeenCalledWith('AAAA BBBB\nCCCC DDDD')
     expect(toastMock).toHaveBeenCalledWith('Recovery codes copied.')

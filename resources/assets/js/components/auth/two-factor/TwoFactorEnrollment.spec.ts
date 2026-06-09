@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen, waitFor } from '@testing-library/vue'
+import { screen, waitFor, within } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
 import Component from './TwoFactorEnrollment.vue'
@@ -29,8 +29,10 @@ describe('twoFactorEnrollment.vue', () => {
     const { emitted } = h.render(Component)
     await waitFor(() => screen.getByAltText('Two-factor authentication QR code'))
 
-    await h.type(screen.getByPlaceholderText('123 456'), '123456')
-    await h.user.click(screen.getByRole('button', { name: 'Confirm' }))
+    const boxes = within(screen.getByTestId('one-time-code-input')).getAllByRole<HTMLInputElement>('textbox')
+    for (let i = 0; i < 6; i++) {
+      await h.type(boxes[i], String((i + 1) % 10))
+    }
 
     await waitFor(() => expect(emitted().enrolled).toEqual([[['AAAA BBBB', 'CCCC DDDD']]]))
   })

@@ -64,7 +64,7 @@ import PasswordField from '@/components/ui/form/PasswordField.vue'
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm.vue'
 import GoogleLoginButton from '@/components/auth/sso/GoogleLoginButton.vue'
 import OpenIDLoginButton from '@/components/auth/sso/OpenIDLoginButton.vue'
-import TwoFactorChallengeForm from '@/components/auth/TwoFactorChallengeForm.vue'
+import TwoFactorChallengeForm from '@/components/auth/two-factor/TwoFactorChallengeForm.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 

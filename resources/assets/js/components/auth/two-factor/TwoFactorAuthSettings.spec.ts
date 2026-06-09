@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen, waitFor } from '@testing-library/vue'
+import { screen, waitFor, within } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { DialogBoxStub } from '@/__tests__/stubs'
 import { authService } from '@/services/authService'
@@ -14,6 +14,14 @@ describe('twoFactorAuthSettings.vue', () => {
 
   const renderDisabled = () =>
     h.actingAsUser(h.factory('user').make({ two_factor: false }) as CurrentUser).render(Component)
+
+  const typeTotp = async (digits: string) => {
+    const boxes = within(screen.getByTestId('one-time-code-input')).getAllByRole<HTMLInputElement>('textbox')
+
+    for (let i = 0; i < digits.length; i++) {
+      await h.type(boxes[i], digits[i])
+    }
+  }
 
   it('shows the enable button when two-factor is off', () => {
     renderDisabled()
@@ -40,8 +48,7 @@ describe('twoFactorAuthSettings.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Enable Two-Factor Authentication' }))
     await waitFor(() => screen.getByAltText('Two-factor authentication QR code'))
 
-    await h.type(screen.getByPlaceholderText('123 456'), '123456')
-    await h.user.click(screen.getByRole('button', { name: 'Confirm' }))
+    await typeTotp('123456')
 
     await waitFor(() => screen.getByText('AAAA BBBB'))
     expect(userStore.state.current.two_factor).toBe(true)
@@ -54,8 +61,7 @@ describe('twoFactorAuthSettings.vue', () => {
     renderEnabled()
 
     await h.user.click(screen.getByRole('button', { name: 'Disable' }))
-    await h.type(screen.getByPlaceholderText('123 456'), '654321')
-    await h.user.click(screen.getByRole('button', { name: 'Submit' }))
+    await typeTotp('654321')
 
     await waitFor(() => expect(userStore.state.current.two_factor).toBe(false))
   })

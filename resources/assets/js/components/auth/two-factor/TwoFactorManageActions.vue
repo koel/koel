@@ -1,15 +1,23 @@
 <template>
   <div class="space-y-4">
-    <p class="text-k-success">Two-factor authentication is active on your account.</p>
+    <AlertBox>Two-factor authentication is enabled.</AlertBox>
 
-    <form v-if="action" class="space-y-3 max-w-md" data-testid="two-factor-manage-form" @submit.prevent="handleSubmit">
-      <FormRow>
-        <template #label>
-          Enter a code from your authenticator app or a recovery code to
-          {{ action === 'disable' ? 'disable' : 'regenerate recovery codes' }}.
+    <form v-if="action" class="space-y-3" data-testid="two-factor-manage-form" @submit.prevent="handleSubmit">
+      <TwoFactorChallengeInput v-model="data.code" @complete="handleSubmit">
+        <template #totp-label>
+          <p class="text-[.95rem] text-k-fg-70">
+            Enter a code from your authenticator app to
+            {{ action === 'disable' ? 'disable two-factor authentication' : 'regenerate recovery codes' }}.
+          </p>
         </template>
-        <TextInput v-model="data.code" v-koel-focus autocomplete="one-time-code" placeholder="123 456" required />
-      </FormRow>
+        <template #recovery-label>
+          <p class="text-[.95rem] text-k-fg-70">
+            Enter a recovery code to
+            {{ action === 'disable' ? 'disable two-factor authentication' : 'regenerate recovery codes' }}.
+          </p>
+        </template>
+      </TwoFactorChallengeInput>
+
       <div class="flex gap-2">
         <Btn type="submit">Submit</Btn>
         <Btn type="button" variant="ghost" @click.prevent="cancel">Cancel</Btn>
@@ -31,8 +39,8 @@ import { useForm } from '@/composables/useForm'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import Btn from '@/components/ui/form/Btn.vue'
-import FormRow from '@/components/ui/form/FormRow.vue'
-import TextInput from '@/components/ui/form/TextInput.vue'
+import TwoFactorChallengeInput from '@/components/auth/two-factor/TwoFactorChallengeInput.vue'
+import AlertBox from '@/components/ui/AlertBox.vue'
 
 type Action = 'regenerate' | 'disable'
 

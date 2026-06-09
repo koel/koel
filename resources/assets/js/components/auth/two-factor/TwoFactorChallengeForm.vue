@@ -9,40 +9,39 @@
       <img alt="Logo" class="inline-block" :src="logo" width="156" />
     </div>
 
-    <p class="text-center text-[.95rem] text-k-fg-70 mb-4">
-      Enter the code from your authenticator app or a recovery code to continue.
-    </p>
+    <TwoFactorChallengeInput ref="codeInput" v-model="data.code" @complete="handleSubmit">
+      <template #totp-label>
+        <p class="text-[.95rem] text-k-fg-70 mb-4">Enter the verification code from your authenticator app.</p>
+      </template>
+      <template #recovery-label>
+        <p class="text-[.95rem] text-k-fg-70 mb-4">Enter one of your recovery codes.</p>
+      </template>
+    </TwoFactorChallengeInput>
 
-    <FormRow>
-      <TextInput
-        v-model="data.code"
-        autocomplete="one-time-code"
-        autofocus
-        placeholder="Authentication code"
-        required
-      />
-    </FormRow>
+    <Btn class="w-full" data-testid="submit" type="submit">Verify</Btn>
 
-    <FormRow>
-      <Btn class="w-full" data-testid="submit" type="submit">Verify</Btn>
-    </FormRow>
-
-    <FormRow>
-      <Btn class="w-full" type="button" variant="ghost" @click.prevent="$emit('cancel')">Back to login</Btn>
-    </FormRow>
+    <Btn
+      bordered
+      class="w-full !mt-6"
+      data-testid="cancel"
+      type="button"
+      variant="ghost"
+      @click.prevent="$emit('cancel')"
+    >
+      Back to login
+    </Btn>
   </form>
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, ref, useTemplateRef } from 'vue'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import { useBranding } from '@/composables/useBranding'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
-import TextInput from '@/components/ui/form/TextInput.vue'
-import FormRow from '@/components/ui/form/FormRow.vue'
+import TwoFactorChallengeInput from '@/components/auth/two-factor/TwoFactorChallengeInput.vue'
 
 const props = defineProps<{ loginToken: string }>()
 const emit = defineEmits<{ (e: 'verified'): void; (e: 'cancel'): void }>()
@@ -50,6 +49,8 @@ const emit = defineEmits<{ (e: 'verified'): void; (e: 'cancel'): void }>()
 const { logo } = useBranding()
 
 const failed = ref(false)
+const codeInput = useTemplateRef<InstanceType<typeof TwoFactorChallengeInput>>('codeInput')
+
 let errorResetTimer: number | null = null
 
 const clearErrorResetTimer = () => {
@@ -69,6 +70,7 @@ const { data, handleSubmit } = useForm<{ code: string }>({
   onError: (error: unknown) => {
     failed.value = true
     logger.error(error)
+    codeInput.value?.reset()
     clearErrorResetTimer()
     errorResetTimer = window.setTimeout(() => {
       failed.value = false

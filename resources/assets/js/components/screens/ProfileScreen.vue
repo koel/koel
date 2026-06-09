@@ -56,7 +56,7 @@
         </TabButton>
       </TabList>
 
-      <TabPanelContainer>
+      <TabPanelContainer class="scroll-mask-y">
         <TabPanel v-show="currentTab === 'profile'" id="profilePaneProfile" aria-labelledby="profilePaneProfile">
           <ProfileForm />
         </TabPanel>
@@ -90,10 +90,10 @@
         </TabPanel>
 
         <TabPanel v-if="currentTab === 'security'" id="profilePaneSecurity" aria-labelledby="profilePaneSecurity">
-          <div class="space-y-10">
+          <main class="space-y-6">
             <ChangePasswordForm />
             <TwoFactorAuthSettings />
-          </div>
+          </main>
         </TabPanel>
 
         <TabPanel v-if="currentTab === 'qr'" id="profilePaneQr" aria-labelledby="profilePaneQr">
@@ -128,7 +128,7 @@ const SubsonicCredentials = defineAsyncComponent(
 )
 const ChangePasswordForm = defineAsyncComponent(() => import('@/components/profile-preferences/ChangePasswordForm.vue'))
 const TwoFactorAuthSettings = defineAsyncComponent(
-  () => import('@/components/profile-preferences/TwoFactorAuthSettings.vue'),
+  () => import('@/components/auth/two-factor/TwoFactorAuthSettings.vue'),
 )
 const QRLogin = defineAsyncComponent(() => import('@/components/profile-preferences/QRLogin.vue'))
 

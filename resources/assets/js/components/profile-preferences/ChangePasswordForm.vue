@@ -1,39 +1,43 @@
 <template>
-  <section>
-    <h3 class="text-2xl mb-2">Change Password</h3>
+  <form @submit.prevent="handleSubmit">
+    <SettingGroup>
+      <template #title>Change Password</template>
 
-    <AlertBox v-if="currentUser.sso_provider">
-      Your password is managed by your single sign-on provider ({{ currentUser.sso_provider }}). You can't change it
-      here.
-    </AlertBox>
+      <AlertBox v-if="currentUser.sso_provider">
+        Your password is managed by your single sign-on provider ({{ currentUser.sso_provider }}). You can't change it
+        here.
+      </AlertBox>
 
-    <form v-else class="space-y-5 max-w-md mt-4" data-testid="change-password-form" @submit.prevent="handleSubmit">
-      <FormRow>
-        <template #label>Current Password</template>
-        <PasswordField
-          v-model="data.current_password"
-          autocomplete="current-password"
-          data-testid="current-password"
-          required
-        />
-      </FormRow>
+      <div v-else class="space-y-5 max-w-md">
+        <FormRow>
+          <template #label>Current Password</template>
+          <PasswordField
+            v-model="data.current_password"
+            autocomplete="current-password"
+            data-testid="current-password"
+            required
+          />
+        </FormRow>
 
-      <FormRow>
-        <template #label>New Password</template>
-        <PasswordField
-          v-model="data.new_password"
-          autocomplete="new-password"
-          data-testid="new-password"
-          minlength="10"
-          required
-        />
-        <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
-      </FormRow>
+        <FormRow>
+          <template #label>New Password</template>
+          <PasswordField
+            v-model="data.new_password"
+            autocomplete="new-password"
+            data-testid="new-password"
+            minlength="10"
+            required
+          />
+          <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
+        </FormRow>
+      </div>
 
-      <Btn type="submit">Update Password</Btn>
-      <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2">Changes will not be saved in the demo version.</span>
-    </form>
-  </section>
+      <template v-if="!currentUser.sso_provider" #footer>
+        <Btn type="submit">Update Password</Btn>
+        <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2">Changes will not be saved in the demo version.</span>
+      </template>
+    </SettingGroup>
+  </form>
 </template>
 
 <script lang="ts" setup>
@@ -46,6 +50,7 @@ import AlertBox from '@/components/ui/AlertBox.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
+import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
 
 const { currentUser } = useAuthorization()
 const { toastSuccess } = useMessageToaster()

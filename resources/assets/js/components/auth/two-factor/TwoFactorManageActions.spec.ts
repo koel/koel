@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen, waitFor } from '@testing-library/vue'
+import { screen, waitFor, within } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { DialogBoxStub } from '@/__tests__/stubs'
 import { authService } from '@/services/authService'
@@ -7,6 +7,14 @@ import Component from './TwoFactorManageActions.vue'
 
 describe('twoFactorManageActions.vue', () => {
   const h = createHarness()
+
+  const typeTotp = async (digits: string) => {
+    const boxes = within(screen.getByTestId('one-time-code-input')).getAllByRole<HTMLInputElement>('textbox')
+
+    for (let i = 0; i < digits.length; i++) {
+      await h.type(boxes[i], digits[i])
+    }
+  }
 
   it('shows regenerate + disable buttons by default', () => {
     h.render(Component)
@@ -23,8 +31,7 @@ describe('twoFactorManageActions.vue', () => {
     const { emitted } = h.render(Component)
 
     await h.user.click(screen.getByRole('button', { name: 'Regenerate Recovery Codes' }))
-    await h.type(screen.getByPlaceholderText('123 456'), '123456')
-    await h.user.click(screen.getByRole('button', { name: 'Submit' }))
+    await typeTotp('123456')
 
     expect(regenMock).toHaveBeenCalledWith('123456')
     await waitFor(() => expect(emitted().regenerated).toEqual([[['NEW1 NEW2', 'NEW3 NEW4']]]))
@@ -36,8 +43,7 @@ describe('twoFactorManageActions.vue', () => {
     const { emitted } = h.render(Component)
 
     await h.user.click(screen.getByRole('button', { name: 'Disable' }))
-    await h.type(screen.getByPlaceholderText('123 456'), '654321')
-    await h.user.click(screen.getByRole('button', { name: 'Submit' }))
+    await typeTotp('654321')
 
     expect(disableMock).toHaveBeenCalledWith('654321')
     await waitFor(() => expect(emitted().disabled).toBeTruthy())
@@ -49,8 +55,7 @@ describe('twoFactorManageActions.vue', () => {
     const { emitted } = h.render(Component)
 
     await h.user.click(screen.getByRole('button', { name: 'Disable' }))
-    await h.type(screen.getByPlaceholderText('123 456'), '654321')
-    await h.user.click(screen.getByRole('button', { name: 'Submit' }))
+    await typeTotp('654321')
 
     expect(disableMock).not.toHaveBeenCalled()
     expect(emitted().disabled).toBeFalsy()

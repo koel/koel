@@ -1,17 +1,21 @@
 <template>
   <div class="space-y-4">
-    <p>Scan this QR code with your authenticator app (1Password, Authy, Google Authenticator, etc.).</p>
+    <AlertBox type="warning"> Two-factor authentication may not work with older versions of Koel Player. </AlertBox>
+
+    <p>1. Scan this QR code with your authenticator app – Authy, Google Authenticator, etc.</p>
 
     <div v-if="provisioningUri" class="block w-fit rounded-md overflow-hidden bg-white p-2">
       <img :src="qrCodeUrl" alt="Two-factor authentication QR code" height="192" width="192" />
     </div>
 
-    <form class="space-y-3 max-w-md" data-testid="two-factor-enrollment-form" @submit.prevent="handleSubmit">
+    <form class="space-y-3 max-w-md mt-6" data-testid="two-factor-enrollment-form" @submit.prevent="handleSubmit">
+      <p class="text-[.95rem] text-k-fg-70">2. Enter the verification code from your authenticator app.</p>
+
       <FormRow>
-        <template #label>Enter the 6-digit code shown in your authenticator app.</template>
-        <TextInput v-model="data.code" v-koel-focus autocomplete="one-time-code" placeholder="123 456" required />
+        <OneTimeCodeInput v-model="data.code" @complete="handleSubmit" />
       </FormRow>
-      <div class="flex gap-2">
+
+      <div class="flex gap-2 mt-6">
         <Btn :disabled="!provisioningUri" type="submit">Confirm</Btn>
         <Btn type="button" variant="ghost" @click.prevent="$emit('cancel')">Cancel</Btn>
       </div>
@@ -28,7 +32,8 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
-import TextInput from '@/components/ui/form/TextInput.vue'
+import OneTimeCodeInput from '@/components/auth/two-factor/OneTimeCodeInput.vue'
+import AlertBox from '@/components/ui/AlertBox.vue'
 
 const emit = defineEmits<{ (e: 'cancel'): void; (e: 'enrolled', codes: string[]): void }>()
 
