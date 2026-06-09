@@ -70,7 +70,7 @@ class OpenIDConnectTest extends PlusTestCase
             'two_factor_confirmed_at' => now(),
         ]);
 
-        $this->mockOidcCallback('123');
+        self::mockOidcCallback('123');
 
         $this->assertCallbackIssuesToken();
     }
