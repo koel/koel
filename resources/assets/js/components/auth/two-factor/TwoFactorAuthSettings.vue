@@ -14,7 +14,7 @@
     <TwoFactorManageActions
       v-else-if="stage === 'idle' && currentUser.two_factor"
       @disabled="onDisabled"
-      @regenerated="showCodes"
+      @regenerated="showRecoveryCodes"
     />
 
     <TwoFactorEnrollment v-else-if="stage === 'enrolling'" @cancel="stage = 'idle'" @enrolled="onEnrolled" />
@@ -45,14 +45,14 @@ const { currentUser } = useAuthorization()
 const stage = ref<Stage>('idle')
 const recoveryCodes = ref<string[]>([])
 
-const showCodes = (codes: string[]) => {
+const showRecoveryCodes = (codes: string[]) => {
   recoveryCodes.value = codes
   stage.value = 'showing-codes'
 }
 
 const onEnrolled = (codes: string[]) => {
   userStore.state.current.two_factor = true
-  showCodes(codes)
+  showRecoveryCodes(codes)
 }
 
 const onDisabled = () => {
