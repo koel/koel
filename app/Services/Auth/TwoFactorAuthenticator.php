@@ -5,6 +5,7 @@ namespace App\Services\Auth;
 use App\Models\User;
 use App\Services\Auth\Support\NullQrCodeProvider;
 use Illuminate\Container\Attributes\Config;
+use Illuminate\Support\Str;
 use RobThree\Auth\TwoFactorAuth as Totp;
 use SensitiveParameter;
 
@@ -23,7 +24,7 @@ class TwoFactorAuthenticator
         $this->totp = $totp ?? new Totp(new NullQrCodeProvider(), $issuer);
     }
 
-    public function setUp(User $user): string
+    public function enroll(User $user): string
     {
         $secret = $this->totp->createSecret();
 
@@ -73,7 +74,7 @@ class TwoFactorAuthenticator
     private static function tryConsumeRecoveryCode(User $user, #[SensitiveParameter] string $code): bool
     {
         $recoveryCodes = $user->two_factor_recovery_codes ?? [];
-        $index = array_search($code, $recoveryCodes, true);
+        $index = array_search(self::normalizeRecoveryCode($code), $recoveryCodes, true);
 
         if ($index === false) {
             return false;
@@ -84,6 +85,11 @@ class TwoFactorAuthenticator
         $user->save();
 
         return true;
+    }
+
+    private static function normalizeRecoveryCode(#[SensitiveParameter] string $code): string
+    {
+        return Str::of($code)->replaceMatches('/\s+/', '')->split(4)->join(' ');
     }
 
     public function disable(User $user): void

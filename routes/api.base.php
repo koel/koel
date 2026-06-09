@@ -17,8 +17,9 @@ use App\Http\Controllers\API\Auth\LogoutController;
 use App\Http\Controllers\API\Auth\TwoFactor\ConfirmController as ConfirmTwoFactorController;
 use App\Http\Controllers\API\Auth\TwoFactor\DisableController as DisableTwoFactorController;
 use App\Http\Controllers\API\Auth\TwoFactor\RegenerateRecoveryCodesController;
-use App\Http\Controllers\API\Auth\TwoFactor\SetupController as SetupTwoFactorController;
+use App\Http\Controllers\API\Auth\TwoFactor\EnrollController as EnrollTwoFactorController;
 use App\Http\Controllers\API\Auth\TwoFactorChallengeController;
+use App\Http\Controllers\API\ChangePasswordController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
 use App\Http\Controllers\API\Embed\EmbedController;
 use App\Http\Controllers\API\Embed\EmbedOptionsController;
@@ -232,12 +233,13 @@ Route::prefix('api')
             Route::apiResource('user', UserController::class)->except('show');
             Route::get('me', [ProfileController::class, 'show']);
             Route::put('me', [ProfileController::class, 'update']);
+            Route::put('me/password', ChangePasswordController::class);
             Route::patch('me/preferences', UpdateUserPreferenceController::class);
             Route::post('me/equalizer-presets', [EqualizerPresetController::class, 'store']);
             Route::delete('me/equalizer-presets/{id}', [EqualizerPresetController::class, 'destroy']);
             Route::post('me/subsonic-api-key/regenerate', RegenerateSubsonicApiKeyController::class);
 
-            Route::post('me/two-factor', SetupTwoFactorController::class);
+            Route::post('me/two-factor', EnrollTwoFactorController::class);
             Route::post('me/two-factor/confirm', ConfirmTwoFactorController::class);
             Route::post('me/two-factor/recovery-codes', RegenerateRecoveryCodesController::class);
             Route::delete('me/two-factor', DisableTwoFactorController::class);

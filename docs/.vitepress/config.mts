@@ -77,6 +77,7 @@ export default defineConfig({
           { text: 'Offline Playback', link: '/usage/offline-playback' },
           { text: 'User Management', link: '/usage/user-management' },
           { text: 'Profile & Preferences', link: '/usage/profile-preferences' },
+          { text: 'Two-Factor Authentication', link: '/usage/two-factor-authentication' },
           { text: 'Remote Controller', link: '/usage/remote-controller' },
           { text: 'Subsonic Clients', link: '/usage/subsonic' },
           { text: 'Embedding', link: '/usage/embedding' },

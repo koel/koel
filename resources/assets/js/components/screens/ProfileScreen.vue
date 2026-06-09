@@ -44,12 +44,19 @@
         >
           Subsonic
         </TabButton>
+        <TabButton
+          :selected="currentTab === 'security'"
+          aria-controls="profilePaneSecurity"
+          @click="currentTab = 'security'"
+        >
+          Security
+        </TabButton>
         <TabButton :selected="currentTab === 'qr'" aria-controls="profilePaneQr" @click="currentTab = 'qr'">
           <QrCodeIcon :size="16" />
         </TabButton>
       </TabList>
 
-      <TabPanelContainer>
+      <TabPanelContainer class="scroll-mask-y">
         <TabPanel v-show="currentTab === 'profile'" id="profilePaneProfile" aria-labelledby="profilePaneProfile">
           <ProfileForm />
         </TabPanel>
@@ -82,6 +89,13 @@
           <SubsonicCredentials />
         </TabPanel>
 
+        <TabPanel v-if="currentTab === 'security'" id="profilePaneSecurity" aria-labelledby="profilePaneSecurity">
+          <main class="space-y-6">
+            <ChangePasswordForm />
+            <TwoFactorAuthSettings />
+          </main>
+        </TabPanel>
+
         <TabPanel v-if="currentTab === 'qr'" id="profilePaneQr" aria-labelledby="profilePaneQr">
           <QRLogin />
         </TabPanel>
@@ -112,12 +126,16 @@ const OfflineStorage = defineAsyncComponent(() => import('@/components/profile-p
 const SubsonicCredentials = defineAsyncComponent(
   () => import('@/components/profile-preferences/SubsonicCredentials.vue'),
 )
+const ChangePasswordForm = defineAsyncComponent(() => import('@/components/profile-preferences/ChangePasswordForm.vue'))
+const TwoFactorAuthSettings = defineAsyncComponent(
+  () => import('@/components/auth/two-factor/TwoFactorAuthSettings.vue'),
+)
 const QRLogin = defineAsyncComponent(() => import('@/components/profile-preferences/QRLogin.vue'))
 
 const { get, set } = useLocalStorage()
 
 const currentTab = ref(
-  get<'profile' | 'preferences' | 'themes' | 'integrations' | 'offline' | 'subsonic' | 'qr'>(
+  get<'profile' | 'preferences' | 'themes' | 'integrations' | 'offline' | 'subsonic' | 'security' | 'qr'>(
     'profileScreenTab',
     'profile',
   ),

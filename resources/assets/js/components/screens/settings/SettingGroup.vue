@@ -13,7 +13,7 @@
         <slot />
       </div>
 
-      <footer class="p-4 border-t border-k-fg-10">
+      <footer v-if="$slots.footer" class="p-4 border-t border-k-fg-10">
         <slot name="footer" />
       </footer>
     </main>

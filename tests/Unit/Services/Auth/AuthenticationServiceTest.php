@@ -86,6 +86,25 @@ class AuthenticationServiceTest extends TestCase
     }
 
     #[Test]
+    public function logUserInBypassesTwoFactorGate(): void
+    {
+        // SSO + proxy-auth flows call logUserIn() directly without going
+        // through login(). Confirm a 2FA-enabled user still mints a token
+        // and that RequiresTwoFactorException never fires from this seam.
+        $user = create_user();
+        $user->two_factor_confirmed_at = now();
+        $user->save();
+
+        $compositeToken = CompositeToken::fromAccessTokens(
+            new NewAccessToken(new PersonalAccessToken(), 'api-token'),
+            new NewAccessToken(new PersonalAccessToken(), 'audio-token'),
+        );
+        $this->tokenManager->expects('createCompositeToken')->with($user)->andReturn($compositeToken);
+
+        self::assertSame($compositeToken, $this->service->logUserIn($user));
+    }
+
+    #[Test]
     public function loginViaTwoFactorChallengeMintsCompositeToken(): void
     {
         $user = create_user();

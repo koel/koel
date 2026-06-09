@@ -8,7 +8,7 @@ use App\Services\Auth\TwoFactorAuthenticator;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 
-class SetupController extends Controller
+class EnrollController extends Controller
 {
     public function __construct(
         private readonly TwoFactorAuthenticator $twoFactorAuth,
@@ -20,7 +20,7 @@ class SetupController extends Controller
         abort_if($user->hasTwoFactorEnabled(), Response::HTTP_UNPROCESSABLE_ENTITY);
 
         return response()->json([
-            'provisioning_uri' => $this->twoFactorAuth->setUp($user),
+            'provisioning_uri' => $this->twoFactorAuth->enroll($user),
         ]);
     }
 }
