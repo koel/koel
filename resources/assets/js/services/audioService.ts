@@ -19,6 +19,7 @@ export const audioService = {
   analyzer: null! as AnalyserNode,
 
   bands: [] as Band[],
+  preamp: 0,
 
   init(mediaElement: HTMLMediaElement) {
     this.element = mediaElement
@@ -83,6 +84,7 @@ export const audioService = {
   },
 
   changePreampGain(db: number) {
+    this.preamp = db
     this.preampGainNode.gain.value = dbToGain(db)
   },
 

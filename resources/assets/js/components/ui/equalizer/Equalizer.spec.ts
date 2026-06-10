@@ -22,6 +22,7 @@ vi.mock('@/services/audioService', () => ({
       db: 0,
       node: {},
     })),
+    preamp: 0,
     changePreampGain: vi.fn(),
     changeFilterGain: vi.fn(),
   },
