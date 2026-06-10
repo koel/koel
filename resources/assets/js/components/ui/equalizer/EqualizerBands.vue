@@ -50,7 +50,7 @@ const emit = defineEmits<{
   (e: 'commit'): void
 }>()
 
-const preampGain = ref(0)
+const preampGain = ref(audioService.preamp)
 const preampBandEl = ref<InstanceType<typeof EqualizerBand>>()
 const filterBandEls = ref<InstanceType<typeof EqualizerBand>[]>()
 const filterBandsEl = ref<HTMLElement>()

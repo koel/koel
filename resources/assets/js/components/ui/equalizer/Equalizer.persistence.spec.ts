@@ -8,6 +8,7 @@ import Component from './Equalizer.vue'
 
 type SliderInstance = {
   el: any
+  options: any
   on: (event: string, cb: Function) => void
   set: (val: number) => void
   handlers: Map<string, Function>
@@ -17,7 +18,7 @@ const sliders: SliderInstance[] = []
 
 vi.mock('nouislider', () => ({
   default: {
-    create: vi.fn((el: any) => {
+    create: vi.fn((el: any, options: any) => {
       const handlers = new Map<string, Function>()
       el.noUiSlider = {
         on: (event: string, cb: Function) => {
@@ -25,7 +26,7 @@ vi.mock('nouislider', () => ({
         },
         set: vi.fn(),
       }
-      sliders.push({ el, on: el.noUiSlider.on, set: el.noUiSlider.set, handlers })
+      sliders.push({ el, options, on: el.noUiSlider.on, set: el.noUiSlider.set, handlers })
     }),
   },
 }))
@@ -37,6 +38,7 @@ vi.mock('@/services/audioService', () => ({
       db: 0,
       node: {},
     })),
+    preamp: 0,
     changePreampGain: vi.fn(),
     changeFilterGain: vi.fn(),
   },
@@ -65,6 +67,7 @@ describe('Equalizer persistence', () => {
     }
     preferenceStore.equalizer_presets = []
     audioService.bands.forEach(band => (band.db = 0))
+    audioService.preamp = 0
   })
 
   afterEach(() => {
@@ -165,5 +168,25 @@ describe('Equalizer persistence', () => {
     const preampSetMock = sliders[PREAMP_SLIDER].set as unknown as ReturnType<typeof vi.fn>
     const lastCall = preampSetMock.mock.calls.at(-1)
     expect(lastCall?.[0]).toBe(-3)
+  })
+
+  it('mounts the preamp slider at the saved value, not animating from zero', async () => {
+    // The previous bug: preampGain was always initialized to 0, so the slider
+    // started at the middle and noUiSlider.set() in loadPreset animated it to
+    // the saved value. Band sliders never had this problem because their start
+    // value comes from audioService.bands[i].db, which is set at app boot.
+    audioService.preamp = -7
+    audioService.bands.forEach((band, index) => (band.db = (index + 1) * -1))
+    preferenceStore.current_equalizer_preset = {
+      name: null,
+      preamp: -7,
+      gains: audioService.bands.map(band => band.db),
+    }
+
+    h.render(Component)
+    await nextTick()
+
+    const PREAMP_SLIDER = 0
+    expect(sliders[PREAMP_SLIDER].options.start).toBe(-7)
   })
 })

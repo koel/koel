@@ -17,6 +17,7 @@ vi.mock('nouislider', () => ({
 vi.mock('@/services/audioService', () => ({
   audioService: {
     bands: [],
+    preamp: 0,
     changePreampGain: vi.fn(),
     changeFilterGain: vi.fn(),
   },
