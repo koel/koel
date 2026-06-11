@@ -32,7 +32,7 @@ class AuthenticationService
         throw_unless($user && Hash::check($password, $user->password), InvalidCredentialsException::class);
 
         if (Hash::needsRehash($user->password)) {
-            $user->password = Hash::make($password);
+            $user->password = $password;
             $user->save();
         }
 
@@ -105,7 +105,7 @@ class AuthenticationService
             #[SensitiveParameter]
             string $password,
         ): void {
-            $user->password = Hash::make($password);
+            $user->password = $password;
             $user->save();
             event(new PasswordReset($user));
         });

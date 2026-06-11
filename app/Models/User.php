@@ -51,7 +51,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $email
  * @property string $name
  * @property string $organization_id
- * @property string $password
+ * @property ?string $password
  * @property string $public_id
  * @property-read ?string $sso_id
  * @property-read ?string $sso_provider
@@ -113,6 +113,7 @@ class User extends Authenticatable implements AuditableContract
     protected function casts(): array
     {
         return [
+            'password' => 'hashed',
             'preferences' => UserPreferencesCast::class,
             'subsonic_api_key' => 'encrypted',
             'two_factor_secret' => 'encrypted',
