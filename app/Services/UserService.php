@@ -68,7 +68,7 @@ class UserService
         $data = [
             'name' => $dto->name,
             'email' => $dto->email,
-            'password' => $dto->password ?: $user->password,
+            'password' => $dto->password ?? $user->password,
             'avatar' => $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null,
         ];
 

@@ -17,7 +17,7 @@ final readonly class UserUpdateData
         public ?Role $role,
         public ?string $avatar,
     ) {
-        $this->password = $plainTextPassword ?: null;
+        $this->password = $plainTextPassword === '' ? null : $plainTextPassword;
     }
 
     public static function make(

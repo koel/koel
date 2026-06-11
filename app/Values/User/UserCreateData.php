@@ -24,7 +24,7 @@ final readonly class UserCreateData implements Arrayable
             SsoUser::assertValidProvider($ssoProvider);
         }
 
-        $this->password = $plainTextPassword ?: null;
+        $this->password = $plainTextPassword === '' ? null : $plainTextPassword;
     }
 
     public static function fromSsoUser(SsoUser $ssoUser): self
