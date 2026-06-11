@@ -8,7 +8,6 @@ use App\Enums\Acl\Role as RoleEnum;
 use App\Models\Organization;
 use App\Models\User;
 use App\Values\User\SsoUser;
-use Illuminate\Support\Facades\Hash;
 use SensitiveParameter;
 
 /**
@@ -29,7 +28,7 @@ class UserRepository extends Repository
                 $user = User::query()->create([
                     'email' => User::FIRST_ADMIN_EMAIL,
                     'name' => User::FIRST_ADMIN_NAME,
-                    'password' => Hash::make(User::FIRST_ADMIN_PASSWORD),
+                    'password' => User::FIRST_ADMIN_PASSWORD,
                     'organization_id' => $defaultOrganization->id,
                 ]);
 

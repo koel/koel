@@ -4,12 +4,11 @@ namespace App\Values\User;
 
 use App\Enums\Acl\Role;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Facades\Hash;
 use SensitiveParameter;
 
 final readonly class UserCreateData implements Arrayable
 {
-    public string $password;
+    public ?string $password;
 
     public function __construct(
         public string $name,
@@ -25,7 +24,7 @@ final readonly class UserCreateData implements Arrayable
             SsoUser::assertValidProvider($ssoProvider);
         }
 
-        $this->password = $plainTextPassword ? Hash::make($plainTextPassword) : '';
+        $this->password = $plainTextPassword === '' ? null : $plainTextPassword;
     }
 
     public static function fromSsoUser(SsoUser $ssoUser): self
@@ -33,7 +32,7 @@ final readonly class UserCreateData implements Arrayable
         return new self(
             name: $ssoUser->name,
             email: $ssoUser->email,
-            plainTextPassword: '',
+            plainTextPassword: null,
             role: Role::default(),
             avatar: $ssoUser->avatar,
             ssoId: $ssoUser->id,

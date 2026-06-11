@@ -12,7 +12,6 @@ use App\Values\User\SsoUser;
 use App\Values\User\UserCreateData;
 use App\Values\User\UserUpdateData;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use SensitiveParameter;
 
@@ -57,7 +56,7 @@ class UserService
 
     public function changePassword(User $user, #[SensitiveParameter] string $newPassword): void
     {
-        $user->password = Hash::make($newPassword);
+        $user->password = $newPassword;
         $user->save();
     }
 
@@ -69,7 +68,7 @@ class UserService
         $data = [
             'name' => $dto->name,
             'email' => $dto->email,
-            'password' => $dto->password ?: $user->password,
+            'password' => $dto->password ?? $user->password,
             'avatar' => $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null,
         ];
 

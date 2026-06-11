@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use SensitiveParameter;
 
@@ -81,7 +80,7 @@ class UserInvitationService
 
         $user->update(attributes: [
             'name' => $name,
-            'password' => Hash::make($password),
+            'password' => $password,
             'invitation_token' => null,
             'invitation_accepted_at' => now(),
         ]);
