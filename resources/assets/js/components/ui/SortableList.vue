@@ -15,6 +15,7 @@
 </template>
 
 <script lang="ts" setup generic="Item extends { id: string }">
+import { isEqual } from 'lodash-es'
 import { computed, onBeforeUnmount, ref } from 'vue'
 
 import SortableListItem from '@/components/ui/SortableListItem.vue'
@@ -47,9 +48,6 @@ const renderItems = computed<Item[]>(() => {
   }
   return liveOrder.value.map(id => itemById.value.get(id)).filter((item): item is Item => item !== undefined)
 })
-
-const arraysEqual = (a: readonly string[], b: readonly string[]) =>
-  a.length === b.length && a.every((value, index) => value === b[index])
 
 const findScrollableAncestor = (el: HTMLElement): HTMLElement | null => {
   for (let current = el.parentElement; current; current = current.parentElement) {
@@ -130,7 +128,7 @@ const setUpGhost = (event: DragEvent, wrapper: HTMLElement) => {
 }
 
 const finalizeDrag = (commit: boolean) => {
-  if (commit && !arraysEqual(liveOrder.value, orderSnapshot.value)) {
+  if (commit && !isEqual(liveOrder.value, orderSnapshot.value)) {
     emit('reorder', [...liveOrder.value])
   }
   draggedId.value = null
@@ -166,7 +164,7 @@ const onItemDragOver = (targetId: string, event: DragEvent) => {
 
   next.splice(insertBefore ? targetIndex : targetIndex + 1, 0, draggedId.value)
 
-  if (!arraysEqual(next, liveOrder.value)) {
+  if (!isEqual(next, liveOrder.value)) {
     liveOrder.value = next
   }
 }
