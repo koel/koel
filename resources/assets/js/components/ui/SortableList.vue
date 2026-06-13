@@ -46,6 +46,7 @@ const renderItems = computed<Item[]>(() => {
   if (draggedId.value === null) {
     return props.items
   }
+
   return liveOrder.value.map(id => itemById.value.get(id)).filter((item): item is Item => item !== undefined)
 })
 
@@ -64,6 +65,7 @@ const stepAutoScroll = () => {
     autoScrollRafId = 0
     return
   }
+
   scrollContainer.scrollTop += autoScrollSpeed
   autoScrollRafId = requestAnimationFrame(stepAutoScroll)
 }
@@ -73,6 +75,7 @@ const stopAutoScroll = () => {
     cancelAnimationFrame(autoScrollRafId)
     autoScrollRafId = 0
   }
+
   autoScrollSpeed = 0
 }
 
@@ -131,9 +134,11 @@ const finalizeDrag = (commit: boolean) => {
   if (commit && !isEqual(liveOrder.value, orderSnapshot.value)) {
     emit('reorder', [...liveOrder.value])
   }
+
   draggedId.value = null
   liveOrder.value = []
   orderSnapshot.value = []
+
   stopAutoScroll()
   scrollContainer = null
 }
@@ -142,8 +147,10 @@ const onItemDragStart = (id: string, wrapper: HTMLElement, event: DragEvent) => 
   const baseline = props.items.map(item => item.id)
   orderSnapshot.value = baseline
   liveOrder.value = [...baseline]
+
   draggedId.value = id
   didDrop = false
+
   scrollContainer = findScrollableAncestor(wrapper)
   setUpGhost(event, wrapper)
 }
@@ -178,6 +185,7 @@ const onDocumentDragEnd = () => {
   if (draggedId.value === null) {
     return
   }
+
   // dragend fires after drop in the normal flow. didDrop guards us against
   // double-finalizing; only here do we handle the "released outside any drop
   // target" path, which must revert the live preview to the snapshot.
