@@ -52,6 +52,7 @@ use Webmozart\Assert\Assert;
  * @property string $visualizer
  * @property ?string $activeExtraPanelTab
  * @property ?string $lastFmSessionKey
+ * @property list<string> $homeBlocksOrder
  */
 final class UserPreferences implements Arrayable, JsonSerializable
 {

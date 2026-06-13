@@ -39,3 +39,10 @@ export const PlayableListSortFieldKey: ReadonlyInjectionKey<Ref<PlayableListSort
   Symbol('PlayableListSortField')
 export const PlayableListSortOrderKey: ReadonlyInjectionKey<Ref<SortOrder>> = Symbol('PlayableListSortOrder')
 export const PlayableListContextKey: InjectionKey<Ref<PlayableListContext>> = Symbol('PlayableListContext')
+
+export interface HomeBlockSortable {
+  onHeaderDragStart: (event: DragEvent) => void
+}
+export const HomeBlockSortableKey: InjectionKey<HomeBlockSortable> = Symbol('HomeBlockSortable')
+
+export const HomeBlockActionsKey: InjectionKey<Ref<HTMLElement | null>> = Symbol('HomeBlockActions')
