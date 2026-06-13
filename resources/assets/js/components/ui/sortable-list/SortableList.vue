@@ -50,14 +50,19 @@ const renderItems = computed<Item[]>(() => {
   return liveOrder.value.map(id => itemById.value.get(id)).filter((item): item is Item => item !== undefined)
 })
 
+const isScrollable = (el: HTMLElement): boolean => {
+  const { overflowY } = getComputedStyle(el)
+  return overflowY === 'auto' || overflowY === 'scroll'
+}
+
 const findScrollableAncestor = (el: HTMLElement): HTMLElement | null => {
-  for (let current = el.parentElement; current; current = current.parentElement) {
-    const overflowY = getComputedStyle(current).overflowY
-    if (overflowY === 'auto' || overflowY === 'scroll') {
-      return current
-    }
+  const parent = el.parentElement
+
+  if (!parent) {
+    return null
   }
-  return null
+
+  return isScrollable(parent) ? parent : findScrollableAncestor(parent)
 }
 
 const stepAutoScroll = () => {
