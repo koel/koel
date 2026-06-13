@@ -18,7 +18,7 @@
 import { isEqual } from 'lodash-es'
 import { computed, onBeforeUnmount, ref } from 'vue'
 
-import SortableListItem from '@/components/ui/SortableListItem.vue'
+import SortableListItem from '@/components/ui/sortable-list/SortableListItem.vue'
 
 const props = defineProps<{
   items: Item[]

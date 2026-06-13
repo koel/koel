@@ -53,7 +53,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import SortableList from '@/components/ui/SortableList.vue'
+import SortableList from '@/components/ui/sortable-list/SortableList.vue'
 
 interface Block {
   id: string
