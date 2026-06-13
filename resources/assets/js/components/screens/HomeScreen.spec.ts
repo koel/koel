@@ -10,7 +10,7 @@ import { eventBus } from '@/utils/eventBus'
 import Component from './HomeScreen.vue'
 
 const blockIdsInDom = (container: Element) =>
-  Array.from(container.querySelectorAll<HTMLElement>('.home-block-sortable__inner > [data-testid]')).map(
+  Array.from(container.querySelectorAll<HTMLElement>('.sortable-list-item__inner > [data-testid]')).map(
     el => el.dataset.testid!,
   )
 
@@ -106,7 +106,7 @@ describe('homeScreen.vue', () => {
     preferenceStore.temporary.home_blocks_order = []
 
     const { container } = h.render(Component)
-    const wrappers = Array.from(container.querySelectorAll<HTMLElement>('.home-block-sortable'))
+    const wrappers = Array.from(container.querySelectorAll<HTMLElement>('.sortable-list-item'))
     const sourceWrapper = wrappers[0]
     const targetWrapper = wrappers[2]
     const sourceHeading = sourceWrapper.querySelector<HTMLHeadingElement>('h3')!
@@ -120,7 +120,7 @@ describe('homeScreen.vue', () => {
     dispatch(targetWrapper, 'drop')
     await nextTick()
 
-    // wrappers[2] is the HomeBlockSortable for similar-songs (its inner
+    // wrappers[2] is the SortableListItem for similar-songs (its inner
     // component is hidden by a v-if in test conditions, but the wrapper
     // and its id survive). The source must end up after that target.
     const saved = preferenceStore.home_blocks_order
@@ -135,7 +135,7 @@ describe('homeScreen.vue', () => {
     preferenceStore.temporary.home_blocks_order = []
 
     const { container } = h.render(Component)
-    const wrappers = Array.from(container.querySelectorAll<HTMLElement>('.home-block-sortable'))
+    const wrappers = Array.from(container.querySelectorAll<HTMLElement>('.sortable-list-item'))
     const sourceWrapper = wrappers[0]
     const targetWrapper = wrappers[2]
     const sourceHeading = sourceWrapper.querySelector<HTMLHeadingElement>('h3')!

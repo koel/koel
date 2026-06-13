@@ -13,19 +13,11 @@
     </ScreenEmptyState>
 
     <div v-else class="home-sections space-y-12 w-full">
-      <TransitionGroup move-class="home-block-move">
-        <HomeBlockSortable
-          v-for="block in orderedBlocks"
-          :key="block.id"
-          :id="block.id"
-          :is-dragging="draggedId === block.id"
-          @dragstart="onDragStart"
-          @dragover="onDragOver"
-          @drop="onDrop"
-        >
-          <component :is="block.component" :loading :data-testid="block.id" />
-        </HomeBlockSortable>
-      </TransitionGroup>
+      <SortableList :items="orderedBlocks" @reorder="onReorder">
+        <template #default="{ item }">
+          <component :is="item.component" :loading :data-testid="item.id" />
+        </template>
+      </SortableList>
       <BtnScrollToTop />
     </div>
   </ScreenBase>
@@ -35,7 +27,7 @@
 import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
 import { sample } from 'lodash-es'
 import type { Component } from 'vue'
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { commonStore } from '@/stores/commonStore'
 import { overviewStore } from '@/stores/overviewStore'
@@ -61,7 +53,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import HomeBlockSortable from '@/components/screens/home/HomeBlockSortable.vue'
+import SortableList from '@/components/ui/SortableList.vue'
 
 interface Block {
   id: string
@@ -126,166 +118,13 @@ const reconcileOrder = (saved: readonly string[]): string[] => {
   return next
 }
 
-const draggedId = ref<string | null>(null)
-const liveOrder = ref<string[]>([])
-const orderSnapshot = ref<string[]>([])
-let didDrop = false
+const orderedBlocks = computed<Block[]>(() =>
+  reconcileOrder(preferenceStore.home_blocks_order ?? []).map(id => BLOCK_BY_ID.get(id)!),
+)
 
-const orderedBlocks = computed<Block[]>(() => {
-  const ids = draggedId.value !== null ? liveOrder.value : reconcileOrder(preferenceStore.home_blocks_order ?? [])
-  return ids.map(id => BLOCK_BY_ID.get(id)!).filter(Boolean)
-})
-
-const arraysEqual = (a: readonly string[], b: readonly string[]) =>
-  a.length === b.length && a.every((value, index) => value === b[index])
-
-const setUpGhost = (event: DragEvent, wrapper: HTMLElement) => {
-  if (!event.dataTransfer) {
-    return
-  }
-
-  event.dataTransfer.effectAllowed = 'move'
-
-  // Clone the wrapper into <body>, outside the scrolled <main>. Otherwise
-  // setDragImage's rasterization of a wrapper that's currently offscreen
-  // inside a scrolled parent picks up the parent's scrollbar.
-  const rect = wrapper.getBoundingClientRect()
-  const ghost = wrapper.cloneNode(true) as HTMLElement
-  ghost.style.position = 'absolute'
-  ghost.style.top = '0'
-  ghost.style.left = '-99999px'
-  ghost.style.width = `${rect.width}px`
-  ghost.style.pointerEvents = 'none'
-  document.body.appendChild(ghost)
-
-  const offsetX = Math.min(event.clientX - rect.left, rect.width)
-  const offsetY = Math.min(event.clientY - rect.top, rect.height)
-  event.dataTransfer.setDragImage(ghost, offsetX, offsetY)
-  event.dataTransfer.setData('application/x-koel.home-block', '1')
-
-  // The browser has snapshotted the clone synchronously; remove it on the
-  // next tick so it doesn't leak into the document.
-  setTimeout(() => ghost.remove(), 0)
+const onReorder = (ids: string[]) => {
+  preferenceStore.home_blocks_order = ids
 }
-
-const AUTO_SCROLL_HOT_ZONE = 80
-const AUTO_SCROLL_MAX_SPEED = 18
-
-let scrollContainer: HTMLElement | null = null
-let autoScrollSpeed = 0
-let autoScrollRafId = 0
-
-const findScrollableAncestor = (el: HTMLElement): HTMLElement | null => {
-  for (let current = el.parentElement; current; current = current.parentElement) {
-    const overflowY = getComputedStyle(current).overflowY
-    if (overflowY === 'auto' || overflowY === 'scroll') {
-      return current
-    }
-  }
-  return null
-}
-
-const stepAutoScroll = () => {
-  if (!scrollContainer || autoScrollSpeed === 0) {
-    autoScrollRafId = 0
-    return
-  }
-  scrollContainer.scrollTop += autoScrollSpeed
-  autoScrollRafId = requestAnimationFrame(stepAutoScroll)
-}
-
-const stopAutoScroll = () => {
-  if (autoScrollRafId !== 0) {
-    cancelAnimationFrame(autoScrollRafId)
-    autoScrollRafId = 0
-  }
-  autoScrollSpeed = 0
-}
-
-const onDocumentDragOver = (event: DragEvent) => {
-  if (draggedId.value === null || !scrollContainer) {
-    return
-  }
-
-  const rect = scrollContainer.getBoundingClientRect()
-  const distanceFromTop = event.clientY - rect.top
-  const distanceFromBottom = rect.bottom - event.clientY
-
-  if (distanceFromTop > 0 && distanceFromTop < AUTO_SCROLL_HOT_ZONE) {
-    const intensity = 1 - distanceFromTop / AUTO_SCROLL_HOT_ZONE
-    autoScrollSpeed = -Math.max(1, Math.round(AUTO_SCROLL_MAX_SPEED * intensity))
-  } else if (distanceFromBottom > 0 && distanceFromBottom < AUTO_SCROLL_HOT_ZONE) {
-    const intensity = 1 - distanceFromBottom / AUTO_SCROLL_HOT_ZONE
-    autoScrollSpeed = Math.max(1, Math.round(AUTO_SCROLL_MAX_SPEED * intensity))
-  } else {
-    autoScrollSpeed = 0
-  }
-
-  if (autoScrollSpeed !== 0 && autoScrollRafId === 0) {
-    autoScrollRafId = requestAnimationFrame(stepAutoScroll)
-  }
-}
-
-const onDragStart = (id: string, wrapper: HTMLElement, event: DragEvent) => {
-  const baseline = reconcileOrder(preferenceStore.home_blocks_order ?? [])
-  orderSnapshot.value = baseline
-  liveOrder.value = [...baseline]
-  draggedId.value = id
-  didDrop = false
-  scrollContainer = findScrollableAncestor(wrapper)
-  setUpGhost(event, wrapper)
-}
-
-const onDragOver = (targetId: string, event: DragEvent) => {
-  if (draggedId.value === null || draggedId.value === targetId) {
-    return
-  }
-
-  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
-  const insertBefore = event.clientY < rect.top + rect.height / 2
-
-  const next = liveOrder.value.filter(id => id !== draggedId.value)
-  const targetIndex = next.indexOf(targetId)
-  if (targetIndex === -1) {
-    return
-  }
-
-  next.splice(insertBefore ? targetIndex : targetIndex + 1, 0, draggedId.value)
-
-  if (!arraysEqual(next, liveOrder.value)) {
-    liveOrder.value = next
-  }
-}
-
-const finalizeDrag = (commit: boolean) => {
-  if (commit && !arraysEqual(liveOrder.value, orderSnapshot.value)) {
-    preferenceStore.home_blocks_order = [...liveOrder.value]
-  }
-  draggedId.value = null
-  liveOrder.value = []
-  orderSnapshot.value = []
-  stopAutoScroll()
-  scrollContainer = null
-}
-
-const onDrop = () => {
-  didDrop = true
-  finalizeDrag(true)
-}
-
-const onDocumentDragEnd = () => {
-  if (draggedId.value === null) {
-    return
-  }
-  // dragend fires after drop in the normal flow. didDrop guards us against
-  // double-finalizing; only here do we handle the "released outside any drop
-  // target" path, which must revert the live preview to the snapshot.
-  finalizeDrag(didDrop)
-  didDrop = false
-}
-
-document.addEventListener('dragend', onDocumentDragEnd, true)
-document.addEventListener('dragover', onDocumentDragOver)
 
 eventBus
   .on('SONGS_DELETED', () => overviewStore.fetch())
@@ -304,12 +143,6 @@ useRouter().onScreenActivated('Home', async () => {
       loading.value = false
     }
   }
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('dragend', onDocumentDragEnd, true)
-  document.removeEventListener('dragover', onDocumentDragOver)
-  stopAutoScroll()
 })
 </script>
 
@@ -331,10 +164,5 @@ onBeforeUnmount(() => {
       @apply content-[''] absolute -top-6 left-0 right-0 -mx-6 h-px bg-k-fg-5;
     }
   }
-}
-
-/* FLIP move animation for blocks reflowing during a drag. */
-.home-block-move {
-  transition: transform 220ms ease;
 }
 </style>

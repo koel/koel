@@ -1,12 +1,12 @@
 <template>
   <div
     ref="wrapperRef"
-    class="home-block-sortable relative"
-    :class="{ 'home-block-sortable--dragging': isDragging }"
+    class="sortable-list-item relative"
+    :class="{ 'sortable-list-item--dragging': isDragging }"
     @dragover.prevent="onDragOver"
     @drop.prevent="onDrop"
   >
-    <div class="home-block-sortable__inner">
+    <div class="sortable-list-item__inner">
       <slot />
     </div>
   </div>
@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { provide, useTemplateRef } from 'vue'
-import { HomeBlockSortableKey } from '@/config/symbols'
+import { SortableItemKey } from '@/config/symbols'
 
 const props = defineProps<{
   id: string
@@ -29,7 +29,7 @@ const emit = defineEmits<{
 
 const wrapperRef = useTemplateRef<HTMLElement>('wrapperRef')
 
-provide(HomeBlockSortableKey, {
+provide(SortableItemKey, {
   onHeaderDragStart: (event: DragEvent) => {
     if (wrapperRef.value) {
       emit('dragstart', props.id, wrapperRef.value, event)
@@ -48,12 +48,12 @@ const onDrop = () => emit('drop', props.id)
 </script>
 
 <style lang="postcss" scoped>
-.home-block-sortable--dragging {
+.sortable-list-item--dragging {
   outline: 1px dashed var(--color-highlight);
   outline-offset: 6px;
 }
 
-.home-block-sortable--dragging .home-block-sortable__inner {
+.sortable-list-item--dragging .sortable-list-item__inner {
   opacity: 0.35;
 }
 </style>

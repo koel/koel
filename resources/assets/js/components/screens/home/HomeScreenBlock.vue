@@ -22,9 +22,9 @@
 
 <script lang="ts" setup>
 import { inject, provide, useTemplateRef } from 'vue'
-import { HomeBlockActionsKey, HomeBlockSortableKey } from '@/config/symbols'
+import { HomeBlockActionsKey, SortableItemKey } from '@/config/symbols'
 
-const sortable = inject(HomeBlockSortableKey, null)
+const sortable = inject(SortableItemKey, null)
 
 const actionsEl = useTemplateRef<HTMLElement>('actionsEl')
 provide(HomeBlockActionsKey, actionsEl)

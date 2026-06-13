@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { defineComponent, h as createElement, inject } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { HomeBlockSortableKey } from '@/config/symbols'
-import Component from './HomeBlockSortable.vue'
+import { SortableItemKey } from '@/config/symbols'
+import Component from './SortableListItem.vue'
 
 const ContextProbe = defineComponent({
   setup() {
-    const sortable = inject(HomeBlockSortableKey, null)
+    const sortable = inject(SortableItemKey, null)
     return () =>
       createElement('button', {
         'data-testid': 'probe',
@@ -40,63 +40,62 @@ const stubRect = (el: HTMLElement) => {
     }) as DOMRect
 }
 
-describe('homeBlockSortable.vue', () => {
+describe('sortableListItem.vue', () => {
   const h = createHarness()
 
   it('renders the slot content', () => {
     h.render(Component, {
-      props: { id: 'random-songs', isDragging: false },
-      slots: { default: '<div data-testid="block-body">block</div>' },
+      props: { id: 'a', isDragging: false },
+      slots: { default: '<div data-testid="body">body</div>' },
     })
 
-    screen.getByTestId('block-body')
+    screen.getByTestId('body')
   })
 
-  it('provides a sortable context that surfaces dragstart with the wrapper element', () => {
+  it('provides a context that surfaces dragstart with the wrapper element', () => {
     const { container, emitted } = h.render(Component, {
-      props: { id: 'random-songs', isDragging: false },
+      props: { id: 'a', isDragging: false },
       slots: { default: () => createElement(ContextProbe) },
     })
 
     fire('dragstart', screen.getByTestId('probe'))
 
-    const wrapper = container.querySelector('.home-block-sortable')
+    const wrapper = container.querySelector('.sortable-list-item')
     const [id, wrapperArg, eventArg] = emitted().dragstart[0] as [string, HTMLElement, Event]
-    expect(id).toBe('random-songs')
+    expect(id).toBe('a')
     expect(wrapperArg).toBe(wrapper)
     expect(eventArg).toBeInstanceOf(Event)
   })
 
   it('emits dragover with id when a drag passes over the wrapper', () => {
     const { container, emitted } = h.render(Component, {
-      props: { id: 'most-played-songs', isDragging: false },
+      props: { id: 'b', isDragging: false },
     })
 
-    const wrapper = container.querySelector<HTMLElement>('.home-block-sortable')!
+    const wrapper = container.querySelector<HTMLElement>('.sortable-list-item')!
     stubRect(wrapper)
-    fire('dragover', wrapper, { clientY: 120, dataTransfer: { dropEffect: 'none' } })
+    fire('dragover', wrapper, { clientY: 120 })
 
     const [id] = emitted().dragover[0] as [string, Event]
-    expect(id).toBe('most-played-songs')
+    expect(id).toBe('b')
   })
 
   it('emits drop with id when a drop event fires', () => {
     const { container, emitted } = h.render(Component, {
-      props: { id: 'top-albums', isDragging: false },
+      props: { id: 'c', isDragging: false },
     })
 
-    const wrapper = container.querySelector<HTMLElement>('.home-block-sortable')!
-    fire('drop', wrapper)
+    fire('drop', container.querySelector<HTMLElement>('.sortable-list-item')!)
 
-    expect(emitted().drop[0]).toEqual(['top-albums'])
+    expect(emitted().drop[0]).toEqual(['c'])
   })
 
   it('applies the dragging modifier class when isDragging is true', () => {
     const { container } = h.render(Component, {
-      props: { id: 'random-songs', isDragging: true },
+      props: { id: 'a', isDragging: true },
     })
 
-    expect(container.querySelector('.home-block-sortable')!.classList.contains('home-block-sortable--dragging')).toBe(
+    expect(container.querySelector('.sortable-list-item')!.classList.contains('sortable-list-item--dragging')).toBe(
       true,
     )
   })
