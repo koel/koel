@@ -1,5 +1,5 @@
 <template>
-  <TransitionGroup tag="div" class="contents" move-class="sortable-list-move">
+  <TransitionGroup move-class="sortable-list-move">
     <SortableListItem
       v-for="item in renderItems"
       :key="item.id"
