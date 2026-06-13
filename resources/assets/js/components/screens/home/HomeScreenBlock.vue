@@ -3,10 +3,8 @@
     <header class="flex items-center justify-between gap-3 mb-8">
       <h3
         :draggable="!!sortable"
-        :class="[
-          'text-2xl font-thin text-k-fg min-w-0',
-          sortable ? 'cursor-grab active:cursor-grabbing select-none' : '',
-        ]"
+        class="text-2xl font-thin text-k-fg min-w-0"
+        :class="sortable ? 'cursor-grab active:cursor-grabbing select-none' : ''"
         @dragstart="onHeaderDragStart"
       >
         <slot name="header" />

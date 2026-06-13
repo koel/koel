@@ -355,6 +355,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.
 - For variant-specific styles (e.g. modes, states), use custom CSS classes (`.initial`, `.chat`, `.user`, `.error`, etc.) with `@apply` in a scoped `<style>` block.
 - Do NOT build class strings in JavaScript arrays or computed properties.
+- Split static and dynamic classes between the two attributes: always-applied Tailwind classes go on the plain `class="..."` attribute; the `:class="..."` binding is reserved for the conditional/reactive bits. **Never** lump always-on classes inside `:class="[...]"` — both `class` and `:class` are supported on the same element and Vue merges them. Bad: `:class="['text-2xl font-thin', sortable ? 'cursor-grab' : '']"`. Good: `class="text-2xl font-thin" :class="sortable ? 'cursor-grab' : ''"`.
 
 ## Testing Assertions
 - When asserting two Eloquent models are the same, use `assertTrue($modelA->is($modelB))` instead of comparing IDs.
