@@ -32,9 +32,9 @@ const AUTO_SCROLL_HOT_ZONE = 80
 const AUTO_SCROLL_MAX_SPEED = 18
 
 const draggedId = ref<string | null>(null)
-const liveOrder = ref<string[]>([])
+const previewOrder = ref<string[]>([])
 const orderSnapshot = ref<string[]>([])
-let didDrop = false
+let dropped = false
 
 let scrollContainer: HTMLElement | null = null
 let autoScrollSpeed = 0
@@ -47,7 +47,7 @@ const renderItems = computed<Item[]>(() => {
     return props.items
   }
 
-  return liveOrder.value.map(id => itemById.value.get(id)).filter((item): item is Item => item !== undefined)
+  return previewOrder.value.map(id => itemById.value.get(id)).filter((item): item is Item => item !== undefined)
 })
 
 const isScrollable = (el: HTMLElement): boolean => {
@@ -136,12 +136,12 @@ const setUpGhost = (event: DragEvent, wrapper: HTMLElement) => {
 }
 
 const finalizeDrag = (commit: boolean) => {
-  if (commit && !isEqual(liveOrder.value, orderSnapshot.value)) {
-    emit('reorder', [...liveOrder.value])
+  if (commit && !isEqual(previewOrder.value, orderSnapshot.value)) {
+    emit('reorder', [...previewOrder.value])
   }
 
   draggedId.value = null
-  liveOrder.value = []
+  previewOrder.value = []
   orderSnapshot.value = []
 
   stopAutoScroll()
@@ -151,10 +151,10 @@ const finalizeDrag = (commit: boolean) => {
 const onItemDragStart = (id: string, wrapper: HTMLElement, event: DragEvent) => {
   const baseline = props.items.map(item => item.id)
   orderSnapshot.value = baseline
-  liveOrder.value = [...baseline]
+  previewOrder.value = [...baseline]
 
   draggedId.value = id
-  didDrop = false
+  dropped = false
 
   scrollContainer = findScrollableAncestor(wrapper)
   setUpGhost(event, wrapper)
@@ -168,7 +168,7 @@ const onItemDragOver = (targetId: string, event: DragEvent) => {
   const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
   const insertBefore = event.clientY < rect.top + rect.height / 2
 
-  const next = liveOrder.value.filter(id => id !== draggedId.value)
+  const next = previewOrder.value.filter(id => id !== draggedId.value)
   const targetIndex = next.indexOf(targetId)
   if (targetIndex === -1) {
     return
@@ -176,13 +176,13 @@ const onItemDragOver = (targetId: string, event: DragEvent) => {
 
   next.splice(insertBefore ? targetIndex : targetIndex + 1, 0, draggedId.value)
 
-  if (!isEqual(next, liveOrder.value)) {
-    liveOrder.value = next
+  if (!isEqual(next, previewOrder.value)) {
+    previewOrder.value = next
   }
 }
 
 const onItemDrop = () => {
-  didDrop = true
+  dropped = true
   finalizeDrag(true)
 }
 
@@ -191,11 +191,11 @@ const onDocumentDragEnd = () => {
     return
   }
 
-  // dragend fires after drop in the normal flow. didDrop guards us against
+  // dragend fires after drop in the normal flow. `dropped` guards us against
   // double-finalizing; only here do we handle the "released outside any drop
-  // target" path, which must revert the live preview to the snapshot.
-  finalizeDrag(didDrop)
-  didDrop = false
+  // target" path, which must revert the preview to the snapshot.
+  finalizeDrag(dropped)
+  dropped = false
 }
 
 document.addEventListener('dragend', onDocumentDragEnd, true)
