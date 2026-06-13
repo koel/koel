@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pt-8">
     <header class="flex items-center justify-between gap-3 mb-8">
       <h3
         :draggable="!!sortable"

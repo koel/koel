@@ -12,7 +12,7 @@
       <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
     </ScreenEmptyState>
 
-    <div v-else class="home-sections space-y-20 w-full">
+    <div v-else class="home-sections space-y-12 w-full">
       <SortableList :items="orderedBlocks" @reorder="onReorder">
         <template #default="{ item }">
           <component :is="item.component" :loading :data-testid="item.id" />
@@ -158,10 +158,10 @@ useRouter().onScreenActivated('Home', async () => {
   > *:not(:first-child) {
     @apply relative;
 
-    /* The divider sits halfway up the space-y-20 (5rem) gap, so it stretches edge-to-edge
+    /* The divider sits halfway up the space-y-12 (3rem) gap, so it stretches edge-to-edge
        without forcing top padding inside each block. */
     &::before {
-      @apply content-[''] absolute -top-10 left-0 right-0 -mx-6 h-px bg-k-fg-5;
+      @apply content-[''] absolute -top-6 left-0 right-0 -mx-6 h-px bg-k-fg-5;
     }
   }
 }
