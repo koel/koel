@@ -109,8 +109,6 @@ ul.dragging > :deep(.droppable) {
 /* No folder is targeted — surface a faint dashed outline so the user can see
    that the whole section is the implicit "move out of folder" drop zone. */
 ul.dragging.no-target {
-  outline: 1px dashed var(--color-k-highlight);
-  outline-offset: 4px;
-  border-radius: 0.375rem;
+  @apply outline-1 outline-dashed outline-offset-2 outline-k-highlight rounded-md;
 }
 </style>
