@@ -18,16 +18,7 @@ type DraggableType = (typeof draggableTypes)[number]
 // (e.g. show a "remove from folder" target only while a playlist is being dragged).
 export const currentDragType = ref<DraggableType | null>(null)
 
-// Id of the folder the cursor is currently over as an accepting drop target.
-// The sidebar reads this to render the "no folder targeted" affordance for the
-// implicit "move out of folder" drop. Each folder sets it on dragover and
-// clears it on dragleave.
-export const currentDropTargetFolderId = ref<string | null>(null)
-
-const clearDragState = () => {
-  currentDragType.value = null
-  currentDropTargetFolderId.value = null
-}
+const clearDragState = () => (currentDragType.value = null)
 
 document.addEventListener('dragend', clearDragState)
 document.addEventListener('drop', clearDragState, true)
