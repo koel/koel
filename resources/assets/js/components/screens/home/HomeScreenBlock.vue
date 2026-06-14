@@ -2,9 +2,9 @@
   <div class="pt-8">
     <header class="flex items-center justify-between gap-3 mb-8">
       <h3
-        :draggable="!!sortable"
+        :draggable="!!reorderable"
         class="text-2xl font-thin text-k-fg min-w-0"
-        :class="sortable ? 'cursor-grab active:cursor-grabbing select-none' : ''"
+        :class="reorderable ? 'cursor-grab active:cursor-grabbing select-none' : ''"
         @dragstart="onHeaderDragStart"
       >
         <slot name="header" />
@@ -22,16 +22,16 @@
 import { inject, provide, useTemplateRef } from 'vue'
 import { BlockActionsHostKey, ReorderableItemKey } from '@/config/symbols'
 
-const sortable = inject(ReorderableItemKey, null)
+const reorderable = inject(ReorderableItemKey, null)
 
 const actionsEl = useTemplateRef<HTMLElement>('actionsEl')
 provide(BlockActionsHostKey, actionsEl)
 
 const onHeaderDragStart = (event: DragEvent) => {
-  if (!sortable) {
+  if (!reorderable) {
     return
   }
 
-  sortable.onHeaderDragStart(event)
+  reorderable.onHeaderDragStart(event)
 }
 </script>

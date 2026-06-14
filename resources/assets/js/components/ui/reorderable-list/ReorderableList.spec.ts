@@ -9,11 +9,11 @@ const ITEMS = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }]
 const Probe = defineComponent({
   props: { label: { type: String, required: true } },
   setup(props) {
-    const sortable = inject(ReorderableItemKey, null)
+    const reorderable = inject(ReorderableItemKey, null)
     return () =>
       createElement('div', {
         'data-testid': props.label,
-        onDragstart: (event: DragEvent) => sortable?.onHeaderDragStart(event),
+        onDragstart: (event: DragEvent) => reorderable?.onHeaderDragStart(event),
       })
   },
 })

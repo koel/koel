@@ -5,7 +5,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { ReorderableItemKey } from '@/config/symbols'
 import Component from './HomeScreenBlock.vue'
 
-const withSortable = (onHeaderDragStart: (event: DragEvent) => void) =>
+const withReorderable = (onHeaderDragStart: (event: DragEvent) => void) =>
   defineComponent({
     setup(_, { slots }) {
       provide(ReorderableItemKey, { onHeaderDragStart })
@@ -30,7 +30,7 @@ describe('HomeScreenBlock', () => {
     screen.getByText('Song list')
   })
 
-  it('leaves the title non-draggable when no sortable context is provided', () => {
+  it('leaves the title non-draggable when no reorderable context is provided', () => {
     const { container } = h.render(Component, {
       slots: { header: 'Top Albums' },
     })
@@ -40,9 +40,9 @@ describe('HomeScreenBlock', () => {
     expect(heading.classList.contains('cursor-grab')).toBe(false)
   })
 
-  it('makes the title draggable and forwards dragstart when a sortable context is injected', () => {
+  it('makes the title draggable and forwards dragstart when a reorderable context is injected', () => {
     const spy = vi.fn()
-    const Wrapper = withSortable(spy)
+    const Wrapper = withReorderable(spy)
 
     const { container } = h.render(Wrapper, {
       slots: { header: 'Top Albums' },

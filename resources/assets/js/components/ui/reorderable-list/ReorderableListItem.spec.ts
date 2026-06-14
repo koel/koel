@@ -7,11 +7,11 @@ import Component from './ReorderableListItem.vue'
 
 const ContextProbe = defineComponent({
   setup() {
-    const sortable = inject(ReorderableItemKey, null)
+    const reorderable = inject(ReorderableItemKey, null)
     return () =>
       createElement('button', {
         'data-testid': 'probe',
-        onDragstart: (event: DragEvent) => sortable?.onHeaderDragStart(event),
+        onDragstart: (event: DragEvent) => reorderable?.onHeaderDragStart(event),
       })
   },
 })
