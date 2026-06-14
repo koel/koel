@@ -5,7 +5,11 @@
       <CreatePlaylistContextMenuButton />
     </SidebarSectionHeader>
 
-    <ul :class="{ dragging: isDraggingPlaylist }" @dragover="onDragOver" @drop="onDrop">
+    <ul
+      :class="{ dragging: isDraggingPlaylist, 'has-folder-target': isDraggingPlaylist && hasFolderTarget }"
+      @dragover="onDragOver"
+      @drop="onDrop"
+    >
       <PlaylistSidebarItem :list="{ name: 'Favorites', playables: favorites }" />
       <PlaylistSidebarItem :list="{ name: 'Recently Played', playables: [] }" />
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
@@ -15,11 +19,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, toRef } from 'vue'
+import { computed, provide, ref, toRef } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
 import { currentDragType, useDroppable } from '@/composables/useDragAndDrop'
+import { PlaylistFolderDropTargetKey } from '@/config/symbols'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
@@ -34,6 +39,13 @@ const favorites = toRef(playableStore.state, 'favorites')
 const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
 
 const isDraggingPlaylist = computed(() => currentDragType.value === 'playlist')
+
+// Folders write their id here while they are the active hover-target, and clear
+// it when the cursor leaves them. The CSS below reads this to switch between
+// the "section is the target" and "this folder is the target" states.
+const folderDropTargetId = ref<string | null>(null)
+provide(PlaylistFolderDropTargetKey, folderDropTargetId)
+const hasFolderTarget = computed(() => folderDropTargetId.value !== null)
 
 const orphanPlaylists = computed(() =>
   playlists.value.filter(({ folder_id }) => {
@@ -95,16 +107,16 @@ ul.dragging {
   cursor: copy;
 }
 
-ul.dragging:not(:has(:deep(.droppable))) {
+ul.dragging:not(.has-folder-target) {
   @apply outline-1 outline-dashed outline-offset-2 outline-k-highlight rounded-md;
 }
 
-ul.dragging:has(:deep(.droppable)) > :deep(*) {
+ul.dragging.has-folder-target > :deep(*) {
   opacity: 0.4;
   transition: opacity 0.15s ease;
 }
 
-ul.dragging:has(:deep(.droppable)) > :deep(.droppable) {
+ul.dragging.has-folder-target > :deep(.droppable) {
   opacity: 1;
 }
 </style>

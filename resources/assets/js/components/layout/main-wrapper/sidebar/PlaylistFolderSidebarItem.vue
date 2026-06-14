@@ -34,12 +34,13 @@
 <script lang="ts" setup>
 import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons'
 import isMobile from 'ismobilejs'
-import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
+import { computed, inject, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { PlaylistFolderDropTargetKey } from '@/config/symbols'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import SidebarItem from './SidebarItem.vue'
@@ -53,6 +54,10 @@ const { folder } = toRefs(props)
 const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
 const { startDragging } = useDraggable('playlist-folder')
 const { openContextMenu } = useContextMenu()
+
+// Provided by SidebarPlaylistsSection so we can flag ourselves as the active
+// hover-target — the section uses that to switch its drop-zone affordance.
+const folderDropTargetId = inject(PlaylistFolderDropTargetKey, ref<string | null>(null))
 
 const opened = ref(false)
 const droppable = ref(false)
@@ -75,6 +80,10 @@ const cancelAutoExpand = () => {
 const clearOnDragEnd = () => {
   droppable.value = false
   cancelAutoExpand()
+
+  if (folderDropTargetId.value === folder.value.id) {
+    folderDropTargetId.value = null
+  }
 }
 
 onMounted(() => document.addEventListener('dragend', clearOnDragEnd))
@@ -110,6 +119,7 @@ const onDragOver = (event: DragEvent) => {
   }
 
   droppable.value = true
+  folderDropTargetId.value = folder.value.id
 }
 
 const onDragLeave = (event: DragEvent) => {
@@ -122,6 +132,10 @@ const onDragLeave = (event: DragEvent) => {
 
   droppable.value = false
   cancelAutoExpand()
+
+  if (folderDropTargetId.value === folder.value.id) {
+    folderDropTargetId.value = null
+  }
 }
 
 const onDrop = async (event: DragEvent) => {

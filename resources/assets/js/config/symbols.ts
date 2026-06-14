@@ -41,3 +41,9 @@ export const PlayableListSortOrderKey: ReadonlyInjectionKey<Ref<SortOrder>> = Sy
 export const PlayableListContextKey: InjectionKey<Ref<PlayableListContext>> = Symbol('PlayableListContext')
 
 export const BlockActionsHostKey: InjectionKey<Ref<HTMLElement | null>> = Symbol('BlockActionsHost')
+
+// Shared between SidebarPlaylistsSection (provider) and PlaylistFolderSidebarItem (consumer):
+// the id of the folder the cursor is currently hovering over as a drop target,
+// or null when no folder is targeted (i.e. the section as a whole is the implicit
+// 'move out of folder' target). Sidebar-scoped concern, not part of useDragAndDrop.
+export const PlaylistFolderDropTargetKey: InjectionKey<Ref<string | null>> = Symbol('PlaylistFolderDropTarget')
