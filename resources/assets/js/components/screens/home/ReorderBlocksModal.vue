@@ -11,8 +11,6 @@
     </header>
 
     <main class="space-y-2">
-      <p class="text-k-fg-50 text-sm mb-3">Drag a row to reorder. Changes are saved instantly.</p>
-
       <ReorderableList :items="orderedBlocks" @reorder="onReorder">
         <template #default="{ item }">
           <BlockReorderRow :label="(item as { id: string; label: string }).label" />
