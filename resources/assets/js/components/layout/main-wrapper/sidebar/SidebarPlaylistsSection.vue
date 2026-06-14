@@ -6,7 +6,7 @@
     </SidebarSectionHeader>
 
     <ul
-      :class="{ dragging: isDraggingPlaylist, 'no-target': isDraggingPlaylist && !hasDropTarget }"
+      :class="{ dragging: isDraggingPlaylist, 'has-folder-target': isDraggingPlaylist && hasDropTarget }"
       @dragover="onDragOver"
       @drop="onDrop"
     >
@@ -87,28 +87,29 @@ const onDrop = async (event: DragEvent) => {
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 
-/* While a playlist is being dragged, dim everything in the section and signal
-   the whole area as a valid drop target via the cursor. The folder under the
-   cursor (which carries the .droppable class on its root) pops back to full
-   opacity to indicate it's the accepting target; dropping anywhere else moves
-   the playlist out of its folder. */
+/* Two states while a playlist is being dragged:
+
+   1. No folder under the cursor — the section as a whole is the implicit
+      "move out of folder" target. Surface a dashed outline around the whole
+      <ul> and keep every entry at full opacity; dimming would lie about the
+      drop being unavailable.
+   2. Cursor over a folder — that folder is the specific target. Dim every
+      entry except the folder under the cursor, which keeps full opacity to
+      identify it as the accepting target. */
 ul.dragging {
   cursor: copy;
-  transition: outline-color 0.15s ease;
 }
 
-ul.dragging > :deep(*) {
+ul.dragging:not(.has-folder-target) {
+  @apply outline-1 outline-dashed outline-offset-2 outline-k-highlight rounded-md;
+}
+
+ul.dragging.has-folder-target > :deep(*) {
   opacity: 0.4;
   transition: opacity 0.15s ease;
 }
 
-ul.dragging > :deep(.droppable) {
+ul.dragging.has-folder-target > :deep(.droppable) {
   opacity: 1;
-}
-
-/* No folder is targeted — surface a faint dashed outline so the user can see
-   that the whole section is the implicit "move out of folder" drop zone. */
-ul.dragging.no-target {
-  @apply outline-1 outline-dashed outline-offset-2 outline-k-highlight rounded-md;
 }
 </style>
