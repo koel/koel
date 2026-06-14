@@ -110,7 +110,7 @@ describe('ReorderBlocksModal', () => {
   })
 
   it('skips persisting on dragend when the order has not actually changed', async () => {
-    preferenceStore.temporary.home_blocks_order = blocks.map(b => b.id)
+    preferenceStore.temporary.home_blocks_order = blocks.map(block => block.id)
     const updateSpy = vi.spyOn(preferenceStore, 'update' as never)
 
     const { container } = h.render(Component, { props: { blocks } })

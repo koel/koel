@@ -53,9 +53,9 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const draggedId = ref<string | null>(null)
 // `blocks` arrives already sorted by the parent (HomeScreen passes
 // `orderedBlocks`), so we just adopt that order as the initial state.
-const orderIds = ref<string[]>(props.blocks.map(b => b.id))
+const orderIds = ref<string[]>(props.blocks.map(block => block.id))
 
-const orderedBlocks = computed(() => orderIds.value.map(id => props.blocks.find(b => b.id === id)!))
+const orderedBlocks = computed(() => orderIds.value.map(id => props.blocks.find(block => block.id === id)!))
 
 const onDragStart = (id: string, event: DragEvent) => {
   if (!event.dataTransfer) {
