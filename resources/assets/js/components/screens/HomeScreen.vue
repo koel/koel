@@ -61,7 +61,7 @@ interface Block {
   component: Component
 }
 
-const BLOCKS: Block[] = [
+const blocks: Block[] = [
   { id: 'recently-played-songs', label: 'Recently Played', component: RecentlyPlayedPlayables },
   { id: 'recently-added-albums', label: 'Latest Albums', component: NewAlbums },
   { id: 'similar-songs', label: 'You Might Also Like', component: SimilarSongs },
@@ -75,8 +75,6 @@ const BLOCKS: Block[] = [
   { id: 'random-albums', label: 'Random Albums', component: RandomAlbums },
   { id: 'random-artists', label: 'Random Artists', component: RandomArtists },
 ]
-
-const BLOCK_BY_ID = new Map(BLOCKS.map(block => [block.id, block]))
 
 const { currentUserCan } = usePolicies()
 
@@ -98,29 +96,24 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 const loading = ref(false)
 let initialized = false
 
-const reconcileOrder = (saved: readonly string[]): string[] => {
-  const next: string[] = []
-  const seen = new Set<string>()
+const orderedBlocks = computed<Block[]>(() => {
+  const saved = preferenceStore.home_blocks_order ?? []
 
-  for (const id of saved) {
-    if (BLOCK_BY_ID.has(id) && !seen.has(id)) {
-      next.push(id)
-      seen.add(id)
+  return [...blocks].sort((a, b) => {
+    const aIdx = saved.indexOf(a.id)
+    const bIdx = saved.indexOf(b.id)
+
+    if (aIdx === -1) {
+      return bIdx === -1 ? 0 : 1
     }
-  }
 
-  for (const block of BLOCKS) {
-    if (!seen.has(block.id)) {
-      next.push(block.id)
+    if (bIdx === -1) {
+      return -1
     }
-  }
 
-  return next
-}
-
-const orderedBlocks = computed<Block[]>(() =>
-  reconcileOrder(preferenceStore.home_blocks_order ?? []).map(id => BLOCK_BY_ID.get(id)!),
-)
+    return aIdx - bIdx
+  })
+})
 
 const onReorder = (ids: string[]) => {
   preferenceStore.home_blocks_order = ids

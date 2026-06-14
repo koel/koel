@@ -28,8 +28,8 @@ const emit = defineEmits<{
   (e: 'reorder', ids: string[]): void
 }>()
 
-const AUTO_SCROLL_HOT_ZONE = 80
-const AUTO_SCROLL_MAX_SPEED = 18
+const autoScrollHotZone = 80
+const autoScrollMaxSpeed = 18
 
 const draggedId = ref<string | null>(null)
 const previewOrder = ref<string[]>([])
@@ -93,12 +93,12 @@ const onDocumentDragOver = (event: DragEvent) => {
   const distanceFromTop = event.clientY - rect.top
   const distanceFromBottom = rect.bottom - event.clientY
 
-  if (distanceFromTop > 0 && distanceFromTop < AUTO_SCROLL_HOT_ZONE) {
-    const intensity = 1 - distanceFromTop / AUTO_SCROLL_HOT_ZONE
-    autoScrollSpeed = -Math.max(1, Math.round(AUTO_SCROLL_MAX_SPEED * intensity))
-  } else if (distanceFromBottom > 0 && distanceFromBottom < AUTO_SCROLL_HOT_ZONE) {
-    const intensity = 1 - distanceFromBottom / AUTO_SCROLL_HOT_ZONE
-    autoScrollSpeed = Math.max(1, Math.round(AUTO_SCROLL_MAX_SPEED * intensity))
+  if (distanceFromTop > 0 && distanceFromTop < autoScrollHotZone) {
+    const intensity = 1 - distanceFromTop / autoScrollHotZone
+    autoScrollSpeed = -Math.max(1, Math.round(autoScrollMaxSpeed * intensity))
+  } else if (distanceFromBottom > 0 && distanceFromBottom < autoScrollHotZone) {
+    const intensity = 1 - distanceFromBottom / autoScrollHotZone
+    autoScrollSpeed = Math.max(1, Math.round(autoScrollMaxSpeed * intensity))
   } else {
     autoScrollSpeed = 0
   }
