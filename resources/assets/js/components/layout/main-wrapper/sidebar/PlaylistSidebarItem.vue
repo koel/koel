@@ -1,5 +1,7 @@
 <template>
-  <!-- using .stop modifier to prevent events from bubbling up to the containing playlist folder (if any) -->
+  <!-- Drag events stop propagation only when this item accepts the drop, so a
+       rejected drag (e.g. a playlist-type drag over a playlist item) bubbles up
+       to the folder or the section list to be handled there. -->
   <SidebarItem
     :class="{ droppable }"
     :href="href"
@@ -8,10 +10,10 @@
     :active
     @dblclick="onDblClick"
     @contextmenu="onContextMenu"
-    @dragleave.stop="onDragLeave"
-    @dragover.stop="onDragOver"
+    @dragleave="onDragLeave"
+    @dragover="onDragOver"
     @dragstart.stop="onDragStart"
-    @drop.stop="onDrop"
+    @drop="onDrop"
   >
     <template #icon>
       <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" fixed-width />
@@ -122,35 +124,37 @@ const onDblClick = async () => {
 const onDragStart = (event: DragEvent) => isPlaylist(list.value) && startDragging(event, list.value)
 
 const onDragOver = (event: DragEvent) => {
-  if (!contentEditable.value) {
-    return false
-  }
-  if (!acceptsDrop(event)) {
-    return false
+  if (!contentEditable.value || !acceptsDrop(event)) {
+    return
   }
 
   event.preventDefault()
+  event.stopPropagation()
   droppable.value = true
-
-  return false
 }
 
-const onDragLeave = () => (droppable.value = false)
+const onDragLeave = (event: DragEvent) => {
+  if (!droppable.value) {
+    return
+  }
+
+  event.stopPropagation()
+  droppable.value = false
+}
 
 const onDrop = async (event: DragEvent) => {
-  droppable.value = false
+  if (!contentEditable.value || !acceptsDrop(event)) {
+    return
+  }
 
-  if (!contentEditable.value) {
-    return false
-  }
-  if (!acceptsDrop(event)) {
-    return false
-  }
+  event.preventDefault()
+  event.stopPropagation()
+  droppable.value = false
 
   const playables = await resolveDroppedItems(event)
 
   if (!playables?.length) {
-    return false
+    return
   }
 
   if (isFavoriteList(list.value)) {
@@ -158,8 +162,6 @@ const onDrop = async (event: DragEvent) => {
   } else if (isPlaylist(list.value)) {
     await addToPlaylist(list.value, playables)
   }
-
-  return false
 }
 </script>
 

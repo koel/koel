@@ -96,26 +96,58 @@ describe('playlistFolderStore', () => {
     expect(playlistFolderStore.byId(folder.id)!.name).toBe('New')
   })
 
-  it('adds a playlist to folder', async () => {
+  it('moves a playlist into a folder', async () => {
     const folder = h.factory('playlist-folder').make()
     const playlist = h.factory('playlist').make({ folder_id: null })
     vi.mocked(http.post).mockResolvedValue({})
 
-    await playlistFolderStore.addPlaylistToFolder(folder, playlist)
+    await playlistFolderStore.movePlaylistToFolder(playlist, folder)
 
     expect(playlist.folder_id).toBe(folder.id)
     expect(http.post).toHaveBeenCalledWith(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
   })
 
-  it('removes a playlist from folder', async () => {
+  it('moves a playlist out of a folder', async () => {
     const folder = h.factory('playlist-folder').make()
     const playlist = h.factory('playlist').make({ folder_id: folder.id })
     vi.mocked(http.delete).mockResolvedValue({})
 
-    await playlistFolderStore.removePlaylistFromFolder(folder, playlist)
+    await playlistFolderStore.movePlaylistToFolder(playlist, null)
 
     expect(playlist.folder_id).toBeNull()
     expect(http.delete).toHaveBeenCalledWith(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
+  })
+
+  it('moves a playlist between folders via the target folder POST', async () => {
+    const fromFolder = h.factory('playlist-folder').make()
+    const toFolder = h.factory('playlist-folder').make()
+    const playlist = h.factory('playlist').make({ folder_id: fromFolder.id })
+    vi.mocked(http.post).mockResolvedValue({})
+
+    await playlistFolderStore.movePlaylistToFolder(playlist, toFolder)
+
+    expect(playlist.folder_id).toBe(toFolder.id)
+    expect(http.post).toHaveBeenCalledWith(`playlist-folders/${toFolder.id}/playlists`, { playlists: [playlist.id] })
+    expect(http.delete).not.toHaveBeenCalled()
+  })
+
+  it('no-ops when the playlist is already in the target folder', async () => {
+    const folder = h.factory('playlist-folder').make()
+    const playlist = h.factory('playlist').make({ folder_id: folder.id })
+
+    await playlistFolderStore.movePlaylistToFolder(playlist, folder)
+
+    expect(http.post).not.toHaveBeenCalled()
+    expect(http.delete).not.toHaveBeenCalled()
+  })
+
+  it('no-ops when moving an already-orphan playlist to no folder', async () => {
+    const playlist = h.factory('playlist').make({ folder_id: null })
+
+    await playlistFolderStore.movePlaylistToFolder(playlist, null)
+
+    expect(http.post).not.toHaveBeenCalled()
+    expect(http.delete).not.toHaveBeenCalled()
   })
 
   it('sorts folders alphabetically', () => {

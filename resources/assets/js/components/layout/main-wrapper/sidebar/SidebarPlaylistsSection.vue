@@ -5,7 +5,7 @@
       <CreatePlaylistContextMenuButton />
     </SidebarSectionHeader>
 
-    <ul>
+    <ul :class="{ droppable }" class="rounded-md" @dragleave="onDragLeave" @dragover="onDragOver" @drop="onDrop">
       <PlaylistSidebarItem :list="{ name: 'Favorites', playables: favorites }" />
       <PlaylistSidebarItem :list="{ name: 'Recently Played', playables: [] }" />
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
@@ -15,10 +15,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
+import { useDroppable } from '@/composables/useDragAndDrop'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
@@ -29,6 +30,9 @@ import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSect
 const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(playableStore.state, 'favorites')
+
+const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
+const droppable = ref(false)
 
 const orphanPlaylists = computed(() =>
   playlists.value.filter(({ folder_id }) => {
@@ -41,4 +45,46 @@ const orphanPlaylists = computed(() =>
     return !folders.value.find(folder => folder.id === folder_id)
   }),
 )
+
+const onDragOver = (event: DragEvent) => {
+  if (!acceptsDrop(event)) {
+    return false
+  }
+
+  event.preventDefault()
+  droppable.value = true
+}
+
+const onDragLeave = (event: DragEvent) => {
+  const relatedTarget = event.relatedTarget as Node | null
+  if (relatedTarget && (event.currentTarget as Node).contains(relatedTarget)) {
+    return
+  }
+
+  droppable.value = false
+}
+
+const onDrop = async (event: DragEvent) => {
+  droppable.value = false
+
+  if (!acceptsDrop(event)) {
+    return false
+  }
+
+  event.preventDefault()
+
+  const playlist = await resolveDroppedValue<Playlist>(event)
+  if (!playlist || playlist.folder_id === null) {
+    return
+  }
+
+  await playlistFolderStore.movePlaylistToFolder(playlist, null)
+}
 </script>
+
+<style lang="postcss" scoped>
+@reference '@css/app.pcss';
+.droppable {
+  @apply ring-1 ring-offset-0 ring-k-highlight cursor-copy;
+}
+</style>

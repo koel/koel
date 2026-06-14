@@ -27,15 +27,6 @@
           />
         </ul>
       </li>
-
-      <li
-        v-if="opened"
-        :class="droppableOnHatch && 'droppable'"
-        class="hatch absolute bottom-0 w-full h-1"
-        @dragover="onDragOverHatch"
-        @dragleave.prevent="onDragLeaveHatch"
-        @drop.prevent="onDropOnHatch"
-      />
     </ul>
   </li>
 </template>
@@ -43,7 +34,7 @@
 <script lang="ts" setup>
 import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons'
 import isMobile from 'ismobilejs'
-import { computed, ref, toRefs } from 'vue'
+import { computed, onBeforeUnmount, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
@@ -65,21 +56,30 @@ const { openContextMenu } = useContextMenu()
 
 const opened = ref(false)
 const droppable = ref(false)
-const droppableOnHatch = ref(false)
-let expandTimeout = 0
+const expandTimeout = ref<number | null>(null)
 
 const playlistsInFolder = computed(() => playlistStore.byFolder(folder.value))
 
 const toggle = () => (opened.value = !opened.value)
 
+const cancelAutoExpand = () => {
+  if (expandTimeout.value !== null) {
+    window.clearTimeout(expandTimeout.value)
+    expandTimeout.value = null
+  }
+}
+
+onBeforeUnmount(cancelAutoExpand)
+
 const onDragStart = (event: DragEvent) => startDragging(event, folder.value)
 
 const onDragOver = (event: DragEvent) => {
-  // Expand the folder after a short delay so the user can drop songs onto playlists inside.
-  if (!opened.value && !expandTimeout) {
-    expandTimeout = window.setTimeout(() => {
+  // Auto-expand the folder after a brief hover so the user can see what's inside,
+  // or drop on a playlist within.
+  if (!opened.value && expandTimeout.value === null) {
+    expandTimeout.value = window.setTimeout(() => {
       opened.value = true
-      expandTimeout = 0
+      expandTimeout.value = null
     }, 500)
   }
 
@@ -91,15 +91,20 @@ const onDragOver = (event: DragEvent) => {
   droppable.value = true
 }
 
-const onDragLeave = () => {
+const onDragLeave = (event: DragEvent) => {
+  // `dragleave` fires when crossing into child elements, too. Only treat it as a
+  // real leave when the cursor moves outside the folder's bounding element.
+  const relatedTarget = event.relatedTarget as Node | null
+  if (relatedTarget && (event.currentTarget as Node).contains(relatedTarget)) {
+    return
+  }
+
   droppable.value = false
-  clearTimeout(expandTimeout)
-  expandTimeout = 0
+  cancelAutoExpand()
 }
 
 const onDrop = async (event: DragEvent) => {
-  clearTimeout(expandTimeout)
-  expandTimeout = 0
+  cancelAutoExpand()
   droppable.value = false
 
   if (!acceptsDrop(event)) {
@@ -107,40 +112,14 @@ const onDrop = async (event: DragEvent) => {
   }
 
   event.preventDefault()
+  event.stopPropagation()
 
   const playlist = await resolveDroppedValue<Playlist>(event)
-  if (!playlist || playlist.folder_id === folder.value.id) {
+  if (!playlist) {
     return
   }
 
-  await playlistFolderStore.addPlaylistToFolder(folder.value, playlist)
-}
-
-const onDragLeaveHatch = () => (droppableOnHatch.value = false)
-
-const onDragOverHatch = (event: DragEvent) => {
-  if (!acceptsDrop(event)) {
-    return false
-  }
-
-  event.preventDefault()
-  droppableOnHatch.value = true
-}
-
-const onDropOnHatch = async (event: DragEvent) => {
-  droppableOnHatch.value = false
-  droppable.value = false
-
-  const playlist = (await resolveDroppedValue<Playlist>(event))!
-
-  // if the playlist isn't in the folder, don't do anything. The folder will handle the drop.
-  if (playlist.folder_id !== folder.value.id) {
-    return
-  }
-
-  // otherwise, the user is trying to remove the playlist from the folder.
-  event.stopPropagation()
-  await playlistFolderStore.removePlaylistFromFolder(folder.value, playlist)
+  await playlistFolderStore.movePlaylistToFolder(playlist, folder.value)
 }
 
 const onContextMenu = (event: MouseEvent) =>
@@ -153,9 +132,5 @@ const onContextMenu = (event: MouseEvent) =>
 @reference '@css/app.pcss';
 .droppable {
   @apply ring-1 ring-offset-0 ring-k-highlight rounded-md cursor-copy;
-}
-
-.hatch.droppable {
-  @apply border-b-[3px] border-k-highlight;
 }
 </style>
