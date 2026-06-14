@@ -1,16 +1,8 @@
 <template>
   <HomeScreenBlock>
-    <template #header>
-      Random Songs
-      <Btn
-        v-if="playables.length"
-        size="small"
-        variant="ghost"
-        rounded
-        :disabled="refreshing"
-        class="float-right"
-        @click.prevent="refresh"
-      >
+    <template #header>Random Songs</template>
+    <template #actions>
+      <Btn v-if="playables.length" size="small" variant="ghost" rounded :disabled="refreshing" @click.prevent="refresh">
         <Icon :icon="faRotateRight" :class="{ 'animate-spin': refreshing }" />
         <span class="sr-only">Refresh</span>
       </Btn>

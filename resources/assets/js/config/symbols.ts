@@ -39,3 +39,5 @@ export const PlayableListSortFieldKey: ReadonlyInjectionKey<Ref<PlayableListSort
   Symbol('PlayableListSortField')
 export const PlayableListSortOrderKey: ReadonlyInjectionKey<Ref<SortOrder>> = Symbol('PlayableListSortOrder')
 export const PlayableListContextKey: InjectionKey<Ref<PlayableListContext>> = Symbol('PlayableListContext')
+
+export const BlockActionsHostKey: InjectionKey<Ref<HTMLElement | null>> = Symbol('BlockActionsHost')

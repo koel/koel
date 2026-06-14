@@ -1,44 +1,46 @@
 <template>
-  <section class="w-full min-w-0">
-    <header class="flex items-center justify-between mb-4">
-      <h3 class="text-2xl font-thin text-k-fg flex items-center gap-3">
-        <slot name="header" />
-      </h3>
-      <nav class="flex gap-2">
-        <button
-          v-if="onRefresh"
-          type="button"
-          class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          :class="{ 'animate-spin': refreshing }"
-          :disabled="refreshing"
-          title="Refresh"
-          @click="refresh"
-        >
-          <Icon :icon="faRotateRight" />
-          <span class="sr-only">Refresh</span>
-        </button>
-        <template v-if="hasOverflow">
-          <button
-            type="button"
-            class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-            title="Scroll left"
-            @click="slide(-1)"
-          >
-            <Icon :icon="faChevronLeft" />
-            <span class="sr-only">Scroll left</span>
-          </button>
-          <button
-            type="button"
-            class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-            title="Scroll right"
-            @click="slide(1)"
-          >
-            <Icon :icon="faChevronRight" />
-            <span class="sr-only">Scroll right</span>
-          </button>
-        </template>
-      </nav>
-    </header>
+  <div class="w-full min-w-0">
+    <Teleport v-if="actionsHost && hasOverflow" :to="actionsHost">
+      <button
+        type="button"
+        class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
+        title="Scroll left"
+        @click="slide(-1)"
+      >
+        <Icon :icon="faChevronLeft" />
+        <span class="sr-only">Scroll left</span>
+      </button>
+      <button
+        type="button"
+        class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
+        title="Scroll right"
+        @click="slide(1)"
+      >
+        <Icon :icon="faChevronRight" />
+        <span class="sr-only">Scroll right</span>
+      </button>
+    </Teleport>
+
+    <nav v-else-if="hasOverflow" class="flex justify-end gap-2 mb-2">
+      <button
+        type="button"
+        class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
+        title="Scroll left"
+        @click="slide(-1)"
+      >
+        <Icon :icon="faChevronLeft" />
+        <span class="sr-only">Scroll left</span>
+      </button>
+      <button
+        type="button"
+        class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
+        title="Scroll right"
+        @click="slide(1)"
+      >
+        <Icon :icon="faChevronRight" />
+        <span class="sr-only">Scroll right</span>
+      </button>
+    </nav>
 
     <div
       ref="scroller"
@@ -48,17 +50,17 @@
         <slot />
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { faChevronLeft, faChevronRight, faRotateRight } from '@fortawesome/free-solid-svg-icons'
-import { onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { inject, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
+import { BlockActionsHostKey } from '@/config/symbols'
 
-const props = defineProps<{ onRefresh?: () => Promise<unknown> | unknown }>()
+const actionsHost = inject(BlockActionsHostKey, ref(null))
 
 const scroller = ref<HTMLDivElement>()
-const refreshing = ref(false)
 const hasOverflow = ref(false)
 
 let resizeObserver: ResizeObserver | undefined
@@ -110,20 +112,6 @@ const slide = (direction: 1 | -1) => {
   const max = el.scrollWidth - el.clientWidth
   const target = Math.max(0, Math.min(max, el.scrollLeft + direction * el.clientWidth))
   el.scrollTo({ left: target, behavior: 'smooth' })
-}
-
-const refresh = async () => {
-  if (!props.onRefresh || refreshing.value) {
-    return
-  }
-
-  refreshing.value = true
-
-  try {
-    await props.onRefresh()
-  } finally {
-    refreshing.value = false
-  }
 }
 </script>
 
