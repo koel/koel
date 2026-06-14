@@ -5,7 +5,7 @@
       <CreatePlaylistContextMenuButton />
     </SidebarSectionHeader>
 
-    <ul :class="{ dragging: isDraggingPlaylist, 'has-target': hasDropTarget }" @dragover="onDragOver" @drop="onDrop">
+    <ul :class="{ dragging: isDraggingPlaylist }" @dragover="onDragOver" @drop="onDrop">
       <PlaylistSidebarItem :list="{ name: 'Favorites', playables: favorites }" />
       <PlaylistSidebarItem :list="{ name: 'Recently Played', playables: [] }" />
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
@@ -19,7 +19,7 @@ import { computed, toRef } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
-import { currentDragType, currentDropTargetFolderId, useDroppable } from '@/composables/useDragAndDrop'
+import { currentDragType, useDroppable } from '@/composables/useDragAndDrop'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
@@ -34,7 +34,6 @@ const favorites = toRef(playableStore.state, 'favorites')
 const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
 
 const isDraggingPlaylist = computed(() => currentDragType.value === 'playlist')
-const hasDropTarget = computed(() => currentDropTargetFolderId.value !== null)
 
 const orphanPlaylists = computed(() =>
   playlists.value.filter(({ folder_id }) => {
@@ -77,28 +76,21 @@ const onDrop = async (event: DragEvent) => {
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 
-/* Two states while a playlist is being dragged:
+/* While a playlist is being dragged, dim everything in the section and signal
+   the whole area as a valid drop target via the cursor. The folder under the
+   cursor (which carries the .droppable class on its root) pops back to full
+   opacity to indicate it's the accepting target; dropping anywhere else moves
+   the playlist out of its folder. */
+ul.dragging {
+  cursor: copy;
+}
 
-   1. No drop target under the cursor — the source folder dims, signalling
-      "you're leaving me." Everything else stays at full opacity, so the
-      whole non-source area reads as a valid "drop to remove from folder."
-
-   2. Cursor over an accepting folder — invert: the target folder pops at
-      full opacity, everything else (including the source) dims, signalling
-      "drop here to add to this folder." */
 ul.dragging > :deep(*) {
+  opacity: 0.4;
   transition: opacity 0.15s ease;
 }
 
-ul.dragging > :deep(.drag-source) {
-  opacity: 0.4;
-}
-
-ul.dragging.has-target > :deep(*) {
-  opacity: 0.4;
-}
-
-ul.dragging.has-target > :deep(.drag-target) {
+ul.dragging > :deep(.droppable) {
   opacity: 1;
 }
 </style>
