@@ -38,7 +38,6 @@ import { isEqual } from 'lodash-es'
 import { GripVerticalIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { preferenceStore } from '@/stores/preferenceStore'
-import { bySavedOrder } from '@/utils/helpers'
 
 import Btn from '@/components/ui/form/Btn.vue'
 
@@ -52,9 +51,9 @@ const props = defineProps<{ blocks: BlockSummary[] }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const draggedId = ref<string | null>(null)
-const orderIds = ref<string[]>(
-  [...props.blocks].sort(bySavedOrder<BlockSummary>(preferenceStore.home_blocks_order ?? [])).map(b => b.id),
-)
+// `blocks` arrives already sorted by the parent (HomeScreen passes
+// `orderedBlocks`), so we just adopt that order as the initial state.
+const orderIds = ref<string[]>(props.blocks.map(b => b.id))
 
 const orderedBlocks = computed(() => orderIds.value.map(id => props.blocks.find(b => b.id === id)!))
 

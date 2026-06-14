@@ -52,25 +52,13 @@ describe('ReorderBlocksModal', () => {
     blocks.forEach(b => screen.getByText(b.label))
   })
 
-  it('renders rows in the order specified by preferenceStore.home_blocks_order', () => {
-    preferenceStore.temporary.home_blocks_order = ['random-songs', 'recently-added-albums']
+  it('renders rows in the order they arrive via props (the parent owns the sort)', () => {
+    const reordered = [blocks[3], blocks[1], blocks[2], blocks[0]]
 
-    const { container } = h.render(Component, { props: { blocks } })
+    const { container } = h.render(Component, { props: { blocks: reordered } })
     const labels = rowIds(container)
 
-    expect(labels[0]).toBe('Random Songs')
-    expect(labels[1]).toBe('Latest Albums')
-  })
-
-  it('appends blocks missing from the saved order at the canonical tail', () => {
-    preferenceStore.temporary.home_blocks_order = ['random-songs']
-
-    const { container } = h.render(Component, { props: { blocks } })
-    const labels = rowIds(container)
-
-    expect(labels[0]).toBe('Random Songs')
-    // The remaining three keep their canonical relative order.
-    expect(labels.slice(1)).toEqual(['Recently Played', 'Latest Albums', 'Top Albums'])
+    expect(labels).toEqual(['Random Songs', 'Latest Albums', 'Top Albums', 'Recently Played'])
   })
 
   it('marks the dragged row with the opacity-40 modifier while a drag is in flight', async () => {

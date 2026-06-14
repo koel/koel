@@ -55,7 +55,6 @@ import { useRouter } from '@/composables/useRouter'
 import { useModal } from '@/composables/useModal'
 import { usePolicies } from '@/composables/usePolicies'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { bySavedOrder } from '@/utils/helpers'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
 import RecentlyPlayedPlayables from '@/components/screens/home/RecentlyPlayedPlayables.vue'
@@ -118,13 +117,22 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 const loading = ref(false)
 let initialized = false
 
-const orderedBlocks = computed<Block[]>(() =>
-  [...blocks].sort(bySavedOrder<Block>(preferenceStore.home_blocks_order ?? [])),
-)
+// Sort `blocks` so they appear in the order saved in the preference. Blocks
+// whose id isn't in the saved list fall to the end (Infinity), keeping their
+// canonical relative order via Array.sort's stability.
+const orderedBlocks = computed<Block[]>(() => {
+  const saved = preferenceStore.home_blocks_order ?? []
+  const positionOf = (id: string) => {
+    const i = saved.indexOf(id)
+    return i === -1 ? Infinity : i
+  }
+
+  return [...blocks].sort((a, b) => positionOf(a.id) - positionOf(b.id))
+})
 
 const openReorderModal = () =>
   openModal<'REORDER_HOME_BLOCKS'>(ReorderBlocksModal, {
-    blocks: blocks.map(({ id, label }) => ({ id, label })),
+    blocks: orderedBlocks.value.map(({ id, label }) => ({ id, label })),
   })
 
 eventBus
