@@ -15,8 +15,8 @@
 
 <script lang="ts" setup>
 import { provide, useTemplateRef } from 'vue'
-import { HomeBlockActionsKey } from '@/config/symbols'
+import { BlockActionsHostKey } from '@/config/symbols'
 
 const actionsEl = useTemplateRef<HTMLElement>('actionsEl')
-provide(HomeBlockActionsKey, actionsEl)
+provide(BlockActionsHostKey, actionsEl)
 </script>

@@ -20,12 +20,12 @@
 
 <script lang="ts" setup>
 import { inject, provide, useTemplateRef } from 'vue'
-import { HomeBlockActionsKey, SortableItemKey } from '@/config/symbols'
+import { BlockActionsHostKey, SortableItemKey } from '@/config/symbols'
 
 const sortable = inject(SortableItemKey, null)
 
 const actionsEl = useTemplateRef<HTMLElement>('actionsEl')
-provide(HomeBlockActionsKey, actionsEl)
+provide(BlockActionsHostKey, actionsEl)
 
 const onHeaderDragStart = (event: DragEvent) => {
   if (!sortable) {

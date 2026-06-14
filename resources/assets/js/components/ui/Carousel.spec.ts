@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { defineComponent, h as createElement, nextTick, provide, ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { HomeBlockActionsKey } from '@/config/symbols'
+import { BlockActionsHostKey } from '@/config/symbols'
 import Component from './Carousel.vue'
 
 const setOverflow = async (scroller: HTMLDivElement, clientWidth: number, scrollWidth: number) => {
@@ -80,7 +80,7 @@ describe('carousel.vue', () => {
     const Wrapper = defineComponent({
       setup() {
         const host = ref<HTMLElement | null>(null)
-        provide(HomeBlockActionsKey, host)
+        provide(BlockActionsHostKey, host)
         return () =>
           createElement('div', [
             createElement('div', { ref: el => (host.value = el as HTMLElement), 'data-testid': 'host' }),

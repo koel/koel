@@ -45,4 +45,4 @@ export interface SortableItemContext {
 }
 export const SortableItemKey: InjectionKey<SortableItemContext> = Symbol('SortableItem')
 
-export const HomeBlockActionsKey: InjectionKey<Ref<HTMLElement | null>> = Symbol('HomeBlockActions')
+export const BlockActionsHostKey: InjectionKey<Ref<HTMLElement | null>> = Symbol('BlockActionsHost')

@@ -56,9 +56,9 @@
 <script setup lang="ts">
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { inject, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
-import { HomeBlockActionsKey } from '@/config/symbols'
+import { BlockActionsHostKey } from '@/config/symbols'
 
-const actionsHost = inject(HomeBlockActionsKey, ref(null))
+const actionsHost = inject(BlockActionsHostKey, ref(null))
 
 const scroller = ref<HTMLDivElement>()
 const hasOverflow = ref(false)
