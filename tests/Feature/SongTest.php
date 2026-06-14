@@ -58,6 +58,44 @@ class SongTest extends TestCase
         $this->getAs('api/songs?cursor=&per_page=101')->assertUnprocessable();
     }
 
+    /**
+     * Verifies cursor pagination traverses every supported sort field across two pages
+     * without 500ing on computed sorts (rating, favorite).
+     */
+    #[Test]
+    public function indexWithCursorTraversesAllSupportedSorts(): void
+    {
+        $user = create_user();
+        $songs = Song::factory()->createMany(3);
+        Rating::factory()->for($user)->for($songs[0], 'rateable')->createOne(['rating' => 5]);
+        Favorite::factory()->for($user)->for($songs[1], 'favoriteable')->createOne();
+
+        foreach ([
+            'title',
+            'track',
+            'length',
+            'year',
+            'created_at',
+            'artist_name',
+            'album_name',
+            'rating',
+            'favorite',
+        ] as $sort) {
+            $first = $this
+                ->getAs("api/songs?cursor=&per_page=2&sort={$sort}&order=desc", $user)
+                ->assertOk()
+                ->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+            $cursor = $first->json('meta.next_cursor');
+            self::assertNotNull($cursor, "missing next_cursor for sort={$sort}");
+
+            $this
+                ->getAs("api/songs?cursor={$cursor}&per_page=2&sort={$sort}&order=desc", $user)
+                ->assertOk()
+                ->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+        }
+    }
+
     #[Test]
     public function indexSortedByFavoriteScopesToCurrentUser(): void
     {

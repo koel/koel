@@ -75,6 +75,32 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
+    public function indexWithCursorTraversesAllSupportedSorts(): void
+    {
+        Artist::factory()
+            ->count(3)
+            ->create()
+            ->each(static function (Artist $artist): void {
+                Album::factory()->for($artist)->createOne();
+            });
+
+        foreach (['name', 'created_at', 'rating', 'favorite'] as $sort) {
+            $first = $this
+                ->getAs("api/artists?cursor=&per_page=2&sort={$sort}&order=desc")
+                ->assertOk()
+                ->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+            $cursor = $first->json('meta.next_cursor');
+            self::assertNotNull($cursor, "missing next_cursor for sort={$sort}");
+
+            $this
+                ->getAs("api/artists?cursor={$cursor}&per_page=2&sort={$sort}&order=desc")
+                ->assertOk()
+                ->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+        }
+    }
+
+    #[Test]
     public function indexExcludesArtistsWithoutAlbums(): void
     {
         $albumArtist = Artist::factory()->createOne();

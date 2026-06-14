@@ -72,6 +72,27 @@ class AlbumTest extends TestCase
     }
 
     #[Test]
+    public function indexWithCursorTraversesAllSupportedSorts(): void
+    {
+        Album::factory()->createMany(3);
+
+        foreach (['name', 'year', 'created_at', 'artist_name', 'length', 'rating', 'favorite'] as $sort) {
+            $first = $this
+                ->getAs("api/albums?cursor=&per_page=2&sort={$sort}&order=desc")
+                ->assertOk()
+                ->assertJsonStructure(AlbumResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+            $cursor = $first->json('meta.next_cursor');
+            self::assertNotNull($cursor, "missing next_cursor for sort={$sort}");
+
+            $this
+                ->getAs("api/albums?cursor={$cursor}&per_page=2&sort={$sort}&order=desc")
+                ->assertOk()
+                ->assertJsonStructure(AlbumResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+        }
+    }
+
+    #[Test]
     public function show(): void
     {
         $this->getAs('api/albums/'
