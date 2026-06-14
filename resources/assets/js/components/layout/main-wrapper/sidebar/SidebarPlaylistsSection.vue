@@ -5,22 +5,17 @@
       <CreatePlaylistContextMenuButton />
     </SidebarSectionHeader>
 
-    <ul>
+    <ul
+      :class="{ active: showDropAffordance, droppable }"
+      class="rounded-md transition-colors"
+      @dragleave="onDragLeave"
+      @dragover="onDragOver"
+      @drop="onDrop"
+    >
       <PlaylistSidebarItem :list="{ name: 'Favorites', playables: favorites }" />
       <PlaylistSidebarItem :list="{ name: 'Recently Played', playables: [] }" />
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
       <PlaylistSidebarItem v-for="playlist in orphanPlaylists" :key="playlist.id" :list="playlist" />
-
-      <li
-        v-if="showOutOfFolderZone"
-        :class="{ droppable }"
-        class="drop-zone mt-2 px-3 py-2 rounded-md text-sm text-k-text-secondary border border-dashed border-k-fg-30 text-center select-none"
-        @dragleave="onZoneDragLeave"
-        @dragover="onZoneDragOver"
-        @drop="onZoneDrop"
-      >
-        Drop here to move out of folder
-      </li>
     </ul>
   </SidebarSection>
 </template>
@@ -45,6 +40,10 @@ const favorites = toRef(playableStore.state, 'favorites')
 const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
 const droppable = ref(false)
 
+// Show the section's "drop here to leave a folder" hint only while a playlist
+// is actively being dragged, so the rest of the time the sidebar is quiet.
+const showDropAffordance = computed(() => currentDragType.value === 'playlist')
+
 const orphanPlaylists = computed(() =>
   playlists.value.filter(({ folder_id }) => {
     if (folder_id === null) {
@@ -57,20 +56,16 @@ const orphanPlaylists = computed(() =>
   }),
 )
 
-// Only show the "move out of folder" zone while a playlist is actively being dragged.
-const showOutOfFolderZone = computed(() => currentDragType.value === 'playlist')
-
-const onZoneDragOver = (event: DragEvent) => {
+const onDragOver = (event: DragEvent) => {
   if (!acceptsDrop(event)) {
     return false
   }
 
   event.preventDefault()
-  event.stopPropagation()
   droppable.value = true
 }
 
-const onZoneDragLeave = (event: DragEvent) => {
+const onDragLeave = (event: DragEvent) => {
   const relatedTarget = event.relatedTarget as Node | null
   if (relatedTarget && (event.currentTarget as Node).contains(relatedTarget)) {
     return
@@ -79,7 +74,7 @@ const onZoneDragLeave = (event: DragEvent) => {
   droppable.value = false
 }
 
-const onZoneDrop = async (event: DragEvent) => {
+const onDrop = async (event: DragEvent) => {
   droppable.value = false
 
   if (!acceptsDrop(event)) {
@@ -87,7 +82,6 @@ const onZoneDrop = async (event: DragEvent) => {
   }
 
   event.preventDefault()
-  event.stopPropagation()
 
   const playlist = await resolveDroppedValue<Playlist>(event)
   if (!playlist || playlist.folder_id === null) {
@@ -100,7 +94,11 @@ const onZoneDrop = async (event: DragEvent) => {
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
-.drop-zone.droppable {
-  @apply border-solid border-k-highlight text-k-highlight cursor-copy;
+ul.active {
+  @apply bg-k-fg-5;
+}
+
+ul.droppable {
+  @apply ring-1 ring-offset-0 ring-k-highlight cursor-copy;
 }
 </style>
