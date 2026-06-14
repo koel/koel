@@ -96,24 +96,19 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 const loading = ref(false)
 let initialized = false
 
-const orderedBlocks = computed<Block[]>(() => {
-  const saved = preferenceStore.home_blocks_order ?? []
+// Compares two blocks by position in `saved`. Blocks not listed in `saved` sort
+// to the end (Infinity); among themselves they keep canonical order via the
+// stability of Array.sort.
+const bySavedOrder = (saved: readonly string[]) => (a: Block, b: Block) => {
+  const positionOf = (id: string) => {
+    const i = saved.indexOf(id)
+    return i === -1 ? Infinity : i
+  }
 
-  return [...blocks].sort((a, b) => {
-    const aIdx = saved.indexOf(a.id)
-    const bIdx = saved.indexOf(b.id)
+  return positionOf(a.id) - positionOf(b.id)
+}
 
-    if (aIdx === -1) {
-      return bIdx === -1 ? 0 : 1
-    }
-
-    if (bIdx === -1) {
-      return -1
-    }
-
-    return aIdx - bIdx
-  })
-})
+const orderedBlocks = computed<Block[]>(() => [...blocks].sort(bySavedOrder(preferenceStore.home_blocks_order ?? [])))
 
 const onReorder = (ids: string[]) => {
   preferenceStore.home_blocks_order = ids
