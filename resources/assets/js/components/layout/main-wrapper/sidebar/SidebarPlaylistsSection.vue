@@ -5,7 +5,11 @@
       <CreatePlaylistContextMenuButton />
     </SidebarSectionHeader>
 
-    <ul :class="{ dragging: isDraggingPlaylist }" @dragover="onDragOver" @drop="onDrop">
+    <ul
+      :class="{ dragging: isDraggingPlaylist, 'no-target': isDraggingPlaylist && !hasDropTarget }"
+      @dragover="onDragOver"
+      @drop="onDrop"
+    >
       <PlaylistSidebarItem :list="{ name: 'Favorites', playables: favorites }" />
       <PlaylistSidebarItem :list="{ name: 'Recently Played', playables: [] }" />
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
@@ -19,7 +23,7 @@ import { computed, toRef } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
-import { currentDragType, useDroppable } from '@/composables/useDragAndDrop'
+import { currentDragType, currentDropTargetFolderId, useDroppable } from '@/composables/useDragAndDrop'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
@@ -34,6 +38,7 @@ const favorites = toRef(playableStore.state, 'favorites')
 const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
 
 const isDraggingPlaylist = computed(() => currentDragType.value === 'playlist')
+const hasDropTarget = computed(() => currentDropTargetFolderId.value !== null)
 
 const orphanPlaylists = computed(() =>
   playlists.value.filter(({ folder_id }) => {
@@ -89,6 +94,7 @@ const onDrop = async (event: DragEvent) => {
    the playlist out of its folder. */
 ul.dragging {
   cursor: copy;
+  transition: outline-color 0.15s ease;
 }
 
 ul.dragging > :deep(*) {
@@ -98,5 +104,13 @@ ul.dragging > :deep(*) {
 
 ul.dragging > :deep(.droppable) {
   opacity: 1;
+}
+
+/* No folder is targeted — surface a faint dashed outline so the user can see
+   that the whole section is the implicit "move out of folder" drop zone. */
+ul.dragging.no-target {
+  outline: 1px dashed var(--color-k-highlight);
+  outline-offset: 4px;
+  border-radius: 0.375rem;
 }
 </style>

@@ -38,7 +38,7 @@ import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
-import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
+import { currentDropTargetFolderId, useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { useContextMenu } from '@/composables/useContextMenu'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
@@ -110,6 +110,7 @@ const onDragOver = (event: DragEvent) => {
   }
 
   droppable.value = true
+  currentDropTargetFolderId.value = folder.value.id
 }
 
 const onDragLeave = (event: DragEvent) => {
@@ -122,6 +123,10 @@ const onDragLeave = (event: DragEvent) => {
 
   droppable.value = false
   cancelAutoExpand()
+
+  if (currentDropTargetFolderId.value === folder.value.id) {
+    currentDropTargetFolderId.value = null
+  }
 }
 
 const onDrop = async (event: DragEvent) => {
