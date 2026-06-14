@@ -150,6 +150,16 @@ describe('playlistFolderStore', () => {
     expect(http.delete).not.toHaveBeenCalled()
   })
 
+  it('rolls folder_id back when the move request fails', async () => {
+    const folder = h.factory('playlist-folder').make()
+    const playlist = h.factory('playlist').make({ folder_id: null })
+    vi.mocked(http.post).mockRejectedValue(new Error('boom'))
+
+    await expect(playlistFolderStore.movePlaylistToFolder(playlist, folder)).rejects.toThrow('boom')
+
+    expect(playlist.folder_id).toBeNull()
+  })
+
   it('sorts folders alphabetically', () => {
     const sorted = playlistFolderStore.sort([
       h.factory('playlist-folder').make({ name: 'Zebra' }),

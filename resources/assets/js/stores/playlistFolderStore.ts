@@ -49,10 +49,16 @@ export const playlistFolderStore = {
     // Update folder_id locally so the UI reflects the move immediately.
     playlist.folder_id = targetFolderId
 
-    if (folder) {
-      await http.post(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
-    } else if (sourceFolderId) {
-      await http.delete(`playlist-folders/${sourceFolderId}/playlists`, { playlists: [playlist.id] })
+    try {
+      if (folder) {
+        await http.post(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
+      } else if (sourceFolderId) {
+        await http.delete(`playlist-folders/${sourceFolderId}/playlists`, { playlists: [playlist.id] })
+      }
+    } catch (error) {
+      // Roll the optimistic mutation back so the UI doesn't diverge from the server.
+      playlist.folder_id = sourceFolderId
+      throw error
     }
   },
 
