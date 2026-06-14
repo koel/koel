@@ -105,12 +105,18 @@ class AlbumBuilder extends FavoriteableBuilder
     {
         throw_unless($this->user, new LogicException('User must be set to query album ratings.'));
 
-        return $this->leftJoin('ratings as album_ratings', function (JoinClause $join): void {
+        $this->leftJoin('ratings as album_ratings', function (JoinClause $join): void {
             $join->on('album_ratings.rateable_id', 'albums.id')->where('album_ratings.rateable_type', 'album')->where(
                 'album_ratings.user_id',
                 $this->user->id,
             );
         })->addSelect(DB::raw('(COALESCE(album_ratings.rating, 0)) as rating'));
+
+        if ($this->getQuery()->groups) {
+            $this->groupBy('album_ratings.rating');
+        }
+
+        return $this;
     }
 
     public function withUserContext(
