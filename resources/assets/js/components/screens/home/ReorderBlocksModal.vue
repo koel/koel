@@ -17,8 +17,8 @@
         :draggable="true"
         class="group flex transition-all items-center gap-2 pr-3 py-2 rounded-sm bg-k-bg-secondary hover:bg-k-fg-5 hover:pl-3 cursor-grab active:cursor-grabbing active:text-k-highlight select-none"
         :class="{ 'opacity-40': draggedId === block.id }"
-        @dragstart="onDragStart(block.id, $event)"
-        @dragover.prevent="onDragOver(block.id, $event)"
+        @dragstart="onDragStart(block, $event)"
+        @dragover.prevent="onDragOver(block, $event)"
         @dragend="onDragEnd"
         @drop.prevent
       >
@@ -57,17 +57,17 @@ const orderIds = ref<string[]>(props.blocks.map(block => block.id))
 
 const orderedBlocks = computed(() => orderIds.value.map(id => props.blocks.find(block => block.id === id)!))
 
-const onDragStart = (id: string, event: DragEvent) => {
+const onDragStart = (block: BlockSummary, event: DragEvent) => {
   if (!event.dataTransfer) {
     return
   }
 
   event.dataTransfer.effectAllowed = 'move'
-  draggedId.value = id
+  draggedId.value = block.id
 }
 
-const onDragOver = (targetId: string, event: DragEvent) => {
-  if (draggedId.value === null || draggedId.value === targetId) {
+const onDragOver = (target: BlockSummary, event: DragEvent) => {
+  if (draggedId.value === null || draggedId.value === target.id) {
     return
   }
 
@@ -75,7 +75,7 @@ const onDragOver = (targetId: string, event: DragEvent) => {
   const insertBefore = event.clientY < rect.top + rect.height / 2
 
   const next = orderIds.value.filter(id => id !== draggedId.value)
-  const targetIndex = next.indexOf(targetId)
+  const targetIndex = next.indexOf(target.id)
 
   if (targetIndex === -1) {
     return
