@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Exceptions\AlbumNameConflictException;
+use App\Http\Controllers\API\Concerns\ResolvesPaginationStrategyFromRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Album\AlbumListRequest;
 use App\Http\Requests\API\Album\AlbumUpdateRequest;
@@ -14,6 +15,8 @@ use Illuminate\Validation\ValidationException;
 
 class AlbumController extends Controller
 {
+    use ResolvesPaginationStrategyFromRequest;
+
     public function __construct(
         private readonly AlbumRepository $repository,
         private readonly AlbumService $service,
@@ -21,23 +24,11 @@ class AlbumController extends Controller
 
     public function index(AlbumListRequest $request)
     {
-        $sortColumn = $request->sort ?? 'name';
-        $sortDirection = $request->order ?? 'asc';
-        $favoritesOnly = $request->boolean('favorites_only');
-
-        if ($request->has('cursor')) {
-            return AlbumResource::collection($this->repository->getForListingByCursor(
-                sortColumn: $sortColumn,
-                sortDirection: $sortDirection,
-                cursor: $request->cursor,
-                favoritesOnly: $favoritesOnly,
-            ));
-        }
-
-        return AlbumResource::collection($this->repository->getForListing(
-            sortColumn: $sortColumn,
-            sortDirection: $sortDirection,
-            favoritesOnly: $favoritesOnly,
+        return AlbumResource::collection($this->repository->paginate(
+            sortColumn: $request->sort ?? 'name',
+            sortDirection: $request->order ?? 'asc',
+            strategy: $this->resolvePaginationStrategy($request),
+            favoritesOnly: $request->boolean('favorites_only'),
         ));
     }
 

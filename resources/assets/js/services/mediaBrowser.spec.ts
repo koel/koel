@@ -15,13 +15,13 @@ describe('mediaBrowser', () => {
     const subfolders = h.factory('folder').make(3)
     const songs = h.factory('song').make(3)
 
-    const songPaginator: PaginatorResource<Song> = {
+    const songPaginator: CursorPaginatorResource<Song> = {
       data: songs,
-      links: {
-        next: 'foo',
-      },
       meta: {
-        current_page: 2,
+        path: '/browse/songs',
+        per_page: 50,
+        next_cursor: 'next-token',
+        prev_cursor: null,
       },
     }
 
@@ -32,11 +32,11 @@ describe('mediaBrowser', () => {
 
     const syncWithVaultMock = h.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
-    const result = await mediaBrowser.browse(folderId, 2)
+    const result = await mediaBrowser.browse(folderId, 'prev-token')
 
     expect(getMock).toBeCalledTimes(2)
     expect(getMock).toHaveBeenNthCalledWith(1, `browse/folders?folder=${folderId}`)
-    expect(getMock).toHaveBeenNthCalledWith(2, `browse/songs?folder=${folderId}&page=2`)
+    expect(getMock).toHaveBeenNthCalledWith(2, `browse/songs?folder=${folderId}&cursor=prev-token`)
     expect(syncWithVaultMock).toHaveBeenCalledWith(songs)
 
     expect(result).toEqual({
@@ -44,7 +44,7 @@ describe('mediaBrowser', () => {
       ancestors,
       subfolders,
       songs,
-      nextPage: 3,
+      nextCursor: 'next-token',
     })
   })
 
@@ -52,10 +52,14 @@ describe('mediaBrowser', () => {
     const subfolders = h.factory('folder').make(3)
     const songs = h.factory('song').make(2)
 
-    const songPaginator: PaginatorResource<Song> = {
+    const songPaginator: CursorPaginatorResource<Song> = {
       data: songs,
-      links: { next: null },
-      meta: { current_page: 1 },
+      meta: {
+        path: '/browse/songs',
+        per_page: 50,
+        next_cursor: null,
+        prev_cursor: null,
+      },
     }
 
     const getMock = h
@@ -65,17 +69,17 @@ describe('mediaBrowser', () => {
 
     h.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
-    const result = await mediaBrowser.browse(null, 1)
+    const result = await mediaBrowser.browse(null, '')
 
     expect(getMock).toHaveBeenNthCalledWith(1, 'browse/folders')
-    expect(getMock).toHaveBeenNthCalledWith(2, 'browse/songs?page=1')
+    expect(getMock).toHaveBeenNthCalledWith(2, 'browse/songs?cursor=')
 
     expect(result).toEqual({
       current: null,
       ancestors: [],
       subfolders,
       songs,
-      nextPage: null,
+      nextCursor: null,
     })
   })
 
@@ -86,25 +90,25 @@ describe('mediaBrowser', () => {
     const subfolders = h.factory('folder').make(2)
     const songs = h.factory('song').make(3)
 
-    const songPaginator: PaginatorResource<Song> = {
+    const songPaginator: CursorPaginatorResource<Song> = {
       data: songs,
-      links: {
-        next: 'foo',
-      },
       meta: {
-        current_page: 2,
+        path: '/browse/songs',
+        per_page: 50,
+        next_cursor: 'next-token',
+        prev_cursor: null,
       },
     }
 
     cache.set(['folder', folderId, 'folders'], { current, ancestors, subfolders })
-    cache.set(['folder', folderId, 'songs', 2], songPaginator)
+    cache.set(['folder', folderId, 'songs', 'prev-token'], songPaginator)
 
     const getMock = h.mock(http, 'get')
 
     const syncWithVaultMock = h.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
-    const firstResult = await mediaBrowser.browse(folderId, 2)
-    const secondResult = await mediaBrowser.browse(folderId, 2)
+    const firstResult = await mediaBrowser.browse(folderId, 'prev-token')
+    const secondResult = await mediaBrowser.browse(folderId, 'prev-token')
 
     expect(getMock).not.toHaveBeenCalled()
     expect(syncWithVaultMock).toHaveBeenCalledWith(songs)
@@ -114,7 +118,7 @@ describe('mediaBrowser', () => {
       ancestors,
       subfolders,
       songs,
-      nextPage: 3,
+      nextCursor: 'next-token',
     }
 
     expect(firstResult).toEqual(expected)
@@ -129,13 +133,13 @@ describe('mediaBrowser', () => {
     const subfolders = h.factory('folder').make(2)
     const songs = h.factory('song').make(3)
 
-    const songPaginator: PaginatorResource<Song> = {
+    const songPaginator: CursorPaginatorResource<Song> = {
       data: songs,
-      links: {
-        next: 'foo',
-      },
       meta: {
-        current_page: 2,
+        path: '/browse/songs',
+        per_page: 50,
+        next_cursor: 'next-token',
+        prev_cursor: null,
       },
     }
 
@@ -146,22 +150,22 @@ describe('mediaBrowser', () => {
 
     h.mock(playableStore, 'syncWithVault').mockReturnValue(songs)
 
-    const result = await mediaBrowser.browse(folderId, 2, true)
+    const result = await mediaBrowser.browse(folderId, 'prev-token', true)
 
     expect(removeCacheMock).toBeCalledTimes(2)
     expect(removeCacheMock).toHaveBeenNthCalledWith(1, ['folder', folderId, 'folders'])
-    expect(removeCacheMock).toHaveBeenNthCalledWith(2, ['folder', folderId, 'songs', 2])
+    expect(removeCacheMock).toHaveBeenNthCalledWith(2, ['folder', folderId, 'songs', 'prev-token'])
 
     expect(getMock).toBeCalledTimes(2)
     expect(getMock).toHaveBeenNthCalledWith(1, `browse/folders?folder=${folderId}`)
-    expect(getMock).toHaveBeenNthCalledWith(2, `browse/songs?folder=${folderId}&page=2`)
+    expect(getMock).toHaveBeenNthCalledWith(2, `browse/songs?folder=${folderId}&cursor=prev-token`)
 
     expect(result).toEqual({
       current,
       ancestors: [],
       subfolders,
       songs,
-      nextPage: 3,
+      nextCursor: 'next-token',
     })
   })
 

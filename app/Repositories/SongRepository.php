@@ -17,6 +17,7 @@ use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\Contracts\PaginationStrategy;
 use App\Repositories\Contracts\ScoutableRepository;
 use App\Values\SmartPlaylist\SmartPlaylistQueryModifier as QueryModifier;
 use App\Values\SmartPlaylist\SmartPlaylistRule as Rule;
@@ -122,29 +123,16 @@ class SongRepository extends Repository implements ScoutableRepository
     public function paginate(
         array $sortColumns,
         string $sortDirection,
+        PaginationStrategy $strategy,
         ?User $scopedUser = null,
-        int $perPage = 50,
-    ): Paginator {
-        $scopedUser ??= $this->auth->user();
-
-        return Song::query(type: PlayableType::SONG, user: $scopedUser)
-            ->withUserContext()
-            ->sort($sortColumns, $sortDirection)
-            ->simplePaginate($perPage);
-    }
-
-    public function paginateByCursor(
-        array $sortColumns,
-        string $sortDirection,
-        ?string $cursor,
-        int $perPage = 50,
-        ?User $scopedUser = null,
-    ): CursorPaginator {
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->withUserContext()
-            ->sort($sortColumns, $sortDirection)
-            ->orderBy('songs.id')
-            ->cursorPaginate($perPage, cursorName: 'cursor', cursor: $cursor);
+    ): Paginator|CursorPaginator {
+        return $strategy->apply(
+            Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+                ->withUserContext()
+                ->sort($sortColumns, $sortDirection),
+            idColumn: 'songs.id',
+            perPage: 50,
+        );
     }
 
     /**
@@ -154,15 +142,22 @@ class SongRepository extends Repository implements ScoutableRepository
         ?Genre $genre,
         array $sortColumns,
         string $sortDirection,
+        PaginationStrategy $strategy,
         ?User $scopedUser = null,
-        int $perPage = 50,
-    ): Paginator {
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->withUserContext()
-            ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
-            ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
-            ->sort($sortColumns, $sortDirection)
-            ->simplePaginate($perPage);
+    ): Paginator|CursorPaginator {
+        return $strategy->apply(
+            Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+                ->withUserContext()
+                ->when($genre, static fn (Builder $builder) => $builder->whereRelation(
+                    'genres',
+                    'genres.id',
+                    $genre->id,
+                ))
+                ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
+                ->sort($sortColumns, $sortDirection),
+            idColumn: 'songs.id',
+            perPage: 50,
+        );
     }
 
     public function getForQueue(
@@ -201,7 +196,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    public function paginateInFolder(?Folder $folder = null, ?User $scopedUser = null): Paginator
+    public function paginateInFolder(?string $cursor, ?Folder $folder = null, ?User $scopedUser = null): CursorPaginator
     {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
@@ -209,7 +204,8 @@ class SongRepository extends Repository implements ScoutableRepository
             ->when($folder, static fn (SongBuilder $query) => $query->where('folder_id', $folder->id)) // @phpstan-ignore-line
             ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('folder_id'))
             ->orderBy('songs.path')
-            ->simplePaginate(50);
+            ->orderBy('songs.id')
+            ->cursorPaginate(50, cursorName: 'cursor', cursor: $cursor);
     }
 
     public function getByArtist(Artist|string $artist, ?User $scopedUser = null): Collection

@@ -13,7 +13,7 @@ describe('genreScreen', () => {
 
     const fetchGenreMock = h.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
     const paginateMock = h.mock(playableStore, 'paginateSongsByGenre').mockResolvedValue({
-      nextPage: 2,
+      nextCursor: 'next-token',
       songs: songs || h.factory('song').make(13),
     })
 
@@ -30,7 +30,7 @@ describe('genreScreen', () => {
       expect(paginateMock).toHaveBeenCalledWith(genre!.id, {
         sort: 'title',
         order: 'asc',
-        page: 1,
+        cursor: '',
       })
     })
 

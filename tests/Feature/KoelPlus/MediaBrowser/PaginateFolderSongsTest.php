@@ -20,8 +20,8 @@ class PaginateFolderSongsTest extends PlusTestCase
         $songs = Song::factory()->for($folder)->count(2)->create();
 
         $response = $this->getAs(
-            '/api/browse/songs?folder=' . $folder->id . '&page=1',
-        )->assertJsonStructure(SongFileResource::PAGINATION_JSON_STRUCTURE);
+            '/api/browse/songs?folder=' . $folder->id . '&cursor=',
+        )->assertJsonStructure(SongFileResource::CURSOR_PAGINATION_JSON_STRUCTURE);
 
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $response->json('data.*.id'));
     }
@@ -32,7 +32,9 @@ class PaginateFolderSongsTest extends PlusTestCase
         /** @var Collection<Song> $songs */
         $songs = Song::factory()->createMany(2);
 
-        $response = $this->getAs('/api/browse/songs')->assertJsonStructure(SongFileResource::PAGINATION_JSON_STRUCTURE);
+        $response = $this->getAs(
+            '/api/browse/songs?cursor=',
+        )->assertJsonStructure(SongFileResource::CURSOR_PAGINATION_JSON_STRUCTURE);
 
         self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $response->json('data.*.id'));
     }

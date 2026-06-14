@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Artist;
 
 use App\Exceptions\ArtistNameConflictException;
+use App\Http\Controllers\API\Concerns\ResolvesPaginationStrategyFromRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Artist\ArtistListRequest;
 use App\Http\Requests\API\Artist\ArtistUpdateRequest;
@@ -14,6 +15,8 @@ use Illuminate\Validation\ValidationException;
 
 class ArtistController extends Controller
 {
+    use ResolvesPaginationStrategyFromRequest;
+
     public function __construct(
         private readonly ArtistService $service,
         private readonly ArtistRepository $repository,
@@ -21,23 +24,11 @@ class ArtistController extends Controller
 
     public function index(ArtistListRequest $request)
     {
-        $sortColumn = $request->sort ?? 'name';
-        $sortDirection = $request->order ?? 'asc';
-        $favoritesOnly = $request->boolean('favorites_only');
-
-        if ($request->has('cursor')) {
-            return ArtistResource::collection($this->repository->getForListingByCursor(
-                sortColumn: $sortColumn,
-                sortDirection: $sortDirection,
-                cursor: $request->cursor,
-                favoritesOnly: $favoritesOnly,
-            ));
-        }
-
-        return ArtistResource::collection($this->repository->getForListing(
-            sortColumn: $sortColumn,
-            sortDirection: $sortDirection,
-            favoritesOnly: $favoritesOnly,
+        return ArtistResource::collection($this->repository->paginate(
+            sortColumn: $request->sort ?? 'name',
+            sortDirection: $request->order ?? 'asc',
+            strategy: $this->resolvePaginationStrategy($request),
+            favoritesOnly: $request->boolean('favorites_only'),
         ));
     }
 

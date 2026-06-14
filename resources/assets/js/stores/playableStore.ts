@@ -270,18 +270,19 @@ export const playableStore = {
     )
   },
 
-  async paginateSongsByGenre(genre: Genre | Genre['id'], params: SongListPaginateParams) {
+  async paginateSongsByGenre(genre: Genre | Genre['id'], params: SongListCursorPaginateParams) {
     const id = typeof genre === 'string' ? genre : genre.id
 
-    const resource = await http.get<PaginatorResource<Song>>(
-      `genres/${id}/songs?${new URLSearchParams(flattenParams(params))}`,
-    )
+    const query = new URLSearchParams(flattenParams(params))
+    query.set('cursor', params.cursor ?? '')
+
+    const resource = await http.get<CursorPaginatorResource<Song>>(`genres/${id}/songs?${query}`)
 
     const songs = this.syncWithVault(resource.data) as Song[]
 
     return {
       songs,
-      nextPage: resource.links.next ? ++resource.meta.current_page : null,
+      nextCursor: resource.meta.next_cursor,
     }
   },
 

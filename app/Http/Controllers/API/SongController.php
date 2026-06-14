@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\API\Concerns\ResolvesPaginationStrategyFromRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\DeleteSongsRequest;
 use App\Http\Requests\API\SongListRequest;
@@ -19,6 +20,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class SongController extends Controller
 {
+    use ResolvesPaginationStrategyFromRequest;
+
     /** @param User $user */
     public function __construct(
         private readonly SongService $songService,
@@ -30,21 +33,10 @@ class SongController extends Controller
 
     public function index(SongListRequest $request)
     {
-        $sortColumns = $request->sort ? explode(',', $request->sort) : ['songs.title'];
-        $sortDirection = $request->order ?: 'asc';
-
-        if ($request->has('cursor')) {
-            return SongResource::collection($this->songRepository->paginateByCursor(
-                sortColumns: $sortColumns,
-                sortDirection: $sortDirection,
-                cursor: $request->cursor,
-                scopedUser: $this->user,
-            ));
-        }
-
         return SongResource::collection($this->songRepository->paginate(
-            sortColumns: $sortColumns,
-            sortDirection: $sortDirection,
+            sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
+            sortDirection: $request->order ?: 'asc',
+            strategy: $this->resolvePaginationStrategy($request),
             scopedUser: $this->user,
         ));
     }

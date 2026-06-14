@@ -20,6 +20,9 @@ class PaginateFolderSongsController extends Controller
             $this->authorize('browse', $folder);
         }
 
-        return SongFileResource::collection($songRepository->paginateInFolder($folder));
+        return SongFileResource::collection($songRepository->paginateInFolder(
+            cursor: request('cursor'),
+            folder: $folder,
+        ));
     }
 }
