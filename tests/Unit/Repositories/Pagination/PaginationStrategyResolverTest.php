@@ -14,7 +14,7 @@ class PaginationStrategyResolverTest extends TestCase
     #[Test]
     public function resolvesCursorStrategyWhenCursorPresent(): void
     {
-        $strategy = PaginationStrategyResolver::resolve($this->requestWithQuery(['cursor' => 'eyJpZCI6MX0']));
+        $strategy = PaginationStrategyResolver::resolve(self::createRequest(['cursor' => 'eyJpZCI6MX0']));
 
         self::assertInstanceOf(CursorStrategy::class, $strategy);
     }
@@ -22,7 +22,7 @@ class PaginationStrategyResolverTest extends TestCase
     #[Test]
     public function resolvesCursorStrategyWhenCursorPresentButEmpty(): void
     {
-        $strategy = PaginationStrategyResolver::resolve($this->requestWithQuery(['cursor' => '']));
+        $strategy = PaginationStrategyResolver::resolve(self::createRequest(['cursor' => '']));
 
         self::assertInstanceOf(CursorStrategy::class, $strategy);
     }
@@ -30,14 +30,14 @@ class PaginationStrategyResolverTest extends TestCase
     #[Test]
     public function resolvesOffsetStrategyWhenCursorAbsent(): void
     {
-        $strategy = PaginationStrategyResolver::resolve($this->requestWithQuery([]));
+        $strategy = PaginationStrategyResolver::resolve(self::createRequest());
 
         self::assertInstanceOf(OffsetStrategy::class, $strategy);
     }
 
-    /** @param array<string, string> $query */
-    private function requestWithQuery(array $query): Request
+    /** @param array<string, string> $queryParams */
+    private static function createRequest(array $queryParams = []): Request
     {
-        return new class($query, [], [], [], [], ['REQUEST_METHOD' => 'GET']) extends Request {};
+        return StubFormRequest::create('/', 'GET', $queryParams);
     }
 }
