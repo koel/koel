@@ -2,12 +2,12 @@ import { describe, expect, it } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { defineComponent, h as createElement, inject } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { SortableItemKey } from '@/config/symbols'
-import Component from './SortableListItem.vue'
+import { ReorderableItemKey } from '@/config/symbols'
+import Component from './ReorderableListItem.vue'
 
 const ContextProbe = defineComponent({
   setup() {
-    const sortable = inject(SortableItemKey, null)
+    const sortable = inject(ReorderableItemKey, null)
     return () =>
       createElement('button', {
         'data-testid': 'probe',
@@ -40,7 +40,7 @@ const stubRect = (el: HTMLElement) => {
     }) as DOMRect
 }
 
-describe('sortableListItem.vue', () => {
+describe('reorderableListItem.vue', () => {
   const h = createHarness()
 
   it('renders the slot content', () => {
@@ -60,7 +60,7 @@ describe('sortableListItem.vue', () => {
 
     fire('dragstart', screen.getByTestId('probe'))
 
-    const wrapper = container.querySelector('.sortable-list-item')
+    const wrapper = container.querySelector('.reorderable-list-item')
     const [id, wrapperArg, eventArg] = emitted().dragstart[0] as [string, HTMLElement, Event]
     expect(id).toBe('a')
     expect(wrapperArg).toBe(wrapper)
@@ -72,7 +72,7 @@ describe('sortableListItem.vue', () => {
       props: { id: 'b', isDragging: false },
     })
 
-    const wrapper = container.querySelector<HTMLElement>('.sortable-list-item')!
+    const wrapper = container.querySelector<HTMLElement>('.reorderable-list-item')!
     stubRect(wrapper)
     fire('dragover', wrapper, { clientY: 120 })
 
@@ -85,7 +85,7 @@ describe('sortableListItem.vue', () => {
       props: { id: 'c', isDragging: false },
     })
 
-    fire('drop', container.querySelector<HTMLElement>('.sortable-list-item')!)
+    fire('drop', container.querySelector<HTMLElement>('.reorderable-list-item')!)
 
     expect(emitted().drop[0]).toEqual(['c'])
   })
@@ -95,8 +95,8 @@ describe('sortableListItem.vue', () => {
       props: { id: 'a', isDragging: true },
     })
 
-    expect(container.querySelector('.sortable-list-item')!.classList.contains('sortable-list-item--dragging')).toBe(
-      true,
-    )
+    expect(
+      container.querySelector('.reorderable-list-item')!.classList.contains('reorderable-list-item--dragging'),
+    ).toBe(true)
   })
 })

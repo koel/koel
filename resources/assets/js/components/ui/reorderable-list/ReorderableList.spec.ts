@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, h as createElement, inject, nextTick } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { SortableItemKey } from '@/config/symbols'
-import Component from './SortableList.vue'
+import { ReorderableItemKey } from '@/config/symbols'
+import Component from './ReorderableList.vue'
 
 const ITEMS = [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }]
 
 const Probe = defineComponent({
   props: { label: { type: String, required: true } },
   setup(props) {
-    const sortable = inject(SortableItemKey, null)
+    const sortable = inject(ReorderableItemKey, null)
     return () =>
       createElement('div', {
         'data-testid': props.label,
@@ -43,11 +43,11 @@ const stubRect = (el: HTMLElement, top: number, height = 100) => {
 }
 
 const itemIds = (container: Element) =>
-  Array.from(container.querySelectorAll<HTMLElement>('.sortable-list-item__inner > [data-testid]')).map(
+  Array.from(container.querySelectorAll<HTMLElement>('.reorderable-list-item__inner > [data-testid]')).map(
     el => el.dataset.testid!,
   )
 
-describe('sortableList.vue', () => {
+describe('reorderableList.vue', () => {
   const h = createHarness()
 
   const renderList = () =>
@@ -64,7 +64,7 @@ describe('sortableList.vue', () => {
 
   it('emits reorder with the new id list when an item is dropped onto another', async () => {
     const { container, emitted } = renderList()
-    const wrappers = Array.from(container.querySelectorAll<HTMLElement>('.sortable-list-item'))
+    const wrappers = Array.from(container.querySelectorAll<HTMLElement>('.reorderable-list-item'))
 
     stubRect(wrappers[0], 0)
     stubRect(wrappers[2], 200)
@@ -84,7 +84,7 @@ describe('sortableList.vue', () => {
 
   it('does not emit reorder when the drag is released without a drop', async () => {
     const { container, emitted } = renderList()
-    const wrappers = Array.from(container.querySelectorAll<HTMLElement>('.sortable-list-item'))
+    const wrappers = Array.from(container.querySelectorAll<HTMLElement>('.reorderable-list-item'))
 
     stubRect(wrappers[0], 0)
     stubRect(wrappers[2], 200)

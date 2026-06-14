@@ -2,13 +2,13 @@ import { screen } from '@testing-library/vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h as createElement, provide } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { SortableItemKey } from '@/config/symbols'
+import { ReorderableItemKey } from '@/config/symbols'
 import Component from './HomeScreenBlock.vue'
 
 const withSortable = (onHeaderDragStart: (event: DragEvent) => void) =>
   defineComponent({
     setup(_, { slots }) {
-      provide(SortableItemKey, { onHeaderDragStart })
+      provide(ReorderableItemKey, { onHeaderDragStart })
       return () => createElement(Component, null, slots)
     },
   })

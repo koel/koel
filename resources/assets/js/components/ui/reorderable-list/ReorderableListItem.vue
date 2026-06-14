@@ -1,12 +1,12 @@
 <template>
   <div
     ref="wrapperRef"
-    class="sortable-list-item relative"
-    :class="{ 'sortable-list-item--dragging': isDragging }"
+    class="reorderable-list-item relative"
+    :class="{ 'reorderable-list-item--dragging': isDragging }"
     @dragover.prevent="onDragOver"
     @drop.prevent="onDrop"
   >
-    <div class="sortable-list-item__inner">
+    <div class="reorderable-list-item__inner">
       <slot />
     </div>
   </div>
@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { provide, useTemplateRef } from 'vue'
-import { SortableItemKey } from '@/config/symbols'
+import { ReorderableItemKey } from '@/config/symbols'
 
 const props = defineProps<{
   id: string
@@ -29,7 +29,7 @@ const emit = defineEmits<{
 
 const wrapperRef = useTemplateRef<HTMLElement>('wrapperRef')
 
-provide(SortableItemKey, {
+provide(ReorderableItemKey, {
   onHeaderDragStart: (event: DragEvent) => {
     if (wrapperRef.value) {
       emit('dragstart', props.id, wrapperRef.value, event)
@@ -48,12 +48,12 @@ const onDrop = () => emit('drop', props.id)
 </script>
 
 <style lang="postcss" scoped>
-.sortable-list-item--dragging {
+.reorderable-list-item--dragging {
   outline: 1px dashed var(--color-highlight);
   outline-offset: 6px;
 }
 
-.sortable-list-item--dragging .sortable-list-item__inner {
+.reorderable-list-item--dragging .reorderable-list-item__inner {
   opacity: 0.35;
 }
 </style>

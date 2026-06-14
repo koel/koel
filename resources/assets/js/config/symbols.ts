@@ -40,9 +40,9 @@ export const PlayableListSortFieldKey: ReadonlyInjectionKey<Ref<PlayableListSort
 export const PlayableListSortOrderKey: ReadonlyInjectionKey<Ref<SortOrder>> = Symbol('PlayableListSortOrder')
 export const PlayableListContextKey: InjectionKey<Ref<PlayableListContext>> = Symbol('PlayableListContext')
 
-export interface SortableItemContext {
+export interface ReorderableItemContext {
   onHeaderDragStart: (event: DragEvent) => void
 }
-export const SortableItemKey: InjectionKey<SortableItemContext> = Symbol('SortableItem')
+export const ReorderableItemKey: InjectionKey<ReorderableItemContext> = Symbol('ReorderableItem')
 
 export const BlockActionsHostKey: InjectionKey<Ref<HTMLElement | null>> = Symbol('BlockActionsHost')

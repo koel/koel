@@ -1,6 +1,6 @@
 <template>
-  <TransitionGroup move-class="sortable-list-move">
-    <SortableListItem
+  <TransitionGroup move-class="reorderable-list-move">
+    <ReorderableListItem
       v-for="item in renderItems"
       :key="item.id"
       :id="item.id"
@@ -10,7 +10,7 @@
       @drop="onItemDrop"
     >
       <slot :item />
-    </SortableListItem>
+    </ReorderableListItem>
   </TransitionGroup>
 </template>
 
@@ -18,7 +18,7 @@
 import { isEqual } from 'lodash-es'
 import { computed, onBeforeUnmount, ref } from 'vue'
 
-import SortableListItem from '@/components/ui/sortable-list/SortableListItem.vue'
+import ReorderableListItem from '@/components/ui/reorderable-list/ReorderableListItem.vue'
 
 const props = defineProps<{
   items: Item[]
@@ -130,7 +130,7 @@ const setUpGhost = (event: DragEvent, wrapper: HTMLElement) => {
   const offsetX = Math.min(event.clientX - rect.left, rect.width)
   const offsetY = Math.min(event.clientY - rect.top, rect.height)
   event.dataTransfer.setDragImage(ghost, offsetX, offsetY)
-  event.dataTransfer.setData('application/x-koel.sortable-item', '1')
+  event.dataTransfer.setData('application/x-koel.reorderable-item', '1')
 
   setTimeout(() => ghost.remove(), 0)
 }
@@ -209,7 +209,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="postcss" scoped>
-.sortable-list-move {
+.reorderable-list-move {
   transition: transform 220ms ease;
 }
 </style>

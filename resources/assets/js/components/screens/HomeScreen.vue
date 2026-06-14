@@ -13,11 +13,11 @@
     </ScreenEmptyState>
 
     <div v-else class="home-sections space-y-12 w-full">
-      <SortableList :items="orderedBlocks" @reorder="onReorder">
+      <ReorderableList :items="orderedBlocks" @reorder="onReorder">
         <template #default="{ item }">
           <component :is="item.component" :loading :data-testid="item.id" />
         </template>
-      </SortableList>
+      </ReorderableList>
       <BtnScrollToTop />
     </div>
   </ScreenBase>
@@ -53,7 +53,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import SortableList from '@/components/ui/sortable-list/SortableList.vue'
+import ReorderableList from '@/components/ui/reorderable-list/ReorderableList.vue'
 
 interface Block {
   id: string
