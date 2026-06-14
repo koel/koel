@@ -374,6 +374,10 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.
+- CodeRabbit (and similar bots) split their output across two GitHub layers. Before claiming a review has been addressed, query **both**:
+  - `gh api repos/{owner}/{repo}/pulls/{n}/comments` — inline review comments on specific file/line positions (🟡 Minor / 🟠 Major / 🔴 Critical / ⚠️ Potential issue).
+  - `gh api repos/{owner}/{repo}/issues/{n}/comments` — issue-level (conversation) comments. CodeRabbit's PR-level summary lives here, and the **Nitpick comments** are bundled in a collapsible section inside that summary's body.
+  - Hitting only `/pulls/{n}/comments` misses every nitpick. Scan the issue-level summary body for `<details><summary>Nitpick` sections and triage each independently alongside the inline findings.
 
 ## Linting & Static Analysis
 - When running lint or static analysis (backend or frontend), fix ALL warnings and errors to ensure 100% clean output — even pre-existing issues unrelated to current changes.
