@@ -44,34 +44,27 @@ class ArtistTest extends TestCase
     public function indexWithCursorReturnsCursorPagination(): void
     {
         Artist::factory()
-            ->count(3)
+            ->count(22)
             ->create()
             ->each(static function (Artist $artist): void {
                 Album::factory()->for($artist)->createOne();
             });
 
         $response = $this->getAs(
-            'api/artists?cursor=&per_page=2',
+            'api/artists?cursor=',
         )->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
 
-        self::assertCount(2, $response->json('data'));
+        self::assertCount(21, $response->json('data'));
         self::assertNotNull($response->json('meta.next_cursor'));
         self::assertNull($response->json('meta.prev_cursor'));
 
         $secondPage = $this->getAs(
-            'api/artists?cursor=' . $response->json('meta.next_cursor') . '&per_page=2',
+            'api/artists?cursor=' . $response->json('meta.next_cursor'),
         )->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
 
         self::assertCount(1, $secondPage->json('data'));
         self::assertNull($secondPage->json('meta.next_cursor'));
         self::assertNotNull($secondPage->json('meta.prev_cursor'));
-    }
-
-    #[Test]
-    public function indexRejectsInvalidPerPage(): void
-    {
-        $this->getAs('api/artists?cursor=&per_page=0')->assertUnprocessable();
-        $this->getAs('api/artists?cursor=&per_page=101')->assertUnprocessable();
     }
 
     #[Test]

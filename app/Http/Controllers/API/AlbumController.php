@@ -30,7 +30,6 @@ class AlbumController extends Controller
                 sortColumn: $sortColumn,
                 sortDirection: $sortDirection,
                 cursor: $request->cursor,
-                perPage: $request->per_page ?? 21,
                 favoritesOnly: $favoritesOnly,
             ));
         }

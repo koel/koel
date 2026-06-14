@@ -38,7 +38,6 @@ class SongController extends Controller
                 sortColumns: $sortColumns,
                 sortDirection: $sortDirection,
                 cursor: $request->cursor,
-                perPage: $request->per_page ?? 50,
                 scopedUser: $this->user,
             ));
         }
@@ -47,7 +46,6 @@ class SongController extends Controller
             sortColumns: $sortColumns,
             sortDirection: $sortDirection,
             scopedUser: $this->user,
-            perPage: $request->per_page ?? 50,
         ));
     }
 
