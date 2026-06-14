@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { arrayify, getPlayableProp } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
@@ -11,6 +12,14 @@ import { mediaBrowser } from '@/services/mediaBrowser'
 type Draggable = MaybeArray<Playable> | Album | Artist | Genre | Playlist | PlaylistFolder | MaybeArray<Song | Folder>
 const draggableTypes = <const>['playables', 'album', 'artist', 'genre', 'playlist', 'playlist-folder', 'browser-media']
 type DraggableType = (typeof draggableTypes)[number]
+
+// Reactive type of the currently-active drag. Set on dragstart, cleared on dragend.
+// Components can read this to render drag-type-specific drop affordances
+// (e.g. show a "remove from folder" target only while a playlist is being dragged).
+export const currentDragType = ref<DraggableType | null>(null)
+
+document.addEventListener('dragend', () => (currentDragType.value = null))
+document.addEventListener('drop', () => (currentDragType.value = null), true)
 
 // A transparent 1x1 image used to suppress the browser's default drag ghost.
 const emptyDragImage = (() => {
@@ -89,6 +98,7 @@ export const useDraggable = (type: DraggableType) => {
       return
     }
 
+    currentDragType.value = type
     event.dataTransfer.effectAllowed = 'copyMove'
 
     let text: string

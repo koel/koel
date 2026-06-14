@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons'
 import isMobile from 'ismobilejs'
-import { computed, onBeforeUnmount, ref, toRefs } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
@@ -69,7 +69,20 @@ const cancelAutoExpand = () => {
   }
 }
 
-onBeforeUnmount(cancelAutoExpand)
+// `dragend` fires on the drag source whenever the operation ends, regardless of
+// where the drop landed or whether a child handler swallowed the event with
+// stopPropagation. Use it as the reliable signal to clear the indicator.
+const clearOnDragEnd = () => {
+  droppable.value = false
+  cancelAutoExpand()
+}
+
+onMounted(() => document.addEventListener('dragend', clearOnDragEnd))
+
+onBeforeUnmount(() => {
+  cancelAutoExpand()
+  document.removeEventListener('dragend', clearOnDragEnd)
+})
 
 const onDragStart = (event: DragEvent) => startDragging(event, folder.value)
 
@@ -88,6 +101,7 @@ const onDragOver = (event: DragEvent) => {
   }
 
   event.preventDefault()
+  event.stopPropagation()
   droppable.value = true
 }
 
