@@ -15,7 +15,7 @@
         v-for="block in orderedBlocks"
         :key="block.id"
         :draggable="true"
-        class="flex items-center gap-3 px-3 py-2 rounded-sm bg-k-bg-secondary hover:bg-k-fg-5 cursor-grab active:cursor-grabbing select-none transition"
+        class="group flex transition-all items-center gap-2 pr-3 py-2 rounded-sm bg-k-bg-secondary hover:bg-k-fg-5 hover:pl-3 cursor-grab active:cursor-grabbing active:text-k-highlight select-none"
         :class="{ 'opacity-40': draggedId === block.id }"
         @dragstart="onDragStart(block.id, $event)"
         @dragover.prevent="onDragOver(block.id, $event)"
@@ -23,7 +23,7 @@
         @drop.prevent
       >
         <GripVerticalIcon class="w-4 h-4 text-k-fg-50" />
-        <span class="text-k-fg">{{ block.label }}</span>
+        {{ block.label }}
       </div>
     </main>
 
