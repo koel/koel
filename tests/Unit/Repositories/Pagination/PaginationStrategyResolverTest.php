@@ -6,23 +6,17 @@ use App\Repositories\Pagination\CursorStrategy;
 use App\Repositories\Pagination\OffsetStrategy;
 use App\Repositories\Pagination\PaginationStrategyResolver;
 use Illuminate\Http\Request;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PaginationStrategyResolverTest extends TestCase
 {
     #[Test]
-    public function resolvesCursorStrategyWhenCursorPresent(): void
+    #[DataProvider('cursorPresentProvider')]
+    public function resolvesCursorStrategyWhenCursorPresent(string $cursor): void
     {
-        $strategy = PaginationStrategyResolver::resolve(self::createRequest(['cursor' => 'eyJpZCI6MX0']));
-
-        self::assertInstanceOf(CursorStrategy::class, $strategy);
-    }
-
-    #[Test]
-    public function resolvesCursorStrategyWhenCursorPresentButEmpty(): void
-    {
-        $strategy = PaginationStrategyResolver::resolve(self::createRequest(['cursor' => '']));
+        $strategy = PaginationStrategyResolver::resolve(self::createRequest(['cursor' => $cursor]));
 
         self::assertInstanceOf(CursorStrategy::class, $strategy);
     }
@@ -33,6 +27,13 @@ class PaginationStrategyResolverTest extends TestCase
         $strategy = PaginationStrategyResolver::resolve(self::createRequest());
 
         self::assertInstanceOf(OffsetStrategy::class, $strategy);
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function cursorPresentProvider(): iterable
+    {
+        yield 'with value' => ['eyJpZCI6MX0'];
+        yield 'empty' => [''];
     }
 
     /** @param array<string, string> $queryParams */
