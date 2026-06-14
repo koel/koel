@@ -205,7 +205,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->when(!$folder, static fn (SongBuilder $query) => $query->whereNull('folder_id'))
             ->orderBy('songs.path')
             ->orderBy('songs.id')
-            ->cursorPaginate(50, cursorName: 'cursor', cursor: $cursor);
+            ->cursorPaginate(50, cursor: $cursor);
     }
 
     public function getByArtist(Artist|string $artist, ?User $scopedUser = null): Collection

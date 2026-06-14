@@ -44,8 +44,7 @@ class ArtistTest extends TestCase
     public function indexWithCursorReturnsCursorPagination(): void
     {
         Artist::factory()
-            ->count(22)
-            ->create()
+            ->createMany(22)
             ->each(static function (Artist $artist): void {
                 Album::factory()->for($artist)->createOne();
             });
@@ -71,8 +70,7 @@ class ArtistTest extends TestCase
     public function indexWithCursorTraversesAllSupportedSortsWithoutDuplicates(): void
     {
         Artist::factory()
-            ->count(30)
-            ->create()
+            ->createMany(30)
             ->each(static function (Artist $artist): void {
                 Album::factory()->for($artist)->createOne();
             });
