@@ -22,7 +22,7 @@
         @dragend="onDragEnd"
         @drop.prevent
       >
-        <Icon :icon="faGripVertical" class="text-k-fg-50" />
+        <GripVerticalIcon class="w-4 h-4 text-k-fg-50" />
         <span class="text-k-fg">{{ block.label }}</span>
       </div>
     </main>
@@ -34,8 +34,8 @@
 </template>
 
 <script lang="ts" setup>
-import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
 import { isEqual } from 'lodash-es'
+import { GripVerticalIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { preferenceStore } from '@/stores/preferenceStore'
 
