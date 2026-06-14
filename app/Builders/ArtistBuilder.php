@@ -112,13 +112,12 @@ class ArtistBuilder extends FavoriteableBuilder
     {
         throw_unless($this->user, new LogicException('User must be set to query artist ratings.'));
 
-        return $this->addSelect([
-            'rating' => DB::table('ratings')
-                ->where('rateable_type', 'artist')
-                ->where('user_id', $this->user->id)
-                ->whereColumn('rateable_id', 'artists.id')
-                ->selectRaw('COALESCE(MAX(rating), 0)'),
-        ]);
+        return $this->leftJoin('ratings as artist_ratings', function (JoinClause $join): void {
+            $join->on('artist_ratings.rateable_id', 'artists.id')->where(
+                'artist_ratings.rateable_type',
+                'artist',
+            )->where('artist_ratings.user_id', $this->user->id);
+        })->addSelect(DB::raw('(COALESCE(artist_ratings.rating, 0)) as rating'));
     }
 
     public function withUserContext(

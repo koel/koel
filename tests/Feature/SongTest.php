@@ -58,17 +58,21 @@ class SongTest extends TestCase
         $this->getAs('api/songs?cursor=&per_page=101')->assertUnprocessable();
     }
 
-    /**
-     * Verifies cursor pagination traverses every supported sort field across two pages
-     * without 500ing on computed sorts (rating, favorite).
-     */
     #[Test]
-    public function indexWithCursorTraversesAllSupportedSorts(): void
+    public function indexWithCursorTraversesAllSupportedSortsWithoutDuplicates(): void
     {
         $user = create_user();
-        $songs = Song::factory()->createMany(3);
-        Rating::factory()->for($user)->for($songs[0], 'rateable')->createOne(['rating' => 5]);
-        Favorite::factory()->for($user)->for($songs[1], 'favoriteable')->createOne();
+        $songs = Song::factory()->createMany(60);
+
+        foreach ($songs->take(20) as $i => $song) {
+            Rating::factory()
+                ->for($user)
+                ->for($song, 'rateable')
+                ->createOne(['rating' => ($i % 5) + 1]);
+        }
+        foreach ($songs->slice(20, 10) as $song) {
+            Favorite::factory()->for($user)->for($song, 'favoriteable')->createOne();
+        }
 
         foreach ([
             'title',
@@ -81,18 +85,23 @@ class SongTest extends TestCase
             'rating',
             'favorite',
         ] as $sort) {
-            $first = $this
-                ->getAs("api/songs?cursor=&per_page=2&sort={$sort}&order=desc", $user)
-                ->assertOk()
-                ->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+            $allIds = [];
+            $cursor = '';
+            $pages = 0;
 
-            $cursor = $first->json('meta.next_cursor');
-            self::assertNotNull($cursor, "missing next_cursor for sort={$sort}");
+            while ($cursor !== null && $pages < 4) {
+                $pages++;
+                $r = $this
+                    ->getAs("api/songs?cursor={$cursor}&sort={$sort}&order=desc", $user)
+                    ->assertOk()
+                    ->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
 
-            $this
-                ->getAs("api/songs?cursor={$cursor}&per_page=2&sort={$sort}&order=desc", $user)
-                ->assertOk()
-                ->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+                $allIds = array_merge($allIds, collect($r->json('data'))->pluck('id')->all());
+                $cursor = $r->json('meta.next_cursor');
+            }
+
+            self::assertCount(60, $allIds, "sort={$sort} returned wrong total");
+            self::assertCount(60, array_unique($allIds), "sort={$sort} returned duplicates");
         }
     }
 

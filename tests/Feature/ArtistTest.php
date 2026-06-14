@@ -75,28 +75,33 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
-    public function indexWithCursorTraversesAllSupportedSorts(): void
+    public function indexWithCursorTraversesAllSupportedSortsWithoutDuplicates(): void
     {
         Artist::factory()
-            ->count(3)
+            ->count(30)
             ->create()
             ->each(static function (Artist $artist): void {
                 Album::factory()->for($artist)->createOne();
             });
 
         foreach (['name', 'created_at', 'rating', 'favorite'] as $sort) {
-            $first = $this
-                ->getAs("api/artists?cursor=&per_page=2&sort={$sort}&order=desc")
-                ->assertOk()
-                ->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+            $allIds = [];
+            $cursor = '';
+            $pages = 0;
 
-            $cursor = $first->json('meta.next_cursor');
-            self::assertNotNull($cursor, "missing next_cursor for sort={$sort}");
+            while ($cursor !== null && $pages < 5) {
+                $pages++;
+                $r = $this
+                    ->getAs("api/artists?favorites_only=false&cursor={$cursor}&sort={$sort}&order=desc")
+                    ->assertOk()
+                    ->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
 
-            $this
-                ->getAs("api/artists?cursor={$cursor}&per_page=2&sort={$sort}&order=desc")
-                ->assertOk()
-                ->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+                $allIds = array_merge($allIds, collect($r->json('data'))->pluck('id')->all());
+                $cursor = $r->json('meta.next_cursor');
+            }
+
+            self::assertCount(30, $allIds, "sort={$sort} returned wrong total");
+            self::assertCount(30, array_unique($allIds), "sort={$sort} returned duplicates");
         }
     }
 
