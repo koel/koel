@@ -3,20 +3,18 @@
 namespace App\Http\Controllers\API;
 
 use App\Exceptions\AlbumNameConflictException;
-use App\Http\Controllers\API\Concerns\ResolvesPaginationStrategyFromRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Album\AlbumListRequest;
 use App\Http\Requests\API\Album\AlbumUpdateRequest;
 use App\Http\Resources\AlbumResource;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
+use App\Repositories\Pagination\PaginationStrategyResolver;
 use App\Services\AlbumService;
 use Illuminate\Validation\ValidationException;
 
 class AlbumController extends Controller
 {
-    use ResolvesPaginationStrategyFromRequest;
-
     public function __construct(
         private readonly AlbumRepository $repository,
         private readonly AlbumService $service,
@@ -27,7 +25,7 @@ class AlbumController extends Controller
         return AlbumResource::collection($this->repository->paginate(
             sortColumn: $request->sort ?? 'name',
             sortDirection: $request->order ?? 'asc',
-            strategy: $this->resolvePaginationStrategy($request),
+            strategy: PaginationStrategyResolver::resolve($request),
             favoritesOnly: $request->boolean('favorites_only'),
         ));
     }

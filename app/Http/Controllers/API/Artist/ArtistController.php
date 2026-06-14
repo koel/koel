@@ -3,20 +3,18 @@
 namespace App\Http\Controllers\API\Artist;
 
 use App\Exceptions\ArtistNameConflictException;
-use App\Http\Controllers\API\Concerns\ResolvesPaginationStrategyFromRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Artist\ArtistListRequest;
 use App\Http\Requests\API\Artist\ArtistUpdateRequest;
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
 use App\Repositories\ArtistRepository;
+use App\Repositories\Pagination\PaginationStrategyResolver;
 use App\Services\ArtistService;
 use Illuminate\Validation\ValidationException;
 
 class ArtistController extends Controller
 {
-    use ResolvesPaginationStrategyFromRequest;
-
     public function __construct(
         private readonly ArtistService $service,
         private readonly ArtistRepository $repository,
@@ -27,7 +25,7 @@ class ArtistController extends Controller
         return ArtistResource::collection($this->repository->paginate(
             sortColumn: $request->sort ?? 'name',
             sortDirection: $request->order ?? 'asc',
-            strategy: $this->resolvePaginationStrategy($request),
+            strategy: PaginationStrategyResolver::resolve($request),
             favoritesOnly: $request->boolean('favorites_only'),
         ));
     }
