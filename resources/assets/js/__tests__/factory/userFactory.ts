@@ -40,6 +40,7 @@ const preferences: UserPreferences = {
   detect_duplicate_uploads: true,
   include_public_media: true,
   lastfm_session_key: 'fake-session-key',
+  home_blocks_order: [],
 }
 
 export default (): User => ({

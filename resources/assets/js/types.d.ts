@@ -431,6 +431,7 @@ interface UserPreferences extends Record<string, any> {
   include_public_media: boolean
   crossfade_duration: number
   lastfm_session_key?: string
+  home_blocks_order: string[]
 }
 
 type Ability = 'manage settings' | 'manage users' | 'manage songs' | 'manage podcasts' | 'manage radio stations'

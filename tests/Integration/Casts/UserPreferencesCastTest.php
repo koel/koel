@@ -31,6 +31,7 @@ class UserPreferencesCastTest extends TestCase
             'equalizer_presets',
             'genres_sort_field',
             'genres_sort_order',
+            'home_blocks_order',
             'include_public_media',
             'lastfm_session_key',
             'lyrics_zoom_level',
