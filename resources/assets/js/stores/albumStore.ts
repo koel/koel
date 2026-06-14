@@ -16,7 +16,7 @@ export interface AlbumUpdateData {
   cover?: Album['cover'] | null
 }
 
-interface AlbumListPaginateParams extends PaginateParams<AlbumListSortField> {
+interface AlbumListPaginateParams extends CursorPaginateParams<AlbumListSortField> {
   favorites_only: boolean
 }
 
@@ -78,10 +78,13 @@ export const albumStore = {
   },
 
   async paginate(params: AlbumListPaginateParams) {
-    const resource = await http.get<PaginatorResource<Album>>(`albums?${new URLSearchParams(flattenParams(params))}`)
+    const query = new URLSearchParams(flattenParams(params))
+    query.set('cursor', params.cursor ?? '')
+
+    const resource = await http.get<CursorPaginatorResource<Album>>(`albums?${query}`)
     this.state.albums = unionBy(this.state.albums, this.syncWithVault(resource.data), 'id')
 
-    return resource.links.next ? ++resource.meta.current_page : null
+    return resource.meta.next_cursor
   },
 
   async fetchForArtist(artist: Artist | Artist['id']) {

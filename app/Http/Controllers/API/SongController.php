@@ -30,10 +30,24 @@ class SongController extends Controller
 
     public function index(SongListRequest $request)
     {
+        $sortColumns = $request->sort ? explode(',', $request->sort) : ['songs.title'];
+        $sortDirection = $request->order ?: 'asc';
+
+        if ($request->has('cursor')) {
+            return SongResource::collection($this->songRepository->paginateByCursor(
+                sortColumns: $sortColumns,
+                sortDirection: $sortDirection,
+                cursor: $request->cursor,
+                perPage: $request->per_page ?? 50,
+                scopedUser: $this->user,
+            ));
+        }
+
         return SongResource::collection($this->songRepository->paginate(
-            sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
-            sortDirection: $request->order ?: 'asc',
+            sortColumns: $sortColumns,
+            sortDirection: $sortDirection,
             scopedUser: $this->user,
+            perPage: $request->per_page ?? 50,
         ));
     }
 

@@ -30,6 +30,35 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function indexWithCursorReturnsCursorPagination(): void
+    {
+        Song::factory()->createMany(3);
+
+        $response = $this->getAs(
+            'api/songs?cursor=&per_page=2',
+        )->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+        self::assertCount(2, $response->json('data'));
+        self::assertNotNull($response->json('meta.next_cursor'));
+        self::assertNull($response->json('meta.prev_cursor'));
+
+        $secondPage = $this->getAs(
+            'api/songs?cursor=' . $response->json('meta.next_cursor') . '&per_page=2',
+        )->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+        self::assertCount(1, $secondPage->json('data'));
+        self::assertNull($secondPage->json('meta.next_cursor'));
+        self::assertNotNull($secondPage->json('meta.prev_cursor'));
+    }
+
+    #[Test]
+    public function indexRejectsInvalidPerPage(): void
+    {
+        $this->getAs('api/songs?cursor=&per_page=0')->assertUnprocessable();
+        $this->getAs('api/songs?cursor=&per_page=101')->assertUnprocessable();
+    }
+
+    #[Test]
     public function indexSortedByFavoriteScopesToCurrentUser(): void
     {
         $user = create_user();

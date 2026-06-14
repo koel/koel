@@ -41,6 +41,7 @@ export interface SongUpdateResult {
 }
 
 export type SongListPaginateParams = PaginateParams<PlayableListSortField>
+export type SongListCursorPaginateParams = CursorPaginateParams<PlayableListSortField>
 
 const watchPlayCount = (playable: Playable) => {
   watch(
@@ -295,11 +296,14 @@ export const playableStore = {
     return this.syncWithVault(await http.get<Song[]>(`genres/${id}/songs/queue?${params}`))
   },
 
-  async paginateSongs(params: SongListPaginateParams) {
-    const resource = await http.get<PaginatorResource<Playable>>(`songs?${new URLSearchParams(flattenParams(params))}`)
+  async paginateSongs(params: SongListCursorPaginateParams) {
+    const query = new URLSearchParams(flattenParams(params))
+    query.set('cursor', params.cursor ?? '')
+
+    const resource = await http.get<CursorPaginatorResource<Playable>>(`songs?${query}`)
     this.state.playables = unionBy(this.state.playables, this.syncWithVault(resource.data), 'id')
 
-    return resource.links.next ? ++resource.meta.current_page : null
+    return resource.meta.next_cursor
   },
 
   getMostPlayedSongs(count: number) {

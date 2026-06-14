@@ -21,6 +21,7 @@ use App\Repositories\Contracts\ScoutableRepository;
 use App\Values\SmartPlaylist\SmartPlaylistQueryModifier as QueryModifier;
 use App\Values\SmartPlaylist\SmartPlaylistRule as Rule;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroup as RuleGroup;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -130,6 +131,20 @@ class SongRepository extends Repository implements ScoutableRepository
             ->withUserContext()
             ->sort($sortColumns, $sortDirection)
             ->simplePaginate($perPage);
+    }
+
+    public function paginateByCursor(
+        array $sortColumns,
+        string $sortDirection,
+        ?string $cursor,
+        int $perPage = 50,
+        ?User $scopedUser = null,
+    ): CursorPaginator {
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->withUserContext()
+            ->sort($sortColumns, $sortDirection)
+            ->orderBy('songs.id')
+            ->cursorPaginate($perPage, cursorName: 'cursor', cursor: $cursor);
     }
 
     /**

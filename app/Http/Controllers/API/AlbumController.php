@@ -21,10 +21,24 @@ class AlbumController extends Controller
 
     public function index(AlbumListRequest $request)
     {
+        $sortColumn = $request->sort ?? 'name';
+        $sortDirection = $request->order ?? 'asc';
+        $favoritesOnly = $request->boolean('favorites_only');
+
+        if ($request->has('cursor')) {
+            return AlbumResource::collection($this->repository->getForListingByCursor(
+                sortColumn: $sortColumn,
+                sortDirection: $sortDirection,
+                cursor: $request->cursor,
+                perPage: $request->per_page ?? 21,
+                favoritesOnly: $favoritesOnly,
+            ));
+        }
+
         return AlbumResource::collection($this->repository->getForListing(
-            sortColumn: $request->sort ?? 'name',
-            sortDirection: $request->order ?? 'asc',
-            favoritesOnly: $request->boolean('favorites_only'),
+            sortColumn: $sortColumn,
+            sortDirection: $sortDirection,
+            favoritesOnly: $favoritesOnly,
         ));
     }
 

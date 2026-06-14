@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Artist;
 use App\Models\User;
 use App\Repositories\Contracts\ScoutableRepository;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -113,6 +114,23 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->onlyAlbumArtists()
             ->sort($sortColumn, $sortDirection)
             ->simplePaginate(21);
+    }
+
+    public function getForListingByCursor(
+        string $sortColumn,
+        string $sortDirection,
+        ?string $cursor,
+        int $perPage = 21,
+        bool $favoritesOnly = false,
+        ?User $user = null,
+    ): CursorPaginator {
+        return Artist::query()
+            ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
+            ->onlyStandard()
+            ->onlyAlbumArtists()
+            ->sort($sortColumn, $sortDirection)
+            ->orderBy('artists.id')
+            ->cursorPaginate($perPage, cursorName: 'cursor', cursor: $cursor);
     }
 
     public function search(string $keywords, int $limit, ?User $user = null): Collection
