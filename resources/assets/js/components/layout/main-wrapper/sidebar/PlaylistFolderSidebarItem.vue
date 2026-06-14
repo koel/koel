@@ -1,6 +1,6 @@
 <template>
   <li
-    :class="{ droppable }"
+    :class="{ droppable, 'drag-source': isDragSource, 'drag-target': isDropTarget }"
     class="playlist-folder relative"
     :draggable="!isMobile.any"
     tabindex="0"
@@ -38,7 +38,12 @@ import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
-import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
+import {
+  currentDraggedPlaylist,
+  currentDropTargetFolderId,
+  useDraggable,
+  useDroppable,
+} from '@/composables/useDragAndDrop'
 import { useContextMenu } from '@/composables/useContextMenu'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
@@ -59,6 +64,12 @@ const droppable = ref(false)
 const expandTimeout = ref<number | null>(null)
 
 const playlistsInFolder = computed(() => playlistStore.byFolder(folder.value))
+
+// Whether the playlist currently being dragged came from this folder.
+const isDragSource = computed(() => currentDraggedPlaylist.value?.folder_id === folder.value.id)
+
+// Whether the cursor is currently over this folder as an accepting drop target.
+const isDropTarget = computed(() => currentDropTargetFolderId.value === folder.value.id)
 
 const toggle = () => (opened.value = !opened.value)
 
@@ -103,6 +114,7 @@ const onDragOver = (event: DragEvent) => {
   event.preventDefault()
   event.stopPropagation()
   droppable.value = true
+  currentDropTargetFolderId.value = folder.value.id
 }
 
 const onDragLeave = (event: DragEvent) => {
@@ -115,6 +127,10 @@ const onDragLeave = (event: DragEvent) => {
 
   droppable.value = false
   cancelAutoExpand()
+
+  if (currentDropTargetFolderId.value === folder.value.id) {
+    currentDropTargetFolderId.value = null
+  }
 }
 
 const onDrop = async (event: DragEvent) => {
@@ -145,6 +161,6 @@ const onContextMenu = (event: MouseEvent) =>
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 .droppable {
-  @apply ring-1 ring-offset-0 ring-k-highlight rounded-md cursor-copy;
+  @apply cursor-copy;
 }
 </style>

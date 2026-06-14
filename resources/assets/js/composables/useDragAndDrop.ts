@@ -18,8 +18,22 @@ type DraggableType = (typeof draggableTypes)[number]
 // (e.g. show a "remove from folder" target only while a playlist is being dragged).
 export const currentDragType = ref<DraggableType | null>(null)
 
-document.addEventListener('dragend', () => (currentDragType.value = null))
-document.addEventListener('drop', () => (currentDragType.value = null), true)
+// The playlist currently being dragged (only meaningful when currentDragType === 'playlist').
+// Lets the sidebar identify the source folder so it can render the "leaving" affordance.
+export const currentDraggedPlaylist = ref<Playlist | null>(null)
+
+// Id of the folder the cursor is currently over as an accepting drop target.
+// The folder itself sets/clears this from its dragover/dragleave handlers.
+export const currentDropTargetFolderId = ref<string | null>(null)
+
+const clearDragState = () => {
+  currentDragType.value = null
+  currentDraggedPlaylist.value = null
+  currentDropTargetFolderId.value = null
+}
+
+document.addEventListener('dragend', clearDragState)
+document.addEventListener('drop', clearDragState, true)
 
 // A transparent 1x1 image used to suppress the browser's default drag ghost.
 const emptyDragImage = (() => {
@@ -131,6 +145,7 @@ export const useDraggable = (type: DraggableType) => {
         dragged = <Playlist>dragged
         text = dragged.name
         data = dragged.id
+        currentDraggedPlaylist.value = dragged
         break
 
       case 'playlist-folder':

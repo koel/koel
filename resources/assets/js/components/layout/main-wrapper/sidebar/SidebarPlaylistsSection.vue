@@ -5,13 +5,7 @@
       <CreatePlaylistContextMenuButton />
     </SidebarSectionHeader>
 
-    <ul
-      :class="{ active: showDropAffordance, droppable }"
-      class="rounded-md transition-colors"
-      @dragleave="onDragLeave"
-      @dragover="onDragOver"
-      @drop="onDrop"
-    >
+    <ul :class="{ dragging: isDraggingPlaylist, 'has-target': hasDropTarget }" @dragover="onDragOver" @drop="onDrop">
       <PlaylistSidebarItem :list="{ name: 'Favorites', playables: favorites }" />
       <PlaylistSidebarItem :list="{ name: 'Recently Played', playables: [] }" />
       <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
@@ -21,11 +15,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
-import { currentDragType, useDroppable } from '@/composables/useDragAndDrop'
+import { currentDragType, currentDropTargetFolderId, useDroppable } from '@/composables/useDragAndDrop'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
@@ -38,11 +32,9 @@ const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(playableStore.state, 'favorites')
 
 const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
-const droppable = ref(false)
 
-// Show the section's "drop here to leave a folder" hint only while a playlist
-// is actively being dragged, so the rest of the time the sidebar is quiet.
-const showDropAffordance = computed(() => currentDragType.value === 'playlist')
+const isDraggingPlaylist = computed(() => currentDragType.value === 'playlist')
+const hasDropTarget = computed(() => currentDropTargetFolderId.value !== null)
 
 const orphanPlaylists = computed(() =>
   playlists.value.filter(({ folder_id }) => {
@@ -56,27 +48,17 @@ const orphanPlaylists = computed(() =>
   }),
 )
 
+// The section is the implicit "no folder" target: dropping anywhere that isn't
+// a folder (folders stop propagation on accept) means "move out of any folder".
 const onDragOver = (event: DragEvent) => {
   if (!acceptsDrop(event)) {
     return false
   }
 
   event.preventDefault()
-  droppable.value = true
-}
-
-const onDragLeave = (event: DragEvent) => {
-  const relatedTarget = event.relatedTarget as Node | null
-  if (relatedTarget && (event.currentTarget as Node).contains(relatedTarget)) {
-    return
-  }
-
-  droppable.value = false
 }
 
 const onDrop = async (event: DragEvent) => {
-  droppable.value = false
-
   if (!acceptsDrop(event)) {
     return false
   }
@@ -94,11 +76,29 @@ const onDrop = async (event: DragEvent) => {
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
-ul.active {
-  @apply bg-k-fg-5;
+
+/* Two states while a playlist is being dragged:
+
+   1. No drop target under the cursor — the source folder dims, signalling
+      "you're leaving me." Everything else stays at full opacity, so the
+      whole non-source area reads as a valid "drop to remove from folder."
+
+   2. Cursor over an accepting folder — invert: the target folder pops at
+      full opacity, everything else (including the source) dims, signalling
+      "drop here to add to this folder." */
+ul.dragging > :deep(*) {
+  transition: opacity 0.15s ease;
 }
 
-ul.droppable {
-  @apply ring-1 ring-offset-0 ring-k-highlight cursor-copy;
+ul.dragging > :deep(.drag-source) {
+  opacity: 0.4;
+}
+
+ul.dragging.has-target > :deep(*) {
+  opacity: 0.4;
+}
+
+ul.dragging.has-target > :deep(.drag-target) {
+  opacity: 1;
 }
 </style>
