@@ -149,6 +149,23 @@ export const defineAsyncComponent = (
   })
 }
 
+/**
+ * Returns a comparator that sorts items by the position of their `id` in `saved`.
+ * Items whose id isn't in `saved` (returning -1 from indexOf) fall to the end —
+ * normalized to Infinity so a single subtraction handles all four pair cases.
+ * Among themselves they keep their input order via Array.sort's stability.
+ */
+export const bySavedOrder =
+  <T extends { id: string }>(saved: readonly string[]) =>
+  (a: T, b: T): number => {
+    const positionOf = (id: string) => {
+      const i = saved.indexOf(id)
+      return i === -1 ? Infinity : i
+    }
+
+    return positionOf(a.id) - positionOf(b.id)
+  }
+
 export const flattenParams = <T extends object>(params: T): Record<string, string> => {
   const result: Record<string, string> = {}
 

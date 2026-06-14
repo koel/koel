@@ -38,6 +38,7 @@ import { isEqual } from 'lodash-es'
 import { GripVerticalIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { preferenceStore } from '@/stores/preferenceStore'
+import { bySavedOrder } from '@/utils/helpers'
 
 import Btn from '@/components/ui/form/Btn.vue'
 
@@ -50,18 +51,9 @@ const props = defineProps<{ blocks: BlockSummary[] }>()
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const bySavedOrder = (saved: readonly string[]) => (a: BlockSummary, b: BlockSummary) => {
-  const positionOf = (id: string) => {
-    const i = saved.indexOf(id)
-    return i === -1 ? Infinity : i
-  }
-
-  return positionOf(a.id) - positionOf(b.id)
-}
-
 const draggedId = ref<string | null>(null)
 const orderIds = ref<string[]>(
-  [...props.blocks].sort(bySavedOrder(preferenceStore.home_blocks_order ?? [])).map(b => b.id),
+  [...props.blocks].sort(bySavedOrder<BlockSummary>(preferenceStore.home_blocks_order ?? [])).map(b => b.id),
 )
 
 const orderedBlocks = computed(() => orderIds.value.map(id => props.blocks.find(b => b.id === id)!))

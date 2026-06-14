@@ -2,43 +2,29 @@
   <div class="w-full min-w-0">
     <Teleport v-if="actionsHost && hasOverflow" :to="actionsHost">
       <button
+        v-for="ctrl in controls"
+        :key="ctrl.title"
         type="button"
         class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        title="Scroll left"
-        @click="slide(-1)"
+        :title="ctrl.title"
+        @click="slide(ctrl.direction)"
       >
-        <Icon :icon="faChevronLeft" />
-        <span class="sr-only">Scroll left</span>
-      </button>
-      <button
-        type="button"
-        class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        title="Scroll right"
-        @click="slide(1)"
-      >
-        <Icon :icon="faChevronRight" />
-        <span class="sr-only">Scroll right</span>
+        <Icon :icon="ctrl.icon" />
+        <span class="sr-only">{{ ctrl.title }}</span>
       </button>
     </Teleport>
 
     <nav v-else-if="hasOverflow" class="flex justify-end gap-2 mb-2">
       <button
+        v-for="ctrl in controls"
+        :key="ctrl.title"
         type="button"
         class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        title="Scroll left"
-        @click="slide(-1)"
+        :title="ctrl.title"
+        @click="slide(ctrl.direction)"
       >
-        <Icon :icon="faChevronLeft" />
-        <span class="sr-only">Scroll left</span>
-      </button>
-      <button
-        type="button"
-        class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        title="Scroll right"
-        @click="slide(1)"
-      >
-        <Icon :icon="faChevronRight" />
-        <span class="sr-only">Scroll right</span>
+        <Icon :icon="ctrl.icon" />
+        <span class="sr-only">{{ ctrl.title }}</span>
       </button>
     </nav>
 
@@ -62,6 +48,11 @@ const actionsHost = inject(BlockActionsHostKey, ref(null))
 
 const scroller = ref<HTMLDivElement>()
 const hasOverflow = ref(false)
+
+const controls = [
+  { title: 'Scroll left', icon: faChevronLeft, direction: -1 as const },
+  { title: 'Scroll right', icon: faChevronRight, direction: 1 as const },
+]
 
 let resizeObserver: ResizeObserver | undefined
 

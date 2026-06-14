@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-8">
+  <div class="pt-6">
     <header class="flex items-center justify-between gap-3 mb-8">
       <h3 class="text-2xl font-thin text-k-fg min-w-0">
         <slot name="header" />
