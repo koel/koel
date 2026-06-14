@@ -55,6 +55,24 @@ class SongResource extends JsonResource
         ],
     ];
 
+    public const array CURSOR_PAGINATION_JSON_STRUCTURE = [
+        'data' => [
+            0 => self::JSON_STRUCTURE,
+        ],
+        'links' => [
+            'first',
+            'last',
+            'prev',
+            'next',
+        ],
+        'meta' => [
+            'path',
+            'per_page',
+            'next_cursor',
+            'prev_cursor',
+        ],
+    ];
+
     private ?User $user = null;
 
     public function __construct(

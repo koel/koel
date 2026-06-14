@@ -9,6 +9,7 @@ use App\Http\Requests\API\Artist\ArtistUpdateRequest;
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
 use App\Repositories\ArtistRepository;
+use App\Repositories\Pagination\PaginationStrategyResolver;
 use App\Services\ArtistService;
 use Illuminate\Validation\ValidationException;
 
@@ -21,9 +22,10 @@ class ArtistController extends Controller
 
     public function index(ArtistListRequest $request)
     {
-        return ArtistResource::collection($this->repository->getForListing(
+        return ArtistResource::collection($this->repository->paginate(
             sortColumn: $request->sort ?? 'name',
             sortDirection: $request->order ?? 'asc',
+            strategy: PaginationStrategyResolver::resolve($request),
             favoritesOnly: $request->boolean('favorites_only'),
         ));
     }

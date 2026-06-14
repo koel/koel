@@ -682,6 +682,12 @@ interface PaginateParams<S extends string = string> {
   page: number
 }
 
+interface CursorPaginateParams<S extends string = string> {
+  sort: MaybeArray<S>
+  order: SortOrder
+  cursor: string | null
+}
+
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never }[keyof T]
 
 interface PaginatorResource<T> {
@@ -691,6 +697,16 @@ interface PaginatorResource<T> {
   }
   meta: {
     current_page: number
+  }
+}
+
+interface CursorPaginatorResource<T> {
+  data: T[]
+  meta: {
+    path: string
+    per_page: number
+    next_cursor: string | null
+    prev_cursor: string | null
   }
 }
 

@@ -21,17 +21,7 @@ describe('albumListScreen.vue', () => {
   const h = createHarness()
 
   const renderComponent = async () => {
-    const paginator: PaginatorResource<Album> = {
-      data: h.factory('album').make(9),
-      links: {
-        next: '?page=1',
-      },
-      meta: {
-        current_page: 0,
-      },
-    }
-
-    const paginateMock = h.mock(albumStore, 'paginate').mockResolvedValueOnce(paginator)
+    const paginateMock = h.mock(albumStore, 'paginate').mockResolvedValueOnce('next-cursor-token')
     albumStore.state.albums = h.factory('album').make(9)
 
     const rendered = h.render(Component, {
@@ -99,7 +89,7 @@ describe('albumListScreen.vue', () => {
     await waitFor(() =>
       expect(paginateMock).toHaveBeenNthCalledWith(2, {
         favorites_only: true,
-        page: 1,
+        cursor: '',
         order: 'asc',
         sort: 'name',
       }),
@@ -110,7 +100,7 @@ describe('albumListScreen.vue', () => {
     await waitFor(() =>
       expect(paginateMock).toHaveBeenNthCalledWith(3, {
         favorites_only: false,
-        page: 1,
+        cursor: '',
         order: 'asc',
         sort: 'name',
       }),

@@ -1,23 +1,21 @@
 <?php
 
-namespace App\Http\Requests\API\Artist;
+namespace App\Http\Requests\API\MediaBrowser;
 
 use App\Http\Requests\API\Request;
 
 /**
- * @property-read string $order
- * @property-read string $sort
  * @property-read ?string $cursor
+ * @property-read ?string $folder
  */
-class ArtistListRequest extends Request
+class PaginateFolderSongsRequest extends Request
 {
     /** @inheritDoc */
     public function rules(): array
     {
         return [
-            'sort' => ['sometimes', 'string'],
-            'order' => ['sometimes', 'in:asc,desc'],
             'cursor' => ['sometimes', 'nullable', 'string'],
+            'folder' => ['sometimes', 'nullable', 'string'],
         ];
     }
 }

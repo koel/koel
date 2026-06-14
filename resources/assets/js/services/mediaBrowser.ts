@@ -9,20 +9,24 @@ interface BrowseFoldersResponse {
 }
 
 export const mediaBrowser = {
-  async browse(folderId: string | null, page = 1, forceRefresh = false) {
+  async browse(folderId: string | null, cursor: string | null = '', forceRefresh = false) {
     if (forceRefresh) {
       cache.remove(['folder', folderId, 'folders'])
-      cache.remove(['folder', folderId, 'songs', page])
+      cache.remove(['folder', folderId, 'songs', cursor])
     }
 
-    const query = folderId ? `folder=${folderId}` : ''
+    const query = new URLSearchParams()
+    if (folderId) {
+      query.set('folder', folderId)
+    }
+    query.set('cursor', cursor ?? '')
 
     const [folders, paginator] = await Promise.all([
       cache.remember(['folder', folderId, 'folders'], () =>
-        http.get<BrowseFoldersResponse>(`browse/folders${query ? `?${query}` : ''}`),
+        http.get<BrowseFoldersResponse>(`browse/folders${folderId ? `?folder=${folderId}` : ''}`),
       ),
-      cache.remember(['folder', folderId, 'songs', page], () =>
-        http.get<PaginatorResource<Song>>(`browse/songs?${query ? `${query}&` : ''}page=${page}`),
+      cache.remember(['folder', folderId, 'songs', cursor], () =>
+        http.get<CursorPaginatorResource<Song>>(`browse/songs?${query}`),
       ),
     ])
 
@@ -31,7 +35,7 @@ export const mediaBrowser = {
       ancestors: folders.ancestors,
       subfolders: folders.subfolders,
       songs: playableStore.syncWithVault(paginator.data) as Song[],
-      nextPage: paginator.links.next ? paginator.meta.current_page + 1 : null,
+      nextCursor: paginator.meta.next_cursor,
     }
   },
 

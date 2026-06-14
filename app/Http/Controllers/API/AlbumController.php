@@ -9,6 +9,7 @@ use App\Http\Requests\API\Album\AlbumUpdateRequest;
 use App\Http\Resources\AlbumResource;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
+use App\Repositories\Pagination\PaginationStrategyResolver;
 use App\Services\AlbumService;
 use Illuminate\Validation\ValidationException;
 
@@ -21,9 +22,10 @@ class AlbumController extends Controller
 
     public function index(AlbumListRequest $request)
     {
-        return AlbumResource::collection($this->repository->getForListing(
+        return AlbumResource::collection($this->repository->paginate(
             sortColumn: $request->sort ?? 'name',
             sortDirection: $request->order ?? 'asc',
+            strategy: PaginationStrategyResolver::resolve($request),
             favoritesOnly: $request->boolean('favorites_only'),
         ));
     }

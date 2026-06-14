@@ -13,6 +13,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
+use App\Repositories\Pagination\PaginationStrategyResolver;
 use App\Repositories\SongRepository;
 use App\Services\SongService;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -33,6 +34,7 @@ class SongController extends Controller
         return SongResource::collection($this->songRepository->paginate(
             sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
             sortDirection: $request->order ?: 'asc',
+            strategy: PaginationStrategyResolver::resolve($request),
             scopedUser: $this->user,
         ));
     }
