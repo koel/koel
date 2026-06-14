@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Repositories\Pagination;
 
-use App\Http\Requests\Request;
 use App\Repositories\Pagination\CursorStrategy;
 use App\Repositories\Pagination\OffsetStrategy;
 use App\Repositories\Pagination\PaginationStrategyResolver;
+use Illuminate\Http\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -38,6 +38,6 @@ class PaginationStrategyResolverTest extends TestCase
     /** @param array<string, string> $queryParams */
     private static function createRequest(array $queryParams = []): Request
     {
-        return StubFormRequest::create('/', 'GET', $queryParams);
+        return Request::create('/', 'GET', $queryParams);
     }
 }

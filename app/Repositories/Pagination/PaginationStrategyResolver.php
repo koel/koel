@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Pagination;
 
-use App\Http\Requests\Request;
 use App\Repositories\Contracts\PaginationStrategy;
+use Illuminate\Http\Request;
 
 final readonly class PaginationStrategyResolver
 {
