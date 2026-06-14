@@ -12,7 +12,7 @@
             data-testid="reorder-home-blocks-btn"
             @click="openReorderModal"
           >
-            <Icon :icon="faSliders" />
+            <ListChevronsUpDownIcon class="w-5 h-5" />
             <span class="sr-only">Reorder home blocks</span>
           </button>
         </template>
@@ -41,7 +41,8 @@
 </template>
 
 <script lang="ts" setup>
-import { faSliders, faVolumeOff } from '@fortawesome/free-solid-svg-icons'
+import { faVolumeOff } from '@fortawesome/free-solid-svg-icons'
+import { ListChevronsUpDownIcon } from 'lucide-vue-next'
 import { sample } from 'lodash-es'
 import type { Component } from 'vue'
 import { computed, defineAsyncComponent, ref } from 'vue'

@@ -10,12 +10,12 @@
       <h1>Reorder Home Blocks</h1>
     </header>
 
-    <main class="space-y-2">
+    <main class="space-y-1">
       <div
         v-for="block in orderedBlocks"
         :key="block.id"
         :draggable="true"
-        class="flex items-center gap-3 px-3 py-2 rounded-md bg-k-bg-secondary hover:bg-k-fg-5 cursor-grab active:cursor-grabbing select-none transition"
+        class="flex items-center gap-3 px-3 py-2 rounded-sm bg-k-bg-secondary hover:bg-k-fg-5 cursor-grab active:cursor-grabbing select-none transition"
         :class="{ 'opacity-40': draggedId === block.id }"
         @dragstart="onDragStart(block.id, $event)"
         @dragover.prevent="onDragOver(block.id, $event)"

@@ -60,8 +60,8 @@ importers:
         specifier: ^4.18.1
         version: 4.18.1
       lucide-vue-next:
-        specifier: ^0.452.0
-        version: 0.452.0(vue@3.5.29(typescript@5.8.3))
+        specifier: ^0.577.0
+        version: 0.577.0(vue@3.5.29(typescript@5.8.3))
       marked:
         specifier: ^17.0.4
         version: 17.0.4
@@ -2778,8 +2778,8 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lucide-vue-next@0.452.0:
-    resolution: {integrity: sha512-a7i6LayYT/kPDkwRvcWWZlPTRPiaM11xhUhFctRXmjibZod9TdVhk4U/7q2RYYkkkDJHp/4OSiXbxC82+mda3Q==}
+  lucide-vue-next@0.577.0:
+    resolution: {integrity: sha512-py05bAfv9SHVJqscbiOnjcnLlEmOffA58a+7XhZuFxrs6txe1E8VoR1ngWGTYO+9aVKABAz8l3ee3PqiQN9QPA==}
     deprecated: Package deprecated. Please use @lucide/vue instead.
     peerDependencies:
       vue: '>=3.0.1'
@@ -5995,7 +5995,7 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  lucide-vue-next@0.452.0(vue@3.5.29(typescript@5.8.3)):
+  lucide-vue-next@0.577.0(vue@3.5.29(typescript@5.8.3)):
     dependencies:
       vue: 3.5.29(typescript@5.8.3)
 
