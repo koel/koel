@@ -8,14 +8,12 @@ use App\Http\Requests\API\MediaBrowser\PaginateFolderSongsRequest;
 use App\Http\Resources\SongFileResource;
 use App\Repositories\FolderRepository;
 use App\Repositories\SongRepository;
-use App\Services\MediaBrowser;
 
 #[RequiresPlus]
 class PaginateFolderSongsController extends Controller
 {
     public function __invoke(
         PaginateFolderSongsRequest $request,
-        MediaBrowser $browser,
         FolderRepository $folderRepository,
         SongRepository $songRepository,
     ) {
