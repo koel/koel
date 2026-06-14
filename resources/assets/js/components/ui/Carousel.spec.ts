@@ -44,6 +44,25 @@ describe('carousel.vue', () => {
     screen.getByRole('button', { name: 'Scroll right' })
   })
 
+  it('renders scroll buttons inside the inline <nav> when no actions host is provided', async () => {
+    // Regression: confirms Vue's top-level ref auto-unwrap in <script setup>
+    // resolves `v-if="actionsHost && hasOverflow"` correctly when the inject
+    // default ref(null) is in play (i.e. no provider). If auto-unwrap didn't
+    // apply, the Teleport branch would always win and the <nav> fallback would
+    // never render.
+    const { container } = h.render(Component, {
+      slots: { default: '<div>Card</div>' },
+    })
+
+    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
+    await setOverflow(scroller, 800, 3200)
+
+    const nav = container.querySelector<HTMLElement>('nav')
+    expect(nav).not.toBeNull()
+    expect(nav!.querySelector('button[title="Scroll left"]')).not.toBeNull()
+    expect(nav!.querySelector('button[title="Scroll right"]')).not.toBeNull()
+  })
+
   it('slides right by the scroller width when the right chevron is clicked', async () => {
     const { container } = h.render(Component, {
       slots: { default: '<div>Card</div>' },

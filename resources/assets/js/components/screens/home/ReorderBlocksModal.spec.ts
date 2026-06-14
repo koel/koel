@@ -1,5 +1,5 @@
 import { fireEvent, screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { preferenceStore } from '@/stores/preferenceStore'
@@ -119,6 +119,20 @@ describe('ReorderBlocksModal', () => {
     const sourceIdx = saved.indexOf('recently-played-songs')
     const targetIdx = saved.indexOf('most-played-albums')
     expect(sourceIdx).toBeGreaterThan(targetIdx)
+  })
+
+  it('skips persisting on dragend when the order has not actually changed', async () => {
+    preferenceStore.temporary.home_blocks_order = blocks.map(b => b.id)
+    const updateSpy = vi.spyOn(preferenceStore, 'update' as never)
+
+    const { container } = h.render(Component, { props: { blocks } })
+    const rows = Array.from(container.querySelectorAll<HTMLElement>('[draggable="true"]'))
+
+    dispatch(rows[0], 'dragstart', { dataTransfer: { effectAllowed: '' } })
+    dispatch(rows[0], 'dragend')
+    await nextTick()
+
+    expect(updateSpy).not.toHaveBeenCalled()
   })
 
   it('emits close when the Close button is clicked', async () => {

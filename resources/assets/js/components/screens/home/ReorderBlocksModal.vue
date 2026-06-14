@@ -102,7 +102,10 @@ const onDragEnd = () => {
     return
   }
 
-  preferenceStore.home_blocks_order = [...orderIds.value]
+  if (!isEqual(orderIds.value, preferenceStore.home_blocks_order ?? [])) {
+    preferenceStore.home_blocks_order = [...orderIds.value]
+  }
+
   draggedId.value = null
 }
 
