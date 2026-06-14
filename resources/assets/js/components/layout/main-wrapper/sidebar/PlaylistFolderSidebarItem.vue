@@ -102,6 +102,13 @@ const onDragOver = (event: DragEvent) => {
 
   event.preventDefault()
   event.stopPropagation()
+
+  // The browser's drag-and-drop cursor on macOS ignores CSS `cursor:`; setting
+  // dropEffect explicitly is how we get the copy (+) cursor while hovering.
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'copy'
+  }
+
   droppable.value = true
 }
 
