@@ -23,6 +23,15 @@ const clearDragState = () => (currentDragType.value = null)
 document.addEventListener('dragend', clearDragState)
 document.addEventListener('drop', clearDragState, true)
 
+// Update the drag-ghost label mid-drag so drop targets can surface
+// context-aware text (e.g. "Move A into folder B").
+export const setDragText = (text: string): void => {
+  const ghost = document.querySelector<HTMLElement>('#dragGhost')
+  if (ghost) {
+    ghost.textContent = text
+  }
+}
+
 // A transparent 1x1 image used to suppress the browser's default drag ghost.
 const emptyDragImage = (() => {
   const img = new Image()

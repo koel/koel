@@ -47,3 +47,8 @@ export const BlockActionsHostKey: InjectionKey<Ref<HTMLElement | null>> = Symbol
 // or null when no folder is targeted (i.e. the section as a whole is the implicit
 // 'move out of folder' target). Sidebar-scoped concern, not part of useDragAndDrop.
 export const PlaylistFolderDropTargetKey: InjectionKey<Ref<string | null>> = Symbol('PlaylistFolderDropTarget')
+
+// The playlist currently being dragged from the sidebar. PlaylistSidebarItem
+// writes it on dragstart; SidebarPlaylistsSection clears it on dragend.
+// Sidebar drop targets read it to compose context-aware drag-ghost text.
+export const DraggedPlaylistKey: InjectionKey<Ref<Playlist | null>> = Symbol('DraggedPlaylist')

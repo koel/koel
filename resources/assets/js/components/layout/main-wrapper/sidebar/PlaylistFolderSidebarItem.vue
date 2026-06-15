@@ -38,9 +38,9 @@ import { computed, inject, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
-import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
+import { setDragText, useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { useContextMenu } from '@/composables/useContextMenu'
-import { PlaylistFolderDropTargetKey } from '@/config/symbols'
+import { DraggedPlaylistKey, PlaylistFolderDropTargetKey } from '@/config/symbols'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import SidebarItem from './SidebarItem.vue'
@@ -58,6 +58,10 @@ const { openContextMenu } = useContextMenu()
 // Provided by SidebarPlaylistsSection so we can flag ourselves as the active
 // hover-target — the section uses that to switch its drop-zone affordance.
 const folderDropTargetId = inject(PlaylistFolderDropTargetKey, ref<string | null>(null))
+
+// Provided by SidebarPlaylistsSection: lets us read the playlist being dragged
+// so the drag-ghost text can say "Move A into folder B".
+const draggedPlaylist = inject(DraggedPlaylistKey, ref<Playlist | null>(null))
 
 const opened = ref(false)
 const droppable = ref(false)
@@ -120,6 +124,10 @@ const onDragOver = (event: DragEvent) => {
 
   droppable.value = true
   folderDropTargetId.value = folder.value.id
+
+  if (draggedPlaylist.value) {
+    setDragText(`Move "${draggedPlaylist.value.name}" into folder "${folder.value.name}"`)
+  }
 }
 
 const onDragLeave = (event: DragEvent) => {

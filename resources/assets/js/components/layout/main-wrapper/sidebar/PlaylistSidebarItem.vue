@@ -30,7 +30,7 @@
 import { faClockRotateLeft, faHeart, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import isMobile from 'ismobilejs'
 import { ListMusicIcon } from 'lucide-vue-next'
-import { computed, ref, toRefs } from 'vue'
+import { computed, inject, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playableStore } from '@/stores/playableStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
@@ -39,6 +39,7 @@ import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { playback } from '@/services/playbackManager'
+import { DraggedPlaylistKey } from '@/config/symbols'
 
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 
@@ -50,6 +51,10 @@ const { url, isCurrentScreen, getRouteParam } = useRouter()
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist', 'browser-media'])
 const { openContextMenu } = useContextMenu()
+
+// Provided by SidebarPlaylistsSection. Lets the section / folders read which
+// playlist is being dragged to compose context-aware drag-ghost text.
+const draggedPlaylist = inject(DraggedPlaylistKey, ref<Playlist | null>(null))
 
 const droppable = ref(false)
 
@@ -121,7 +126,14 @@ const onDblClick = async () => {
   }
 }
 
-const onDragStart = (event: DragEvent) => isPlaylist(list.value) && startDragging(event, list.value)
+const onDragStart = (event: DragEvent) => {
+  if (!isPlaylist(list.value)) {
+    return
+  }
+
+  startDragging(event, list.value)
+  draggedPlaylist.value = list.value
+}
 
 const onDragOver = (event: DragEvent) => {
   if (!contentEditable.value || !acceptsDrop(event)) {

@@ -19,12 +19,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, provide, ref, toRef } from 'vue'
+import { computed, onBeforeUnmount, onMounted, provide, ref, toRef } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
-import { currentDragType, useDroppable } from '@/composables/useDragAndDrop'
-import { PlaylistFolderDropTargetKey } from '@/config/symbols'
+import { currentDragType, setDragText, useDroppable } from '@/composables/useDragAndDrop'
+import { DraggedPlaylistKey, PlaylistFolderDropTargetKey } from '@/config/symbols'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
@@ -46,6 +46,15 @@ const isDraggingPlaylist = computed(() => currentDragType.value === 'playlist')
 const folderDropTargetId = ref<string | null>(null)
 provide(PlaylistFolderDropTargetKey, folderDropTargetId)
 const hasFolderTarget = computed(() => folderDropTargetId.value !== null)
+
+// PlaylistSidebarItem writes this on dragstart so other sidebar entries can
+// resolve the source folder and compose context-aware drag-ghost text.
+const draggedPlaylist = ref<Playlist | null>(null)
+provide(DraggedPlaylistKey, draggedPlaylist)
+
+const clearDraggedPlaylist = () => (draggedPlaylist.value = null)
+onMounted(() => document.addEventListener('dragend', clearDraggedPlaylist))
+onBeforeUnmount(() => document.removeEventListener('dragend', clearDraggedPlaylist))
 
 const orphanPlaylists = computed(() =>
   playlists.value.filter(({ folder_id }) => {
@@ -72,6 +81,14 @@ const onDragOver = (event: DragEvent) => {
   // dropEffect explicitly is how we get the copy (+) cursor while hovering.
   if (event.dataTransfer) {
     event.dataTransfer.dropEffect = 'copy'
+  }
+
+  const playlist = draggedPlaylist.value
+  if (playlist?.folder_id) {
+    const sourceFolder = playlistFolderStore.byId(playlist.folder_id)
+    if (sourceFolder) {
+      setDragText(`Move "${playlist.name}" out of folder "${sourceFolder.name}"`)
+    }
   }
 }
 
