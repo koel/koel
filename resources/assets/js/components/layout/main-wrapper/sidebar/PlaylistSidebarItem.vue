@@ -1,7 +1,4 @@
 <template>
-  <!-- Drag events stop propagation only when this item accepts the drop, so a
-       rejected drag (e.g. a playlist-type drag over a playlist item) bubbles up
-       to the folder or the section list to be handled there. -->
   <SidebarItem
     :class="{ droppable }"
     :href="href"
@@ -52,8 +49,6 @@ const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist', 'browser-media'])
 const { openContextMenu } = useContextMenu()
 
-// Provided by SidebarPlaylistsSection. Lets the section / folders read which
-// playlist is being dragged to compose context-aware drag-ghost text.
 const draggedPlaylist = inject(DraggedPlaylistKey, ref<Playlist | null>(null))
 
 const droppable = ref(false)

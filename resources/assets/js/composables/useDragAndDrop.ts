@@ -13,9 +13,6 @@ type Draggable = MaybeArray<Playable> | Album | Artist | Genre | Playlist | Play
 const draggableTypes = <const>['playables', 'album', 'artist', 'genre', 'playlist', 'playlist-folder', 'browser-media']
 type DraggableType = (typeof draggableTypes)[number]
 
-// Reactive type of the currently-active drag. Set on dragstart, cleared on dragend.
-// Components can read this to render drag-type-specific drop affordances
-// (e.g. show a "remove from folder" target only while a playlist is being dragged).
 export const currentDragType = ref<DraggableType | null>(null)
 
 const clearDragState = () => (currentDragType.value = null)
@@ -23,9 +20,7 @@ const clearDragState = () => (currentDragType.value = null)
 document.addEventListener('dragend', clearDragState)
 document.addEventListener('drop', clearDragState, true)
 
-// Update the drag-ghost label mid-drag so drop targets can surface
-// context-aware text (e.g. "Move A to B"). Pass an empty string to hide the
-// ghost entirely — useful when the cursor is over a target that would no-op.
+// Empty text hides the ghost — used when the hover target would no-op.
 export const setDragText = (text: string): void => {
   const ghost = document.querySelector<HTMLElement>('#dragGhost')
   if (!ghost) {

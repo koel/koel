@@ -55,12 +55,7 @@ const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
 const { startDragging } = useDraggable('playlist-folder')
 const { openContextMenu } = useContextMenu()
 
-// Provided by SidebarPlaylistsSection so we can flag ourselves as the active
-// hover-target — the section uses that to switch its drop-zone affordance.
 const folderDropTargetId = inject(PlaylistFolderDropTargetKey, ref<string | null>(null))
-
-// Provided by SidebarPlaylistsSection: lets us read the playlist being dragged
-// so the drag-ghost text can say "Move A into folder B".
 const draggedPlaylist = inject(DraggedPlaylistKey, ref<Playlist | null>(null))
 
 const opened = ref(false)
@@ -78,9 +73,7 @@ const cancelAutoExpand = () => {
   }
 }
 
-// `dragend` fires on the drag source whenever the operation ends, regardless of
-// where the drop landed or whether a child handler swallowed the event with
-// stopPropagation. Use it as the reliable signal to clear the indicator.
+// dragend always fires on the source, regardless of drop-handler stopPropagation.
 const clearOnDragEnd = () => {
   droppable.value = false
   cancelAutoExpand()
@@ -100,8 +93,7 @@ onBeforeUnmount(() => {
 const onDragStart = (event: DragEvent) => startDragging(event, folder.value)
 
 const onDragOver = (event: DragEvent) => {
-  // Auto-expand the folder after a brief hover so the user can see what's inside,
-  // or drop on a playlist within.
+  // Auto-expand so the user can drop on a playlist inside.
   if (!opened.value && expandTimeout.value === null) {
     expandTimeout.value = window.setTimeout(() => {
       opened.value = true
@@ -116,8 +108,7 @@ const onDragOver = (event: DragEvent) => {
   event.preventDefault()
   event.stopPropagation()
 
-  // The browser's drag-and-drop cursor on macOS ignores CSS `cursor:`; setting
-  // dropEffect explicitly is how we get the copy (+) cursor while hovering.
+  // macOS ignores CSS cursor: during DnD; dropEffect drives the native + cursor.
   if (event.dataTransfer) {
     event.dataTransfer.dropEffect = 'copy'
   }
@@ -127,15 +118,12 @@ const onDragOver = (event: DragEvent) => {
 
   const playlist = draggedPlaylist.value
   if (playlist) {
-    // Hovering over the source folder is a no-op — suppress the ghost text
-    // so we don't pretend a move is about to happen.
     setDragText(playlist.folder_id === folder.value.id ? '' : `Move ${playlist.name} to ${folder.value.name}`)
   }
 }
 
 const onDragLeave = (event: DragEvent) => {
-  // `dragleave` fires when crossing into child elements, too. Only treat it as a
-  // real leave when the cursor moves outside the folder's bounding element.
+  // dragleave also fires when entering a child — ignore unless cursor is truly outside.
   const relatedTarget = event.relatedTarget as Node | null
   if (relatedTarget && (event.currentTarget as Node).contains(relatedTarget)) {
     return

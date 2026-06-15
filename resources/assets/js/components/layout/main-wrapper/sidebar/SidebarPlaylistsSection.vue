@@ -40,15 +40,10 @@ const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
 
 const isDraggingPlaylist = computed(() => currentDragType.value === 'playlist')
 
-// Folders write their id here while they are the active hover-target, and clear
-// it when the cursor leaves them. The CSS below reads this to switch between
-// the "section is the target" and "this folder is the target" states.
 const folderDropTargetId = ref<string | null>(null)
 provide(PlaylistFolderDropTargetKey, folderDropTargetId)
 const hasFolderTarget = computed(() => folderDropTargetId.value !== null)
 
-// PlaylistSidebarItem writes this on dragstart so other sidebar entries can
-// resolve the source folder and compose context-aware drag-ghost text.
 const draggedPlaylist = ref<Playlist | null>(null)
 provide(DraggedPlaylistKey, draggedPlaylist)
 
@@ -68,8 +63,6 @@ const orphanPlaylists = computed(() =>
   }),
 )
 
-// The section is the implicit "no folder" target: dropping anywhere that isn't
-// a folder (folders stop propagation on accept) means "move out of any folder".
 const onDragOver = (event: DragEvent) => {
   if (!acceptsDrop(event)) {
     return false
@@ -77,16 +70,13 @@ const onDragOver = (event: DragEvent) => {
 
   event.preventDefault()
 
-  // The browser's drag-and-drop cursor on macOS ignores CSS `cursor:`; setting
-  // dropEffect explicitly is how we get the copy (+) cursor while hovering.
+  // macOS ignores CSS cursor: during DnD; dropEffect drives the native + cursor.
   if (event.dataTransfer) {
     event.dataTransfer.dropEffect = 'copy'
   }
 
   const playlist = draggedPlaylist.value
   if (!playlist?.folder_id) {
-    // Either nothing tracked yet, or the playlist isn't in a folder so dropping
-    // here is a no-op. Don't claim a move is about to happen.
     setDragText('')
     return
   }
@@ -114,15 +104,6 @@ const onDrop = async (event: DragEvent) => {
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 
-/* Two states while a playlist is being dragged:
-
-   1. No folder under the cursor — the section as a whole is the implicit
-      "move out of folder" target. Surface a dashed outline around the whole
-      <ul> and keep every entry at full opacity; dimming would lie about the
-      drop being unavailable.
-   2. Cursor over a folder — that folder is the specific target. Dim every
-      entry except the folder under the cursor, which keeps full opacity to
-      identify it as the accepting target. */
 ul.dragging {
   cursor: copy;
 }
