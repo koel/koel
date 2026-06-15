@@ -84,12 +84,15 @@ const onDragOver = (event: DragEvent) => {
   }
 
   const playlist = draggedPlaylist.value
-  if (playlist?.folder_id) {
-    const sourceFolder = playlistFolderStore.byId(playlist.folder_id)
-    if (sourceFolder) {
-      setDragText(`Move "${playlist.name}" out of folder "${sourceFolder.name}"`)
-    }
+  if (!playlist?.folder_id) {
+    // Either nothing tracked yet, or the playlist isn't in a folder so dropping
+    // here is a no-op. Don't claim a move is about to happen.
+    setDragText('')
+    return
   }
+
+  const sourceFolder = playlistFolderStore.byId(playlist.folder_id)
+  setDragText(sourceFolder ? `Move ${playlist.name} out of ${sourceFolder.name}` : '')
 }
 
 const onDrop = async (event: DragEvent) => {

@@ -125,8 +125,11 @@ const onDragOver = (event: DragEvent) => {
   droppable.value = true
   folderDropTargetId.value = folder.value.id
 
-  if (draggedPlaylist.value) {
-    setDragText(`Move "${draggedPlaylist.value.name}" into folder "${folder.value.name}"`)
+  const playlist = draggedPlaylist.value
+  if (playlist) {
+    // Hovering over the source folder is a no-op — suppress the ghost text
+    // so we don't pretend a move is about to happen.
+    setDragText(playlist.folder_id === folder.value.id ? '' : `Move ${playlist.name} to ${folder.value.name}`)
   }
 }
 
