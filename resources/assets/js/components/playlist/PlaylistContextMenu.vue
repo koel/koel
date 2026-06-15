@@ -18,6 +18,10 @@
       <Separator />
       <MenuItem @click="toggleOffline">{{ allCached ? 'Remove Offline Versions' : 'Make Available Offline' }}</MenuItem>
     </template>
+    <template v-if="canMoveOutOfFolder">
+      <Separator />
+      <MenuItem @click="moveOutOfFolder">Move Out of Folder</MenuItem>
+    </template>
     <template v-if="canEditPlaylist || canDeletePlaylist">
       <Separator />
       <MenuItem v-if="canEditPlaylist" @click="edit">Edit…</MenuItem>
@@ -41,6 +45,7 @@ import { useKoelPlus } from '@/composables/useKoelPlus'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
 import { playback } from '@/services/playbackManager'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { commonStore } from '@/stores/commonStore'
@@ -71,6 +76,7 @@ const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
 
 const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value))
 const canDeletePlaylist = computed(() => currentUserCan.deletePlaylist(playlist.value))
+const canMoveOutOfFolder = computed(() => playlist.value.folder_id !== null && canEditPlaylist.value)
 const canShowCollaboration = computed(() => isPlus.value && !playlist.value?.is_smart)
 const canShare = computed(() => allowEmbedding.value || canShowCollaboration.value)
 
@@ -129,6 +135,8 @@ const addToQueue = () =>
       toastWarning('The playlist is empty.')
     }
   })
+
+const moveOutOfFolder = () => trigger(() => playlistFolderStore.movePlaylistToFolder(playlist.value, null))
 
 const showCollaborationModal = () =>
   trigger(() => openModal<'PLAYLIST_COLLABORATION'>(PlaylistCollaborationModal, { playlist: playlist.value }))

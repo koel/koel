@@ -37,18 +37,29 @@ export const playlistFolderStore = {
     this.byId(folder.id)!.name = name
   },
 
-  async addPlaylistToFolder(folder: PlaylistFolder, playlist: Playlist) {
-    // Update the folder ID right away, so that the UI can be refreshed immediately.
-    // The actual HTTP request will be done in the background.
-    playlist.folder_id = folder.id
-    await http.post(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
-  },
+  async movePlaylistToFolder(playlist: Playlist, folder: PlaylistFolder | null) {
+    const targetFolderId = folder?.id ?? null
 
-  async removePlaylistFromFolder(folder: PlaylistFolder, playlist: Playlist) {
-    // Update the folder ID right away, so that the UI can be updated immediately.
-    // The actual update will be done in the background.
-    playlist.folder_id = null
-    await http.delete(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
+    if (playlist.folder_id === targetFolderId) {
+      return
+    }
+
+    const sourceFolderId = playlist.folder_id
+
+    // Update folder_id locally so the UI reflects the move immediately.
+    playlist.folder_id = targetFolderId
+
+    try {
+      if (folder) {
+        await http.post(`playlist-folders/${folder.id}/playlists`, { playlists: [playlist.id] })
+      } else if (sourceFolderId) {
+        await http.delete(`playlist-folders/${sourceFolderId}/playlists`, { playlists: [playlist.id] })
+      }
+    } catch (error) {
+      // Roll the optimistic mutation back so the UI doesn't diverge from the server.
+      playlist.folder_id = sourceFolderId
+      throw error
+    }
   },
 
   sort: (folders: PlaylistFolder[] | UnwrapNestedRefs<PlaylistFolder>[]) => orderBy(folders, 'name'),
