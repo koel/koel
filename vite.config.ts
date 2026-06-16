@@ -13,6 +13,14 @@ export default defineConfig({
     '**/*.php': ['composer cs'],
     'resources/assets/**/*.{js,ts,css,pcss,vue}': ['vp check --fix'],
   },
+  fmt: {
+    semi: false,
+    singleQuote: true,
+    arrowParens: 'avoid',
+    printWidth: 120,
+    objectWrap: 'preserve',
+    ignorePatterns: ['resources/assets/css/vendor/**', 'resources/assets/js/visualizers/**'],
+  },
   lint: {
     plugins: ['typescript', 'vue', 'import'],
     categories: {
