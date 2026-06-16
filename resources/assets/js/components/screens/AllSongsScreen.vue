@@ -85,8 +85,8 @@ const loading = ref(false)
 let sortField: MaybeArray<PlayableListSortField> = lsGet<PlayableListSortField>('all-songs-sort-field', 'title')!
 let sortOrder: SortOrder = lsGet<SortOrder>('all-songs-sort-order', 'asc')!
 
-const page = ref<number | null>(1)
-const moreSongsAvailable = computed(() => page.value !== null)
+const cursor = ref<string | null>('')
+const moreSongsAvailable = computed(() => cursor.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 
 const fetchSongs = async () => {
@@ -97,10 +97,10 @@ const fetchSongs = async () => {
   loading.value = true
 
   try {
-    page.value = await playableStore.paginateSongs({
+    cursor.value = await playableStore.paginateSongs({
       sort: sortField,
       order: sortOrder,
-      page: page.value!,
+      cursor: cursor.value,
     })
   } catch (error: any) {
     useErrorHandler().handleHttpError(error)
@@ -121,7 +121,7 @@ const playAll = async (shuffle: boolean) => {
 }
 
 const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
-  page.value = 1
+  cursor.value = ''
   playableStore.state.playables = []
   sortField = field
   sortOrder = order

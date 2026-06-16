@@ -19,7 +19,7 @@ describe('allSongsScreen.vue', () => {
   })
 
   const renderComponent = async () => {
-    const fetchMock = h.mock(playableStore, 'paginateSongs').mockResolvedValue(2)
+    const fetchMock = h.mock(playableStore, 'paginateSongs').mockResolvedValue('next-cursor-token')
 
     h.router.$currentRoute.value = {
       screen: 'Songs',
@@ -38,7 +38,7 @@ describe('allSongsScreen.vue', () => {
       expect(fetchMock).toHaveBeenCalledWith({
         sort: 'title',
         order: 'asc',
-        page: 1,
+        cursor: '',
       }),
     )
 

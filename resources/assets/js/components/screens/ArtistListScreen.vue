@@ -109,7 +109,7 @@ const grid = ref<InstanceType<typeof ArtistGrid>>()
 const artists = toRef(artistStore.state, 'artists')
 
 const loading = ref(false)
-const page = ref<number | null>(1)
+const cursor = ref<string | null>('')
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
@@ -124,7 +124,7 @@ const noFavoriteArtists = computed(
     displayedArtists.value.length === 0 &&
     !moreArtistsAvailable.value,
 )
-const moreArtistsAvailable = computed(() => page.value !== null)
+const moreArtistsAvailable = computed(() => cursor.value !== null)
 const showSkeletons = computed(() => loading.value && artists.value.length === 0)
 
 const fetchArtists = async () => {
@@ -135,9 +135,9 @@ const fetchArtists = async () => {
   loading.value = true
 
   try {
-    page.value = await artistStore.paginate({
+    cursor.value = await artistStore.paginate({
       favorites_only: preferences.artists_favorites_only,
-      page: page!.value || 1,
+      cursor: cursor.value,
       sort: preferences.artists_sort_field,
       order: preferences.artists_sort_order,
     })
@@ -149,7 +149,7 @@ const fetchArtists = async () => {
 }
 
 const resetState = async () => {
-  page.value = 1
+  cursor.value = ''
 
   artistStore.reset()
   grid.value?.scrollToTop()

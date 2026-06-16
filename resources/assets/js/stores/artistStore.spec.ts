@@ -84,22 +84,22 @@ describe('artistStore', () => {
 
     h.mock(http, 'get').mockResolvedValueOnce({
       data: artists,
-      links: {
-        next: '/artists?page=2',
-      },
       meta: {
-        current_page: 1,
+        path: '/artists',
+        per_page: 21,
+        next_cursor: 'eyJuZXh0Ijoi...',
+        prev_cursor: null,
       },
     })
 
     expect(
       await artistStore.paginate({
         favorites_only: false,
-        page: 1,
+        cursor: '',
         sort: 'name',
         order: 'asc',
       }),
-    ).toEqual(2)
+    ).toEqual('eyJuZXh0Ijoi...')
 
     expect(artistStore.state.artists).toEqual(artists)
     expect(artistStore.vault.size).toBe(3)

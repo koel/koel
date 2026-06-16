@@ -6,7 +6,7 @@ namespace App\Http\Requests\API;
  * @property string $email
  * @property string $password
  */
-class UserLoginRequest extends Request
+class LoginWithCredentialsRequest extends Request
 {
     /** @inheritdoc */
     public function rules(): array

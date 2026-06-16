@@ -41,6 +41,62 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
+    public function indexWithCursorReturnsCursorPagination(): void
+    {
+        Artist::factory()
+            ->createMany(22)
+            ->each(static function (Artist $artist): void {
+                Album::factory()->for($artist)->createOne();
+            });
+
+        $response = $this->getAs(
+            'api/artists?cursor=',
+        )->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+        self::assertCount(21, $response->json('data'));
+        self::assertNotNull($response->json('meta.next_cursor'));
+        self::assertNull($response->json('meta.prev_cursor'));
+
+        $secondPage = $this->getAs(
+            'api/artists?cursor=' . $response->json('meta.next_cursor'),
+        )->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+        self::assertCount(1, $secondPage->json('data'));
+        self::assertNull($secondPage->json('meta.next_cursor'));
+        self::assertNotNull($secondPage->json('meta.prev_cursor'));
+    }
+
+    #[Test]
+    public function indexWithCursorTraversesAllSupportedSortsWithoutDuplicates(): void
+    {
+        Artist::factory()
+            ->createMany(30)
+            ->each(static function (Artist $artist): void {
+                Album::factory()->for($artist)->createOne();
+            });
+
+        foreach (['name', 'created_at', 'rating', 'favorite'] as $sort) {
+            $allIds = [];
+            $cursor = '';
+            $pages = 0;
+
+            while ($cursor !== null && $pages < 5) {
+                $pages++;
+                $r = $this
+                    ->getAs("api/artists?favorites_only=false&cursor={$cursor}&sort={$sort}&order=desc")
+                    ->assertOk()
+                    ->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+                $allIds = array_merge($allIds, collect($r->json('data'))->pluck('id')->all());
+                $cursor = $r->json('meta.next_cursor');
+            }
+
+            self::assertCount(30, $allIds, "sort={$sort} returned wrong total");
+            self::assertCount(30, array_unique($allIds), "sort={$sort} returned duplicates");
+        }
+    }
+
+    #[Test]
     public function indexExcludesArtistsWithoutAlbums(): void
     {
         $albumArtist = Artist::factory()->createOne();

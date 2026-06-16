@@ -5,11 +5,9 @@ import { useLocalStorage } from '@/composables/useLocalStorage'
 import { use } from '@/utils/helpers'
 
 export interface UpdateCurrentProfileData {
-  current_password: string
   name: string
   email: string
   avatar?: string
-  new_password?: string
 }
 
 const API_TOKEN_STORAGE_KEY = 'api-token'
@@ -18,11 +16,39 @@ const REDIRECT_KEY = 'redirect'
 
 const { get: lsGet, set: lsSet, remove: lsRemove } = useLocalStorage(false) // authentication local storage data aren't namespaced
 
+const isTwoFactorChallengeRequired = (response: LoginResponse): response is TwoFactorChallengeRequired => {
+  return 'two_factor' in response && response.two_factor
+}
+
 export const authService = {
-  async login(email: string, password: string) {
-    this.setTokensUsingCompositeToken(await http.post<CompositeToken>('me', { email, password }))
+  async login(email: string, password: string): Promise<TwoFactorChallengeRequired | null> {
+    const response = await http.post<LoginResponse>('me', { email, password })
+
+    if (isTwoFactorChallengeRequired(response)) {
+      return response
+    }
+
+    this.setTokensUsingCompositeToken(response)
+    this.maybeRedirect()
+    return null
+  },
+
+  async submitTwoFactorChallenge(loginToken: string, code: string) {
+    this.setTokensUsingCompositeToken(
+      await http.post<CompositeToken>('me/two-factor-challenge', { login_token: loginToken, code }),
+    )
     this.maybeRedirect()
   },
+
+  enrollTwoFactor: async () => await http.post<{ provisioning_uri: string }>('me/two-factor'),
+
+  confirmTwoFactor: async (code: string) =>
+    await http.post<{ recovery_codes: string[] }>('me/two-factor/confirm', { code }),
+
+  disableTwoFactor: async (code: string) => await http.delete('me/two-factor', { code }),
+
+  regenerateRecoveryCodes: async (code: string) =>
+    await http.post<{ recovery_codes: string[] }>('me/two-factor/recovery-codes', { code }),
 
   async logout() {
     await http.delete('me')
@@ -33,6 +59,10 @@ export const authService = {
 
   updateProfile: async (data: UpdateCurrentProfileData) => {
     merge(userStore.current, await http.put<User>('me', data))
+  },
+
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    await http.put('me/password', { current_password: currentPassword, new_password: newPassword })
   },
 
   getApiToken: () => lsGet<string>(API_TOKEN_STORAGE_KEY),

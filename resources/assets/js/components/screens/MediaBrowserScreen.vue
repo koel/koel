@@ -74,13 +74,13 @@ const getFolderIdFromRoute = () => getRouteParam('folder') || null
 
 const subfolders = ref<Folder[]>([])
 const songs = ref<Song[]>([])
-const nextPage = ref<number | null>(1)
+const cursor = ref<string | null>('')
 
 const parentEntry = computed(() => mediaBrowser.getParentReference(currentFolder.value))
 const noContent = computed(() => !loading.value && !subfolders.value.length && !songs.value.length)
 
 const shouldShowSkeleton = computed(() => {
-  return loading.value && nextPage.value === 1
+  return loading.value && cursor.value === ''
 })
 
 const items = computed(() => {
@@ -98,22 +98,22 @@ const resetState = () => {
   songs.value = []
   currentFolder.value = null
   ancestors.value = []
-  nextPage.value = 1
+  cursor.value = ''
 }
 
 const fetchContent = async (forceRefresh = false) => {
-  if (loading.value || nextPage.value === null) {
+  if (loading.value || cursor.value === null) {
     return
   }
 
   try {
     loading.value = true
-    const fetched = await mediaBrowser.browse(folderId.value, nextPage.value, forceRefresh)
+    const fetched = await mediaBrowser.browse(folderId.value, cursor.value, forceRefresh)
     currentFolder.value = fetched.current
     ancestors.value = fetched.ancestors
     subfolders.value = fetched.subfolders
     songs.value = [...songs.value, ...fetched.songs]
-    nextPage.value = fetched.nextPage
+    cursor.value = fetched.nextCursor
   } catch (e) {
     useErrorHandler().handleHttpError(e)
   } finally {
@@ -127,7 +127,7 @@ const refresh = () => {
 }
 
 const onScrolledToEnd = () => {
-  if (nextPage.value !== null) {
+  if (cursor.value !== null) {
     fetchContent()
   }
 }

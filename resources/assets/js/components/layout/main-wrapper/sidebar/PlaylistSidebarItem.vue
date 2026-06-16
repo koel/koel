@@ -1,5 +1,4 @@
 <template>
-  <!-- using .stop modifier to prevent events from bubbling up to the containing playlist folder (if any) -->
   <SidebarItem
     :class="{ droppable }"
     :href="href"
@@ -8,10 +7,10 @@
     :active
     @dblclick="onDblClick"
     @contextmenu="onContextMenu"
-    @dragleave.stop="onDragLeave"
-    @dragover.stop="onDragOver"
+    @dragleave="onDragLeave"
+    @dragover="onDragOver"
     @dragstart.stop="onDragStart"
-    @drop.stop="onDrop"
+    @drop="onDrop"
   >
     <template #icon>
       <Icon v-if="isRecentlyPlayedList(list)" :icon="faClockRotateLeft" fixed-width />
@@ -28,7 +27,7 @@
 import { faClockRotateLeft, faHeart, faUsers, faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons'
 import isMobile from 'ismobilejs'
 import { ListMusicIcon } from 'lucide-vue-next'
-import { computed, ref, toRefs } from 'vue'
+import { computed, inject, ref, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playableStore } from '@/stores/playableStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
@@ -37,6 +36,7 @@ import { useDraggable, useDroppable } from '@/composables/useDragAndDrop'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { playback } from '@/services/playbackManager'
+import { DraggedPlaylistKey } from '@/config/symbols'
 
 import SidebarItem from '@/components/layout/main-wrapper/sidebar/SidebarItem.vue'
 
@@ -48,6 +48,8 @@ const { url, isCurrentScreen, getRouteParam } = useRouter()
 const { startDragging } = useDraggable('playlist')
 const { acceptsDrop, resolveDroppedItems } = useDroppable(['playables', 'album', 'artist', 'browser-media'])
 const { openContextMenu } = useContextMenu()
+
+const draggedPlaylist = inject(DraggedPlaylistKey, ref<Playlist | null>(null))
 
 const droppable = ref(false)
 
@@ -119,38 +121,47 @@ const onDblClick = async () => {
   }
 }
 
-const onDragStart = (event: DragEvent) => isPlaylist(list.value) && startDragging(event, list.value)
+const onDragStart = (event: DragEvent) => {
+  if (!isPlaylist(list.value)) {
+    return
+  }
+
+  startDragging(event, list.value)
+  draggedPlaylist.value = list.value
+}
 
 const onDragOver = (event: DragEvent) => {
-  if (!contentEditable.value) {
-    return false
-  }
-  if (!acceptsDrop(event)) {
-    return false
+  if (!contentEditable.value || !acceptsDrop(event)) {
+    return
   }
 
   event.preventDefault()
+  event.stopPropagation()
   droppable.value = true
-
-  return false
 }
 
-const onDragLeave = () => (droppable.value = false)
+const onDragLeave = (event: DragEvent) => {
+  if (!droppable.value) {
+    return
+  }
+
+  event.stopPropagation()
+  droppable.value = false
+}
 
 const onDrop = async (event: DragEvent) => {
-  droppable.value = false
+  if (!contentEditable.value || !acceptsDrop(event)) {
+    return
+  }
 
-  if (!contentEditable.value) {
-    return false
-  }
-  if (!acceptsDrop(event)) {
-    return false
-  }
+  event.preventDefault()
+  event.stopPropagation()
+  droppable.value = false
 
   const playables = await resolveDroppedItems(event)
 
   if (!playables?.length) {
-    return false
+    return
   }
 
   if (isFavoriteList(list.value)) {
@@ -158,8 +169,6 @@ const onDrop = async (event: DragEvent) => {
   } else if (isPlaylist(list.value)) {
     await addToPlaylist(list.value, playables)
   }
-
-  return false
 }
 </script>
 

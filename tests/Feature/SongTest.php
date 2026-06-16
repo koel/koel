@@ -30,6 +30,75 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function indexWithCursorReturnsCursorPagination(): void
+    {
+        Song::factory()->createMany(51);
+
+        $response = $this->getAs(
+            'api/songs?cursor=',
+        )->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+        self::assertCount(50, $response->json('data'));
+        self::assertNotNull($response->json('meta.next_cursor'));
+        self::assertNull($response->json('meta.prev_cursor'));
+
+        $secondPage = $this->getAs(
+            'api/songs?cursor=' . $response->json('meta.next_cursor'),
+        )->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+        self::assertCount(1, $secondPage->json('data'));
+        self::assertNull($secondPage->json('meta.next_cursor'));
+        self::assertNotNull($secondPage->json('meta.prev_cursor'));
+    }
+
+    #[Test]
+    public function indexWithCursorTraversesAllSupportedSortsWithoutDuplicates(): void
+    {
+        $user = create_user();
+        $songs = Song::factory()->createMany(60);
+
+        foreach ($songs->take(20) as $i => $song) {
+            Rating::factory()
+                ->for($user)
+                ->for($song, 'rateable')
+                ->createOne(['rating' => ($i % 5) + 1]);
+        }
+        foreach ($songs->slice(20, 10) as $song) {
+            Favorite::factory()->for($user)->for($song, 'favoriteable')->createOne();
+        }
+
+        foreach ([
+            'title',
+            'track',
+            'length',
+            'year',
+            'created_at',
+            'artist_name',
+            'album_name',
+            'rating',
+            'favorite',
+        ] as $sort) {
+            $allIds = [];
+            $cursor = '';
+            $pages = 0;
+
+            while ($cursor !== null && $pages < 4) {
+                $pages++;
+                $r = $this
+                    ->getAs("api/songs?cursor={$cursor}&sort={$sort}&order=desc", $user)
+                    ->assertOk()
+                    ->assertJsonStructure(SongResource::CURSOR_PAGINATION_JSON_STRUCTURE);
+
+                $allIds = array_merge($allIds, collect($r->json('data'))->pluck('id')->all());
+                $cursor = $r->json('meta.next_cursor');
+            }
+
+            self::assertCount(60, $allIds, "sort={$sort} returned wrong total");
+            self::assertCount(60, array_unique($allIds), "sort={$sort} returned duplicates");
+        }
+    }
+
+    #[Test]
     public function indexSortedByFavoriteScopesToCurrentUser(): void
     {
         $user = create_user();

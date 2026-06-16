@@ -115,7 +115,7 @@ const grid = ref<InstanceType<typeof AlbumGrid>>()
 const albums = toRef(albumStore.state, 'albums')
 
 const loading = ref(false)
-const page = ref<number | null>(1)
+const cursor = ref<string | null>('')
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
@@ -130,7 +130,7 @@ const noFavoriteAlbums = computed(
     displayedAlbums.value.length === 0 &&
     !moreAlbumsAvailable.value,
 )
-const moreAlbumsAvailable = computed(() => page.value !== null)
+const moreAlbumsAvailable = computed(() => cursor.value !== null)
 const showSkeletons = computed(() => loading.value && albums.value.length === 0)
 
 const fetchAlbums = async () => {
@@ -141,9 +141,9 @@ const fetchAlbums = async () => {
   loading.value = true
 
   try {
-    page.value = await albumStore.paginate({
+    cursor.value = await albumStore.paginate({
       favorites_only: preferences.albums_favorites_only,
-      page: page!.value || 1,
+      cursor: cursor.value,
       sort: preferences.albums_sort_field,
       order: preferences.albums_sort_order,
     })
@@ -155,7 +155,7 @@ const fetchAlbums = async () => {
 }
 
 const resetState = async () => {
-  page.value = 1
+  cursor.value = ''
 
   albumStore.reset()
   grid.value?.scrollToTop()

@@ -21,19 +21,10 @@ describe('artistListScreen.vue', () => {
   const h = createHarness()
 
   const renderComponent = async () => {
-    const paginator: PaginatorResource<Artist> = {
-      data: h.factory('artist').make(9),
-      links: {
-        next: '?page=1',
-      },
-      meta: {
-        current_page: 0,
-      },
-    }
+    const artists = h.factory('artist').make(9)
+    const paginateMock = h.mock(artistStore, 'paginate').mockResolvedValueOnce('next-cursor-token')
 
-    const paginateMock = h.mock(artistStore, 'paginate').mockResolvedValueOnce(paginator)
-
-    artistStore.state.artists = paginator.data
+    artistStore.state.artists = artists
 
     const rendered = h.render(Component, {
       global: {
@@ -101,7 +92,7 @@ describe('artistListScreen.vue', () => {
     await waitFor(() =>
       expect(paginateMock).toHaveBeenNthCalledWith(2, {
         favorites_only: true,
-        page: 1,
+        cursor: '',
         order: 'asc',
         sort: 'name',
       }),
@@ -112,7 +103,7 @@ describe('artistListScreen.vue', () => {
     await waitFor(() =>
       expect(paginateMock).toHaveBeenNthCalledWith(3, {
         favorites_only: false,
-        page: 1,
+        cursor: '',
         order: 'asc',
         sort: 'name',
       }),

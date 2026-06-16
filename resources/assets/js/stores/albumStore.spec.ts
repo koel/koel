@@ -79,11 +79,11 @@ describe('albumStore', () => {
 
     h.mock(http, 'get').mockResolvedValueOnce({
       data: albums,
-      links: {
-        next: '/albums?page=2',
-      },
       meta: {
-        current_page: 1,
+        path: '/albums',
+        per_page: 21,
+        next_cursor: 'eyJuZXh0Ijoi...',
+        prev_cursor: null,
       },
     })
 
@@ -92,9 +92,9 @@ describe('albumStore', () => {
         favorites_only: false,
         sort: 'name',
         order: 'asc',
-        page: 1,
+        cursor: '',
       }),
-    ).toEqual(2)
+    ).toEqual('eyJuZXh0Ijoi...')
 
     expect(albumStore.state.albums).toEqual(albums)
     expect(albumStore.vault.size).toBe(3)

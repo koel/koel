@@ -143,7 +143,10 @@ class SongBuilder extends FavoriteableBuilder
         Assert::oneOf(strtolower($direction), ['asc', 'desc']);
 
         if ($column === 'user_ratings.rating') {
-            return $this->orderBy(DB::raw('COALESCE(user_ratings.rating, 0)'), $direction)->orderBy('songs.title');
+            return $this
+                ->addSelect(DB::raw('(COALESCE(user_ratings.rating, 0)) as user_rating_score'))
+                ->orderBy('user_rating_score', $direction)
+                ->orderBy('songs.title');
         }
 
         return $this

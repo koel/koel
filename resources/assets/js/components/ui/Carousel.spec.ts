@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { screen, waitFor } from '@testing-library/vue'
-import { nextTick } from 'vue'
+import { screen } from '@testing-library/vue'
+import { defineComponent, h as createElement, nextTick, provide, ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { BlockActionsHostKey } from '@/config/symbols'
 import Component from './Carousel.vue'
 
 const setOverflow = async (scroller: HTMLDivElement, clientWidth: number, scrollWidth: number) => {
@@ -14,21 +15,17 @@ const setOverflow = async (scroller: HTMLDivElement, clientWidth: number, scroll
 describe('carousel.vue', () => {
   const h = createHarness()
 
-  it('renders the header slot and renders content', () => {
+  it('renders the default slot content', () => {
     h.render(Component, {
-      slots: {
-        header: 'Most Played',
-        default: '<div data-testid="card">Card</div>',
-      },
+      slots: { default: '<div data-testid="card">Card</div>' },
     })
 
-    screen.getByText('Most Played')
     screen.getByTestId('card')
   })
 
   it('hides the scroll buttons when the track fits within the scroller', () => {
     h.render(Component, {
-      slots: { header: 'Top', default: '<div data-testid="card">Card</div>' },
+      slots: { default: '<div data-testid="card">Card</div>' },
     })
 
     expect(screen.queryByRole('button', { name: 'Scroll left' })).toBeNull()
@@ -37,7 +34,7 @@ describe('carousel.vue', () => {
 
   it('shows the scroll buttons when the track overflows the scroller', async () => {
     const { container } = h.render(Component, {
-      slots: { header: 'Top', default: '<div>Card</div>' },
+      slots: { default: '<div>Card</div>' },
     })
 
     const scroller = container.querySelector('.home-carousel') as HTMLDivElement
@@ -47,9 +44,28 @@ describe('carousel.vue', () => {
     screen.getByRole('button', { name: 'Scroll right' })
   })
 
+  it('renders scroll buttons inside the inline <nav> when no actions host is provided', async () => {
+    // Regression: confirms Vue's top-level ref auto-unwrap in <script setup>
+    // resolves `v-if="actionsHost && hasOverflow"` correctly when the inject
+    // default ref(null) is in play (i.e. no provider). If auto-unwrap didn't
+    // apply, the Teleport branch would always win and the <nav> fallback would
+    // never render.
+    const { container } = h.render(Component, {
+      slots: { default: '<div>Card</div>' },
+    })
+
+    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
+    await setOverflow(scroller, 800, 3200)
+
+    const nav = container.querySelector<HTMLElement>('nav')
+    expect(nav).not.toBeNull()
+    expect(nav!.querySelector('button[title="Scroll left"]')).not.toBeNull()
+    expect(nav!.querySelector('button[title="Scroll right"]')).not.toBeNull()
+  })
+
   it('slides right by the scroller width when the right chevron is clicked', async () => {
     const { container } = h.render(Component, {
-      slots: { header: 'Top', default: '<div>Card</div>' },
+      slots: { default: '<div>Card</div>' },
     })
 
     const scroller = container.querySelector('.home-carousel') as HTMLDivElement
@@ -65,7 +81,7 @@ describe('carousel.vue', () => {
 
   it('slides left by the scroller width when the left chevron is clicked', async () => {
     const { container } = h.render(Component, {
-      slots: { header: 'Top', default: '<div>Card</div>' },
+      slots: { default: '<div>Card</div>' },
     })
 
     const scroller = container.querySelector('.home-carousel') as HTMLDivElement
@@ -79,50 +95,27 @@ describe('carousel.vue', () => {
     expect(spy).toHaveBeenCalledWith({ left: 800, behavior: 'smooth' })
   })
 
-  it('omits the refresh button when no onRefresh prop is passed', () => {
-    h.render(Component, { slots: { header: 'Top', default: '<div>Card</div>' } })
-
-    expect(screen.queryByRole('button', { name: 'Refresh' })).toBeNull()
-  })
-
-  it('calls onRefresh when the refresh button is clicked', async () => {
-    const onRefresh = vi.fn().mockResolvedValue(undefined)
-    h.render(Component, {
-      props: { onRefresh },
-      slots: { header: 'Top', default: '<div>Card</div>' },
+  it('teleports the scroll buttons into a provided actions host', async () => {
+    const Wrapper = defineComponent({
+      setup() {
+        const host = ref<HTMLElement | null>(null)
+        provide(BlockActionsHostKey, host)
+        return () =>
+          createElement('div', [
+            createElement('div', { ref: el => (host.value = el as HTMLElement), 'data-testid': 'host' }),
+            createElement(Component, null, { default: () => createElement('div', 'Card') }),
+          ])
+      },
     })
 
-    await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
+    const { container } = h.render(Wrapper)
+    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
+    await setOverflow(scroller, 800, 3200)
 
-    expect(onRefresh).toHaveBeenCalled()
-  })
-
-  it('disables the refresh button while onRefresh is in flight', async () => {
-    let resolve!: () => void
-    const onRefresh = vi.fn(() => new Promise<void>(r => (resolve = r)))
-
-    h.render(Component, {
-      props: { onRefresh },
-      slots: { header: 'Top', default: '<div>Card</div>' },
-    })
-
-    const button = screen.getByRole<HTMLButtonElement>('button', { name: 'Refresh' })
-    expect(button.disabled).toBe(false)
-    expect(button.classList.contains('animate-spin')).toBe(false)
-
-    const clickPromise = h.user.click(button)
-
-    await waitFor(() => {
-      expect(button.disabled).toBe(true)
-      expect(button.classList.contains('animate-spin')).toBe(true)
-    })
-
-    resolve()
-    await clickPromise
-
-    await waitFor(() => {
-      expect(button.disabled).toBe(false)
-      expect(button.classList.contains('animate-spin')).toBe(false)
-    })
+    const host = screen.getByTestId('host')
+    expect(host.querySelector('button[title="Scroll left"]')).not.toBeNull()
+    expect(host.querySelector('button[title="Scroll right"]')).not.toBeNull()
+    // The inline <nav> must not coexist with the teleported buttons.
+    expect(container.querySelector('nav button[title="Scroll left"]')).toBeNull()
   })
 })

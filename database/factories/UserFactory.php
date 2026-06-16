@@ -6,7 +6,6 @@ use App\Enums\Acl\Role;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /** @extends Factory<User> */
@@ -18,7 +17,7 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name,
             'email' => fake()->unique()->safeEmail,
-            'password' => Hash::make('secret'),
+            'password' => 'secret',
             'preferences' => [
                 'lastfm_session_key' => Str::random(),
             ],

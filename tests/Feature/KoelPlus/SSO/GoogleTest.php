@@ -74,4 +74,29 @@ class GoogleTest extends PlusTestCase
         $response->assertViewIs('sso-callback');
         $response->assertViewHas('token');
     }
+
+    #[Test]
+    public function callbackBypassesTwoFactorChallenge(): void
+    {
+        create_user([
+            'sso_provider' => 'Google',
+            'sso_id' => '123',
+            'email' => 'bruce@iron.com',
+            'two_factor_confirmed_at' => now(),
+        ]);
+
+        $googleUser = Mockery::mock(GoogleUser::class, [
+            'getEmail' => 'bruce@iron.com',
+            'getName' => 'Bruce Dickinson',
+            'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar',
+            'getId' => '123',
+        ]);
+
+        Socialite::expects('driver->user')->andReturn($googleUser);
+
+        $response = $this->get('auth/google/callback');
+        $response->assertOk();
+        $response->assertViewIs('sso-callback');
+        $response->assertViewHas('token');
+    }
 }

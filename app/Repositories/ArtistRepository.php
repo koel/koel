@@ -4,7 +4,9 @@ namespace App\Repositories;
 
 use App\Models\Artist;
 use App\Models\User;
+use App\Repositories\Contracts\PaginationStrategy;
 use App\Repositories\Contracts\ScoutableRepository;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -101,18 +103,22 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    public function getForListing(
+    public function paginate(
         string $sortColumn,
         string $sortDirection,
+        PaginationStrategy $strategy,
         bool $favoritesOnly = false,
         ?User $user = null,
-    ): Paginator {
-        return Artist::query()
-            ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
-            ->onlyStandard()
-            ->onlyAlbumArtists()
-            ->sort($sortColumn, $sortDirection)
-            ->simplePaginate(21);
+    ): Paginator|CursorPaginator {
+        return $strategy->apply(
+            Artist::query()
+                ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
+                ->onlyStandard()
+                ->onlyAlbumArtists()
+                ->sort($sortColumn, $sortDirection),
+            idColumn: 'artists.id',
+            perPage: 21,
+        );
     }
 
     public function search(string $keywords, int $limit, ?User $user = null): Collection

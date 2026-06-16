@@ -101,9 +101,9 @@ let sortOrder: SortOrder = lsGet<SortOrder>('genre-sort-order', 'asc')!
 const id = ref<Genre['id'] | null>(null)
 const genre = ref<Genre | null>(null)
 const loading = ref(false)
-const page = ref<number | null>(1)
+const cursor = ref<string | null>('')
 
-const moreSongsAvailable = computed(() => page.value !== null)
+const moreSongsAvailable = computed(() => cursor.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 const duration = computed(() => (genre.value ? secondsToHumanReadable(genre.value.length) : ''))
 
@@ -115,18 +115,18 @@ const fetch = async () => {
   loading.value = true
 
   try {
-    let fetched: { songs: Song[]; nextPage: number | null }
+    let fetched: { songs: Song[]; nextCursor: string | null }
 
     ;[genre.value, fetched] = await Promise.all([
       genreStore.fetchOne(id.value!),
       playableStore.paginateSongsByGenre(id.value!, {
         sort: sortField,
         order: sortOrder,
-        page: page.value!,
+        cursor: cursor.value,
       }),
     ])
 
-    page.value = fetched.nextPage
+    cursor.value = fetched.nextCursor
     songs.value.push(...fetched.songs)
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)
@@ -137,14 +137,14 @@ const fetch = async () => {
 
 const refresh = async () => {
   genre.value = null
-  page.value = 1
+  cursor.value = ''
   songs.value = []
 
   await fetch()
 }
 
 const fetchWithSort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
-  page.value = 1
+  cursor.value = ''
   songs.value = []
   sortField = field
   sortOrder = order

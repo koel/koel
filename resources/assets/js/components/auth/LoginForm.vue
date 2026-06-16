@@ -1,7 +1,15 @@
 <template>
   <div class="flex items-center justify-center min-h-screen my-0 mx-auto flex-col gap-5">
+    <TwoFactorChallengeForm
+      v-if="twoFactorLoginToken"
+      class="w-full sm:w-[288px]"
+      :login-token="twoFactorLoginToken"
+      @cancel="twoFactorLoginToken = ''"
+      @verified="$emit('loggedin')"
+    />
+
     <form
-      v-show="!showingForgotPasswordForm"
+      v-show="!twoFactorLoginToken && !showingForgotPasswordForm"
       :class="{ error: failed }"
       class="w-full sm:w-[288px] sm:border duration-500 p-7 rounded-xl border-transparent sm:bg-k-fg-10 space-y-3"
       data-testid="login-form"
@@ -30,7 +38,11 @@
       </FormRow>
     </form>
 
-    <div v-if="ssoProviders.length" v-show="!showingForgotPasswordForm" class="flex gap-3 items-center">
+    <div
+      v-if="ssoProviders.length"
+      v-show="!twoFactorLoginToken && !showingForgotPasswordForm"
+      class="flex gap-3 items-center"
+    >
       <GoogleLoginButton v-if="ssoProviders.includes('Google')" @error="onSSOError" @success="onSSOSuccess" />
       <OpenIDLoginButton v-if="ssoProviders.includes('OpenID Connect')" @error="onSSOError" @success="onSSOSuccess" />
     </div>
@@ -52,6 +64,7 @@ import PasswordField from '@/components/ui/form/PasswordField.vue'
 import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm.vue'
 import GoogleLoginButton from '@/components/auth/sso/GoogleLoginButton.vue'
 import OpenIDLoginButton from '@/components/auth/sso/OpenIDLoginButton.vue'
+import TwoFactorChallengeForm from '@/components/auth/two-factor/TwoFactorChallengeForm.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
@@ -67,6 +80,7 @@ const demoAccount = window.KOEL.demo_account || {
 
 const failed = ref(false)
 const showingForgotPasswordForm = ref(false)
+const twoFactorLoginToken = ref('')
 const canResetPassword = window.KOEL.mailer_configured && !window.KOEL.is_demo
 const ssoProviders = window.KOEL.sso_providers || []
 const emailPlaceholder = window.KOEL.is_demo ? demoAccount.email : 'Your email address'
@@ -80,10 +94,15 @@ const { data, handleSubmit } = useForm<{ email: string; password: string }>({
         password: '',
       },
   onSubmit: async ({ email, password }) => await authService.login(email, password),
-  onSuccess: () => {
+  onSuccess: challenge => {
     failed.value = false
-    // Reset the password so that the next login will have this field empty.
     data.password = ''
+
+    if (challenge) {
+      twoFactorLoginToken.value = challenge.login_token
+      return
+    }
+
     emit('loggedin')
   },
   onError: (error: unknown) => {

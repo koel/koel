@@ -13,22 +13,27 @@ use function Tests\create_user;
 
 class OpenIDConnectTest extends PlusTestCase
 {
-    #[Test]
-    public function callbackWithNewUser(): void
+    private static function mockOidcCallback(?string $ssoId = null): void
     {
-        $oidcUser = Mockery::mock(OidcUser::class, [
+        Socialite::expects('driver->user')->andReturn(Mockery::mock(OidcUser::class, [
             'getEmail' => 'bruce@iron.com',
             'getName' => 'Bruce Dickinson',
             'getAvatar' => null,
-            'getId' => Str::random(),
-        ]);
+            'getId' => $ssoId ?? Str::random(),
+        ]));
+    }
 
-        Socialite::expects('driver->user')->andReturn($oidcUser);
+    private function assertCallbackIssuesToken(): void
+    {
+        $this->get('auth/oidc/callback')->assertOk()->assertViewIs('sso-callback')->assertViewHas('token');
+    }
 
-        $response = $this->get('auth/oidc/callback');
-        $response->assertOk();
-        $response->assertViewIs('sso-callback');
-        $response->assertViewHas('token');
+    #[Test]
+    public function callbackWithNewUser(): void
+    {
+        self::mockOidcCallback();
+
+        $this->assertCallbackIssuesToken();
     }
 
     #[Test]
@@ -36,19 +41,9 @@ class OpenIDConnectTest extends PlusTestCase
     {
         create_user(['email' => 'bruce@iron.com']);
 
-        $oidcUser = Mockery::mock(OidcUser::class, [
-            'getEmail' => 'bruce@iron.com',
-            'getName' => 'Bruce Dickinson',
-            'getAvatar' => null,
-            'getId' => Str::random(),
-        ]);
+        self::mockOidcCallback();
 
-        Socialite::expects('driver->user')->andReturn($oidcUser);
-
-        $response = $this->get('auth/oidc/callback');
-        $response->assertOk();
-        $response->assertViewIs('sso-callback');
-        $response->assertViewHas('token');
+        $this->assertCallbackIssuesToken();
     }
 
     #[Test]
@@ -60,18 +55,23 @@ class OpenIDConnectTest extends PlusTestCase
             'email' => 'bruce@iron.com',
         ]);
 
-        $oidcUser = Mockery::mock(OidcUser::class, [
-            'getEmail' => 'bruce@iron.com',
-            'getName' => 'Bruce Dickinson',
-            'getAvatar' => null,
-            'getId' => '123',
+        self::mockOidcCallback('123');
+
+        $this->assertCallbackIssuesToken();
+    }
+
+    #[Test]
+    public function callbackBypassesTwoFactorChallenge(): void
+    {
+        create_user([
+            'sso_provider' => 'OpenID Connect',
+            'sso_id' => '123',
+            'email' => 'bruce@iron.com',
+            'two_factor_confirmed_at' => now(),
         ]);
 
-        Socialite::expects('driver->user')->andReturn($oidcUser);
+        self::mockOidcCallback('123');
 
-        $response = $this->get('auth/oidc/callback');
-        $response->assertOk();
-        $response->assertViewIs('sso-callback');
-        $response->assertViewHas('token');
+        $this->assertCallbackIssuesToken();
     }
 }

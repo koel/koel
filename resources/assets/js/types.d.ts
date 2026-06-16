@@ -51,6 +51,13 @@ interface CompositeToken {
   token: string
 }
 
+interface TwoFactorChallengeRequired {
+  two_factor: true
+  login_token: string
+}
+
+type LoginResponse = CompositeToken | TwoFactorChallengeRequired
+
 type SSOProvider = 'Google' | 'OpenID Connect' | 'Reverse Proxy'
 
 interface KoelGlobals {
@@ -424,6 +431,7 @@ interface UserPreferences extends Record<string, any> {
   include_public_media: boolean
   crossfade_duration: number
   lastfm_session_key?: string
+  home_blocks_order: string[]
 }
 
 type Ability = 'manage settings' | 'manage users' | 'manage songs' | 'manage podcasts' | 'manage radio stations'
@@ -453,6 +461,7 @@ interface User {
    * (their own /me response); never leaked through user listings.
    */
   subsonic_api_key?: string
+  two_factor?: boolean
   /**
    * What the *current user* (the one making the request) is permitted to do
    * *to this user* — the result of running UserPolicy from their perspective.
@@ -469,6 +478,7 @@ type CurrentUser = User & {
   preferences: UserPreferences
   abilities: Ability[]
   subsonic_api_key: string
+  two_factor: boolean
 }
 
 interface Settings {
@@ -672,6 +682,12 @@ interface PaginateParams<S extends string = string> {
   page: number
 }
 
+interface CursorPaginateParams<S extends string = string> {
+  sort: MaybeArray<S>
+  order: SortOrder
+  cursor: string | null
+}
+
 type MethodOf<T> = { [K in keyof T]: T[K] extends Closure ? K : never }[keyof T]
 
 interface PaginatorResource<T> {
@@ -681,6 +697,16 @@ interface PaginatorResource<T> {
   }
   meta: {
     current_page: number
+  }
+}
+
+interface CursorPaginatorResource<T> {
+  data: T[]
+  meta: {
+    path: string
+    per_page: number
+    next_cursor: string | null
+    prev_cursor: string | null
   }
 }
 
