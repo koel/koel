@@ -43,6 +43,7 @@ export default defineConfig({
       'no-unsafe-type-assertion': 'off',
       'no-unnecessary-type-assertion': 'off',
       'no-unnecessary-type-arguments': 'off',
+      'no-unnecessary-type-parameters': 'off',
       'no-floating-promises': 'off',
       'unbound-method': 'off',
       'restrict-template-expressions': 'off',

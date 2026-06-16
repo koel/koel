@@ -84,7 +84,7 @@ class Http {
     return this
   }
 
-  public async request(method: string, url: string, data: Record<string, any> = {}) {
+  public async request<T>(method: string, url: string, data: Record<string, any> = {}) {
     const options: Record<string, any> = {}
 
     if (method !== 'get' && data) {
@@ -99,27 +99,27 @@ class Http {
     const contentType = response.headers.get('content-type')
     const responseData = contentType?.includes('application/json') ? await response.json() : await response.text()
 
-    return { data: responseData }
+    return { data: responseData as T }
   }
 
   public async get<T>(url: string) {
-    return (await this.request('get', url)).data as T
+    return (await this.request<T>('get', url)).data
   }
 
   public async post<T>(url: string, data: Record<string, any> = {}) {
-    return (await this.request('post', url, data)).data as T
+    return (await this.request<T>('post', url, data)).data
   }
 
   public async put<T>(url: string, data: Record<string, any>) {
-    return (await this.request('put', url, data)).data as T
+    return (await this.request<T>('put', url, data)).data
   }
 
   public async patch<T>(url: string, data: Record<string, any>) {
-    return (await this.request('patch', url, data)).data as T
+    return (await this.request<T>('patch', url, data)).data
   }
 
   public async delete<T>(url: string, data: Record<string, any> = {}) {
-    return (await this.request('delete', url, data)).data as T
+    return (await this.request<T>('delete', url, data)).data
   }
 
   private showLoadingIndicator() {

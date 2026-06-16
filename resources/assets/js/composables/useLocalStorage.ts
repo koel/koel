@@ -1,6 +1,6 @@
 import { useAuthorization } from '@/composables/useAuthorization'
 
-const baseGet = (key: string): any => {
+const baseGet = <T>(key: string): T | null => {
   const raw = localStorage.getItem(key)
 
   if (raw === null) {
@@ -8,7 +8,7 @@ const baseGet = (key: string): any => {
   }
 
   try {
-    return JSON.parse(raw)
+    return JSON.parse(raw) as T
   } catch {
     return null
   }
@@ -25,7 +25,7 @@ export const useLocalStorage = (namespaced = true, user?: User) => {
   }
 
   const get = <T>(key: string, defaultValue: T | null = null): T | null => {
-    const value = baseGet(namespace + key)
+    const value = baseGet<T>(namespace + key)
 
     return value === null ? defaultValue : value
   }
