@@ -81,7 +81,7 @@ class TestHarness {
     return this.actingAsUser(factory('user').state('admin').make() as CurrentUser)
   }
 
-  public mock<T, M extends MethodOf<Required<T>>>(obj: T, methodName: M, implementation?: any) {
+  public mock<T>(obj: T, methodName: MethodOf<Required<T>>, implementation?: any) {
     // check if the method is already mocked, and if so, use it instead of creating a new mock
     for (const [key, _] of this.backupMethods.entries()) {
       if (key[0] !== obj || key[1] !== methodName) {

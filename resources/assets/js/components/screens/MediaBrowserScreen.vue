@@ -84,13 +84,13 @@ const shouldShowSkeleton = computed(() => {
 })
 
 const items = computed(() => {
-  const _items = [...subfolders.value, ...songs.value]
+  const merged = [...subfolders.value, ...songs.value]
 
   if (parentEntry.value) {
-    _items.unshift(parentEntry.value)
+    merged.unshift(parentEntry.value)
   }
 
-  return _items
+  return merged
 })
 
 const resetState = () => {

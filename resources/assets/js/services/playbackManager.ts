@@ -10,7 +10,7 @@ const playbackServiceMap: Record<string, BasePlaybackService> = {
 }
 
 export const playbackManager = {
-  _currentService: null as BasePlaybackService | null,
+  currentService: null as BasePlaybackService | null,
 
   usePlayback(type: keyof typeof playbackServiceMap, mediaElement?: HTMLMediaElement) {
     for (const key in playbackServiceMap) {
@@ -19,7 +19,7 @@ export const playbackManager = {
       }
     }
 
-    this._currentService = playbackServiceMap[type]
+    this.currentService = playbackServiceMap[type]
 
     return playbackServiceMap[type].activate(mediaElement ?? document.querySelector<HTMLMediaElement>('#audio-player')!)
   },
@@ -50,7 +50,7 @@ export function playback<T extends keyof PlaybackTypeMap = 'queue'>(
   } else if (actualType === 'radio') {
     return playbackManager.useRadioPlayback(mediaElement) as PlaybackTypeMap[T]
   } else if (actualType === 'current') {
-    return playbackManager._currentService as PlaybackTypeMap[T]
+    return playbackManager.currentService as PlaybackTypeMap[T]
   }
 
   throw new Error(`Unknown playback type: ${type}`)

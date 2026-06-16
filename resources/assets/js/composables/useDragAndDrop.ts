@@ -203,9 +203,11 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
           const id = String(JSON.parse(event.dataTransfer!.getData('application/x-koel.playlist')))
           return playlistStore.byId(id) as T | undefined
         default:
+          return undefined
       }
     } catch (error: unknown) {
       logger.error(error, event)
+      return undefined
     }
   }
 

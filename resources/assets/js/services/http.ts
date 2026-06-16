@@ -49,7 +49,7 @@ class Http {
               try {
                 url = new URL(error.request?.url || '').pathname
               } catch {
-                url = String(error.request?.url || '')
+                url = error.request?.url || ''
               }
 
               const isAuthEntryPoint =

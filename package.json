@@ -74,11 +74,11 @@
     "rollup-plugin-visualizer": "^6.0.3",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.8.3",
-    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.11",
-    "vite-plus": "^0.1.11",
+    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.24",
+    "vite-plus": "^0.1.24",
     "vitepress": "^1.6.3",
     "vitepress-plugin-llms": "^1.11.0",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.11",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.24",
     "vue-tsc": "^3.2.5"
   },
   "engines": {
@@ -103,8 +103,8 @@
     "overrides": {
       "form-data@<2.5.4": ">=2.5.4",
       "@rolldown/pluginutils": "1.0.0-rc.9",
-      "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.11",
-      "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.11"
+      "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.24",
+      "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.24"
     }
   },
   "packageManager": "pnpm@10.32.1"

@@ -60,7 +60,8 @@ export const themeStore = {
 
   setTheme(theme?: Theme | Theme['id']) {
     if (theme === undefined) {
-      return this.setTheme(this.getCurrentTheme())
+      this.setTheme(this.getCurrentTheme())
+      return
     }
 
     if (typeof theme === 'string') {

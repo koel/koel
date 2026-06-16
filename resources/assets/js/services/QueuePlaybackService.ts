@@ -40,9 +40,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       return queueStore.next
     }
 
-    if (preferences.repeat_mode === 'REPEAT_ALL') {
-      return queueStore.first
-    }
+    return preferences.repeat_mode === 'REPEAT_ALL' ? queueStore.first : undefined
   }
 
   /**
@@ -54,9 +52,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       return queueStore.previous
     }
 
-    if (preferences.repeat_mode === 'REPEAT_ALL') {
-      return queueStore.last
-    }
+    return preferences.repeat_mode === 'REPEAT_ALL' ? queueStore.last : undefined
   }
 
   public registerPlay(playable: Playable) {

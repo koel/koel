@@ -2,37 +2,30 @@ import type { Mock } from 'vite-plus/test'
 import { expect } from 'vite-plus/test'
 import type { Component } from 'vue'
 
+const ASYNC_LOADER_KEY = '__asyncLoader'
+
+const resolveComponent = async (arg: any): Promise<Component> => {
+  const loader = arg?.[ASYNC_LOADER_KEY]
+  return typeof loader === 'function' ? await loader() : arg
+}
+
 export const assertOpenContextMenu = async (
   openContextMenuMock: Mock,
   menu: Component,
   props: Record<string, any> = {},
 ) => {
-  const firstArg = openContextMenuMock.mock.calls[0][0]
-  const secondArg = openContextMenuMock.mock.calls[0][1]
-  const thirdArg = openContextMenuMock.mock.calls[0][2]
+  const [firstArg, secondArg, thirdArg] = openContextMenuMock.mock.calls[0]
 
-  if (typeof firstArg.__asyncLoader === 'function') {
-    const actualMenu = await firstArg.__asyncLoader()
-    expect(actualMenu).toBe(menu)
-  } else {
-    expect(firstArg).toBe(menu)
-  }
-
+  expect(await resolveComponent(firstArg)).toBe(menu)
   expect(secondArg).toBeInstanceOf(MouseEvent)
   expect(thirdArg).toEqual(props)
 }
 
 export const assertOpenModal = async (openModalMock: Mock, modal: Component, props?: Record<string, any>) => {
   expect(openModalMock).toHaveBeenCalled()
-  const firstArg = openModalMock.mock.calls[0][0]
-  const secondArg = openModalMock.mock.calls[0][1]
+  const [firstArg, secondArg] = openModalMock.mock.calls[0]
 
-  if (typeof firstArg.__asyncLoader === 'function') {
-    const actualModal = await firstArg.__asyncLoader()
-    expect(actualModal).toBe(modal)
-  } else {
-    expect(firstArg).toBe(modal)
-  }
+  expect(await resolveComponent(firstArg)).toBe(modal)
 
   if (props !== undefined) {
     expect(secondArg).toEqual(props)
