@@ -80,11 +80,11 @@ export const playableStore = {
     const playable = this.vault.get(id)
 
     if (!playable) {
-      return
+      return undefined
     }
 
     if (isSong(playable) && playable.deleted) {
-      return
+      return undefined
     }
 
     return playable

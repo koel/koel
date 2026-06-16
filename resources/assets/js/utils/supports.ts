@@ -16,4 +16,4 @@ export const isAudioContextSupported = !window.RUNNING_UNIT_TESTS && !iOS()
 export const isDirectoryReadingSupported =
   window.DataTransferItem && typeof window.DataTransferItem.prototype.webkitGetAsEntry === 'function'
 
-export const isFullscreenSupported = () => Boolean(document.fullscreenEnabled)
+export const isFullscreenSupported = (): boolean => document.fullscreenEnabled ?? false

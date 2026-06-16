@@ -51,8 +51,8 @@ const input = ref<InstanceType<typeof TextInput>>()
 const q = ref('')
 
 let onInput = () => {
-  const _q = q.value.trim()
-  _q && eventBus.emit('SEARCH_KEYWORDS_CHANGED', _q)
+  const trimmed = q.value.trim()
+  trimmed && eventBus.emit('SEARCH_KEYWORDS_CHANGED', trimmed)
 }
 
 if (!window.RUNNING_UNIT_TESTS) {

@@ -51,7 +51,7 @@ export const defaultPreferences: UserPreferences = {
 }
 
 const preferenceStore = {
-  _temporary: false,
+  isTemporary: false,
   initialized: ref(false),
 
   state: reactive<UserPreferences>(defaultPreferences),
@@ -96,10 +96,10 @@ const preferenceStore = {
 
     this.state[key] = value
 
-    if (!this._temporary) {
+    if (!this.isTemporary) {
       this.update(key, value)
     } else {
-      this._temporary = false
+      this.isTemporary = false
     }
   },
 
@@ -118,12 +118,12 @@ const preferenceStore = {
   // Calling preferenceStore.temporary.volume = 7 won't trigger saving.
   // This is useful in tests as it doesn't create stray HTTP requests.
   get temporary() {
-    this._temporary = true
+    this.isTemporary = true
     return this as unknown as ExportedType
   },
 }
 
-type ExportedType = Omit<typeof preferenceStore, 'setupProxy' | '_temporary'> & UserPreferences
+type ExportedType = Omit<typeof preferenceStore, 'setupProxy' | 'isTemporary'> & UserPreferences
 
 const exported = preferenceStore as unknown as ExportedType
 

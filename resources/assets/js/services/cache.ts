@@ -17,8 +17,8 @@ export class Cache {
     return this.hit(key)
   }
 
-  public get<T>(key: any) {
-    return this.storage.get(Cache.normalizeKey(key))?.value as T
+  public get(key: any) {
+    return this.storage.get(Cache.normalizeKey(key))?.value
   }
 
   public set(key: any, value: any, seconds: number = DEFAULT_EXPIRATION_TIME) {
