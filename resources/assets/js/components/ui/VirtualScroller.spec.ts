@@ -36,7 +36,7 @@ describe('virtualScroller.vue', () => {
     const scrollToMock = vi.fn()
     scrollerEl.scrollTo = scrollToMock
 
-    const instance = (scrollerEl as any).__vueParentComponent
+    const instance = (scrollerEl as any)['__vueParentComponent']
     instance?.exposed?.scrollToIndex(50)
 
     expect(scrollToMock).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'smooth' }))

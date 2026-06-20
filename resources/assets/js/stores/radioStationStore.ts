@@ -31,7 +31,7 @@ export const radioStationStore = {
   }),
 
   nowPlaying: ref<string | null>(null),
-  _pollTimer: null as ReturnType<typeof setInterval> | null,
+  pollTimer: null as ReturnType<typeof setInterval> | null,
 
   byId(id: RadioStation['id']) {
     return this.state.stations.find(station => station.id === id)
@@ -92,13 +92,13 @@ export const radioStationStore = {
   startPolling(station: RadioStation) {
     this.stopPolling()
     this.fetchNowPlaying(station)
-    this._pollTimer = setInterval(() => this.fetchNowPlaying(station), POLL_INTERVAL)
+    this.pollTimer = setInterval(() => this.fetchNowPlaying(station), POLL_INTERVAL)
   },
 
   stopPolling() {
-    if (this._pollTimer) {
-      clearInterval(this._pollTimer)
-      this._pollTimer = null
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer)
+      this.pollTimer = null
     }
 
     this.nowPlaying.value = null

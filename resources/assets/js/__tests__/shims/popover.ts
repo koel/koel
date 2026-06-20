@@ -54,7 +54,7 @@ if (popoverApiMissing) {
       return this.getAttribute('popover')
     },
     set(this: HTMLElement, value: string | null) {
-      value === null ? this.removeAttribute('popover') : this.setAttribute('popover', String(value))
+      value === null ? this.removeAttribute('popover') : this.setAttribute('popover', value)
     },
   })
 
@@ -99,6 +99,6 @@ if (popoverApiMissing) {
 
   HTMLElement.prototype.togglePopover = function (this: HTMLElement, _options?: boolean): boolean {
     popoverOpen.get(this) ? this.hidePopover() : this.showPopover()
-    return Boolean(popoverOpen.get(this))
+    return popoverOpen.get(this) ?? false
   }
 }

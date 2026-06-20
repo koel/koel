@@ -13,6 +13,14 @@ export default defineConfig({
     '**/*.php': ['composer cs'],
     'resources/assets/**/*.{js,ts,css,pcss,vue}': ['vp check --fix'],
   },
+  fmt: {
+    semi: false,
+    singleQuote: true,
+    arrowParens: 'avoid',
+    printWidth: 120,
+    objectWrap: 'preserve',
+    ignorePatterns: ['resources/assets/css/vendor/**', 'resources/assets/js/visualizers/**'],
+  },
   lint: {
     plugins: ['typescript', 'vue', 'import'],
     categories: {
@@ -35,6 +43,7 @@ export default defineConfig({
       'no-unsafe-type-assertion': 'off',
       'no-unnecessary-type-assertion': 'off',
       'no-unnecessary-type-arguments': 'off',
+      'no-unnecessary-type-parameters': 'off',
       'no-floating-promises': 'off',
       'unbound-method': 'off',
       'restrict-template-expressions': 'off',
