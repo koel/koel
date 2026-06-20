@@ -55,58 +55,64 @@ use App\Http\Middleware\AuthenticateSubsonicRequests;
 use App\Http\Middleware\NormalizeSubsonicArrayParams;
 use Illuminate\Support\Facades\Route;
 
+$endpoints = [
+    'ping' => PingController::class,
+    'getLicense' => GetLicenseController::class,
+    'getMusicFolders' => GetMusicFoldersController::class,
+    'getArtists' => GetArtistsController::class,
+    'getIndexes' => GetIndexesController::class,
+    'getMusicDirectory' => GetMusicDirectoryController::class,
+    'getInternetRadioStations' => GetInternetRadioStationsController::class,
+    'createInternetRadioStation' => CreateInternetRadioStationController::class,
+    'updateInternetRadioStation' => UpdateInternetRadioStationController::class,
+    'deleteInternetRadioStation' => DeleteInternetRadioStationController::class,
+    'getArtist' => GetArtistController::class,
+    'getAlbum' => GetAlbumController::class,
+    'getSong' => GetSongController::class,
+    'getGenres' => GetGenresController::class,
+    'search2' => Search2Controller::class,
+    'search3' => Search3Controller::class,
+    'getAlbumList' => GetAlbumListController::class,
+    'getAlbumList2' => GetAlbumList2Controller::class,
+    'stream' => StreamController::class,
+    'getCoverArt' => GetCoverArtController::class,
+    'getPlaylists' => GetPlaylistsController::class,
+    'getPlaylist' => GetPlaylistController::class,
+    'createPlaylist' => CreatePlaylistController::class,
+    'updatePlaylist' => UpdatePlaylistController::class,
+    'deletePlaylist' => DeletePlaylistController::class,
+    'scrobble' => ScrobbleController::class,
+    'star' => StarController::class,
+    'unstar' => UnstarController::class,
+    'setRating' => SetRatingController::class,
+    'getStarred' => GetStarredController::class,
+    'getStarred2' => GetStarred2Controller::class,
+    'getRandomSongs' => GetRandomSongsController::class,
+    'getNowPlaying' => GetNowPlayingController::class,
+    'getUser' => GetUserController::class,
+    'getAvatar' => GetAvatarController::class,
+    'getOpenSubsonicExtensions' => GetOpenSubsonicExtensionsController::class,
+    'download' => DownloadController::class,
+    'getSongsByGenre' => GetSongsByGenreController::class,
+    'getLyrics' => GetLyricsController::class,
+    'getLyricsBySongId' => GetLyricsBySongIdController::class,
+    'getArtistInfo' => GetArtistInfoController::class,
+    'getArtistInfo2' => GetArtistInfo2Controller::class,
+    'getAlbumInfo' => GetAlbumInfoController::class,
+    'getAlbumInfo2' => GetAlbumInfo2Controller::class,
+    'getPodcasts' => GetPodcastsController::class,
+    'getNewestPodcasts' => GetNewestPodcastsController::class,
+    'refreshPodcasts' => RefreshPodcastsController::class,
+    'createPodcastChannel' => CreatePodcastChannelController::class,
+    'deletePodcastChannel' => DeletePodcastChannelController::class,
+    'getPlayQueue' => GetPlayQueueController::class,
+    'savePlayQueue' => SavePlayQueueController::class,
+];
+
 Route::prefix('rest')
     ->middleware([NormalizeSubsonicArrayParams::class, AuthenticateSubsonicRequests::class])
-    ->group(static function (): void {
-        Route::match(['get', 'post'], 'ping.view', PingController::class);
-        Route::match(['get', 'post'], 'getLicense.view', GetLicenseController::class);
-        Route::match(['get', 'post'], 'getMusicFolders.view', GetMusicFoldersController::class);
-        Route::match(['get', 'post'], 'getArtists.view', GetArtistsController::class);
-        Route::match(['get', 'post'], 'getIndexes.view', GetIndexesController::class);
-        Route::match(['get', 'post'], 'getMusicDirectory.view', GetMusicDirectoryController::class);
-        Route::match(['get', 'post'], 'getInternetRadioStations.view', GetInternetRadioStationsController::class);
-        Route::match(['get', 'post'], 'createInternetRadioStation.view', CreateInternetRadioStationController::class);
-        Route::match(['get', 'post'], 'updateInternetRadioStation.view', UpdateInternetRadioStationController::class);
-        Route::match(['get', 'post'], 'deleteInternetRadioStation.view', DeleteInternetRadioStationController::class);
-        Route::match(['get', 'post'], 'getArtist.view', GetArtistController::class);
-        Route::match(['get', 'post'], 'getAlbum.view', GetAlbumController::class);
-        Route::match(['get', 'post'], 'getSong.view', GetSongController::class);
-        Route::match(['get', 'post'], 'getGenres.view', GetGenresController::class);
-        Route::match(['get', 'post'], 'search2.view', Search2Controller::class);
-        Route::match(['get', 'post'], 'search3.view', Search3Controller::class);
-        Route::match(['get', 'post'], 'getAlbumList.view', GetAlbumListController::class);
-        Route::match(['get', 'post'], 'getAlbumList2.view', GetAlbumList2Controller::class);
-        Route::match(['get', 'post'], 'stream.view', StreamController::class);
-        Route::match(['get', 'post'], 'getCoverArt.view', GetCoverArtController::class);
-        Route::match(['get', 'post'], 'getPlaylists.view', GetPlaylistsController::class);
-        Route::match(['get', 'post'], 'getPlaylist.view', GetPlaylistController::class);
-        Route::match(['get', 'post'], 'createPlaylist.view', CreatePlaylistController::class);
-        Route::match(['get', 'post'], 'updatePlaylist.view', UpdatePlaylistController::class);
-        Route::match(['get', 'post'], 'deletePlaylist.view', DeletePlaylistController::class);
-        Route::match(['get', 'post'], 'scrobble.view', ScrobbleController::class);
-        Route::match(['get', 'post'], 'star.view', StarController::class);
-        Route::match(['get', 'post'], 'unstar.view', UnstarController::class);
-        Route::match(['get', 'post'], 'setRating.view', SetRatingController::class);
-        Route::match(['get', 'post'], 'getStarred.view', GetStarredController::class);
-        Route::match(['get', 'post'], 'getStarred2.view', GetStarred2Controller::class);
-        Route::match(['get', 'post'], 'getRandomSongs.view', GetRandomSongsController::class);
-        Route::match(['get', 'post'], 'getNowPlaying.view', GetNowPlayingController::class);
-        Route::match(['get', 'post'], 'getUser.view', GetUserController::class);
-        Route::match(['get', 'post'], 'getAvatar.view', GetAvatarController::class);
-        Route::match(['get', 'post'], 'getOpenSubsonicExtensions.view', GetOpenSubsonicExtensionsController::class);
-        Route::match(['get', 'post'], 'download.view', DownloadController::class);
-        Route::match(['get', 'post'], 'getSongsByGenre.view', GetSongsByGenreController::class);
-        Route::match(['get', 'post'], 'getLyrics.view', GetLyricsController::class);
-        Route::match(['get', 'post'], 'getLyricsBySongId.view', GetLyricsBySongIdController::class);
-        Route::match(['get', 'post'], 'getArtistInfo.view', GetArtistInfoController::class);
-        Route::match(['get', 'post'], 'getArtistInfo2.view', GetArtistInfo2Controller::class);
-        Route::match(['get', 'post'], 'getAlbumInfo.view', GetAlbumInfoController::class);
-        Route::match(['get', 'post'], 'getAlbumInfo2.view', GetAlbumInfo2Controller::class);
-        Route::match(['get', 'post'], 'getPodcasts.view', GetPodcastsController::class);
-        Route::match(['get', 'post'], 'getNewestPodcasts.view', GetNewestPodcastsController::class);
-        Route::match(['get', 'post'], 'refreshPodcasts.view', RefreshPodcastsController::class);
-        Route::match(['get', 'post'], 'createPodcastChannel.view', CreatePodcastChannelController::class);
-        Route::match(['get', 'post'], 'deletePodcastChannel.view', DeletePodcastChannelController::class);
-        Route::match(['get', 'post'], 'getPlayQueue.view', GetPlayQueueController::class);
-        Route::match(['get', 'post'], 'savePlayQueue.view', SavePlayQueueController::class);
+    ->group(static function () use ($endpoints): void {
+        foreach ($endpoints as $endpoint => $controller) {
+            Route::match(['get', 'post'], "{$endpoint}{format?}", $controller)->where('format', '\.view');
+        }
     });
