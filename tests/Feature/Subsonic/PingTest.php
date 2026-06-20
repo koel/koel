@@ -43,6 +43,29 @@ class PingTest extends TestCase
     }
 
     #[Test]
+    public function pingWorksWithoutViewSuffix(): void
+    {
+        $user = create_user();
+
+        $this
+            ->getJson('/rest/ping?apiKey=' . $user->subsonic_api_key . '&f=json')
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'ok');
+    }
+
+    #[Test]
+    public function onlyTheViewSuffixIsAccepted(): void
+    {
+        $user = create_user();
+
+        $this
+            ->getJson('/rest/ping.json?apiKey=' . $user->subsonic_api_key . '&f=json')
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'failed')
+            ->assertJsonPath('subsonic-response.error.code', 70);
+    }
+
+    #[Test]
     public function missingApiKeyReturnsCode10Error(): void
     {
         $response = $this->getJson('/rest/ping.view?f=json')->assertOk();
