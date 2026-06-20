@@ -2,7 +2,11 @@
   <div v-if="hasLyrics" class="group relative h-full">
     <LrcLyricsPane v-if="isLrc" :font-size="fontSize" :lyrics="lrcLyrics" class="absolute inset-0 px-6 py-8" />
 
-    <div v-else class="lyrics px-6 py-8 whitespace-pre-wrap leading-relaxed" data-testid="plain-text-lyrics">
+    <div
+      v-else
+      class="lyrics absolute inset-0 px-6 py-8 overflow-y-auto scroll-mask-y whitespace-pre-wrap leading-relaxed"
+      data-testid="plain-text-lyrics"
+    >
       {{ plainTextLyrics }}
     </div>
 
