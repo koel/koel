@@ -26,6 +26,7 @@ const onError = (error: any) => {
 
 const onSuccess = (token: CompositeToken) => {
   authService.setTokensUsingCompositeToken(token)
+  authService.maybeRedirect()
   emit('loggedIn')
 }
 </script>

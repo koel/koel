@@ -1,5 +1,5 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
 import Component from './Auth.vue'
@@ -8,6 +8,8 @@ describe('auth.vue', () => {
   const h = createHarness({
     authenticated: false,
   })
+
+  afterEach(() => (window.KOEL.sso_providers = []))
 
   const renderAndSubmitCredentials = async () => {
     const rendered = h.render(Component)
@@ -80,7 +82,5 @@ describe('auth.vue', () => {
     })
 
     await waitFor(() => screen.getByTestId('google-login-button'))
-
-    window.KOEL.sso_providers = []
   })
 })

@@ -6,7 +6,7 @@ import { authService } from '@/services/authService'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import Component from './SsoLoginOptions.vue'
 
-const token = { 'audio-token': 'a-token', 'video-token': 'v-token' }
+const token = { 'audio-token': 'audio-token', token: 'api-token' }
 
 const GoogleLoginButtonStub = defineComponent({
   emits: ['success', 'error'],
@@ -46,14 +46,16 @@ describe('ssoLoginOptions.vue', () => {
     screen.getByTestId('sso-success')
   })
 
-  it('sets tokens and emits loggedIn on success', async () => {
+  it('sets tokens, reconciles redirects and emits loggedIn on success', async () => {
     window.KOEL.sso_providers = ['Google']
     const setTokensMock = h.mock(authService, 'setTokensUsingCompositeToken')
+    const redirectMock = h.mock(authService, 'maybeRedirect')
     const { emitted } = renderWithGoogle()
 
     await h.user.click(screen.getByTestId('sso-success'))
 
     expect(setTokensMock).toHaveBeenCalledWith(token)
+    expect(redirectMock).toHaveBeenCalled()
     expect(emitted().loggedIn).toBeTruthy()
   })
 
