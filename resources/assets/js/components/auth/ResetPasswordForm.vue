@@ -1,21 +1,15 @@
 <template>
-  <div class="flex items-center justify-center h-screen">
-    <form
-      v-if="validPayload"
-      class="flex flex-col gap-3 sm:w-[480px] sm:bg-k-fg-10 sm:rounded-lg p-7"
-      @submit.prevent="handleSubmit"
-    >
-      <h1 class="text-2xl mb-2">Set New Password</h1>
-      <div>
-        <FormRow>
-          <PasswordField v-model="data.password" minlength="10" placeholder="New password" required />
-          <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
-        </FormRow>
-      </div>
-      <div>
-        <Btn :disabled="loading" type="submit">Save</Btn>
-      </div>
-    </form>
+  <div class="flex items-center justify-center min-h-screen">
+    <AuthFormCard v-if="validPayload" @submit="handleSubmit">
+      <p class="text-[.95rem] text-k-fg-70 mb-4">Choose a new password for your account.</p>
+
+      <FormRow>
+        <PasswordField v-model="data.password" minlength="10" placeholder="New password" required />
+        <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
+      </FormRow>
+
+      <Btn class="w-full" :disabled="loading" type="submit">Save</Btn>
+    </AuthFormCard>
   </div>
 </template>
 
@@ -31,6 +25,7 @@ import { useForm } from '@/composables/useForm'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
+import AuthFormCard from '@/components/auth/AuthFormCard.vue'
 
 const { getRouteParam, go } = useRouter()
 const { toastSuccess, toastError } = useMessageToaster()

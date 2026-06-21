@@ -17,7 +17,7 @@
     </template>
 
     <div v-else class="h-screen flex flex-col items-center justify-center">
-      <LoginForm @loggedin="onUserLoggedIn" />
+      <Auth @logged-in="onUserLoggedIn" />
     </div>
   </div>
 </template>
@@ -36,7 +36,7 @@ const StreamableDetails = defineAsyncComponent(() => import('@/remote/components
 const Scanner = defineAsyncComponent(() => import('@/remote/components/Scanner.vue'))
 const RemoteFooter = defineAsyncComponent(() => import('@/remote/components/RemoteFooter.vue'))
 const AlbumArtOverlay = defineAsyncComponent(() => import('@/components/ui/AlbumArtOverlay.vue'))
-const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
+const Auth = defineAsyncComponent(() => import('@/components/auth/Auth.vue'))
 
 const authenticated = ref(false)
 const connected = ref(false)
