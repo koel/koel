@@ -79,7 +79,7 @@
         class="px-4 py-2 focus:outline-hidden"
         @mouseover="($event.currentTarget as HTMLLIElement).focus()"
       >
-        <StarRating :rateable="playables[0] as Song" />
+        <StarRating :rateable="playables[0] as Song" @rate="closeContextMenu" />
       </li>
       <Separator />
     </template>
