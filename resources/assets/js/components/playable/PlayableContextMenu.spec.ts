@@ -525,7 +525,7 @@ describe('playableContextMenu.vue', () => {
   })
 
   it('closes the menu after rating', async () => {
-    h.mock(playableStore, 'rate').mockResolvedValue(undefined)
+    h.mock(playableStore, 'rate')
     const menu = shallowRef<any>({ component: Component, position: { top: 0, left: 0 } })
     const song = h.factory('song').make({ rating: 0 })
 
