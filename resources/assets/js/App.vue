@@ -21,7 +21,7 @@
     <DropZone v-show="showDropZone" @close="showDropZone = false" />
   </main>
 
-  <LoginForm v-if="layout === 'login'" @loggedin="triggerAppInitialization" />
+  <Auth v-if="layout === 'auth'" @logged-in="triggerAppInitialization" />
   <Embed v-if="layout === 'embed'" />
 
   <AcceptInvitation v-if="layout === 'invitation'" />
@@ -66,7 +66,7 @@ import AppInitializer from '@/components/utils/AppInitializer.vue'
 import ContextMenu from '@/components/ui/context-menu/ContextMenu.vue'
 
 const HotkeyListener = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
-const LoginForm = defineAsyncComponent(() => import('@/components/auth/LoginForm.vue'))
+const Auth = defineAsyncComponent(() => import('@/components/auth/Auth.vue'))
 const MainWrapper = defineAsyncComponent(() => import('@/components/layout/main-wrapper/index.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 const AiAssistantScreen = defineAsyncComponent(() => import('@/components/ai/AiAssistantScreen.vue'))
@@ -104,7 +104,7 @@ const layout = computed(() => {
     return currentRoute.value.meta.layout
   }
 
-  return authenticated.value ? 'default' : 'login'
+  return authenticated.value ? 'default' : 'auth'
 })
 
 onMounted(() => {

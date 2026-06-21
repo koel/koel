@@ -1,25 +1,14 @@
 <template>
-  <form
-    class="min-w-full sm:min-w-[480px] sm:bg-k-fg-10 p-7 rounded-xl"
-    data-testid="forgot-password-form"
-    @submit.prevent="handleSubmit"
-  >
-    <h1 class="text-2xl mb-4">Forgot Password</h1>
+  <AuthFormCard data-testid="forgot-password-form" @submit="handleSubmit">
+    <p class="text-[.95rem] text-k-fg-70 mb-4">Enter your email address and we'll send you a password reset link.</p>
 
     <FormRow>
-      <div class="flex flex-col gap-3 sm:flex-row sm:gap-0 sm:content-stretch">
-        <TextInput
-          v-model="data.email"
-          class="flex-1 sm:rounded-l sm:rounded-r-none"
-          placeholder="Your email address"
-          required
-          type="email"
-        />
-        <Btn :disabled="loading" class="sm:rounded-l-none sm:rounded-r" type="submit">Reset Password</Btn>
-        <Btn variant="ghost" :disabled="loading" @click="cancel">Cancel</Btn>
-      </div>
+      <TextInput v-model="data.email" placeholder="Your email address" required type="email" />
     </FormRow>
-  </form>
+
+    <Btn class="w-full" :disabled="loading" type="submit">Reset Password</Btn>
+    <Btn class="w-full" bordered :disabled="loading" type="button" @click="cancel">Cancel</Btn>
+  </AuthFormCard>
 </template>
 
 <script lang="ts" setup>
@@ -31,6 +20,7 @@ import { useForm } from '@/composables/useForm'
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
+import AuthFormCard from '@/components/auth/AuthFormCard.vue'
 
 const emit = defineEmits<{ (e: 'cancel'): void }>()
 
