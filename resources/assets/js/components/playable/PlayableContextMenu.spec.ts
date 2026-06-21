@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
+import { ContextMenuKey } from '@/config/symbols'
 import { arrayify } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import { screen, waitFor } from '@testing-library/vue'
@@ -521,5 +522,21 @@ describe('playableContextMenu.vue', () => {
     for (const playable of playables) {
       expect(removeOfflineCacheMock).toHaveBeenCalledWith(playable)
     }
+  })
+
+  it('closes the menu after rating', async () => {
+    h.mock(playableStore, 'rate').mockResolvedValue()
+    const menu = shallowRef<any>({ component: Component, position: { top: 0, left: 0 } })
+    const song = h.factory('song').make({ rating: 0 })
+
+    h.render(Component, {
+      props: { playables: [song] },
+      global: { provide: { [ContextMenuKey as symbol]: menu } },
+    })
+
+    await h.tick(2)
+    await h.user.click(screen.getByRole('radio', { name: 'Rate 4 of 5' }))
+
+    expect(menu.value.component).toBeNull()
   })
 })

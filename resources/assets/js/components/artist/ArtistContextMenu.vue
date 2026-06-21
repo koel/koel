@@ -10,7 +10,7 @@
       class="px-4 py-2 focus:outline-hidden"
       @mouseover="($event.currentTarget as HTMLLIElement).focus()"
     >
-      <StarRating :rateable="artist" />
+      <StarRating :rateable="artist" @rate="closeContextMenu" />
     </li>
     <Separator />
     <MenuItem v-if="allowEdit" @click="requestEditForm">Edit…</MenuItem>
@@ -47,7 +47,7 @@ const EditArtistForm = defineAsyncComponent(() => import('@/components/artist/Ed
 const CreateEmbedForm = defineAsyncComponent(() => import('@/components/embed/CreateEmbedForm.vue'))
 
 const { go, url } = useRouter()
-const { MenuItem, Separator, trigger } = useContextMenu()
+const { MenuItem, Separator, closeContextMenu, trigger } = useContextMenu()
 const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 

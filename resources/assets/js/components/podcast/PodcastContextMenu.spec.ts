@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
+import { shallowRef } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { ContextMenuKey } from '@/config/symbols'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import Component from './PodcastContextMenu.vue'
@@ -87,5 +89,20 @@ describe('podcastContextMenu.vue', () => {
     await h.user.click(screen.getByText('Unsubscribe'))
 
     expect(unsubMock).toHaveBeenCalledWith(podcast)
+  })
+
+  it('closes the menu after rating', async () => {
+    h.mock(podcastStore, 'rate').mockResolvedValue()
+    const menu = shallowRef<any>({ component: Component, position: { top: 0, left: 0 } })
+    const podcast = h.factory('podcast').make({ rating: 0 })
+
+    h.actingAsAdmin().render(Component, {
+      props: { podcast },
+      global: { provide: { [ContextMenuKey as symbol]: menu } },
+    })
+
+    await h.user.click(screen.getByRole('radio', { name: 'Rate 4 of 5' }))
+
+    expect(menu.value.component).toBeNull()
   })
 })
