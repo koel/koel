@@ -38,7 +38,7 @@
 
 <script lang="ts" setup>
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useLocalStorage } from '@/composables/useLocalStorage'
@@ -63,38 +63,77 @@ const mobileShowing = ref(false)
 const searchFocused = ref(false)
 
 const onSearchFocusChange = (focused: boolean) => (searchFocused.value = focused)
+const EXPAND_DELAY = 500
+const COLLAPSE_DELAY = 500
+
 const expanded = ref(!lsGet('sidebar-collapsed', false))
-
-watch(expanded, value => lsSet('sidebar-collapsed', !value))
-
-let tmpShowingHandler: number | undefined
 const tmpShowing = ref(false)
+
+let expandTimer: number | undefined
+let collapseTimer: number | undefined
+
+const clearExpandTimer = () => {
+  if (expandTimer) {
+    clearTimeout(expandTimer)
+    expandTimer = undefined
+  }
+}
+
+const clearCollapseTimer = () => {
+  if (collapseTimer) {
+    clearTimeout(collapseTimer)
+    collapseTimer = undefined
+  }
+}
+
+watch(expanded, value => {
+  lsSet('sidebar-collapsed', !value)
+  clearExpandTimer()
+  clearCollapseTimer()
+  tmpShowing.value = false
+})
 
 const onMouseEnter = () => {
   if (expanded.value) {
     return
   }
 
-  tmpShowingHandler = window.setTimeout(() => {
-    if (expanded.value) {
-      return
-    }
-    tmpShowing.value = true
-  }, 500)
-}
+  clearCollapseTimer()
 
-const onMouseLeave = (e: MouseEvent) => {
-  if (!e.relatedTarget) {
+  if (tmpShowing.value) {
     return
   }
 
-  if (tmpShowingHandler) {
-    clearTimeout(tmpShowingHandler)
-    tmpShowingHandler = undefined
+  expandTimer = window.setTimeout(() => {
+    expandTimer = undefined
+
+    if (!expanded.value) {
+      tmpShowing.value = true
+    }
+  }, EXPAND_DELAY)
+}
+
+const onMouseLeave = (event: MouseEvent) => {
+  if (!event.relatedTarget) {
+    return
   }
 
-  tmpShowing.value = false
+  clearExpandTimer()
+
+  if (!tmpShowing.value) {
+    return
+  }
+
+  collapseTimer = window.setTimeout(() => {
+    collapseTimer = undefined
+    tmpShowing.value = false
+  }, COLLAPSE_DELAY)
 }
+
+onBeforeUnmount(() => {
+  clearExpandTimer()
+  clearCollapseTimer()
+})
 
 const showManageOptions = computed(
   () => currentUserCan.manageSettings() || currentUserCan.manageUsers() || currentUserCan.uploadSongs(),
