@@ -92,7 +92,7 @@ describe('podcastContextMenu.vue', () => {
   })
 
   it('closes the menu after rating', async () => {
-    h.mock(podcastStore, 'rate').mockResolvedValue()
+    h.mock(podcastStore, 'rate').mockResolvedValue(undefined)
     const menu = shallowRef<any>({ component: Component, position: { top: 0, left: 0 } })
     const podcast = h.factory('podcast').make({ rating: 0 })
 

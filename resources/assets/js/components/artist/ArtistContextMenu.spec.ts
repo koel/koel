@@ -120,7 +120,7 @@ describe('artistContextMenu.vue', () => {
   })
 
   it('closes the menu after rating', async () => {
-    h.mock(artistStore, 'rate').mockResolvedValue()
+    h.mock(artistStore, 'rate').mockResolvedValue(undefined)
     const menu = shallowRef<any>({ component: Component, position: { top: 0, left: 0 } })
     const artist = h.factory('artist').make({ rating: 0 })
 
