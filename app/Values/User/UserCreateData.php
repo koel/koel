@@ -27,13 +27,13 @@ final readonly class UserCreateData implements Arrayable
         $this->password = $plainTextPassword === '' ? null : $plainTextPassword;
     }
 
-    public static function fromSsoUser(SsoUser $ssoUser): self
+    public static function fromSsoUser(SsoUser $ssoUser, ?Role $role = null): self
     {
         return new self(
             name: $ssoUser->name,
             email: $ssoUser->email,
             plainTextPassword: null,
-            role: Role::default(),
+            role: $role ?? Role::default(),
             avatar: $ssoUser->avatar,
             ssoId: $ssoUser->id,
             ssoProvider: $ssoUser->provider,

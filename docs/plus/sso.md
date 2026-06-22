@@ -58,6 +58,8 @@ Save the `.env` file and reload Koel. A corresponding button appears on the logi
 When a user logs in via SSO for the first time, a new user account will be created in Koel with the email address, name, avatar, and the SSO ID obtained from the SSO provider.
 If, however, there's already an existing user with the same email address, Koel will merge the two accounts with a sensible merging strategy.
 
+New SSO users are given the **User** role by default. To place them in the **Guest** role instead, set `SSO_DEFAULT_ROLE=guest` in your `.env` file.
+
 SSO users can update their name and avatar, but not their email address. Furthermore, a new user created via SSO does not have a password set and won't be able to log in via the email+password method.
 
 <script lang="ts" setup>
