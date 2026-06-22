@@ -145,6 +145,7 @@ Koel Plus only. See [Single Sign-On](plus/sso).
 | `SSO_OIDC_CLIENT_ID` | OAuth client ID registered with the IdP. | _(empty)_ |
 | `SSO_OIDC_CLIENT_SECRET` | OAuth client secret. | _(empty)_ |
 | `SSO_OIDC_BUTTON_LABEL` | Label shown on the OIDC login button. | `OpenID Connect` |
+| `SSO_DEFAULT_ROLE` | The role given to a user on their first SSO login: `user` or `guest`. Applies to OIDC, Google, and reverse-proxy auth. | `user` |
 
 ## Proxy Authentication
 
