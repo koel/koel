@@ -35,14 +35,20 @@ final readonly class ParsedLyrics
                 continue;
             }
 
-            if (preg_match('/^\s*\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?]\s*(.*)$/', $line, $matches)) {
-                $start = ((int) $matches[1] * 60_000) + ((int) $matches[2] * 1000);
+            if (preg_match('/^\s*((?:\[\d{1,2}:\d{2}(?:[.:]\d{1,3})?]\s*)+)(.*)$/', $line, $matches)) {
+                $text = trim($matches[2]);
+                preg_match_all('/\[(\d{1,2}):(\d{2})(?:[.:](\d{1,3}))?]/', $matches[1], $tags, PREG_SET_ORDER);
 
-                if ($matches[3] !== '') {
-                    $start += (int) round((float) "0.{$matches[3]}" * 1000);
+                foreach ($tags as $tag) {
+                    $start = ((int) $tag[1] * 60_000) + ((int) $tag[2] * 1000);
+                    $fraction = $tag[3] ?? '';
+
+                    if ($fraction !== '') {
+                        $start += (int) round((float) "0.$fraction" * 1000);
+                    }
+
+                    $timedLines[] = ['start' => $start, 'value' => $text];
                 }
-
-                $timedLines[] = ['start' => $start, 'value' => trim($matches[4])];
 
                 continue;
             }

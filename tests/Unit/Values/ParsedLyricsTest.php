@@ -49,6 +49,22 @@ class ParsedLyricsTest extends TestCase
     }
 
     #[Test]
+    public function expandsRepeatedTimestampsOnOneLineIntoSeparateEntries(): void
+    {
+        $lyrics = ParsedLyrics::fromRawLyrics('[00:10.00][00:20.00][00:30.00]Chorus');
+
+        self::assertTrue($lyrics->synced);
+        self::assertSame(
+            [
+                ['start' => 10_000, 'value' => 'Chorus'],
+                ['start' => 20_000, 'value' => 'Chorus'],
+                ['start' => 30_000, 'value' => 'Chorus'],
+            ],
+            $lyrics->lines,
+        );
+    }
+
+    #[Test]
     public function extractsOffsetMetadataAndSortsByStart(): void
     {
         $lyrics = ParsedLyrics::fromRawLyrics("[offset:-250]\n[00:10.00]Later\n[00:05.00]Earlier");
