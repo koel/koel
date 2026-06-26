@@ -8,19 +8,21 @@ use Illuminate\Support\Arr;
 class SyncedLyricsConverter
 {
     /**
-     * Convert an embedded SYLT (synchronised lyrics) frame from getID3 output into LRC-formatted text.
+     * Convert SYLT (synchronised lyrics) frames from an ID3v2 tag into LRC-formatted text.
      * Returns an empty string when there are no usable synced lyrics.
+     *
+     * @param array<mixed> $frames
      */
-    public static function fromGetId3Info(array $info): string
+    public static function fromSyltFrames(array $frames): string
     {
         // A tag may carry several SYLT frames (different languages/descriptors); use the first usable one.
-        foreach (Arr::wrap(Arr::get($info, 'id3v2.SYLT', [])) as $frame) {
+        foreach ($frames as $frame) {
             // Format 2 is "milliseconds from beginning of file"; MPEG-frame timestamps (1) can't be converted reliably.
             if (!is_array($frame) || (int) Arr::get($frame, 'timestampformat') !== 2) {
                 continue;
             }
 
-            $lines = self::framesToLrcLines(Arr::wrap(Arr::get($frame, 'lyrics', [])));
+            $lines = self::entriesToLrcLines(Arr::wrap(Arr::get($frame, 'lyrics', [])));
 
             if ($lines) {
                 return implode("\n", $lines);
@@ -34,7 +36,7 @@ class SyncedLyricsConverter
      * @param array<mixed> $entries
      * @return list<string>
      */
-    private static function framesToLrcLines(array $entries): array
+    private static function entriesToLrcLines(array $entries): array
     {
         $lines = [];
 

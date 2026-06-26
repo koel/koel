@@ -58,7 +58,9 @@ class ScanInformation implements Arrayable
             $cover = self::getTag($comments, 'picture', []);
         }
 
-        $lyrics = SyncedLyricsConverter::fromGetId3Info($info) ?: html_entity_decode(TagFixer::fix(self::getTag($tags, [
+        $syncedLyrics = SyncedLyricsConverter::fromSyltFrames(Arr::wrap(Arr::get($info, 'id3v2.SYLT', [])));
+
+        $lyrics = $syncedLyrics ?: html_entity_decode(TagFixer::fix(self::getTag($tags, [
             'unsynchronised_lyric',
             'unsychronised_lyric',
             'unsyncedlyrics',
