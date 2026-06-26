@@ -41,6 +41,23 @@ class SyncedLyricsConverterTest extends TestCase
     }
 
     #[Test]
+    public function skipsLaterEntriesWithoutTimestamp(): void
+    {
+        $lrc = SyncedLyricsConverter::fromSyltFrames([
+            [
+                'timestampformat' => 2,
+                'lyrics' => [
+                    ['data' => 'Intro', 'timestamp' => 1000],
+                    ['data' => 'Malformed line'], // missing timestamp, not first -> skipped
+                    ['data' => 'Outro', 'timestamp' => 2000],
+                ],
+            ],
+        ]);
+
+        self::assertSame("[00:01.00]Intro\n[00:02.00]Outro", $lrc);
+    }
+
+    #[Test]
     public function usesFirstUsableFrame(): void
     {
         $lrc = SyncedLyricsConverter::fromSyltFrames([

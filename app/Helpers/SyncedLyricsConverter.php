@@ -39,11 +39,22 @@ class SyncedLyricsConverter
     private static function entriesToLrcLines(array $entries): array
     {
         $lines = [];
+        $firstEntrySeen = false;
 
         foreach ($entries as $entry) {
             if (!is_array($entry)) {
                 continue;
             }
+
+            $timestamp = Arr::get($entry, 'timestamp');
+
+            // Only the first entry may legitimately omit its timestamp (it marks the start of the file);
+            // a later entry without one is malformed, so skip it rather than placing it at the beginning.
+            if ($timestamp === null && $firstEntrySeen) {
+                continue;
+            }
+
+            $firstEntrySeen = true;
 
             $text = trim(html_entity_decode(TagFixer::fix((string) Arr::get($entry, 'data', ''))));
 
@@ -51,7 +62,7 @@ class SyncedLyricsConverter
                 continue;
             }
 
-            $lines[] = self::formatTimestamp((int) Arr::get($entry, 'timestamp', 0)) . $text;
+            $lines[] = self::formatTimestamp((int) $timestamp) . $text;
         }
 
         return $lines;
