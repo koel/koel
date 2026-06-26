@@ -3,6 +3,7 @@
 namespace App\Values\Scanning;
 
 use App\Helpers\Encoding\TagFixer;
+use App\Helpers\SyncedLyricsConverter;
 use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Contracts\Support\Arrayable;
@@ -57,16 +58,12 @@ class ScanInformation implements Arrayable
             $cover = self::getTag($comments, 'picture', []);
         }
 
-        $lyrics = self::getSyncedLyricsAsLrc($info);
-
-        if ($lyrics === '') {
-            $lyrics = html_entity_decode(TagFixer::fix(self::getTag($tags, [
-                'unsynchronised_lyric',
-                'unsychronised_lyric',
-                'unsyncedlyrics',
-                'lyrics',
-            ])));
-        }
+        $lyrics = SyncedLyricsConverter::fromGetId3Info($info) ?: html_entity_decode(TagFixer::fix(self::getTag($tags, [
+            'unsynchronised_lyric',
+            'unsychronised_lyric',
+            'unsyncedlyrics',
+            'lyrics',
+        ])));
 
         return new self(
             title: html_entity_decode(TagFixer::fix(self::getTag($tags, 'title', pathinfo($path, PATHINFO_FILENAME)))),
@@ -137,55 +134,6 @@ class ScanInformation implements Arrayable
         }
 
         return $value ?? $default;
-    }
-
-    /**
-     * Convert an embedded SYLT (synchronised lyrics) frame, if present, into LRC-formatted text.
-     */
-    private static function getSyncedLyricsAsLrc(array $info): string
-    {
-        $frame = Arr::get($info, 'id3v2.SYLT.0');
-
-        // Format 2 is "milliseconds from beginning of file"; MPEG-frame timestamps (1) cannot be converted reliably.
-        if (!is_array($frame) || (int) Arr::get($frame, 'timestampformat') !== 2) {
-            return '';
-        }
-
-        $entries = Arr::get($frame, 'lyrics');
-
-        if (!is_array($entries)) {
-            return '';
-        }
-
-        $lines = [];
-
-        foreach ($entries as $entry) {
-            if (!is_array($entry)) {
-                continue;
-            }
-
-            $text = trim(html_entity_decode(TagFixer::fix((string) Arr::get($entry, 'data', ''))));
-
-            if ($text === '') {
-                continue;
-            }
-
-            $lines[] = self::formatLrcTimestamp((int) Arr::get($entry, 'timestamp', 0)) . $text;
-        }
-
-        return implode("\n", $lines);
-    }
-
-    private static function formatLrcTimestamp(int $milliseconds): string
-    {
-        $centiseconds = intdiv(max($milliseconds, 0), 10);
-
-        return sprintf(
-            '[%02d:%02d.%02d]',
-            intdiv($centiseconds, 6000),
-            intdiv($centiseconds % 6000, 100),
-            $centiseconds % 100,
-        );
     }
 
     /** @inheritdoc */

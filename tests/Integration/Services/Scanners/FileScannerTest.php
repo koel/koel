@@ -184,6 +184,59 @@ class FileScannerTest extends TestCase
     }
 
     #[Test]
+    public function treatsSyncedLyricEntryWithoutTimestampAsStartOfFile(): void
+    {
+        $path = test_path('songs/blank.mp3');
+
+        $analyzed = [
+            'filenamepath' => $path,
+            'id3v2' => [
+                'SYLT' => [
+                    [
+                        'timestampformat' => 2,
+                        'lyrics' => [
+                            ['data' => 'Intro line'], // first entry may omit its timestamp
+                            ['data' => 'Next line', 'timestamp' => 5000],
+                        ],
+                    ],
+                ],
+            ],
+            'playtime_seconds' => 100,
+        ];
+
+        $this->swap(getID3::class, Mockery::mock(getID3::class, [
+            'CopyTagsToComments' => $analyzed,
+            'analyze' => $analyzed,
+        ]));
+
+        self::assertSame("[00:00.00]Intro line\n[00:05.00]Next line", app(FileScanner::class)->scan($path)->lyrics);
+    }
+
+    #[Test]
+    public function usesFirstUsableSyncedLyricsFrame(): void
+    {
+        $path = test_path('songs/blank.mp3');
+
+        $analyzed = [
+            'filenamepath' => $path,
+            'id3v2' => [
+                'SYLT' => [
+                    ['timestampformat' => 1, 'lyrics' => [['data' => 'Frame timestamps', 'timestamp' => 1]]],
+                    ['timestampformat' => 2, 'lyrics' => [['data' => 'Real line', 'timestamp' => 3000]]],
+                ],
+            ],
+            'playtime_seconds' => 100,
+        ];
+
+        $this->swap(getID3::class, Mockery::mock(getID3::class, [
+            'CopyTagsToComments' => $analyzed,
+            'analyze' => $analyzed,
+        ]));
+
+        self::assertSame('[00:03.00]Real line', app(FileScanner::class)->scan($path)->lyrics);
+    }
+
+    #[Test]
     public function fallsBackToUnsynchronisedLyricsWhenSyltUsesFrameTimestamps(): void
     {
         $path = test_path('songs/blank.mp3');
