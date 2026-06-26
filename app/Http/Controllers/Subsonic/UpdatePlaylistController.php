@@ -24,15 +24,13 @@ class UpdatePlaylistController extends Controller
     public function __invoke(UpdatePlaylistRequest $request, Authenticatable $user)
     {
         $playlist = $this->playlistRepository->getOne($request->playlistId);
-        $this->authorize('edit', $playlist);
+        $this->authorize('collaborate', $playlist);
 
-        $changes = array_filter(
-            ['name' => $request->name, 'description' => $request->comment],
-            static fn ($value) => $value !== null,
-        );
+        $changes = $request->getChanges();
 
         if ($changes) {
-            $playlist->update($changes);
+            $this->authorize('own', $playlist);
+            $this->playlistService->patchDetails($playlist, $changes);
         }
 
         if (($request->songIdToAdd || $request->songIndexToRemove) && $playlist->is_smart) {

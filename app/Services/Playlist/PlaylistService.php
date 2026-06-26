@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Webmozart\Assert\Assert;
 
 class PlaylistService
 {
@@ -58,6 +59,16 @@ class PlaylistService
 
             return $playlist;
         });
+    }
+
+    /** @param array<string, string> $changes */
+    public function patchDetails(Playlist $playlist, array $changes): Playlist
+    {
+        Assert::allInArray(array_keys($changes), ['name', 'description']);
+
+        $playlist->update($changes);
+
+        return $playlist;
     }
 
     public function updatePlaylist(Playlist $playlist, PlaylistUpdateData $dto): Playlist

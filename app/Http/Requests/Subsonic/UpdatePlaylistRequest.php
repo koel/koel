@@ -42,4 +42,13 @@ class UpdatePlaylistRequest extends Request
             'songIndexToRemove' => array_map('intval', Arr::wrap($this->input('songIndexToRemove'))),
         ]);
     }
+
+    /** @return array<string, string> */
+    public function getChanges(): array
+    {
+        return array_filter(
+            ['name' => $this->name, 'description' => $this->comment],
+            static fn ($value) => $value !== null,
+        );
+    }
 }

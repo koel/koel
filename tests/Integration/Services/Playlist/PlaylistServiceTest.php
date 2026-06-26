@@ -11,6 +11,7 @@ use App\Services\Podcast\PodcastService;
 use App\Values\Playlist\PlaylistCreateData;
 use App\Values\Playlist\PlaylistUpdateData;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 use Tests\TestCase;
@@ -287,5 +288,27 @@ class PlaylistServiceTest extends TestCase
         // move to the last position
         $this->service->movePlayablesInPlaylist($playlist, [$ids[0], $ids[1]], $ids[3], Placement::AFTER);
         self::assertSame([$ids[2], $ids[3], $ids[0], $ids[1]], $playlist->refresh()->playables->modelKeys());
+    }
+
+    #[Test]
+    public function patchDetailsUpdatesOnlyProvidedFields(): void
+    {
+        $playlist = create_playlist(['name' => 'Original', 'description' => 'Keep me']);
+
+        $this->service->patchDetails($playlist, ['name' => 'Renamed']);
+
+        $playlist->refresh();
+        self::assertSame('Renamed', $playlist->name);
+        self::assertSame('Keep me', $playlist->description);
+    }
+
+    #[Test]
+    public function patchDetailsRejectsUnexpectedKeys(): void
+    {
+        $playlist = create_playlist();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->service->patchDetails($playlist, ['owner_id' => 'hijacked']);
     }
 }
