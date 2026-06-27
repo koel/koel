@@ -67,6 +67,25 @@ class UserServiceTest extends PlusTestCase
         self::assertSame('bruce@iron.com', $user->email);
         self::assertSame('123', $user->sso_id);
         self::assertSame('https://lh3.googleusercontent.com/a/vatar', $user->avatar);
+        self::assertSame(Role::default(), $user->role);
+    }
+
+    #[Test]
+    public function createUserFromSsoUsesConfiguredDefaultRole(): void
+    {
+        config(['koel.sso.default_role' => Role::GUEST]);
+        $service = app(UserService::class);
+
+        $socialiteUser = Mockery::mock(SocialiteUser::class, [
+            'getId' => '456',
+            'getEmail' => 'steve@iron.com',
+            'getName' => 'Steve Harris',
+            'getAvatar' => null,
+        ]);
+
+        $user = $service->createOrUpdateUserFromSso(SsoUser::fromSocialite($socialiteUser, 'Google'));
+
+        self::assertSame(Role::GUEST, $user->role);
     }
 
     #[Test]

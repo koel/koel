@@ -60,6 +60,22 @@ describe('artistCard.vue', () => {
     expect(screen.queryByText('Download')).toBeNull()
   })
 
+  it('separates Shuffle and Download with a standalone, non-link separator', () => {
+    commonStore.state.allows_download = true
+    renderComponent()
+
+    const separator = screen.getByText('•')
+    expect(separator.tagName).toBe('SPAN')
+    expect(separator.closest('a')).toBeNull()
+  })
+
+  it('does not render the separator when download is disabled', () => {
+    commonStore.state.allows_download = false
+    renderComponent()
+
+    expect(screen.queryByText('•')).toBeNull()
+  })
+
   it('shuffles', async () => {
     h.createAudioPlayer()
 

@@ -36,6 +36,7 @@
 
     <template #meta>
       <a :title="`Shuffle all songs in the album ${album.name}`" role="button" @click.prevent="shuffle"> Shuffle </a>
+      <span v-if="allowDownload" aria-hidden="true">•</span>
       <a
         v-if="allowDownload"
         :title="`Download all songs in the album ${album.name}`"

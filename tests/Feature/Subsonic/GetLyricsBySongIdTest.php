@@ -39,6 +39,30 @@ class GetLyricsBySongIdTest extends TestCase
     }
 
     #[Test]
+    public function returnsSyncedLyricsWhenTimestampsPresent(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->createOne([
+            'title' => 'Karma Police',
+            'artist_name' => 'Radiohead',
+            'lyrics' => "[00:12.34]Karma police\n[00:15.00]Arrest this man",
+            'owner_id' => $user->id,
+        ]);
+
+        $response = $this
+            ->getJson("/rest/getLyricsBySongId.view?apiKey={$user->subsonic_api_key}&f=json&id={$song->id}")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'ok');
+
+        $structured = $response->json('subsonic-response.lyricsList.structuredLyrics.0');
+        self::assertTrue($structured['synced']);
+        self::assertSame(
+            [['start' => 12_340, 'value' => 'Karma police'], ['start' => 15_000, 'value' => 'Arrest this man']],
+            $structured['line'],
+        );
+    }
+
+    #[Test]
     public function emptyLyricsReturnsEmptyList(): void
     {
         $user = create_user();

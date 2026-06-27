@@ -10,7 +10,7 @@
       class="px-4 py-2 focus:outline-hidden"
       @mouseover="($event.currentTarget as HTMLLIElement).focus()"
     >
-      <StarRating :rateable="podcast" />
+      <StarRating :rateable="podcast" @rate="closeContextMenu" />
     </li>
     <Separator />
     <MenuItem @click="visitWebsite">Visit Website</MenuItem>
@@ -36,7 +36,7 @@ const props = defineProps<{ podcast: Podcast }>()
 const { podcast } = toRefs(props)
 
 const { go, url } = useRouter()
-const { MenuItem, Separator, trigger } = useContextMenu()
+const { MenuItem, Separator, closeContextMenu, trigger } = useContextMenu()
 const { showConfirmDialog } = useDialogBox()
 const { toastSuccess } = useMessageToaster()
 

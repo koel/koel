@@ -96,24 +96,6 @@ article {
       @apply w-[80px] rounded-md;
     }
   }
-
-  .meta {
-    :deep(a),
-    :deep(button) {
-      & + a,
-      & + button {
-        &::before {
-          @apply mr-0.5 content-['•'];
-        }
-      }
-
-      & + button {
-        &::before {
-          @apply mr-1;
-        }
-      }
-    }
-  }
 }
 
 .compact {

@@ -129,6 +129,85 @@ class FileScannerTest extends TestCase
     }
 
     #[Test]
+    public function convertsEmbeddedSyncedLyricsToLrc(): void
+    {
+        $path = test_path('songs/blank.mp3');
+
+        $analyzed = [
+            'filenamepath' => $path,
+            'id3v2' => [
+                'SYLT' => [
+                    [
+                        'timestampformat' => 2,
+                        'lyrics' => [
+                            ['data' => 'First line', 'timestamp' => 12_340],
+                            ['data' => 'Second line', 'timestamp' => 65_060],
+                        ],
+                    ],
+                ],
+            ],
+            'playtime_seconds' => 100,
+        ];
+
+        $this->swap(getID3::class, Mockery::mock(getID3::class, [
+            'CopyTagsToComments' => $analyzed,
+            'analyze' => $analyzed,
+        ]));
+
+        $info = app(FileScanner::class)->scan($path);
+
+        self::assertSame("[00:12.34]First line\n[01:05.06]Second line", $info->lyrics);
+    }
+
+    #[Test]
+    public function prefersSyncedLyricsOverUnsynchronisedLyrics(): void
+    {
+        $path = test_path('songs/blank.mp3');
+
+        $analyzed = [
+            'filenamepath' => $path,
+            'id3v2' => [
+                'SYLT' => [
+                    ['timestampformat' => 2, 'lyrics' => [['data' => 'Synced', 'timestamp' => 0]]],
+                ],
+            ],
+            'tags' => ['id3v2' => ['unsynchronised_lyric' => ['Plain lyrics']]],
+            'playtime_seconds' => 100,
+        ];
+
+        $this->swap(getID3::class, Mockery::mock(getID3::class, [
+            'CopyTagsToComments' => $analyzed,
+            'analyze' => $analyzed,
+        ]));
+
+        self::assertSame('[00:00.00]Synced', app(FileScanner::class)->scan($path)->lyrics);
+    }
+
+    #[Test]
+    public function fallsBackToUnsynchronisedLyricsWhenSyltUsesFrameTimestamps(): void
+    {
+        $path = test_path('songs/blank.mp3');
+
+        $analyzed = [
+            'filenamepath' => $path,
+            'id3v2' => [
+                'SYLT' => [
+                    ['timestampformat' => 1, 'lyrics' => [['data' => 'Synced', 'timestamp' => 1]]],
+                ],
+            ],
+            'tags' => ['id3v2' => ['unsynchronised_lyric' => ['Plain lyrics']]],
+            'playtime_seconds' => 100,
+        ];
+
+        $this->swap(getID3::class, Mockery::mock(getID3::class, [
+            'CopyTagsToComments' => $analyzed,
+            'analyze' => $analyzed,
+        ]));
+
+        self::assertSame('Plain lyrics', app(FileScanner::class)->scan($path)->lyrics);
+    }
+
+    #[Test]
     public function htmlEntities(): void
     {
         $path = test_path('songs/blank.mp3');

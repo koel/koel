@@ -22,7 +22,7 @@
     "@laravel/echo-vue": "^2.1.6",
     "butterchurn": "^2.6.7",
     "butterchurn-presets": "^2.4.7",
-    "dompurify": "^3.4.9",
+    "dompurify": "^3.4.11",
     "events": "^3.3.0",
     "fuse.js": "^7.1.0",
     "idb": "^8.0.3",

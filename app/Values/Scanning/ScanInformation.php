@@ -3,6 +3,7 @@
 namespace App\Values\Scanning;
 
 use App\Helpers\Encoding\TagFixer;
+use App\Helpers\SyncedLyricsConverter;
 use App\Models\Album;
 use App\Models\Artist;
 use Illuminate\Contracts\Support\Arrayable;
@@ -57,7 +58,9 @@ class ScanInformation implements Arrayable
             $cover = self::getTag($comments, 'picture', []);
         }
 
-        $lyrics = html_entity_decode(TagFixer::fix(self::getTag($tags, [
+        $syncedLyrics = SyncedLyricsConverter::fromSyltFrames(Arr::wrap(Arr::get($info, 'id3v2.SYLT', [])));
+
+        $lyrics = $syncedLyrics ?: html_entity_decode(TagFixer::fix(self::getTag($tags, [
             'unsynchronised_lyric',
             'unsychronised_lyric',
             'unsyncedlyrics',
