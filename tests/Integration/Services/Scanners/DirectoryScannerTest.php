@@ -65,7 +65,7 @@ class DirectoryScannerTest extends TestCase
         self::assertNotEmpty($song->album->cover);
 
         // File search shouldn't be case-sensitive.
-        $this->assertDatabaseHas(Song::class, ['path' => $this->path('/subdir/no-name.mp3')]);
+        $this->assertDatabaseHas(Song::class, ['path' => $this->path('/subdir/uppercase-extension.MP3')]);
 
         // Non-audio files shouldn't be recognized
         $this->assertDatabaseMissing(Song::class, ['path' => $this->path('/rubbish.log')]);
