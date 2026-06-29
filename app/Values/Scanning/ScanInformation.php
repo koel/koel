@@ -74,7 +74,7 @@ class ScanInformation implements Arrayable
             albumArtistName: html_entity_decode($albumArtistName),
             track: (int) self::getTag($tags, ['track', 'tracknumber', 'track_number']),
             disc: (int) self::getTag($tags, ['discnumber', 'part_of_a_set'], 1),
-            year: (int) self::getTag($tags, 'year') ?: null,
+            year: (int) self::getTag($tags, ['year', 'date']) ?: null,
             genre: TagFixer::fix(self::getTag($tags, 'genre')),
             lyrics: $lyrics,
             length: (float) Arr::get($info, 'playtime_seconds'),
