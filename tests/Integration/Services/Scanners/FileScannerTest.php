@@ -90,6 +90,7 @@ class FileScannerTest extends TestCase
             ],
             'path' => realpath($flacPath),
             'mtime' => filemtime($flacPath),
+            'year' => 2015,
             'mime_type' => 'audio/flac',
             'file_size' => 532_201,
         ];

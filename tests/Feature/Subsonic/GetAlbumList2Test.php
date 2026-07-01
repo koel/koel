@@ -36,6 +36,29 @@ class GetAlbumList2Test extends TestCase
     }
 
     #[Test]
+    public function newestRespectsOffset(): void
+    {
+        $user = create_user();
+
+        Album::factory()->createMany([
+            ['name' => 'Oldest', 'user_id' => $user->id, 'created_at' => now()->subDays(20)],
+            ['name' => 'Middle', 'user_id' => $user->id, 'created_at' => now()->subDays(10)],
+            ['name' => 'Newest', 'user_id' => $user->id, 'created_at' => now()],
+        ]);
+
+        $firstPage = $this->getJson(
+            "/rest/getAlbumList2.view?apiKey={$user->subsonic_api_key}&f=json&type=newest&size=1&offset=0",
+        )->assertOk();
+
+        $secondPage = $this->getJson(
+            "/rest/getAlbumList2.view?apiKey={$user->subsonic_api_key}&f=json&type=newest&size=1&offset=1",
+        )->assertOk();
+
+        self::assertSame(['Newest'], array_column($firstPage->json('subsonic-response.albumList2.album'), 'name'));
+        self::assertSame(['Middle'], array_column($secondPage->json('subsonic-response.albumList2.album'), 'name'));
+    }
+
+    #[Test]
     public function alphabeticalByNameRespectsOffsetAndSize(): void
     {
         $user = create_user();

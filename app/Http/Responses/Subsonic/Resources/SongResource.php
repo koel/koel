@@ -44,6 +44,7 @@ final class SongResource
      *     discNumber: ?int,
      *     isVideo: bool,
      *     userRating: ?int,
+     *     starred: ?string,
      * }
      */
     public static function toArray(Song $song, User $user): array
@@ -70,6 +71,7 @@ final class SongResource
             'discNumber' => $song->disc ?: null,
             'isVideo' => false,
             'userRating' => $song->getRatingFor($user) ?: null,
+            'starred' => $song->favorited_at?->toIso8601String(),
         ];
     }
 }

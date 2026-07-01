@@ -33,7 +33,7 @@ class PlayMostPlayedAlbum implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $albums = $this->albumRepository->getMostPlayed(1, $this->context->user);
+        $albums = $this->albumRepository->getMostPlayed(1, user: $this->context->user);
 
         if ($albums->isEmpty()) {
             return 'No play history found yet.';

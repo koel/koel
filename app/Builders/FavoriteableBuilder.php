@@ -35,7 +35,9 @@ abstract class FavoriteableBuilder extends Builder
             )->where('favorites.user_id', $this->user->id);
         });
 
-        $this->addSelect(DB::raw('(CASE WHEN favorites.created_at IS NULL THEN false ELSE true END) AS favorite'));
+        $this->addSelect(DB::raw(
+            '(CASE WHEN favorites.created_at IS NULL THEN false ELSE true END) AS favorite',
+        ))->addSelect('favorites.created_at as favorited_at');
 
         return $this;
     }
