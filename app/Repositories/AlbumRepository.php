@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @extends Repository<Album>
@@ -69,7 +68,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->withUserContext(user: $user)
             ->whereExists(static function (QueryBuilder $query) use ($user): void {
                 $query
-                    ->select(DB::raw(1))
+                    ->selectRaw('1')
                     ->from('interactions')
                     ->join('songs as recently_played_songs', 'recently_played_songs.id', 'interactions.song_id')
                     ->whereColumn('recently_played_songs.album_id', 'albums.id')
