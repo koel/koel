@@ -7,6 +7,7 @@ use App\Http\Responses\Subsonic\Resources\AlbumResource;
 use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Favorite;
+use App\Models\Interaction;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -76,6 +77,49 @@ class GetAlbumTest extends TestCase
         )->assertOk();
 
         self::assertArrayNotHasKey('starred', $response->json('subsonic-response.album'));
+    }
+
+    #[Test]
+    public function populatesPlayedDateFromMostRecentlyPlayedSong(): void
+    {
+        $user = create_user();
+        $album = Album::factory()->createOne(['user_id' => $user->id]);
+
+        $stale = Song::factory()->createOne(['album_id' => $album->id, 'owner_id' => $user->id]);
+        $recent = Song::factory()->createOne(['album_id' => $album->id, 'owner_id' => $user->id]);
+
+        Interaction::factory()->createOne([
+            'user_id' => $user->id,
+            'song_id' => $stale->id,
+            'last_played_at' => now()->subDays(9),
+        ]);
+
+        $lastPlayedAt = now()->subMinutes(2)->startOfSecond();
+
+        Interaction::factory()->createOne([
+            'user_id' => $user->id,
+            'song_id' => $recent->id,
+            'last_played_at' => $lastPlayedAt,
+        ]);
+
+        $this
+            ->getJson("/rest/getAlbum.view?apiKey={$user->subsonic_api_key}&f=json&id={$album->id}")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.album.played', $lastPlayedAt->toIso8601String());
+    }
+
+    #[Test]
+    public function omitsPlayedDateWhenNeverPlayed(): void
+    {
+        $user = create_user();
+        $album = Album::factory()->createOne(['user_id' => $user->id]);
+        Song::factory()->createOne(['album_id' => $album->id, 'owner_id' => $user->id]);
+
+        $response = $this->getJson(
+            "/rest/getAlbum.view?apiKey={$user->subsonic_api_key}&f=json&id={$album->id}",
+        )->assertOk();
+
+        self::assertArrayNotHasKey('played', $response->json('subsonic-response.album'));
     }
 
     #[Test]

@@ -101,6 +101,19 @@ class AlbumBuilder extends FavoriteableBuilder
         ]);
     }
 
+    private function withLastPlayedSubquery(): self
+    {
+        throw_unless($this->user, new LogicException('User must be set to query last played timestamps.'));
+
+        return $this->addSelect([
+            'last_played_at' => DB::table('interactions')
+                ->join('songs as songs_for_last_played', 'songs_for_last_played.id', 'interactions.song_id')
+                ->whereColumn('songs_for_last_played.album_id', 'albums.id')
+                ->where('interactions.user_id', $this->user->id)
+                ->selectRaw('MAX(interactions.last_played_at)'),
+        ]);
+    }
+
     private function withRatingSubquery(): self
     {
         throw_unless($this->user, new LogicException('User must be set to query album ratings.'));
@@ -132,6 +145,7 @@ class AlbumBuilder extends FavoriteableBuilder
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
             ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus))
             ->withLengthSubquery()
+            ->withLastPlayedSubquery()
             ->withRatingSubquery();
     }
 
