@@ -24,11 +24,11 @@ trait LoadsAlbumsByType
         int $offset,
     ): Collection {
         return match ($request->type) {
-            'newest' => $albumRepository->getRecentlyAdded($size),
-            'frequent' => $albumRepository->getMostPlayed($size),
+            'newest' => $albumRepository->getRecentlyAdded($size, $offset),
+            'frequent' => $albumRepository->getMostPlayed($size, $offset),
             'random' => $albumRepository->getRandom($size),
             'starred' => $albumRepository->getFavorites($size, $offset),
-            'recent' => $albumRepository->getRecentlyPlayed($size),
+            'recent' => $albumRepository->getRecentlyPlayed($size, $offset),
             'highest' => $albumRepository->getHighestRated($size, $offset),
             'byYear' => $albumRepository->getByYearRange(
                 $request->integer('fromYear'),

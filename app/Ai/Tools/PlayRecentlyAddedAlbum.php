@@ -33,7 +33,7 @@ class PlayRecentlyAddedAlbum implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $albums = $this->albumRepository->getRecentlyAdded(1, $this->context->user);
+        $albums = $this->albumRepository->getRecentlyAdded(1, user: $this->context->user);
 
         if ($albums->isEmpty()) {
             return 'No albums found in the library.';
