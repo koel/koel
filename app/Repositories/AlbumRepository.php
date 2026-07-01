@@ -39,27 +39,29 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->find($id);
     }
 
-    public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
+    public function getRecentlyAdded(int $count = 6, int $offset = 0, ?User $user = null): Collection
     {
         return Album::query()
             ->onlyStandard()
             ->withUserContext(user: $user ?? $this->auth->user())
             ->latest()
+            ->offset($offset)
             ->limit($count)
             ->get();
     }
 
-    public function getMostPlayed(int $count = 6, ?User $user = null): Collection
+    public function getMostPlayed(int $count = 6, int $offset = 0, ?User $user = null): Collection
     {
         return Album::query()
             ->onlyStandard()
             ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
             ->orderByDesc('play_count')
+            ->offset($offset)
             ->limit($count)
             ->get();
     }
 
-    public function getRecentlyPlayed(int $count = 6, ?User $user = null): Collection
+    public function getRecentlyPlayed(int $count = 6, int $offset = 0, ?User $user = null): Collection
     {
         $user ??= $this->auth->user();
 
@@ -76,6 +78,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
                     ->whereNotNull('interactions.last_played_at');
             })
             ->orderByDesc('last_played_at')
+            ->offset($offset)
             ->limit($count)
             ->get();
     }
