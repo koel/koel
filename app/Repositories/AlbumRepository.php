@@ -11,8 +11,8 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @extends Repository<Album>
@@ -61,11 +61,20 @@ class AlbumRepository extends Repository implements ScoutableRepository
 
     public function getRecentlyPlayed(int $count = 6, ?User $user = null): Collection
     {
+        $user ??= $this->auth->user();
+
         return Album::query()
             ->onlyStandard()
-            ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
-            ->addSelect(DB::raw('MAX(interactions.last_played_at) as last_played_at'))
-            ->havingRaw('MAX(interactions.last_played_at) IS NOT NULL')
+            ->withUserContext(user: $user)
+            ->whereExists(static function (QueryBuilder $query) use ($user): void {
+                $query
+                    ->selectRaw('1')
+                    ->from('interactions')
+                    ->join('songs as recently_played_songs', 'recently_played_songs.id', 'interactions.song_id')
+                    ->whereColumn('recently_played_songs.album_id', 'albums.id')
+                    ->where('interactions.user_id', $user->id)
+                    ->whereNotNull('interactions.last_played_at');
+            })
             ->orderByDesc('last_played_at')
             ->limit($count)
             ->get();

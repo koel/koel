@@ -31,6 +31,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property ?boolean $favorite Whether the album is liked by the scoped user
+ * @property ?Carbon $favorited_at When the scoped user favorited the album, if at all
+ * @property ?Carbon $last_played_at When the scoped user last played the album, if at all
  * @property ?int $year
  * @property ?string $thumbnail The album's thumbnail file name
  * @property Artist $artist The album's artist
@@ -74,6 +76,8 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
     {
         return [
             'favorite' => 'boolean',
+            'favorited_at' => 'datetime',
+            'last_played_at' => 'datetime',
         ];
     }
 
