@@ -30,6 +30,7 @@ final class AlbumResource
      *     created: string,
      *     year: ?int,
      *     userRating: ?int,
+     *     starred: ?string,
      * }
      */
     public static function toArray(Album $album, User $user): array
@@ -45,6 +46,7 @@ final class AlbumResource
             'created' => $album->created_at->toIso8601String(),
             'year' => $album->year,
             'userRating' => $album->getRatingFor($user) ?: null,
+            'starred' => $album->favorited_at?->toIso8601String(),
         ];
     }
 }

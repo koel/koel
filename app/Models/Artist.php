@@ -41,6 +41,8 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property int $user_id The ID of the user that owns this artist
  * @property string $id
  * @property string $name
+ * @property ?bool $favorite Whether the artist is liked by the scoped user
+ * @property ?Carbon $favorited_at When the scoped user favorited the artist, if at all
  *
  * @method static ArtistFactory factory(...$parameters)
  */
@@ -68,6 +70,7 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
     {
         return [
             'favorite' => 'boolean',
+            'favorited_at' => 'datetime',
         ];
     }
 

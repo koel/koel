@@ -74,6 +74,49 @@ class GetStarred2Test extends TestCase
     }
 
     #[Test]
+    public function populatesStarredDateForEachType(): void
+    {
+        $user = create_user();
+
+        $song = Song::factory()->createOne(['owner_id' => $user->id]);
+        $album = Album::factory()->createOne(['user_id' => $user->id]);
+        $artist = Artist::factory()->createOne(['user_id' => $user->id]);
+
+        $favoritedAt = now()->subDays(3)->startOfSecond();
+
+        Favorite::factory()->createMany([
+            [
+                'user_id' => $user->id,
+                'favoriteable_type' => FavoriteableType::PLAYABLE->value,
+                'favoriteable_id' => $song->id,
+                'created_at' => $favoritedAt,
+            ],
+            [
+                'user_id' => $user->id,
+                'favoriteable_type' => FavoriteableType::ALBUM->value,
+                'favoriteable_id' => $album->id,
+                'created_at' => $favoritedAt,
+            ],
+            [
+                'user_id' => $user->id,
+                'favoriteable_type' => FavoriteableType::ARTIST->value,
+                'favoriteable_id' => $artist->id,
+                'created_at' => $favoritedAt,
+            ],
+        ]);
+
+        $payload = $this
+            ->getJson("/rest/getStarred2.view?apiKey={$user->subsonic_api_key}&f=json")
+            ->assertOk()
+            ->json('subsonic-response.starred2');
+
+        $expected = $favoritedAt->toIso8601String();
+        self::assertSame($expected, collect($payload['song'])->firstWhere('id', $song->id)['starred']);
+        self::assertSame($expected, collect($payload['album'])->firstWhere('id', $album->id)['starred']);
+        self::assertSame($expected, collect($payload['artist'])->firstWhere('id', $artist->id)['starred']);
+    }
+
+    #[Test]
     public function emptyWhenNothingStarred(): void
     {
         $user = create_user();
