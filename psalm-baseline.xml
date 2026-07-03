@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="7.0.0-beta19@7e751c06a756fa64dc4c759c09fe4a173afcb433">
+  <file src="app/Builders/GenreBuilder.php">
+    <MissingTemplateParam>
+      <code><![CDATA[GenreBuilder]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Builders/UserBuilder.php">
+    <MissingTemplateParam>
+      <code><![CDATA[UserBuilder]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/EncryptedValueCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/LicenseInstanceCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/LicenseMetaCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/Podcast/CategoriesCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/Podcast/EnclosureCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/Podcast/EpisodeMetadataCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/Podcast/PodcastMetadataCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/Podcast/PodcastStateCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/SmartPlaylistRulesCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/SongLyricsCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/SongStorageCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/SongTitleCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/ThemePropertiesCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Casts/UserPreferencesCast.php">
+    <MissingTemplateParam>
+      <code><![CDATA[CastsAttributes]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Console/Commands/Admin/SetUserRoleCommand.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Role::allAvailable()->each(static function (Role $role) use (&$roles): void {
+            $roles[$role->value] = $role->label();
+        })]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Enums/Acl/Role.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+      <code><![CDATA[Collection<self>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Events/MultipleSongsLiked.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Song>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Events/MultipleSongsUnliked.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Song>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Exceptions/EmbeddableNotFoundException.php">
+    <MissingTemplateParam>
+      <code><![CDATA[EmbeddableNotFoundException]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Http/Controllers/API/FavoriteController.php">
+    <UndefinedClass>
+      <code><![CDATA[$modelType::findOrFail($request->id)]]></code>
+      <code><![CDATA[$modelType::query()]]></code>
+      <code><![CDATA[$modelType::query()]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="app/Http/Integrations/Ticketmaster/Requests/AttractionSearchRequest.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<TicketmasterAttraction>|array<array-key, TicketmasterAttraction>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Http/Integrations/Ticketmaster/Requests/EventSearchRequest.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<TicketmasterEvent>|array<array-key, TicketmasterEvent>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Jobs/DeleteSongFilesJob.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<SongFileInfo>|array<array-key, SongFileInfo>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Jobs/DeleteTranscodeFilesJob.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<TranscodeFileInfo>|array<array-key, TranscodeFileInfo>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Listeners/LoveMultipleTracksOnLastfm.php">
+    <MissingTemplateParam>
+      <code><![CDATA[$event->songs->filter(static fn (Song $song) => !$song->isEpisode() && !$song->artist->is_unknown)]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Listeners/UnloveMultipleTracksOnLastfm.php">
+    <MissingTemplateParam>
+      <code><![CDATA[$event->songs->filter(static fn ($song) => !$song->isEpisode() && !$song->artist->is_unknown)]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Models/User.php">
+    <MissingTemplateParam>
+      <code><![CDATA[BaseCollection<RoleEnum>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Responses/BroadcastableResponse.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Services/DownloadService.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<Song>|array<array-key, Song>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Services/Integrations/TicketmasterService.php">
+    <MissingTemplateParam>
+      <code><![CDATA[$attractions]]></code>
+      <code><![CDATA[Collection<TicketmasterEvent>|array<array-key, TicketmasterEvent>]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Services/SongService.php">
+    <NoValue>
+      <code><![CDATA[$album]]></code>
+      <code><![CDATA[$artist]]></code>
+    </NoValue>
+    <ParadoxicalCondition>
+      <code><![CDATA[Album]]></code>
+      <code><![CDATA[Artist]]></code>
+    </ParadoxicalCondition>
+  </file>
+  <file src="app/Values/Album/AlbumInformation.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Album/AlbumUpdateData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Artist/ArtistInformation.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Artist/ArtistUpdateData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Branding.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/CompositeToken.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/EmbedOptions.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/EqualizerPreset.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/IpInfoLiteData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/License/LicenseInstance.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/License/LicenseMeta.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Playlist/PlaylistCollaborator.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Playlist/PlaylistCreateData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Playlist/PlaylistUpdateData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Podcast/EpisodePlayable.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Podcast/PodcastState.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Radio/RadioStationCreateData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Radio/RadioStationUpdateData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Scanning/ScanInformation.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Scanning/ScanResultCollection.php">
+    <MissingTemplateParam>
+      <code><![CDATA[ScanResultCollection]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/SmartPlaylist/SmartPlaylistRule.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/SmartPlaylist/SmartPlaylistRuleGroup.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/SmartPlaylist/SmartPlaylistRuleGroupCollection.php">
+    <MissingTemplateParam>
+      <code><![CDATA[SmartPlaylistRuleGroupCollection]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Song/SongUpdateData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Theme/ThemeProperties.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Ticketmaster/TicketmasterAttraction.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Ticketmaster/TicketmasterEvent.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/Ticketmaster/TicketmasterVenue.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/User/UserCreateData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="app/Values/User/UserPreferences.php">
+    <MethodSignatureMustOmitReturnType>
+      <code><![CDATA[public function __clone(): void]]></code>
+    </MethodSignatureMustOmitReturnType>
+    <MissingTemplateParam>
+      <code><![CDATA[Arrayable]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="bootstrap/providers.php">
+    <UndefinedClass>
+      <code><![CDATA[ImageServiceProvider]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="config/ignition.php">
+    <UndefinedClass>
+      <code><![CDATA[MissingPackageSolutionProvider]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="database/migrations/2025_06_12_150202_user-scope_artists_and_albums.php">
+    <UndefinedVariable>
+      <code><![CDATA[$artistCache]]></code>
+    </UndefinedVariable>
+  </file>
+</files>
