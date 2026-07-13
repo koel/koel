@@ -28,6 +28,9 @@ import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
+const props = withDefaults(defineProps<{ parent?: PlaylistFolder | null }>(), {
+  parent: null,
+})
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
@@ -38,7 +41,8 @@ const { data, isPristine, handleSubmit } = useForm<Pick<PlaylistFolder, 'name'>>
   initialValues: {
     name: '',
   },
-  onSubmit: async ({ name }) => await playlistFolderStore.store(name),
+  onSubmit: async ({ name }) =>
+    props.parent ? await playlistFolderStore.store(name, props.parent) : await playlistFolderStore.store(name),
   onSuccess: (folder: PlaylistFolder) => {
     close()
     toastSuccess(`Playlist folder "${folder.name}" created.`)

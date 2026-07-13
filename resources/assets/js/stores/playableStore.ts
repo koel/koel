@@ -244,10 +244,10 @@ export const playableStore = {
     return songs
   },
 
-  async fetchForPlaylistFolder(folder: PlaylistFolder) {
+  async fetchForPlaylists(playlists: Playlist[]) {
     const playables: Playable[] = []
 
-    for await (const playlist of playlistStore.byFolder(folder)) {
+    for await (const playlist of playlists) {
       playables.push(...(await this.fetchForPlaylist(playlist)))
     }
 

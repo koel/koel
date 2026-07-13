@@ -2,15 +2,22 @@
 
 namespace Tests\Feature;
 
+use App\Models\PlaylistFolder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class InitialDataTest extends TestCase
 {
     #[Test]
     public function index(): void
     {
-        $this->getAs('/api/data')->assertJsonStructure([
+        $user = create_user();
+        $parent = PlaylistFolder::factory()->for($user)->createOne();
+        $child = PlaylistFolder::factory()->for($user)->for($parent, 'parent')->createOne();
+
+        $response = $this->getAs('/api/data', $user)->assertJsonStructure([
             'settings',
             'playlists',
             'playlist_folders',
@@ -42,5 +49,10 @@ class InitialDataTest extends TestCase
             ],
             'supports_batch_downloading',
         ]);
+
+        $folders = collect($response->json('playlist_folders'));
+
+        self::assertNull($folders->firstWhere('id', $parent->id)['parent_id']);
+        self::assertSame($parent->id, $folders->firstWhere('id', $child->id)['parent_id']);
     }
 }

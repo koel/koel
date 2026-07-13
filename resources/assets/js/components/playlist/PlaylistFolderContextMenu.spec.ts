@@ -2,13 +2,13 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
-import { MessageToasterStub } from '@/__tests__/stubs'
-import { playlistStore } from '@/stores/playlistStore'
+import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
 import { playableStore } from '@/stores/playableStore'
 import { playbackService } from '@/services/QueuePlaybackService'
 import Router from '@/router'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import EditPlaylistFolderForm from '@/components/playlist/EditPlaylistFolderForm.vue'
+import CreatePlaylistFolderForm from '@/components/playlist/CreatePlaylistFolderForm.vue'
 
 const openModalMock = vi.fn()
 
@@ -42,39 +42,55 @@ describe('playlistFolderContextMenu.vue', () => {
 
   const createPlayableFolder = () => {
     const folder = h.factory('playlist-folder').make()
-    h.mock(playlistStore, 'byFolder', h.factory('playlist').make({ folder_id: folder.id }, 3))
-    return folder
+    const playlists = h.factory('playlist').make({ folder_id: folder.id }, 3)
+    h.mock(playlistFolderStore, 'playlistsInTree', playlists)
+
+    return { folder, playlists }
   }
 
-  it('renames', async () => {
+  it('edits', async () => {
     const { folder } = await renderComponent()
 
-    await h.user.click(screen.getByText('Rename'))
+    await h.user.click(screen.getByText('Edit…'))
 
     await assertOpenModal(openModalMock, EditPlaylistFolderForm, { folder })
   })
 
   it('deletes', async () => {
-    const { folder } = await renderComponent()
+    const confirmMock = h.mock(DialogBoxStub.value, 'confirm', true)
     const deleteMock = h.mock(playlistFolderStore, 'delete')
+    const { folder } = await renderComponent()
 
     await h.user.click(screen.getByText('Delete'))
+
+    expect(confirmMock).toHaveBeenCalledWith(
+      `Delete the playlist folder "${folder.name}"? Its playlists and subfolders will be kept.`,
+    )
     expect(deleteMock).toHaveBeenCalledWith(folder)
+  })
+
+  it('creates a child folder', async () => {
+    const { folder } = await renderComponent()
+
+    await h.user.click(screen.getByText('New Folder…'))
+
+    await assertOpenModal(openModalMock, CreatePlaylistFolderForm, { parent: folder })
   })
 
   it('plays', async () => {
     h.createAudioPlayer()
 
     const songs = h.factory('song').make(3)
-    const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
+    const fetchMock = h.mock(playableStore, 'fetchForPlaylists').mockResolvedValue(songs)
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
-    const { folder } = await renderComponent(createPlayableFolder())
+    const { folder, playlists } = createPlayableFolder()
+    await renderComponent(folder)
 
     await h.user.click(screen.getByText('Play All'))
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(folder)
+      expect(fetchMock).toHaveBeenCalledWith(playlists)
       expect(queueMock).toHaveBeenCalledWith(songs)
       expect(goMock).toHaveBeenCalledWith('/#/queue')
     })
@@ -83,17 +99,18 @@ describe('playlistFolderContextMenu.vue', () => {
   it('warns if attempting to play with no songs in folder', async () => {
     h.createAudioPlayer()
 
-    const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue([])
+    const fetchMock = h.mock(playableStore, 'fetchForPlaylists').mockResolvedValue([])
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
     const warnMock = h.mock(MessageToasterStub.value, 'warning')
 
-    const { folder } = await renderComponent(createPlayableFolder())
+    const { folder, playlists } = createPlayableFolder()
+    await renderComponent(folder)
 
     await h.user.click(screen.getByText('Play All'))
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(folder)
+      expect(fetchMock).toHaveBeenCalledWith(playlists)
       expect(queueMock).not.toHaveBeenCalled()
       expect(goMock).not.toHaveBeenCalled()
       expect(warnMock).toHaveBeenCalledWith('No songs available.')
@@ -104,16 +121,17 @@ describe('playlistFolderContextMenu.vue', () => {
     h.createAudioPlayer()
 
     const songs = h.factory('song').make(3)
-    const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue(songs)
+    const fetchMock = h.mock(playableStore, 'fetchForPlaylists').mockResolvedValue(songs)
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
 
-    const { folder } = await renderComponent(createPlayableFolder())
+    const { folder, playlists } = createPlayableFolder()
+    await renderComponent(folder)
 
     await h.user.click(screen.getByText('Shuffle All'))
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(folder)
+      expect(fetchMock).toHaveBeenCalledWith(playlists)
       expect(queueMock).toHaveBeenCalledWith(songs, true)
       expect(goMock).toHaveBeenCalledWith('/#/queue')
     })
@@ -129,17 +147,18 @@ describe('playlistFolderContextMenu.vue', () => {
   it('warns if attempting to shuffle with no songs in folder', async () => {
     h.createAudioPlayer()
 
-    const fetchMock = h.mock(playableStore, 'fetchForPlaylistFolder').mockResolvedValue([])
+    const fetchMock = h.mock(playableStore, 'fetchForPlaylists').mockResolvedValue([])
     const queueMock = h.mock(playbackService, 'queueAndPlay')
     const goMock = h.mock(Router, 'go')
     const warnMock = h.mock(MessageToasterStub.value, 'warning')
 
-    const { folder } = await renderComponent(createPlayableFolder())
+    const { folder, playlists } = createPlayableFolder()
+    await renderComponent(folder)
 
     await h.user.click(screen.getByText('Shuffle All'))
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(folder)
+      expect(fetchMock).toHaveBeenCalledWith(playlists)
       expect(queueMock).not.toHaveBeenCalled()
       expect(goMock).not.toHaveBeenCalled()
       expect(warnMock).toHaveBeenCalledWith('No songs available.')

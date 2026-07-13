@@ -14,6 +14,8 @@ class Transcoder
         private readonly int $transcodeTimeout = 0,
         #[Config('koel.streaming.ffmpeg_path')]
         private readonly string $ffmpegPath = '',
+        #[Config('koel.streaming.aac_fast')]
+        private readonly bool $aacFast = true,
     ) {}
 
     public function transcode(string $source, string $destination, int $bitRate): void
@@ -34,6 +36,7 @@ class Transcoder
             'aac',
             '-b:a',
             "{$bitRate}k",
+            ...($this->aacFast ? ['-aac_coder', 'fast'] : []),
             '-threads',
             '0',
             '-movflags',

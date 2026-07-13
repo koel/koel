@@ -39,27 +39,154 @@ class PlaylistFolderTest extends TestCase
     {
         $user = create_user();
 
-        $this->postAs(
-            'api/playlist-folders',
-            ['name' => 'Classical'],
-            $user,
-        )->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE);
+        $this
+            ->postAs('api/playlist-folders', ['name' => 'Classical'], $user)
+            ->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE)
+            ->assertJsonPath('parent_id', null);
 
-        $this->assertDatabaseHas(PlaylistFolder::class, ['name' => 'Classical', 'user_id' => $user->id]);
+        $this->assertDatabaseHas(PlaylistFolder::class, [
+            'name' => 'Classical',
+            'parent_id' => null,
+            'user_id' => $user->id,
+        ]);
+    }
+
+    #[Test]
+    public function creatingUnderAMissingParentIsNotAllowed(): void
+    {
+        $user = create_user();
+
+        $this
+            ->postAs('api/playlist-folders', ['name' => 'Classical', 'parent_id' => fake()->uuid()], $user)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('parent_id');
+
+        $this->assertDatabaseMissing(PlaylistFolder::class, [
+            'name' => 'Classical',
+            'user_id' => $user->id,
+        ]);
+    }
+
+    #[Test]
+    public function createNestedFolder(): void
+    {
+        $user = create_user();
+        $parent = PlaylistFolder::factory()->for($user)->createOne();
+
+        $response = $this->postAs('api/playlist-folders', ['name' => 'Live Sets', 'parent_id' => $parent->id], $user);
+
+        $response->assertSuccessful()->assertJsonPath('name', 'Live Sets')->assertJsonPath('parent_id', $parent->id);
+
+        $this->assertDatabaseHas(PlaylistFolder::class, [
+            'name' => 'Live Sets',
+            'parent_id' => $parent->id,
+            'user_id' => $user->id,
+        ]);
+    }
+
+    #[Test]
+    public function creatingUnderAnotherUsersFolderIsNotAllowed(): void
+    {
+        $user = create_user();
+        $parent = PlaylistFolder::factory()->createOne();
+
+        $this
+            ->postAs('api/playlist-folders', ['name' => 'Live Sets', 'parent_id' => $parent->id], $user)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('parent_id');
+
+        $this->assertDatabaseMissing(PlaylistFolder::class, [
+            'name' => 'Live Sets',
+            'user_id' => $user->id,
+        ]);
     }
 
     #[Test]
     public function update(): void
     {
-        $folder = PlaylistFolder::factory()->createOne(['name' => 'Metal']);
+        $parent = PlaylistFolder::factory()->createOne();
+        $folder = PlaylistFolder::factory()->for($parent->user)->for($parent, 'parent')->createOne(['name' => 'Metal']);
 
-        $this->patchAs(
-            "api/playlist-folders/{$folder->id}",
-            ['name' => 'Classical'],
-            $folder->user,
-        )->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE);
+        $this
+            ->patchAs("api/playlist-folders/{$folder->id}", ['name' => 'Classical'], $folder->user)
+            ->assertJsonStructure(PlaylistFolderResource::JSON_STRUCTURE)
+            ->assertJsonPath('parent_id', $parent->id);
 
-        self::assertSame('Classical', $folder->fresh()->name);
+        $updatedFolder = $folder->fresh();
+        self::assertSame('Classical', $updatedFolder->name);
+        self::assertTrue($updatedFolder->parent->is($parent));
+    }
+
+    #[Test]
+    public function moveBetweenParents(): void
+    {
+        $user = create_user();
+        $parent = PlaylistFolder::factory()->for($user)->createOne();
+        $newParent = PlaylistFolder::factory()->for($user)->createOne();
+        $folder = PlaylistFolder::factory()->for($user)->for($parent, 'parent')->createOne();
+
+        $this
+            ->patchAs("api/playlist-folders/{$folder->id}", ['parent_id' => $newParent->id], $user)
+            ->assertSuccessful()
+            ->assertJsonPath('parent_id', $newParent->id);
+
+        self::assertTrue($folder->fresh()->parent->is($newParent));
+    }
+
+    #[Test]
+    public function moveToRoot(): void
+    {
+        $parent = PlaylistFolder::factory()->createOne();
+        $folder = PlaylistFolder::factory()->for($parent->user)->for($parent, 'parent')->createOne();
+
+        $this
+            ->patchAs("api/playlist-folders/{$folder->id}", ['parent_id' => null], $folder->user)
+            ->assertSuccessful()
+            ->assertJsonPath('parent_id', null);
+
+        self::assertNull($folder->fresh()->parent_id);
+    }
+
+    #[Test]
+    public function movingUnderAnotherUsersFolderIsNotAllowed(): void
+    {
+        $folder = PlaylistFolder::factory()->createOne();
+        $parent = PlaylistFolder::factory()->createOne();
+
+        $this
+            ->patchAs("api/playlist-folders/{$folder->id}", ['parent_id' => $parent->id], $folder->user)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('parent_id');
+
+        self::assertNull($folder->fresh()->parent_id);
+    }
+
+    #[Test]
+    public function movingUnderItselfIsNotAllowed(): void
+    {
+        $folder = PlaylistFolder::factory()->createOne();
+
+        $this
+            ->patchAs("api/playlist-folders/{$folder->id}", ['parent_id' => $folder->id], $folder->user)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('parent_id');
+
+        self::assertNull($folder->fresh()->parent_id);
+    }
+
+    #[Test]
+    public function movingUnderADescendantIsNotAllowed(): void
+    {
+        $folder = PlaylistFolder::factory()->createOne();
+        $child = PlaylistFolder::factory()->for($folder->user)->for($folder, 'parent')->createOne();
+        $grandchild = PlaylistFolder::factory()->for($folder->user)->for($child, 'parent')->createOne();
+
+        $this
+            ->patchAs("api/playlist-folders/{$folder->id}", ['parent_id' => $grandchild->id], $folder->user)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('parent_id');
+
+        self::assertNull($folder->fresh()->parent_id);
     }
 
     #[Test]
@@ -76,6 +203,16 @@ class PlaylistFolderTest extends TestCase
     public function destroy(): void
     {
         $folder = PlaylistFolder::factory()->createOne();
+        $child = PlaylistFolder::factory()->for($folder->user)->for($folder, 'parent')->createOne();
+        $grandchild = PlaylistFolder::factory()->for($folder->user)->for($child, 'parent')->createOne();
+        $directPlaylist = create_playlist();
+        $directPlaylist->users()->detach();
+        $directPlaylist->users()->attach($folder->user, ['role' => 'owner']);
+        $folder->playlists()->attach($directPlaylist);
+        $childPlaylist = create_playlist();
+        $childPlaylist->users()->detach();
+        $childPlaylist->users()->attach($folder->user, ['role' => 'owner']);
+        $child->playlists()->attach($childPlaylist);
 
         $this->deleteAs(
             "api/playlist-folders/{$folder->id}",
@@ -84,6 +221,12 @@ class PlaylistFolderTest extends TestCase
         )->assertNoContent();
 
         $this->assertModelMissing($folder);
+        $this->assertModelExists($directPlaylist);
+        $this->assertModelExists($childPlaylist);
+        self::assertNull($this->folderService->getFolderForPlaylist($directPlaylist->fresh()));
+        self::assertTrue($this->folderService->getFolderForPlaylist($childPlaylist->fresh())?->is($child));
+        self::assertNull($child->fresh()->parent_id);
+        self::assertTrue($grandchild->fresh()->parent->is($child));
     }
 
     #[Test]

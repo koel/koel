@@ -29,6 +29,32 @@ describe('folderSelect', () => {
     expect(options[options.length - 1].textContent).toContain('+ New Folder')
   })
 
+  it('renders existing folders with their full paths', () => {
+    const root = h.factory('playlist-folder').make({ name: 'Music', parent_id: null })
+    const child = h.factory('playlist-folder').make({ name: 'Live', parent_id: root.id })
+    const grandchild = h.factory('playlist-folder').make({ name: '2026', parent_id: child.id })
+    const earlierRoot = h.factory('playlist-folder').make({ name: 'Archive', parent_id: null })
+    playlistFolderStore.init([root, child, grandchild, earlierRoot])
+
+    h.render(Component, {
+      props: {
+        folderId: null,
+        'onUpdate:folderId': (value: any) => value,
+        folderName: null,
+        'onUpdate:folderName': (value: any) => value,
+      },
+    })
+
+    expect(screen.getAllByRole('option').map(option => option.textContent)).toEqual([
+      '',
+      'Archive',
+      'Music',
+      'Music / Live',
+      'Music / Live / 2026',
+      '+ New Folder',
+    ])
+  })
+
   it('switches to input mode when "+ New Folder" is selected', async () => {
     renderComponent()
 

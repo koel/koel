@@ -26,21 +26,25 @@ class PlaylistFolderController extends Controller
 
     public function store(PlaylistFolderStoreRequest $request)
     {
-        return PlaylistFolderResource::make($this->service->createFolder($this->user, $request->name));
+        return PlaylistFolderResource::make($this->service->createFolder(
+            $this->user,
+            $request->name,
+            $request->validated('parent_id'),
+        ));
     }
 
     public function update(PlaylistFolder $playlistFolder, PlaylistFolderUpdateRequest $request)
     {
         $this->authorize('own', $playlistFolder);
 
-        return PlaylistFolderResource::make($this->service->renameFolder($playlistFolder, $request->name));
+        return PlaylistFolderResource::make($this->service->updateFolder($playlistFolder, $request->validated()));
     }
 
     public function destroy(PlaylistFolder $playlistFolder)
     {
         $this->authorize('own', $playlistFolder);
 
-        $playlistFolder->delete();
+        $this->service->deleteFolder($playlistFolder);
 
         return response()->noContent();
     }
