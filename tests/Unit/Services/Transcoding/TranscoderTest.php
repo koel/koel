@@ -54,6 +54,40 @@ class TranscoderTest extends TestCase
     }
 
     #[Test]
+    public function transcodeWithFastAacCoder(): void
+    {
+        Process::fake();
+        File::expects('ensureDirectoryExists')->with('/path/to');
+
+        $transcoder = new Transcoder(transcodeTimeout: 300, ffmpegPath: '/usr/bin/ffmpeg', aacFast: true);
+        $transcoder->transcode('/path/to/song.aiff', '/path/to/output.m4a', 320);
+
+        Process::assertRanTimes(static function (PendingProcess $process): bool {
+            return (
+                $process->command === [
+                    '/usr/bin/ffmpeg',
+                    '-nostdin',
+                    '-i',
+                    '/path/to/song.aiff',
+                    '-vn',
+                    '-c:a',
+                    'aac',
+                    '-b:a',
+                    '320k',
+                    '-aac_coder',
+                    'fast',
+                    '-threads',
+                    '0',
+                    '-movflags',
+                    '+faststart',
+                    '-y',
+                    '/path/to/output.m4a',
+                ]
+            );
+        }, 1);
+    }
+
+    #[Test]
     public function throwOnFailure(): void
     {
         Process::fake([
