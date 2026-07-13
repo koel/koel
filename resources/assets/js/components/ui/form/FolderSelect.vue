@@ -33,7 +33,9 @@
     </div>
     <SelectBox v-else v-model="selected" @update:model-value="onSelectChange">
       <option :value="null" />
-      <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
+      <option v-for="folder in folders" :key="folder.id" :value="folder.id">
+        {{ playlistFolderStore.pathFor(folder) }}
+      </option>
       <option v-if="folderName" :value="PENDING_FOLDER">{{ folderName }} (new)</option>
       <option :value="NEW_FOLDER">+ New Folder</option>
     </SelectBox>
@@ -41,8 +43,9 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, ref, toRef, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { orderBy } from 'lodash-es'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
@@ -53,7 +56,9 @@ const PENDING_FOLDER = '__pending__'
 const folderId = defineModel<PlaylistFolder['id'] | null | undefined>('folderId', { required: true })
 const folderName = defineModel<string | null>('folderName', { default: null })
 
-const folders = toRef(playlistFolderStore.state, 'folders')
+const folders = computed(() =>
+  orderBy(playlistFolderStore.state.folders, folder => playlistFolderStore.pathFor(folder)),
+)
 const entering = ref(false)
 const inputName = ref('')
 const newFolderInput = ref<HTMLInputElement>()

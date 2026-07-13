@@ -331,6 +331,7 @@ interface PlaylistFolder {
   type: 'playlist-folders'
   readonly id: string
   name: string
+  parent_id: PlaylistFolder['id'] | null
   // we don't need to keep track of the playlists here, as they can be computed using their folder_id value
 }
 

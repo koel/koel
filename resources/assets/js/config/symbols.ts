@@ -44,3 +44,4 @@ export const BlockActionsHostKey: InjectionKey<Ref<HTMLElement | null>> = Symbol
 
 export const PlaylistFolderDropTargetKey: InjectionKey<Ref<string | null>> = Symbol('PlaylistFolderDropTarget')
 export const DraggedPlaylistKey: InjectionKey<Ref<Playlist | null>> = Symbol('DraggedPlaylist')
+export const DraggedPlaylistFolderKey: InjectionKey<Ref<PlaylistFolder | null>> = Symbol('DraggedPlaylistFolder')

@@ -39,6 +39,6 @@ describe('createPlaylistContextMenu.vue', () => {
     h.render(Component)
     await h.user.click(screen.getByText('New Folder…'))
 
-    await assertOpenModal(openModalMock, CreatePlaylistFolderForm)
+    await assertOpenModal(openModalMock, CreatePlaylistFolderForm, { parent: null })
   })
 })

@@ -1,11 +1,10 @@
-import { describe, it } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { describe, expect, it } from 'vite-plus/test'
+import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import factory from '@/__tests__/factory'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
-import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
 import Component from './SidebarPlaylistsSection.vue'
 
 describe('sidebarPlaylistsSection.vue', () => {
@@ -16,7 +15,10 @@ describe('sidebarPlaylistsSection.vue', () => {
       global: {
         stubs: {
           PlaylistSidebarItem,
-          PlaylistFolderSidebarItem,
+          PlaylistFolderSidebarItem: {
+            props: ['folder'],
+            template: '<li>{{ folder.name }}</li>',
+          },
         },
       },
     })
@@ -36,13 +38,47 @@ describe('sidebarPlaylistsSection.vue', () => {
     })
   })
 
-  it('displays playlist folders', () => {
-    playlistFolderStore.state.folders = [
-      h.factory('playlist-folder').make({ name: 'Foo Folder' }),
-      h.factory('playlist-folder').make({ name: 'Bar Folder' }),
-    ]
+  it('displays only root playlist folders', () => {
+    const firstRoot = h.factory('playlist-folder').make({ name: 'First Root Folder', parent_id: null })
+    const secondRoot = h.factory('playlist-folder').make({ name: 'Second Root Folder', parent_id: null })
+    const child = h.factory('playlist-folder').make({ name: 'Child Folder', parent_id: firstRoot.id })
+    playlistFolderStore.state.folders = [firstRoot, child, secondRoot]
 
     renderComponent()
-    ;['Foo Folder', 'Bar Folder'].forEach(text => screen.getByText(text))
+
+    screen.getByText(firstRoot.name)
+    screen.getByText(secondRoot.name)
+    expect(screen.queryByText(child.name)).toBeNull()
+  })
+
+  it('moves a dropped folder to root', async () => {
+    const parent = h.factory('playlist-folder').make({ parent_id: null })
+    const child = h.factory('playlist-folder').make({ parent_id: parent.id })
+    playlistFolderStore.state.folders = [parent, child]
+    const moveMock = h.mock(playlistFolderStore, 'moveFolderToFolder')
+
+    renderComponent()
+
+    const rootList = screen.getByRole('list')
+    const dataTransfer = {
+      dropEffect: '',
+      types: ['application/x-koel.playlist-folder'],
+      getData: () => JSON.stringify(child.id),
+    }
+    let wasDragOverPrevented = false
+    rootList.addEventListener('dragover', event => {
+      wasDragOverPrevented = event.defaultPrevented
+    })
+
+    await fireEvent.dragOver(rootList, { dataTransfer })
+    expect(wasDragOverPrevented).toBe(true)
+    await fireEvent.drop(rootList, {
+      dataTransfer: {
+        types: ['application/x-koel.playlist-folder'],
+        getData: () => JSON.stringify(child.id),
+      },
+    })
+
+    expect(moveMock).toHaveBeenCalledWith(child, null)
   })
 })
