@@ -11,6 +11,7 @@ class PlaylistFolderResource extends JsonResource
         'type',
         'id',
         'name',
+        'parent_id',
         'user_id',
         'created_at',
     ];
@@ -28,6 +29,7 @@ class PlaylistFolderResource extends JsonResource
             'type' => 'playlist-folders',
             'id' => $this->folder->id,
             'name' => $this->folder->name,
+            'parent_id' => $this->folder->parent_id,
             'user_id' => $this->folder->user_id,
             'created_at' => $this->folder->created_at,
         ];
