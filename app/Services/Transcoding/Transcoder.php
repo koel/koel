@@ -15,7 +15,7 @@ class Transcoder
         #[Config('koel.streaming.ffmpeg_path')]
         private readonly string $ffmpegPath = '',
         #[Config('koel.streaming.aac_fast')]
-        private readonly bool $aacFast = false,
+        private readonly bool $aacFast = true,
     ) {}
 
     public function transcode(string $source, string $destination, int $bitRate): void
