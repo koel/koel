@@ -24,7 +24,7 @@ class PlaylistFolderService
 
             if ($parentId) {
                 $parent = $this->repository->findOneForUpdate($parentId);
-                $this->ensureParentBelongsToUser($parent, $user);
+                self::ensureParentBelongsToUser($parent, $user);
             }
 
             return $user->playlistFolders()->create([
@@ -69,10 +69,10 @@ class PlaylistFolderService
                 $lockedFolder->parent_id = null;
             } else {
                 $parent = $folders->firstWhere('id', $parentId);
-                $this->ensureParentBelongsToUser($parent, $lockedFolder->user);
+                self::ensureParentBelongsToUser($parent, $lockedFolder->user);
 
                 throw_if(
-                    $this->movingFolderWouldCreateCycle($lockedFolder, $parent, $folders),
+                    self::movingFolderWouldCreateCycle($lockedFolder, $parent, $folders),
                     ValidationException::withMessages([
                         'parent_id' => ['A playlist folder cannot be moved into itself or one of its descendants.'],
                     ]),
@@ -121,7 +121,7 @@ class PlaylistFolderService
     }
 
     /** @param Collection<int, PlaylistFolder> $folders */
-    private function movingFolderWouldCreateCycle(
+    private static function movingFolderWouldCreateCycle(
         PlaylistFolder $folder,
         PlaylistFolder $newParent,
         Collection $folders,
@@ -139,7 +139,7 @@ class PlaylistFolderService
         return false;
     }
 
-    private function ensureParentBelongsToUser(?PlaylistFolder $parent, User $user): void
+    private static function ensureParentBelongsToUser(?PlaylistFolder $parent, User $user): void
     {
         throw_unless(
             $parent?->ownedBy($user),

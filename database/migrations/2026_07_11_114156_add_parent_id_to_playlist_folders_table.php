@@ -12,12 +12,4 @@ return new class extends Migration {
             $table->foreign('parent_id')->references('id')->on('playlist_folders')->cascadeOnUpdate()->nullOnDelete();
         });
     }
-
-    public function down(): void
-    {
-        Schema::table('playlist_folders', static function (Blueprint $table): void {
-            $table->dropForeign(['parent_id']);
-            $table->dropColumn('parent_id');
-        });
-    }
 };
