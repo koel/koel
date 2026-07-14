@@ -34,6 +34,19 @@ class GetPlaylistTest extends TestCase
     }
 
     #[Test]
+    public function ownerIsReportedAsSubsonicUsername(): void
+    {
+        $user = create_user(['name' => 'Jane Doe', 'email' => 'jane@example.com']);
+        $playlist = self::playlistOwnedBy($user);
+
+        $this
+            ->getJson("/rest/getPlaylist.view?apiKey={$user->subsonic_api_key}&f=json&id={$playlist->id}")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'ok')
+            ->assertJsonPath('subsonic-response.playlist.owner', $user->email);
+    }
+
+    #[Test]
     public function unknownIdReturnsCode70(): void
     {
         $user = create_user();

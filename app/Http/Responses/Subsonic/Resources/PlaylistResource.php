@@ -39,7 +39,7 @@ final class PlaylistResource
             'id' => $playlist->id,
             'name' => $playlist->name,
             'comment' => (string) $playlist->description,
-            'owner' => $playlist->owner->name,
+            'owner' => $playlist->owner->email,
             'public' => false,
             'songCount' => $playlist->playables_count ?? 0,
             'duration' => (int) round($playlist->playables_sum_length ?? 0),
