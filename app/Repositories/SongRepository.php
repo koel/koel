@@ -174,6 +174,23 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection<int, Song> */
+    public function getOrdered(
+        array $sortColumns,
+        string $sortDirection,
+        int $limit,
+        int $offset = 0,
+        ?User $scopedUser = null,
+    ): Collection {
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->withUserContext()
+            ->sort($sortColumns, $sortDirection)
+            ->orderBy('songs.id')
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+    }
+
+    /** @return Collection<int, Song> */
     public function getFavorites(?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
         return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())

@@ -39,12 +39,4 @@ final class SearchResultResource
             'song' => $songs->map(static fn (Song $song) => SongResource::toArray($song, $user))->all(),
         ];
     }
-
-    /**
-     * @return array{artist: array<empty>, album: array<empty>, song: array<empty>}
-     */
-    public static function empty(): array
-    {
-        return ['artist' => [], 'album' => [], 'song' => []];
-    }
 }

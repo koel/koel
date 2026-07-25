@@ -199,6 +199,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->onlyStandard()
             ->withUserContext(user: $user ?? $this->auth->user())
             ->sort($sortColumn, $sortDirection)
+            ->orderBy('albums.id')
             ->offset($offset)
             ->limit($limit)
             ->get();
