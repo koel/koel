@@ -6,6 +6,7 @@ use App\Models\Playlist;
 use App\Models\User;
 use App\Services\Image\ImageWriter;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\ParallelTesting;
 
 function create_user(array $attributes = []): User
 {
@@ -73,4 +74,20 @@ function minimal_base64_encoded_image(): string
 function stored_image_name(string $ulid): string
 {
     return sprintf('%s.%s', $ulid, app(ImageWriter::class)->format());
+}
+
+/**
+ * Each parallel worker gets its own sandbox, so that tearing one down doesn't
+ * delete files another worker is still using.
+ */
+function sandbox_dir(): string
+{
+    $token = ParallelTesting::token();
+
+    return $token ? "sandbox-$token" : 'sandbox';
+}
+
+function sandbox_path(string $subPath = ''): string
+{
+    return public_path(sandbox_dir() . "/$subPath");
 }
