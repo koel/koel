@@ -18,7 +18,7 @@ class ProfileUpdateRequest extends Request
         return [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . auth()->user()->getAuthIdentifier(),
-            'avatar' => ['sometimes', 'nullable', 'string', 'starts_with:data:'],
+            'avatar' => ['sometimes', 'nullable', 'string', 'starts_with:data:image/'],
         ];
     }
 

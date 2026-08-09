@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -90,8 +91,18 @@ class ProfileTest extends TestCase
         self::assertNull($user->getRawOriginal('avatar'));
     }
 
+    /** @return array<string, array<string>> */
+    public static function avatarsThatAreNotImageDataProvider(): array
+    {
+        return [
+            'remote URL' => ['https://example.com/avatar.jpg'],
+            'non-image data URL' => ['data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=='],
+        ];
+    }
+
     #[Test]
-    public function updateProfileRejectsAvatarThatIsNotImageData(): void
+    #[DataProvider('avatarsThatAreNotImageDataProvider')]
+    public function updateProfileRejectsAvatarThatIsNotImageData(string $avatar): void
     {
         $user = create_user(['avatar' => 'foo.jpg']);
 
@@ -100,7 +111,7 @@ class ProfileTest extends TestCase
             [
                 'name' => 'Foo',
                 'email' => $user->email,
-                'avatar' => 'https://example.com/avatar.jpg',
+                'avatar' => $avatar,
             ],
             $user,
         )->assertUnprocessable();
