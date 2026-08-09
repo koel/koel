@@ -55,6 +55,7 @@ window.KOEL = {
   is_demo: false,
   pusher: { app_key: '', app_cluster: '' },
   branding: { name: 'Koel', logo: '', cover: '' },
+  gravatar: { url: 'https://www.gravatar.com/avatar', default: 'robohash' },
   mailer_configured: true,
   sso_providers: [],
   accepted_audio_extensions: [],

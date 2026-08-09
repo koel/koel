@@ -68,6 +68,10 @@ interface KoelGlobals {
     readonly app_cluster: string
   }
   branding: Branding
+  gravatar: {
+    readonly url: string
+    readonly default: string
+  }
   mailer_configured: boolean
   sso_providers: SSOProvider[]
   sso_oidc_label?: string
