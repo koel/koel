@@ -75,8 +75,6 @@ return Application::configure(basePath: dirname(__DIR__))
             return redirect()->guest('/');
         });
 
-        // @mago-ignore lint:prefer-first-class-callable (the closure's parameter types are what
-        // Laravel reflects on to decide which exceptions this renderer applies to)
         $exceptions->render(
             static fn (Throwable $e, Request $request): ?SymfonyResponse => SubsonicAwareErrorRenderer::render(
                 $e,
