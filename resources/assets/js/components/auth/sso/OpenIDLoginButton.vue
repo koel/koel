@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import { faKey } from '@fortawesome/free-solid-svg-icons'
-import { openPopup } from '@/utils/helpers'
+import { useSsoLogin } from '@/composables/useSsoLogin'
 
 import appleLogo from '@/../img/logos/sso/apple.svg'
 import auth0Logo from '@/../img/logos/sso/auth0.svg'
@@ -49,10 +49,11 @@ const emit = defineEmits<{
   (e: 'error', error: any): void
 }>()
 
+const { startSsoLogin } = useSsoLogin()
+
 const loginWithOpenID = async () => {
   try {
-    window.onmessage = (msg: MessageEvent) => emit('success', msg.data)
-    openPopup('/auth/oidc/redirect', 'OpenID Login', 768, 640, window)
+    startSsoLogin('/auth/oidc/redirect', 'OpenID Login', token => emit('success', token))
   } catch (error: unknown) {
     emit('error', error)
   }
