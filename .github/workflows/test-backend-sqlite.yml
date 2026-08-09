@@ -29,7 +29,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
-          coverage: xdebug
+          coverage: none
           extensions: pdo_sqlite, zip, gd
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v2
@@ -37,8 +37,8 @@ jobs:
           composer-options: --prefer-dist
       - name: Generate app key
         run: php artisan key:generate --quiet
-      - name: Run tests with coverage
-        run: composer coverage
+      - name: Run tests
+        run: composer test
         env:
           COMPOSER_PROCESS_TIMEOUT: 600
       - name: Upload logs if broken
@@ -47,7 +47,3 @@ jobs:
         with:
           name: unit-be-logs-${{ github.run_id }}-${{ github.run_attempt }}-sqlite
           path: storage/logs
-      - name: Upload coverage
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}

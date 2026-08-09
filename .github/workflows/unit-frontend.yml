@@ -39,7 +39,3 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Run unit tests
         run: pnpm exec vp test --run --shard=${{ matrix.shard }}
-      - name: Collect coverage
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}

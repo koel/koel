@@ -122,8 +122,6 @@
     ],
     "koel:init": "@php scripts/koel-init.php",
     "test": "@php artisan test --parallel",
-    "test:ci": "@php artisan test",
-    "coverage": "@php artisan test --coverage-clover=coverage.xml",
     "cs": "mago format --check",
     "cs:fix": "mago format",
     "lint": "mago lint",
