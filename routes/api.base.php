@@ -16,8 +16,8 @@ use App\Http\Controllers\API\Auth\LoginWithOneTimeTokenController;
 use App\Http\Controllers\API\Auth\LogoutController;
 use App\Http\Controllers\API\Auth\TwoFactor\ConfirmController as ConfirmTwoFactorController;
 use App\Http\Controllers\API\Auth\TwoFactor\DisableController as DisableTwoFactorController;
-use App\Http\Controllers\API\Auth\TwoFactor\RegenerateRecoveryCodesController;
 use App\Http\Controllers\API\Auth\TwoFactor\EnrollController as EnrollTwoFactorController;
+use App\Http\Controllers\API\Auth\TwoFactor\RegenerateRecoveryCodesController;
 use App\Http\Controllers\API\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\API\ChangePasswordController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
@@ -100,6 +100,7 @@ use Pusher\Pusher;
 
 Route::prefix('api')
     ->middleware('api')
+    // @mago-ignore lint:halstead (a flat list of route definitions, not logic to break up)
     ->group(static function (): void {
         Route::get('ping', static fn () => null);
 
@@ -122,6 +123,7 @@ Route::prefix('api')
             });
         });
 
+        // @mago-ignore lint:halstead (a flat list of route definitions, not logic to break up)
         Route::middleware('auth')->group(static function (): void {
             Route::get('one-time-token', GetOneTimeTokenController::class);
             Route::post('broadcasting/auth', static function (Request $request) {
