@@ -10,10 +10,12 @@ use Throwable;
 
 class ValidImageData implements ValidationRule
 {
+    /**
+     * Images are read lazily, so the data must actually be inspected for it to be validated.
+     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         try {
-            // Images are read lazily, so the data must actually be inspected to be validated.
             Image::fromBase64(Str::after($value, 'base64,'))->dimensions();
         } catch (Throwable) {
             $fail("Invalid image for $attribute");

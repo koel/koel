@@ -19,6 +19,8 @@ class ImageWriter
     /** In descending order of preference: the first format the driver supports wins. */
     private const array FORMATS = ['avif', 'webp', 'jpg'];
 
+    private const string FALLBACK_FORMAT = 'webp';
+
     private readonly string $format;
 
     public function __construct(#[Config('images.default')] string $driver = 'gd')
@@ -33,7 +35,16 @@ class ImageWriter
 
     private static function findSupportedFormat(string $driver): string
     {
-        $imageDriver = $driver === 'imagick' ? new ImagickDriver() : new GdDriver();
+        $imageDriver = match ($driver) {
+            'gd' => new GdDriver(),
+            'imagick' => new ImagickDriver(),
+            // A custom driver can't be introspected, so assume only the format every driver encodes.
+            default => null,
+        };
+
+        if (!$imageDriver) {
+            return self::FALLBACK_FORMAT;
+        }
 
         foreach (self::FORMATS as $format) {
             if ($imageDriver->supports($format)) {
@@ -53,7 +64,11 @@ class ImageWriter
             ->when($config->blur, static fn (ProcessableImage $image) => $image->blur($config->blur))
             ->optimize($this->format, $config->quality);
 
-        File::put($destination, $image->toBytes());
+        throw_if(
+            File::put($destination, $image->toBytes()) === false,
+            RuntimeException::class,
+            "Failed to write image to $destination",
+        );
     }
 
     /**

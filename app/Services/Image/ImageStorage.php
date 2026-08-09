@@ -43,7 +43,7 @@ class ImageStorage
 
             $path ??= self::generateRandomStoragePath('svg');
 
-            File::put($path, $sanitized);
+            throw_if(File::put($path, $sanitized) === false, RuntimeException::class, "Failed to write image to $path");
 
             return basename($path);
         }
