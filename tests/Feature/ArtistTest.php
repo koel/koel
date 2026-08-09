@@ -15,6 +15,7 @@ use Tests\TestCase;
 use function Tests\create_admin;
 use function Tests\create_user;
 use function Tests\minimal_base64_encoded_image;
+use function Tests\stored_image_name;
 
 class ArtistTest extends TestCase
 {
@@ -175,7 +176,7 @@ class ArtistTest extends TestCase
         $artist->refresh();
 
         self::assertEquals('Updated Artist Name', $artist->name);
-        self::assertEquals("$ulid.webp", $artist->image);
+        self::assertEquals(stored_image_name($ulid), $artist->image);
     }
 
     #[Test]
