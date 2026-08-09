@@ -12,6 +12,7 @@ use Tests\TestCase;
 
 use function Tests\create_admin;
 use function Tests\create_user;
+use function Tests\sandbox_path;
 use function Tests\test_path;
 
 class UploadTest extends TestCase
@@ -53,7 +54,7 @@ class UploadTest extends TestCase
     #[Test]
     public function uploadSuccessful(): void
     {
-        Setting::set('media_path', public_path('sandbox/media'));
+        Setting::set('media_path', sandbox_path('media'));
 
         $this->postAs('/api/upload', ['file' => $this->file], create_admin())->assertJsonStructure(['song', 'album']);
     }
@@ -62,7 +63,7 @@ class UploadTest extends TestCase
     public function uploadDisabledInDemoMode(): void
     {
         config(['koel.misc.demo' => true]);
-        Setting::set('media_path', public_path('sandbox/media'));
+        Setting::set('media_path', sandbox_path('media'));
 
         try {
             $this->postAs('/api/upload', ['file' => $this->file], create_user())->assertForbidden();

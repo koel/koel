@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
+use function Tests\sandbox_path;
 use function Tests\test_path;
 
 class DuplicateUploadActionTest extends TestCase
@@ -103,10 +104,10 @@ class DuplicateUploadActionTest extends TestCase
     #[Test]
     public function keepSingleDuplicate(): void
     {
-        Setting::set('media_path', public_path('sandbox/media'));
+        Setting::set('media_path', sandbox_path('media'));
 
         $user = create_user();
-        $songPath = public_path('sandbox/media/keep-test.mp3');
+        $songPath = sandbox_path('media/keep-test.mp3');
         File::copy(test_path('songs/full.mp3'), $songPath);
 
         $upload = DuplicateUpload::factory()->for($user)->createOne(['location' => $songPath]);
@@ -119,12 +120,12 @@ class DuplicateUploadActionTest extends TestCase
     #[Test]
     public function keepAllDuplicates(): void
     {
-        Setting::set('media_path', public_path('sandbox/media'));
+        Setting::set('media_path', sandbox_path('media'));
 
         $user = create_user();
 
         foreach (range(1, 2) as $i) {
-            $songPath = public_path("sandbox/media/keep-all-test-{$i}.mp3");
+            $songPath = sandbox_path("media/keep-all-test-{$i}.mp3");
             File::copy(test_path('songs/full.mp3'), $songPath);
             DuplicateUpload::factory()->for($user)->createOne(['location' => $songPath]);
         }
