@@ -21,6 +21,9 @@ class ImageWriter
 
     private const string FALLBACK_FORMAT = 'webp';
 
+    /** A 1x1 PNG, encoded to verify that a format the driver claims to support really works. */
+    private const string PROBE_IMAGE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+
     private readonly string $format;
 
     public function __construct(#[Config('images.default')] string $driver = 'gd')
@@ -31,6 +34,19 @@ class ImageWriter
     public function format(): string
     {
         return $this->format;
+    }
+
+    /**
+     * Some builds advertise a format their encoder can't actually produce, yielding empty
+     * output instead of failing, so the format is confirmed against a real encode.
+     */
+    private static function canActuallyEncode(string $format): bool
+    {
+        return (bool) rescue(
+            static fn (): bool => Image::fromBase64(self::PROBE_IMAGE)->optimize($format)->toBytes() !== '',
+            false,
+            report: false,
+        );
     }
 
     private static function findSupportedFormat(string $driver): string
@@ -47,7 +63,7 @@ class ImageWriter
         }
 
         foreach (self::FORMATS as $format) {
-            if ($imageDriver->supports($format)) {
+            if ($imageDriver->supports($format) && self::canActuallyEncode($format)) {
                 return $format;
             }
         }
@@ -64,11 +80,10 @@ class ImageWriter
             ->when($config->blur, static fn (ProcessableImage $image) => $image->blur($config->blur))
             ->optimize($this->format, $config->quality);
 
-        throw_if(
-            File::put($destination, $image->toBytes()) === false,
-            RuntimeException::class,
-            "Failed to write image to $destination",
-        );
+        $bytes = $image->toBytes();
+
+        throw_if($bytes === '', RuntimeException::class, "Encoding produced an empty image for $destination");
+        throw_if(File::put($destination, $bytes) === false, RuntimeException::class, "Failed to write $destination");
     }
 
     /**
