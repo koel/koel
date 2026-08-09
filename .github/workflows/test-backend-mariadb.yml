@@ -60,7 +60,7 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate --quiet
       - name: Run tests
-        run: composer test
+        run: composer test:ci
         env:
           COMPOSER_PROCESS_TIMEOUT: 600
       - name: Upload logs if broken

@@ -66,7 +66,8 @@
     "phlak/semver": "^5.0",
     "laravel/boost": "^2.0",
     "opcodesio/log-viewer": "^3.19",
-    "carthage-software/mago": "^1.8.0"
+    "carthage-software/mago": "^1.8.0",
+    "brianium/paratest": "^7.0"
   },
   "suggest": {
     "ext-zip": "Allow downloading multiple songs as Zip archives"
@@ -120,7 +121,8 @@
       "@php artisan key:generate"
     ],
     "koel:init": "@php scripts/koel-init.php",
-    "test": "@php artisan test",
+    "test": "@php artisan test --parallel",
+    "test:ci": "@php artisan test",
     "coverage": "@php artisan test --coverage-clover=coverage.xml",
     "cs": "mago format --check",
     "cs:fix": "mago format",

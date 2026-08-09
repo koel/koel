@@ -69,16 +69,16 @@ abstract class TestCase extends BaseTestCase
     private static function createSandbox(): void
     {
         config([
-            'koel.image_storage_dir' => 'sandbox/img/storage',
-            'koel.artifacts_path' => public_path('sandbox/artifacts/'),
+            'koel.image_storage_dir' => sandbox_dir() . '/img/storage',
+            'koel.artifacts_path' => sandbox_path('artifacts/'),
         ]);
 
         File::ensureDirectoryExists(public_path(config('koel.image_storage_dir')));
-        File::ensureDirectoryExists(public_path('sandbox/media/'));
+        File::ensureDirectoryExists(sandbox_path('media/'));
     }
 
     private static function destroySandbox(): void
     {
-        File::deleteDirectory(public_path('sandbox'));
+        File::deleteDirectory(sandbox_path());
     }
 }
