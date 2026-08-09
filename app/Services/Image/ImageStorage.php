@@ -48,13 +48,13 @@ class ImageStorage
             return basename($path);
         }
 
-        $path ??= self::generateRandomStoragePath();
+        $path ??= self::generateRandomStoragePath($this->imageWriter->format());
         $this->imageWriter->write($path, $source, $config);
 
         return basename($path);
     }
 
-    private static function generateRandomStoragePath(string $extension = 'webp'): string
+    private static function generateRandomStoragePath(string $extension): string
     {
         return image_storage_path(sprintf('%s.%s', Ulid::generate(), $extension));
     }

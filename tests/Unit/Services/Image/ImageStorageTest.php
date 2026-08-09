@@ -34,6 +34,7 @@ class ImageStorageTest extends TestCase
         $ulid = Ulid::freeze();
         $logo = "$ulid.webp";
 
+        $this->imageWriter->allows('format')->andReturn('webp');
         $this->imageWriter->expects('write')->with(image_storage_path($logo), 'dummy-logo-src', null);
 
         self::assertSame($logo, $this->service->storeImage('dummy-logo-src'));

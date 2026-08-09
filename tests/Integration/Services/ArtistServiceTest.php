@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\minimal_base64_encoded_image;
+use function Tests\stored_image_name;
 
 class ArtistServiceTest extends TestCase
 {
@@ -62,7 +63,7 @@ class ArtistServiceTest extends TestCase
         $updatedArtist = $this->service->updateArtist($artist, $data);
 
         self::assertEquals('New Artist Name', $updatedArtist->name);
-        self::assertEquals("$ulid.webp", $updatedArtist->image);
+        self::assertEquals(stored_image_name($ulid), $updatedArtist->image);
 
         $songs->each(static function (Song $song) use ($updatedArtist): void {
             self::assertEquals($updatedArtist->name, $song->fresh()->artist_name);

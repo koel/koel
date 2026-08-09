@@ -14,6 +14,7 @@ use Tests\TestCase;
 use function Tests\create_admin;
 use function Tests\create_user;
 use function Tests\minimal_base64_encoded_image;
+use function Tests\stored_image_name;
 
 class RadioStationTest extends TestCase
 {
@@ -69,7 +70,7 @@ class RadioStationTest extends TestCase
         $this->assertDatabaseHas(RadioStation::class, [
             'url' => 'https://example.com/stream',
             'name' => 'Test Radio Station',
-            'logo' => "$ulid.webp",
+            'logo' => stored_image_name($ulid),
             'description' => 'A test radio station',
             'is_public' => true,
             'user_id' => $user->id,
@@ -127,7 +128,7 @@ class RadioStationTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(RadioStationResource::JSON_STRUCTURE);
 
-        self::assertSame("$ulid.webp", $station->refresh()->logo);
+        self::assertSame(stored_image_name($ulid), $station->refresh()->logo);
     }
 
     #[Test]

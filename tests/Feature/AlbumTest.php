@@ -11,6 +11,7 @@ use Tests\TestCase;
 use function Tests\create_admin;
 use function Tests\create_user;
 use function Tests\minimal_base64_encoded_image;
+use function Tests\stored_image_name;
 
 class AlbumTest extends TestCase
 {
@@ -121,7 +122,7 @@ class AlbumTest extends TestCase
 
         self::assertEquals('Updated Album Name', $album->name);
         self::assertEquals(2023, $album->year);
-        self::assertEquals("$ulid.webp", $album->cover);
+        self::assertEquals(stored_image_name($ulid), $album->cover);
     }
 
     #[Test]

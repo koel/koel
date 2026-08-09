@@ -346,8 +346,7 @@ class DoctorCommand extends Command
     private function checkImageWriting(): void
     {
         try {
-            $writer = new ImageWriter();
-            $this->reportSuccess('Image processing', $writer->extension->value);
+            $this->reportSuccess('Image processing', app(ImageWriter::class)->format());
         } catch (Throwable $e) {
             $this->collectError($e);
             $this->reportError('Image processing', 'No supported format');

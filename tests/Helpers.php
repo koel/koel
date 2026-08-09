@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\Models\Playlist;
 use App\Models\User;
+use App\Services\Image\ImageWriter;
 use Illuminate\Database\Eloquent\Collection;
 
 function create_user(array $attributes = []): User
@@ -64,4 +65,12 @@ function create_playlists(int $count, array $attributes = [], ?User $owner = nul
 function minimal_base64_encoded_image(): string
 {
     return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII';
+}
+
+/**
+ * The name a stored image gets, whose extension depends on the formats the image driver supports.
+ */
+function stored_image_name(string $ulid): string
+{
+    return sprintf('%s.%s', $ulid, app(ImageWriter::class)->format());
 }
