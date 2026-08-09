@@ -80,7 +80,9 @@ export const moveItemsInList = <T>(list: T[], items: T | T[], target: T, placeme
 
 export const gravatar = async (email: string, size = 192) => {
   const hash = await sha256(email.trim().toLowerCase())
-  return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=robohash`
+  const { url, default: fallback } = window.KOEL.gravatar
+
+  return `${url}/${hash}?s=${size}&d=${fallback}`
 }
 
 export const openPopup = (url: string, name: string, width: number, height: number, parent: Window) => {

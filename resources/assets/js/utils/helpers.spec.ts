@@ -1,7 +1,32 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
-import { arrayify, flattenParams, limitBy, use } from './helpers'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
+import { arrayify, flattenParams, gravatar, limitBy, use } from './helpers'
 
 describe('helpers utils', () => {
+  describe('gravatar()', () => {
+    // Must match the URL built by the gravatar() PHP helper, which is what the server serves as an avatar.
+    const EMAIL_SHA256 = 'efbe2fad818a477cc2eef45f6be5fd0a1111aead627c3529562f17f0375d4523'
+
+    afterEach(() => (window.KOEL.gravatar = { url: 'https://www.gravatar.com/avatar', default: 'robohash' }))
+
+    it('identifies the email by its SHA-256 hash', async () => {
+      expect(await gravatar('koel@example.com')).toBe(
+        `https://www.gravatar.com/avatar/${EMAIL_SHA256}?s=192&d=robohash`,
+      )
+    })
+
+    it('normalizes the email before hashing', async () => {
+      expect(await gravatar('  KOEL@Example.com  ')).toBe(await gravatar('koel@example.com'))
+    })
+
+    it('honors the configured URL and default', async () => {
+      window.KOEL.gravatar = { url: 'https://gravatar.example.com/avatar', default: 'identicon' }
+
+      expect(await gravatar('koel@example.com', 64)).toBe(
+        `https://gravatar.example.com/avatar/${EMAIL_SHA256}?s=64&d=identicon`,
+      )
+    })
+  })
+
   it('use() triggers a closure with a defined value', () => {
     const mock = vi.fn()
     use('foo', mock)

@@ -82,7 +82,7 @@ function gravatar(string $email, int $size = 192): string
     $url = config('services.gravatar.url');
     $default = config('services.gravatar.default');
 
-    return sprintf("%s/%s?s=$size&d=$default", $url, md5(Str::lower($email)));
+    return sprintf("%s/%s?s=$size&d=$default", $url, hash('sha256', Str::lower(trim($email))));
 }
 
 function avatar_or_gravatar(?string $avatar, string $email): string
