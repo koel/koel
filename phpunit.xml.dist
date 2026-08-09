@@ -14,6 +14,7 @@
     </testsuites>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="APP_URL" value="http://localhost/"/>
         <env name="APP_KEY" value="16efa6c23c2e8c705826b0e66778fbe7"/>
         <env name="STORAGE_DRIVER" value="local"/>
