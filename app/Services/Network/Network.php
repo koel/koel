@@ -4,6 +4,8 @@ namespace App\Services\Network;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Uri;
+use IPLib\Address\AddressInterface;
+use IPLib\Address\IPv4;
 use IPLib\Factory;
 use IPLib\Range\Type as RangeType;
 use Throwable;
@@ -63,7 +65,11 @@ class Network
         $literal = Factory::parseAddressString($host);
 
         if ($literal) {
-            return $literal->getRangeType() === RangeType::T_PUBLIC ? [$host] : [];
+            if (self::isAmbiguousIpv4Literal($literal, $host)) {
+                return [];
+            }
+
+            return $literal->getRangeType() === RangeType::T_PUBLIC ? [$literal->toString()] : [];
         }
 
         try {
@@ -92,5 +98,19 @@ class Network
         }
 
         return $ips;
+    }
+
+    /**
+     * ip-lib reads a dotted-quad octet with a leading zero as decimal, so `0177.0.0.1`
+     * parses as the public `177.0.0.1`. glibc reads the same octet as octal and connects
+     * to `127.0.0.1` instead, which turns the public-address check into a bypass. Any
+     * IPv4 literal that isn't already written in canonical form carries that ambiguity.
+     *
+     * IPv6 is exempt: its textual forms vary in case and zero-compression but every
+     * parser agrees on what they mean.
+     */
+    private static function isAmbiguousIpv4Literal(AddressInterface $literal, string $host): bool
+    {
+        return $literal instanceof IPv4 && $literal->toString() !== $host;
     }
 }
