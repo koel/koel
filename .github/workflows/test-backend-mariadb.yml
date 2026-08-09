@@ -43,7 +43,7 @@ jobs:
       DB_HOST: 127.0.1.1
       DB_PORT: 3306
       DB_DATABASE: koel
-      DB_USERNAME: mariadb
+      DB_USERNAME: root
       DB_PASSWORD: mariadb
     steps:
       - uses: actions/checkout@v6
@@ -60,7 +60,7 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate --quiet
       - name: Run tests
-        run: composer test:ci
+        run: composer test
         env:
           COMPOSER_PROCESS_TIMEOUT: 600
       - name: Upload logs if broken
