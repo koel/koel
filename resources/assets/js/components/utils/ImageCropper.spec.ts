@@ -15,6 +15,15 @@ describe('imageCropper.vue', () => {
     screen.getByText('Cancel')
   })
 
+  it('renders outside of its host, which would clip it', () => {
+    const { container } = h.render(Component, {
+      props: { source: 'data:image/png;base64,abc' },
+    })
+
+    expect(container.textContent).toBe('')
+    screen.getByText('Crop')
+  })
+
   it('emits cancel on cancel click', async () => {
     const { emitted } = h.render(Component, {
       props: { source: 'data:image/png;base64,abc' },
