@@ -4,9 +4,9 @@ php-version = "8.3.0"
 
 [source]
 workspace = "."
-paths = ["app/", "config/", "database/factories/", "database/seeders/", "routes/", "tests/"]
+paths = ["app/", "bootstrap/", "config/", "database/factories/", "database/seeders/", "routes/", "tests/"]
 includes = ["vendor"]
-excludes = []
+excludes = ["bootstrap/cache/"]
 
 [formatter]
 preset = "default"
