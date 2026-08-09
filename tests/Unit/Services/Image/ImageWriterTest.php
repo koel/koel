@@ -24,7 +24,9 @@ class ImageWriterTest extends TestCase
 
         (new ImageWriter())->write($destination, $source, ImageWritingConfig::make(maxWidth: $sourceWidth * 2));
 
-        self::assertSame($sourceWidth, Image::fromPath($destination)->width());
+        // Re-encode before measuring: the written format may be one that getimagesize() can't read,
+        // even when the image driver is perfectly able to encode it.
+        self::assertSame($sourceWidth, Image::fromPath($destination)->toPng()->width());
 
         File::delete($destination);
     }
