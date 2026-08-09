@@ -5,6 +5,7 @@ namespace Tests\Integration\Services;
 use App\Enums\Acl\Role;
 use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Services\UserService;
+use App\Values\User\AvatarUpdateData;
 use App\Values\User\UserCreateData;
 use App\Values\User\UserUpdateData;
 use Illuminate\Support\Facades\Hash;
@@ -82,7 +83,7 @@ class UserServiceTest extends TestCase
             email: 'steve@iron.com',
             plainTextPassword: 'TheTrooper',
             role: Role::ADMIN,
-            avatar: minimal_base64_encoded_image(),
+            avatar: AvatarUpdateData::make(minimal_base64_encoded_image()),
         ));
 
         $user->refresh();
@@ -92,6 +93,30 @@ class UserServiceTest extends TestCase
         self::assertTrue(Hash::check('TheTrooper', $user->password));
         self::assertSame(Role::ADMIN, $user->role);
         self::assertFileExists(image_storage_path($user->getRawOriginal('avatar')));
+    }
+
+    #[Test]
+    public function updateUserKeepingAvatar(): void
+    {
+        $user = create_user(['avatar' => 'foo.jpg']);
+
+        $this->service->updateUser($user, UserUpdateData::make(name: 'Steve Harris', email: 'steve@iron.com'));
+
+        self::assertSame('foo.jpg', $user->refresh()->getRawOriginal('avatar'));
+    }
+
+    #[Test]
+    public function updateUserRemovingAvatar(): void
+    {
+        $user = create_user(['avatar' => 'foo.jpg']);
+
+        $this->service->updateUser($user, UserUpdateData::make(
+            name: 'Steve Harris',
+            email: 'steve@iron.com',
+            avatar: AvatarUpdateData::make(),
+        ));
+
+        self::assertNull($user->refresh()->getRawOriginal('avatar'));
     }
 
     #[Test]

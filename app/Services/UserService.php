@@ -73,8 +73,11 @@ class UserService
             'name' => $dto->name,
             'email' => $dto->email,
             'password' => $dto->password ?? $user->password,
-            'avatar' => $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null,
         ];
+
+        if ($dto->avatar) {
+            $data['avatar'] = $dto->avatar->image ? $this->maybeStoreAvatar($dto->avatar->image) : null;
+        }
 
         if ($user->sso_provider) {
             // SSO users cannot change their password or email

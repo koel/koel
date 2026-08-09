@@ -52,6 +52,25 @@ class ProfileTest extends TestCase
     }
 
     #[Test]
+    public function updateProfileKeepingAvatar(): void
+    {
+        $user = create_user(['avatar' => 'foo.jpg']);
+
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Foo',
+                'email' => 'bar@baz.com',
+            ],
+            $user,
+        )->assertOk();
+
+        $user->refresh();
+
+        self::assertSame('foo.jpg', $user->getRawOriginal('avatar'));
+    }
+
+    #[Test]
     public function updateProfileRemovingAvatar(): void
     {
         $user = create_user(['avatar' => 'foo.jpg']);
@@ -61,6 +80,7 @@ class ProfileTest extends TestCase
             [
                 'name' => 'Foo',
                 'email' => $user->email,
+                'avatar' => null,
             ],
             $user,
         )->assertOk();
@@ -68,6 +88,24 @@ class ProfileTest extends TestCase
         $user->refresh();
 
         self::assertNull($user->getRawOriginal('avatar'));
+    }
+
+    #[Test]
+    public function updateProfileRejectsAvatarThatIsNotImageData(): void
+    {
+        $user = create_user(['avatar' => 'foo.jpg']);
+
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Foo',
+                'email' => $user->email,
+                'avatar' => 'https://example.com/avatar.jpg',
+            ],
+            $user,
+        )->assertUnprocessable();
+
+        self::assertSame('foo.jpg', $user->refresh()->getRawOriginal('avatar'));
     }
 
     #[Test]
