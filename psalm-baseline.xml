@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
+  <file src="app/Http/Controllers/AuthorizeDropboxController.php">
+    <TaintedHeader>
+      <code><![CDATA["https://www.dropbox.com/oauth2/authorize?client_id=$appKey&response_type=code&token_access_type=offline"]]></code>
+    </TaintedHeader>
+    <TaintedSSRF>
+      <code><![CDATA["https://www.dropbox.com/oauth2/authorize?client_id=$appKey&response_type=code&token_access_type=offline"]]></code>
+    </TaintedSSRF>
+  </file>
+  <file src="app/Repositories/Repository.php">
+    <TaintedSql>
+      <code><![CDATA[$params]]></code>
+    </TaintedSql>
+  </file>
+</files>
