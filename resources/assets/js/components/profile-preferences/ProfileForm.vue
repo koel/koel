@@ -74,7 +74,10 @@ const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
 
     await authService.updateProfile(data)
   },
-  onSuccess: () => toastSuccess('Profile updated.'),
+  onSuccess: () => {
+    data.avatar = currentUser.value.avatar
+    toastSuccess('Profile updated.')
+  },
 })
 
 const onAvatarChanged = (avatar: string) => {
