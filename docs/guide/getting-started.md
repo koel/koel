@@ -91,8 +91,7 @@ detailed instructions and issue reporting.
 
 ### Using Railway (community)
 
-If you'd rather not run Docker Compose on a server yourself, a community-maintained template deploys Koel with
-PostgreSQL on [Railway](https://railway.com):
+To deploy Koel with PostgreSQL on [Railway](https://railway.com), use this community-maintained template:
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/koel?utm_medium=integration&utm_source=button&utm_campaign=koel)
 
