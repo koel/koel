@@ -33,7 +33,7 @@
       </div>
 
       <div>
-        <EditableProfileAvatar :profile="data" @changed="onAvatarChanged" />
+        <EditableProfileAvatar v-model:avatar="data.avatar" :name="data.name" />
       </div>
     </div>
 
@@ -65,7 +65,8 @@ const isDemo = window.KOEL.is_demo
 
 const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
   initialValues: {
-    ...pick(currentUser.value, 'name', 'email', 'avatar'),
+    ...pick(currentUser.value, 'name', 'email'),
+    avatar: undefined,
   },
   onSubmit: async data => {
     if (isDemo) {
@@ -75,12 +76,8 @@ const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
     await authService.updateProfile(data)
   },
   onSuccess: () => {
-    data.avatar = currentUser.value.avatar
+    data.avatar = undefined
     toastSuccess('Profile updated.')
   },
 })
-
-const onAvatarChanged = (avatar: string) => {
-  data.avatar = avatar
-}
 </script>

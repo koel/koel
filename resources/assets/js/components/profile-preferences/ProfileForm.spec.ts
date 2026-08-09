@@ -30,7 +30,7 @@ describe('profileForm.vue', () => {
     expect(updateMock).toHaveBeenCalledWith({
       name: 'Koel User',
       email: 'koel@example.com',
-      avatar: 'https://gravatar.com/foo',
+      avatar: undefined,
     })
 
     expect(alertMock).toHaveBeenCalledWith('Profile updated.')

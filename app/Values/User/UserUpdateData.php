@@ -15,7 +15,7 @@ final readonly class UserUpdateData
         #[SensitiveParameter]
         ?string $plainTextPassword,
         public ?Role $role,
-        public ?string $avatar,
+        public ?AvatarUpdateData $avatar,
     ) {
         $this->password = $plainTextPassword === '' ? null : $plainTextPassword;
     }
@@ -26,7 +26,7 @@ final readonly class UserUpdateData
         #[SensitiveParameter]
         ?string $plainTextPassword = null,
         ?Role $role = null,
-        ?string $avatar = null,
+        ?AvatarUpdateData $avatar = null,
     ): self {
         return new self(
             name: $name,

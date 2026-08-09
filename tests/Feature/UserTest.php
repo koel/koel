@@ -130,6 +130,26 @@ class UserTest extends TestCase
     }
 
     #[Test]
+    public function adminUpdatesUserKeepingAvatar(): void
+    {
+        $user = create_user(['avatar' => 'foo.jpg']);
+
+        $this->putAs(
+            "api/users/{$user->public_id}",
+            [
+                'name' => 'Foo',
+                'email' => 'bar@baz.com',
+                'role' => 'user',
+            ],
+            create_admin(),
+        )->assertSuccessful();
+
+        $user->refresh();
+
+        self::assertSame('foo.jpg', $user->getRawOriginal('avatar'));
+    }
+
+    #[Test]
     public function privilegeEscalationIsForbiddenWhenUpdating(): void
     {
         $manager = create_manager();

@@ -1,6 +1,6 @@
 <template>
   <div class="avatar-width ring-4 ring-white mt-8 rounded-full relative overflow-hidden aspect-square">
-    <UserAvatar v-if="profile.avatar" :user="profile as any" class="avatar-width" />
+    <UserAvatar v-if="previewedUser.avatar" :user="previewedUser" class="avatar-width" />
 
     <div
       class="absolute top-0 rounded-full w-full aspect-square flex items-center justify-center gap-2 pt-[50%] bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300"
@@ -9,7 +9,7 @@
         <Icon :icon="faUpload" />
       </button>
 
-      <button v-if="avatarChanged" class="control" title="Reset avatar" type="button" @click.prevent="resetAvatar">
+      <button v-if="isChanged" class="control" title="Reset avatar" type="button" @click.prevent="resetAvatar">
         <Icon :icon="faRefresh" />
       </button>
 
@@ -33,10 +33,8 @@ import { gravatar } from '@/utils/helpers'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import ImageCropper from '@/components/utils/ImageCropper.vue'
 
-const props = defineProps<{ profile: { name: string; avatar?: string } }>()
-const emit = defineEmits<{ (e: 'changed', image: string): void }>()
-
-const { profile } = props
+const props = defineProps<{ name: string; avatar?: string | null }>()
+const emit = defineEmits<{ (e: 'update:avatar', avatar?: string | null): void }>()
 
 const { open, onChange } = useFileDialog({
   accept: 'image/*',
@@ -47,11 +45,17 @@ const { open, onChange } = useFileDialog({
 const openFileDialog = () => open()
 
 const cropperSource = ref<string | null>(null)
+const gravatarUrl = ref<string>()
+
+const isChanged = computed(() => props.avatar !== undefined)
+
+const previewedUser = computed(() => ({
+  name: props.name,
+  avatar: isChanged.value ? (props.avatar ?? gravatarUrl.value) : userStore.current.avatar,
+}))
 
 onChange(files => {
   if (!files?.length) {
-    emit('changed', userStore.current.avatar)
-    cropperSource.value = null
     return
   }
 
@@ -60,17 +64,18 @@ onChange(files => {
   })
 })
 
-const removeAvatar = async () => emit('changed', await gravatar(userStore.current.email))
+const removeAvatar = async () => {
+  gravatarUrl.value = await gravatar(userStore.current.email)
+  emit('update:avatar', null)
+}
 
 const resetAvatar = () => {
-  emit('changed', userStore.current.avatar)
+  emit('update:avatar', undefined)
   cropperSource.value = null
 }
 
-const avatarChanged = computed(() => profile.avatar !== userStore.current.avatar)
-
-const onCrop = (result: string) => {
-  emit('changed', result)
+const onCrop = (image: string) => {
+  emit('update:avatar', image)
   cropperSource.value = null
 }
 
