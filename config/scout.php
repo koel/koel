@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\Search\MultiIndexSqliteEngine;
+
 return [
     /*
      |--------------------------------------------------------------------------
@@ -103,6 +105,7 @@ return [
     ],
 
     'tntsearch' => [
+        'engine' => MultiIndexSqliteEngine::class,
         'storage' => storage_path('search-indexes'),
         'fuzziness' => env('TNTSEARCH_FUZZINESS', true),
         'fuzzy' => [
