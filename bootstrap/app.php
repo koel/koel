@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\SubsonicAwareErrorRenderer;
+use App\Http\Middleware\AddRequestContextForLogging;
 use App\Http\Middleware\AuthenticateAudioRequests;
 use App\Http\Middleware\EnsureEmbedsEnabled;
 use App\Http\Middleware\ForceHttps;
@@ -32,6 +33,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(static function (Middleware $middleware): void {
+        $middleware->api(prepend: [
+            AddRequestContextForLogging::class,
+        ]);
+
+        $middleware->web(prepend: [
+            AddRequestContextForLogging::class,
+        ]);
+
         $middleware->api(append: [
             RestrictPlusFeatures::class,
             HandleDemoMode::class,
