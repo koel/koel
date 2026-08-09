@@ -6,7 +6,7 @@ php-version = "8.3.0"
 workspace = "."
 paths = ["app/", "bootstrap/", "config/", "database/factories/", "database/seeders/", "routes/", "tests/"]
 includes = ["vendor"]
-excludes = []
+excludes = ["bootstrap/cache/"]
 
 [formatter]
 preset = "default"
