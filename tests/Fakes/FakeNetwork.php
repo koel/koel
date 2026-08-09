@@ -3,6 +3,7 @@
 namespace Tests\Fakes;
 
 use App\Services\Network\Network;
+use IPLib\Factory;
 
 /**
  * Skips DNS resolution so tests don't need real internet connectivity.
@@ -12,10 +13,11 @@ use App\Services\Network\Network;
 class FakeNetwork extends Network
 {
     /**
-     * Return a synthetic public IP for any non-IP host that would otherwise
-     * require DNS, and apply the literal-IP privacy check inline (no recursion
-     * back into isPublicHost). The pinned IP is never actually contacted in
-     * tests because Http::fake intercepts before curl runs.
+     * Return a synthetic public IP for any non-IP host that would otherwise require DNS.
+     * IP literals are handed to the real implementation, which resolves them without
+     * touching the network — so every literal the guard rejects is rejected here too.
+     * The returned IP is never actually contacted in tests because Http::fake intercepts
+     * before curl runs.
      *
      * @return list<string>
      */
@@ -25,12 +27,8 @@ class FakeNetwork extends Network
             return [];
         }
 
-        if (filter_var($host, FILTER_VALIDATE_IP)) {
-            return (
-                filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)
-                    ? [$host]
-                    : []
-            );
+        if (Factory::parseAddressString($host)) {
+            return parent::resolveToPublicIps($host);
         }
 
         return ['203.0.113.1'];
