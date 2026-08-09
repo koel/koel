@@ -25,6 +25,14 @@ describe('helpers utils', () => {
         `https://gravatar.example.com/avatar/${EMAIL_SHA256}?s=64&d=identicon`,
       )
     })
+
+    it('encodes a default that is an image URL', async () => {
+      window.KOEL.gravatar = { url: 'https://www.gravatar.com/avatar', default: 'https://example.com/avatar.png' }
+
+      expect(await gravatar('koel@example.com')).toBe(
+        `https://www.gravatar.com/avatar/${EMAIL_SHA256}?s=192&d=https%3A%2F%2Fexample.com%2Favatar.png`,
+      )
+    })
   })
 
   it('use() triggers a closure with a defined value', () => {

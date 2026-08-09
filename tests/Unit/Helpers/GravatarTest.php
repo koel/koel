@@ -37,4 +37,15 @@ class GravatarTest extends TestCase
             64,
         ));
     }
+
+    #[Test]
+    public function encodesADefaultThatIsAnImageUrl(): void
+    {
+        config(['services.gravatar.default' => 'https://example.com/avatar.png']);
+
+        self::assertSame(
+            'https://www.gravatar.com/avatar/' . self::EMAIL_SHA256 . '?s=192&d=https%3A%2F%2Fexample.com%2Favatar.png',
+            gravatar('koel@example.com'),
+        );
+    }
 }
