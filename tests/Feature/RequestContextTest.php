@@ -38,4 +38,14 @@ class RequestContextTest extends TestCase
 
         self::assertNull(Context::get('user_id'));
     }
+
+    #[Test]
+    public function tagsSubsonicRequestsToo(): void
+    {
+        $uuid = Uuid::freeze();
+
+        $this->get('rest/ping.view');
+
+        self::assertSame($uuid, Context::get('request_id'));
+    }
 }
