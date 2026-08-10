@@ -79,10 +79,12 @@ function rescue_unless($condition, callable $callback, $default = null): mixed
 
 function gravatar(string $email, int $size = 192): string
 {
-    $url = config('services.gravatar.url');
-    $default = config('services.gravatar.default');
+    $query = http_build_query([
+        's' => $size,
+        'd' => config('services.gravatar.default'),
+    ]);
 
-    return sprintf("%s/%s?s=$size&d=$default", $url, md5(Str::lower($email)));
+    return sprintf('%s/%s?%s', config('services.gravatar.url'), hash('sha256', Str::lower(trim($email))), $query);
 }
 
 function avatar_or_gravatar(?string $avatar, string $email): string

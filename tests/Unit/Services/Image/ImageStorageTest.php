@@ -32,8 +32,9 @@ class ImageStorageTest extends TestCase
     public function storeRasterImage(): void
     {
         $ulid = Ulid::freeze();
-        $logo = "$ulid.webp";
+        $logo = "$ulid.avif";
 
+        $this->imageWriter->allows('format')->andReturn('avif');
         $this->imageWriter->expects('write')->with(image_storage_path($logo), 'dummy-logo-src', null);
 
         self::assertSame($logo, $this->service->storeImage('dummy-logo-src'));

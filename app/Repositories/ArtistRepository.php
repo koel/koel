@@ -121,6 +121,25 @@ class ArtistRepository extends Repository implements ScoutableRepository
         );
     }
 
+    /** @return Collection<int, Artist> */
+    public function getOrdered(
+        string $sortColumn,
+        string $sortDirection,
+        int $limit,
+        int $offset = 0,
+        ?User $user = null,
+    ): Collection {
+        return Artist::query()
+            ->onlyStandard()
+            ->onlyAlbumArtists()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->sort($sortColumn, $sortDirection)
+            ->orderBy('artists.id')
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+    }
+
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(

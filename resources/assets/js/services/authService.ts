@@ -4,10 +4,14 @@ import { userStore } from '@/stores/userStore'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { use } from '@/utils/helpers'
 
+/**
+ * An `avatar` of `undefined` leaves the current avatar untouched, whereas `null` removes it
+ * (falling back to the Gravatar). Any other value is the new avatar as base64-encoded image data.
+ */
 export interface UpdateCurrentProfileData {
   name: string
   email: string
-  avatar?: string
+  avatar?: string | null
 }
 
 const API_TOKEN_STORAGE_KEY = 'api-token'

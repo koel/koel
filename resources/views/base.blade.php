@@ -41,6 +41,10 @@
                 'app_cluster' => config('broadcasting.connections.pusher.options.cluster'),
             ],
             'branding' => koel_branding(),
+            'gravatar' => [
+                'url' => config('services.gravatar.url'),
+                'default' => config('services.gravatar.default'),
+            ],
         ];
     @endphp
     window.KOEL = @json($koelGlobals);

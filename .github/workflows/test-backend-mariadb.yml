@@ -43,7 +43,7 @@ jobs:
       DB_HOST: 127.0.1.1
       DB_PORT: 3306
       DB_DATABASE: koel
-      DB_USERNAME: mariadb
+      DB_USERNAME: root
       DB_PASSWORD: mariadb
     steps:
       - uses: actions/checkout@v6

@@ -101,6 +101,32 @@ class NetworkTest extends TestCase
         self::assertSame([], $this->network->resolveToPublicIps($wrapper));
     }
 
+    /** @return array<string, array{string}> */
+    public static function provideAmbiguousIpv4Literals(): array
+    {
+        return [
+            'octal loopback' => ['0177.0.0.1'],
+            'octal loopback, extra padding' => ['0000177.0.0.1'],
+            'octal private 10.x' => ['010.0.0.1'],
+            'leading zero on the last octet' => ['1.2.3.04'],
+        ];
+    }
+
+    #[Test, DataProvider('provideAmbiguousIpv4Literals')]
+    public function rejectsIpv4LiteralsThatParsersDisagreeOn(string $literal): void
+    {
+        self::assertFalse($this->network->isPublicHost($literal));
+        self::assertSame([], $this->network->resolveToPublicIps($literal));
+        self::assertFalse($this->network->isSafeUrl("http://$literal:8099/internal"));
+    }
+
+    #[Test]
+    public function acceptsIpv6LiteralsRegardlessOfTextualForm(): void
+    {
+        self::assertSame(['2606:4700:4700::1111'], $this->network->resolveToPublicIps('2606:4700:4700::1111'));
+        self::assertSame(['2606:4700:4700::1111'], $this->network->resolveToPublicIps('2606:4700:4700:0:0:0:0:1111'));
+    }
+
     #[Test]
     public function resolveToPublicIpsReturnsIpsForPublicIpLiteral(): void
     {
