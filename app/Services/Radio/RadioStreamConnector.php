@@ -17,7 +17,7 @@ class RadioStreamConnector
      *
      * @return resource|false
      */
-    public function connect(string $url)
+    public function connect(string $url): mixed
     {
         $publicIps = $this->network->resolveUrlToPublicIps($url);
 
@@ -30,8 +30,11 @@ class RadioStreamConnector
         // in between. Dial the address that was validated and carry the original host in
         // the Host header and the TLS peer name, the way SafeHttp pins curl via
         // CURLOPT_RESOLVE. Redirects stay off, so this is the only host ever contacted.
-        $host = Uri::of($url)->host();
-        $pinnedUrl = (string) Uri::of($url)->withHost(self::formatHostForUrl($publicIps[0]));
+        $uri = Uri::of($url);
+        $host = $uri->host();
+        $port = $uri->port();
+        $hostHeader = $port === null ? $host : "$host:$port";
+        $pinnedUrl = (string) $uri->withHost(self::formatHostForUrl($publicIps[0]));
 
         $httpOptions = [
             'timeout' => 5,
@@ -45,12 +48,12 @@ class RadioStreamConnector
         ];
 
         $context = stream_context_create([
-            'http' => ['header' => "Icy-MetaData: 1\r\nHost: $host\r\n", ...$httpOptions],
+            'http' => ['header' => "Icy-MetaData: 1\r\nHost: $hostHeader\r\n", ...$httpOptions],
             'ssl' => $sslOptions,
         ]);
 
         $plainContext = stream_context_create([
-            'http' => ['header' => "Host: $host\r\n", ...$httpOptions],
+            'http' => ['header' => "Host: $hostHeader\r\n", ...$httpOptions],
             'ssl' => $sslOptions,
         ]);
 

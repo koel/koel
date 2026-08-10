@@ -43,6 +43,6 @@ class RadioStreamConnectorTest extends TestCase
         fclose($server);
 
         self::assertStringContainsString('GET /stream', $request);
-        self::assertStringContainsString('Host: rebind.test', $request);
+        self::assertStringContainsString("Host: rebind.test:$port", $request);
     }
 }
