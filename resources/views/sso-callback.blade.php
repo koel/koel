@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>SSO Callback | Koel</title>
     <script>
-        window.opener.postMessage(@json($token), '*')
+        window.opener.postMessage(@json($token), window.location.origin)
         window.close()
     </script>
 </head>
