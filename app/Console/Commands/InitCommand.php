@@ -270,7 +270,11 @@ class InitCommand extends Command
         $result = self::SUCCESS;
 
         $this->components->task('Linking storage', static function () use (&$result): void {
-            $result = Artisan::call('storage:link', ['--quiet' => true]);
+            $result = Artisan::call('storage:link', [
+                '--quiet' => true,
+                '--relative' => true,
+                '--force' => true,
+            ]);
         });
 
         if ($result !== self::SUCCESS) {
