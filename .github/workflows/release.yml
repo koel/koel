@@ -5,6 +5,11 @@ on:
 
 name: Upload Release Assets
 
+permissions:
+  # softprops/action-gh-release creates the draft release and
+  # uploads the archives with the workflow token.
+  contents: write
+
 jobs:
   build:
     name: Upload Release Assets

@@ -20,6 +20,9 @@ on:
 env:
   LARAVEL_BYPASS_ENV_CHECK: 1
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
