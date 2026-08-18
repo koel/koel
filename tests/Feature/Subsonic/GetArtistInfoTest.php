@@ -60,6 +60,8 @@ class GetArtistInfoTest extends TestCase
                 ]),
         )->assertOk();
 
-        self::assertSame([], $response->json('subsonic-response.artistInfo'));
+        // Raw body, not ->json(): json_decode() maps {} and [] to the same PHP value, so a
+        // decoded comparison passes whichever one the server emitted.
+        self::assertStringContainsString('"artistInfo":{}', $response->getContent());
     }
 }

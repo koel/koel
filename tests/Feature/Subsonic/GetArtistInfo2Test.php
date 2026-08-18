@@ -43,9 +43,28 @@ class GetArtistInfo2Test extends TestCase
 
         $this->mock(Encyclopedia::class)->expects('getArtistInformation')->andReturnNull();
 
-        $this
-            ->getJson("/rest/getArtistInfo2.view?apiKey={$user->subsonic_api_key}&f=json&id={$artist->id}")
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.artistInfo2', []);
+        $response = $this->getJson(
+            "/rest/getArtistInfo2.view?apiKey={$user->subsonic_api_key}&f=json&id={$artist->id}",
+        )->assertOk();
+
+        // Raw body, not assertJsonPath: json_decode() maps {} and [] to the same PHP value.
+        self::assertStringContainsString('"artistInfo2":{}', $response->getContent());
+    }
+
+    #[Test]
+    public function returnsEmptyArtistInfo2ElementInXmlWhenEncyclopediaReturnsNull(): void
+    {
+        $user = create_user();
+        $artist = Artist::factory()->createOne(['user_id' => $user->id]);
+
+        $this->mock(Encyclopedia::class)->expects('getArtistInformation')->andReturnNull();
+
+        $response = $this->get(
+            "/rest/getArtistInfo2.view?apiKey={$user->subsonic_api_key}&id={$artist->id}",
+        )->assertOk();
+
+        $xml = simplexml_load_string($response->getContent());
+
+        self::assertCount(1, $xml->artistInfo2);
     }
 }
