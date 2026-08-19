@@ -17,7 +17,7 @@ class GetAlbumInfoTest extends TestCase
     public function returnsNotesFromEncyclopediaUnderAlbumInfoWrapper(): void
     {
         $user = create_user();
-        $album = Album::factory()->createOne(['user_id' => $user->id]);
+        $album = Album::factory()->for($user)->createOne();
 
         $this
             ->mock(Encyclopedia::class)
@@ -41,5 +41,25 @@ class GetAlbumInfoTest extends TestCase
             ->assertJsonPath('subsonic-response.albumInfo.notes', 'About the album')
             ->assertJsonPath('subsonic-response.albumInfo.lastFmUrl', 'https://www.last.fm/album/Foo')
             ->assertJsonPath('subsonic-response.albumInfo.smallImageUrl', 'https://example.test/cover.jpg');
+    }
+
+    #[Test]
+    public function returnsEmptyAlbumInfoObjectWhenEncyclopediaReturnsNull(): void
+    {
+        $user = create_user();
+        $album = Album::factory()->for($user)->createOne();
+
+        $this->mock(Encyclopedia::class)->expects('getAlbumInformation')->andReturnNull();
+
+        $response = $this->getJson(
+            '/rest/getAlbumInfo.view?'
+                . Arr::query([
+                    'apiKey' => $user->subsonic_api_key,
+                    'f' => 'json',
+                    'id' => $album->id,
+                ]),
+        )->assertOk();
+
+        self::assertStringContainsString('"albumInfo":{}', $response->getContent());
     }
 }

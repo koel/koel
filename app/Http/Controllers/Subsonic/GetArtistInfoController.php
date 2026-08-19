@@ -8,6 +8,7 @@ use App\Http\Responses\Subsonic\Resources\ArtistInfoResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\ArtistRepository;
 use App\Services\Contracts\Encyclopedia;
+use stdClass;
 
 /**
  * Subsonic v1 `getArtistInfo`. Per spec the wrapper is `<artistInfo>` (v2 uses
@@ -26,7 +27,7 @@ class GetArtistInfoController extends Controller
         $info = $this->encyclopedia->getArtistInformation($artist);
 
         return SubsonicResponse::ok([
-            'artistInfo' => $info === null ? [] : ArtistInfoResource::toArray($info),
+            'artistInfo' => $info === null ? new stdClass() : ArtistInfoResource::toArray($info),
         ]);
     }
 }

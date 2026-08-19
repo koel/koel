@@ -16,7 +16,7 @@ class GetAlbumInfo2Test extends TestCase
     public function returnsNotesFromEncyclopedia(): void
     {
         $user = create_user();
-        $album = Album::factory()->createOne(['user_id' => $user->id]);
+        $album = Album::factory()->for($user)->createOne();
 
         $this
             ->mock(Encyclopedia::class)
@@ -39,13 +39,31 @@ class GetAlbumInfo2Test extends TestCase
     public function returnsEmptyWhenEncyclopediaReturnsNull(): void
     {
         $user = create_user();
-        $album = Album::factory()->createOne(['user_id' => $user->id]);
+        $album = Album::factory()->for($user)->createOne();
 
         $this->mock(Encyclopedia::class)->expects('getAlbumInformation')->andReturnNull();
 
-        $this
-            ->getJson("/rest/getAlbumInfo2.view?apiKey={$user->subsonic_api_key}&f=json&id={$album->id}")
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.albumInfo', []);
+        $response = $this->getJson(
+            "/rest/getAlbumInfo2.view?apiKey={$user->subsonic_api_key}&f=json&id={$album->id}",
+        )->assertOk();
+
+        // Asserted against the raw body on purpose: json_decode() maps both {} and [] to an
+        // empty PHP array, so assertJsonPath() cannot tell them apart and would pass either way.
+        self::assertStringContainsString('"albumInfo":{}', $response->getContent());
+    }
+
+    #[Test]
+    public function returnsEmptyAlbumInfoElementInXmlWhenEncyclopediaReturnsNull(): void
+    {
+        $user = create_user();
+        $album = Album::factory()->for($user)->createOne();
+
+        $this->mock(Encyclopedia::class)->expects('getAlbumInformation')->andReturnNull();
+
+        $response = $this->get("/rest/getAlbumInfo2.view?apiKey={$user->subsonic_api_key}&id={$album->id}")->assertOk();
+
+        $xml = simplexml_load_string($response->getContent());
+
+        self::assertCount(1, $xml->albumInfo);
     }
 }
