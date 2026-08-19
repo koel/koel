@@ -16,7 +16,7 @@ class GetAlbumInfo2Test extends TestCase
     public function returnsNotesFromEncyclopedia(): void
     {
         $user = create_user();
-        $album = Album::factory()->createOne(['user_id' => $user->id]);
+        $album = Album::factory()->for($user)->createOne();
 
         $this
             ->mock(Encyclopedia::class)
@@ -39,7 +39,7 @@ class GetAlbumInfo2Test extends TestCase
     public function returnsEmptyWhenEncyclopediaReturnsNull(): void
     {
         $user = create_user();
-        $album = Album::factory()->createOne(['user_id' => $user->id]);
+        $album = Album::factory()->for($user)->createOne();
 
         $this->mock(Encyclopedia::class)->expects('getAlbumInformation')->andReturnNull();
 
@@ -56,7 +56,7 @@ class GetAlbumInfo2Test extends TestCase
     public function returnsEmptyAlbumInfoElementInXmlWhenEncyclopediaReturnsNull(): void
     {
         $user = create_user();
-        $album = Album::factory()->createOne(['user_id' => $user->id]);
+        $album = Album::factory()->for($user)->createOne();
 
         $this->mock(Encyclopedia::class)->expects('getAlbumInformation')->andReturnNull();
 

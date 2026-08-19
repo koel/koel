@@ -16,7 +16,7 @@ class GetArtistInfo2Test extends TestCase
     public function returnsBiographyFromEncyclopedia(): void
     {
         $user = create_user();
-        $artist = Artist::factory()->createOne(['user_id' => $user->id]);
+        $artist = Artist::factory()->for($user)->createOne();
 
         $this
             ->mock(Encyclopedia::class)
@@ -39,7 +39,7 @@ class GetArtistInfo2Test extends TestCase
     public function returnsEmptyWhenEncyclopediaReturnsNull(): void
     {
         $user = create_user();
-        $artist = Artist::factory()->createOne(['user_id' => $user->id]);
+        $artist = Artist::factory()->for($user)->createOne();
 
         $this->mock(Encyclopedia::class)->expects('getArtistInformation')->andReturnNull();
 
@@ -55,7 +55,7 @@ class GetArtistInfo2Test extends TestCase
     public function returnsEmptyArtistInfo2ElementInXmlWhenEncyclopediaReturnsNull(): void
     {
         $user = create_user();
-        $artist = Artist::factory()->createOne(['user_id' => $user->id]);
+        $artist = Artist::factory()->for($user)->createOne();
 
         $this->mock(Encyclopedia::class)->expects('getArtistInformation')->andReturnNull();
 
