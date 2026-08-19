@@ -24,7 +24,6 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, ref } from 'vue'
 import { playback } from '@/services/playbackManager'
-import { crossfadeService } from '@/services/crossfadeService'
 
 const progress = ref(0)
 const bufferProgress = ref(0)
@@ -32,41 +31,63 @@ const hoverProgress = ref(0)
 const isLoading = ref(false)
 const isDragging = ref(false)
 
-const getActiveMedia = (): HTMLMediaElement | null => {
-  if (crossfadeService.active && crossfadeService.state) {
-    return crossfadeService.state.incomingAudio
-  }
+const getActivePlayback = () => {
+  const service = playback('current')
 
-  return playback('current')?.media ?? null
+  return service
+    ? {
+        media: service.media,
+        position: service.position,
+        duration: service.duration,
+        bufferedThrough: service.bufferedThrough,
+      }
+    : null
 }
 
 const updateProgress = () => {
-  const media = getActiveMedia()
+  const activePlayback = getActivePlayback()
 
-  if (!media) {
+  if (!activePlayback) {
     return
   }
 
-  const { currentTime, duration, buffered, readyState } = media
+  const { media, position, duration, bufferedThrough } = activePlayback
 
   if (duration > 0) {
-    progress.value = (currentTime / duration) * 100
+    progress.value = Math.min(100, (position / duration) * 100)
   } else {
     progress.value = 0
   }
 
-  // Buffer progress
-  if (buffered.length > 0 && duration > 0) {
-    bufferProgress.value = (buffered.end(buffered.length - 1) / duration) * 100
+  if (bufferedThrough > 0 && duration > 0) {
+    bufferProgress.value = Math.min(100, (bufferedThrough / duration) * 100)
   } else {
     bufferProgress.value = 0
   }
 
-  // Loading state: has src but not enough data to play
-  isLoading.value = !!media.src && readyState < 3 && currentTime === 0
+  isLoading.value = !!media.src && media.readyState < 3
 }
 
 let trackEl: HTMLElement | null = null
+let suppressNextClick = false
+let suppressClickResetTimer: number | null = null
+
+const clearSuppressClickReset = () => {
+  if (suppressClickResetTimer === null) {
+    return
+  }
+
+  window.clearTimeout(suppressClickResetTimer)
+  suppressClickResetTimer = null
+}
+
+const scheduleSuppressClickReset = () => {
+  clearSuppressClickReset()
+  suppressClickResetTimer = window.setTimeout(() => {
+    suppressNextClick = false
+    suppressClickResetTimer = null
+  })
+}
 
 const computeRatio = (clientX: number, track: HTMLElement) => {
   const rect = track.getBoundingClientRect()
@@ -82,15 +103,17 @@ const seekFromEvent = (e: MouseEvent | PointerEvent) => {
   const service = playback('current')
   const targetTrack = trackEl ?? (e.currentTarget as HTMLElement)?.querySelector<HTMLElement>('.track')
 
-  if (!service?.media?.duration || !targetTrack) {
+  if (!service?.duration || !targetTrack) {
     return
   }
 
-  service.seekTo(computeRatio(e.clientX, targetTrack) * service.media.duration)
+  service.seekTo(computeRatio(e.clientX, targetTrack) * service.duration)
 }
 
 const onClickSeek = (e: MouseEvent) => {
-  if (isDragging.value) {
+  if (isDragging.value || suppressNextClick) {
+    clearSuppressClickReset()
+    suppressNextClick = false
     return
   }
 
@@ -110,10 +133,13 @@ const onPointerDown = (e: PointerEvent) => {
 
   e.preventDefault()
   isDragging.value = true
-  seekFromEvent(e)
+  clearSuppressClickReset()
+  suppressNextClick = false
+  progress.value = computeRatio(e.clientX, trackEl) * 100
 
   document.addEventListener('pointermove', onDragMove)
   document.addEventListener('pointerup', onDragEnd)
+  document.addEventListener('pointercancel', onDragCancel)
 }
 
 const onDragMove = (e: PointerEvent) => {
@@ -122,15 +148,24 @@ const onDragMove = (e: PointerEvent) => {
   }
 
   progress.value = computeRatio(e.clientX, trackEl) * 100
-  seekFromEvent(e)
 }
 
-const onDragEnd = () => {
+const stopDragging = () => {
   isDragging.value = false
   trackEl = null
   document.removeEventListener('pointermove', onDragMove)
   document.removeEventListener('pointerup', onDragEnd)
+  document.removeEventListener('pointercancel', onDragCancel)
 }
+
+const onDragEnd = (e: PointerEvent) => {
+  seekFromEvent(e)
+  suppressNextClick = true
+  scheduleSuppressClickReset()
+  stopDragging()
+}
+
+const onDragCancel = () => stopDragging()
 
 const onHover = (e: MouseEvent) => {
   if (isDragging.value) {
@@ -145,8 +180,10 @@ const progressInterval = setInterval(updateProgress, 250)
 
 onBeforeUnmount(() => {
   clearInterval(progressInterval)
+  clearSuppressClickReset()
   document.removeEventListener('pointermove', onDragMove)
   document.removeEventListener('pointerup', onDragEnd)
+  document.removeEventListener('pointercancel', onDragCancel)
 })
 </script>
 

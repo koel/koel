@@ -8,11 +8,13 @@ use App\Models\Song;
 use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\PhpStreamerAdapter;
 use App\Services\Streamer\Adapters\PodcastStreamerAdapter;
+use App\Services\Streamer\Adapters\ProgressiveTranscodingStreamerAdapter;
 use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Services\Streamer\Adapters\XAccelRedirectStreamerAdapter;
 use App\Services\Streamer\Adapters\XSendFileStreamerAdapter;
 use App\Services\Streamer\Streamer;
+use App\Services\Transcoding\LocalTranscodingStrategy;
 use App\Values\RequestedStreamingConfig;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -82,6 +84,31 @@ class StreamerTest extends TestCase
     }
 
     #[Test]
+    public function transcodeFlacWhenConfigured(): void
+    {
+        config([
+            'koel.streaming.bitrate' => 128,
+            'koel.streaming.ffmpeg_path' => PHP_BINARY,
+            'koel.streaming.transcode_flac' => true,
+        ]);
+        $song = Song::factory()->createOne([
+            'storage' => SongStorageType::LOCAL,
+            'path' => '/tmp/test.flac',
+            'mime_type' => 'audio/flac',
+        ]);
+
+        $this
+            ->mock(LocalTranscodingStrategy::class)
+            ->expects('getTranscodeLocation')
+            ->with($song, 128)
+            ->andReturn('https://example.com/transcode.m4a');
+
+        $response = (new Streamer($song, config: RequestedStreamingConfig::make()))->stream();
+
+        self::assertTrue($response->isRedirect('https://example.com/transcode.m4a'));
+    }
+
+    #[Test]
     public function useTranscodingAdapterIfSongMimeTypeRequiresTranscoding(): void
     {
         $backupConfig = config('koel.streaming.transcode_required_mime_types');
@@ -97,6 +124,70 @@ class StreamerTest extends TestCase
         self::assertInstanceOf(TranscodingStreamerAdapter::class, $streamer->getAdapter());
 
         config(['koel.streaming.transcode_required_mime_types' => $backupConfig]);
+    }
+
+    #[Test]
+    public function useProgressiveAdapterOnlyForAutomaticOpusCompatibilityTranscoding(): void
+    {
+        config([
+            'koel.streaming.progressive' => true,
+            'koel.streaming.ffmpeg_path' => PHP_BINARY,
+            'koel.streaming.transcode_required_mime_types' => ['audio/aiff'],
+        ]);
+        $song = Song::factory()->createOne([
+            'storage' => SongStorageType::LOCAL,
+            'path' => '/tmp/test.aiff',
+            'mime_type' => 'audio/aiff',
+        ]);
+
+        $streamer = new Streamer($song, config: RequestedStreamingConfig::make(progressive: true));
+
+        self::assertInstanceOf(ProgressiveTranscodingStreamerAdapter::class, $streamer->getAdapter());
+    }
+
+    #[Test]
+    public function useCompletedTranscodingAdapterWhenProgressiveStreamingIsDisabled(): void
+    {
+        config([
+            'koel.streaming.progressive' => false,
+            'koel.streaming.ffmpeg_path' => PHP_BINARY,
+            'koel.streaming.transcode_required_mime_types' => ['audio/aiff'],
+        ]);
+        $song = Song::factory()->createOne([
+            'storage' => SongStorageType::LOCAL,
+            'path' => '/tmp/test.aiff',
+            'mime_type' => 'audio/aiff',
+        ]);
+
+        $streamer = new Streamer($song, config: RequestedStreamingConfig::make(progressive: true));
+
+        self::assertInstanceOf(TranscodingStreamerAdapter::class, $streamer->getAdapter());
+    }
+
+    #[Test]
+    public function passRequestedBitRateForForcedTranscoding(): void
+    {
+        config([
+            'koel.streaming.ffmpeg_path' => PHP_BINARY,
+        ]);
+        $song = Song::factory()->createOne([
+            'storage' => SongStorageType::LOCAL,
+            'path' => '/tmp/test.aiff',
+            'mime_type' => 'audio/aiff',
+        ]);
+
+        $this
+            ->mock(LocalTranscodingStrategy::class)
+            ->expects('getTranscodeLocation')
+            ->with($song, 64)
+            ->andReturn('https://example.com/transcode.m4a');
+
+        $response = (new Streamer($song, config: RequestedStreamingConfig::make(
+            transcode: true,
+            bitRate: 64,
+        )))->stream();
+
+        self::assertTrue($response->isRedirect('https://example.com/transcode.m4a'));
     }
 
     /** @return array<mixed> */

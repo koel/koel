@@ -1,10 +1,16 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { screen } from '@testing-library/vue'
+import { playbackManager } from '@/services/playbackManager'
 import Component from './LrcLyricsPane.vue'
 
 describe('lrcLyricsPane.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    afterEach: () => {
+      playbackManager.currentService = null
+      vi.useRealTimers()
+    },
+  })
 
   const renderComponent = (lyrics?: Array<{ time: number; text: string }>) => {
     lyrics = lyrics ?? [
@@ -34,5 +40,29 @@ describe('lrcLyricsPane.vue', () => {
   it('renders empty when no lyrics provided', () => {
     renderComponent([])
     expect(screen.queryAllByTestId('lyrics-line')).toHaveLength(0)
+  })
+
+  it('tracks lyrics using the playback service logical position', async () => {
+    vi.useFakeTimers()
+    h.mock(HTMLElement.prototype, 'scrollTo')
+    h.setReadOnlyProperty(playbackManager, 'currentService', {
+      position: 16,
+      seekTo: vi.fn(),
+    })
+    h.render(Component, {
+      props: {
+        lyrics: [
+          { time: 10.5, text: 'First line' },
+          { time: 15.2, text: 'Second line' },
+          { time: 20, text: 'Third line' },
+        ],
+        fontSize: '1rem',
+      },
+    })
+
+    vi.advanceTimersByTime(100)
+    await h.tick(2)
+
+    expect(screen.getByText('Second line').classList.contains('active')).toBe(true)
   })
 })

@@ -197,6 +197,11 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
         return $this->type === PlayableType::PODCAST_EPISODE;
     }
 
+    public function isFlac(): bool
+    {
+        return in_array($this->mime_type, ['audio/flac', 'audio/x-flac'], true);
+    }
+
     public function genreEqualsTo(string|array $genres): bool
     {
         $genreNames = collect(is_string($genres) ? explode(',', $genres) : $genres)

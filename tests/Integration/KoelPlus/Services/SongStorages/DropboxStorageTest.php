@@ -134,4 +134,19 @@ class DropboxStorageTest extends PlusTestCase
             $service->getPresignedUrl($song->storage_metadata->getPath()),
         );
     }
+
+    #[Test]
+    public function checksFileExistence(): void
+    {
+        $this->client->expects('setAccessToken')->with('free-bird');
+
+        /** @var DropboxStorage $service */
+        $service = app(DropboxStorage::class);
+
+        $this->filesystem->expects('fileExists')->with('transcodes/opus/256/song.weba')->andReturnTrue();
+        $this->filesystem->expects('fileExists')->with('transcodes/opus/256/missing.weba')->andReturnFalse();
+
+        self::assertTrue($service->fileExists('transcodes/opus/256/song.weba'));
+        self::assertFalse($service->fileExists('transcodes/opus/256/missing.weba'));
+    }
 }

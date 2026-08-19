@@ -42,6 +42,7 @@ class TestHarness {
       commonStore.state.uses_i_tunes = true
       commonStore.state.supports_batch_downloading = true
       commonStore.state.supports_transcoding = true
+      commonStore.state.supports_progressive_transcoding = false
 
       this.setDefaultBranding()
       cb?.()

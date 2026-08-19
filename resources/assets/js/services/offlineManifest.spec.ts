@@ -30,6 +30,17 @@ describe('offlineManifest', () => {
     const all = await offlineManifest.getAll()
     expect(all).toHaveLength(1)
     expect(all[0].playable.id).toBe('song-1')
+    expect(all[0].sourceUrl).toBeUndefined()
+  })
+
+  it('stores the codec-aware cache key without the audio token', async () => {
+    const entry = makeEntry('song-1')
+    entry.sourceUrl = 'https://koel.test/play/song-1?t=secret&codec=aac'
+
+    await offlineManifest.put(entry)
+
+    const [storedEntry] = await offlineManifest.getAll()
+    expect(storedEntry.sourceUrl).toBe('https://koel.test/play/song-1?codec=aac')
   })
 
   it('returns empty array when no entries', async () => {

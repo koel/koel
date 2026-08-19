@@ -97,6 +97,11 @@ class DropboxStorage extends CloudStorage
         $this->filesystem->writeStream($key, fopen($path, 'r'));
     }
 
+    public function fileExists(string $key): bool
+    {
+        return $this->filesystem->fileExists($key);
+    }
+
     public function deleteFileWithKey(string $key, bool $backup): void
     {
         $this->deleteUsingFilesystem($this->filesystem, $key, $backup);

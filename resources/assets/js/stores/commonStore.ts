@@ -49,6 +49,7 @@ const initialState = {
   } as QueueState,
   supports_batch_downloading: false,
   supports_transcoding: false,
+  supports_progressive_transcoding: false,
   dir_separator: '/',
   current_theme: null! as Theme,
 }

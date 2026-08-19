@@ -3,6 +3,7 @@
 namespace App\Services\Transcoding;
 
 use App\Enums\SongStorageType;
+use App\Enums\TranscodeCodec;
 use App\Helpers\Ulid;
 use App\Models\Song;
 use App\Services\SongStorages\SftpStorage;
@@ -12,27 +13,16 @@ use Webmozart\Assert\Assert;
 
 class SftpTranscodingStrategy extends TranscodingStrategy
 {
-    public function getTranscodeLocation(Song $song, int $bitRate): string
+    protected function createTranscodeLocation(Song $song, int $bitRate, TranscodeCodec $codec): string
     {
-        $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate);
-
-        if ($transcode?->isValid()) {
-            return $transcode->location;
-        }
-
-        // If a transcode record exists, but is not valid (i.e., checksum failed), delete the associated file.
-        if ($transcode) {
-            File::delete($transcode->location);
-        }
-
         /** @var SftpStorage $storage */
         $storage = app(SftpStorage::class);
         $tmpSource = $storage->copyToLocal($song->storage_metadata->getPath());
 
-        $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
+        $destination = artifact_path(sprintf('transcodes/%d/%s.%s', $bitRate, Ulid::generate(), $codec->extension()));
 
         try {
-            $this->transcodeAndUpsert($song, $tmpSource, $destination, $bitRate);
+            $this->transcodeAndUpsert($song, $tmpSource, $destination, $bitRate, $codec);
         } catch (Throwable $e) {
             File::delete($destination);
 

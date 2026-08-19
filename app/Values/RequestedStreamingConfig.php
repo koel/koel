@@ -8,10 +8,15 @@ final readonly class RequestedStreamingConfig
         public bool $transcode,
         public ?int $bitRate,
         public float $startTime,
+        public bool $progressive,
     ) {}
 
-    public static function make(bool $transcode = false, ?int $bitRate = 128, float $startTime = 0.0): self
-    {
-        return new self($transcode, $bitRate, $startTime);
+    public static function make(
+        bool $transcode = false,
+        ?int $bitRate = 128,
+        float $startTime = 0.0,
+        bool $progressive = false,
+    ): self {
+        return new self($transcode, $bitRate, $startTime, $progressive);
     }
 }

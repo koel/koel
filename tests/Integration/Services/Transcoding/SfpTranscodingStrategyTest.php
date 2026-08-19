@@ -3,6 +3,7 @@
 namespace Tests\Integration\Services\Transcoding;
 
 use App\Enums\SongStorageType;
+use App\Enums\TranscodeCodec;
 use App\Helpers\Ulid;
 use App\Models\Song;
 use App\Models\Transcode;
@@ -44,7 +45,8 @@ class SfpTranscodingStrategyTest extends TestCase
         File::expects('ensureDirectoryExists')->with(dirname($destination));
         File::expects('size')->with($destination)->andReturn(1_024);
 
-        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128);
+        $this->transcoder->expects('preferredCodec')->andReturn(TranscodeCodec::AAC);
+        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128, TranscodeCodec::AAC);
 
         File::expects('hash')->with($destination)->andReturn('mocked-checksum');
         File::expects('delete')->with('/tmp/song.flac');
@@ -104,7 +106,8 @@ class SfpTranscodingStrategyTest extends TestCase
 
         File::expects('ensureDirectoryExists')->with(dirname($destination));
 
-        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128);
+        $this->transcoder->expects('preferredCodec')->andReturn(TranscodeCodec::AAC);
+        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128, TranscodeCodec::AAC);
 
         File::expects('hash')->with($destination)->andReturn('mocked-checksum');
         File::expects('size')->with($destination)->andReturn(1_024);

@@ -87,4 +87,13 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         self::assertStringContainsString(Str::after($reference->location, 's3://koel/'), $url);
     }
+
+    #[Test]
+    public function checksFileExistence(): void
+    {
+        Storage::disk('s3')->put('transcodes/opus/256/song.weba', 'audio');
+
+        self::assertTrue($this->service->fileExists('transcodes/opus/256/song.weba'));
+        self::assertFalse($this->service->fileExists('transcodes/opus/256/missing.weba'));
+    }
 }

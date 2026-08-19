@@ -14,6 +14,7 @@ export const audioService = {
 
   context: null! as AudioContext,
   source: null! as MediaElementAudioSourceNode,
+  sourceNodes: new WeakMap<HTMLMediaElement, MediaElementAudioSourceNode>(),
   element: null! as HTMLMediaElement,
   preampGainNode: null! as GainNode,
   analyzer: null! as AnalyserNode,
@@ -25,8 +26,9 @@ export const audioService = {
     this.element = mediaElement
 
     this.context = new AudioContext()
+    this.sourceNodes = new WeakMap()
     this.preampGainNode = this.context.createGain()
-    this.source = this.context.createMediaElementSource(this.element)
+    this.source = this.getOrCreateSource(mediaElement)
     this.analyzer = this.context.createAnalyser()
 
     this.source.connect(this.preampGainNode)
@@ -79,8 +81,21 @@ export const audioService = {
     }
 
     this.element = newElement
-    this.source = this.context.createMediaElementSource(newElement)
+    this.source = this.getOrCreateSource(newElement)
     this.source.connect(this.preampGainNode)
+  },
+
+  getOrCreateSource(element: HTMLMediaElement) {
+    const existingSource = this.sourceNodes.get(element)
+
+    if (existingSource) {
+      return existingSource
+    }
+
+    const source = this.context.createMediaElementSource(element)
+    this.sourceNodes.set(element, source)
+
+    return source
   },
 
   changePreampGain(db: number) {

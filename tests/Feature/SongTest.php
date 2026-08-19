@@ -147,9 +147,13 @@ class SongTest extends TestCase
     #[Test]
     public function show(): void
     {
-        $song = Song::factory()->createOne();
+        config(['koel.streaming.transcode_required_mime_types' => ['audio/aiff']]);
+        $song = Song::factory()->createOne(['mime_type' => 'audio/aiff']);
 
-        $this->getAs("api/songs/{$song->id}")->assertJsonStructure(SongResource::JSON_STRUCTURE);
+        $this
+            ->getAs("api/songs/{$song->id}")
+            ->assertJsonStructure(SongResource::JSON_STRUCTURE)
+            ->assertJsonPath('requires_transcoding', true);
     }
 
     #[Test]

@@ -207,6 +207,7 @@ interface Song extends BasePlayable {
   lyrics: string
   is_public: boolean
   is_external: boolean
+  requires_transcoding: boolean
   basename?: string
   deleted?: boolean
   collaboration?: {

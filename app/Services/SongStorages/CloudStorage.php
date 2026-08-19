@@ -29,6 +29,8 @@ abstract class CloudStorage extends SongStorage implements MustDeleteTemporaryLo
 
     abstract public function uploadToStorage(string $key, string $path): void;
 
+    abstract public function fileExists(string $key): bool;
+
     abstract public function getPresignedUrl(string $key): string;
 
     abstract public function deleteFileWithKey(string $key, bool $backup): void;

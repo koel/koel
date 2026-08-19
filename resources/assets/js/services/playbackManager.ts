@@ -3,6 +3,7 @@ import { playbackService as queuePlayback } from '@/services/QueuePlaybackServic
 import type { RadioPlaybackService } from '@/services/RadioPlaybackService'
 import { playbackService as radioPlayback } from '@/services/RadioPlaybackService'
 import type { BasePlaybackService } from '@/services/BasePlaybackService'
+import { audioService } from '@/services/audioService'
 
 const playbackServiceMap: Record<string, BasePlaybackService> = {
   queue: queuePlayback,
@@ -13,15 +14,31 @@ export const playbackManager = {
   currentService: null as BasePlaybackService | null,
 
   usePlayback(type: keyof typeof playbackServiceMap, mediaElement?: HTMLMediaElement) {
-    for (const key in playbackServiceMap) {
-      if (key !== type) {
-        playbackServiceMap[key].deactivate()
+    const nextService = playbackServiceMap[type]
+    const isSwitchingServices = this.currentService !== nextService
+
+    if (isSwitchingServices) {
+      for (const key in playbackServiceMap) {
+        if (key !== type) {
+          playbackServiceMap[key].deactivate()
+        }
       }
     }
 
-    this.currentService = playbackServiceMap[type]
+    const targetMedia = mediaElement ?? document.querySelector<HTMLMediaElement>('#audio-player')!
 
-    return playbackServiceMap[type].activate(mediaElement ?? document.querySelector<HTMLMediaElement>('#audio-player')!)
+    if (isSwitchingServices && nextService.media && nextService.media !== targetMedia) {
+      nextService.swapMediaElement(targetMedia)
+    }
+
+    this.currentService = nextService
+    const activeService = nextService.activate(targetMedia)
+
+    if (audioService.context && audioService.element !== activeService.media) {
+      audioService.reconnectSource(activeService.media)
+    }
+
+    return activeService
   },
 
   useQueuePlayback(mediaElement?: HTMLMediaElement) {

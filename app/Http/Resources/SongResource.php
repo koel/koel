@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\Transcoding\TranscodingPolicy;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
@@ -34,6 +35,7 @@ class SongResource extends JsonResource
         'disc',
         'is_public',
         'created_at',
+        'requires_transcoding',
     ];
 
     public const array PAGINATION_JSON_STRUCTURE = [
@@ -124,6 +126,7 @@ class SongResource extends JsonResource
             'year' => $this->unless($embedding, $this->song->year),
             'is_public' => $this->unless($embedding, $this->song->is_public),
             'created_at' => $this->unless($embedding, $this->song->created_at),
+            'requires_transcoding' => $this->unless($embedding, fn () => app(TranscodingPolicy::class)->requiresCompatibilityTranscoding($this->song)),
             'embed_stream_url' => $this->when($embedding, fn () => URL::temporarySignedRoute(
                 'embeds.stream',
                 now()->addDay(),

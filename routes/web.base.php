@@ -48,7 +48,14 @@ Route::middleware('web')->group(static function (): void {
     Route::get('dropbox/authorize/{key}', AuthorizeDropboxController::class)->name('dropbox.authorize');
 
     Route::middleware('audio.auth')->group(static function (): void {
-        Route::get('play/{song}/{transcode?}', PlayController::class)->name('song.play');
+        Route::get('play/{song}/{transcode?}/{bitRate?}', PlayController::class)->whereIn('bitRate', [
+            '64',
+            '96',
+            '128',
+            '192',
+            '256',
+            '320',
+        ])->name('song.play');
 
         Route::get('radio/stream/{radioStation}', StreamRadioController::class)->name('radio.stream');
 

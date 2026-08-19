@@ -1,10 +1,12 @@
 import type { DBSchema, IDBPDatabase } from 'idb'
 import { openDB } from 'idb'
+import { normalizeAudioCacheKey } from '@/utils/audioCache'
 
 export interface OfflineManifestEntry {
   playable: Playable
   cachedAt: number
   size: number
+  sourceUrl?: string
 }
 
 /** The stored format includes an explicit key for IndexedDB */
@@ -59,9 +61,16 @@ export const offlineManifest = {
 
   async put(entry: OfflineManifestEntry) {
     try {
-      await (await getDB()).put('manifest', { ...entry, id: entry.playable.id })
+      const storedEntry: StoredEntry = { ...entry, id: entry.playable.id }
+
+      if (storedEntry.sourceUrl) {
+        storedEntry.sourceUrl = normalizeAudioCacheKey(storedEntry.sourceUrl)
+      }
+
+      await (await getDB()).put('manifest', storedEntry)
+      return true
     } catch {
-      // noop — indexedDB may not be available
+      return false
     }
   },
 

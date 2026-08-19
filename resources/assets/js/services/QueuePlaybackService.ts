@@ -18,18 +18,58 @@ import { socketService } from '@/services/socketService'
 import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
 import { BasePlaybackService } from '@/services/BasePlaybackService'
 import { crossfadeService } from '@/services/crossfadeService'
+import type { CrossfadeState } from '@/services/crossfadeService'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import { volumeManager } from '@/services/volumeManager'
 import { useBranding } from '@/composables/useBranding'
+import { progressiveTranscodingService } from '@/services/progressiveTranscodingService'
+import { playbackPreloadService } from '@/services/playbackPreloadService'
 
 /**
  * The number of seconds before the current playable ends to start preloading the next one.
  */
 const PRELOAD_BUFFER = 30
 
+interface ProgressivePlaybackState {
+  playableId: Playable['id']
+  playableLength: number
+  sourceOffset: number
+  timestampMode: 'unknown' | 'absolute' | 'relative'
+}
+
+interface PendingCrossfade {
+  outgoingPlayableId: Playable['id']
+  incomingPlayableId: Playable['id']
+  state: CrossfadeState | null
+  startPromise: Promise<boolean>
+}
+
 export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private upNext: Ref<Playable | null> = ref(null)
+  private progressivePlayback: ProgressivePlaybackState | null = null
+  private cancelPendingSourceReadiness: Closure | null = null
+  private pendingCrossfade: PendingCrossfade | null = null
+
+  public get position(): number {
+    return this.toLogicalTime(this.media.currentTime)
+  }
+
+  public get duration(): number {
+    return this.progressivePlayback?.playableLength ?? this.media.duration
+  }
+
+  public get bufferedThrough(): number {
+    const { buffered } = this.media
+
+    if (buffered.length === 0) {
+      return 0
+    }
+
+    const bufferedEnd = buffered.end(buffered.length - 1)
+
+    return this.progressivePlayback ? Math.min(this.duration, this.toLogicalTime(bufferedEnd, false)) : bufferedEnd
+  }
 
   /**
    * The next item in the queue.
@@ -66,11 +106,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   public preload(playable: Playable) {
-    const audioElement = document.createElement('audio')
-    audioElement.setAttribute('src', playableStore.getSourceUrl(playable))
-    audioElement.setAttribute('preload', 'auto')
-    audioElement.load()
-    playable.preloaded = true
+    playbackPreloadService.preload(playable)
   }
 
   /**
@@ -82,12 +118,25 @@ export class QueuePlaybackService extends BasePlaybackService {
    * We'll let them come true
    */
   public async play(playable: Playable, position = 0) {
-    const isCrossfadeFinalization = crossfadeService.active && crossfadeService.state!.playable.id === playable.id
+    const readyCrossfadeState =
+      position === 0 && crossfadeService.active && crossfadeService.state?.playable.id === playable.id
+        ? crossfadeService.state
+        : null
 
-    // Cancel any active crossfade unless we're finalizing it
-    if (!isCrossfadeFinalization) {
-      this.cancelCrossfade()
+    if (readyCrossfadeState) {
+      const pendingCrossfade = this.pendingCrossfade
+      const promoted = await this.promoteCrossfade(readyCrossfadeState, pendingCrossfade)
+
+      if (
+        promoted ||
+        (pendingCrossfade && this.pendingCrossfade !== pendingCrossfade) ||
+        (!pendingCrossfade && crossfadeService.state !== readyCrossfadeState)
+      ) {
+        return
+      }
     }
+
+    this.cancelCrossfade()
 
     if (isEpisode(playable)) {
       useEpisodeProgressTracking().trackEpisode(playable)
@@ -114,40 +163,13 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     await this.setNowPlayingMeta(playable)
 
-    if (isCrossfadeFinalization) {
-      // The incoming track is already playing via the crossfade audio element.
-      // Simply swap it in as the new primary — no src change, no seeking, no interruption.
-      const { incomingAudio } = crossfadeService.state!
+    const source = this.setPlaybackSource(playable, position)
 
-      // Stop and fully discard the old element
-      this.media.pause()
-      this.media.removeAttribute('src')
-      this.media.load()
-
-      // The incoming audio is already playing at the right position.
-      // Just make it the new primary media element.
-      this.swapMediaElement(incomingAudio)
-      this.setVolume(volumeManager.get())
-
-      // Reconnect the audio graph to the new element
-      if (isAudioContextSupported && audioService.context) {
-        audioService.reconnectSource(incomingAudio)
-      }
-
-      crossfadeService.state = null
-
-      this.recordStartTime(playable)
-      this.showNotification(playable)
+    if (position === 0) {
+      await this.restart()
     } else {
-      // Normal playback: set src and start
-      this.media.src = playableStore.getSourceUrl(playable)
-
-      if (position === 0) {
-        await this.restart()
-      } else {
-        this.seekTo(position)
-        await this.resume()
-      }
+      void this.prepareSourceAtPosition(source, position)
+      await this.resume()
     }
 
     this.setMediaSessionActionHandlers()
@@ -210,7 +232,19 @@ export class QueuePlaybackService extends BasePlaybackService {
       logger.error(error)
     }
 
-    this.media.currentTime = 0
+    const source = progressiveTranscodingService.getSource(playable)
+
+    if (source.progressive) {
+      if (!this.isProgressivePlayback(playable) || this.progressivePlayback!.sourceOffset !== 0 || this.media.ended) {
+        this.setPlaybackSource(playable, 0)
+      }
+    } else {
+      if (this.isProgressivePlayback(playable)) {
+        this.setPlaybackSource(playable, 0)
+      }
+
+      this.media.currentTime = 0
+    }
 
     try {
       await this.media.play()
@@ -239,8 +273,8 @@ export class QueuePlaybackService extends BasePlaybackService {
   public async playPrev() {
     // If the item's duration is greater than 5 seconds, and we've passed 5 seconds into it,
     // restart playing instead.
-    if (this.media.currentTime > 5 && queueStore.current!.length > 5) {
-      this.media.currentTime = 0
+    if (this.position > 5 && queueStore.current!.length > 5) {
+      this.seekTo(0)
 
       return
     }
@@ -266,10 +300,18 @@ export class QueuePlaybackService extends BasePlaybackService {
 
   public async stop() {
     this.cancelCrossfade()
+    this.clearPendingSourceReadiness()
+    playbackPreloadService.clear()
 
     if (this.media) {
       this.media.pause()
-      this.seekTo(0)
+
+      if (this.progressivePlayback) {
+        this.replaceMediaElement()
+        this.progressivePlayback = null
+      } else {
+        this.media.currentTime = 0
+      }
     }
 
     document.title = useBranding().name
@@ -297,8 +339,12 @@ export class QueuePlaybackService extends BasePlaybackService {
     if (!this.media.src) {
       // on first load when the queue is loaded from saved state, the player's src is empty
       // we need to properly set it as well as any kind of playback metadata
-      this.media.src = playableStore.getSourceUrl(playable)
-      this.seekTo(commonStore.state.queue_state.playback_position)
+      const position = commonStore.state.queue_state.playback_position
+      const source = this.setPlaybackSource(playable, position)
+
+      if (position > 0) {
+        void this.prepareSourceAtPosition(source, position)
+      }
 
       await this.setNowPlayingMeta(queueStore.current!)
       this.recordStartTime(playable)
@@ -353,8 +399,16 @@ export class QueuePlaybackService extends BasePlaybackService {
     document.title = `${playable.title} ♫ ${useBranding().name}`
     this.media.setAttribute('title', isSong(playable) ? `${playable.artist_name} - ${playable.title}` : playable.title)
 
-    if (isAudioContextSupported) {
-      await audioService.context.resume()
+    await this.prepareAudioContext()
+  }
+
+  private async prepareAudioContext(): Promise<void> {
+    if (audioService.context) {
+      try {
+        await audioService.context.resume()
+      } catch (error: unknown) {
+        logger.warn('Failed to resume the audio context:', error)
+      }
     }
   }
 
@@ -369,24 +423,33 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   public forward(seconds: number): void {
-    this.media.currentTime += seconds
+    this.seekTo(this.position + seconds)
   }
 
   protected onEnded(): void {
+    const endedPlayable = queueStore.current
+
     if (
-      queueStore.current &&
-      isSong(queueStore.current) &&
+      endedPlayable &&
+      isSong(endedPlayable) &&
       commonStore.state.uses_last_fm &&
       userStore.current.preferences.lastfm_session_key
     ) {
-      playableStore.scrobble(queueStore.current)
+      playableStore.scrobble(endedPlayable)
     }
 
-    // If a crossfade is active (completed or not), the outgoing track has ended — transition to the next song
-    if (crossfadeService.active) {
-      const { playable } = crossfadeService.state!
-      this.play(playable)
+    if (this.pendingCrossfade) {
+      void this.finishPendingCrossfadeAfterEnd(this.pendingCrossfade, endedPlayable)
       return
+    }
+
+    if (crossfadeService.active && crossfadeService.state) {
+      void this.promoteCrossfade(crossfadeService.state, null)
+      return
+    }
+
+    if (crossfadeService.inProgress) {
+      this.cancelCrossfade()
     }
 
     preferences.repeat_mode === 'REPEAT_ONE' ? this.restart() : this.playNext()
@@ -404,20 +467,21 @@ export class QueuePlaybackService extends BasePlaybackService {
       return
     }
 
-    const media = this.media
+    const position = this.position
+    const duration = this.duration
 
     // If we've passed 25% of the playable, it's safe to say it has been "played".
     // See https://github.com/koel/koel/issues/1087
-    if (!currentPlayable.play_count_registered && media.currentTime * 4 >= media.duration) {
+    if (!currentPlayable.play_count_registered && position * 4 >= duration) {
       this.registerPlay(currentPlayable)
     }
 
-    if (Math.ceil(media.currentTime) % 5 === 0) {
+    if (Math.ceil(position) % 5 === 0) {
       // every 5 seconds, we save the current playback position to the server
       try {
         http.silently.put('queue/playback-status', {
           song: currentPlayable.id,
-          position: Math.ceil(media.currentTime),
+          position: Math.ceil(position),
         })
       } catch (error: unknown) {
         logger.error(error)
@@ -425,7 +489,7 @@ export class QueuePlaybackService extends BasePlaybackService {
 
       // if the current item is an episode, we emit an event to update the progress on the client side as well
       if (isEpisode(currentPlayable)) {
-        eventBus.emit('EPISODE_PROGRESS_UPDATED', currentPlayable, Math.ceil(media.currentTime))
+        eventBus.emit('EPISODE_PROGRESS_UPDATED', currentPlayable, Math.ceil(position))
       }
     }
 
@@ -436,10 +500,10 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
 
     // Set the "up next" value to the next playable if we're near the end of the current playback.
-    this.upNext.value = media.currentTime + 15 > media.duration ? nextPlayable : null
+    this.upNext.value = position + 15 > duration ? nextPlayable : null
 
     // Preload the next playable if we're near the end of the current playback.
-    if (media.currentTime + PRELOAD_BUFFER > media.duration && !nextPlayable.preloaded) {
+    if (position + PRELOAD_BUFFER > duration && !nextPlayable.preloaded && !crossfadeService.inProgress) {
       this.preload(nextPlayable)
     }
 
@@ -448,46 +512,370 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     if (
       crossfadeDuration > 0 &&
-      !crossfadeService.active &&
+      !crossfadeService.inProgress &&
       preferences.repeat_mode !== 'REPEAT_ONE' &&
-      media.duration > crossfadeDuration * 2 && // skip for short tracks
-      media.currentTime + crossfadeDuration >= media.duration
+      duration > crossfadeDuration * 2 && // skip for short tracks
+      position + crossfadeDuration >= duration
     ) {
-      if (crossfadeService.start(nextPlayable, crossfadeDuration, volumeManager.get())) {
-        // Show the incoming track as "now playing" immediately
-        queueStore.current!.playback_state = 'Stopped'
-        nextPlayable.playback_state = 'Playing'
-        this.setNowPlayingMeta(nextPlayable)
-        this.showNotification(nextPlayable)
-        this.registerPlay(nextPlayable)
+      let pendingCrossfade: PendingCrossfade | null = null
+      const startPromise = crossfadeService.start(nextPlayable, crossfadeDuration, volumeManager.get(), () => {
+        if (
+          pendingCrossfade &&
+          this.pendingCrossfade === pendingCrossfade &&
+          queueStore.current?.id === pendingCrossfade.outgoingPlayableId
+        ) {
+          this.setVolume(volumeManager.get())
+        }
+      })
+
+      pendingCrossfade = {
+        outgoingPlayableId: currentPlayable.id,
+        incomingPlayableId: nextPlayable.id,
+        state: crossfadeService.state,
+        startPromise,
       }
+      this.pendingCrossfade = pendingCrossfade
     }
 
     // Fade out the primary player during an active crossfade
     if (crossfadeService.active && crossfadeService.state) {
-      const remaining = media.duration - media.currentTime
+      const remaining = duration - position
       const progress = Math.max(0, 1 - remaining / crossfadeDuration)
       this.setVolume(volumeManager.get() * (1 - progress))
     }
   }
 
   public rewind(seconds: number): void {
-    this.media.currentTime -= seconds
+    this.seekTo(this.position - seconds)
   }
 
   public fastSeek(position: number): void {
+    if (this.progressivePlayback) {
+      this.seekTo(position)
+      return
+    }
+
     this.media.fastSeek(position || 0)
   }
 
   public seekTo(position: number): void {
     this.cancelCrossfade()
-    this.media.currentTime = position || 0
+
+    const currentPlayable = queueStore.current
+    const clampedPosition = Math.max(0, Math.min(position || 0, currentPlayable?.length || position || 0))
+
+    if (
+      currentPlayable &&
+      (this.isProgressivePlayback(currentPlayable) || progressiveTranscodingService.isEligible(currentPlayable))
+    ) {
+      void this.reloadSourceAtPosition(currentPlayable, clampedPosition)
+      return
+    }
+
+    this.media.currentTime = clampedPosition
   }
 
-  /** Cancel any active crossfade and restore volume */
+  private setPlaybackSource(playable: Playable, position: number) {
+    this.clearPendingSourceReadiness()
+
+    const source = progressiveTranscodingService.getSource(playable, position)
+    const preloadedMedia = source.progressive && position === 0 ? playbackPreloadService.take(playable) : null
+
+    if (!source.progressive || position > 0) {
+      playbackPreloadService.clear()
+    }
+
+    const shouldReplaceMediaElement = !!this.media.src && (!!this.progressivePlayback || source.progressive)
+
+    this.progressivePlayback = source.progressive
+      ? {
+          playableId: playable.id,
+          playableLength: playable.length,
+          sourceOffset: Math.max(0, position),
+          timestampMode: 'unknown',
+        }
+      : null
+
+    if (preloadedMedia) {
+      this.adoptMediaElement(preloadedMedia)
+    } else if (shouldReplaceMediaElement) {
+      this.replaceMediaElement(source.url)
+    } else {
+      this.media.src = source.url
+    }
+
+    return source
+  }
+
+  private async reloadSourceAtPosition(playable: Playable, position: number) {
+    const shouldResume = playable.playback_state === 'Playing'
+    const source = this.setPlaybackSource(playable, position)
+    const media = this.media
+    void this.prepareSourceAtPosition(source, position)
+
+    if (shouldResume) {
+      try {
+        await media.play()
+      } catch (error: unknown) {
+        if (media === this.media) {
+          logger.warn(error)
+        }
+      }
+    }
+  }
+
+  private isProgressivePlayback(playable?: Playable | null): playable is Song {
+    return !!playable && this.progressivePlayback?.playableId === playable.id
+  }
+
+  private toLogicalTime(mediaTime: number, rememberTimestampMode = true): number {
+    const state = this.progressivePlayback
+
+    if (!state || state.sourceOffset === 0) {
+      return mediaTime
+    }
+
+    if (state.timestampMode === 'absolute') {
+      return mediaTime
+    }
+
+    if (state.timestampMode === 'relative') {
+      return state.sourceOffset + mediaTime
+    }
+
+    if (mediaTime <= 0.05) {
+      return state.sourceOffset
+    }
+
+    const timestampMode = Math.abs(mediaTime - state.sourceOffset) <= mediaTime ? 'absolute' : 'relative'
+
+    if (rememberTimestampMode) {
+      state.timestampMode = timestampMode
+    }
+
+    return timestampMode === 'absolute' ? mediaTime : state.sourceOffset + mediaTime
+  }
+
+  private prepareSourceAtPosition(source: { progressive: boolean }, position: number): Promise<boolean> {
+    const media = this.media
+
+    this.clearPendingSourceReadiness()
+
+    const sourceReadiness = new Promise<boolean>(resolve => {
+      let resolved = false
+      let cleanedUp = false
+
+      const resolveOnce = (ready: boolean) => {
+        if (resolved) {
+          return
+        }
+
+        resolved = true
+        resolve(ready)
+      }
+
+      const cleanUp = () => {
+        if (cleanedUp) {
+          return
+        }
+
+        cleanedUp = true
+        media.removeEventListener('loadedmetadata', onLoadedMetadata)
+        media.removeEventListener('error', onLoadFailed)
+        media.removeEventListener('abort', onLoadFailed)
+        window.clearTimeout(timeoutId)
+
+        if (this.cancelPendingSourceReadiness === cancel) {
+          this.cancelPendingSourceReadiness = null
+        }
+      }
+
+      const onLoadedMetadata = () => {
+        if (media !== this.media) {
+          cleanUp()
+          resolveOnce(false)
+          return
+        }
+
+        if (!source.progressive || Number.isFinite(media.duration)) {
+          media.currentTime = position
+        }
+
+        cleanUp()
+        resolveOnce(true)
+      }
+
+      const onLoadFailed = () => {
+        cleanUp()
+        resolveOnce(false)
+      }
+
+      const cancel = onLoadFailed
+      const timeoutId = window.setTimeout(() => resolveOnce(false), 10_000)
+
+      this.cancelPendingSourceReadiness = cancel
+      media.addEventListener('loadedmetadata', onLoadedMetadata)
+      media.addEventListener('error', onLoadFailed)
+      media.addEventListener('abort', onLoadFailed)
+      media.load()
+
+      if (media.readyState >= 1) {
+        onLoadedMetadata()
+      }
+    })
+
+    return sourceReadiness
+  }
+
+  private clearPendingSourceReadiness(): void {
+    this.cancelPendingSourceReadiness?.()
+    this.cancelPendingSourceReadiness = null
+  }
+
+  private async finishPendingCrossfadeAfterEnd(
+    pendingCrossfade: PendingCrossfade,
+    endedPlayable: Playable | null | undefined,
+  ): Promise<void> {
+    const started = await pendingCrossfade.startPromise
+
+    if (this.pendingCrossfade !== pendingCrossfade) {
+      return
+    }
+
+    const outgoingIsStillCurrent =
+      endedPlayable?.id === pendingCrossfade.outgoingPlayableId &&
+      queueStore.current?.id === pendingCrossfade.outgoingPlayableId
+
+    if (!outgoingIsStillCurrent) {
+      this.cancelCrossfade()
+      return
+    }
+
+    if (
+      started &&
+      crossfadeService.active &&
+      crossfadeService.state === pendingCrossfade.state &&
+      pendingCrossfade.state?.playable.id === pendingCrossfade.incomingPlayableId
+    ) {
+      const promoted = await this.promoteCrossfade(pendingCrossfade.state, pendingCrossfade)
+
+      if (promoted || this.pendingCrossfade !== pendingCrossfade) {
+        return
+      }
+    }
+
+    if (!started || pendingCrossfade.state?.failed) {
+      this.cancelCrossfade()
+      await this.playNext()
+    }
+  }
+
+  private async promoteCrossfade(state: CrossfadeState, pendingCrossfade: PendingCrossfade | null): Promise<boolean> {
+    await this.prepareAudioContext()
+
+    if (pendingCrossfade && this.pendingCrossfade !== pendingCrossfade) {
+      return false
+    }
+
+    if (
+      pendingCrossfade &&
+      (pendingCrossfade.state !== state || queueStore.current?.id !== pendingCrossfade.outgoingPlayableId)
+    ) {
+      return false
+    }
+
+    const consumedState = crossfadeService.consumeReadyState(state)
+
+    if (!consumedState) {
+      return false
+    }
+
+    this.pendingCrossfade = null
+
+    const playable = consumedState.playable
+
+    if (isEpisode(playable)) {
+      useEpisodeProgressTracking().trackEpisode(playable)
+    }
+
+    queueStore.queueIfNotQueued(playable, 'after-current')
+
+    if (queueStore.current) {
+      queueStore.current.playback_state = 'Stopped'
+    }
+
+    playable.playback_state = 'Playing'
+    document.title = `${playable.title} ♫ ${useBranding().name}`
+
+    const previousMedia = this.media
+    const { incomingAudio, progressive } = consumedState
+
+    incomingAudio.setAttribute(
+      'title',
+      isSong(playable) ? `${playable.artist_name} - ${playable.title}` : playable.title,
+    )
+    this.swapMediaElement(incomingAudio)
+    this.setVolume(volumeManager.get())
+    this.progressivePlayback = progressive
+      ? { playableId: playable.id, playableLength: playable.length, sourceOffset: 0, timestampMode: 'unknown' }
+      : null
+
+    previousMedia.pause()
+    previousMedia.removeAttribute('src')
+    previousMedia.load()
+
+    if (isAudioContextSupported && audioService.context) {
+      audioService.reconnectSource(incomingAudio)
+    }
+
+    this.recordStartTime(playable)
+    this.showNotification(playable)
+    this.setMediaSessionActionHandlers()
+
+    return true
+  }
+
+  private replaceMediaElement(sourceUrl?: string): void {
+    const replacementMedia = document.createElement('audio')
+
+    this.adoptMediaElement(replacementMedia)
+
+    if (sourceUrl) {
+      replacementMedia.src = sourceUrl
+    }
+  }
+
+  private adoptMediaElement(replacementMedia: HTMLMediaElement): void {
+    const previousMedia = this.media
+
+    replacementMedia.crossOrigin = 'anonymous'
+    replacementMedia.volume = previousMedia.volume
+    replacementMedia.muted = previousMedia.muted
+    replacementMedia.playbackRate = previousMedia.playbackRate
+    replacementMedia.title = previousMedia.title
+
+    this.swapMediaElement(replacementMedia)
+
+    if (audioService.context) {
+      audioService.reconnectSource(replacementMedia)
+    }
+
+    previousMedia.pause()
+    previousMedia.removeAttribute('src')
+    previousMedia.load()
+  }
+
+  /** Cancel any in-progress crossfade and restore volume */
   private cancelCrossfade() {
-    if (crossfadeService.active) {
+    const hadCrossfade = this.pendingCrossfade !== null || crossfadeService.inProgress
+
+    this.pendingCrossfade = null
+
+    if (crossfadeService.inProgress) {
       crossfadeService.cancel()
+    }
+
+    if (hadCrossfade) {
       this.setVolume(volumeManager.get())
     }
   }

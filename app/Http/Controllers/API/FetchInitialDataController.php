@@ -26,6 +26,7 @@ use App\Services\Integrations\YouTubeService;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\MediaBrowser;
 use App\Services\QueueService;
+use App\Services\Transcoding\TranscodingPolicy;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class FetchInitialDataController extends Controller
@@ -40,12 +41,15 @@ class FetchInitialDataController extends Controller
         QueueService $queueService,
         ThemeRepository $themeRepository,
         LicenseServiceInterface $licenseService,
+        TranscodingPolicy $transcodingPolicy,
         Authenticatable $user,
     ) {
         $licenseStatus = $licenseService->getStatus();
         $theme = $licenseStatus->isValid()
             ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
             : null;
+        $supportsTranscoding =
+            (bool) config('koel.streaming.ffmpeg_path') && is_executable(config('koel.streaming.ffmpeg_path'));
 
         return response()->json([
             'settings' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
@@ -68,8 +72,8 @@ class FetchInitialDataController extends Controller
             'allows_embedding' => (bool) config('koel.embed.enabled'),
             'supports_batch_downloading' => extension_loaded('zip'),
             'media_path_set' => (bool) Setting::get('media_path'),
-            'supports_transcoding' =>
-                config('koel.streaming.ffmpeg_path') && is_executable(config('koel.streaming.ffmpeg_path')),
+            'supports_transcoding' => $supportsTranscoding,
+            'supports_progressive_transcoding' => $transcodingPolicy->supportsProgressiveTranscoding(),
             'cdn_url' => static_url(),
             'current_version' => koel_version(),
             'latest_version' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)

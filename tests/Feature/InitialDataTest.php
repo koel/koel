@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Enums\TranscodeCodec;
 use App\Models\PlaylistFolder;
+use App\Services\Transcoding\Transcoder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -10,6 +12,42 @@ use function Tests\create_user;
 
 class InitialDataTest extends TestCase
 {
+    #[Test]
+    public function reportsProgressiveTranscodingCapability(): void
+    {
+        config([
+            'koel.streaming.ffmpeg_path' => PHP_BINARY,
+            'koel.streaming.progressive' => true,
+        ]);
+        $this->mock(Transcoder::class)->expects('preferredCodec')->andReturn(TranscodeCodec::OPUS);
+        $user = create_user();
+
+        $this
+            ->getAs('/api/data', $user)
+            ->assertJsonPath('supports_progressive_transcoding', true)
+            ->assertJsonPath('supports_transcoding', true);
+
+        config(['koel.streaming.progressive' => false]);
+
+        $this->getAs('/api/data', $user)->assertJsonPath('supports_progressive_transcoding', false);
+    }
+
+    #[Test]
+    public function reportsNoTranscodingCapabilitiesWhenFfmpegIsUnset(): void
+    {
+        config([
+            'koel.streaming.ffmpeg_path' => null,
+            'koel.streaming.progressive' => true,
+        ]);
+        $user = create_user();
+
+        $this
+            ->getAs('/api/data', $user)
+            ->assertOk()
+            ->assertJsonPath('supports_transcoding', false)
+            ->assertJsonPath('supports_progressive_transcoding', false);
+    }
+
     #[Test]
     public function index(): void
     {
@@ -30,6 +68,7 @@ class InitialDataTest extends TestCase
             'allows_download',
             'allows_embedding',
             'supports_transcoding',
+            'supports_progressive_transcoding',
             'cdn_url',
             'current_version',
             'latest_version',

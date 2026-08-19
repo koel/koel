@@ -3,37 +3,25 @@
 namespace App\Services\Transcoding;
 
 use App\Enums\SongStorageType;
+use App\Enums\TranscodeCodec;
 use App\Helpers\Ulid;
 use App\Models\Song;
 use Illuminate\Support\Facades\File;
+use Throwable;
 
 class LocalTranscodingStrategy extends TranscodingStrategy
 {
-    public function getTranscodeLocation(Song $song, int $bitRate): string
+    protected function createTranscodeLocation(Song $song, int $bitRate, TranscodeCodec $codec): string
     {
-        $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate);
+        $destination = artifact_path(sprintf('transcodes/%d/%s.%s', $bitRate, Ulid::generate(), $codec->extension()));
 
-        if ($transcode?->isValid()) {
-            return $transcode->location;
+        try {
+            $this->transcodeAndUpsert($song, $song->path, $destination, $bitRate, $codec);
+        } catch (Throwable $e) {
+            File::delete($destination);
+
+            throw $e;
         }
-
-        // If a transcode record exists, but is not valid (i.e., checksum failed), delete the associated file.
-        if ($transcode) {
-            File::delete($transcode->location);
-        }
-
-        // (Re)Transcode the song to the specified bit rate and either create a new transcode record or
-        // update the existing one.
-        $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
-        $this->transcoder->transcode($song->path, $destination, $bitRate);
-
-        $this->createOrUpdateTranscode(
-            $song,
-            $destination,
-            $bitRate,
-            File::hash($destination),
-            File::size($destination),
-        );
 
         return $destination;
     }

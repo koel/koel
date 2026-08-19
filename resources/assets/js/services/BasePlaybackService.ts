@@ -6,6 +6,21 @@ import { volumeManager } from '@/services/volumeManager'
 export abstract class BasePlaybackService {
   public media!: HTMLMediaElement
   private boundMediaEvents = new Set<[string, EventListener, boolean]>()
+  private active = false
+
+  public get position(): number {
+    return this.media.currentTime
+  }
+
+  public get duration(): number {
+    return this.media.duration
+  }
+
+  public get bufferedThrough(): number {
+    const { buffered } = this.media
+
+    return buffered.length > 0 ? buffered.end(buffered.length - 1) : 0
+  }
 
   public activate(mediaElement: HTMLMediaElement) {
     if (!this.media) {
@@ -13,6 +28,8 @@ export abstract class BasePlaybackService {
       watch(volumeManager.volume, volume => this.setVolume(volume), { immediate: true })
       this.setMediaSessionActionHandlers()
     }
+
+    this.active = true
 
     if (!this.boundMediaEvents.size) {
       this.addMediaEventListeners()
@@ -76,8 +93,9 @@ export abstract class BasePlaybackService {
     // Swap the reference
     this.media = newMedia
 
-    // Reattach listeners on the new element
-    this.addMediaEventListeners()
+    if (this.active) {
+      this.addMediaEventListeners()
+    }
   }
 
   public abstract play(source: Streamable): Promise<void>
@@ -111,6 +129,8 @@ export abstract class BasePlaybackService {
   public abstract rotateRepeatMode(): void
 
   public deactivate() {
+    this.active = false
+
     this.boundMediaEvents.forEach(([event, handler, options]) => {
       this.media.removeEventListener(event, handler, options)
     })

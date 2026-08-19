@@ -57,6 +57,11 @@ class S3CompatibleStorage extends CloudStorage
         Storage::disk('s3')->put($key, fopen($path, 'r'));
     }
 
+    public function fileExists(string $key): bool
+    {
+        return Storage::disk('s3')->exists($key);
+    }
+
     public function testSetup(): void
     {
         Storage::disk('s3')->put('test.txt', 'Koel test file');

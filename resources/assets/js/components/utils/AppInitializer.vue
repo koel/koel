@@ -9,8 +9,12 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useOverlay } from '@/composables/useOverlay'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { shouldWarnUponWindowUnload as shouldWarnAboutOfflineCaching } from '@/composables/useOfflinePlayback'
+import {
+  initializeOfflinePlayback,
+  shouldWarnUponWindowUnload as shouldWarnAboutOfflineCaching,
+} from '@/composables/useOfflinePlayback'
 import { uploadService } from '@/services/uploadService'
+import { logger } from '@/utils/logger'
 
 const emits = defineEmits<{
   (e: 'success'): void
@@ -34,11 +38,22 @@ const requestNotificationPermission = async () => {
   }
 }
 
+const initializeOfflinePlaybackSafely = async () => {
+  try {
+    await initializeOfflinePlayback()
+  } catch (error: unknown) {
+    logger.warn('Failed to initialize offline playback:', error)
+  }
+}
+
 onMounted(async () => {
   showOverlay({ message: 'Just a little patience…' })
 
   try {
+    const offlinePlaybackInitialization = initializeOfflinePlaybackSafely()
+
     await commonStore.init()
+    await offlinePlaybackInitialization
 
     await requestNotificationPermission()
 

@@ -30,6 +30,7 @@ const generate = (partOfCompilation = false): Song => {
     created_at: faker.date.past().toISOString(),
     playback_state: 'Stopped',
     is_external: false,
+    requires_transcoding: false,
   }
 }
 
