@@ -3,6 +3,7 @@
 namespace App\Services\Transcoding;
 
 use App\Enums\SongStorageType;
+use App\Enums\TranscodeCodec;
 use App\Models\Song;
 use App\Models\Transcode;
 use App\Repositories\TranscodeRepository;
@@ -15,7 +16,7 @@ abstract class TranscodingStrategy
         protected Transcoder $transcoder,
     ) {}
 
-    protected function findTranscodeBySongAndBitRate(Song $song, int $bitRate): ?Transcode
+    protected function findTranscode(Song $song, int $bitRate): ?Transcode
     {
         return $this->transcodeRepository->findFirstWhere([
             'song_id' => $song->id,
@@ -27,6 +28,7 @@ abstract class TranscodingStrategy
         Song $song,
         string $locationOrCloudKey,
         int $bitRate,
+        TranscodeCodec $codec,
         string $hash,
         int $fileSize,
     ): Transcode {
@@ -35,24 +37,31 @@ abstract class TranscodingStrategy
                 'song_id' => $song->id,
                 'location' => $locationOrCloudKey,
                 'bit_rate' => $bitRate,
+                'codec' => $codec,
                 'hash' => $hash,
                 'file_size' => $fileSize,
             ],
             uniqueBy: ['song_id', 'bit_rate'],
-            update: ['location', 'hash', 'file_size'],
+            update: ['location', 'codec', 'hash', 'file_size'],
         );
 
-        return $this->findTranscodeBySongAndBitRate($song, $bitRate); // @phpstan-ignore-line
+        return $this->findTranscode($song, $bitRate); // @phpstan-ignore-line
     }
 
-    protected function transcodeAndUpsert(Song $song, string $tmpSource, string $destination, int $bitRate): void
-    {
-        $this->transcoder->transcode($tmpSource, $destination, $bitRate);
+    protected function transcodeAndUpsert(
+        Song $song,
+        string $tmpSource,
+        string $destination,
+        int $bitRate,
+        TranscodeCodec $codec,
+    ): void {
+        $this->transcoder->transcode($tmpSource, $destination, $bitRate, $codec);
 
         $this->createOrUpdateTranscode(
             $song,
             $destination,
             $bitRate,
+            $codec,
             File::hash($destination),
             File::size($destination),
         );

@@ -3,6 +3,7 @@
 namespace Tests\Integration\Services\Transcoding;
 
 use App\Enums\SongStorageType;
+use App\Enums\TranscodeCodec;
 use App\Helpers\Ulid;
 use App\Models\Song;
 use App\Models\Transcode;
@@ -47,7 +48,8 @@ class CloudTranscodingStrategyTest extends TestCase
         $storage->expects('getPresignedUrl')->with($transcodeKey)->andReturn($transcodePresignedUrl);
         $storage->expects('uploadToStorage')->with($transcodeKey, $tmpDestination);
 
-        $this->transcoder->expects('transcode')->with($songPresignedUrl, $tmpDestination, 128);
+        $this->transcoder->expects('preferredCodec')->andReturn(TranscodeCodec::AAC);
+        $this->transcoder->expects('transcode')->with($songPresignedUrl, $tmpDestination, 128, TranscodeCodec::AAC);
 
         File::expects('ensureDirectoryExists')->with(dirname($tmpDestination));
         File::expects('hash')->with($tmpDestination)->andReturn('mocked-checksum');
@@ -62,6 +64,47 @@ class CloudTranscodingStrategyTest extends TestCase
             'song_id' => $song->id,
             'location' => $transcodeKey,
             'bit_rate' => 128,
+            'hash' => 'mocked-checksum',
+            'file_size' => 1_024,
+        ]);
+    }
+
+    #[Test]
+    public function getOpusTranscodeLocation(): void
+    {
+        $song = Song::factory()->createOne([
+            'path' => 's3://bucket/key.aiff',
+            'storage' => SongStorageType::S3,
+        ]);
+
+        $storage = $this->mock(S3CompatibleStorage::class);
+        $ulid = Ulid::freeze();
+        $songPresignedUrl = 'https://s3.song.presigned.url/key.aiff';
+        $tmpDestination = artifact_path("tmp/$ulid.weba", ensureDirectoryExists: false);
+        $transcodeKey = "transcodes/256/$ulid.weba";
+        $transcodePresignedUrl = "https://s3.song.presigned.url/transcodes/256/$ulid.weba";
+
+        $storage->expects('getPresignedUrl')->with('key.aiff')->andReturn($songPresignedUrl);
+        $storage->expects('getPresignedUrl')->with($transcodeKey)->andReturn($transcodePresignedUrl);
+        $storage->expects('uploadToStorage')->with($transcodeKey, $tmpDestination);
+
+        $this->transcoder->expects('preferredCodec')->andReturn(TranscodeCodec::OPUS);
+        $this->transcoder->expects('transcode')->with($songPresignedUrl, $tmpDestination, 256, TranscodeCodec::OPUS);
+
+        File::expects('ensureDirectoryExists')->with(dirname($tmpDestination));
+        File::expects('hash')->with($tmpDestination)->andReturn('mocked-checksum');
+        File::expects('delete')->with($tmpDestination);
+        File::expects('size')->with($tmpDestination)->andReturn(1_024);
+
+        $transcodedPath = $this->strategy->getTranscodeLocation($song, 256);
+
+        self::assertSame($transcodePresignedUrl, $transcodedPath);
+
+        $this->assertDatabaseHas(Transcode::class, [
+            'song_id' => $song->id,
+            'location' => $transcodeKey,
+            'bit_rate' => 256,
+            'codec' => TranscodeCodec::OPUS->value,
             'hash' => 'mocked-checksum',
             'file_size' => 1_024,
         ]);

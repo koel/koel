@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Acl\Role;
+use App\Enums\TranscodeCodec;
 
 return [
     'storage_driver' => env('STORAGE_DRIVER', 'local') ?: 'local',
@@ -33,15 +34,15 @@ return [
      | Streaming Configurations
      |--------------------------------------------------------------------------
      |
-     | Many streaming options can be set, including, 'bitrate' with 128 set
-     | as the default, 'method' with php as the default and 'transcoding'
-     | to configure the path for FFMPEG to transcode FLAC audio files
+     | Many streaming options can be set, including the streaming method,
+     | transcoding codec and bitrate, and the path to the FFmpeg binary.
      |
      */
 
     'streaming' => [
         'bitrate' => env('TRANSCODE_BIT_RATE') ?: env('OUTPUT_BIT_RATE', 128),
         'aac_fast' => env('TRANSCODE_AAC_FAST', true),
+        'transcode_codec' => TranscodeCodec::tryFrom((string) env('TRANSCODE_CODEC')) ?? TranscodeCodec::default(),
         'method' => env('STREAMING_METHOD'),
         'ffmpeg_path' => env('FFMPEG_PATH') ?: find_ffmpeg_path(),
         'transcode_flac' => env('TRANSCODE_FLAC', true),
