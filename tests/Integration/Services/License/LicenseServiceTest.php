@@ -256,6 +256,17 @@ class LicenseServiceTest extends TestCase
         Saloon::assertSentCount(1);
     }
 
+    #[Test]
+    public function getLicenseStatusDoesNotCacheAFailureThatIsNotTheValidationService(): void
+    {
+        License::factory()->createOne();
+
+        Saloon::fake([ValidateLicenseRequest::class => MockResponse::make(body: '{"not":"a license"}')]);
+
+        self::assertSame(Status::UNKNOWN, $this->service->getStatus()->status);
+        self::assertFalse(Cache::has('license_status'));
+    }
+
     /** @return array<array{int}> */
     public static function provideInconclusiveResponseStatuses(): array
     {
