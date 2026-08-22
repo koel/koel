@@ -17,6 +17,7 @@ import { commonStore } from '@/stores/commonStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import { logger } from '@/utils/logger'
 import { playbackService } from '@/services/QueuePlaybackService'
+import { useBranding } from '@/composables/useBranding'
 
 describe('playbackService', () => {
   const h = createHarness({
@@ -364,6 +365,21 @@ describe('playbackService', () => {
     await playbackService.playFirstInQueue()
 
     expect(playMock).toHaveBeenCalledWith(songs[0])
+  })
+
+  it.each<[string, string | null]>([
+    ['the playable cover', 'https://test/cover.jpg'],
+    ['the branding cover', null],
+  ])('sets the media session artwork to %s', (_, albumCover) => {
+    const song = h.factory('song').make({ album_cover: albumCover! })
+    preferences.temporary.show_now_playing_notification = false
+
+    playbackService.showNotification(song)
+
+    const { artwork } = navigator.mediaSession.metadata!
+
+    expect(artwork).toHaveLength(8)
+    artwork!.forEach(image => expect(image.src).toBe(albumCover ?? useBranding().cover))
   })
 
   it('stops listening to media event after deactivation', () => {
