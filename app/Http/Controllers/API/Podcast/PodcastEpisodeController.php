@@ -17,6 +17,8 @@ class PodcastEpisodeController extends Controller
 
     public function index(Podcast $podcast)
     {
+        $this->authorize('view', $podcast);
+
         if (request()->boolean('refresh')) {
             $this->podcastService->refreshPodcast($podcast);
         }
