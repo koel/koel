@@ -179,14 +179,15 @@ export class QueuePlaybackService extends BasePlaybackService {
       return
     }
 
+    const cover = getPlayableProp(playable, 'album_cover', 'episode_image') || useBranding().cover
+
     navigator.mediaSession.metadata = new MediaMetadata({
       title: playable.title,
       artist: getPlayableProp(playable, 'artist_name', 'podcast_author'),
       album: getPlayableProp(playable, 'album_name', 'podcast_title'),
       artwork: [48, 64, 96, 128, 192, 256, 384, 512].map(d => ({
-        src: getPlayableProp(playable, 'album_cover', 'episode_image'),
+        src: cover,
         sizes: `${d}x${d}`,
-        type: 'image/png',
       })),
     })
   }

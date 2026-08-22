@@ -2,6 +2,7 @@ import vueSnapshotSerializer from 'jest-serializer-vue'
 import { expect, vi } from 'vite-plus/test'
 import './shims/popover'
 import './shims/storage'
+import './shims/mediaSession'
 
 declare global {
   interface Window {
