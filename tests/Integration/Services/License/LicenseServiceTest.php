@@ -242,7 +242,7 @@ class LicenseServiceTest extends TestCase
     }
 
     #[Test]
-    public function getLicenseStatusCachesAnUnknownStatus(): void
+    public function getLicenseStatusCachesAnUnknownStatusOnlyBriefly(): void
     {
         License::factory()->createOne();
 
@@ -254,6 +254,11 @@ class LicenseServiceTest extends TestCase
         $this->service->getStatus();
 
         Saloon::assertSentCount(1);
+
+        $this->travel(16)->minutes();
+        $this->service->getStatus();
+
+        Saloon::assertSentCount(2);
     }
 
     #[Test]
