@@ -10,6 +10,7 @@ use App\Models\Song;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Laravel\Scout\EngineManager;
 use Laravel\Scout\Engines\Engine;
 use Mockery;
@@ -23,6 +24,12 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        // These cases deliberately hand the listener an EMPTY scan result and assert that rows
+        // are deleted. Since an empty result is otherwise refused (a media directory that has
+        // silently stopped holding the library looks identical to an emptied one), they opt in
+        // explicitly.
+        config(['koel.scanning.allow_empty_scan_deletion' => true]);
 
         $this->listener = app(DeleteNonExistingRecordsPostScan::class);
     }
@@ -101,6 +108,57 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
 
         self::assertModelMissing($album);
         self::assertModelMissing($artist);
+    }
+
+    #[Test]
+    public function refusesToDeleteEverythingWhenAScanReturnsNothing(): void
+    {
+        config(['koel.scanning.allow_empty_scan_deletion' => false]);
+        Log::spy();
+
+        $songs = Song::factory()->createMany(3);
+
+        // What a mount point whose backing filesystem went away produces: a scan that completes
+        // successfully over a readable directory and reports no valid files at all.
+        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+
+        $songs->each($this->assertModelExists(...));
+
+        // The warning is half of what this guard is for. Silently keeping the rows would leave an
+        // operator with a library that stopped updating and nothing saying why.
+        Log::shouldHaveReceived('warning') // @phpstan-ignore-line
+            ->once()
+            ->withArgs(static fn (string $message) => str_contains($message, 'Refusing to delete'));
+    }
+
+    #[Test]
+    public function stillDeletesWhenAnEmptyScanIsExplicitlyAllowed(): void
+    {
+        config(['koel.scanning.allow_empty_scan_deletion' => true]);
+
+        $song = Song::factory()->createOne();
+
+        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+
+        $this->assertModelMissing($song);
+    }
+
+    #[Test]
+    public function stillDeletesVanishedFilesWhenTheScanFoundSomething(): void
+    {
+        config(['koel.scanning.allow_empty_scan_deletion' => false]);
+
+        /** @var Collection|array<array-key, Song> $songs */
+        $songs = Song::factory()->createMany(2);
+
+        // A non-empty result is unambiguous, so the guard must not interfere with it.
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($songs[0]->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        $this->assertModelExists($songs[0]);
+        $this->assertModelMissing($songs[1]);
     }
 
     #[Test]

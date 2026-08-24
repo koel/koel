@@ -195,6 +195,17 @@ return [
      */
     'ignore_dot_files' => env('IGNORE_DOT_FILES', true),
 
+    'scanning' => [
+        /*
+         * A scan that finds no valid files is ambiguous: the library may be empty, or the media
+         * directory may have silently stopped holding it, for example a bind mount whose backing
+         * filesystem went away and left an empty but readable directory behind. Koel deletes
+         * every song row not seen by the scan, so the second case wipes the library. Set this to
+         * true only if an empty scan should really be treated as an empty library.
+         */
+        'allow_empty_scan_deletion' => env('KOEL_ALLOW_EMPTY_SCAN_DELETION', false),
+    ],
+
     'force_https' => env('FORCE_HTTPS', false),
     'backup_on_delete' => env('BACKUP_ON_DELETE', true),
 
