@@ -103,8 +103,8 @@ importers:
         specifier: ^19.8.1
         version: 19.8.1
       '@faker-js/faker':
-        specifier: ^9.8.0
-        version: 9.8.0
+        specifier: ^10.5.0
+        version: 10.5.0
       '@floating-ui/dom':
         specifier: ^1.7.2
         version: 1.7.2
@@ -152,7 +152,7 @@ importers:
         version: 10.4.21(postcss@8.5.23)
       factoria:
         specifier: ^5.0.0
-        version: 5.0.0(@faker-js/faker@9.8.0)
+        version: 5.0.0(@faker-js/faker@10.5.0)
       fake-indexeddb:
         specifier: ^6.2.5
         version: 6.2.5
@@ -612,9 +612,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@faker-js/faker@9.8.0':
-    resolution: {integrity: sha512-U9wpuSrJC93jZBxx/Qq2wPjCuYISBueyVUGK7qqdmj7r/nxaxwW8AQDCLeRO7wZnjj94sh3p246cAYjUKuqgfg==}
-    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+  '@faker-js/faker@10.5.0':
+    resolution: {integrity: sha512-bsxD8WLS5lIj7aaoCx1YJkktqYj5vlBUE6HWzu2Q51ksrGJ0H737ECCKlFU7Yf8Br45z9t99frBp/J7kzbMPAg==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@floating-ui/core@1.7.2':
     resolution: {integrity: sha512-wNB5ooIKHQc+Kui96jE/n69rHFWAVoxn5CAzL1Xdd8FG03cgY3MLO+GF9U3W737fYDSgPWA6MReKhBQBop6Pcw==}
@@ -685,12 +685,12 @@ packages:
       socket.io-client: '*'
       vue: ^3.0.0
 
-  '@napi-rs/wasm-runtime@1.2.2':
-    resolution: {integrity: sha512-JfB4kuJQjaoHuCTseIINHtHWeJnvgEcxjwA5t/Y00ZgaOO1Crz3fjT/p8kT28zA/Caz7oiUMn3d6H2yOVCVwuw==}
+  '@napi-rs/wasm-runtime@1.2.3':
+    resolution: {integrity: sha512-UMduMbqO5s5zF2NkNacMT/yK5Y5QiKvWr2+50bzIIxFDwVJ2h49b+oyjaCGPhJxd2/gC2x39EHv/gHVuu36x2Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=23.5.0}
     peerDependencies:
-      '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.3
-      '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.3
+      '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.4
+      '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.4
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -4207,7 +4207,7 @@ snapshots:
   '@esbuild/win32-x64@0.27.3':
     optional: true
 
-  '@faker-js/faker@9.8.0': {}
+  '@faker-js/faker@10.5.0': {}
 
   '@floating-ui/core@1.7.2':
     dependencies:
@@ -4283,7 +4283,7 @@ snapshots:
       socket.io-client: 4.8.1
       vue: 3.5.29(typescript@5.8.3)
 
-  '@napi-rs/wasm-runtime@1.2.2(@emnapi/core@1.9.0)(@emnapi/runtime@1.9.0)':
+  '@napi-rs/wasm-runtime@1.2.3(@emnapi/core@1.9.0)(@emnapi/runtime@1.9.0)':
     dependencies:
       '@emnapi/core': 1.9.0
       '@emnapi/runtime': 1.9.0
@@ -4488,7 +4488,7 @@ snapshots:
 
   '@rolldown/binding-wasm32-wasi@1.0.0-rc.9(@emnapi/core@1.9.0)(@emnapi/runtime@1.9.0)':
     dependencies:
-      '@napi-rs/wasm-runtime': 1.2.2(@emnapi/core@1.9.0)(@emnapi/runtime@1.9.0)
+      '@napi-rs/wasm-runtime': 1.2.3(@emnapi/core@1.9.0)(@emnapi/runtime@1.9.0)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
@@ -5553,9 +5553,9 @@ snapshots:
 
   extend@3.0.2: {}
 
-  factoria@5.0.0(@faker-js/faker@9.8.0):
+  factoria@5.0.0(@faker-js/faker@10.5.0):
     dependencies:
-      '@faker-js/faker': 9.8.0
+      '@faker-js/faker': 10.5.0
 
   fake-indexeddb@6.2.5: {}
 

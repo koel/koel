@@ -15,6 +15,9 @@ on:
       - docs/**
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -45,15 +48,17 @@ jobs:
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
       - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
           extensions: pdo_pgsql, zip, gd
       - name: Install PHP dependencies
-        uses: ramsey/composer-install@v2
+        uses: ramsey/composer-install@1919f6c305aea6ab10e6181a8ddf72317ad77e0e # 2.3.1
         with:
           composer-options: --prefer-dist
       - name: Generate app key
@@ -63,7 +68,7 @@ jobs:
         env:
           COMPOSER_PROCESS_TIMEOUT: 600
       - name: Upload logs if broken
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
           name: unit-be-pgsql-logs-${{ github.run_id }}-${{ github.run_attempt }}

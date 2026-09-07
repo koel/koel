@@ -8,6 +8,7 @@ use App\Http\Responses\Subsonic\Resources\AlbumInfoResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\AlbumRepository;
 use App\Services\Contracts\Encyclopedia;
+use stdClass;
 
 class GetAlbumInfo2Controller extends Controller
 {
@@ -22,7 +23,7 @@ class GetAlbumInfo2Controller extends Controller
         $info = $this->encyclopedia->getAlbumInformation($album);
 
         return SubsonicResponse::ok([
-            'albumInfo' => $info ? AlbumInfoResource::toArray($info) : [],
+            'albumInfo' => $info ? AlbumInfoResource::toArray($info) : new stdClass(),
         ]);
     }
 }

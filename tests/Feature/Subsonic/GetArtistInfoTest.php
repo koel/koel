@@ -17,7 +17,7 @@ class GetArtistInfoTest extends TestCase
     public function returnsBiographyFromEncyclopediaUnderArtistInfoWrapper(): void
     {
         $user = create_user();
-        $artist = Artist::factory()->createOne(['user_id' => $user->id]);
+        $artist = Artist::factory()->for($user)->createOne();
 
         $this
             ->mock(Encyclopedia::class)
@@ -47,7 +47,7 @@ class GetArtistInfoTest extends TestCase
     public function returnsEmptyArtistInfoWhenEncyclopediaReturnsNull(): void
     {
         $user = create_user();
-        $artist = Artist::factory()->createOne(['user_id' => $user->id]);
+        $artist = Artist::factory()->for($user)->createOne();
 
         $this->mock(Encyclopedia::class)->expects('getArtistInformation')->andReturnNull();
 
@@ -60,6 +60,8 @@ class GetArtistInfoTest extends TestCase
                 ]),
         )->assertOk();
 
-        self::assertSame([], $response->json('subsonic-response.artistInfo'));
+        // Raw body, not ->json(): json_decode() maps {} and [] to the same PHP value, so a
+        // decoded comparison passes whichever one the server emitted.
+        self::assertStringContainsString('"artistInfo":{}', $response->getContent());
     }
 }

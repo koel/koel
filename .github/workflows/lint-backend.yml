@@ -15,6 +15,9 @@ on:
       - docs/**
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -22,14 +25,16 @@ jobs:
       matrix:
         php-version: [ 8.3 ]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
       - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
       - name: Install PHP dependencies
-        uses: ramsey/composer-install@v2
+        uses: ramsey/composer-install@1919f6c305aea6ab10e6181a8ddf72317ad77e0e # 2.3.1
         with:
           composer-options: --prefer-dist
       - name: Run code style checker

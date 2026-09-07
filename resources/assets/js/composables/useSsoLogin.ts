@@ -3,7 +3,7 @@ import { openPopup } from '@/utils/helpers'
 export const useSsoLogin = () => {
   let stopListening = () => {}
 
-  const startSsoLogin = (redirectUrl: string, popupName: string, onToken: (token: string) => void) => {
+  const startSsoLogin = (redirectUrl: string, popupName: string, onToken: (token: CompositeToken) => void) => {
     stopListening()
 
     const popup = openPopup(redirectUrl, popupName, 768, 640, window)
@@ -20,7 +20,7 @@ export const useSsoLogin = () => {
         return
       }
 
-      if (typeof message.data !== 'string') {
+      if (typeof message.data?.token !== 'string' || typeof message.data?.['audio-token'] !== 'string') {
         return
       }
 
