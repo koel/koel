@@ -28,7 +28,9 @@ class PwaManifestTest extends TestCase
             ->assertHeader('Content-Type', 'application/manifest+json')
             ->assertJsonPath('name', 'Koel')
             ->assertJsonPath('start_url', 'https://music.example.com/')
-            ->assertJsonPath('icons.0.sizes', '192x192');
+            ->assertJsonPath('icons.0.sizes', '192x192')
+            ->assertJsonPath('background_color', '#111111')
+            ->assertJsonPath('theme_color', '#111111');
     }
 
     #[Test]

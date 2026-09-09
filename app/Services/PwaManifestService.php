@@ -58,9 +58,9 @@ class PwaManifestService
                     'type' => 'image/png',
                 ],
             ],
-            'background_color' => '#181818',
+            'background_color' => '#111111',
             'description' => 'Personal audio streaming service that works.',
-            'theme_color' => '#181818',
+            'theme_color' => '#111111',
         ];
     }
 
