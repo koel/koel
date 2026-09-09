@@ -8,6 +8,8 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\DotenvEditor;
+use App\Services\PublicStorageLinker;
+use App\Services\PwaManifestService;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
@@ -34,6 +36,8 @@ class InitCommand extends Command
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly DotenvEditor $dotenvEditor,
+        private readonly PublicStorageLinker $publicStorageLinker,
+        private readonly PwaManifestService $pwaManifestService,
     ) {
         parent::__construct();
     }
@@ -61,7 +65,7 @@ class InitCommand extends Command
             $this->migrateLegacyImages();
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
-            $this->maybeCopyManifests();
+            $this->removeLegacyManifests();
             $this->tryInstallingScheduler();
         } catch (Throwable $e) {
             Log::error($e);
@@ -267,17 +271,13 @@ class InitCommand extends Command
 
     private function linkStorage(): void
     {
-        $result = self::SUCCESS;
+        $linked = false;
 
-        $this->components->task('Linking storage', static function () use (&$result): void {
-            $result = Artisan::call('storage:link', [
-                '--quiet' => true,
-                '--relative' => true,
-                '--force' => true,
-            ]);
+        $this->components->task('Linking storage', function () use (&$linked): void {
+            $linked = $this->publicStorageLinker->link();
         });
 
-        if ($result !== self::SUCCESS) {
+        if (!$linked) {
             $this->components->warn('Failed to link storage. Album and artist images may not load until you run '
             . '`php artisan storage:link` manually.');
         }
@@ -432,20 +432,10 @@ class InitCommand extends Command
         }
     }
 
-    private function maybeCopyManifests(): void
+    private function removeLegacyManifests(): void
     {
-        foreach (['manifest.json', 'manifest-remote.json'] as $file) {
-            $destination = public_path($file);
-            $source = public_path("$file.example");
-
-            if (File::exists($destination)) {
-                $this->components->task("$file already exists -- skipping");
-                continue;
-            }
-
-            $this->components->task("Copying $file", static function () use ($source, $destination): void {
-                File::copy($source, $destination);
-            });
-        }
+        $this->components->task('Removing legacy manifests', function (): void {
+            $this->pwaManifestService->removeUncustomizedLegacyFiles();
+        });
     }
 }

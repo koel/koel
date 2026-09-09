@@ -8,12 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="mobile-web-app-capable" content="yes">
 
-    <meta name="theme-color" content="#282828">
-    <meta name="msapplication-navbutton-color" content="#282828">
+    <meta name="theme-color" content="#111111">
+    <meta name="msapplication-navbutton-color" content="#111111">
 
     <link rel="stylesheet" href="{{ static_url('css/layer-order.css') }}">
 
-    <link rel="manifest" href="{{ static_url('manifest.json') }}" />
+    <link rel="manifest" href="@yield('manifest', route('manifest'))" />
     <meta name="msapplication-config" content="{{ static_url('browserconfig.xml') }}" />
     <link rel="icon" type="image/x-icon" href="{{ koel_branding('logo') ?? static_url('img/favicon.ico') }}" />
     <link rel="icon" href="{{ koel_branding('logo') ?? static_url('img/icon.png') }}">
