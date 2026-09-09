@@ -8,8 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="mobile-web-app-capable" content="yes">
 
-    <meta name="theme-color" content="#282828">
-    <meta name="msapplication-navbutton-color" content="#282828">
+    <meta name="theme-color" content="#111111">
+    <meta name="msapplication-navbutton-color" content="#111111">
 
     <link rel="stylesheet" href="{{ static_url('css/layer-order.css') }}">
 

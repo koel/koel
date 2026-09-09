@@ -72,6 +72,14 @@ class PwaManifestTest extends TestCase
     }
 
     #[Test]
+    public function pageThemeColorMatchesTheManifest(): void
+    {
+        $themeColor = $this->get('manifest.json')->json('theme_color');
+
+        $this->withoutVite()->get('/')->assertSee('<meta name="theme-color" content="' . $themeColor . '">', false);
+    }
+
+    #[Test]
     public function removesLegacyManifestsStillPointingAtThePlaceholderHost(): void
     {
         File::put(public_path('manifest.json'), json_encode(['start_url' => 'https://your.koel.host']));
