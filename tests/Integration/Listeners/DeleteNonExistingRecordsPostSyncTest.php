@@ -25,12 +25,6 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     {
         parent::setUp();
 
-        // These cases deliberately hand the listener an EMPTY scan result and assert that rows
-        // are deleted. Since an empty result is otherwise refused (a media directory that has
-        // silently stopped holding the library looks identical to an emptied one), they opt in
-        // explicitly.
-        config(['koel.scanning.allow_empty_scan_deletion' => true]);
-
         $this->listener = app(DeleteNonExistingRecordsPostScan::class);
     }
 
@@ -113,7 +107,6 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     #[Test]
     public function refusesToDeleteEverythingWhenAScanReturnsNothing(): void
     {
-        config(['koel.scanning.allow_empty_scan_deletion' => false]);
         Log::spy();
 
         $songs = Song::factory()->createMany(3);
@@ -132,22 +125,8 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     }
 
     #[Test]
-    public function stillDeletesWhenAnEmptyScanIsExplicitlyAllowed(): void
-    {
-        config(['koel.scanning.allow_empty_scan_deletion' => true]);
-
-        $song = Song::factory()->createOne();
-
-        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
-
-        $this->assertModelMissing($song);
-    }
-
-    #[Test]
     public function stillDeletesVanishedFilesWhenTheScanFoundSomething(): void
     {
-        config(['koel.scanning.allow_empty_scan_deletion' => false]);
-
         /** @var Collection|array<array-key, Song> $songs */
         $songs = Song::factory()->createMany(2);
 
@@ -169,9 +148,13 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $manager->shouldReceive('engine')->andReturn($engine);
         $this->app->instance(EngineManager::class, $manager);
 
+        $kept = Song::factory()->createOne();
         $orphan = Song::factory()->createOne();
 
-        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($kept->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
 
         self::assertModelMissing($orphan);
         $engine->shouldHaveReceived('delete')->atLeast()->once(); // @phpstan-ignore-line

@@ -32,8 +32,8 @@ readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
                 'Scan reported no valid files while the library still holds songs. Refusing to '
                 . 'delete them, because a media directory that has become empty, for example a '
                 . 'bind mount whose backing filesystem went away, is indistinguishable from a '
-                . 'library that was emptied on purpose. Set '
-                . 'KOEL_ALLOW_EMPTY_SCAN_DELETION=true if it really was emptied.',
+                . 'library that was emptied on purpose. If it really was emptied, the rows '
+                . 'will be removed by the next scan that finds any file.',
             );
 
             return;
@@ -64,10 +64,6 @@ readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
      */
     private function wouldDeleteEverythingOnAnEmptyScan(MediaScanCompleted $event, array $paths): bool
     {
-        if (config('koel.scanning.allow_empty_scan_deletion')) {
-            return false;
-        }
-
         if ($event->results->valid()->isNotEmpty()) {
             return false;
         }
