@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\DotenvEditor;
+use App\Services\PublicStorageLinker;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
@@ -34,6 +35,7 @@ class InitCommand extends Command
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly DotenvEditor $dotenvEditor,
+        private readonly PublicStorageLinker $publicStorageLinker,
     ) {
         parent::__construct();
     }
@@ -267,17 +269,13 @@ class InitCommand extends Command
 
     private function linkStorage(): void
     {
-        $result = self::SUCCESS;
+        $linked = false;
 
-        $this->components->task('Linking storage', static function () use (&$result): void {
-            $result = Artisan::call('storage:link', [
-                '--quiet' => true,
-                '--relative' => true,
-                '--force' => true,
-            ]);
+        $this->components->task('Linking storage', function () use (&$linked): void {
+            $linked = $this->publicStorageLinker->link();
         });
 
-        if ($result !== self::SUCCESS) {
+        if (!$linked) {
             $this->components->warn('Failed to link storage. Album and artist images may not load until you run '
             . '`php artisan storage:link` manually.');
         }
