@@ -75,7 +75,7 @@ class PublicStorageLinkerTest extends TestCase
     }
 
     #[Test]
-    public function leavesUpToDateLinkUntouched(): void
+    public function leavesUpToDateAbsoluteLinkUntouched(): void
     {
         symlink($this->target, $this->link);
 
@@ -83,6 +83,17 @@ class PublicStorageLinkerTest extends TestCase
 
         self::assertTrue($this->linker->link());
         self::assertSame($this->target, readlink($this->link));
+    }
+
+    #[Test]
+    public function leavesUpToDateRelativeLinkUntouched(): void
+    {
+        symlink('../storage/app/public', $this->link);
+
+        Artisan::partialMock()->shouldNotReceive('call')->with('storage:link', Mockery::any());
+
+        self::assertTrue($this->linker->link());
+        self::assertSame('../storage/app/public', readlink($this->link));
     }
 
     #[Test]
