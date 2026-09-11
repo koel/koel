@@ -17,7 +17,7 @@ use function Tests\create_user;
 class ScrobbleServiceTest extends TestCase
 {
     private LastfmService|MockInterface $lastfm;
-    private ListenBrainzService|MockInterface $listenbrainz;
+    private ListenBrainzService|MockInterface $listenBrainz;
     private ScrobbleService $service;
     private User $user;
 
@@ -26,8 +26,8 @@ class ScrobbleServiceTest extends TestCase
         parent::setUp();
 
         $this->lastfm = Mockery::mock(LastfmService::class);
-        $this->listenbrainz = Mockery::mock(ListenBrainzService::class);
-        $this->service = new ScrobbleService($this->lastfm, $this->listenbrainz);
+        $this->listenBrainz = Mockery::mock(ListenBrainzService::class);
+        $this->service = new ScrobbleService($this->lastfm, $this->listenBrainz);
         $this->user = create_user();
     }
 
@@ -36,10 +36,10 @@ class ScrobbleServiceTest extends TestCase
     {
         $song = Song::factory()->make();
         $this->lastfm->allows('isConnected')->andReturnTrue();
-        $this->listenbrainz->allows('isConnected')->andReturnTrue();
+        $this->listenBrainz->allows('isConnected')->andReturnTrue();
 
         $this->lastfm->expects('scrobble')->with($song, $this->user, 100);
-        $this->listenbrainz->expects('scrobble')->with($song, $this->user, 100);
+        $this->listenBrainz->expects('scrobble')->with($song, $this->user, 100);
 
         $this->service->scrobble($song, $this->user, 100);
     }
@@ -49,10 +49,10 @@ class ScrobbleServiceTest extends TestCase
     {
         $song = Song::factory()->make();
         $this->lastfm->allows('isConnected')->andReturnFalse();
-        $this->listenbrainz->allows('isConnected')->andReturnTrue();
+        $this->listenBrainz->allows('isConnected')->andReturnTrue();
 
         $this->lastfm->shouldNotReceive('scrobble');
-        $this->listenbrainz->expects('scrobble')->with($song, $this->user, 100);
+        $this->listenBrainz->expects('scrobble')->with($song, $this->user, 100);
 
         $this->service->scrobble($song, $this->user, 100);
     }
@@ -62,10 +62,10 @@ class ScrobbleServiceTest extends TestCase
     {
         $song = Song::factory()->make();
         $this->lastfm->allows('isConnected')->andReturnFalse();
-        $this->listenbrainz->allows('isConnected')->andReturnTrue();
+        $this->listenBrainz->allows('isConnected')->andReturnTrue();
 
         $this->lastfm->shouldNotReceive('updateNowPlaying');
-        $this->listenbrainz->expects('updateNowPlaying')->with($song, $this->user);
+        $this->listenBrainz->expects('updateNowPlaying')->with($song, $this->user);
 
         $this->service->updateNowPlaying($song, $this->user);
     }
@@ -74,7 +74,7 @@ class ScrobbleServiceTest extends TestCase
     public function hasConnectedScrobbler(): void
     {
         $this->lastfm->allows('isConnected')->andReturnFalse();
-        $this->listenbrainz->allows('isConnected')->andReturnTrue();
+        $this->listenBrainz->allows('isConnected')->andReturnTrue();
 
         self::assertTrue($this->service->hasConnectedScrobbler($this->user));
     }
@@ -83,7 +83,7 @@ class ScrobbleServiceTest extends TestCase
     public function hasNoConnectedScrobbler(): void
     {
         $this->lastfm->allows('isConnected')->andReturnFalse();
-        $this->listenbrainz->allows('isConnected')->andReturnFalse();
+        $this->listenBrainz->allows('isConnected')->andReturnFalse();
 
         self::assertFalse($this->service->hasConnectedScrobbler($this->user));
     }

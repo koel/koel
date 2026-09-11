@@ -5,7 +5,7 @@ import { http } from '@/services/http'
 import { userStore } from '@/stores/userStore'
 import Component from './ListenBrainzIntegration.vue'
 
-describe('listenbrainzIntegration.vue', () => {
+describe('listenBrainzIntegration.vue', () => {
   const h = createHarness()
 
   const renderForConnectedUser = (connected: boolean) => {

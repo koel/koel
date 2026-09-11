@@ -29,7 +29,7 @@ class ScrobbleTest extends TestCase
     }
 
     #[Test]
-    public function listenbrainzScrobble(): void
+    public function listenBrainzScrobble(): void
     {
         $user = create_user(['preferences' => ['listenbrainz_token' => 'my_token']]);
         $song = Song::factory()->createOne();

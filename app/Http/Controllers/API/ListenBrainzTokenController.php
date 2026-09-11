@@ -11,13 +11,13 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class ListenBrainzTokenController extends Controller
 {
     public function __construct(
-        private readonly ListenBrainzService $listenbrainz,
+        private readonly ListenBrainzService $listenBrainz,
     ) {}
 
     /** @param User $user */
     public function store(SetListenBrainzTokenRequest $request, Authenticatable $user)
     {
-        $this->listenbrainz->setUserToken($user, $request->token);
+        $this->listenBrainz->setUserToken($user, $request->token);
 
         return response()->noContent();
     }
@@ -25,7 +25,7 @@ class ListenBrainzTokenController extends Controller
     /** @param User $user */
     public function destroy(Authenticatable $user)
     {
-        $this->listenbrainz->setUserToken($user, null);
+        $this->listenBrainz->setUserToken($user, null);
 
         return response()->noContent();
     }

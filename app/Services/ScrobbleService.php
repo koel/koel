@@ -13,9 +13,9 @@ class ScrobbleService
     /** @var array<Scrobbler> */
     private array $scrobblers;
 
-    public function __construct(LastfmService $lastfm, ListenBrainzService $listenbrainz)
+    public function __construct(LastfmService $lastfm, ListenBrainzService $listenBrainz)
     {
-        $this->scrobblers = [$lastfm, $listenbrainz];
+        $this->scrobblers = [$lastfm, $listenBrainz];
     }
 
     public function scrobble(Song $song, User $user, int $timestamp): void

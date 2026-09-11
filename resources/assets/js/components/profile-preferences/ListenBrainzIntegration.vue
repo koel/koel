@@ -1,7 +1,7 @@
 <template>
   <section>
     <h3 class="text-2xl mb-2 flex items-center gap-2">
-      <img :src="listenbrainzLogo" alt="ListenBrainz Logo" height="20" width="20" />
+      <img :src="listenBrainzLogo" alt="ListenBrainz Logo" height="20" width="20" />
       ListenBrainz
     </h3>
 
@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import listenbrainzLogo from '@/../img/logos/listenbrainz.svg'
+import listenBrainzLogo from '@/../img/logos/listenbrainz.svg'
 
 import { computed } from 'vue'
 import { http } from '@/services/http'
