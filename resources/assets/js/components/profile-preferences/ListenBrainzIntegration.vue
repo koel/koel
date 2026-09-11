@@ -1,7 +1,7 @@
 <template>
   <section>
     <h3 class="text-2xl mb-2 flex items-center gap-2">
-      <img :src="listenBrainzLogo" alt="ListenBrainz Logo" height="20" width="20" />
+      <img :src="listenBrainzLogo" alt="" height="20" width="20" />
       ListenBrainz
     </h3>
 

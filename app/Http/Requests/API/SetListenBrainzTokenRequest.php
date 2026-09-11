@@ -12,6 +12,6 @@ class SetListenBrainzTokenRequest extends Request
     /** @inheritdoc */
     public function rules(): array
     {
-        return ['token' => ['required', 'string', new ValidListenBrainzToken()]];
+        return ['token' => ['bail', 'required', 'string', new ValidListenBrainzToken()]];
     }
 }

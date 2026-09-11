@@ -47,6 +47,19 @@ class ListenBrainzTest extends TestCase
     }
 
     #[Test]
+    public function nonStringTokenIsRejectedWithoutCallingListenBrainz(): void
+    {
+        Saloon::fake([ValidateTokenRequest::class => MockResponse::make(['valid' => true])]);
+
+        $this
+            ->postAs('api/listenbrainz/token', ['token' => ['not', 'a', 'string']], create_user())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrorFor('token');
+
+        Saloon::assertNothingSent();
+    }
+
+    #[Test]
     public function disconnect(): void
     {
         $user = create_user(['preferences' => ['listenbrainz_token' => 'my_token']]);
