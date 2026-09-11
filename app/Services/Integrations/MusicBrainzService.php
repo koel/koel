@@ -4,6 +4,7 @@ namespace App\Services\Integrations;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Song;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;
 use App\Pipelines\Encyclopedia\GetArtistWikidataIdUsingMbid;
@@ -14,7 +15,10 @@ use App\Pipelines\Encyclopedia\GetWikipediaPageTitleUsingWikidataId;
 use App\Services\Contracts\Encyclopedia;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Pipeline;
+use Illuminate\Support\Str;
 
 class MusicBrainzService implements Encyclopedia
 {
@@ -30,9 +34,13 @@ class MusicBrainzService implements Encyclopedia
         }
 
         return rescue_if(static::enabled(), static function () use ($artist) {
-            $wikipediaSummary = Pipeline::send($artist->name)
+            /** @var string|null $mbid */
+            $mbid = Pipeline::send($artist->name)->through([GetMbidForArtist::class])->thenReturn();
+
+            $artist->setMbidIfMissing($mbid);
+
+            $wikipediaSummary = Pipeline::send($mbid)
                 ->through([
-                    GetMbidForArtist::class,
                     GetArtistWikidataIdUsingMbid::class,
                     GetWikipediaPageTitleUsingWikidataId::class,
                     GetWikipediaPageSummaryUsingPageTitle::class,
@@ -63,12 +71,16 @@ class MusicBrainzService implements Encyclopedia
                 'artist' => $album->artist->name,
             ])->through([GetReleaseAndReleaseGroupMbidsForAlbum::class])->thenReturn();
 
+            $album->setMbidIfMissing($albumMbid);
+
             if (!$albumMbid || !$releaseGroupMbid) {
                 return null;
             }
 
             /** @var array<mixed> $tracks */
             $tracks = Pipeline::send($albumMbid)->through([GetAlbumTracksUsingMbid::class])->thenReturn() ?: [];
+
+            self::storeRecordingMbids($album, $tracks);
 
             $wikipediaSummary = Pipeline::send($releaseGroupMbid)
                 ->through([
@@ -84,5 +96,44 @@ class MusicBrainzService implements Encyclopedia
                     $tracks,
                 );
         });
+    }
+
+    /**
+     * Match the release's tracks to the album's songs by title, which doubles as the safety check: a release the
+     * name search got wrong shares no titles with the album, so nothing is stored.
+     *
+     * @param array<mixed> $tracks
+     */
+    private static function storeRecordingMbids(Album $album, array $tracks): void
+    {
+        $recordingMbids = self::getRecordingMbidsByTitle($tracks);
+
+        if ($recordingMbids->isEmpty()) {
+            return;
+        }
+
+        $album->songs->each(static fn (Song $song) => $song->setMbidIfMissing($recordingMbids->get(self::normalizeTitle($song->title))));
+    }
+
+    /**
+     * Titles appearing more than once on a release can't be matched to a single recording, so they are dropped.
+     *
+     * @param array<mixed> $tracks
+     *
+     * @return Collection<array-key, string>
+     */
+    private static function getRecordingMbidsByTitle(array $tracks): Collection
+    {
+        return collect($tracks)
+            ->filter(static fn (array $track): bool => (bool) Arr::get($track, 'recording.id'))
+            ->groupBy(static fn (array $track): string => self::normalizeTitle(Arr::get($track, 'title')))
+            ->reject(static fn (Collection $group): bool => $group->count() > 1)
+            ->map(static fn (Collection $group): string => (string) Arr::get($group->first(), 'recording.id'))
+            ->except('');
+    }
+
+    private static function normalizeTitle(?string $title): string
+    {
+        return Str::lower(trim($title ?? ''));
     }
 }
