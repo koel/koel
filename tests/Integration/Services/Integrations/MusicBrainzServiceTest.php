@@ -2,8 +2,6 @@
 
 namespace Tests\Integration\Services\Integrations;
 
-use App\Events\AlbumMbidsResolved;
-use App\Events\ArtistMbidResolved;
 use App\Models\Artist;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;
@@ -16,7 +14,6 @@ use App\Services\Integrations\MusicBrainzService;
 use App\Values\Album\AlbumInformation;
 use Exception;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -165,73 +162,5 @@ class MusicBrainzServiceTest extends TestCase
             ]);
 
         self::assertNull($this->service->getAlbumInformation($album));
-    }
-
-    #[Test]
-    public function announceResolvedArtistMbid(): void
-    {
-        Event::fake([ArtistMbidResolved::class]);
-
-        $this->mockPipelinePipe(GetMbidForArtist::class, 'Skid Row', 'sample-artist-mbid');
-        $this->mockPipelinePipe(GetArtistWikidataIdUsingMbid::class, 'sample-artist-mbid', null);
-
-        $artist = Artist::factory()->createOne(['name' => 'Skid Row']);
-
-        $this->service->getArtistInformation($artist);
-
-        Event::assertDispatched(
-            ArtistMbidResolved::class,
-            static fn (ArtistMbidResolved $event): bool => (
-                $event->artist->is($artist)
-                && $event->mbid === 'sample-artist-mbid'
-            ),
-        );
-    }
-
-    #[Test]
-    public function announceNothingWhenTheArtistHasNoMbid(): void
-    {
-        Event::fake([ArtistMbidResolved::class]);
-
-        $this->mockPipelinePipe(GetMbidForArtist::class, 'Skid Row', null);
-        $this->mockPipelinePipe(GetArtistWikidataIdUsingMbid::class, null, null);
-
-        $this->service->getArtistInformation(Artist::factory()->createOne(['name' => 'Skid Row']));
-
-        Event::assertNotDispatched(ArtistMbidResolved::class);
-    }
-
-    #[Test]
-    public function announceResolvedAlbumMbidsEvenWithoutAnArticle(): void
-    {
-        Event::fake([AlbumMbidsResolved::class]);
-
-        $tracks = [['id' => 'track-mbid', 'title' => 'Monkey Business', 'recording' => ['id' => 'recording-mbid']]];
-
-        $this->mockPipelinePipe(
-            GetReleaseAndReleaseGroupMbidsForAlbum::class,
-            ['album' => 'Slave to the Grind', 'artist' => 'Skid Row'],
-            ['sample-album-mbid', null],
-        );
-
-        $this->mockPipelinePipe(GetAlbumTracksUsingMbid::class, 'sample-album-mbid', $tracks);
-
-        $user = create_user();
-        $album = Artist::factory()
-            ->for($user)
-            ->createOne(['name' => 'Skid Row'])
-            ->albums() // @phpstan-ignore-line
-            ->create(['name' => 'Slave to the Grind', 'user_id' => $user->id]);
-
-        self::assertNull($this->service->getAlbumInformation($album));
-
-        Event::assertDispatched(
-            AlbumMbidsResolved::class,
-            static fn (AlbumMbidsResolved $event): bool => (
-                $event->album->is($album)
-                && $event->mbid === 'sample-album-mbid'
-                && $event->tracks === $tracks
-            ),
-        );
     }
 }

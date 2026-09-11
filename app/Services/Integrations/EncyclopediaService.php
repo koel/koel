@@ -17,6 +17,7 @@ class EncyclopediaService
         private readonly Encyclopedia $encyclopedia,
         private readonly ImageStorage $imageStorage,
         private readonly SpotifyService $spotifyService,
+        private readonly MbidService $mbidService,
     ) {}
 
     public function getAlbumInformation(Album $album): ?AlbumInformation
@@ -24,6 +25,9 @@ class EncyclopediaService
         if ($album->is_unknown) {
             return null;
         }
+
+        // Identifiers come from MusicBrainz whenever it's enabled, even when another service supplies the entry.
+        $this->mbidService->fetchAndStoreAlbumMbids($album);
 
         return rescue(
             fn () => Cache::remember(
@@ -40,6 +44,8 @@ class EncyclopediaService
         if ($artist->is_unknown || $artist->is_various) {
             return null;
         }
+
+        $this->mbidService->fetchAndStoreArtistMbid($artist);
 
         return rescue(
             fn () => Cache::remember(

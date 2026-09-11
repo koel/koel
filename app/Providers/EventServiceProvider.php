@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Events\AlbumMbidsResolved;
-use App\Events\ArtistMbidResolved;
 use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
 use App\Events\MultipleSongsLiked;
@@ -18,8 +16,6 @@ use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\MakePlaylistSongsPublic;
 use App\Listeners\PruneLibrary;
-use App\Listeners\StoreAlbumMbids;
-use App\Listeners\StoreArtistMbid;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
 use App\Listeners\UpdateNowPlaying;
 use App\Listeners\WriteScanLog;
@@ -42,14 +38,6 @@ class EventServiceProvider extends BaseServiceProvider
 
         PlaybackStarted::class => [
             UpdateNowPlaying::class,
-        ],
-
-        ArtistMbidResolved::class => [
-            StoreArtistMbid::class,
-        ],
-
-        AlbumMbidsResolved::class => [
-            StoreAlbumMbids::class,
         ],
 
         LibraryChanged::class => [

@@ -2,8 +2,6 @@
 
 namespace App\Services\Integrations;
 
-use App\Events\AlbumMbidsResolved;
-use App\Events\ArtistMbidResolved;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
@@ -34,10 +32,6 @@ class MusicBrainzService implements Encyclopedia
         return rescue_if(static::enabled(), static function () use ($artist) {
             /** @var string|null $mbid */
             $mbid = Pipeline::send($artist->name)->through([GetMbidForArtist::class])->thenReturn();
-
-            if ($mbid) {
-                event(new ArtistMbidResolved($artist, $mbid));
-            }
 
             $wikipediaSummary = Pipeline::send($mbid)
                 ->through([
@@ -71,18 +65,12 @@ class MusicBrainzService implements Encyclopedia
                 'artist' => $album->artist->name,
             ])->through([GetReleaseAndReleaseGroupMbidsForAlbum::class])->thenReturn();
 
-            if (!$albumMbid) {
+            if (!$albumMbid || !$releaseGroupMbid) {
                 return null;
             }
 
             /** @var array<mixed> $tracks */
             $tracks = Pipeline::send($albumMbid)->through([GetAlbumTracksUsingMbid::class])->thenReturn() ?: [];
-
-            event(new AlbumMbidsResolved($album, $albumMbid, $tracks));
-
-            if (!$releaseGroupMbid) {
-                return null;
-            }
 
             $wikipediaSummary = Pipeline::send($releaseGroupMbid)
                 ->through([
