@@ -38,7 +38,7 @@ final class SubmitListensRequest extends Request implements HasBody
     /** @inheritdoc */
     protected function defaultBody(): array
     {
-        $listen = ['track_metadata' => $this->trackMetadata()];
+        $listen = ['track_metadata' => $this->getTrackMetadata()];
 
         if ($this->listenType === ListenType::SINGLE) {
             $listen['listened_at'] = $this->timestamp;
@@ -51,7 +51,7 @@ final class SubmitListensRequest extends Request implements HasBody
     }
 
     /** @return array{artist_name: string, track_name: string, release_name?: string, additional_info: array} */
-    private function trackMetadata(): array
+    private function getTrackMetadata(): array
     {
         $metadata = [
             'artist_name' => $this->song->artist->name,
