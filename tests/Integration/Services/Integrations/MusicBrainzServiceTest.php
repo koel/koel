@@ -2,9 +2,9 @@
 
 namespace Tests\Integration\Services\Integrations;
 
-use App\Models\Album;
+use App\Events\AlbumMbidsResolved;
+use App\Events\ArtistMbidResolved;
 use App\Models\Artist;
-use App\Models\Song;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;
 use App\Pipelines\Encyclopedia\GetArtistWikidataIdUsingMbid;
@@ -16,6 +16,7 @@ use App\Services\Integrations\MusicBrainzService;
 use App\Values\Album\AlbumInformation;
 use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -166,46 +167,11 @@ class MusicBrainzServiceTest extends TestCase
         self::assertNull($this->service->getAlbumInformation($album));
     }
 
-    private function mockAlbumPipeline(array $tracks): void
-    {
-        $this->mockPipelinePipe(
-            GetReleaseAndReleaseGroupMbidsForAlbum::class,
-            ['album' => 'Slave to the Grind', 'artist' => 'Skid Row'],
-            ['sample-album-mbid', 'sample-release-group-mbid'],
-        );
-
-        $this->mockPipelinePipe(GetAlbumTracksUsingMbid::class, 'sample-album-mbid', $tracks);
-        $this->mockPipelinePipe(GetAlbumWikidataIdUsingReleaseGroupMbid::class, 'sample-release-group-mbid', null);
-    }
-
-    /** @return array<mixed> */
-    private static function makeTracks(array $titles): array
-    {
-        return collect($titles)->map(static fn (string $title, int $index): array => [
-            'id' => "track-mbid-$index",
-            'title' => $title,
-            'recording' => ['id' => "recording-mbid-$index"],
-        ])->all();
-    }
-
-    private function makeAlbumWithSongs(array $titles): Album
-    {
-        $user = create_user();
-        $artist = Artist::factory()->for($user)->createOne(['name' => 'Skid Row']);
-
-        /** @var Album $album */
-        $album = $artist->albums()->create(['name' => 'Slave to the Grind', 'user_id' => $user->id]); // @phpstan-ignore-line
-
-        foreach ($titles as $title) {
-            Song::factory()->for($album)->for($artist)->createOne(['title' => $title, 'owner_id' => $user->id]);
-        }
-
-        return $album;
-    }
-
     #[Test]
-    public function storeArtistMbid(): void
+    public function announceResolvedArtistMbid(): void
     {
+        Event::fake([ArtistMbidResolved::class]);
+
         $this->mockPipelinePipe(GetMbidForArtist::class, 'Skid Row', 'sample-artist-mbid');
         $this->mockPipelinePipe(GetArtistWikidataIdUsingMbid::class, 'sample-artist-mbid', null);
 
@@ -213,79 +179,59 @@ class MusicBrainzServiceTest extends TestCase
 
         $this->service->getArtistInformation($artist);
 
-        self::assertSame('sample-artist-mbid', $artist->refresh()->mbid);
+        Event::assertDispatched(
+            ArtistMbidResolved::class,
+            static fn (ArtistMbidResolved $event): bool => (
+                $event->artist->is($artist)
+                && $event->mbid === 'sample-artist-mbid'
+            ),
+        );
     }
 
     #[Test]
-    public function keepExistingArtistMbid(): void
+    public function announceNothingWhenTheArtistHasNoMbid(): void
     {
-        $this->mockPipelinePipe(GetMbidForArtist::class, 'Skid Row', 'sample-artist-mbid');
-        $this->mockPipelinePipe(GetArtistWikidataIdUsingMbid::class, 'sample-artist-mbid', null);
+        Event::fake([ArtistMbidResolved::class]);
 
-        $artist = Artist::factory()->createOne(['name' => 'Skid Row', 'mbid' => 'mbid-from-tags']);
+        $this->mockPipelinePipe(GetMbidForArtist::class, 'Skid Row', null);
+        $this->mockPipelinePipe(GetArtistWikidataIdUsingMbid::class, null, null);
 
-        $this->service->getArtistInformation($artist);
+        $this->service->getArtistInformation(Artist::factory()->createOne(['name' => 'Skid Row']));
 
-        self::assertSame('mbid-from-tags', $artist->refresh()->mbid);
+        Event::assertNotDispatched(ArtistMbidResolved::class);
     }
 
     #[Test]
-    public function storeAlbumAndRecordingMbids(): void
+    public function announceResolvedAlbumMbidsEvenWithoutAnArticle(): void
     {
-        $this->mockAlbumPipeline(self::makeTracks(['Monkey Business', 'Slave to the Grind']));
-        $album = $this->makeAlbumWithSongs(['Monkey Business', 'Slave to the Grind']);
+        Event::fake([AlbumMbidsResolved::class]);
 
-        $this->service->getAlbumInformation($album);
+        $tracks = [['id' => 'track-mbid', 'title' => 'Monkey Business', 'recording' => ['id' => 'recording-mbid']]];
 
-        $songs = $album->fresh()->songs;
+        $this->mockPipelinePipe(
+            GetReleaseAndReleaseGroupMbidsForAlbum::class,
+            ['album' => 'Slave to the Grind', 'artist' => 'Skid Row'],
+            ['sample-album-mbid', null],
+        );
 
-        self::assertSame('sample-album-mbid', $album->refresh()->mbid);
-        self::assertSame('recording-mbid-0', $songs->firstWhere('title', 'Monkey Business')->mbid);
-        self::assertSame('recording-mbid-1', $songs->firstWhere('title', 'Slave to the Grind')->mbid);
-    }
+        $this->mockPipelinePipe(GetAlbumTracksUsingMbid::class, 'sample-album-mbid', $tracks);
 
-    #[Test]
-    public function matchRecordingsRegardlessOfTitleCasingAndPadding(): void
-    {
-        $this->mockAlbumPipeline(self::makeTracks(['  MONKEY BUSINESS ']));
-        $album = $this->makeAlbumWithSongs(['Monkey Business']);
+        $user = create_user();
+        $album = Artist::factory()
+            ->for($user)
+            ->createOne(['name' => 'Skid Row'])
+            ->albums() // @phpstan-ignore-line
+            ->create(['name' => 'Slave to the Grind', 'user_id' => $user->id]);
 
-        $this->service->getAlbumInformation($album);
+        self::assertNull($this->service->getAlbumInformation($album));
 
-        self::assertSame('recording-mbid-0', $album->fresh()->songs->first()->mbid);
-    }
-
-    #[Test]
-    public function storeNoRecordingMbidWhenTheReleaseIsADifferentAlbum(): void
-    {
-        $this->mockAlbumPipeline(self::makeTracks(['A Totally Different Song']));
-        $album = $this->makeAlbumWithSongs(['Monkey Business']);
-
-        $this->service->getAlbumInformation($album);
-
-        self::assertNull($album->fresh()->songs->first()->mbid);
-    }
-
-    #[Test]
-    public function storeNoRecordingMbidForAmbiguousTitles(): void
-    {
-        $this->mockAlbumPipeline(self::makeTracks(['Monkey Business', 'Monkey Business']));
-        $album = $this->makeAlbumWithSongs(['Monkey Business']);
-
-        $this->service->getAlbumInformation($album);
-
-        self::assertNull($album->fresh()->songs->first()->mbid);
-    }
-
-    #[Test]
-    public function keepExistingRecordingMbid(): void
-    {
-        $this->mockAlbumPipeline(self::makeTracks(['Monkey Business']));
-        $album = $this->makeAlbumWithSongs(['Monkey Business']);
-        $album->songs->first()->update(['mbid' => 'mbid-from-tags']);
-
-        $this->service->getAlbumInformation($album);
-
-        self::assertSame('mbid-from-tags', $album->fresh()->songs->first()->mbid);
+        Event::assertDispatched(
+            AlbumMbidsResolved::class,
+            static fn (AlbumMbidsResolved $event): bool => (
+                $event->album->is($album)
+                && $event->mbid === 'sample-album-mbid'
+                && $event->tracks === $tracks
+            ),
+        );
     }
 }
