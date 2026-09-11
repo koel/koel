@@ -6,6 +6,7 @@ use App\Builders\ArtistBuilder;
 use App\Facades\License;
 use App\Helpers\Encoding\Bom;
 use App\Models\Concerns\Artists\HasArtistAttributes;
+use App\Models\Concerns\HasMbid;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\MorphsToRatings;
@@ -40,6 +41,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property bool $is_various If the artist is Various Artists
  * @property int $user_id The ID of the user that owns this artist
  * @property string $id
+ * @property ?string $mbid The MusicBrainz artist ID
  * @property string $name
  * @property ?bool $favorite Whether the artist is liked by the scoped user
  * @property ?Carbon $favorited_at When the scoped user favorited the artist, if at all
@@ -54,6 +56,7 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
 {
     use Auditable;
     use HasArtistAttributes;
+    use HasMbid;
     use HasFactory;
     use HasUlids;
     use MorphsToEmbeds;
