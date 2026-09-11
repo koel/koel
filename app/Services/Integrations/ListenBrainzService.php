@@ -2,7 +2,7 @@
 
 namespace App\Services\Integrations;
 
-use App\Enums\ListenType;
+use App\Enums\ListenBrainzListenType;
 use App\Http\Integrations\ListenBrainz\ListenBrainzConnector;
 use App\Http\Integrations\ListenBrainz\Requests\SubmitListensRequest;
 use App\Http\Integrations\ListenBrainz\Requests\ValidateTokenRequest;
@@ -24,12 +24,18 @@ class ListenBrainzService implements Scrobbler
 
     public function scrobble(Song $song, User $user, int $timestamp): void
     {
-        rescue(fn () => $this->connector->send(new SubmitListensRequest($song, $user, ListenType::SINGLE, $timestamp)));
+        rescue(fn () => $this->connector->send(
+            new SubmitListensRequest($song, $user, ListenBrainzListenType::SINGLE, $timestamp),
+        ));
     }
 
     public function updateNowPlaying(Song $song, User $user): void
     {
-        rescue(fn () => $this->connector->send(new SubmitListensRequest($song, $user, ListenType::PLAYING_NOW)));
+        rescue(fn () => $this->connector->send(new SubmitListensRequest(
+            $song,
+            $user,
+            ListenBrainzListenType::PLAYING_NOW,
+        )));
     }
 
     /**

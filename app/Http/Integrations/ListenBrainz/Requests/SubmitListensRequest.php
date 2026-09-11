@@ -2,7 +2,7 @@
 
 namespace App\Http\Integrations\ListenBrainz\Requests;
 
-use App\Enums\ListenType;
+use App\Enums\ListenBrainzListenType;
 use App\Models\Album;
 use App\Models\Song;
 use App\Models\User;
@@ -20,7 +20,7 @@ final class SubmitListensRequest extends Request implements HasBody
     public function __construct(
         private readonly Song $song,
         private readonly User $user,
-        private readonly ListenType $listenType,
+        private readonly ListenBrainzListenType $listenType,
         private readonly ?int $timestamp = null,
     ) {}
 
@@ -40,7 +40,7 @@ final class SubmitListensRequest extends Request implements HasBody
     {
         $listen = ['track_metadata' => $this->getTrackMetadata()];
 
-        if ($this->listenType === ListenType::SINGLE) {
+        if ($this->listenType === ListenBrainzListenType::SINGLE) {
             $listen['listened_at'] = $this->timestamp;
         }
 
