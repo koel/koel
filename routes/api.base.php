@@ -21,7 +21,6 @@ use App\Http\Controllers\API\Auth\TwoFactor\RegenerateRecoveryCodesController;
 use App\Http\Controllers\API\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\API\ChangePasswordController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
-use App\Http\Controllers\API\DisconnectFromListenbrainzController;
 use App\Http\Controllers\API\Embed\EmbedController;
 use App\Http\Controllers\API\Embed\EmbedOptionsController;
 use App\Http\Controllers\API\EqualizerPresetController;
@@ -44,6 +43,7 @@ use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GetOneTimeTokenController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
+use App\Http\Controllers\API\ListenBrainzTokenController;
 use App\Http\Controllers\API\Me\RegenerateSubsonicApiKeyController;
 use App\Http\Controllers\API\MediaBrowser\FetchFolderSongsController;
 use App\Http\Controllers\API\MediaBrowser\FetchRecursiveFolderSongsController;
@@ -77,7 +77,6 @@ use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
 use App\Http\Controllers\API\SearchYouTubeController;
 use App\Http\Controllers\API\SetLastfmSessionKeyController;
-use App\Http\Controllers\API\SetListenbrainzTokenController;
 use App\Http\Controllers\API\Settings\UpdateBrandingController;
 use App\Http\Controllers\API\Settings\UpdateMediaPathController;
 use App\Http\Controllers\API\SongController;
@@ -253,10 +252,8 @@ Route::prefix('api')
             Route::delete('lastfm/disconnect', DisconnectFromLastfmController::class)->name('lastfm.disconnect');
 
             // ListenBrainz-related routes
-            Route::post('listenbrainz/token', SetListenbrainzTokenController::class);
-            Route::delete('listenbrainz/disconnect', DisconnectFromListenbrainzController::class)->name(
-                'listenbrainz.disconnect',
-            );
+            Route::post('listenbrainz/token', [ListenBrainzTokenController::class, 'store']);
+            Route::delete('listenbrainz/token', [ListenBrainzTokenController::class, 'destroy']);
 
             // YouTube-related routes
             if (YouTube::enabled()) {

@@ -93,7 +93,7 @@ describe('playbackService', () => {
     userStore.state.current.preferences.listenbrainz_token = undefined
   }
 
-  const connectToListenbrainz = () => {
+  const connectToListenBrainz = () => {
     commonStore.state.uses_last_fm = false
     userStore.state.current.preferences.lastfm_session_key = undefined
     userStore.state.current.preferences.listenbrainz_token = 'token'
@@ -132,7 +132,7 @@ describe('playbackService', () => {
   })
 
   it('scrobbles when connected to ListenBrainz only', () => {
-    connectToListenbrainz()
+    connectToListenBrainz()
 
     expect(playTo(100, 200)).toHaveBeenCalledOnce()
   })

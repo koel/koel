@@ -17,14 +17,14 @@
 
 <script lang="ts" setup>
 import LastfmIntegration from '@/components/profile-preferences/LastfmIntegration.vue'
-import ListenbrainzIntegration from '@/components/profile-preferences/ListenbrainzIntegration.vue'
+import ListenBrainzIntegration from '@/components/profile-preferences/ListenBrainzIntegration.vue'
 import SpotifyIntegration from '@/components/profile-preferences/SpotifyIntegration.vue'
 import MusicBrainzIntegration from '@/components/profile-preferences/MusicBrainzIntegration.vue'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
 
 const integrations = [
   { component: MusicBrainzIntegration, color: '#ba478f' },
-  { component: ListenbrainzIntegration, color: '#eb743b' },
+  { component: ListenBrainzIntegration, color: '#eb743b' },
   { component: SpotifyIntegration, color: '#1db954' },
   { component: LastfmIntegration, color: '#d31f27' },
 ]

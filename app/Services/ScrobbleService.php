@@ -6,14 +6,14 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\Contracts\Scrobbler;
 use App\Services\Integrations\LastfmService;
-use App\Services\Integrations\ListenbrainzService;
+use App\Services\Integrations\ListenBrainzService;
 
 class ScrobbleService
 {
     /** @var array<Scrobbler> */
     private array $scrobblers;
 
-    public function __construct(LastfmService $lastfm, ListenbrainzService $listenbrainz)
+    public function __construct(LastfmService $lastfm, ListenBrainzService $listenbrainz)
     {
         $this->scrobblers = [$lastfm, $listenbrainz];
     }

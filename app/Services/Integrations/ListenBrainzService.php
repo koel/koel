@@ -3,18 +3,18 @@
 namespace App\Services\Integrations;
 
 use App\Enums\ListenType;
-use App\Http\Integrations\Listenbrainz\ListenbrainzConnector;
-use App\Http\Integrations\Listenbrainz\Requests\SubmitListensRequest;
-use App\Http\Integrations\Listenbrainz\Requests\ValidateTokenRequest;
+use App\Http\Integrations\ListenBrainz\ListenBrainzConnector;
+use App\Http\Integrations\ListenBrainz\Requests\SubmitListensRequest;
+use App\Http\Integrations\ListenBrainz\Requests\ValidateTokenRequest;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\Contracts\Scrobbler;
 use SensitiveParameter;
 
-class ListenbrainzService implements Scrobbler
+class ListenBrainzService implements Scrobbler
 {
     public function __construct(
-        private readonly ListenbrainzConnector $connector,
+        private readonly ListenBrainzConnector $connector,
     ) {}
 
     public function isConnected(User $user): bool

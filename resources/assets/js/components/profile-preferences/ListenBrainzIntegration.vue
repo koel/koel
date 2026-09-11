@@ -68,7 +68,7 @@ const { data, handleSubmit } = useForm<{ token: string }>({
 })
 
 const disconnect = async () => {
-  await http.delete('listenbrainz/disconnect')
+  await http.delete('listenbrainz/token')
   currentUser.value.preferences.listenbrainz_token = undefined
   toastSuccess('ListenBrainz account disconnected.')
 }

@@ -2,12 +2,12 @@
 
 namespace Tests\Integration\Services\Integrations;
 
-use App\Http\Integrations\Listenbrainz\Requests\SubmitListensRequest;
-use App\Http\Integrations\Listenbrainz\Requests\ValidateTokenRequest;
+use App\Http\Integrations\ListenBrainz\Requests\SubmitListensRequest;
+use App\Http\Integrations\ListenBrainz\Requests\ValidateTokenRequest;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
-use App\Services\Integrations\ListenbrainzService;
+use App\Services\Integrations\ListenBrainzService;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Saloon;
@@ -15,15 +15,15 @@ use Tests\TestCase;
 
 use function Tests\create_user;
 
-class ListenbrainzServiceTest extends TestCase
+class ListenBrainzServiceTest extends TestCase
 {
-    private ListenbrainzService $service;
+    private ListenBrainzService $service;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->service = app(ListenbrainzService::class);
+        $this->service = app(ListenBrainzService::class);
     }
 
     #[Test]

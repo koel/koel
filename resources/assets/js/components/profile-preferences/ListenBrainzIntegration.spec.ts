@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { userStore } from '@/stores/userStore'
-import Component from './ListenbrainzIntegration.vue'
+import Component from './ListenBrainzIntegration.vue'
 
 describe('listenbrainzIntegration.vue', () => {
   const h = createHarness()
@@ -47,7 +47,7 @@ describe('listenbrainzIntegration.vue', () => {
 
     await h.user.click(screen.getByRole('button', { name: 'Disconnect' }))
 
-    expect(deleteMock).toHaveBeenCalledWith('listenbrainz/disconnect')
+    expect(deleteMock).toHaveBeenCalledWith('listenbrainz/token')
     await waitFor(() => screen.getByRole('button', { name: 'Connect' }))
     expect(userStore.state.current.preferences.listenbrainz_token).toBeUndefined()
   })

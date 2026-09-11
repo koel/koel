@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Integrations\Listenbrainz;
+namespace App\Http\Integrations\ListenBrainz;
 
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 
-class ListenbrainzConnector extends Connector
+class ListenBrainzConnector extends Connector
 {
     use AcceptsJson;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Integrations\Listenbrainz\Requests;
+namespace App\Http\Integrations\ListenBrainz\Requests;
 
 use App\Enums\ListenType;
 use App\Models\Album;

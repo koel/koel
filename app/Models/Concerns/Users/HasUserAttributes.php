@@ -37,11 +37,6 @@ trait HasUserAttributes
         return Attribute::get(fn (): bool => (bool) $this->preferences->lastFmSessionKey)->shouldCache();
     }
 
-    protected function connectedToListenbrainz(): Attribute
-    {
-        return Attribute::get(fn (): bool => (bool) $this->preferences->listenBrainzToken)->shouldCache();
-    }
-
     protected function role(): Attribute
     {
         // Enforce a single-role permission model

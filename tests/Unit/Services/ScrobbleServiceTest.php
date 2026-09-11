@@ -5,7 +5,7 @@ namespace Tests\Unit\Services;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\Integrations\LastfmService;
-use App\Services\Integrations\ListenbrainzService;
+use App\Services\Integrations\ListenBrainzService;
 use App\Services\ScrobbleService;
 use Mockery;
 use Mockery\MockInterface;
@@ -17,7 +17,7 @@ use function Tests\create_user;
 class ScrobbleServiceTest extends TestCase
 {
     private LastfmService|MockInterface $lastfm;
-    private ListenbrainzService|MockInterface $listenbrainz;
+    private ListenBrainzService|MockInterface $listenbrainz;
     private ScrobbleService $service;
     private User $user;
 
@@ -26,7 +26,7 @@ class ScrobbleServiceTest extends TestCase
         parent::setUp();
 
         $this->lastfm = Mockery::mock(LastfmService::class);
-        $this->listenbrainz = Mockery::mock(ListenbrainzService::class);
+        $this->listenbrainz = Mockery::mock(ListenBrainzService::class);
         $this->service = new ScrobbleService($this->lastfm, $this->listenbrainz);
         $this->user = create_user();
     }

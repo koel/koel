@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Integrations\Listenbrainz\Requests;
+namespace App\Http\Integrations\ListenBrainz\Requests;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
