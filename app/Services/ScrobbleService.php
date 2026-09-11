@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Contracts\Scrobbler;
 use App\Services\Integrations\LastfmService;
 use App\Services\Integrations\ListenBrainzService;
+use Illuminate\Support\Arr;
 
 class ScrobbleService
 {
@@ -40,9 +41,6 @@ class ScrobbleService
     /** @return array<Scrobbler> */
     private function getConnectedScrobblers(User $user): array
     {
-        return array_values(array_filter(
-            $this->scrobblers,
-            static fn (Scrobbler $scrobbler): bool => $scrobbler->isConnected($user),
-        ));
+        return Arr::where($this->scrobblers, static fn (Scrobbler $scrobbler): bool => $scrobbler->isConnected($user));
     }
 }
