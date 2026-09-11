@@ -3,6 +3,7 @@
 namespace App\Values\Scanning;
 
 use App\Helpers\Encoding\TagFixer;
+use App\Helpers\MbidReader;
 use App\Helpers\SyncedLyricsConverter;
 use App\Models\Album;
 use App\Models\Artist;
@@ -76,10 +77,10 @@ class ScanInformation implements Arrayable
             albumName: html_entity_decode(TagFixer::fix(self::getTag($tags, 'album', Album::UNKNOWN_NAME))),
             artistName: html_entity_decode(TagFixer::fix(self::getTag($tags, 'artist', Artist::UNKNOWN_NAME))),
             albumArtistName: html_entity_decode($albumArtistName),
-            mbid: self::getRecordingMbid($info, $tags),
-            albumMbid: self::getMusicBrainzId($tags, 'musicbrainz_albumid', 'MusicBrainz Album Id'),
-            artistMbid: self::getMusicBrainzId($tags, 'musicbrainz_artistid', 'MusicBrainz Artist Id'),
-            albumArtistMbid: self::getMusicBrainzId($tags, 'musicbrainz_albumartistid', 'MusicBrainz Album Artist Id'),
+            mbid: MbidReader::getRecordingMbid($info, $tags),
+            albumMbid: MbidReader::getAlbumMbid($tags),
+            artistMbid: MbidReader::getArtistMbid($tags),
+            albumArtistMbid: MbidReader::getAlbumArtistMbid($tags),
             track: (int) self::getTag($tags, ['track', 'tracknumber', 'track_number']),
             disc: (int) self::getTag($tags, ['discnumber', 'part_of_a_set'], 1),
             year: (int) self::getTag($tags, ['year', 'date']) ?: null,
@@ -139,36 +140,6 @@ class ScanInformation implements Arrayable
             mimeType: $mimeType,
             fileSize: $fileSize,
         );
-    }
-
-    /**
-     * Vorbis comments expose MusicBrainz identifiers as ordinary tags, whereas ID3v2 buries them in TXXX frames
-     * that getID3 keys by their original description.
-     */
-    private static function getMusicBrainzId(array $tags, string $vorbisKey, string $txxxDescription): ?string
-    {
-        return self::getTag($tags, $vorbisKey, null) ?: Arr::get($tags, "text.$txxxDescription") ?: null;
-    }
-
-    /**
-     * ID3v2 stores the recording identifier in a UFID frame owned by MusicBrainz — its
-     * "MusicBrainz Release Track Id" TXXX frame identifies the release track instead, which is a different thing.
-     */
-    private static function getRecordingMbid(array $info, array $tags): ?string
-    {
-        $fromVorbisComments = self::getTag($tags, 'musicbrainz_trackid', null);
-
-        if ($fromVorbisComments) {
-            return $fromVorbisComments;
-        }
-
-        foreach (Arr::get($info, 'id3v2.UFID', []) as $frame) {
-            if (Arr::get($frame, 'ownerid') === 'http://musicbrainz.org') {
-                return Arr::get($frame, 'data') ?: null;
-            }
-        }
-
-        return null;
     }
 
     private static function getTag(array $arr, string|array $keys, $default = ''): mixed

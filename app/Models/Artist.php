@@ -6,7 +6,7 @@ use App\Builders\ArtistBuilder;
 use App\Facades\License;
 use App\Helpers\Encoding\Bom;
 use App\Models\Concerns\Artists\HasArtistAttributes;
-use App\Models\Concerns\HasMusicBrainzId;
+use App\Models\Concerns\HasMbid;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\MorphsToRatings;
@@ -56,7 +56,7 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
 {
     use Auditable;
     use HasArtistAttributes;
-    use HasMusicBrainzId;
+    use HasMbid;
     use HasFactory;
     use HasUlids;
     use MorphsToEmbeds;

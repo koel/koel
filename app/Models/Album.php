@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Builders\AlbumBuilder;
 use App\Models\Concerns\Albums\HasAlbumAttributes;
-use App\Models\Concerns\HasMusicBrainzId;
+use App\Models\Concerns\HasMbid;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\MorphsToRatings;
@@ -60,7 +60,7 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
 {
     use Auditable;
     use HasAlbumAttributes;
-    use HasMusicBrainzId;
+    use HasMbid;
     use HasFactory;
     use HasUlids;
     use MorphsToEmbeds;

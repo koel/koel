@@ -245,9 +245,9 @@ class SongService
 
         $album = $this->resolveAlbum($albumArtist, Arr::get($data, 'album'));
 
-        $artist->claimMbid(Arr::get($data, 'artist_mbid'));
-        $albumArtist->claimMbid(Arr::get($data, 'albumartist_mbid'));
-        $album->claimMbid(Arr::get($data, 'album_mbid'));
+        $artist->setMbidIfMissing(Arr::get($data, 'artist_mbid'));
+        $albumArtist->setMbidIfMissing(Arr::get($data, 'albumartist_mbid'));
+        $album->setMbidIfMissing(Arr::get($data, 'album_mbid'));
 
         $hasCover = $album->cover && File::exists(image_storage_path($album->cover));
 
