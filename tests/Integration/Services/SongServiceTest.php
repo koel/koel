@@ -227,6 +227,67 @@ class SongServiceTest extends TestCase
     }
 
     #[Test]
+    public function createFromScanStoresMusicBrainzIds(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
+
+        $info = app(FileScanner::class)->scan(test_path('songs/full-vorbis-comments.flac'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertSame('11111111-1111-1111-1111-111111111111', $song->mbid);
+        self::assertSame('22222222-2222-2222-2222-222222222222', $song->album->mbid);
+        self::assertSame('33333333-3333-3333-3333-333333333333', $song->artist->mbid);
+    }
+
+    #[Test]
+    public function createFromScanKeepsExistingAlbumAndArtistMusicBrainzIds(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
+
+        $owner = create_admin();
+
+        $artist = Artist::getOrCreate($owner, 'Koel');
+        $artist->update(['mbid' => 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa']);
+
+        $album = Album::getOrCreate($artist, 'Koel Testing Vol. 1');
+        $album->update(['mbid' => 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb']);
+
+        $info = app(FileScanner::class)->scan(test_path('songs/full-vorbis-comments.flac'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+
+        self::assertSame('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', $song->artist->mbid);
+        self::assertSame('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', $song->album->mbid);
+        self::assertSame('11111111-1111-1111-1111-111111111111', $song->mbid);
+    }
+
+    #[Test]
+    public function createFromScanDoesNotStampTheAlbumArtistIdOnTheSongArtist(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
+
+        // The file credits the same name as both artist and album artist, so both resolve to one row.
+        // Its artist identifier must win over the album artist's.
+        $info = app(FileScanner::class)->scan(test_path('songs/full-vorbis-comments.flac'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertTrue($song->artist->is($song->album_artist));
+        self::assertSame('33333333-3333-3333-3333-333333333333', $song->artist->mbid);
+    }
+
+    #[Test]
+    public function createFromScanLeavesMusicBrainzIdsEmptyForUntaggedFile(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
+
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertNull($song->mbid);
+        self::assertNull($song->album->mbid);
+        self::assertNull($song->artist->mbid);
+    }
+
+    #[Test]
     public function createOrUpdateFromScan(): void
     {
         Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);

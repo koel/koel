@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Builders\AlbumBuilder;
 use App\Models\Concerns\Albums\HasAlbumAttributes;
+use App\Models\Concerns\HasMusicBrainzId;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\MorphsToRatings;
@@ -45,6 +46,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $artist_name
  * @property string $cover The album cover's file name
  * @property string $id
+ * @property ?string $mbid The MusicBrainz release ID
  * @property string $name Name of the album
  *
  * @method static AlbumFactory factory(...$parameters)
@@ -58,6 +60,7 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
 {
     use Auditable;
     use HasAlbumAttributes;
+    use HasMusicBrainzId;
     use HasFactory;
     use HasUlids;
     use MorphsToEmbeds;

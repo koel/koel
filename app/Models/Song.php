@@ -42,6 +42,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property ?bool $favorite Whether the song is liked by the current user (dynamically calculated)
  * @property ?Carbon $favorited_at When the current user favorited the song, if at all
  * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
+ * @property ?string $mbid The MusicBrainz recording ID
  * @property ?string $album_name
  * @property ?string $artist_name
  * @property ?string $basename
