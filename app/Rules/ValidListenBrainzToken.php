@@ -12,7 +12,7 @@ class ValidListenBrainzToken implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (!app(ListenBrainzService::class)->validateToken($value)) {
-            $fail('ListenBrainz did not accept this token.');
+            $fail('Invalid ListenBrainz token.');
         }
     }
 }
