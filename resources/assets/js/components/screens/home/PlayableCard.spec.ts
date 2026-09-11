@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { playableStore } from '@/stores/playableStore'
 
 const isCachedMock = vi.fn().mockReturnValue(false)
 const isCachingMock = vi.fn().mockReturnValue(false)
@@ -41,7 +42,10 @@ describe('playableCard.vue', () => {
       ...overrides,
     })
 
-    return h.render(Component, { props: { playable: song } })
+    return {
+      ...h.render(Component, { props: { playable: song } }),
+      props: { playable: song },
+    }
   }
 
   it('renders song info', () => {
@@ -89,6 +93,20 @@ describe('playableCard.vue', () => {
     renderCard()
     screen.getByTitle('Caching for offline playback')
     expect(screen.queryByTitle('Available offline')).toBeNull()
+  })
+
+  it('toggles favorite state when the Favorite button is clicked', async () => {
+    const toggleFavoriteMock = h.mock(playableStore, 'toggleFavorite')
+    const { props } = renderCard({ favorite: false })
+
+    await h.user.click(screen.getByRole('button', { name: 'Favorite' }))
+
+    expect(toggleFavoriteMock).toHaveBeenCalledWith(props.playable)
+  })
+
+  it('renders the button as undo-able for a favorite song', () => {
+    renderCard({ favorite: true })
+    screen.getByRole('button', { name: 'Undo Favorite' })
   })
 
   it('shows error icon when caching fails', () => {
