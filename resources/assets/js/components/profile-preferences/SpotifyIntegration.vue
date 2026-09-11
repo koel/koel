@@ -4,7 +4,7 @@
       <span class="mr-2 text-[#1db954]">
         <Icon :icon="faSpotify" />
       </span>
-      Spotify Integration
+      Spotify
     </h3>
 
     <div v-if="useSpotify">

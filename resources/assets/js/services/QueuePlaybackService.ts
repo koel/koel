@@ -27,6 +27,11 @@ import { useBranding } from '@/composables/useBranding'
  */
 const PRELOAD_BUFFER = 30
 
+// Both Last.fm and ListenBrainz consider a track listened to once it has been played for half its
+// length or four minutes, whichever comes first. Tracks shorter than 30 seconds never count.
+const SCROBBLE_AFTER_SECONDS = 240
+const MIN_SCROBBLE_LENGTH = 30
+
 export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private upNext: Ref<Playable | null> = ref(null)
@@ -367,6 +372,29 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     song.play_start_time = Math.floor(Date.now() / 1000)
     song.play_count_registered = false
+    song.scrobble_registered = false
+  }
+
+  private get scrobblingEnabled() {
+    const { preferences } = userStore.current
+
+    return (
+      (commonStore.state.uses_last_fm && Boolean(preferences.lastfm_session_key)) ||
+      Boolean(preferences.listenbrainz_token)
+    )
+  }
+
+  private scrobbleIfEligible(playable: Playable, currentTime: number, duration: number) {
+    if (playable.scrobble_registered || !isSong(playable) || !this.scrobblingEnabled) {
+      return
+    }
+
+    if (duration < MIN_SCROBBLE_LENGTH || currentTime < Math.min(duration / 2, SCROBBLE_AFTER_SECONDS)) {
+      return
+    }
+
+    playable.scrobble_registered = true
+    playableStore.scrobble(playable)
   }
 
   public forward(seconds: number): void {
@@ -374,15 +402,6 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   protected onEnded(): void {
-    if (
-      queueStore.current &&
-      isSong(queueStore.current) &&
-      commonStore.state.uses_last_fm &&
-      userStore.current.preferences.lastfm_session_key
-    ) {
-      playableStore.scrobble(queueStore.current)
-    }
-
     // If a crossfade is active (completed or not), the outgoing track has ended — transition to the next song
     if (crossfadeService.active) {
       const { playable } = crossfadeService.state!
@@ -412,6 +431,8 @@ export class QueuePlaybackService extends BasePlaybackService {
     if (!currentPlayable.play_count_registered && media.currentTime * 4 >= media.duration) {
       this.registerPlay(currentPlayable)
     }
+
+    this.scrobbleIfEligible(currentPlayable, media.currentTime, media.duration)
 
     if (Math.ceil(media.currentTime) % 5 === 0) {
       // every 5 seconds, we save the current playback position to the server

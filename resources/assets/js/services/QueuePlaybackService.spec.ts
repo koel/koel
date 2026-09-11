@@ -87,14 +87,77 @@ describe('playbackService', () => {
     expect(logMock).toHaveBeenCalledWith(errorEvent)
   })
 
-  it('scrobbles if current playable ends', () => {
-    setCurrentSong()
+  const connectToLastfm = () => {
     commonStore.state.uses_last_fm = true
     userStore.state.current.preferences.lastfm_session_key = 'foo'
+    userStore.state.current.preferences.listenbrainz_token = undefined
+  }
+
+  const connectToListenbrainz = () => {
+    commonStore.state.uses_last_fm = false
+    userStore.state.current.preferences.lastfm_session_key = undefined
+    userStore.state.current.preferences.listenbrainz_token = 'token'
+  }
+
+  const disconnectScrobblers = () => {
+    commonStore.state.uses_last_fm = false
+    userStore.state.current.preferences.lastfm_session_key = undefined
+    userStore.state.current.preferences.listenbrainz_token = undefined
+  }
+
+  const playTo = (currentTime: number, duration: number, song?: Playable) => {
+    setCurrentSong(song)
+    h.setReadOnlyProperty(playbackService.media, 'currentTime', currentTime)
+    h.setReadOnlyProperty(playbackService.media, 'duration', duration)
+
+    const scrobbleMock = h.mock(playableStore, 'scrobble')
+    h.mock(playbackService, 'registerPlay')
+    h.mock(http, 'put')
+
+    playbackService.media.dispatchEvent(new Event('timeupdate'))
+
+    return scrobbleMock
+  }
+
+  it.each<[string, number, number, number]>([
+    ['half of a short track has been played', 100, 200, 1],
+    ['just before half of a short track', 99, 200, 0],
+    ['four minutes of a long track have been played', 240, 600, 1],
+    ['just before four minutes of a long track', 239, 600, 0],
+    ['the track is too short to ever count', 20, 20, 0],
+  ])('scrobbles when %s', (_, currentTime, duration, calls) => {
+    connectToLastfm()
+
+    expect(playTo(currentTime, duration)).toHaveBeenCalledTimes(calls)
+  })
+
+  it('scrobbles when connected to ListenBrainz only', () => {
+    connectToListenbrainz()
+
+    expect(playTo(100, 200)).toHaveBeenCalledOnce()
+  })
+
+  it('does not scrobble without a connected service', () => {
+    disconnectScrobblers()
+
+    expect(playTo(100, 200)).not.toHaveBeenCalled()
+  })
+
+  it('does not scrobble the same playable twice', () => {
+    connectToLastfm()
+    const song = h.factory('song').make({ playback_state: 'Playing', scrobble_registered: true })
+
+    expect(playTo(100, 200, song)).not.toHaveBeenCalled()
+  })
+
+  it('does not scrobble when the playable ends', () => {
+    connectToLastfm()
+    setCurrentSong()
 
     const scrobbleMock = h.mock(playableStore, 'scrobble')
     playbackService.media.dispatchEvent(new Event('ended'))
-    expect(scrobbleMock).toHaveBeenCalled()
+
+    expect(scrobbleMock).not.toHaveBeenCalled()
   })
 
   it.each<[RepeatMode, number, number]>([

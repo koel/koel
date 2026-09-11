@@ -21,6 +21,7 @@ use App\Http\Controllers\API\Auth\TwoFactor\RegenerateRecoveryCodesController;
 use App\Http\Controllers\API\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\API\ChangePasswordController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
+use App\Http\Controllers\API\DisconnectFromListenbrainzController;
 use App\Http\Controllers\API\Embed\EmbedController;
 use App\Http\Controllers\API\Embed\EmbedOptionsController;
 use App\Http\Controllers\API\EqualizerPresetController;
@@ -76,6 +77,7 @@ use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
 use App\Http\Controllers\API\SearchYouTubeController;
 use App\Http\Controllers\API\SetLastfmSessionKeyController;
+use App\Http\Controllers\API\SetListenbrainzTokenController;
 use App\Http\Controllers\API\Settings\UpdateBrandingController;
 use App\Http\Controllers\API\Settings\UpdateMediaPathController;
 use App\Http\Controllers\API\SongController;
@@ -249,6 +251,12 @@ Route::prefix('api')
             // Last.fm-related routes
             Route::post('lastfm/session-key', SetLastfmSessionKeyController::class);
             Route::delete('lastfm/disconnect', DisconnectFromLastfmController::class)->name('lastfm.disconnect');
+
+            // ListenBrainz-related routes
+            Route::post('listenbrainz/token', SetListenbrainzTokenController::class);
+            Route::delete('listenbrainz/disconnect', DisconnectFromListenbrainzController::class)->name(
+                'listenbrainz.disconnect',
+            );
 
             // YouTube-related routes
             if (YouTube::enabled()) {

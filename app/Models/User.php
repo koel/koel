@@ -56,6 +56,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read ?string $sso_id
  * @property-read ?string $sso_provider
  * @property-read bool $connected_to_lastfm Whether the user is connected to Last.fm
+ * @property-read bool $connected_to_listenbrainz Whether the user is connected to ListenBrainz
  * @property-read bool $has_custom_avatar
  * @property-read bool $is_prospect
  * @property-read bool $is_sso
