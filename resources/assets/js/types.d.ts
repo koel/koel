@@ -181,6 +181,7 @@ interface BasePlayable extends IStreamable {
   title: string
   readonly length: number
   play_count_registered?: boolean
+  scrobble_registered?: boolean
   play_count: number
   rating: number // 0-5, current user's rating; 0 = unrated
   play_start_time?: number
@@ -436,6 +437,7 @@ interface UserPreferences extends Record<string, any> {
   include_public_media: boolean
   crossfade_duration: number
   lastfm_session_key?: string
+  listenbrainz_token?: string
   home_blocks_order: string[]
 }
 

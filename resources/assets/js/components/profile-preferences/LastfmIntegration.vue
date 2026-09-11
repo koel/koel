@@ -4,7 +4,7 @@
       <span class="mr-2 text-(--lastfm-color)">
         <Icon :icon="faLastfm" />
       </span>
-      Last.fm Integration
+      Last.fm
     </h3>
 
     <div v-if="useLastfm" data-testid="lastfm-integrated">
