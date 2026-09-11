@@ -9,6 +9,7 @@ use App\Casts\SongStorageCast;
 use App\Casts\SongTitleCast;
 use App\Enums\PlayableType;
 use App\Enums\SongStorageType;
+use App\Models\Concerns\HasMbid;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\MorphsToRatings;
@@ -94,6 +95,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
 {
     use Auditable;
     use HasFactory;
+    use HasMbid;
     use HasSongAttributes;
     use HasSongRelationships;
     use HasUuids;

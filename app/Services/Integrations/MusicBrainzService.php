@@ -30,9 +30,11 @@ class MusicBrainzService implements Encyclopedia
         }
 
         return rescue_if(static::enabled(), static function () use ($artist) {
-            $wikipediaSummary = Pipeline::send($artist->name)
+            /** @var string|null $mbid */
+            $mbid = Pipeline::send($artist->name)->through([GetMbidForArtist::class])->thenReturn();
+
+            $wikipediaSummary = Pipeline::send($mbid)
                 ->through([
-                    GetMbidForArtist::class,
                     GetArtistWikidataIdUsingMbid::class,
                     GetWikipediaPageTitleUsingWikidataId::class,
                     GetWikipediaPageSummaryUsingPageTitle::class,
