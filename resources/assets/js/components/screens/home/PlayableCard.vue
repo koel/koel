@@ -6,7 +6,7 @@
     draggable="true"
     tabindex="0"
     @dblclick="play"
-    @keydown.enter.prevent="play"
+    @keydown.enter.self.prevent="play"
     @dragstart="onDragStart"
     @contextmenu.prevent="onContextMenu"
   >

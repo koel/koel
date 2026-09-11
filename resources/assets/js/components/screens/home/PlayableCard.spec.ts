@@ -7,6 +7,11 @@ const isCachedMock = vi.fn().mockReturnValue(false)
 const isCachingMock = vi.fn().mockReturnValue(false)
 const hasCachingErrorMock = vi.fn().mockReturnValue(false)
 const getCachingErrorMock = vi.fn().mockReturnValue(undefined)
+const playMock = vi.fn()
+
+vi.mock('@/services/playbackManager', () => ({
+  playback: () => ({ play: playMock, pause: vi.fn(), resume: vi.fn() }),
+}))
 
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
@@ -30,6 +35,7 @@ describe('playableCard.vue', () => {
       hasCachingErrorMock.mockReturnValue(false)
       getCachingErrorMock.mockClear()
       getCachingErrorMock.mockReturnValue(undefined)
+      playMock.mockClear()
     },
   })
 
@@ -102,6 +108,26 @@ describe('playableCard.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Favorite' }))
 
     expect(toggleFavoriteMock).toHaveBeenCalledWith(props.playable)
+  })
+
+  it('toggles favorite without starting playback when the button is activated with Enter', async () => {
+    const toggleFavoriteMock = h.mock(playableStore, 'toggleFavorite')
+    const { props } = renderCard({ favorite: false })
+
+    screen.getByRole('button', { name: 'Favorite' }).focus()
+    await h.user.keyboard('{Enter}')
+
+    expect(toggleFavoriteMock).toHaveBeenCalledWith(props.playable)
+    expect(playMock).not.toHaveBeenCalled()
+  })
+
+  it('plays the song when the card itself is activated with Enter', async () => {
+    const { props } = renderCard()
+
+    screen.getByTestId('song-card').focus()
+    await h.user.keyboard('{Enter}')
+
+    expect(playMock).toHaveBeenCalledWith(props.playable)
   })
 
   it('renders the button as undo-able for a favorite song', () => {
