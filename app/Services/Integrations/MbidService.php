@@ -4,6 +4,7 @@ namespace App\Services\Integrations;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Song;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
@@ -63,7 +64,12 @@ class MbidService
         });
     }
 
-    /** @param array<mixed> $tracks The release's tracks, as returned by MusicBrainz */
+    /**
+     * A title shared by two songs on the same album is as unmatchable as one shared by two tracks on the
+     * release: there is no way to tell which is which, and guessing would give both the same recording.
+     *
+     * @param array<mixed> $tracks The release's tracks, as returned by MusicBrainz
+     */
     private static function storeRecordingMbids(Album $album, array $tracks): void
     {
         $recordingMbids = self::getRecordingMbidsByTitle($tracks);
@@ -72,8 +78,13 @@ class MbidService
             return;
         }
 
-        foreach ($album->songs as $song) {
-            $song->setMbidIfMissing($recordingMbids->get(self::normalizeTitle($song->title)));
+        $songs = $album
+            ->songs
+            ->groupBy(static fn (Song $song): string => self::normalizeTitle($song->title))
+            ->reject(static fn (Collection $group): bool => $group->count() > 1);
+
+        foreach ($songs as $title => $group) {
+            $group->first()->setMbidIfMissing($recordingMbids->get($title));
         }
     }
 

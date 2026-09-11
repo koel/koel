@@ -52,8 +52,11 @@ class MbidServiceTest extends TestCase
         $user = create_user();
         $artist = Artist::factory()->for($user)->createOne(['name' => 'Skid Row']);
 
-        /** @var Album $album */
-        $album = $artist->albums()->create(['name' => 'Slave to the Grind', 'user_id' => $user->id]); // @phpstan-ignore-line
+        $album = Album::factory()->for($artist)->createOne([
+            'name' => 'Slave to the Grind',
+            'artist_name' => $artist->name,
+            'user_id' => $user->id,
+        ]);
 
         foreach ($titles as $title) {
             Song::factory()->for($album)->for($artist)->createOne(['title' => $title, 'owner_id' => $user->id]);
@@ -221,5 +224,17 @@ class MbidServiceTest extends TestCase
 
         self::assertNull($artist->refresh()->mbid);
         self::assertNull($album->refresh()->mbid);
+    }
+
+    #[Test]
+    public function storeNoRecordingMbidWhenTwoSongsShareATitle(): void
+    {
+        $this->allowAlbumLookups(['Monkey Business']);
+        $album = self::makeAlbumWith(['Monkey Business', 'Monkey Business']);
+
+        $this->service->fetchAndStoreAlbumMbids($album);
+
+        self::assertSame('sample-album-mbid', $album->refresh()->mbid);
+        self::assertTrue($album->fresh()->songs->every(static fn (Song $song): bool => $song->mbid === null));
     }
 }
