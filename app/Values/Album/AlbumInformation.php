@@ -63,10 +63,13 @@ final class AlbumInformation implements Arrayable
         $self = clone $this;
 
         $self->tracks = collect($tracks)->map(static function (array $track) {
+            // A release track and the recording it points at are different entities with different identifiers.
+            $recordingMbid = Arr::get($track, 'recording.id');
+
             return [
                 'title' => Arr::get($track, 'title'),
                 'length' => (int) Arr::get($track, 'length', 0) / 1000, // MusicBrainz length is in milliseconds
-                'url' => 'https://musicbrainz.org/recording/' . Arr::get($track, 'id'),
+                'url' => $recordingMbid ? "https://musicbrainz.org/recording/$recordingMbid" : null,
             ];
         })->toArray();
 
