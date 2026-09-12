@@ -3,9 +3,11 @@
 namespace App\Services\Network;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Uri;
 use IPLib\Address\AddressInterface;
 use IPLib\Address\IPv4;
+use IPLib\Address\IPv6;
 use IPLib\Factory;
 use IPLib\Range\Type as RangeType;
 use Throwable;
@@ -79,10 +81,11 @@ class Network
      */
     public function resolveToPublicIps(string $host): array
     {
-        $literal = Factory::parseAddressString($host);
+        $normalizedHost = self::unwrapIpv6Literal($host);
+        $literal = Factory::parseAddressString($normalizedHost);
 
         if ($literal) {
-            if (self::isAmbiguousIpv4Literal($literal, $host)) {
+            if (self::isAmbiguousIpv4Literal($literal, $normalizedHost)) {
                 return [];
             }
 
@@ -90,31 +93,54 @@ class Network
         }
 
         try {
-            $a = dns_get_record($host, DNS_A);
-            $aaaa = dns_get_record($host, DNS_AAAA);
+            $a = dns_get_record($normalizedHost, DNS_A);
+            $aaaa = dns_get_record($normalizedHost, DNS_AAAA);
         } catch (Throwable) {
             return [];
         }
 
-        if ($a === false || $aaaa === false) {
+        if (in_array(false, [$a, $aaaa], true)) {
             // dns_get_record returning false is a resolver failure — fail closed
             // rather than treating it as "host has no records".
             return [];
         }
 
-        $ips = [];
+        $ips = collect([...$a, ...$aaaa])->map(self::readIp(...))->all();
 
-        foreach (array_merge($a, $aaaa) as $record) {
-            $ip = Arr::get($record, 'ip') ?? Arr::get($record, 'ipv6');
+        return self::areAllPublic($ips) ? array_values($ips) : [];
+    }
 
-            if (!$ip || Factory::parseAddressString($ip)?->getRangeType() !== RangeType::T_PUBLIC) {
-                return [];
-            }
+    /** @param array<string, mixed> $record */
+    private static function readIp(array $record): string
+    {
+        return (string) Arr::first(
+            [Arr::get($record, 'ip'), Arr::get($record, 'ipv6')],
+            static fn (?string $ip): bool => filled($ip),
+        );
+    }
 
-            $ips[] = $ip;
-        }
+    /** @param list<string> $ips */
+    private static function areAllPublic(array $ips): bool
+    {
+        return collect($ips)->every(
+            static fn (string $ip): bool => Factory::parseAddressString($ip)?->getRangeType() === RangeType::T_PUBLIC,
+        );
+    }
 
-        return $ips;
+    /**
+     * A URI parser keeps the brackets around an IPv6 literal host — `Uri::host()` and PSR-7
+     * `getHost()` both hand back `[::1]` — and no IP parser accepts that form, so an IPv6
+     * host would otherwise fall through to a DNS lookup that can never succeed.
+     *
+     * Brackets are unwrapped only when they really do wrap an IPv6 literal. A bracketed
+     * IPv4 address is malformed, and keeping it bracketed leaves it unparseable so the
+     * caller fails closed.
+     */
+    public static function unwrapIpv6Literal(string $host): string
+    {
+        $inner = Str::match('/^\[(.+)]$/', $host);
+
+        return Factory::parseAddressString($inner) instanceof IPv6 ? $inner : $host;
     }
 
     /**
