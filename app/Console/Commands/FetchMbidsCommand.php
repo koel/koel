@@ -85,14 +85,27 @@ class FetchMbidsCommand extends Command
         $this->info(sprintf('Looking up %s.', Str::plural($label, $total, prependCount: true)));
 
         $progress = $this->output->createProgressBar($total);
+        $progress->setFormat(' %current%/%max% [%bar%] %message%');
 
         foreach ($entities as $entity) {
-            $this->rescueLookup(static fn () => $lookUp($entity), $entity->name);
+            $name = self::describe($entity);
+
+            $progress->setMessage($name);
+            $progress->display();
+
+            $this->rescueLookup(static fn () => $lookUp($entity), $name);
             $progress->advance();
         }
 
+        $progress->setMessage('');
+        $progress->display();
         $progress->finish();
         $this->newLine();
+    }
+
+    private static function describe(Album|Artist $entity): string
+    {
+        return $entity instanceof Album ? sprintf('%s - %s', $entity->name, $entity->artist_name) : $entity->name;
     }
 
     private function rescueLookup(callable $lookup, string $name): void

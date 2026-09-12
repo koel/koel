@@ -59,6 +59,27 @@ class FetchMbidsCommandTest extends TestCase
     }
 
     #[Test]
+    public function nameWhatItIsLookingUp(): void
+    {
+        $this->allowPipelinePipe(GetMbidForArtist::class, 'found-artist-mbid');
+        $this->allowPipelinePipe(GetReleaseAndReleaseGroupMbidsForAlbum::class, ['found-album-mbid', null]);
+        $this->allowPipelinePipe(GetAlbumTracksUsingMbid::class, []);
+
+        $artist = Artist::factory()->createOne(['name' => 'Aphex Twin', 'mbid' => null]);
+        Album::factory()->for($artist)->createOne([
+            'name' => 'Selected Ambient Works 85-92',
+            'artist_name' => $artist->name,
+            'mbid' => null,
+        ]);
+
+        $this
+            ->artisan('koel:fetch-mbids')
+            ->expectsOutputToContain('Selected Ambient Works 85-92 - Aphex Twin')
+            ->expectsOutputToContain('Aphex Twin')
+            ->assertSuccessful();
+    }
+
+    #[Test]
     public function countTheEntitiesItLooksUp(): void
     {
         $this->allowPipelinePipe(GetMbidForArtist::class, 'found-artist-mbid');
