@@ -327,6 +327,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.
+- **Never justify proposed work with an unverified claim about an external system.** Before arguing that a change is worth making because some client reads a field, some spec defines it, some service accepts a parameter, or some tool behaves a certain way — go and check. Read the spec page, grep the client's source (`gh search code --repo owner/name 'symbol'`), query the live API. If verifying is not possible, say the claim is unverified **in the same breath as the proposal**, never after the work is built. A rationale that turns out to rest on a guess wastes a review cycle and makes every other claim in the proposal suspect.
 - CodeRabbit (and similar bots) split their output across three GitHub layers. Before claiming a review has been addressed, query **all three**:
   - `gh api repos/{owner}/{repo}/pulls/{n}/comments` — inline review comments on specific file/line positions (🟡 Minor / 🟠 Major / 🔴 Critical / ⚠️ Potential issue).
   - `gh api repos/{owner}/{repo}/issues/{n}/comments` — issue-level (conversation) comments. CodeRabbit's PR-level summary lives here, and the **Nitpick comments** are sometimes bundled in a collapsible section inside that summary's body.
