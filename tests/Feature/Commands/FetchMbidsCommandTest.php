@@ -12,7 +12,7 @@ use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class BackfillMusicBrainzIdentifiersCommandTest extends TestCase
+class FetchMbidsCommandTest extends TestCase
 {
     public function setUp(): void
     {
@@ -43,7 +43,7 @@ class BackfillMusicBrainzIdentifiersCommandTest extends TestCase
             'mbid' => null,
         ]);
 
-        $this->artisan('koel:musicbrainz:backfill')->assertSuccessful();
+        $this->artisan('koel:fetch-mbids')->assertSuccessful();
 
         self::assertSame('found-artist-mbid', $artist->refresh()->mbid);
         self::assertSame('found-album-mbid', $album->refresh()->mbid);
@@ -63,7 +63,7 @@ class BackfillMusicBrainzIdentifiersCommandTest extends TestCase
         ]);
 
         $this
-            ->artisan('koel:musicbrainz:backfill')
+            ->artisan('koel:fetch-mbids')
             ->expectsOutput('Every album and artist already has an identifier.')
             ->assertSuccessful();
 
@@ -86,7 +86,7 @@ class BackfillMusicBrainzIdentifiersCommandTest extends TestCase
         ]);
 
         $this
-            ->artisan('koel:musicbrainz:backfill')
+            ->artisan('koel:fetch-mbids')
             ->expectsOutput('Every album and artist already has an identifier.')
             ->assertSuccessful();
     }
@@ -97,7 +97,7 @@ class BackfillMusicBrainzIdentifiersCommandTest extends TestCase
         $this->allowPipelinePipe(GetMbidForArtist::class, 'found-artist-mbid');
         Artist::factory()->createOne(['mbid' => null]);
 
-        $this->artisan('koel:musicbrainz:backfill')->assertSuccessful();
+        $this->artisan('koel:fetch-mbids')->assertSuccessful();
 
         self::assertInstanceOf(ThrottledMusicBrainzConnector::class, app(MusicBrainzConnector::class));
     }
@@ -108,7 +108,7 @@ class BackfillMusicBrainzIdentifiersCommandTest extends TestCase
         config(['koel.services.musicbrainz.enabled' => false]);
 
         $this
-            ->artisan('koel:musicbrainz:backfill')
+            ->artisan('koel:fetch-mbids')
             ->expectsOutput('MusicBrainz is disabled. Enable it before running this command.')
             ->assertFailed();
     }

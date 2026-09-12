@@ -15,13 +15,13 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class BackfillMusicBrainzIdentifiersCommand extends Command
+class FetchMbidsCommand extends Command
 {
     private const float REQUEST_INTERVAL_IN_SECONDS = 1.0;
 
-    protected $signature = 'koel:musicbrainz:backfill';
+    protected $signature = 'koel:fetch-mbids';
 
-    protected $description = 'Fill in missing MusicBrainz identifiers for albums and artists.';
+    protected $description = 'Attempt to fetch missing MusicBrainz identifiers for albums and artists.';
 
     public function __construct(
         private readonly MbidService $mbidService,
@@ -50,8 +50,8 @@ class BackfillMusicBrainzIdentifiersCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->backfillAlbums($albums);
-        $this->backfillArtists($artists);
+        $this->lookUpAlbums($albums);
+        $this->lookUpArtists($artists);
 
         $this->newLine();
         $this->info('Done. Run the command again to continue where an interrupted run left off.');
@@ -68,7 +68,7 @@ class BackfillMusicBrainzIdentifiersCommand extends Command
     }
 
     /** @param Collection<array-key, Album> $albums */
-    private function backfillAlbums(Collection $albums): void
+    private function lookUpAlbums(Collection $albums): void
     {
         $this->info(sprintf('Looking up %d album(s).', count($albums)));
 
@@ -84,7 +84,7 @@ class BackfillMusicBrainzIdentifiersCommand extends Command
     }
 
     /** @param Collection<array-key, Artist> $artists */
-    private function backfillArtists(Collection $artists): void
+    private function lookUpArtists(Collection $artists): void
     {
         $this->info(sprintf('Looking up %d artist(s).', count($artists)));
 
