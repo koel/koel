@@ -59,6 +59,9 @@ final class SubmitListensRequest extends Request implements HasBody
             'additional_info' => array_filter([
                 'duration_ms' => $this->song->length ? (int) round($this->song->length * 1000) : null,
                 'tracknumber' => $this->song->track ?: null,
+                'recording_mbid' => $this->song->mbid,
+                'release_mbid' => $this->song->album->mbid,
+                'artist_mbids' => $this->getArtistMbids(),
                 'media_player' => 'Koel',
                 'submission_client' => 'Koel',
             ]),
@@ -69,5 +72,15 @@ final class SubmitListensRequest extends Request implements HasBody
         }
 
         return $metadata;
+    }
+
+    /**
+     * ListenBrainz wants a list here, and an empty one would survive the array_filter() above.
+     *
+     * @return list<string>|null
+     */
+    private function getArtistMbids(): ?array
+    {
+        return $this->song->artist->mbid ? [$this->song->artist->mbid] : null;
     }
 }
