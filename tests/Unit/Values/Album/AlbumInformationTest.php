@@ -30,7 +30,6 @@ class AlbumInformationTest extends TestCase
         $tracks = self::getFixtureTracks();
         $first = $tracks[0];
 
-        // A release track and the recording it points at are different entities, and the link must use the latter.
         self::assertNotSame(Arr::get($first, 'id'), Arr::get($first, 'recording.id'));
 
         $information = AlbumInformation::make()->withMusicBrainzTracks($tracks);

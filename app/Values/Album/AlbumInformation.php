@@ -63,7 +63,6 @@ final class AlbumInformation implements Arrayable
         $self = clone $this;
 
         $self->tracks = collect($tracks)->map(static function (array $track) {
-            // A release track and the recording it points at are different entities with different identifiers.
             $recordingMbid = Arr::get($track, 'recording.id');
 
             return [
