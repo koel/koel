@@ -32,6 +32,7 @@ final class AlbumResource
      *     userRating: ?int,
      *     starred: ?string,
      *     played: ?string,
+     *     musicBrainzId: ?string,
      * }
      */
     public static function toArray(Album $album, User $user): array
@@ -49,6 +50,7 @@ final class AlbumResource
             'userRating' => $album->getRatingFor($user) ?: null,
             'starred' => $album->favorited_at?->toIso8601String(),
             'played' => $album->last_played_at?->toIso8601String(),
+            'musicBrainzId' => $album->mbid,
         ];
     }
 }

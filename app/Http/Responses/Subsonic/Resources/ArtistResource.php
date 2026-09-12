@@ -22,6 +22,7 @@ final class ArtistResource
      *     albumCount: int,
      *     userRating: ?int,
      *     starred: ?string,
+     *     musicBrainzId: ?string,
      * }
      */
     public static function toArray(Artist $artist, User $user): array
@@ -33,6 +34,7 @@ final class ArtistResource
             'albumCount' => $artist->albums_count ?? 0,
             'userRating' => $artist->getRatingFor($user) ?: null,
             'starred' => $artist->favorited_at?->toIso8601String(),
+            'musicBrainzId' => $artist->mbid,
         ];
     }
 }
