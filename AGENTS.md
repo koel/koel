@@ -6,21 +6,7 @@
 The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to enhance the user's satisfaction building Laravel applications.
 
 ## Foundational Context
-This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
-
-- php - 8.4.20
-- laravel/framework (LARAVEL) - v12
-- laravel/nightwatch (NIGHTWATCH) - v1
-- laravel/prompts (PROMPTS) - v0
-- laravel/sanctum (SANCTUM) - v4
-- laravel/scout (SCOUT) - v10
-- laravel/socialite (SOCIALITE) - v5
-- larastan/larastan (LARASTAN) - v3
-- laravel/mcp (MCP) - v0
-- phpunit/phpunit (PHPUNIT) - v11
-- vue (VUE) - v3
-- laravel-echo (ECHO) - v2
-- tailwindcss (TAILWINDCSS) - v4
+This is a Laravel application. Read `composer.json` and `package.json` for the exact package versions in use, and abide by them.
 
 ## Conventions
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
@@ -278,6 +264,8 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Self-Explanatory Code
 - Code should read on its own. If a piece of code needs a comment to be understood, that's a signal the code is wrong, not that the comment is needed — refactor it: extract a named helper, rename a variable to encode intent, lift a condition into a named flag, pull a block into a small function. Use a comment only when refactoring genuinely can't carry the intent (a hidden invariant, a workaround tied to a specific external bug, behaviour a reader would otherwise misjudge). Never write comments that narrate the next line, summarise the surrounding block, or restate what well-named identifiers already say.
+- **The "hidden invariant" carve-out is not a license — it is a last resort.** If you catch yourself writing a comment to explain that two things are different, that an order matters, or that a value means something specific, the fix is a better identifier, not a sentence. `$recordingMbid = Arr::get($track, 'recording.id')` already says the link targets the recording; a line above it explaining that a release track and a recording are distinct entities is noise. Encode the distinction in the name, then delete the comment.
+- **Never write comments in tests.** A test's method name plus its assertions are the documentation. A comment above an assertion restating what the assertion checks is always noise — rename the test instead.
 - Don't use single-letter variable names. The only allowed ones are `i` / `j` for loop counters, `h` for the test harness, and `$e` for the exception variable in `catch (Throwable|Exception|Error $e)` blocks (PHP's universal idiom — analogous to `e` for events in JS/TS event handlers). For everything else (callback params, destructured fields, lambda args, etc.) pick a name that says what it is.
 - Never combine assignment with return. Always `$x = expr;` then `return $x;` on a separate line — `return $x = expr;` cramming two effects into one statement is forbidden in PHP, TS, and JS.
 
@@ -302,19 +290,12 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Environment Variables Documentation
 - When adding, removing, or modifying environment variables in `.env.example`, always update `docs/environment-variables.md` to stay in sync.
 
-## Documentation Pages
-- Every doc page under `docs/` must have a `description` in its YAML frontmatter. When creating or editing a doc page, ensure the description accurately summarizes the page content.
-- The docs use `vitepress-plugin-llms` to generate `llms.txt` and `llms-full.txt` on build; descriptions are surfaced there.
-- Run `bash docs/.vitepress/check-frontmatter.sh` to verify all pages have descriptions.
-- **Write docs for users, not engineers.** Be concise, use simple words, be friendly. Lead with the action ("To upgrade: 1. Download. 2. Extract. 3. Restart."), not the rationale. Don't explain how launcher scripts or commands work internally — users want to know *what to do*, not *how the script reasons about it*. Cut corporate-speak ("turnkey path", "conceptually immutable", "provisions with the conventional layout"), nerdy parentheticals ("(`migrate` is idempotent — Laravel skips already-applied ones)"), and redundant warnings already covered elsewhere on the page.
-- **Don't inject your own judgment into docs.** No "isn't straightforward", "is usually easier", "you'd need to", "this is the recommended path", "for most users", "if you really want to". Don't editorialize difficulty, opinion-rate alternatives, or steer the reader toward what *you* think they should do. Users decided to read this section; just give them the steps.
-- **No clever bash one-liners for trivial tasks.** Don't reach for `diff <(grep -oE … | sort -u) <(…)` when the instruction is "compare two files" — users can eyeball them. Process substitution, awk, sed pipelines, and similar are nerd-bait. If the task is "look at the difference between A and B", say that in English. Reserve shell snippets for things the user actually needs the exact incantation for.
-
 ## Git Commits
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages (e.g. `fix:`, `feat:`, `chore:`, `test:`, `refactor:`, `docs:`, `ci:`, etc.).
 - Focus on the feature/purpose, not implementation details. For example, prefer "feat: show current playing song during radio stream" over "feat: radio station ICY metadata now-playing". Same applies to PR titles.
 - Never attribute work to AI in any artifact: no "Generated with Claude Code", "Assisted by AI", "Co-Authored-By: Claude/ChatGPT/Copilot/AI" lines, no AI-tool mentions in commits, PR titles, PR descriptions, issue comments, code comments, or doc pages. The author is the human running the tool.
 - When the implementation of a PR changes (e.g. during code review), always update the PR title and description to reflect the current state of the changes.
+- **Fold `AGENTS.md` changes into the PR that prompted them.** When a review finding or a "make it a rule" instruction lands mid-PR, commit the `AGENTS.md` (or scoped `*/AGENTS.md`) edit into that same PR — don't leave it uncommitted, and don't save it for a separate branch. The rule and the code that motivated it are one reviewable unit: the diff is the evidence for why the rule exists. This extends to any unrelated in-progress `AGENTS.md` work already sitting in the tree — fold it in rather than splitting hairs over relatedness.
 
 ## Releasing
 - To release a new version, run `php artisan koel:release` (interactive) or `php artisan koel:release {patch|minor|major|vX.Y.Z}`. The command handles the version bump, commit, tag, `latest` tag move, and `release` branch sync.
@@ -332,31 +313,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## AI Assistant Tools
 - When AI assistant tool capabilities change (added, removed, or updated), always update the sample prompts in `AiSamplePrompts.vue` to reflect the current abilities.
 
-## Lucide Icons
-- When importing icons from `lucide-vue-next`, always use the `Icon` suffix (e.g. `SparklesIcon`, not `Sparkles`; `SearchIcon`, not `Search`).
-
-## TypeScript Conventions
-- Always prefer generics over type casting when the API supports it (e.g. `container.querySelector<HTMLElement>('.foo')` instead of `container.querySelector('.foo') as HTMLElement`).
-- Do not add explicit return types when they can be inferred by the compiler. Only annotate return types when inference is insufficient or ambiguous.
-- When using `setTimeout`, `setInterval`, or `requestAnimationFrame`, always ensure they are cleaned up: on component unmount (`onBeforeUnmount`), on state transitions that invalidate them (e.g. drop cancels a pending expand), and when the operation completes. Treat every timer/rAF as a resource that must be explicitly released.
-
-## Vue Template Conventions
-- Always use Vue's same-name shorthand for bindings: `:foo` instead of `:foo="foo"`. This applies to props, components, and any v-bind where the attribute name matches the variable name.
-
-## Vue Forms
-- Any Vue surface that takes user input and commits it on submit must use the `useForm` composable from `@/composables/useForm` — including inline composers, popovers, and mini name-prompts that aren't named `*Form.vue`. Don't roll your own `ref<string>('')` + manual submit handling.
-- Pair it with the canonical wiring: `<form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">`, inputs use `v-koel-focus` (not manual `onMounted` focus) and `required` (not manual `:disabled`), Save is `<Btn type="submit">`, Cancel is `<Btn type="button" @click.prevent="maybeClose">`, and `maybeClose` does `if (isPristine() || (await showConfirmDialog(...))) emit('cancel')`.
-- For purely-local submits (no server call), pass `useOverlay: false` and have `onSubmit` just emit. Use the optional `validator` callback for non-HTML5 rules (e.g. trim/whitespace).
-- Read `resources/assets/js/components/playlist/CreatePlaylistFolderForm.vue` before writing a new form — that's the reference shape.
-
-## Vue Component Decomposition
-- Always try to break Vue components into smaller, self-managed-state subcomponents. A component that hosts multiple stages, multiple modes, or multiple distinct UI shapes should split each into its own focused child. The parent becomes a thin orchestrator (state machine + API calls + composition); each child owns one shape with clear props in and events out, no service dependencies of its own, and is testable in isolation with minimal mocks. Reference shape: `TwoFactorAuthSettings.vue` (orchestrator) → `TwoFactorEnrollment.vue` / `TwoFactorRecoveryCodes.vue` / `TwoFactorManageActions.vue` (focused children).
-
-## Vue Component Styling
-- Put shared/base Tailwind classes directly on the HTML element via the `class` attribute.
-- For variant-specific styles (e.g. modes, states), use custom CSS classes (`.initial`, `.chat`, `.user`, `.error`, etc.) with `@apply` in a scoped `<style>` block.
-- Do NOT build class strings in JavaScript arrays or computed properties.
-
 ## Testing Assertions
 - When asserting two Eloquent models are the same, use `assertTrue($modelA->is($modelB))` instead of comparing IDs.
 - Never resort to `ReflectionClass` / `ReflectionProperty` / `ReflectionMethod` in tests to peek at private state, instantiate classes with private constructors, or invoke private methods. If a test "needs" reflection, the smell is the test or the code: the production class should expose what's necessary via a public factory, the dependency should be injectable, or the test should construct the dependency itself (TOTP and similar deterministic primitives need no shared instance). Refactor instead of reaching for reflection.
@@ -365,20 +321,17 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Use `createOne()` to create a single model and `createMany()` to create a collection. Never use `create()` directly, as its return type is ambiguous (single model or collection depending on arguments).
 - Wire parent relationships with `->for($parent)` instead of passing foreign keys in the attributes array. For polymorphic relations, pass the relation name as the second argument: `->for($song, 'rateable')` (sets both `*_id` and `*_type`). Prefer `Rating::factory()->for($user)->for($song, 'rateable')->createOne(['rating' => 5])` over the equivalent `createOne(['user_id' => $user->id, 'rateable_id' => $song->id, 'rateable_type' => $song->getMorphClass(), 'rating' => 5])`.
 
-## Frontend Testing
-- Prefer semantic queries (`getByRole`, `getByLabelText`, `getByText`) via `screen` from `@testing-library/vue`. Use `data-testid` only as a last resort when no semantic query is available.
-- `getBy*` queries already throw if the element is not found, so never wrap them in `expect().toBeTruthy()`. Just call `screen.getByTestId('foo')` directly — the throw is the assertion. Use `expect(screen.queryBy*()).toBeNull()` to assert absence.
-
 ## Test Class Namespacing
 - Unit test classes must mirror the namespace of the class under test. Replace `App\` with `Tests\Unit\` and add a `Test` suffix (e.g. `App\Ai\Services\FavoriteableEntityResolver` → `Tests\Unit\Ai\Services\FavoriteableEntityResolverTest`).
 - The test file path must match the namespace (e.g. `tests/Unit/Ai/Services/FavoriteableEntityResolverTest.php`).
 
 ## Code Reviews
 - When addressing PR review comments, do NOT blindly follow them. Always use your own knowledge and logic to evaluate whether the feedback makes sense. If it doesn't, push back and explain why.
-- CodeRabbit (and similar bots) split their output across two GitHub layers. Before claiming a review has been addressed, query **both**:
+- CodeRabbit (and similar bots) split their output across three GitHub layers. Before claiming a review has been addressed, query **all three**:
   - `gh api repos/{owner}/{repo}/pulls/{n}/comments` — inline review comments on specific file/line positions (🟡 Minor / 🟠 Major / 🔴 Critical / ⚠️ Potential issue).
-  - `gh api repos/{owner}/{repo}/issues/{n}/comments` — issue-level (conversation) comments. CodeRabbit's PR-level summary lives here, and the **Nitpick comments** are bundled in a collapsible section inside that summary's body.
-  - Hitting only `/pulls/{n}/comments` misses every nitpick. Scan the issue-level summary body for `<details><summary>Nitpick` sections and triage each independently alongside the inline findings.
+  - `gh api repos/{owner}/{repo}/issues/{n}/comments` — issue-level (conversation) comments. CodeRabbit's PR-level summary lives here, and the **Nitpick comments** are sometimes bundled in a collapsible section inside that summary's body.
+  - `gh api repos/{owner}/{repo}/pulls/{n}/reviews` — the review submission bodies. **Outside diff range comments** and standalone **Nitpick comments** land here whenever GitHub won't let the bot anchor a finding inline (the line falls outside the diff hunk, the file was deleted, and similar). The giveaway is a CAUTION block reading `Some comments are outside the diff and can't be posted inline due to platform limitations`.
+  - Querying only the first two misses an entire class of findings — precisely the ones GitHub could not anchor inline. Sort by `created_at` / `submitted_at` to find what is new since the last pass, and don't filter review submissions by `state` alone: a submission with no state still carries findings in its `body`.
 
 ## Linting & Static Analysis
 - When running lint or static analysis (backend or frontend), fix ALL warnings and errors to ensure 100% clean output — even pre-existing issues unrelated to current changes.
@@ -387,16 +340,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Vite+ Toolchain
 
 This project uses **Vite+**, a unified toolchain wrapping Vite, Vitest, Oxlint, Oxfmt, and more via a single global CLI called `vp`. Run `vp help` for available commands.
-
-### Key Commands
-- `vp dev` — development server
-- `vp build` — production build
-- `vp test` — run frontend tests (Vitest)
-- `vp lint` — lint code (Oxlint)
-- `vp fmt` — format code (Oxfmt)
-- `vp check` — run format + lint + type checks
-- `vp install` / `vp add` / `vp remove` — package management (delegates to pnpm)
-- `vp run <script>` — run a package.json script (equivalent of `pnpm run <script>`)
 
 ### Imports
 - Import from `vite-plus` instead of `vite` (e.g. `import { defineConfig } from 'vite-plus'`)
