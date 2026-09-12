@@ -2,6 +2,7 @@
 
 namespace App\Http\Integrations\MusicBrainz;
 
+use Illuminate\Support\Sleep;
 use Saloon\Http\PendingRequest;
 
 final class ThrottledMusicBrainzConnector extends MusicBrainzConnector
@@ -20,7 +21,7 @@ final class ThrottledMusicBrainzConnector extends MusicBrainzConnector
         $elapsed = microtime(true) - $this->previousRequestAt;
 
         if ($elapsed < $this->minimumIntervalInSeconds) {
-            usleep((int) round(($this->minimumIntervalInSeconds - $elapsed) * 1_000_000));
+            Sleep::usleep((int) round(($this->minimumIntervalInSeconds - $elapsed) * 1_000_000));
         }
 
         $this->previousRequestAt = microtime(true);

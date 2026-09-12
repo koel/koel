@@ -3,6 +3,8 @@
 namespace Tests\Unit\Http\Integrations\MusicBrainz;
 
 use App\Http\Integrations\MusicBrainz\ThrottledMusicBrainzConnector;
+use Carbon\CarbonInterval;
+use Illuminate\Support\Sleep;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\PendingRequest;
@@ -10,46 +12,51 @@ use Tests\TestCase;
 
 class ThrottledMusicBrainzConnectorTest extends TestCase
 {
-    private const float SHORT_INTERVAL = 0.05;
-    private const float LONG_INTERVAL = 30.0;
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        Sleep::fake();
+    }
 
     #[Test]
     public function letTheFirstRequestThrough(): void
     {
-        $connector = new ThrottledMusicBrainzConnector(self::LONG_INTERVAL);
+        self::boot(new ThrottledMusicBrainzConnector(), times: 1);
 
-        $elapsed = self::timeBoot($connector, 1);
-
-        self::assertLessThan(self::LONG_INTERVAL / 2, $elapsed);
+        Sleep::assertNeverSlept();
     }
 
     #[Test]
-    public function holdEachFollowingRequestBackByTheInterval(): void
+    public function holdEachFollowingRequestBack(): void
     {
-        $connector = new ThrottledMusicBrainzConnector(self::SHORT_INTERVAL);
+        self::boot(new ThrottledMusicBrainzConnector(), times: 3);
 
-        $elapsed = self::timeBoot($connector, 3);
-
-        self::assertGreaterThanOrEqual(self::SHORT_INTERVAL * 2, $elapsed);
+        Sleep::assertSleptTimes(2);
     }
 
     #[Test]
     public function keepToOneRequestPerSecondByDefault(): void
     {
-        $elapsed = self::timeBoot(new ThrottledMusicBrainzConnector(), 2);
+        self::boot(new ThrottledMusicBrainzConnector(), times: 2);
 
-        self::assertGreaterThanOrEqual(1.0, $elapsed);
+        Sleep::assertSlept(static fn (CarbonInterval $waited): bool => $waited->totalSeconds > 0.99);
     }
 
-    private static function timeBoot(ThrottledMusicBrainzConnector $connector, int $times): float
+    #[Test]
+    public function waitOnlyAsLongAsAskedFor(): void
+    {
+        self::boot(new ThrottledMusicBrainzConnector(0.25), times: 2);
+
+        Sleep::assertSlept(static fn (CarbonInterval $waited): bool => $waited->totalSeconds < 0.26);
+    }
+
+    private static function boot(ThrottledMusicBrainzConnector $connector, int $times): void
     {
         $pendingRequest = Mockery::mock(PendingRequest::class);
-        $startedAt = microtime(true);
 
         for ($i = 0; $i < $times; $i++) {
             $connector->boot($pendingRequest);
         }
-
-        return microtime(true) - $startedAt;
     }
 }
