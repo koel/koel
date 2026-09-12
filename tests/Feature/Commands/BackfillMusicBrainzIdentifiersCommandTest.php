@@ -92,25 +92,6 @@ class BackfillMusicBrainzIdentifiersCommandTest extends TestCase
     }
 
     #[Test]
-    public function honorTheLimit(): void
-    {
-        $this->allowPipelinePipe(GetMbidForArtist::class, 'found-artist-mbid');
-        $this->allowPipelinePipe(GetReleaseAndReleaseGroupMbidsForAlbum::class, ['found-album-mbid', null]);
-        $this->allowPipelinePipe(GetAlbumTracksUsingMbid::class, []);
-
-        Artist::factory()
-            ->count(3)
-            ->createMany(array_map(
-                static fn (int $index): array => ['name' => "Artist $index", 'mbid' => null],
-                range(1, 3),
-            ));
-
-        $this->artisan('koel:musicbrainz:backfill', ['--limit' => 1])->assertSuccessful();
-
-        self::assertSame(1, Artist::query()->whereNotNull('mbid')->count());
-    }
-
-    #[Test]
     public function throttleTheLookupsMusicBrainzReceives(): void
     {
         $this->allowPipelinePipe(GetMbidForArtist::class, 'found-artist-mbid');

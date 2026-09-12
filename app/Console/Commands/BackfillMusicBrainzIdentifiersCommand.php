@@ -22,8 +22,7 @@ class BackfillMusicBrainzIdentifiersCommand extends Command
      */
     private const float REQUEST_INTERVAL_IN_SECONDS = 1.0;
 
-    protected $signature = 'koel:musicbrainz:backfill
-        {--limit= : Stop after this many albums and this many artists}';
+    protected $signature = 'koel:musicbrainz:backfill';
 
     protected $description = 'Fill in missing MusicBrainz identifiers for albums and artists.';
 
@@ -45,10 +44,8 @@ class BackfillMusicBrainzIdentifiersCommand extends Command
 
         $this->throttleMusicBrainzRequests();
 
-        $limit = $this->option('limit') === null ? null : (int) $this->option('limit');
-
-        $albums = $this->albumRepository->getWithoutMbid($limit);
-        $artists = $this->artistRepository->getWithoutMbid($limit);
+        $albums = $this->albumRepository->getWithoutMbid();
+        $artists = $this->artistRepository->getWithoutMbid();
 
         if ($albums->isEmpty() && $artists->isEmpty()) {
             $this->info('Every album and artist already has an identifier.');
