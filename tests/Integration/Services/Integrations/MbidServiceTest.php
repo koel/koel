@@ -9,6 +9,7 @@ use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
 use App\Services\Integrations\MbidService;
+use Closure;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -141,6 +142,42 @@ class MbidServiceTest extends TestCase
 
         self::assertSame('album-mbid-from-tags', $album->refresh()->mbid);
         self::assertSame('recording-mbid-from-tags', self::getFirstSongMbid($album));
+    }
+
+    #[Test]
+    public function skipTheArtistSearchWhenTheMbidIsAlreadyKnown(): void
+    {
+        $this->mock(GetMbidForArtist::class)->shouldNotReceive('__invoke');
+        $artist = Artist::factory()->createOne(['name' => 'Skid Row', 'mbid' => 'mbid-from-tags']);
+
+        $this->service->fetchAndStoreArtistMbid($artist);
+
+        self::assertSame('mbid-from-tags', $artist->refresh()->mbid);
+    }
+
+    #[Test]
+    public function lookUpRecordingsUsingTheKnownAlbumMbidWithoutSearching(): void
+    {
+        $this->mock(GetReleaseAndReleaseGroupMbidsForAlbum::class)->shouldNotReceive('__invoke');
+
+        $searchedMbid = null;
+
+        $this
+            ->mock(GetAlbumTracksUsingMbid::class)
+            ->allows('__invoke')
+            ->andReturnUsing(static function (?string $mbid, Closure $next) use (&$searchedMbid): mixed {
+                $searchedMbid = $mbid;
+
+                return $next([['title' => 'Monkey Business', 'recording' => ['id' => 'recording-mbid-0']]]);
+            });
+
+        $album = self::makeAlbumWith(['Monkey Business']);
+        $album->update(['mbid' => 'album-mbid-from-tags']);
+
+        $this->service->fetchAndStoreAlbumMbids($album);
+
+        self::assertSame('album-mbid-from-tags', $searchedMbid);
+        self::assertSame('recording-mbid-0', self::getFirstSongMbid($album));
     }
 
     #[Test]

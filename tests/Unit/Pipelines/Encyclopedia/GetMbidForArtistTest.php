@@ -35,7 +35,7 @@ class GetMbidForArtistTest extends TestCase
         Saloon::assertSent(static function (SearchForArtistRequest $request): bool {
             self::assertSame(
                 [
-                    'query' => 'artist:Skid Row',
+                    'query' => 'artist:"Skid Row"',
                     'limit' => 1,
                 ],
                 $request->query()->all(),
