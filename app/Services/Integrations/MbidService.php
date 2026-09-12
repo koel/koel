@@ -24,7 +24,7 @@ class MbidService
 {
     public function fetchAndStoreArtistMbid(Artist $artist): void
     {
-        if ($artist->is_unknown || $artist->is_various) {
+        if ($artist->is_unknown || $artist->is_various || $artist->mbid) {
             return;
         }
 
@@ -43,13 +43,7 @@ class MbidService
         }
 
         rescue_if(MusicBrainzService::enabled(), static function () use ($album): void {
-            /** @var array{0: ?string, 1: ?string} $mbids */
-            $mbids = Pipeline::send([
-                'album' => $album->name,
-                'artist' => $album->artist->name,
-            ])->through([GetReleaseAndReleaseGroupMbidsForAlbum::class])->thenReturn();
-
-            $albumMbid = $mbids[0] ?? null;
+            $albumMbid = $album->mbid ?: self::searchForReleaseMbid($album);
 
             if (!$albumMbid) {
                 return;
@@ -62,6 +56,21 @@ class MbidService
 
             self::storeRecordingMbids($album, $tracks);
         });
+    }
+
+    /**
+     * A release identifier the tags already carry is authoritative, where this search takes whichever
+     * release ranks first for the album and artist names — so only ask when there is nothing to go on.
+     */
+    private static function searchForReleaseMbid(Album $album): ?string
+    {
+        /** @var array{0: ?string, 1: ?string} $mbids */
+        $mbids = Pipeline::send([
+            'album' => $album->name,
+            'artist' => $album->artist->name,
+        ])->through([GetReleaseAndReleaseGroupMbidsForAlbum::class])->thenReturn();
+
+        return $mbids[0] ?? null;
     }
 
     /**
