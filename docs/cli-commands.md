@@ -132,10 +132,14 @@ php artisan koel:fetch-artwork --delay=2
 
 ### `koel:fetch-mbids`
 
-Attempt to fetch missing MusicBrainz identifiers for albums and artists. Koel reads these identifiers
-from your files when it scans them, and looks up the rest when you open an album or an artist. Run this
-command to look up everything that is still missing in one go, so songs you have not browsed to also
-carry an identifier when Koel submits a listen to ListenBrainz or answers a Subsonic client.
+Attempt to fetch missing MusicBrainz identifiers for albums, artists and songs. Koel reads these
+identifiers from your files when it scans them, and looks up the rest when you open an album or an
+artist. Run this command to look up everything that is still missing in one go, so songs you have not
+browsed to also carry an identifier when Koel submits a listen to ListenBrainz or answers a Subsonic
+client.
+
+A song's identifier is found through its album, so an album is revisited when any of its songs is still
+missing one, even if the album itself already has one.
 
 MusicBrainz accepts one request per second, so a large library takes a while. You can stop the command at
 any time and run it again later: it only looks up what is still missing, and it never replaces an
