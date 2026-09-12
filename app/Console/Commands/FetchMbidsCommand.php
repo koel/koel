@@ -2,7 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Console\Commands\Concerns\ThrottlesMusicBrainzRequests;
+use App\Http\Integrations\MusicBrainz\MusicBrainzConnector;
+use App\Http\Integrations\MusicBrainz\ThrottledMusicBrainzConnector;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Repositories\AlbumRepository;
@@ -17,7 +18,8 @@ use Throwable;
 
 class FetchMbidsCommand extends Command
 {
-    use ThrottlesMusicBrainzRequests;
+    /** @link https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting */
+    private const float REQUEST_INTERVAL_IN_SECONDS = 1.0;
 
     protected $signature = 'koel:fetch-mbids';
 
@@ -57,6 +59,14 @@ class FetchMbidsCommand extends Command
         $this->info('Done. Run the command again to continue where an interrupted run left off.');
 
         return self::SUCCESS;
+    }
+
+    private function throttleMusicBrainzRequests(): void
+    {
+        $this->laravel->instance(
+            MusicBrainzConnector::class,
+            new ThrottledMusicBrainzConnector(self::REQUEST_INTERVAL_IN_SECONDS),
+        );
     }
 
     /**
