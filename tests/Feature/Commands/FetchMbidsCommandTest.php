@@ -111,6 +111,7 @@ class FetchMbidsCommandTest extends TestCase
         $this->artisan('koel:fetch-mbids')->assertSuccessful();
 
         self::assertSame('found-recording-mbid', $song->refresh()->mbid);
+        self::assertSame('album-mbid-from-tags', $album->refresh()->mbid);
     }
 
     #[Test]
