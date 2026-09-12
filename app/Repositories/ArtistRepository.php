@@ -10,6 +10,7 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\LazyCollection;
 
 /**
  * @extends Repository<Artist>
@@ -90,6 +91,17 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->when($offset > 0, static fn (Builder $query) => $query->offset($offset))
             ->when($limit !== null, static fn (Builder $query) => $query->limit($limit))
             ->get();
+    }
+
+    /** @return LazyCollection<array-key, Artist> */
+    public function lazyGetWithoutMbid(): LazyCollection
+    {
+        return Artist::query()->onlyStandard()->whereNull('mbid')->lazyById();
+    }
+
+    public function countWithoutMbid(): int
+    {
+        return Artist::query()->onlyStandard()->whereNull('mbid')->count();
     }
 
     public function getAll(?User $user = null): Collection

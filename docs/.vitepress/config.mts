@@ -16,6 +16,8 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.png', type: 'image/x-png' }],
   ],
   cleanUrls: true,
+  // Agent instructions live beside the pages they govern; they are not pages themselves.
+  srcExclude: ['**/AGENTS.md', '**/CLAUDE.md'],
   sitemap: {
     hostname: 'https://docs.koel.dev',
   },

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\LazyCollection;
 
 /**
  * @extends Repository<Album>
@@ -21,6 +22,17 @@ use Illuminate\Database\Query\JoinClause;
 // @mago-ignore lint:too-many-methods,cyclomatic-complexity
 class AlbumRepository extends Repository implements ScoutableRepository
 {
+    /** @return LazyCollection<array-key, Album> */
+    public function lazyGetWithoutMbid(): LazyCollection
+    {
+        return Album::query()->onlyStandard()->whereNull('albums.mbid')->lazyById();
+    }
+
+    public function countWithoutMbid(): int
+    {
+        return Album::query()->onlyStandard()->whereNull('albums.mbid')->count();
+    }
+
     /**
      * @param string $id
      */
