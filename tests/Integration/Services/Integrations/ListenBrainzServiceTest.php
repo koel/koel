@@ -143,6 +143,32 @@ class ListenBrainzServiceTest extends TestCase
     }
 
     #[Test]
+    public function scrobbleSubmitsWhicheverMusicBrainzIdentifiersAreKnown(): void
+    {
+        $user = create_user(['preferences' => ['listenbrainz_token' => 'my_token']]);
+        $artist = Artist::factory()->createOne(['mbid' => null]);
+        $album = Album::factory()->for($artist)->createOne(['mbid' => null]);
+        $song = Song::factory()
+            ->for($artist)
+            ->for($album)
+            ->createOne(['mbid' => 'e3c3d3ee-3333-4ccc-8ddd-2f2f2f2f2f2f']);
+
+        Saloon::fake([SubmitListensRequest::class => MockResponse::make()]);
+
+        $this->service->scrobble($song, $user, 100);
+
+        Saloon::assertSent(static function (SubmitListensRequest $request) use ($song): bool {
+            $additionalInfo = $request->body()->all()['payload'][0]['track_metadata']['additional_info'];
+
+            self::assertSame($song->mbid, $additionalInfo['recording_mbid']);
+            self::assertArrayNotHasKey('release_mbid', $additionalInfo);
+            self::assertArrayNotHasKey('artist_mbids', $additionalInfo);
+
+            return true;
+        });
+    }
+
+    #[Test]
     public function updateNowPlayingOmitsTimestamp(): void
     {
         $user = create_user(['preferences' => ['listenbrainz_token' => 'my_token']]);

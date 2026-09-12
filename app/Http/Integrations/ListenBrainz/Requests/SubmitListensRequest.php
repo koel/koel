@@ -50,7 +50,22 @@ final class SubmitListensRequest extends Request implements HasBody
         ];
     }
 
-    /** @return array{artist_name: string, track_name: string, release_name?: string, additional_info: array} */
+    /**
+     * @return array{
+     *     artist_name: string,
+     *     track_name: string,
+     *     release_name?: string,
+     *     additional_info: array{
+     *         duration_ms?: int,
+     *         tracknumber?: int,
+     *         recording_mbid?: string,
+     *         release_mbid?: string,
+     *         artist_mbids?: list<string>,
+     *         media_player: string,
+     *         submission_client: string,
+     *     },
+     * }
+     */
     private function getTrackMetadata(): array
     {
         $metadata = [
@@ -74,11 +89,7 @@ final class SubmitListensRequest extends Request implements HasBody
         return $metadata;
     }
 
-    /**
-     * ListenBrainz wants a list here, and an empty one would survive the array_filter() above.
-     *
-     * @return list<string>|null
-     */
+    /** @return list<string>|null */
     private function getArtistMbids(): ?array
     {
         return $this->song->artist->mbid ? [$this->song->artist->mbid] : null;
