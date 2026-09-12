@@ -91,7 +91,7 @@ class RadioStreamConnectorTest extends TestCase
 
             foreach (explode(',', $argv[1]) as $status) {
                 $connection = stream_socket_accept($server, 10);
-                $requests[] = fread($connection, 2048);
+                $requests[] = (string) stream_get_line($connection, 8192, "\r\n\r\n");
 
                 fwrite($connection, "HTTP/1.0 $status Response\r\nContent-Type: audio/mpeg\r\n\r\n");
                 fclose($connection);
