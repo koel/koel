@@ -11,6 +11,7 @@ use App\Repositories\ArtistRepository;
 use App\Services\Integrations\MbidService;
 use App\Services\Integrations\MusicBrainzService;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -74,8 +75,8 @@ class BackfillMusicBrainzIdentifiersCommand extends Command
         );
     }
 
-    /** @param \Illuminate\Database\Eloquent\Collection<array-key, Album> $albums */
-    private function backfillAlbums(iterable $albums): void
+    /** @param Collection<array-key, Album> $albums */
+    private function backfillAlbums(Collection $albums): void
     {
         $this->info(sprintf('Looking up %d album(s).', count($albums)));
 
@@ -90,8 +91,8 @@ class BackfillMusicBrainzIdentifiersCommand extends Command
         $this->newLine();
     }
 
-    /** @param \Illuminate\Database\Eloquent\Collection<array-key, Artist> $artists */
-    private function backfillArtists(iterable $artists): void
+    /** @param Collection<array-key, Artist> $artists */
+    private function backfillArtists(Collection $artists): void
     {
         $this->info(sprintf('Looking up %d artist(s).', count($artists)));
 
