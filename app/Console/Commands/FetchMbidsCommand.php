@@ -18,9 +18,6 @@ use Throwable;
 
 class FetchMbidsCommand extends Command
 {
-    /** @link https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting */
-    private const float REQUEST_INTERVAL_IN_SECONDS = 1.0;
-
     protected $signature = 'koel:fetch-mbids';
 
     protected $description = 'Attempt to fetch missing MusicBrainz identifiers for albums and artists.';
@@ -63,10 +60,7 @@ class FetchMbidsCommand extends Command
 
     private function throttleMusicBrainzRequests(): void
     {
-        $this->laravel->instance(
-            MusicBrainzConnector::class,
-            new ThrottledMusicBrainzConnector(self::REQUEST_INTERVAL_IN_SECONDS),
-        );
+        $this->laravel->instance(MusicBrainzConnector::class, new ThrottledMusicBrainzConnector());
     }
 
     /**

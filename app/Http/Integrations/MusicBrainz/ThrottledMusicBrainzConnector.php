@@ -4,13 +4,15 @@ namespace App\Http\Integrations\MusicBrainz;
 
 use Saloon\Http\PendingRequest;
 
-/** @link https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting */
 final class ThrottledMusicBrainzConnector extends MusicBrainzConnector
 {
+    /** @link https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting */
+    private const float REQUEST_INTERVAL_IN_SECONDS = 1.0;
+
     private float $previousRequestAt = 0.0;
 
     public function __construct(
-        private readonly float $minimumIntervalInSeconds,
+        private readonly float $minimumIntervalInSeconds = self::REQUEST_INTERVAL_IN_SECONDS,
     ) {}
 
     public function boot(PendingRequest $pendingRequest): void

@@ -33,6 +33,14 @@ class ThrottledMusicBrainzConnectorTest extends TestCase
         self::assertGreaterThanOrEqual(self::SHORT_INTERVAL * 2, $elapsed);
     }
 
+    #[Test]
+    public function keepToOneRequestPerSecondByDefault(): void
+    {
+        $elapsed = self::timeBoot(new ThrottledMusicBrainzConnector(), 2);
+
+        self::assertGreaterThanOrEqual(1.0, $elapsed);
+    }
+
     private static function timeBoot(ThrottledMusicBrainzConnector $connector, int $times): float
     {
         $pendingRequest = Mockery::mock(PendingRequest::class);
