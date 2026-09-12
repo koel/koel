@@ -189,6 +189,28 @@ Check the current Koel Plus license status.
 php artisan koel:license:status
 ```
 
+### `koel:musicbrainz:backfill`
+
+Fill in missing MusicBrainz identifiers for albums and artists. Koel reads these identifiers from your
+files when it scans them, and looks up the rest when you open an album or an artist. Run this command to
+look up everything that is still missing in one go, so songs you have not browsed to also carry an
+identifier when Koel submits a listen to ListenBrainz or answers a Subsonic client.
+
+MusicBrainz accepts one request per second, so a large library takes a while. The command stops and
+restarts safely: it only looks up what is still missing, and it never replaces an identifier your files
+already supplied. Use `--limit` to do the work in smaller runs.
+
+#### Usage
+
+```bash
+php artisan koel:musicbrainz:backfill [--limit=<number>]
+```
+
+#### Options
+| Name      | Description                                        |
+|-----------|----------------------------------------------------|
+| `--limit` | Stop after this many albums and this many artists. |
+
 ### `koel:podcasts:sync`
 
 Synchronize podcasts.

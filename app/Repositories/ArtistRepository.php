@@ -92,6 +92,17 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** Artists that have no MusicBrainz identifier yet, for the backfill command to work through. */
+    public function getWithoutMbid(?int $limit = null): Collection
+    {
+        return Artist::query()
+            ->onlyStandard()
+            ->whereNull('mbid')
+            ->when($limit !== null, static fn (Builder $query) => $query->limit($limit))
+            ->orderBy('name')
+            ->get();
+    }
+
     public function getAll(?User $user = null): Collection
     {
         return Artist::query()

@@ -21,6 +21,17 @@ use Illuminate\Database\Query\JoinClause;
 // @mago-ignore lint:too-many-methods,cyclomatic-complexity
 class AlbumRepository extends Repository implements ScoutableRepository
 {
+    /** Albums that have no MusicBrainz identifier yet, for the backfill command to work through. */
+    public function getWithoutMbid(?int $limit = null): Collection
+    {
+        return Album::query()
+            ->onlyStandard()
+            ->whereNull('albums.mbid')
+            ->when($limit !== null, static fn (Builder $query) => $query->limit($limit))
+            ->orderBy('albums.name')
+            ->get();
+    }
+
     /**
      * @param string $id
      */
