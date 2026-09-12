@@ -93,6 +93,28 @@ class FetchMbidsCommandTest extends TestCase
     }
 
     #[Test]
+    public function fillInSongIdentifiersOnAnAlbumThatAlreadyHasOne(): void
+    {
+        $this->allowPipelinePipe(GetMbidForArtist::class, 'found-artist-mbid');
+        $this->allowPipelinePipe(GetAlbumTracksUsingMbid::class, [
+            ['title' => 'Schism', 'recording' => ['id' => 'found-recording-mbid']],
+        ]);
+
+        $artist = Artist::factory()->createOne(['name' => 'Tool', 'mbid' => 'artist-mbid-from-tags']);
+        $album = Album::factory()->for($artist)->createOne([
+            'name' => 'Lateralus',
+            'artist_name' => $artist->name,
+            'mbid' => 'album-mbid-from-tags',
+        ]);
+        $song = Song::factory()->for($album)->for($artist)->createOne(['title' => 'Schism', 'mbid' => null]);
+
+        $this->artisan('koel:fetch-mbids')->assertSuccessful();
+
+        self::assertSame('found-recording-mbid', $song->refresh()->mbid);
+        self::assertSame('album-mbid-from-tags', $album->refresh()->mbid);
+    }
+
+    #[Test]
     public function leaveExistingIdentifiersAlone(): void
     {
         $this->mock(GetMbidForArtist::class)->shouldNotReceive('__invoke');
@@ -104,14 +126,16 @@ class FetchMbidsCommandTest extends TestCase
             'artist_name' => $artist->name,
             'mbid' => 'album-mbid-from-tags',
         ]);
+        $song = Song::factory()->for($album)->for($artist)->createOne(['mbid' => 'recording-mbid-from-tags']);
 
         $this
             ->artisan('koel:fetch-mbids')
-            ->expectsOutput('Every album and artist already has an identifier.')
+            ->expectsOutput('Every album, artist and song already has an identifier.')
             ->assertSuccessful();
 
         self::assertSame('artist-mbid-from-tags', $artist->refresh()->mbid);
         self::assertSame('album-mbid-from-tags', $album->refresh()->mbid);
+        self::assertSame('recording-mbid-from-tags', $song->refresh()->mbid);
     }
 
     #[Test]
@@ -130,7 +154,7 @@ class FetchMbidsCommandTest extends TestCase
 
         $this
             ->artisan('koel:fetch-mbids')
-            ->expectsOutput('Every album and artist already has an identifier.')
+            ->expectsOutput('Every album, artist and song already has an identifier.')
             ->assertSuccessful();
     }
 

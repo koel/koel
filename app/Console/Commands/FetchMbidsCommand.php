@@ -20,7 +20,7 @@ class FetchMbidsCommand extends Command
 {
     protected $signature = 'koel:fetch-mbids';
 
-    protected $description = 'Attempt to fetch missing MusicBrainz identifiers for albums and artists.';
+    protected $description = 'Attempt to fetch missing MusicBrainz identifiers for albums, artists and songs.';
 
     public function __construct(
         private readonly MbidService $mbidService,
@@ -38,18 +38,18 @@ class FetchMbidsCommand extends Command
             return self::FAILURE;
         }
 
-        $albumCount = $this->albumRepository->countWithoutMbid();
+        $albumCount = $this->albumRepository->countWithIncompleteMbids();
         $artistCount = $this->artistRepository->countWithoutMbid();
 
         if ($albumCount === 0 && $artistCount === 0) {
-            $this->info('Every album and artist already has an identifier.');
+            $this->info('Every album, artist and song already has an identifier.');
 
             return self::SUCCESS;
         }
 
         $this->throttleMusicBrainzRequests();
 
-        $this->lookUp($this->albumRepository->lazyGetWithoutMbid(), $albumCount, 'album');
+        $this->lookUp($this->albumRepository->lazyGetWithIncompleteMbids(), $albumCount, 'album');
         $this->lookUp($this->artistRepository->lazyGetWithoutMbid(), $artistCount, 'artist');
 
         $this->newLine();

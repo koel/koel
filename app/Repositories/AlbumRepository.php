@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Builders\AlbumBuilder;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\User;
@@ -23,14 +24,27 @@ use Illuminate\Support\LazyCollection;
 class AlbumRepository extends Repository implements ScoutableRepository
 {
     /** @return LazyCollection<array-key, Album> */
-    public function lazyGetWithoutMbid(): LazyCollection
+    public function lazyGetWithIncompleteMbids(): LazyCollection
     {
-        return Album::query()->onlyStandard()->whereNull('albums.mbid')->lazyById();
+        return self::queryWithIncompleteMbids()->lazyById();
     }
 
-    public function countWithoutMbid(): int
+    public function countWithIncompleteMbids(): int
     {
-        return Album::query()->onlyStandard()->whereNull('albums.mbid')->count();
+        return self::queryWithIncompleteMbids()->count();
+    }
+
+    /**
+     * An album is incomplete while it lacks an identifier of its own or any of its songs lacks one. A
+     * tagged file commonly names the release without naming the recording, so the two run out separately.
+     */
+    private static function queryWithIncompleteMbids(): AlbumBuilder
+    {
+        return Album::query()
+            ->onlyStandard()
+            ->where(static fn (AlbumBuilder $query) => $query->whereNull(
+                'albums.mbid',
+            )->orWhereHas('songs', static fn (Builder $songs) => $songs->whereNull('songs.mbid')));
     }
 
     /**
