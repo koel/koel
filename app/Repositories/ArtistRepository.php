@@ -94,7 +94,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
     }
 
     /** @return LazyCollection<array-key, Artist> */
-    public function lazyWithoutMbid(): LazyCollection
+    public function lazyGetWithoutMbid(): LazyCollection
     {
         return Artist::query()->onlyStandard()->whereNull('mbid')->lazyById();
     }
