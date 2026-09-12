@@ -17,10 +17,6 @@ use Throwable;
 
 class BackfillMusicBrainzIdentifiersCommand extends Command
 {
-    /**
-     * MusicBrainz asks for at most one request per second, and an album costs several of them.
-     * @link https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting
-     */
     private const float REQUEST_INTERVAL_IN_SECONDS = 1.0;
 
     protected $signature = 'koel:musicbrainz:backfill';
@@ -63,10 +59,6 @@ class BackfillMusicBrainzIdentifiersCommand extends Command
         return self::SUCCESS;
     }
 
-    /**
-     * Every lookup is cached indefinitely and no identifier is ever overwritten, so an interrupted run
-     * costs nothing to repeat: the next one sees only what is still missing.
-     */
     private function throttleMusicBrainzRequests(): void
     {
         $this->laravel->instance(
