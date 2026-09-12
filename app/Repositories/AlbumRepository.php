@@ -23,7 +23,7 @@ use Illuminate\Support\LazyCollection;
 class AlbumRepository extends Repository implements ScoutableRepository
 {
     /** @return LazyCollection<array-key, Album> */
-    public function getWithoutMbid(): LazyCollection
+    public function lazyWithoutMbid(): LazyCollection
     {
         return Album::query()->onlyStandard()->whereNull('albums.mbid')->lazyById();
     }

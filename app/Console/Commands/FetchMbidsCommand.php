@@ -50,14 +50,14 @@ class FetchMbidsCommand extends Command
         $this->throttleMusicBrainzRequests();
 
         $this->lookUp(
-            $this->albumRepository->getWithoutMbid(),
+            $this->albumRepository->lazyWithoutMbid(),
             $albumCount,
             'album',
             $this->mbidService->fetchAndStoreAlbumMbids(...),
         );
 
         $this->lookUp(
-            $this->artistRepository->getWithoutMbid(),
+            $this->artistRepository->lazyWithoutMbid(),
             $artistCount,
             'artist',
             $this->mbidService->fetchAndStoreArtistMbid(...),
