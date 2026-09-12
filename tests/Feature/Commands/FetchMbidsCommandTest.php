@@ -43,10 +43,27 @@ class FetchMbidsCommandTest extends TestCase
             'mbid' => null,
         ]);
 
-        $this->artisan('koel:fetch-mbids')->assertSuccessful();
+        $this
+            ->artisan('koel:fetch-mbids')
+            ->expectsOutput('Looking up 1 album.')
+            ->expectsOutput('Looking up 1 artist.')
+            ->assertSuccessful();
 
         self::assertSame('found-artist-mbid', $artist->refresh()->mbid);
         self::assertSame('found-album-mbid', $album->refresh()->mbid);
+    }
+
+    #[Test]
+    public function countTheEntitiesItLooksUp(): void
+    {
+        $this->allowPipelinePipe(GetMbidForArtist::class, 'found-artist-mbid');
+
+        Artist::factory()->createMany(array_map(
+            static fn (int $index): array => ['name' => "Artist $index", 'mbid' => null],
+            range(1, 3),
+        ));
+
+        $this->artisan('koel:fetch-mbids')->expectsOutput('Looking up 3 artists.')->assertSuccessful();
     }
 
     #[Test]

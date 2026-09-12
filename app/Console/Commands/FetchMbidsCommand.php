@@ -13,6 +13,7 @@ use App\Services\Integrations\MusicBrainzService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Throwable;
 
 class FetchMbidsCommand extends Command
@@ -50,8 +51,8 @@ class FetchMbidsCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->lookUpAlbums($albums);
-        $this->lookUpArtists($artists);
+        $this->lookUp($albums, 'album', $this->mbidService->fetchAndStoreAlbumMbids(...));
+        $this->lookUp($artists, 'artist', $this->mbidService->fetchAndStoreArtistMbid(...));
 
         $this->newLine();
         $this->info('Done. Run the command again to continue where an interrupted run left off.');
@@ -67,31 +68,18 @@ class FetchMbidsCommand extends Command
         );
     }
 
-    /** @param Collection<array-key, Album> $albums */
-    private function lookUpAlbums(Collection $albums): void
+    /**
+     * @param Collection<array-key, Album|Artist> $entities
+     * @param callable(Album|Artist): void $lookUp
+     */
+    private function lookUp(Collection $entities, string $label, callable $lookUp): void
     {
-        $this->info(sprintf('Looking up %d album(s).', count($albums)));
+        $this->info(sprintf('Looking up %s.', Str::plural($label, $entities, prependCount: true)));
 
-        $progress = $this->output->createProgressBar(count($albums));
+        $progress = $this->output->createProgressBar($entities->count());
 
-        foreach ($albums as $album) {
-            $this->rescueLookup(fn () => $this->mbidService->fetchAndStoreAlbumMbids($album), $album->name);
-            $progress->advance();
-        }
-
-        $progress->finish();
-        $this->newLine();
-    }
-
-    /** @param Collection<array-key, Artist> $artists */
-    private function lookUpArtists(Collection $artists): void
-    {
-        $this->info(sprintf('Looking up %d artist(s).', count($artists)));
-
-        $progress = $this->output->createProgressBar(count($artists));
-
-        foreach ($artists as $artist) {
-            $this->rescueLookup(fn () => $this->mbidService->fetchAndStoreArtistMbid($artist), $artist->name);
+        foreach ($entities as $entity) {
+            $this->rescueLookup(static fn () => $lookUp($entity), $entity->name);
             $progress->advance();
         }
 
