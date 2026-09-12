@@ -68,15 +68,15 @@ class FetchMbidsCommand extends Command
      *
      * @param LazyCollection<array-key, TEntity> $entities
      */
-    private function lookUp(LazyCollection $entities, int $total, string $label): void
+    private function lookUp(LazyCollection $entities, int $total, string $noun): void
     {
-        $this->info(sprintf('Looking up %s.', Str::plural($label, $total, prependCount: true)));
+        $this->info(sprintf('Looking up %s.', Str::plural($noun, $total, prependCount: true)));
 
         $progress = $this->output->createProgressBar($total);
         $progress->setFormat(' %current%/%max% [%bar%] %message%');
 
         foreach ($entities as $entity) {
-            $progress->setMessage(self::describe($entity));
+            $progress->setMessage(self::getLabelForEntity($entity));
             $progress->display();
 
             $this->fetchIdentifiersFor($entity);
@@ -100,11 +100,11 @@ class FetchMbidsCommand extends Command
         } catch (Throwable $e) {
             Log::error($e);
             $this->newLine();
-            $this->warn(sprintf('Could not look up "%s": %s', self::describe($entity), $e->getMessage()));
+            $this->warn(sprintf('Could not look up "%s": %s', self::getLabelForEntity($entity), $e->getMessage()));
         }
     }
 
-    private static function describe(Album|Artist $entity): string
+    private static function getLabelForEntity(Album|Artist $entity): string
     {
         return $entity instanceof Album ? sprintf('%s - %s', $entity->name, $entity->artist_name) : $entity->name;
     }
