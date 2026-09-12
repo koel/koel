@@ -49,8 +49,8 @@ class FetchMbidsCommand extends Command
 
         $this->throttleMusicBrainzRequests();
 
-        $this->lookUpEach($this->albumRepository->lazyGetWithoutMbid(), $albumCount, 'album');
-        $this->lookUpEach($this->artistRepository->lazyGetWithoutMbid(), $artistCount, 'artist');
+        $this->lookUp($this->albumRepository->lazyGetWithoutMbid(), $albumCount, 'album');
+        $this->lookUp($this->artistRepository->lazyGetWithoutMbid(), $artistCount, 'artist');
 
         $this->newLine();
         $this->info('Done. Run the command again to continue where an interrupted run left off.');
@@ -68,7 +68,7 @@ class FetchMbidsCommand extends Command
      *
      * @param LazyCollection<array-key, TEntity> $entities
      */
-    private function lookUpEach(LazyCollection $entities, int $total, string $label): void
+    private function lookUp(LazyCollection $entities, int $total, string $label): void
     {
         $this->info(sprintf('Looking up %s.', Str::plural($label, $total, prependCount: true)));
 
