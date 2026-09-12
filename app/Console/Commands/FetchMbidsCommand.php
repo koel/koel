@@ -11,8 +11,8 @@ use App\Repositories\ArtistRepository;
 use App\Services\Integrations\MbidService;
 use App\Services\Integrations\MusicBrainzService;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -38,19 +38,30 @@ class FetchMbidsCommand extends Command
             return self::FAILURE;
         }
 
-        $this->throttleMusicBrainzRequests();
+        $albumCount = $this->albumRepository->countWithoutMbid();
+        $artistCount = $this->artistRepository->countWithoutMbid();
 
-        $albums = $this->albumRepository->getWithoutMbid();
-        $artists = $this->artistRepository->getWithoutMbid();
-
-        if ($albums->isEmpty() && $artists->isEmpty()) {
+        if ($albumCount === 0 && $artistCount === 0) {
             $this->info('Every album and artist already has an identifier.');
 
             return self::SUCCESS;
         }
 
-        $this->lookUp($albums, 'album', $this->mbidService->fetchAndStoreAlbumMbids(...));
-        $this->lookUp($artists, 'artist', $this->mbidService->fetchAndStoreArtistMbid(...));
+        $this->throttleMusicBrainzRequests();
+
+        $this->lookUp(
+            $this->albumRepository->getWithoutMbid(),
+            $albumCount,
+            'album',
+            $this->mbidService->fetchAndStoreAlbumMbids(...),
+        );
+
+        $this->lookUp(
+            $this->artistRepository->getWithoutMbid(),
+            $artistCount,
+            'artist',
+            $this->mbidService->fetchAndStoreArtistMbid(...),
+        );
 
         $this->newLine();
         $this->info('Done. Run the command again to continue where an interrupted run left off.');
@@ -64,14 +75,16 @@ class FetchMbidsCommand extends Command
     }
 
     /**
-     * @param Collection<array-key, Album|Artist> $entities
-     * @param callable(Album|Artist): void $lookUp
+     * @template TEntity of Album|Artist
+     *
+     * @param LazyCollection<array-key, TEntity> $entities
+     * @param callable(TEntity): void $lookUp
      */
-    private function lookUp(Collection $entities, string $label, callable $lookUp): void
+    private function lookUp(LazyCollection $entities, int $total, string $label, callable $lookUp): void
     {
-        $this->info(sprintf('Looking up %s.', Str::plural($label, $entities, prependCount: true)));
+        $this->info(sprintf('Looking up %s.', Str::plural($label, $total, prependCount: true)));
 
-        $progress = $this->output->createProgressBar($entities->count());
+        $progress = $this->output->createProgressBar($total);
 
         foreach ($entities as $entity) {
             $this->rescueLookup(static fn () => $lookUp($entity), $entity->name);

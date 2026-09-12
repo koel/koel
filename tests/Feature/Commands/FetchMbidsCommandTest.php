@@ -6,6 +6,7 @@ use App\Http\Integrations\MusicBrainz\MusicBrainzConnector;
 use App\Http\Integrations\MusicBrainz\ThrottledMusicBrainzConnector;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Song;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
@@ -34,7 +35,9 @@ class FetchMbidsCommandTest extends TestCase
     {
         $this->allowPipelinePipe(GetMbidForArtist::class, 'found-artist-mbid');
         $this->allowPipelinePipe(GetReleaseAndReleaseGroupMbidsForAlbum::class, ['found-album-mbid', null]);
-        $this->allowPipelinePipe(GetAlbumTracksUsingMbid::class, []);
+        $this->allowPipelinePipe(GetAlbumTracksUsingMbid::class, [
+            ['title' => 'Schism', 'recording' => ['id' => 'found-recording-mbid']],
+        ]);
 
         $artist = Artist::factory()->createOne(['name' => 'Tool', 'mbid' => null]);
         $album = Album::factory()->for($artist)->createOne([
@@ -42,6 +45,7 @@ class FetchMbidsCommandTest extends TestCase
             'artist_name' => $artist->name,
             'mbid' => null,
         ]);
+        $song = Song::factory()->for($album)->for($artist)->createOne(['title' => 'Schism', 'mbid' => null]);
 
         $this
             ->artisan('koel:fetch-mbids')
@@ -51,6 +55,7 @@ class FetchMbidsCommandTest extends TestCase
 
         self::assertSame('found-artist-mbid', $artist->refresh()->mbid);
         self::assertSame('found-album-mbid', $album->refresh()->mbid);
+        self::assertSame('found-recording-mbid', $song->refresh()->mbid);
     }
 
     #[Test]
