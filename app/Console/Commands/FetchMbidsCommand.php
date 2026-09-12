@@ -49,19 +49,8 @@ class FetchMbidsCommand extends Command
 
         $this->throttleMusicBrainzRequests();
 
-        $this->lookUp(
-            $this->albumRepository->lazyGetWithoutMbid(),
-            $albumCount,
-            'album',
-            $this->mbidService->fetchAndStoreAlbumMbids(...),
-        );
-
-        $this->lookUp(
-            $this->artistRepository->lazyGetWithoutMbid(),
-            $artistCount,
-            'artist',
-            $this->mbidService->fetchAndStoreArtistMbid(...),
-        );
+        $this->lookUpEach($this->albumRepository->lazyGetWithoutMbid(), $albumCount, 'album');
+        $this->lookUpEach($this->artistRepository->lazyGetWithoutMbid(), $artistCount, 'artist');
 
         $this->newLine();
         $this->info('Done. Run the command again to continue where an interrupted run left off.');
@@ -78,9 +67,8 @@ class FetchMbidsCommand extends Command
      * @template TEntity of Album|Artist
      *
      * @param LazyCollection<array-key, TEntity> $entities
-     * @param callable(TEntity): void $lookUp
      */
-    private function lookUp(LazyCollection $entities, int $total, string $label, callable $lookUp): void
+    private function lookUpEach(LazyCollection $entities, int $total, string $label): void
     {
         $this->info(sprintf('Looking up %s.', Str::plural($label, $total, prependCount: true)));
 
@@ -88,12 +76,10 @@ class FetchMbidsCommand extends Command
         $progress->setFormat(' %current%/%max% [%bar%] %message%');
 
         foreach ($entities as $entity) {
-            $name = self::describe($entity);
-
-            $progress->setMessage($name);
+            $progress->setMessage(self::describe($entity));
             $progress->display();
 
-            $this->rescueLookup(static fn () => $lookUp($entity), $name);
+            $this->fetchIdentifiersFor($entity);
             $progress->advance();
         }
 
@@ -103,19 +89,23 @@ class FetchMbidsCommand extends Command
         $this->newLine();
     }
 
-    private static function describe(Album|Artist $entity): string
-    {
-        return $entity instanceof Album ? sprintf('%s - %s', $entity->name, $entity->artist_name) : $entity->name;
-    }
-
-    private function rescueLookup(callable $lookup, string $name): void
+    private function fetchIdentifiersFor(Album|Artist $entity): void
     {
         try {
-            $lookup();
+            if ($entity instanceof Album) {
+                $this->mbidService->fetchAndStoreAlbumMbids($entity);
+            } else {
+                $this->mbidService->fetchAndStoreArtistMbid($entity);
+            }
         } catch (Throwable $e) {
             Log::error($e);
             $this->newLine();
-            $this->warn(sprintf('Could not look up "%s": %s', $name, $e->getMessage()));
+            $this->warn(sprintf('Could not look up "%s": %s', self::describe($entity), $e->getMessage()));
         }
+    }
+
+    private static function describe(Album|Artist $entity): string
+    {
+        return $entity instanceof Album ? sprintf('%s - %s', $entity->name, $entity->artist_name) : $entity->name;
     }
 }
