@@ -18,7 +18,7 @@ while IFS= read -r file; do
   ' "$file"; then
     missing+=("${file#"$DOCS_DIR/"}")
   fi
-done < <(find "$DOCS_DIR" -name '*.md' -not -path '*/.vitepress/*' | sort)
+done < <(find "$DOCS_DIR" -name '*.md' -not -path '*/.vitepress/*' -not -name 'AGENTS.md' -not -name 'CLAUDE.md' | sort)
 
 if [ ${#missing[@]} -gt 0 ]; then
   echo "ERROR: The following doc pages are missing a 'description' in their frontmatter:"
