@@ -50,7 +50,22 @@ final class SubmitListensRequest extends Request implements HasBody
         ];
     }
 
-    /** @return array{artist_name: string, track_name: string, release_name?: string, additional_info: array} */
+    /**
+     * @return array{
+     *     artist_name: string,
+     *     track_name: string,
+     *     release_name?: string,
+     *     additional_info: array{
+     *         duration_ms?: int,
+     *         tracknumber?: int,
+     *         recording_mbid?: string,
+     *         release_mbid?: string,
+     *         artist_mbids?: list<string>,
+     *         media_player: string,
+     *         submission_client: string,
+     *     },
+     * }
+     */
     private function getTrackMetadata(): array
     {
         $metadata = [
@@ -59,6 +74,9 @@ final class SubmitListensRequest extends Request implements HasBody
             'additional_info' => array_filter([
                 'duration_ms' => $this->song->length ? (int) round($this->song->length * 1000) : null,
                 'tracknumber' => $this->song->track ?: null,
+                'recording_mbid' => $this->song->mbid,
+                'release_mbid' => $this->song->album->mbid,
+                'artist_mbids' => $this->getArtistMbids(),
                 'media_player' => 'Koel',
                 'submission_client' => 'Koel',
             ]),
@@ -69,5 +87,11 @@ final class SubmitListensRequest extends Request implements HasBody
         }
 
         return $metadata;
+    }
+
+    /** @return list<string>|null */
+    private function getArtistMbids(): ?array
+    {
+        return $this->song->artist->mbid ? [$this->song->artist->mbid] : null;
     }
 }
