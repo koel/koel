@@ -48,7 +48,9 @@ class ThrottledMusicBrainzConnectorTest extends TestCase
     {
         self::boot(new ThrottledMusicBrainzConnector(0.25), times: 2);
 
-        Sleep::assertSlept(static fn (CarbonInterval $waited): bool => $waited->totalSeconds < 0.26);
+        Sleep::assertSlept(
+            static fn (CarbonInterval $waited): bool => $waited->totalSeconds > 0.24 && $waited->totalSeconds < 0.26,
+        );
     }
 
     private static function boot(ThrottledMusicBrainzConnector $connector, int $times): void
