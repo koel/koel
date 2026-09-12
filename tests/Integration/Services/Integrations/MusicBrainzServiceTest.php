@@ -8,6 +8,7 @@ use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;
 use App\Pipelines\Encyclopedia\GetArtistWikidataIdUsingMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
+use App\Pipelines\Encyclopedia\GetReleaseGroupMbidUsingReleaseMbid;
 use App\Pipelines\Encyclopedia\GetWikipediaPageSummaryUsingPageTitle;
 use App\Pipelines\Encyclopedia\GetWikipediaPageTitleUsingWikidataId;
 use App\Services\Integrations\MusicBrainzService;
@@ -135,6 +136,41 @@ class MusicBrainzServiceTest extends TestCase
         self::assertInstanceOf(AlbumInformation::class, $this->service->getAlbumInformation($album));
 
         // eh, good enough
+    }
+
+    #[Test]
+    public function getAlbumInformationUsesAKnownReleaseIdentifierInsteadOfSearching(): void
+    {
+        $this->mock(GetReleaseAndReleaseGroupMbidsForAlbum::class)->shouldNotReceive('__invoke');
+
+        $this->mockPipelinePipe(
+            GetReleaseGroupMbidUsingReleaseMbid::class,
+            'release-mbid-from-tags',
+            'sample-release-group-mbid',
+        );
+
+        $this->mockPipelinePipe(GetAlbumTracksUsingMbid::class, 'release-mbid-from-tags', []);
+        $this->mockPipelinePipe(GetAlbumWikidataIdUsingReleaseGroupMbid::class, 'sample-release-group-mbid', 'Q123456');
+        $this->mockPipelinePipe(GetWikipediaPageTitleUsingWikidataId::class, 'Q123456', 'Slave to the Grind');
+
+        $this->mockPipelinePipe(
+            GetWikipediaPageSummaryUsingPageTitle::class,
+            'Slave to the Grind',
+            File::json(test_path('fixtures/wikipedia/album-page-summary.json')),
+        );
+
+        $user = create_user();
+        $album = Artist::factory()
+            ->for($user)
+            ->createOne(['name' => 'Skid Row'])
+            ->albums() // @phpstan-ignore-line
+            ->create([
+                'name' => 'Slave to the Grind',
+                'user_id' => $user->id,
+                'mbid' => 'release-mbid-from-tags',
+            ]);
+
+        self::assertInstanceOf(AlbumInformation::class, $this->service->getAlbumInformation($album));
     }
 
     #[Test]
