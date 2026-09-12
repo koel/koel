@@ -2,6 +2,7 @@
 
 namespace App\Http\Integrations\MusicBrainz\Requests;
 
+use App\Helpers\LuceneQuery;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -23,7 +24,11 @@ class SearchForReleaseRequest extends Request
     protected function defaultQuery(): array
     {
         return [
-            'query' => "release:\"{$this->albumName}\" AND artist:\"{$this->artistName}\"",
+            'query' => sprintf(
+                'release:%s AND artist:%s',
+                LuceneQuery::phrase($this->albumName),
+                LuceneQuery::phrase($this->artistName),
+            ),
             'limit' => 1,
         ];
     }
