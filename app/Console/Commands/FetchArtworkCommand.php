@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Builders\AlbumBuilder;
 use App\Builders\ArtistBuilder;
+use App\Console\Commands\Concerns\ThrottlesMusicBrainzRequests;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Integrations\EncyclopediaService;
@@ -14,7 +15,9 @@ use Illuminate\Support\Facades\Cache;
 
 class FetchArtworkCommand extends Command
 {
-    protected $signature = 'koel:fetch-artwork {--delay=1 : Time in seconds between requests to avoid rate limits}';
+    use ThrottlesMusicBrainzRequests;
+
+    protected $signature = 'koel:fetch-artwork {--delay=1 : Time in seconds to pause after each artist and album}';
     protected $description = 'Attempt to fetch artist and album artworks from available sources.';
 
     public function __construct(
@@ -25,13 +28,15 @@ class FetchArtworkCommand extends Command
 
     public function handle(): int
     {
-        $delay = (int) $this->option('delay');
-
         if (!SpotifyService::enabled() && !MusicBrainzService::enabled()) {
             $this->components->error('Please configure Spotify and/or MusicBrainz integration first.');
 
             return self::FAILURE;
         }
+
+        $delay = (int) $this->option('delay');
+
+        $this->throttleMusicBrainzRequests();
 
         $this->components->info('Fetching artist images...');
 

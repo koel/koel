@@ -10,26 +10,27 @@ use Tests\TestCase;
 
 class ThrottledMusicBrainzConnectorTest extends TestCase
 {
-    private const float INTERVAL = 0.05;
+    private const float SHORT_INTERVAL = 0.05;
+    private const float LONG_INTERVAL = 30.0;
 
     #[Test]
     public function letTheFirstRequestThrough(): void
     {
-        $connector = new ThrottledMusicBrainzConnector(self::INTERVAL);
+        $connector = new ThrottledMusicBrainzConnector(self::LONG_INTERVAL);
 
         $elapsed = self::timeBoot($connector, 1);
 
-        self::assertLessThan(self::INTERVAL, $elapsed);
+        self::assertLessThan(self::LONG_INTERVAL / 2, $elapsed);
     }
 
     #[Test]
     public function holdEachFollowingRequestBackByTheInterval(): void
     {
-        $connector = new ThrottledMusicBrainzConnector(self::INTERVAL);
+        $connector = new ThrottledMusicBrainzConnector(self::SHORT_INTERVAL);
 
         $elapsed = self::timeBoot($connector, 3);
 
-        self::assertGreaterThanOrEqual(self::INTERVAL * 2, $elapsed);
+        self::assertGreaterThanOrEqual(self::SHORT_INTERVAL * 2, $elapsed);
     }
 
     private static function timeBoot(ThrottledMusicBrainzConnector $connector, int $times): float

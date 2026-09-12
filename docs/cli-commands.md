@@ -119,14 +119,14 @@ Attempt to fetch missing album covers and artist images from the available sourc
 You'll need to configure and enable the corresponding [3rd-party integrations](./service-integrations.md) for this
 command to work.
 
-To avoid hitting rate limits, Koel pauses between requests. By default, this delay is 1 second, but you can customize it
-with the `--delay` option.
+MusicBrainz accepts one request per second, and Koel keeps to that on its own. Koel also pauses after each artist and
+album, which paces the other services. That pause is 1 second by default; change it with the `--delay` option.
 
 #### Usage
 
 ```bash
 php artisan koel:fetch-artwork
-# Or with a custom delay (in seconds) between requests:
+# Or with a custom pause (in seconds) after each artist and album:
 php artisan koel:fetch-artwork --delay=2
 ```
 
