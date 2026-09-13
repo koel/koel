@@ -47,7 +47,7 @@ final class AlbumResource
             'duration' => (int) round($album->songs_sum_length ?? 0),
             'created' => $album->created_at->toIso8601String(),
             'year' => $album->year,
-            'userRating' => $album->getRatingFor($user) ?: null,
+            'userRating' => (int) ($album->rating ?? 0) ?: null,
             'starred' => $album->favorited_at?->toIso8601String(),
             'played' => $album->last_played_at?->toIso8601String(),
             'musicBrainzId' => $album->mbid,

@@ -71,7 +71,7 @@ final class SongResource
             'type' => 'music',
             'discNumber' => $song->disc ?: null,
             'isVideo' => false,
-            'userRating' => $song->getRatingFor($user) ?: null,
+            'userRating' => (int) ($song->rating ?? 0) ?: null,
             'starred' => $song->favorited_at?->toIso8601String(),
             'musicBrainzId' => $song->mbid,
         ];

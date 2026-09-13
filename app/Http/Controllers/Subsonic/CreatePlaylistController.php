@@ -9,6 +9,7 @@ use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\SongRepository;
 use App\Services\Playlist\PlaylistService;
 use App\Values\Playlist\PlaylistCreateData;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -17,6 +18,7 @@ class CreatePlaylistController extends Controller
 {
     public function __construct(
         private readonly PlaylistService $playlistService,
+        private readonly SongRepository $songRepository,
     ) {}
 
     /** @param User $user */
@@ -29,12 +31,12 @@ class CreatePlaylistController extends Controller
 
         $playlist->loadCount('playables')->loadSum('playables', 'length');
 
+        $songs = $this->songRepository->getByPlaylist($playlist, $user);
+
         return SubsonicResponse::ok([
             'playlist' => PlaylistResource::toArray($playlist)
                 + [
-                    'entry' => $playlist->playables->map(
-                        static fn (Song $song) => SongResource::toArray($song, $user),
-                    )->all(),
+                    'entry' => $songs->map(static fn (Song $song) => SongResource::toArray($song, $user))->all(),
                 ],
         ]);
     }
