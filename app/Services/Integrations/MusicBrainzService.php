@@ -9,6 +9,7 @@ use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;
 use App\Pipelines\Encyclopedia\GetArtistWikidataIdUsingMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
+use App\Pipelines\Encyclopedia\GetReleaseGroupMbidUsingReleaseMbid;
 use App\Pipelines\Encyclopedia\GetWikipediaPageSummaryUsingPageTitle;
 use App\Pipelines\Encyclopedia\GetWikipediaPageTitleUsingWikidataId;
 use App\Services\Contracts\Encyclopedia;
@@ -45,6 +46,24 @@ class MusicBrainzService implements Encyclopedia
         });
     }
 
+    /** @return array{0: ?string, 1: ?string} The release and release group identifiers */
+    private static function resolveReleaseMbids(Album $album): array
+    {
+        if ($album->mbid) {
+            /** @var string|null $releaseGroupMbid */
+            $releaseGroupMbid = Pipeline::send($album->mbid)
+                ->through([GetReleaseGroupMbidUsingReleaseMbid::class])
+                ->thenReturn();
+
+            return [$album->mbid, $releaseGroupMbid];
+        }
+
+        return Pipeline::send([
+            'album' => $album->name,
+            'artist' => $album->artist->name,
+        ])->through([GetReleaseAndReleaseGroupMbidsForAlbum::class])->thenReturn();
+    }
+
     public function getAlbumInformation(Album $album): ?AlbumInformation
     {
         if ($album->is_unknown || $album->artist->is_unknown) {
@@ -56,14 +75,7 @@ class MusicBrainzService implements Encyclopedia
             // A release is a specific version of an album, which contains the actual tracks.
             // A release group is a collection of releases (e.g. different formats or editions or markets
             // of the same album), which contains metadata like the Wikidata relationship.
-            /**
-             * @var string|null $albumMbid
-             * @var string|null $releaseGroupMbid
-             */
-            [$albumMbid, $releaseGroupMbid] = Pipeline::send([
-                'album' => $album->name,
-                'artist' => $album->artist->name,
-            ])->through([GetReleaseAndReleaseGroupMbidsForAlbum::class])->thenReturn();
+            [$albumMbid, $releaseGroupMbid] = self::resolveReleaseMbids($album);
 
             if (!$albumMbid || !$releaseGroupMbid) {
                 return null;
