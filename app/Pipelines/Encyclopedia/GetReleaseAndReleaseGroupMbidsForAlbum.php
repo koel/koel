@@ -22,7 +22,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
             return $next(null);
         }
 
-        $mbids = $this->tryRememberForever(
+        $mbids = self::tryRememberForever(
             key: cache_key('release and release group mbids', $params['album'], $params['artist']),
             callback: function () use ($params): array {
                 $response = $this->connector->send(new SearchForReleaseRequest($params['album'], $params['artist']));

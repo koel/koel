@@ -13,20 +13,20 @@ trait TriesRemember
      * every visit. It is stored as this instead, and remembered only for a while: MusicBrainz may well
      * have the entry next month.
      */
-    private const bool NOTHING_FOUND = false;
+    private const string NOTHING_FOUND = '__koel_nothing_found__';
     private const int NOTHING_FOUND_TTL_IN_DAYS = 7;
 
-    private function tryRemember(string $key, DateTimeInterface|int $ttl, Closure $callback): mixed
+    private static function tryRemember(string $key, DateTimeInterface|int $ttl, Closure $callback): mixed
     {
-        return $this->tryRememberFor($key, $ttl, $callback);
+        return self::tryRememberFor($key, $ttl, $callback);
     }
 
-    private function tryRememberForever(string $key, Closure $callback): mixed
+    private static function tryRememberForever(string $key, Closure $callback): mixed
     {
-        return $this->tryRememberFor($key, null, $callback);
+        return self::tryRememberFor($key, null, $callback);
     }
 
-    private function tryRememberFor(string $key, DateTimeInterface|int|null $ttl, Closure $callback): mixed
+    private static function tryRememberFor(string $key, DateTimeInterface|int|null $ttl, Closure $callback): mixed
     {
         if (Cache::has($key)) {
             $cached = Cache::get($key);

@@ -20,7 +20,7 @@ class GetReleaseGroupMbidUsingReleaseMbid
             return $next(null);
         }
 
-        $releaseGroupMbid = $this->tryRememberForever(
+        $releaseGroupMbid = self::tryRememberForever(
             key: cache_key('release group mbid from release mbid', $mbid),
             callback: fn (): ?string => $this->connector
                 ->send(new GetReleaseGroupForReleaseRequest($mbid))

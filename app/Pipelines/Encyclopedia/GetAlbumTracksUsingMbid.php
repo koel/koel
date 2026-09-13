@@ -21,7 +21,7 @@ class GetAlbumTracksUsingMbid
             return $next(null);
         }
 
-        $tracks = $this->tryRememberForever(key: cache_key('album tracks', $mbid), callback: function () use (
+        $tracks = self::tryRememberForever(key: cache_key('album tracks', $mbid), callback: function () use (
             $mbid,
         ): array {
             $tracks = [];

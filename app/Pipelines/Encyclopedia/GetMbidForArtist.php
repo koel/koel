@@ -20,7 +20,7 @@ class GetMbidForArtist
             return $next(null);
         }
 
-        $mbid = $this->tryRememberForever(key: cache_key('artist mbid', $name), callback: fn () => $this->connector
+        $mbid = self::tryRememberForever(key: cache_key('artist mbid', $name), callback: fn () => $this->connector
             ->send(new SearchForArtistRequest($name))
             ->json('artists.0.id'));
 

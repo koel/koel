@@ -22,7 +22,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbid
             return $next(null);
         }
 
-        $wikidataId = $this->tryRememberForever(
+        $wikidataId = self::tryRememberForever(
             key: cache_key('album wikidata id from release group mbid', $mbid),
             callback: function () use ($mbid): ?string {
                 $wikidata = collect(Arr::where(
