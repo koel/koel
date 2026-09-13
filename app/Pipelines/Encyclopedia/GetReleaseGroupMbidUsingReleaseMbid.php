@@ -22,6 +22,7 @@ class GetReleaseGroupMbidUsingReleaseMbid
 
         $releaseGroupMbid = self::tryRememberForever(
             key: cache_key('release group mbid from release mbid', $mbid),
+            nothingFoundTtl: now()->addWeek(),
             callback: fn (): ?string => $this->connector
                 ->send(new GetReleaseGroupForReleaseRequest($mbid))
                 ->json('release-group.id'),

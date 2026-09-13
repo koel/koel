@@ -22,6 +22,7 @@ class GetWikipediaPageTitleUsingWikidataId
 
         $pageTitle = self::tryRememberForever(
             key: cache_key('wikipedia page title from wikidata id', $wikidataId),
+            nothingFoundTtl: now()->addWeek(),
             callback: fn () => $this->connector
                 ->send(new GetEntityDataRequest($wikidataId))
                 ->json("entities.$wikidataId.sitelinks.enwiki.title"),

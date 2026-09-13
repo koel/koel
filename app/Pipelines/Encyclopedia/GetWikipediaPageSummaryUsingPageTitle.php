@@ -23,6 +23,7 @@ class GetWikipediaPageSummaryUsingPageTitle
         $summary = self::tryRemember(
             key: cache_key('wikipedia page summary from page title', $pageTitle),
             ttl: now()->addMonth(),
+            nothingFoundTtl: now()->addWeek(),
             callback: fn () => $this->connector->send(new GetPageSummaryRequest($pageTitle))->json(),
         );
 

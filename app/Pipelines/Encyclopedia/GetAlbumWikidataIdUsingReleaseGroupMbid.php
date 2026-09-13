@@ -24,6 +24,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbid
 
         $wikidataId = self::tryRememberForever(
             key: cache_key('album wikidata id from release group mbid', $mbid),
+            nothingFoundTtl: now()->addWeek(),
             callback: function () use ($mbid): ?string {
                 $wikidata = collect(Arr::where(
                     $this->connector->send(new GetReleaseGroupUrlRelationshipsRequest($mbid))->json('relations'),
