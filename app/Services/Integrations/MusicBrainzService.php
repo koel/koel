@@ -46,13 +46,7 @@ class MusicBrainzService implements Encyclopedia
         });
     }
 
-    /**
-     * A release identifier the album already carries is authoritative, where the search below takes
-     * whichever release ranks first for the album and artist names. The release group is never stored,
-     * so it is read off the known release instead.
-     *
-     * @return array{0: ?string, 1: ?string} The release and release group identifiers
-     */
+    /** @return array{0: ?string, 1: ?string} The release and release group identifiers */
     private static function resolveReleaseMbids(Album $album): array
     {
         if ($album->mbid) {
