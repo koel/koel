@@ -16,11 +16,7 @@ class CloudTranscodingStrategy extends TranscodingStrategy
     {
         $storage = CloudStorageFactory::make($song->storage);
 
-        $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate) ?? $this->createTranscode(
-            $storage,
-            $song,
-            $bitRate,
-        );
+        $transcode = $this->findTranscode($song, $bitRate) ?? $this->createTranscode($storage, $song, $bitRate);
 
         return $storage->getPresignedUrl($transcode->location);
     }
@@ -34,15 +30,17 @@ class CloudTranscodingStrategy extends TranscodingStrategy
      */
     private function createTranscode(CloudStorage $storage, Song $song, int $bitRate): Transcode
     {
-        $tmpDestination = artifact_path(sprintf('tmp/%s.m4a', Ulid::generate()));
+        $codec = $this->transcoder->preferredCodec();
+        $tmpDestination = artifact_path(sprintf('tmp/%s.%s', Ulid::generate(), $codec->extension()));
 
         $this->transcoder->transcode(
             $storage->getPresignedUrl($song->storage_metadata->getPath()),
             $tmpDestination,
             $bitRate,
+            $codec,
         );
 
-        $key = sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate());
+        $key = sprintf('transcodes/%d/%s.%s', $bitRate, Ulid::generate(), $codec->extension());
 
         try {
             $storage->uploadToStorage($key, $tmpDestination);
@@ -51,6 +49,7 @@ class CloudTranscodingStrategy extends TranscodingStrategy
                 $song,
                 $key,
                 $bitRate,
+                $codec,
                 File::hash($tmpDestination),
                 File::size($tmpDestination),
             );

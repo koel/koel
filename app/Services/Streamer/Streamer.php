@@ -73,9 +73,7 @@ class Streamer
             return false;
         }
 
-        if (
-            in_array($song->mime_type, ['audio/flac', 'audio/x-flac'], true) && config('koel.streaming.transcode_flac')
-        ) {
+        if ($song->isFlac() && config('koel.streaming.transcode_flac')) {
             return true;
         }
 

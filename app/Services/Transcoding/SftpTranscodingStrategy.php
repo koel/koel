@@ -14,7 +14,7 @@ class SftpTranscodingStrategy extends TranscodingStrategy
 {
     public function getTranscodeLocation(Song $song, int $bitRate): string
     {
-        $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate);
+        $transcode = $this->findTranscode($song, $bitRate);
 
         if ($transcode?->isValid()) {
             return $transcode->location;
@@ -29,10 +29,11 @@ class SftpTranscodingStrategy extends TranscodingStrategy
         $storage = app(SftpStorage::class);
         $tmpSource = $storage->copyToLocal($song->storage_metadata->getPath());
 
-        $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
+        $codec = $this->transcoder->preferredCodec();
+        $destination = artifact_path(sprintf('transcodes/%d/%s.%s', $bitRate, Ulid::generate(), $codec->extension()));
 
         try {
-            $this->transcodeAndUpsert($song, $tmpSource, $destination, $bitRate);
+            $this->transcodeAndUpsert($song, $tmpSource, $destination, $bitRate, $codec);
         } catch (Throwable $e) {
             File::delete($destination);
 

@@ -17,7 +17,7 @@ use function DaveRandom\Resume\get_request_header;
 
 trait StreamsLocalPath
 {
-    private function streamLocalPath(string $path): void
+    private function streamLocalPath(string $path, ?string $contentType = null): void
     {
         try {
             $rangeHeader = get_request_header('Range');
@@ -26,7 +26,7 @@ trait StreamsLocalPath
             $rangeHeader = $rangeHeader === 'bytes=0-1' ? 'bytes=0-' : $rangeHeader;
 
             $rangeSet = RangeSet::createFromHeader($rangeHeader);
-            $resource = new FileResource($path, File::mimeType($path));
+            $resource = new FileResource($path, $contentType ?? File::mimeType($path));
             (new ResourceServlet($resource))->sendResource($rangeSet);
         } catch (InvalidRangeHeaderException) {
             abort(Response::HTTP_BAD_REQUEST);
