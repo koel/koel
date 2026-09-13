@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services\Integrations;
 
+use App\Models\Album;
 use App\Models\Artist;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;
@@ -160,13 +161,12 @@ class MusicBrainzServiceTest extends TestCase
         );
 
         $user = create_user();
-        $album = Artist::factory()
+        $artist = Artist::factory()->for($user)->createOne(['name' => 'Skid Row']);
+        $album = Album::factory()
+            ->for($artist)
             ->for($user)
-            ->createOne(['name' => 'Skid Row'])
-            ->albums() // @phpstan-ignore-line
-            ->create([
+            ->createOne([
                 'name' => 'Slave to the Grind',
-                'user_id' => $user->id,
                 'mbid' => 'release-mbid-from-tags',
             ]);
 
