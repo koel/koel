@@ -8,11 +8,7 @@ use Illuminate\Support\Facades\Cache;
 
 trait TriesRemember
 {
-    /**
-     * `Cache::has()` reports a stored null as a miss, so a lookup that found nothing would be repeated on
-     * every visit. It is stored as this instead, and remembered only for a while: MusicBrainz may well
-     * have the entry next month.
-     */
+    /** `Cache::has()` reports a stored null as a miss, so nothing-found is stored as this instead. */
     private const string NOTHING_FOUND = '__koel_nothing_found__';
     private const int NOTHING_FOUND_TTL_IN_DAYS = 7;
 
