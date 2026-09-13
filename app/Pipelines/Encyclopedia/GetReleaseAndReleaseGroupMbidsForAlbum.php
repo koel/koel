@@ -25,7 +25,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
         $mbids = self::tryRememberForever(
             key: cache_key('release and release group mbids', $params['album'], $params['artist']),
             nothingFoundTtl: now()->addWeek(),
-            callback: function () use ($params): array {
+            callback: function () use ($params): ?array {
                 $response = $this->connector->send(new SearchForReleaseRequest($params['album'], $params['artist']));
 
                 // Opportunistically, cache the artist mbids as well.
@@ -37,13 +37,12 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
                     );
                 }
 
-                return [
-                    $response->json('releases.0.id'),
-                    $response->json('releases.0.release-group.id'),
-                ];
+                $releaseMbid = $response->json('releases.0.id');
+
+                return $releaseMbid === null ? null : [$releaseMbid, $response->json('releases.0.release-group.id')];
             },
         );
 
-        return $next($mbids);
+        return $next($mbids ?? [null, null]);
     }
 }

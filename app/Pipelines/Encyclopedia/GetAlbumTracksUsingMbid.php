@@ -24,7 +24,7 @@ class GetAlbumTracksUsingMbid
         $tracks = self::tryRememberForever(
             key: cache_key('album tracks', $mbid),
             nothingFoundTtl: now()->addWeek(),
-            callback: function () use ($mbid): array {
+            callback: function () use ($mbid): ?array {
                 $tracks = [];
 
                 // There can be multiple media entries (e.g. CDs) in a release, each with its own set of tracks.
@@ -33,7 +33,7 @@ class GetAlbumTracksUsingMbid
                     array_push($tracks, ...Arr::get($media, 'tracks', []));
                 }
 
-                return $tracks;
+                return $tracks ?: null;
             },
         );
 

@@ -86,4 +86,24 @@ class GetAlbumTracksUsingMbidTest extends TestCase
 
         Saloon::assertNothingSent();
     }
+
+    #[Test]
+    public function askAgainForAnEmptyTrackListOnlyAfterAWhile(): void
+    {
+        Saloon::fake([
+            GetRecordingsRequest::class => MockResponse::make(body: ['media' => []]),
+        ]);
+
+        $pipe = new GetAlbumTracksUsingMbid(new MusicBrainzConnector());
+
+        $pipe('sample-mbid', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+        $pipe('sample-mbid', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+
+        Saloon::assertSentCount(1);
+
+        $this->travel(8)->days();
+        $pipe('sample-mbid', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+
+        Saloon::assertSentCount(2);
+    }
 }
