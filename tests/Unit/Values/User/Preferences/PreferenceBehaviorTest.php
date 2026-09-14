@@ -18,6 +18,7 @@ use App\Values\User\Preferences\RadioStationsViewModePreference;
 use App\Values\User\Preferences\RepeatModePreference;
 use App\Values\User\Preferences\TranscodeQualityPreference;
 use App\Values\User\Preferences\VolumePreference;
+use App\Values\User\UserPreferences;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -132,6 +133,15 @@ class PreferenceBehaviorTest extends TestCase
         self::assertFalse((new LastfmSessionKeyPreference())->isCustomizable());
         self::assertSame('lastFmSessionKey', (new LastfmSessionKeyPreference())->getProperty());
         self::assertSame('lastfm_session_key', (new LastfmSessionKeyPreference())->getKey());
+    }
+
+    #[Test]
+    public function onlyIntegrationTokensAreEncrypted(): void
+    {
+        self::assertEqualsCanonicalizing(
+            ['lastfm_session_key', 'listenbrainz_token'],
+            UserPreferences::encryptedKeys(),
+        );
     }
 
     #[Test]

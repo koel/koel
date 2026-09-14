@@ -13,4 +13,9 @@ class LastfmSessionKeyPreference extends Preference
     {
         return false;
     }
+
+    public function isEncrypted(): bool
+    {
+        return true;
+    }
 }
