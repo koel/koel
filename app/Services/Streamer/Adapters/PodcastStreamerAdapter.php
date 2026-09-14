@@ -8,6 +8,8 @@ use App\Services\Podcast\PodcastService;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Values\Podcast\EpisodePlayable;
 use App\Values\RequestedStreamingConfig;
+use Illuminate\Http\RedirectResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webmozart\Assert\Assert;
 
 class PodcastStreamerAdapter implements StreamerAdapter
@@ -20,7 +22,7 @@ class PodcastStreamerAdapter implements StreamerAdapter
     ) {}
 
     /** @inheritDoc */
-    public function stream(Episode $song, ?RequestedStreamingConfig $config = null)
+    public function stream(Episode $song, ?RequestedStreamingConfig $config = null): BinaryFileResponse|RedirectResponse
     {
         Assert::true($song->isEpisode());
 
