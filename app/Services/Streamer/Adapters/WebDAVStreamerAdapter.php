@@ -2,6 +2,7 @@
 
 namespace App\Services\Streamer\Adapters;
 
+use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song;
 use App\Services\SongStorages\WebDAVStorage;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
@@ -15,9 +16,9 @@ class WebDAVStreamerAdapter implements StreamerAdapter
         private readonly WebDAVStorage $storage,
     ) {}
 
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null): void
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null): StreamedFileResponse
     {
         $this->storage->assertSupported();
-        $this->streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
+        return self::streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
     }
 }
