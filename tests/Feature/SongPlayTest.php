@@ -86,6 +86,41 @@ class SongPlayTest extends TestCase
     }
 
     #[Test]
+    public function seekToTheBytesAskedFor(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $path = test_path('songs/blank.mp3');
+        $song = Song::factory()->createOne(['path' => $path]);
+        $offset = (int) (filesize($path) / 2);
+
+        $response = $this->get("play/{$song->id}?t=$token->audioToken", [
+            'Range' => "bytes=$offset-" . ($offset + 63),
+        ]);
+
+        $response->assertStatus(Response::HTTP_PARTIAL_CONTENT);
+
+        self::assertSame(file_get_contents($path, offset: $offset, length: 64), $response->streamedContent());
+    }
+
+    #[Test]
+    public function nameTheFileWithoutAskingBrowsersToSaveIt(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $song = Song::factory()->createOne(['path' => test_path('songs/blank.mp3')]);
+
+        $this->get("play/{$song->id}?t=$token->audioToken")->assertOk()->assertHeader(
+            'content-disposition',
+            'inline; filename=blank.mp3',
+        );
+    }
+
+    #[Test]
     public function serveTheWholeFileWhenNoRangeIsAsked(): void
     {
         $user = create_user();
