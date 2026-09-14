@@ -34,6 +34,7 @@ class UserPreferencesCastTest extends TestCase
             'home_blocks_order',
             'include_public_media',
             'lastfm_session_key',
+            'listenbrainz_token',
             'lyrics_zoom_level',
             'make_uploads_public',
             'podcasts_favorites_only',

@@ -14,13 +14,14 @@ use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\Contracts\Encyclopedia;
+use App\Services\Contracts\Scrobbler;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
 use Generator;
 use Illuminate\Support\Collection;
 use SensitiveParameter;
 
-class LastfmService implements Encyclopedia
+class LastfmService implements Encyclopedia, Scrobbler
 {
     public function __construct(
         private readonly LastfmConnector $connector,
@@ -91,6 +92,11 @@ class LastfmService implements Encyclopedia
     public function updateNowPlaying(Song $song, User $user): void
     {
         rescue(fn () => $this->connector->send(new UpdateNowPlayingRequest($song, $user)));
+    }
+
+    public function isConnected(User $user): bool
+    {
+        return static::enabled() && (bool) $user->preferences->lastFmSessionKey;
     }
 
     public function getSessionKey(#[SensitiveParameter] string $token): ?string

@@ -22,8 +22,9 @@ class GetArtistWikidataIdUsingMbid
             return $next(null);
         }
 
-        $wikidataId = $this->tryRememberForever(
+        $wikidataId = self::tryRememberForever(
             key: cache_key('artist wikidata id from mbid', $mbid),
+            nothingFoundTtl: now()->addWeek(),
             callback: function () use ($mbid): ?string {
                 $wikidata = collect(Arr::where(
                     $this->connector->send(new GetArtistUrlRelationshipsRequest($mbid))->json('relations'),

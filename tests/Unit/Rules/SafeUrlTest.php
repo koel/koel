@@ -42,8 +42,12 @@ class SafeUrlTest extends TestCase
     #[Test]
     public function rejectsLoopbackAddress(): void
     {
+        Http::fake(['*' => Http::response()]);
+
         self::assertFalse($this->passes('http://127.0.0.1/feed'));
         self::assertFalse($this->passes('http://[::1]/feed'));
+
+        Http::assertNothingSent();
     }
 
     #[Test]

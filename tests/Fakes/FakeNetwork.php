@@ -27,7 +27,7 @@ class FakeNetwork extends Network
             return [];
         }
 
-        if (Factory::parseAddressString($host)) {
+        if (Factory::parseAddressString(self::unwrapIpv6Literal($host))) {
             return parent::resolveToPublicIps($host);
         }
 

@@ -17,7 +17,7 @@ use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\MakePlaylistSongsPublic;
 use App\Listeners\PruneLibrary;
 use App\Listeners\UnloveMultipleTracksOnLastfm;
-use App\Listeners\UpdateLastfmNowPlaying;
+use App\Listeners\UpdateNowPlaying;
 use App\Listeners\WriteScanLog;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as BaseServiceProvider;
 
@@ -37,7 +37,7 @@ class EventServiceProvider extends BaseServiceProvider
         ],
 
         PlaybackStarted::class => [
-            UpdateLastfmNowPlaying::class,
+            UpdateNowPlaying::class,
         ],
 
         LibraryChanged::class => [

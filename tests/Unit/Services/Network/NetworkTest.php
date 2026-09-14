@@ -27,6 +27,8 @@ class NetworkTest extends TestCase
             'private 10.x' => ['10.0.0.1'],
             'link-local' => ['169.254.1.1'],
             'loopback IPv6' => ['::1'],
+            'bracketed loopback IPv6' => ['[::1]'],
+            'bracketed private IPv6' => ['[fd00::1]'],
         ];
     }
 
@@ -125,6 +127,21 @@ class NetworkTest extends TestCase
     {
         self::assertSame(['2606:4700:4700::1111'], $this->network->resolveToPublicIps('2606:4700:4700::1111'));
         self::assertSame(['2606:4700:4700::1111'], $this->network->resolveToPublicIps('2606:4700:4700:0:0:0:0:1111'));
+    }
+
+    #[Test]
+    public function acceptsBracketedIpv6Literals(): void
+    {
+        self::assertSame(['2606:4700:4700::1111'], $this->network->resolveToPublicIps('[2606:4700:4700::1111]'));
+        self::assertTrue($this->network->isPublicHost('[2606:4700:4700::1111]'));
+        self::assertTrue($this->network->isSafeUrl('https://[2606:4700:4700::1111]/feed.xml'));
+    }
+
+    #[Test]
+    public function rejectsBracketedIpv4Literal(): void
+    {
+        self::assertSame([], $this->network->resolveToPublicIps('[8.8.8.8]'));
+        self::assertFalse($this->network->isSafeUrl('https://[8.8.8.8]/feed.xml'));
     }
 
     #[Test]

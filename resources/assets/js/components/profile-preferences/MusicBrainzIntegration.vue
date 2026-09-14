@@ -4,7 +4,7 @@
       <span class="mr-2 text-[#1db954]">
         <img :src="musicbrainzLogo" alt="MusicBrainz Logo" height="20" width="20" />
       </span>
-      MusicBrainz Integration
+      MusicBrainz
     </h3>
 
     <div v-if="useMusicBrainz">

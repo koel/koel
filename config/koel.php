@@ -139,6 +139,9 @@ return [
             'secret' => env('LASTFM_API_SECRET'),
             'endpoint' => 'https://ws.audioscrobbler.com/2.0',
         ],
+        'listenbrainz' => [
+            'endpoint' => env('LISTENBRAINZ_API_ENDPOINT', 'https://api.listenbrainz.org'),
+        ],
         'spotify' => [
             'client_id' => env('SPOTIFY_CLIENT_ID'),
             'client_secret' => env('SPOTIFY_CLIENT_SECRET'),

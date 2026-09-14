@@ -2,6 +2,7 @@
 
 namespace App\Http\Integrations\MusicBrainz\Requests;
 
+use App\Helpers\LuceneQuery;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
@@ -22,7 +23,7 @@ class SearchForArtistRequest extends Request
     protected function defaultQuery(): array
     {
         return [
-            'query' => "artist:{$this->name}",
+            'query' => 'artist:' . LuceneQuery::phrase($this->name),
             'limit' => 1,
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Streamer\Adapters;
 
+use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song;
 use App\Services\SongStorages\SftpStorage;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
@@ -15,8 +16,8 @@ class SftpStreamerAdapter implements StreamerAdapter
         private readonly SftpStorage $storage,
     ) {}
 
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null): void
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null): StreamedFileResponse
     {
-        $this->streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
+        return self::streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
     }
 }

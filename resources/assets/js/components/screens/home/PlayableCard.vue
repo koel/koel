@@ -6,7 +6,7 @@
     draggable="true"
     tabindex="0"
     @dblclick="play"
-    @keydown.enter.prevent="play"
+    @keydown.enter.self.prevent="play"
     @dragstart="onDragStart"
     @contextmenu.prevent="onContextMenu"
   >
@@ -32,8 +32,18 @@
       </span>
       <span class="block truncate text-k-fg-50 text-[0.9rem]">{{ artist }}</span>
     </span>
-    <span class="text-k-fg-50 text-[0.9rem] tabular-nums">
-      {{ fmtLength }}
+    <span class="flex flex-col items-end gap-1">
+      <FavoriteButton
+        :favorite="playable.favorite"
+        class="text-k-fg-50 hover:text-k-fg transition-opacity"
+        :class="
+          playable.favorite ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus:opacity-100 no-hover:opacity-100'
+        "
+        @toggle="toggleFavorite"
+      />
+      <span class="text-k-fg-50 text-[0.9rem] tabular-nums">
+        {{ fmtLength }}
+      </span>
     </span>
   </li>
 </template>
@@ -48,9 +58,11 @@ import { useDraggable } from '@/composables/useDragAndDrop'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { playback } from '@/services/playbackManager'
+import { playableStore } from '@/stores/playableStore'
 
 import PlayableThumbnail from '@/components/playable/PlayableThumbnail.vue'
 import OfflineMark from '@/components/ui/OfflineMark.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
 
@@ -78,6 +90,8 @@ const play = () => {
     playback().play(playable.value)
   }
 }
+
+const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
 
 const onDragStart = (event: DragEvent) => startDragging(event, [playable.value])
 

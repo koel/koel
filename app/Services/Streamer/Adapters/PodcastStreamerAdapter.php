@@ -2,12 +2,14 @@
 
 namespace App\Services\Streamer\Adapters;
 
+use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song as Episode;
 use App\Services\Network\SafeHttp;
 use App\Services\Podcast\PodcastService;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Values\Podcast\EpisodePlayable;
 use App\Values\RequestedStreamingConfig;
+use Illuminate\Http\RedirectResponse;
 use Webmozart\Assert\Assert;
 
 class PodcastStreamerAdapter implements StreamerAdapter
@@ -20,8 +22,10 @@ class PodcastStreamerAdapter implements StreamerAdapter
     ) {}
 
     /** @inheritDoc */
-    public function stream(Episode $song, ?RequestedStreamingConfig $config = null)
-    {
+    public function stream(
+        Episode $song,
+        ?RequestedStreamingConfig $config = null,
+    ): StreamedFileResponse|RedirectResponse {
         Assert::true($song->isEpisode());
 
         $streamableUrl = $this->podcastService->getStreamableUrl($song);
@@ -30,6 +34,6 @@ class PodcastStreamerAdapter implements StreamerAdapter
             return response()->redirectTo($streamableUrl);
         }
 
-        $this->streamLocalPath(EpisodePlayable::getForEpisode($song, $this->http)->path);
+        return self::streamLocalPath(EpisodePlayable::getForEpisode($song, $this->http)->path);
     }
 }

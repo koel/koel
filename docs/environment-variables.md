@@ -126,6 +126,7 @@ Also see [Service Integrations](service-integrations) for detailed setup instruc
 | `MUSICBRAINZ_USER_AGENT` | The user agent for MusicBrainz API requests. Auto-generated if empty. | _(auto-generated)_ |
 | `LASTFM_API_KEY` | Your Last.fm API key. Required for artist/album info and scrobbling. | _(empty)_ |
 | `LASTFM_API_SECRET` | Your Last.fm API secret. | _(empty)_ |
+| `LISTENBRAINZ_API_ENDPOINT` | The ListenBrainz API root. Change this only if you run your own ListenBrainz server. | `https://api.listenbrainz.org` |
 | `SPOTIFY_CLIENT_ID` | Your Spotify application client ID. Used for fetching artist and album images. | _(empty)_ |
 | `SPOTIFY_CLIENT_SECRET` | Your Spotify application client secret. | _(empty)_ |
 | `YOUTUBE_API_KEY` | Your YouTube API key. See [YouTube integration](service-integrations#youtube). | _(empty)_ |

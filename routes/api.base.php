@@ -43,6 +43,7 @@ use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GetOneTimeTokenController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
+use App\Http\Controllers\API\ListenBrainzTokenController;
 use App\Http\Controllers\API\Me\RegenerateSubsonicApiKeyController;
 use App\Http\Controllers\API\MediaBrowser\FetchFolderSongsController;
 use App\Http\Controllers\API\MediaBrowser\FetchRecursiveFolderSongsController;
@@ -249,6 +250,10 @@ Route::prefix('api')
             // Last.fm-related routes
             Route::post('lastfm/session-key', SetLastfmSessionKeyController::class);
             Route::delete('lastfm/disconnect', DisconnectFromLastfmController::class)->name('lastfm.disconnect');
+
+            // ListenBrainz-related routes
+            Route::post('listenbrainz/token', [ListenBrainzTokenController::class, 'store']);
+            Route::delete('listenbrainz/token', [ListenBrainzTokenController::class, 'destroy']);
 
             // YouTube-related routes
             if (YouTube::enabled()) {

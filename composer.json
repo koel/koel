@@ -20,7 +20,6 @@
     "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-SimpleXML": "*",
-    "daverandom/resume": "^0.0.3",
     "laravel/helpers": "^1.7",
     "teamtnt/laravel-scout-tntsearch-driver": "^15.1.0",
     "algolia/algoliasearch-client-php": "^3.3",

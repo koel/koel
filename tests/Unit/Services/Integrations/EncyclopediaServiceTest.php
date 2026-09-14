@@ -8,6 +8,7 @@ use App\Services\Contracts\Encyclopedia;
 use App\Services\Image\ImageStorage;
 use App\Services\Integrations\EncyclopediaService;
 use App\Services\Integrations\LastfmService;
+use App\Services\Integrations\MbidService;
 use App\Services\Integrations\SpotifyService;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
@@ -23,6 +24,7 @@ class EncyclopediaServiceTest extends TestCase
     private Encyclopedia|MockInterface $encyclopedia;
     private ImageStorage|MockInterface $imageStorage;
     private SpotifyService|MockInterface $spotifyService;
+    private MbidService|MockInterface $mbidService;
     private EncyclopediaService $encyclopediaService;
 
     private array $spotifyConfig;
@@ -34,11 +36,15 @@ class EncyclopediaServiceTest extends TestCase
         $this->encyclopedia = Mockery::mock(LastfmService::class);
         $this->imageStorage = Mockery::mock(ImageStorage::class);
         $this->spotifyService = Mockery::mock(SpotifyService::class);
+        $this->mbidService = Mockery::mock(MbidService::class);
+        $this->mbidService->allows('fetchAndStoreAlbumMbids');
+        $this->mbidService->allows('fetchAndStoreArtistMbid');
 
         $this->encyclopediaService = new EncyclopediaService(
             $this->encyclopedia,
             $this->imageStorage,
             $this->spotifyService,
+            $this->mbidService,
         );
 
         $this->spotifyConfig = config('koel.services.spotify');

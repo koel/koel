@@ -135,7 +135,7 @@ class SafeHttp
                 throw_unless($ips, UnsafeUrlException::forUrl((string) $uri));
 
                 // IP literals don't trigger a DNS lookup, so nothing to pin.
-                if (!filter_var($host, FILTER_VALIDATE_IP)) {
+                if (!filter_var(Network::unwrapIpv6Literal($host), FILTER_VALIDATE_IP)) {
                     $port = $uri->getPort() ?? ($uri->getScheme() === 'https' ? 443 : 80);
 
                     $options['curl'] ??= [];

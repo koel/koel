@@ -35,7 +35,7 @@ class GetMbidForArtistTest extends TestCase
         Saloon::assertSent(static function (SearchForArtistRequest $request): bool {
             self::assertSame(
                 [
-                    'query' => 'artist:Skid Row',
+                    'query' => 'artist:"Skid Row"',
                     'limit' => 1,
                 ],
                 $request->query()->all(),
@@ -57,6 +57,38 @@ class GetMbidForArtistTest extends TestCase
         (new GetMbidForArtist(new MusicBrainzConnector()))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
+    }
+
+    #[Test]
+    public function searchOnlyOnceWhenTheArtistIsUnknownToMusicBrainz(): void
+    {
+        Saloon::fake([
+            SearchForArtistRequest::class => MockResponse::make(body: ['artists' => []]),
+        ]);
+
+        $pipe = new GetMbidForArtist(new MusicBrainzConnector());
+
+        $pipe('Nobody At All', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+        $pipe('Nobody At All', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+
+        Saloon::assertSentCount(1);
+    }
+
+    #[Test]
+    public function forgetAnUnknownArtistAfterAWhile(): void
+    {
+        Saloon::fake([
+            SearchForArtistRequest::class => MockResponse::make(body: ['artists' => []]),
+        ]);
+
+        $pipe = new GetMbidForArtist(new MusicBrainzConnector());
+        $pipe('Nobody At All', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+
+        $this->travel(8)->days();
+
+        $pipe('Nobody At All', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+
+        Saloon::assertSentCount(2);
     }
 
     #[Test]

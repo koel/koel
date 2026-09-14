@@ -92,4 +92,25 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
 
         Saloon::assertNothingSent();
     }
+
+    #[Test]
+    public function askAgainForAnUnknownReleaseOnlyAfterAWhile(): void
+    {
+        Saloon::fake([
+            SearchForReleaseRequest::class => MockResponse::make(body: ['releases' => []]),
+        ]);
+
+        $pipe = new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector());
+        $params = ['album' => 'Nothing At All', 'artist' => 'Nobody'];
+
+        $pipe($params, self::createNextClosureMock([null, null])->next(...)); // @phpstan-ignore-line
+        $pipe($params, self::createNextClosureMock([null, null])->next(...)); // @phpstan-ignore-line
+
+        Saloon::assertSentCount(1);
+
+        $this->travel(8)->days();
+        $pipe($params, self::createNextClosureMock([null, null])->next(...)); // @phpstan-ignore-line
+
+        Saloon::assertSentCount(2);
+    }
 }
