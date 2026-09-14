@@ -12,6 +12,6 @@ class PhpStreamerAdapter extends LocalStreamerAdapter
 
     public function stream(Song $song, ?RequestedStreamingConfig $config = null)
     {
-        return $this->streamLocalPath($song->storage_metadata->getPath());
+        return self::streamLocalPath($song->storage_metadata->getPath());
     }
 }

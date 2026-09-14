@@ -30,6 +30,6 @@ class PodcastStreamerAdapter implements StreamerAdapter
             return response()->redirectTo($streamableUrl);
         }
 
-        return $this->streamLocalPath(EpisodePlayable::getForEpisode($song, $this->http)->path);
+        return self::streamLocalPath(EpisodePlayable::getForEpisode($song, $this->http)->path);
     }
 }
