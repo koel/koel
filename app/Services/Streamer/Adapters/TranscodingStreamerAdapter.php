@@ -29,6 +29,6 @@ class TranscodingStreamerAdapter implements StreamerAdapter
             return response()->redirectTo($transcodePath);
         }
 
-        $this->streamLocalPath($transcodePath);
+        return $this->streamLocalPath($transcodePath);
     }
 }

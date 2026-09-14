@@ -15,9 +15,9 @@ class WebDAVStreamerAdapter implements StreamerAdapter
         private readonly WebDAVStorage $storage,
     ) {}
 
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null): void
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null)
     {
         $this->storage->assertSupported();
-        $this->streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
+        return $this->streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
     }
 }

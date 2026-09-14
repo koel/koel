@@ -15,8 +15,8 @@ class SftpStreamerAdapter implements StreamerAdapter
         private readonly SftpStorage $storage,
     ) {}
 
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null): void
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null)
     {
-        $this->streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
+        return $this->streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
     }
 }
