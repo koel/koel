@@ -38,6 +38,23 @@ class EncryptIntegrationTokensInUserPreferencesTest extends TestCase
     }
 
     #[Test]
+    public function runningTwiceDoesNotEncryptTwice(): void
+    {
+        $user = create_user();
+
+        DB::table('users')
+            ->where('id', $user->id)
+            ->update([
+                'preferences' => json_encode(['lastfm_session_key' => 'lastfm-secret']),
+            ]);
+
+        $this->runMigration();
+        $this->runMigration();
+
+        self::assertSame('lastfm-secret', $user->refresh()->preferences->lastFmSessionKey);
+    }
+
+    #[Test]
     public function usersWithoutTokensAreLeftAlone(): void
     {
         $user = create_user();
