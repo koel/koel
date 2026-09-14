@@ -150,7 +150,10 @@ class SongPlayTest extends TestCase
             'mime_type' => 'audio/flac',
         ]);
 
-        $this->mock(TranscodingStreamerAdapter::class)->expects('stream');
+        $this
+            ->mock(TranscodingStreamerAdapter::class)
+            ->expects('stream')
+            ->andReturn(response()->file(test_path('songs/blank.mp3')));
 
         $this->get("play/{$song->id}?t=$token->audioToken")->assertOk();
 
@@ -166,7 +169,10 @@ class SongPlayTest extends TestCase
         $token = app(TokenManager::class)->createCompositeToken($user);
         $song = Song::factory()->createOne(['path' => '/var/songs/blank.mp3']);
 
-        $this->mock(TranscodingStreamerAdapter::class)->expects('stream');
+        $this
+            ->mock(TranscodingStreamerAdapter::class)
+            ->expects('stream')
+            ->andReturn(response()->file(test_path('songs/blank.mp3')));
 
         $this->get("play/{$song->id}/1?t=$token->audioToken")->assertOk();
     }
