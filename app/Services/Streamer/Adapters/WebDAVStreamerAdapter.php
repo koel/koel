@@ -2,11 +2,11 @@
 
 namespace App\Services\Streamer\Adapters;
 
+use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song;
 use App\Services\SongStorages\WebDAVStorage;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Values\RequestedStreamingConfig;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class WebDAVStreamerAdapter implements StreamerAdapter
 {
@@ -16,7 +16,7 @@ class WebDAVStreamerAdapter implements StreamerAdapter
         private readonly WebDAVStorage $storage,
     ) {}
 
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null): BinaryFileResponse
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null): StreamedFileResponse
     {
         $this->storage->assertSupported();
         return self::streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));

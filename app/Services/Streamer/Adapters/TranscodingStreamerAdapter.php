@@ -2,6 +2,7 @@
 
 namespace App\Services\Streamer\Adapters;
 
+use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Services\Transcoding\TranscodeStrategyFactory;
@@ -9,13 +10,12 @@ use App\Values\RequestedStreamingConfig;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class TranscodingStreamerAdapter implements StreamerAdapter
 {
     use StreamsLocalPath;
 
-    public function stream(Song $song, ?RequestedStreamingConfig $config = null): BinaryFileResponse|RedirectResponse
+    public function stream(Song $song, ?RequestedStreamingConfig $config = null): StreamedFileResponse|RedirectResponse
     {
         abort_unless(
             is_executable(config('koel.streaming.ffmpeg_path')),

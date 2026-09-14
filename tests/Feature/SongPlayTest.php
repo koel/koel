@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song;
 use App\Services\Auth\TokenManager;
 use App\Services\Streamer\Adapters\LocalStreamerAdapter;
@@ -121,6 +122,29 @@ class SongPlayTest extends TestCase
     }
 
     #[Test]
+    public function refuseARangeThatStartsPastTheEnd(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $path = test_path('songs/blank.mp3');
+        $song = Song::factory()->createOne(['path' => $path]);
+        $size = filesize($path);
+
+        $response = $this->get("play/{$song->id}?t=$token->audioToken", [
+            'Range' => 'bytes=' . ($size + 1) . '-' . ($size + 64),
+        ]);
+
+        $response
+            ->assertStatus(Response::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE)
+            ->assertHeader('content-range', "bytes */$size")
+            ->assertHeader('content-length', '0');
+
+        self::assertSame('', $response->streamedContent());
+    }
+
+    #[Test]
     public function serveTheWholeFileWhenNoRangeIsAsked(): void
     {
         $user = create_user();
@@ -153,7 +177,7 @@ class SongPlayTest extends TestCase
         $this
             ->mock(TranscodingStreamerAdapter::class)
             ->expects('stream')
-            ->andReturn(response()->file(test_path('songs/blank.mp3')));
+            ->andReturn(new StreamedFileResponse(test_path('songs/blank.mp3')));
 
         $this->get("play/{$song->id}?t=$token->audioToken")->assertOk();
 
@@ -172,7 +196,7 @@ class SongPlayTest extends TestCase
         $this
             ->mock(TranscodingStreamerAdapter::class)
             ->expects('stream')
-            ->andReturn(response()->file(test_path('songs/blank.mp3')));
+            ->andReturn(new StreamedFileResponse(test_path('songs/blank.mp3')));
 
         $this->get("play/{$song->id}/1?t=$token->audioToken")->assertOk();
     }
