@@ -1,8 +1,8 @@
 <?php
 
 use App\Values\User\UserPreferences;
-use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +27,7 @@ return new class extends Migration {
                 foreach ($secretKeys as $secretKey) {
                     $token = Arr::get($preferences, $secretKey);
 
-                    if (!is_string($token) || self::isCiphertext($token)) {
+                    if (!is_string($token) || Encrypter::appearsEncrypted($token)) {
                         continue;
                     }
 
@@ -42,16 +42,5 @@ return new class extends Migration {
                         ->update(['preferences' => json_encode($preferences)]);
                 }
             });
-    }
-
-    private static function isCiphertext(string $value): bool
-    {
-        try {
-            Crypt::decryptString($value);
-
-            return true;
-        } catch (DecryptException) {
-            return false;
-        }
     }
 };
