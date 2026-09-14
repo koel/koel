@@ -21,4 +21,9 @@ class ListenBrainzTokenPreference extends Preference
     {
         return false;
     }
+
+    public function isEncrypted(): bool
+    {
+        return true;
+    }
 }
