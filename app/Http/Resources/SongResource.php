@@ -124,6 +124,7 @@ class SongResource extends JsonResource
             'year' => $this->unless($embedding, $this->song->year),
             'is_public' => $this->unless($embedding, $this->song->is_public),
             'created_at' => $this->unless($embedding, $this->song->created_at),
+            'mbid' => $this->unless($embedding, $this->song->mbid),
             'embed_stream_url' => $this->when($embedding, fn () => URL::temporarySignedRoute(
                 'embeds.stream',
                 now()->addDay(),

@@ -119,6 +119,30 @@ describe('artistContextMenu.vue', () => {
     expect(screen.queryByText('Embed…')).toBeNull()
   })
 
+  it('links to MusicBrainz', async () => {
+    commonStore.state.uses_musicbrainz = true
+    const openMock = h.mock(window, 'open')
+    const { artist } = await renderComponent(h.factory('artist').make())
+
+    await h.user.click(screen.getByText('View on MusicBrainz'))
+
+    expect(openMock).toHaveBeenCalledWith(`https://musicbrainz.org/artist/${artist.mbid}`, '_blank')
+  })
+
+  it('does not link to MusicBrainz when MusicBrainz is disabled', async () => {
+    commonStore.state.uses_musicbrainz = false
+    await renderComponent()
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
+  it('does not link to MusicBrainz when the artist has no identifier', async () => {
+    commonStore.state.uses_musicbrainz = true
+    await renderComponent(h.factory('artist').make({ mbid: null }))
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
   it('closes the menu after rating', async () => {
     h.mock(artistStore, 'rate')
     const menu = shallowRef<any>({ component: Component, position: { top: 0, left: 0 } })

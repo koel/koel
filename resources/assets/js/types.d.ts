@@ -141,6 +141,7 @@ interface Artist {
   name: string
   image: string // empty string = no image
   created_at: string
+  mbid: string | null
   is_external: boolean
   favorite: boolean
   rating: number
@@ -158,6 +159,7 @@ interface Album {
   cover: string // empty string = no cover
   thumbnail?: string | null
   created_at: string
+  mbid: string | null
   year: number | null
   length: number
   is_external: boolean
@@ -208,6 +210,7 @@ interface Song extends BasePlayable {
   lyrics: string
   is_public: boolean
   is_external: boolean
+  mbid: string | null
   basename?: string
   deleted?: boolean
   collaboration?: {

@@ -94,6 +94,7 @@ class AlbumResource extends JsonResource
             'artist_name' => $this->album->artist->name,
             'cover' => image_storage_url($this->album->cover),
             'created_at' => $this->unless($embedding, $this->album->created_at),
+            'mbid' => $this->unless($embedding, $this->album->mbid),
             'year' => $this->album->year,
             'is_external' => $this->unless($embedding, fn () => $isPlus && $this->album->user_id !== $user->id),
             'favorite' => $this->unless($embedding, $this->album->favorite),

@@ -155,6 +155,14 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
+    public function showIncludesTheMusicBrainzIdentifier(): void
+    {
+        $artist = Artist::factory()->createOne(['mbid' => '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d']);
+
+        $this->getAs("api/artists/{$artist->id}")->assertJsonPath('mbid', '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d');
+    }
+
+    #[Test]
     public function updateWithImage(): void
     {
         $artist = Artist::factory()->createOne();
