@@ -7,6 +7,7 @@ export default (): Artist => {
     name: faker.person.fullName(),
     image: 'foo.jpg',
     created_at: faker.date.past().toISOString(),
+    mbid: faker.string.uuid(),
     is_external: false,
     favorite: faker.datatype.boolean(),
     rating: faker.number.int({ min: 0, max: 5 }),

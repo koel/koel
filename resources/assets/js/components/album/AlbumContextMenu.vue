@@ -28,6 +28,10 @@
       <Separator />
       <MenuItem @click="showEmbedModal">Embed…</MenuItem>
     </template>
+    <template v-if="musicBrainzUrl">
+      <Separator />
+      <MenuItem @click="viewOnMusicBrainz">View on MusicBrainz</MenuItem>
+    </template>
   </ul>
 </template>
 
@@ -45,6 +49,7 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
 import { usePolicies } from '@/composables/usePolicies'
 import { useRouter } from '@/composables/useRouter'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { playback } from '@/services/playbackManager'
 
 import StarRating from '@/components/ui/StarRating.vue'
@@ -65,6 +70,14 @@ const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
 const allowEdit = computed(() => currentUserCan.editAlbum(album.value))
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))
+
+const { useMusicBrainz } = useThirdPartyServices()
+
+const musicBrainzUrl = computed(() =>
+  useMusicBrainz.value && album.value.mbid ? `https://musicbrainz.org/release/${album.value.mbid}` : null,
+)
+
+const viewOnMusicBrainz = () => trigger(() => window.open(musicBrainzUrl.value!, '_blank'))
 
 const play = () =>
   trigger(async () => {

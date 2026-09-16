@@ -524,6 +524,38 @@ describe('playableContextMenu.vue', () => {
     }
   })
 
+  it('links to MusicBrainz', async () => {
+    commonStore.state.uses_musicbrainz = true
+    const openMock = h.mock(window, 'open')
+    const song = h.factory('song').make()
+
+    await renderComponent(song)
+    await h.user.click(screen.getByText('View on MusicBrainz'))
+
+    expect(openMock).toHaveBeenCalledWith(`https://musicbrainz.org/recording/${song.mbid}`, '_blank')
+  })
+
+  it('does not link to MusicBrainz when MusicBrainz is disabled', async () => {
+    commonStore.state.uses_musicbrainz = false
+    await renderComponent(h.factory('song').make())
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
+  it('does not link to MusicBrainz when the song has no identifier', async () => {
+    commonStore.state.uses_musicbrainz = true
+    await renderComponent(h.factory('song').make({ mbid: null }))
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
+  it('does not link to MusicBrainz when multiple playables are selected', async () => {
+    commonStore.state.uses_musicbrainz = true
+    await renderComponent(h.factory('song').make(3))
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
   it('closes the menu after rating', async () => {
     h.mock(playableStore, 'rate')
     const menu = shallowRef<any>({ component: Component, position: { top: 0, left: 0 } })
