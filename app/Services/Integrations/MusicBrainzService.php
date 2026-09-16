@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;
+use App\Pipelines\Encyclopedia\GetArtistImageUsingWikidataId;
 use App\Pipelines\Encyclopedia\GetArtistWikidataIdUsingMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
@@ -39,15 +40,25 @@ class MusicBrainzService implements Encyclopedia
             /** @var string|null $mbid */
             $mbid = $artist->mbid ?: Pipeline::send($artist->name)->through([GetMbidForArtist::class])->thenReturn();
 
-            $wikipediaSummary = Pipeline::send($mbid)
-                ->through([
-                    GetArtistWikidataIdUsingMbid::class,
-                    GetWikipediaPageTitleUsingWikidataId::class,
-                    GetWikipediaPageSummaryUsingPageTitle::class,
-                ])
+            $wikidataId = Pipeline::send($mbid)->through([GetArtistWikidataIdUsingMbid::class])->thenReturn();
+
+            $wikipediaSummary = Pipeline::send($wikidataId)
+                ->through([GetWikipediaPageTitleUsingWikidataId::class, GetWikipediaPageSummaryUsingPageTitle::class])
                 ->thenReturn();
 
-            return $wikipediaSummary ? ArtistInformation::fromWikipediaSummary($wikipediaSummary) : null;
+            /** @var string|null $wikidataImage */
+            $wikidataImage = Pipeline::send($wikidataId)->through([GetArtistImageUsingWikidataId::class])->thenReturn();
+
+            if (!$wikipediaSummary && !$wikidataImage) {
+                return null;
+            }
+
+            $info = $wikipediaSummary
+                ? ArtistInformation::fromWikipediaSummary($wikipediaSummary)
+                : ArtistInformation::make();
+            $info->image = $wikidataImage ?: $info->image;
+
+            return $info;
         });
     }
 

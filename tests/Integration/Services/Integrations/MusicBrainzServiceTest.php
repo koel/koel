@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetAlbumWikidataIdUsingReleaseGroupMbid;
+use App\Pipelines\Encyclopedia\GetArtistImageUsingWikidataId;
 use App\Pipelines\Encyclopedia\GetArtistWikidataIdUsingMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
@@ -62,6 +63,9 @@ class MusicBrainzServiceTest extends TestCase
             'Skid Row (American band)',
             File::json(test_path('fixtures/wikipedia/artist-page-summary.json')),
         );
+
+        $this->mockPipelinePipe(GetArtistImageUsingWikidataId::class, 'Q123456', null);
+
         $artist = Artist::factory()->createOne(['name' => 'Skid Row']);
 
         $info = $this->service->getArtistInformation($artist);
@@ -77,6 +81,55 @@ class MusicBrainzServiceTest extends TestCase
             ],
             $info->toArray(),
         );
+    }
+
+    #[Test]
+    public function theWikidataImageWinsOverTheWikipediaThumbnail(): void
+    {
+        $this->mockPipelinePipe(GetMbidForArtist::class, 'Skid Row', 'sample-mbid');
+        $this->mockPipelinePipe(GetArtistWikidataIdUsingMbid::class, 'sample-mbid', 'Q123456');
+        $this->mockPipelinePipe(GetWikipediaPageTitleUsingWikidataId::class, 'Q123456', 'Skid Row (American band)');
+
+        $this->mockPipelinePipe(
+            GetWikipediaPageSummaryUsingPageTitle::class,
+            'Skid Row (American band)',
+            File::json(test_path('fixtures/wikipedia/artist-page-summary.json')),
+        );
+
+        $this->mockPipelinePipe(
+            GetArtistImageUsingWikidataId::class,
+            'Q123456',
+            'https://commons.wikimedia.org/wiki/Special:FilePath/Skid%20Row.jpg?width=640',
+        );
+
+        $artist = Artist::factory()->createOne(['name' => 'Skid Row']);
+
+        $info = $this->service->getArtistInformation($artist);
+
+        self::assertSame('https://commons.wikimedia.org/wiki/Special:FilePath/Skid%20Row.jpg?width=640', $info->image);
+        self::assertSame('https://en.wikipedia.org/wiki/Skid_Row_(American_band)', $info->url);
+    }
+
+    #[Test]
+    public function theWikidataImageIsUsedWhenThereIsNoWikipediaPage(): void
+    {
+        $this->mockPipelinePipe(GetMbidForArtist::class, 'Skid Row', 'sample-mbid');
+        $this->mockPipelinePipe(GetArtistWikidataIdUsingMbid::class, 'sample-mbid', 'Q123456');
+        $this->mockPipelinePipe(GetWikipediaPageTitleUsingWikidataId::class, 'Q123456', null);
+        $this->mockPipelinePipe(GetWikipediaPageSummaryUsingPageTitle::class, null, null);
+
+        $this->mockPipelinePipe(
+            GetArtistImageUsingWikidataId::class,
+            'Q123456',
+            'https://commons.wikimedia.org/wiki/Special:FilePath/Skid%20Row.jpg?width=640',
+        );
+
+        $artist = Artist::factory()->createOne(['name' => 'Skid Row']);
+
+        $info = $this->service->getArtistInformation($artist);
+
+        self::assertSame('https://commons.wikimedia.org/wiki/Special:FilePath/Skid%20Row.jpg?width=640', $info->image);
+        self::assertNull($info->url);
     }
 
     #[Test]
