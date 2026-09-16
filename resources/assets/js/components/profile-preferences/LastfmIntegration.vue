@@ -19,7 +19,7 @@
         <a href="https://www.last.fm/about/trackmymusic" rel="noopener" target="_blank">scrobbling</a>.
       </p>
       <div class="buttons mt-4 space-x-2">
-        <Btn class="bg-(--lastfm-color)!" @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
+        <Btn @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
         <Btn variant="ghost" bordered v-if="connected" class="disconnect" @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>
