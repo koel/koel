@@ -8,14 +8,18 @@ To further enhance your music experience, Koel supports several 3rd-party servic
 ListenBrainz, Spotify, and YouTube.
 
 :::tip Note
-Koel prefers MusicBrainz/Wikipedia for artist and album information, and Spotify for artist images and album arts.
+Koel prefers MusicBrainz/Wikipedia for artist and album information, the Cover Art Archive for album covers, and
+Spotify for artist images.
 :::
 
 ## MusicBrainz (+Wikipedia)
 
 [MusicBrainz](https://musicbrainz.org/) is a community-maintained open music encyclopedia that collects music metadata
 and makes it available to the public. Koel uses MusicBrainz (with cross-reference to Wikipedia) to retrieve artist and
-album information, artist images, and album arts.
+album information, artist images, and album covers.
+
+Album covers come from the [Cover Art Archive](https://coverartarchive.org/), which MusicBrainz runs together with the
+Internet Archive. Koel finds the cover by the album's MusicBrainz identifier and prefers it over Spotify.
 
 You don't have anything to do to enable this integration, as it is enabled by default. However, you can disable it by
 explicitly setting `USE_MUSICBRAINZ` to `false` in `.env`.

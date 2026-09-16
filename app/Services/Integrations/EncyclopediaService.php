@@ -17,6 +17,7 @@ class EncyclopediaService
         private readonly Encyclopedia $encyclopedia,
         private readonly ImageStorage $imageStorage,
         private readonly SpotifyService $spotifyService,
+        private readonly CoverArtArchiveService $coverArtArchiveService,
         private readonly MbidService $mbidService,
     ) {}
 
@@ -61,7 +62,9 @@ class EncyclopediaService
     {
         $info = $this->encyclopedia->getAlbumInformation($album) ?: AlbumInformation::make();
 
-        if ($album->cover || !SpotifyService::enabled() && !$info->cover) {
+        $noCoverSourceAvailable = !CoverArtArchiveService::enabled() && !SpotifyService::enabled() && !$info->cover;
+
+        if ($album->cover || $noCoverSourceAvailable) {
             return $info;
         }
 
@@ -95,7 +98,9 @@ class EncyclopediaService
 
     private function fetchAndStoreAlbumCover(Album $album, AlbumInformation $info): ?string
     {
-        $coverUrl = SpotifyService::enabled() ? $this->spotifyService->tryGetAlbumCover($album) : $info->cover;
+        $coverUrl =
+            $this->coverArtArchiveService->tryGetAlbumCover($album)
+            ?? (SpotifyService::enabled() ? $this->spotifyService->tryGetAlbumCover($album) : $info->cover);
 
         if (!$coverUrl) {
             return null;

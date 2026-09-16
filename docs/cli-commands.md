@@ -115,7 +115,8 @@ php artisan koel:extract-folders
 
 ### `koel:fetch-artwork`
 
-Attempt to fetch missing album covers and artist images from the available sources (Spotify, Last.fm, and MusicBrainz).
+Attempt to fetch missing album covers and artist images from the available sources (the Cover Art Archive, Spotify,
+Last.fm, and Wikipedia).
 You'll need to configure and enable the corresponding [3rd-party integrations](./service-integrations.md) for this
 command to work.
 
