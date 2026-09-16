@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\Integrations\MusicBrainzService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
@@ -101,6 +102,7 @@ class SongResource extends JsonResource
         $isPlus = once(static fn () => License::isPlus());
         $user = $this->user ?? once(static fn () => auth()->user());
         $embedding = $request->routeIs('embeds.payload');
+        $musicBrainzEnabled = MusicBrainzService::enabled();
 
         $data = [
             'type' => Str::plural($this->song->type->value),
@@ -125,7 +127,7 @@ class SongResource extends JsonResource
             'year' => $this->unless($embedding, $this->song->year),
             'is_public' => $this->unless($embedding, $this->song->is_public),
             'created_at' => $this->unless($embedding, $this->song->created_at),
-            'mbid' => $this->unless($embedding, $this->song->mbid),
+            'mbid' => $this->when($musicBrainzEnabled && !$embedding, $this->song->mbid),
             'embed_stream_url' => $this->when($embedding, fn () => URL::temporarySignedRoute(
                 'embeds.stream',
                 now()->addDay(),

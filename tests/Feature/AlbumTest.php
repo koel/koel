@@ -107,6 +107,15 @@ class AlbumTest extends TestCase
     }
 
     #[Test]
+    public function showOmitsTheMusicBrainzIdentifierWhenMusicBrainzIsDisabled(): void
+    {
+        config(['koel.services.musicbrainz.enabled' => false]);
+        $album = Album::factory()->createOne(['mbid' => '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d']);
+
+        $this->getAs("api/albums/{$album->id}")->assertJsonMissingPath('mbid');
+    }
+
+    #[Test]
     public function updateWithCover(): void
     {
         $album = Album::factory()->createOne();
