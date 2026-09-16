@@ -2,6 +2,7 @@
 
 namespace App\Http\Integrations\CoverArtArchive;
 
+use App\Services\Integrations\MusicBrainzService;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 
@@ -19,12 +20,7 @@ class CoverArtArchiveConnector extends Connector
     {
         return [
             'Accept' => 'application/json',
-            'User-Agent' => config('koel.services.musicbrainz.user_agent') ?: sprintf(
-                '%s/%s( %s )',
-                config('app.name'),
-                koel_version(),
-                config('app.url'),
-            ),
+            'User-Agent' => MusicBrainzService::userAgent(),
         ];
     }
 }

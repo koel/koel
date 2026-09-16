@@ -67,6 +67,11 @@ function koel_version(): string
     return trim(File::get(base_path('.version')));
 }
 
+function koel_user_agent(): string
+{
+    return sprintf('%s/%s( %s )', config('app.name'), koel_version(), config('app.url'));
+}
+
 function rescue_if($condition, callable $callback, $default = null): mixed
 {
     return value($condition) ? rescue($callback, $default) : $default;
