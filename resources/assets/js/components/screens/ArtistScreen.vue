@@ -72,7 +72,7 @@
       </div>
 
       <div v-show="activeTab === 'albums'" class="albums-pane">
-        <GridListView class="scroll-mask-y" view-mode="list">
+        <GridListView class="scroll-mask-y">
           <template v-if="albums">
             <AlbumCard v-for="album in albums" :key="album.id" :album :show-release-year="true" />
           </template>

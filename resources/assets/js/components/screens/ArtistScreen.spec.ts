@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/vue'
 import type { Mock } from 'vite-plus/test'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -72,6 +73,14 @@ describe('artistScreen.vue', () => {
     })
 
     await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/artists'))
+  })
+
+  it('lays the albums out as a grid', async () => {
+    h.mock(albumStore, 'fetchForArtist').mockResolvedValue(h.factory('album').make(3))
+
+    const { container } = await renderComponent('albums')
+
+    await waitFor(() => expect(container.querySelector('.albums-pane .as-grid')).toBeTruthy())
   })
 
   it('shows the playable list', async () => {

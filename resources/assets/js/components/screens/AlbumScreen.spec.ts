@@ -95,6 +95,16 @@ describe('albumScreen.vue', () => {
     })
   })
 
+  it('lays the other albums out as a grid', async () => {
+    h.mock(albumStore, 'fetchForArtist').mockResolvedValue(h.factory('album').make(3))
+
+    await renderComponent('other-albums')
+
+    const [card] = await screen.findAllByTestId('album-card')
+
+    expect(card.closest('.as-grid')).toBeTruthy()
+  })
+
   it('has a Favorite button if album is favorite', async () => {
     const { album } = await renderComponent('songs', h.factory('album').make({ favorite: true }))
     const favoriteMock = h.mock(albumStore, 'toggleFavorite')

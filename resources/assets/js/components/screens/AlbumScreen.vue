@@ -70,12 +70,12 @@
 
       <div v-show="activeTab === 'other-albums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
-          <GridListView class="scroll-mask-y" v-if="otherAlbums.length" view-mode="list">
+          <GridListView v-if="otherAlbums.length" class="scroll-mask-y">
             <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" />
           </GridListView>
           <p v-else class="p-6 text-k-fg-50">No other albums by {{ album.artist_name }} found in the library.</p>
         </template>
-        <GridListView v-else view-mode="list">
+        <GridListView v-else>
           <AlbumCardSkeleton v-for="i in 6" :key="i" />
         </GridListView>
       </div>
