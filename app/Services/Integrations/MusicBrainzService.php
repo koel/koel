@@ -24,6 +24,11 @@ class MusicBrainzService implements Encyclopedia
         return config('koel.services.musicbrainz.enabled');
     }
 
+    public static function userAgent(): string
+    {
+        return config('koel.services.musicbrainz.user_agent') ?: koel_user_agent();
+    }
+
     public function getArtistInformation(Artist $artist): ?ArtistInformation
     {
         if ($artist->is_unknown || $artist->is_various) {

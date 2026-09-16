@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Contracts\Encyclopedia;
 use App\Services\Image\ImageStorage;
+use App\Services\Integrations\CoverArtArchiveService;
 use App\Services\Integrations\EncyclopediaService;
 use App\Services\Integrations\LastfmService;
 use App\Services\Integrations\MbidService;
@@ -24,6 +25,7 @@ class EncyclopediaServiceTest extends TestCase
     private Encyclopedia|MockInterface $encyclopedia;
     private ImageStorage|MockInterface $imageStorage;
     private SpotifyService|MockInterface $spotifyService;
+    private CoverArtArchiveService|MockInterface $coverArtArchiveService;
     private MbidService|MockInterface $mbidService;
     private EncyclopediaService $encyclopediaService;
 
@@ -36,6 +38,8 @@ class EncyclopediaServiceTest extends TestCase
         $this->encyclopedia = Mockery::mock(LastfmService::class);
         $this->imageStorage = Mockery::mock(ImageStorage::class);
         $this->spotifyService = Mockery::mock(SpotifyService::class);
+        $this->coverArtArchiveService = Mockery::mock(CoverArtArchiveService::class);
+        $this->coverArtArchiveService->allows('tryGetAlbumCover')->andReturnNull()->byDefault();
         $this->mbidService = Mockery::mock(MbidService::class);
         $this->mbidService->allows('fetchAndStoreAlbumMbids');
         $this->mbidService->allows('fetchAndStoreArtistMbid');
@@ -44,6 +48,7 @@ class EncyclopediaServiceTest extends TestCase
             $this->encyclopedia,
             $this->imageStorage,
             $this->spotifyService,
+            $this->coverArtArchiveService,
             $this->mbidService,
         );
 
@@ -101,6 +106,29 @@ class EncyclopediaServiceTest extends TestCase
         $this->spotifyService->expects('tryGetAlbumCover')->with($album)->andReturn('https://spotify.com/cover.jpg');
 
         $this->imageStorage->expects('storeImage')->with('https://spotify.com/cover.jpg');
+
+        self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
+    }
+
+    #[Test]
+    public function getAlbumInformationPrefersTheCoverArtArchiveOverSpotify(): void
+    {
+        config()->set('koel.services.spotify', [
+            'client_id' => 'spotify-client-id',
+            'client_secret' => 'spotify-client-secret',
+        ]);
+        $album = Album::factory()->createOne(['cover' => '']);
+        $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
+
+        $this->encyclopedia->expects('getAlbumInformation')->with($album)->andReturn($info);
+
+        $this->coverArtArchiveService
+            ->expects('tryGetAlbumCover')
+            ->with($album)
+            ->andReturn('https://coverartarchive.org/release/foo/bar-1200.jpg');
+
+        $this->spotifyService->expects('tryGetAlbumCover')->never();
+        $this->imageStorage->expects('storeImage')->with('https://coverartarchive.org/release/foo/bar-1200.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
     }
