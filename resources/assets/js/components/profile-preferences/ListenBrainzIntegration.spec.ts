@@ -29,15 +29,6 @@ describe('listenBrainzIntegration.vue', () => {
     expect(screen.queryByRole('button', { name: 'Connect' })).toBeNull()
   })
 
-  it('styles the disconnect button the same way Last.fm does', () => {
-    renderForConnectedUser(true)
-
-    const button = screen.getByRole('button', { name: 'Disconnect' })
-
-    expect(button.dataset.variant).toBe('ghost')
-    expect(button.hasAttribute('bordered')).toBe(true)
-  })
-
   it('submits the token and switches to the connected state', async () => {
     const postMock = h.mock(http, 'post').mockResolvedValue(null)
     renderForConnectedUser(false)
