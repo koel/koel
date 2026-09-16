@@ -34,6 +34,7 @@ class SongResource extends JsonResource
         'disc',
         'is_public',
         'created_at',
+        'mbid',
     ];
 
     public const array PAGINATION_JSON_STRUCTURE = [

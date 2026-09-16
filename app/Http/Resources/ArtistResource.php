@@ -15,6 +15,7 @@ class ArtistResource extends JsonResource
         'name',
         'image',
         'created_at',
+        'mbid',
         'rating',
         'permissions' => [
             'edit',

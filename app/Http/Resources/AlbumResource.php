@@ -18,6 +18,7 @@ class AlbumResource extends JsonResource
         'artist_name',
         'cover',
         'created_at',
+        'mbid',
         'year',
         'length',
         'rating',
