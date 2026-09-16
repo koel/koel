@@ -20,7 +20,7 @@
       </p>
       <div class="buttons mt-4 space-x-2">
         <Btn class="bg-(--lastfm-color)!" @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
-        <Btn variant="ghost" v-if="connected" class="disconnect" @click.prevent="disconnect">Disconnect</Btn>
+        <Btn variant="ghost" bordered v-if="connected" class="disconnect" @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>
 
