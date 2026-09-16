@@ -17,14 +17,49 @@
             "mainsnak": {
               "snaktype": "value",
               "property": "P18",
+              "datatype": "commonsMedia",
               "datavalue": {
-                "value": "Skid Row live 1991.jpg",
+                "value": "Wrong band.jpg",
                 "type": "string"
-              },
+              }
+            },
+            "type": "statement",
+            "rank": "deprecated"
+          },
+          {
+            "mainsnak": {
+              "snaktype": "novalue",
+              "property": "P18",
               "datatype": "commonsMedia"
             },
             "type": "statement",
             "rank": "normal"
+          },
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P18",
+              "datatype": "commonsMedia",
+              "datavalue": {
+                "value": "Skid Row early.jpg",
+                "type": "string"
+              }
+            },
+            "type": "statement",
+            "rank": "normal"
+          },
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P18",
+              "datatype": "commonsMedia",
+              "datavalue": {
+                "value": "Skid Row live 1991.jpg",
+                "type": "string"
+              }
+            },
+            "type": "statement",
+            "rank": "preferred"
           }
         ]
       },

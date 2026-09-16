@@ -47,7 +47,11 @@ class MusicBrainzService implements Encyclopedia
                 ->thenReturn();
 
             /** @var string|null $wikidataImage */
-            $wikidataImage = Pipeline::send($wikidataId)->through([GetArtistImageUsingWikidataId::class])->thenReturn();
+            $wikidataImage = rescue(
+                static fn () => Pipeline::send($wikidataId)
+                    ->through([GetArtistImageUsingWikidataId::class])
+                    ->thenReturn(),
+            );
 
             if (!$wikipediaSummary && !$wikidataImage) {
                 return null;

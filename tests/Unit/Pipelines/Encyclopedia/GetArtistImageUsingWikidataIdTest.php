@@ -22,7 +22,7 @@ class GetArtistImageUsingWikidataIdTest extends TestCase
     private const string EXPECTED_URL = 'https://commons.wikimedia.org/wiki/Special:FilePath/Skid%20Row%20live%201991.jpg?width=640';
 
     #[Test]
-    public function getImage(): void
+    public function picksThePreferredImageAndSkipsDeprecatedAndValuelessOnes(): void
     {
         Saloon::fake([
             GetEntityDataRequest::class => MockResponse::make(body: File::json(test_path(

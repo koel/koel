@@ -133,6 +133,33 @@ class MusicBrainzServiceTest extends TestCase
     }
 
     #[Test]
+    public function aFailedImageLookupStillReturnsTheArtistInformation(): void
+    {
+        $this->mockPipelinePipe(GetMbidForArtist::class, 'Skid Row', 'sample-mbid');
+        $this->mockPipelinePipe(GetArtistWikidataIdUsingMbid::class, 'sample-mbid', 'Q123456');
+        $this->mockPipelinePipe(GetWikipediaPageTitleUsingWikidataId::class, 'Q123456', 'Skid Row (American band)');
+
+        $this->mockPipelinePipe(
+            GetWikipediaPageSummaryUsingPageTitle::class,
+            'Skid Row (American band)',
+            File::json(test_path('fixtures/wikipedia/artist-page-summary.json')),
+        );
+
+        $this->mockPipelinePipe(
+            GetArtistImageUsingWikidataId::class,
+            'Q123456',
+            new Exception('Wikidata is having a bad day'),
+        );
+
+        $artist = Artist::factory()->createOne(['name' => 'Skid Row']);
+
+        $info = $this->service->getArtistInformation($artist);
+
+        self::assertSame('https://en.wikipedia.org/wiki/Skid_Row_(American_band)', $info->url);
+        self::assertStringContainsString('2023_Sweden_Rock', $info->image);
+    }
+
+    #[Test]
     public function getArtistInformationReturnsNullUponAnyErrorInThePipeline(): void
     {
         $this->mockPipelinePipe(GetMbidForArtist::class, 'Skid Row', 'sample-mbid');
