@@ -120,6 +120,9 @@ Last.fm, and Wikipedia).
 You'll need to configure and enable the corresponding [3rd-party integrations](./service-integrations.md) for this
 command to work.
 
+The Cover Art Archive finds covers by MusicBrainz identifier, so run [`koel:fetch-mbids`](#koel-fetch-mbids) first to
+fill in the albums that do not have one yet.
+
 To avoid hitting rate limits, Koel pauses between requests. By default, this delay is 1 second, but you can customize it
 with the `--delay` option.
 

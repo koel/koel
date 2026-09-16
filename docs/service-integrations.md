@@ -19,7 +19,10 @@ and makes it available to the public. Koel uses MusicBrainz (with cross-referenc
 album information, artist images, and album covers.
 
 Album covers come from the [Cover Art Archive](https://coverartarchive.org/), which MusicBrainz runs together with the
-Internet Archive. Koel finds the cover by the album's MusicBrainz identifier and prefers it over Spotify.
+Internet Archive. Koel finds the cover by the album's MusicBrainz identifier and prefers it over Spotify. Albums without
+an identifier are skipped, so on an existing library run
+[`koel:fetch-mbids`](./cli-commands.md#koel-fetch-mbids) before
+[`koel:fetch-artwork`](./cli-commands.md#koel-fetch-artwork).
 
 You don't have anything to do to enable this integration, as it is enabled by default. However, you can disable it by
 explicitly setting `USE_MUSICBRAINZ` to `false` in `.env`.
