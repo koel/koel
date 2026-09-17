@@ -9,20 +9,23 @@ ListenBrainz, Spotify, and YouTube.
 
 :::tip Note
 Koel prefers MusicBrainz/Wikipedia for artist and album information, the Cover Art Archive for album covers, and
-Spotify for artist images.
+Wikidata for artist images. Spotify is used for images only when those have none.
 :::
 
 ## MusicBrainz (+Wikipedia)
 
 [MusicBrainz](https://musicbrainz.org/) is a community-maintained open music encyclopedia that collects music metadata
 and makes it available to the public. Koel uses MusicBrainz (with cross-reference to Wikipedia) to retrieve artist and
-album information, artist images, and album covers.
+album information, and to find artist images and album covers.
 
 Album covers come from the [Cover Art Archive](https://coverartarchive.org/), which MusicBrainz runs together with the
 Internet Archive. Koel finds the cover by the album's MusicBrainz identifier and prefers it over Spotify. Albums without
 an identifier are skipped, so on an existing library run
 [`koel:fetch-mbids`](./cli-commands.md#koel-fetch-mbids) before
 [`koel:fetch-artwork`](./cli-commands.md#koel-fetch-artwork).
+
+Artist images come from [Wikidata](https://www.wikidata.org/), found by the artist's MusicBrainz identifier, and are
+also preferred over Spotify.
 
 If an album has no release year in its tags, Koel fills it in with the year the album was first released, according to
 MusicBrainz. A year from your tags is never replaced.

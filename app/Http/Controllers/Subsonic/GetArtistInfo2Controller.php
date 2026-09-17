@@ -7,14 +7,15 @@ use App\Http\Requests\Subsonic\IdRequest;
 use App\Http\Responses\Subsonic\Resources\ArtistInfoResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\ArtistRepository;
-use App\Services\Contracts\Encyclopedia;
+use App\Services\Integrations\EncyclopediaService;
+use Illuminate\Support\Arr;
 use stdClass;
 
 class GetArtistInfo2Controller extends Controller
 {
     public function __construct(
         private readonly ArtistRepository $artistRepository,
-        private readonly Encyclopedia $encyclopedia,
+        private readonly EncyclopediaService $encyclopedia,
     ) {}
 
     public function __invoke(IdRequest $request)
@@ -23,7 +24,7 @@ class GetArtistInfo2Controller extends Controller
         $info = $this->encyclopedia->getArtistInformation($artist);
 
         return SubsonicResponse::ok([
-            'artistInfo2' => $info === null ? new stdClass() : ArtistInfoResource::toArray($info),
+            'artistInfo2' => Arr::whereNotNull($info ? ArtistInfoResource::toArray($info) : []) ?: new stdClass(),
         ]);
     }
 }
