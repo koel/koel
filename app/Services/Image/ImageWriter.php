@@ -131,7 +131,10 @@ class ImageWriter
 
             return $response->throwIfClientError()->throwIfServerError()->body();
         } catch (Throwable $e) {
-            throw new RuntimeException('Failed to fetch image from URL: ' . $url, previous: $e);
+            throw new RuntimeException(
+                sprintf('Failed to fetch image from URL: %s (%s)', $url, $e->getMessage()),
+                previous: $e,
+            );
         }
     }
 }
