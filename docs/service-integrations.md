@@ -24,6 +24,9 @@ an identifier are skipped, so on an existing library run
 [`koel:fetch-mbids`](./cli-commands.md#koel-fetch-mbids) before
 [`koel:fetch-artwork`](./cli-commands.md#koel-fetch-artwork).
 
+If an album has no release year in its tags, Koel fills it in with the year the album was first released, according to
+MusicBrainz. A year from your tags is never replaced.
+
 You don't have anything to do to enable this integration, as it is enabled by default. However, you can disable it by
 explicitly setting `USE_MUSICBRAINZ` to `false` in `.env`.
 

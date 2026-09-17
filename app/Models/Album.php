@@ -144,4 +144,18 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
 
         return $array;
     }
+
+    public function setYearIfMissing(?int $year): void
+    {
+        if (!$year || $this->year) {
+            return;
+        }
+
+        $stored = static::query()->whereKey($this->getKey())->whereNull('year')->update(['year' => $year]) > 0;
+
+        if ($stored) {
+            $this->year = $year;
+            $this->syncOriginalAttribute('year');
+        }
+    }
 }

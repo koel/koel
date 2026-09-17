@@ -29,6 +29,7 @@ class EncyclopediaService
 
         // Identifiers come from MusicBrainz whenever it's enabled, even when another service supplies the entry.
         $this->mbidService->fetchAndStoreAlbumMbids($album);
+        $this->mbidService->fetchAndStoreAlbumYear($album);
 
         return rescue(
             fn () => Cache::remember(

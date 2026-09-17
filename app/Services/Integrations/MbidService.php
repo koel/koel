@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
+use App\Pipelines\Encyclopedia\GetAlbumYearUsingReleaseMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
 use Illuminate\Support\Arr;
@@ -55,6 +56,20 @@ class MbidService
             $tracks = Pipeline::send($albumMbid)->through([GetAlbumTracksUsingMbid::class])->thenReturn() ?: [];
 
             self::storeRecordingMbids($album, $tracks);
+        });
+    }
+
+    public function fetchAndStoreAlbumYear(Album $album): void
+    {
+        if ($album->year || !$album->mbid) {
+            return;
+        }
+
+        rescue_if(MusicBrainzService::enabled(), static function () use ($album): void {
+            /** @var int|null $year */
+            $year = Pipeline::send($album->mbid)->through([GetAlbumYearUsingReleaseMbid::class])->thenReturn();
+
+            $album->setYearIfMissing($year);
         });
     }
 

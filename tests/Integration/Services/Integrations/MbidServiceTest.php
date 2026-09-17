@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
+use App\Pipelines\Encyclopedia\GetAlbumYearUsingReleaseMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
 use App\Services\Integrations\MbidService;
@@ -273,5 +274,77 @@ class MbidServiceTest extends TestCase
 
         self::assertSame('sample-album-mbid', $album->refresh()->mbid);
         self::assertTrue($album->fresh()->songs->every(static fn (Song $song): bool => $song->mbid === null));
+    }
+
+    #[Test]
+    public function fetchAndStoreAlbumYear(): void
+    {
+        $album = Album::factory()->createOne(['mbid' => 'sample-album-mbid', 'year' => null]);
+        $this->allowPipelinePipe(GetAlbumYearUsingReleaseMbid::class, 1991);
+
+        $this->service->fetchAndStoreAlbumYear($album);
+
+        self::assertSame(1991, $album->year);
+        self::assertSame(1991, $album->refresh()->year);
+    }
+
+    #[Test]
+    public function keepTheYearTheTagsSupplied(): void
+    {
+        $album = Album::factory()->createOne(['mbid' => 'sample-album-mbid', 'year' => 2011]);
+        $this->mock(GetAlbumYearUsingReleaseMbid::class)->expects('__invoke')->never();
+
+        $this->service->fetchAndStoreAlbumYear($album);
+
+        self::assertSame(2011, $album->refresh()->year);
+    }
+
+    #[Test]
+    public function lookUpNoYearWithoutAnAlbumMbid(): void
+    {
+        $album = Album::factory()->createOne(['mbid' => null, 'year' => null]);
+        $this->mock(GetAlbumYearUsingReleaseMbid::class)->expects('__invoke')->never();
+
+        $this->service->fetchAndStoreAlbumYear($album);
+
+        self::assertNull($album->refresh()->year);
+    }
+
+    #[Test]
+    public function storeNoYearWhenMusicBrainzHasNone(): void
+    {
+        $album = Album::factory()->createOne(['mbid' => 'sample-album-mbid', 'year' => null]);
+        $this->allowPipelinePipe(GetAlbumYearUsingReleaseMbid::class, null);
+
+        $this->service->fetchAndStoreAlbumYear($album);
+
+        self::assertNull($album->refresh()->year);
+    }
+
+    #[Test]
+    public function lookUpNoYearWhenMusicBrainzIsDisabled(): void
+    {
+        config(['koel.services.musicbrainz.enabled' => false]);
+        $album = Album::factory()->createOne(['mbid' => 'sample-album-mbid', 'year' => null]);
+        $this->mock(GetAlbumYearUsingReleaseMbid::class)->expects('__invoke')->never();
+
+        $this->service->fetchAndStoreAlbumYear($album);
+
+        self::assertNull($album->refresh()->year);
+    }
+
+    #[Test]
+    public function fetchTheYearOfAnAlbumMatchedInTheSameRequest(): void
+    {
+        $album = self::makeAlbumWith(['Monkey Business']);
+        $album->update(['year' => null]);
+        $this->allowAlbumLookups(['Monkey Business']);
+        $this->allowPipelinePipe(GetAlbumYearUsingReleaseMbid::class, 1991);
+
+        $this->service->fetchAndStoreAlbumMbids($album);
+        $this->service->fetchAndStoreAlbumYear($album);
+
+        self::assertSame('sample-album-mbid', $album->mbid);
+        self::assertSame(1991, $album->refresh()->year);
     }
 }
