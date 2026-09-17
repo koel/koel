@@ -2,6 +2,7 @@
 
 namespace App\Http\Integrations\MusicBrainz;
 
+use App\Http\Integrations\Concerns\ThrowsWhenUnavailable;
 use App\Services\Integrations\MusicBrainzService;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
@@ -9,6 +10,7 @@ use Saloon\Traits\Plugins\AcceptsJson;
 class MusicBrainzConnector extends Connector
 {
     use AcceptsJson;
+    use ThrowsWhenUnavailable;
 
     public function resolveBaseUrl(): string
     {
