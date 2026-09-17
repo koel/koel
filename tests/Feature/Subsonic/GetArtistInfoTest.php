@@ -3,7 +3,7 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Models\Artist;
-use App\Services\Contracts\Encyclopedia;
+use App\Services\Integrations\EncyclopediaService;
 use App\Values\Artist\ArtistInformation;
 use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\Test;
@@ -20,7 +20,7 @@ class GetArtistInfoTest extends TestCase
         $artist = Artist::factory()->for($user)->createOne();
 
         $this
-            ->mock(Encyclopedia::class)
+            ->mock(EncyclopediaService::class)
             ->expects('getArtistInformation')
             ->andReturn(ArtistInformation::make(
                 url: 'https://www.last.fm/artist/Foo',
@@ -49,7 +49,7 @@ class GetArtistInfoTest extends TestCase
         $user = create_user();
         $artist = Artist::factory()->for($user)->createOne();
 
-        $this->mock(Encyclopedia::class)->expects('getArtistInformation')->andReturnNull();
+        $this->mock(EncyclopediaService::class)->expects('getArtistInformation')->andReturnNull();
 
         $response = $this->getJson(
             '/rest/getArtistInfo.view?'

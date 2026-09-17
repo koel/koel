@@ -16,7 +16,7 @@ Wikidata for artist images. Spotify is used for images only when those have none
 
 [MusicBrainz](https://musicbrainz.org/) is a community-maintained open music encyclopedia that collects music metadata
 and makes it available to the public. Koel uses MusicBrainz (with cross-reference to Wikipedia) to retrieve artist and
-album information, artist images, and album covers.
+album information, and to find artist images and album covers.
 
 Album covers come from the [Cover Art Archive](https://coverartarchive.org/), which MusicBrainz runs together with the
 Internet Archive. Koel finds the cover by the album's MusicBrainz identifier and prefers it over Spotify. Albums without
