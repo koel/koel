@@ -24,6 +24,9 @@ an identifier are skipped, so on an existing library run
 [`koel:fetch-mbids`](./cli-commands.md#koel-fetch-mbids) before
 [`koel:fetch-artwork`](./cli-commands.md#koel-fetch-artwork).
 
+Artist images come from [Wikidata](https://www.wikidata.org/), found by the artist's MusicBrainz identifier, and are
+also preferred over Spotify.
+
 If an album has no release year in its tags, Koel fills it in with the year the album was first released, according to
 MusicBrainz. A year from your tags is never replaced.
 
