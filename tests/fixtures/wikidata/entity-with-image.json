@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "Q461269": {
+      "pageid": 435092,
+      "ns": 0,
+      "title": "Q461269",
+      "lastrevid": 2347365745,
+      "modified": "2025-05-11T10:03:09Z",
+      "type": "item",
+      "id": "Q461269",
+      "labels": "****OBJECT REDACTED****",
+      "descriptions": "****OBJECT REDACTED****",
+      "aliases": "****OBJECT REDACTED****",
+      "claims": {
+        "P18": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P18",
+              "datatype": "commonsMedia",
+              "datavalue": {
+                "value": "Wrong band.jpg",
+                "type": "string"
+              }
+            },
+            "type": "statement",
+            "rank": "deprecated"
+          },
+          {
+            "mainsnak": {
+              "snaktype": "novalue",
+              "property": "P18",
+              "datatype": "commonsMedia"
+            },
+            "type": "statement",
+            "rank": "normal"
+          },
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P18",
+              "datatype": "commonsMedia",
+              "datavalue": {
+                "value": "Skid Row early.jpg",
+                "type": "string"
+              }
+            },
+            "type": "statement",
+            "rank": "normal"
+          },
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P18",
+              "datatype": "commonsMedia",
+              "datavalue": {
+                "value": "Skid Row live 1991.jpg",
+                "type": "string"
+              }
+            },
+            "type": "statement",
+            "rank": "preferred"
+          }
+        ]
+      },
+      "sitelinks": {
+        "dewiki": {
+          "site": "dewiki",
+          "title": "Skid Row",
+          "badges": [],
+          "url": "https://de.wikipedia.org/wiki/Skid_Row"
+        },
+        "enwiki": {
+          "site": "enwiki",
+          "title": "Skid Row (American band)",
+          "badges": [],
+          "url": "https://en.wikipedia.org/wiki/Skid_Row_(American_band)"
+        },
+        "eswiki": {
+          "site": "eswiki",
+          "title": "Skid Row",
+          "badges": [],
+          "url": "https://es.wikipedia.org/wiki/Skid_Row"
+        },
+        "simplewiki": {
+          "site": "simplewiki",
+          "title": "Skid Row (American band)",
+          "badges": [],
+          "url": "https://simple.wikipedia.org/wiki/Skid_Row_(American_band)"
+        },
+        "ukwiki": {
+          "site": "ukwiki",
+          "title": "Skid Row (\u0445\u0435\u0432\u0456-\u043c\u0435\u0442\u0430\u043b-\u0433\u0443\u0440\u0442)",
+          "badges": [],
+          "url": "https://uk.wikipedia.org/wiki/Skid_Row_(%D1%85%D0%B5%D0%B2%D1%96-%D0%BC%D0%B5%D1%82%D0%B0%D0%BB-%D0%B3%D1%83%D1%80%D1%82)"
+        }
+      }
+    }
+  }
+}
