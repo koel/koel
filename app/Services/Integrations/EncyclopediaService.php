@@ -18,6 +18,7 @@ class EncyclopediaService
         private readonly ImageStorage $imageStorage,
         private readonly SpotifyService $spotifyService,
         private readonly CoverArtArchiveService $coverArtArchiveService,
+        private readonly WikidataService $wikidataService,
         private readonly MbidService $mbidService,
     ) {}
 
@@ -83,7 +84,9 @@ class EncyclopediaService
     {
         $info = $this->encyclopedia->getArtistInformation($artist) ?: ArtistInformation::make();
 
-        if ($artist->image || !SpotifyService::enabled() && !$info->image) {
+        $noImageSourceAvailable = !WikidataService::enabled() && !SpotifyService::enabled() && !$info->image;
+
+        if ($artist->image || $noImageSourceAvailable) {
             return $info;
         }
 
@@ -116,7 +119,9 @@ class EncyclopediaService
 
     private function fetchAndStoreArtistImage(Artist $artist, ArtistInformation $info): ?string
     {
-        $imgUrl = SpotifyService::enabled() ? $this->spotifyService->tryGetArtistImage($artist) : $info->image;
+        $imgUrl =
+            $this->wikidataService->tryGetArtistImage($artist)
+            ?? (SpotifyService::enabled() ? $this->spotifyService->tryGetArtistImage($artist) : $info->image);
 
         if (!$imgUrl) {
             return null;

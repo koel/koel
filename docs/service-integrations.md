@@ -9,7 +9,7 @@ ListenBrainz, Spotify, and YouTube.
 
 :::tip Note
 Koel prefers MusicBrainz/Wikipedia for artist and album information, the Cover Art Archive for album covers, and
-Spotify for artist images.
+Wikidata for artist images. Spotify is used for images only when those have none.
 :::
 
 ## MusicBrainz (+Wikipedia)
