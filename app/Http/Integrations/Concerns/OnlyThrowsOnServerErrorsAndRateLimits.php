@@ -6,7 +6,7 @@ use Illuminate\Http\Response as HttpResponse;
 use Saloon\Http\Response;
 use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
 
-trait ThrowsOnServerErrorsAndRateLimits
+trait OnlyThrowsOnServerErrorsAndRateLimits
 {
     use AlwaysThrowOnErrors;
 

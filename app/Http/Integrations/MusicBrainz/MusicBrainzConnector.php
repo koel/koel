@@ -2,7 +2,7 @@
 
 namespace App\Http\Integrations\MusicBrainz;
 
-use App\Http\Integrations\Concerns\ThrowsOnServerErrorsAndRateLimits;
+use App\Http\Integrations\Concerns\OnlyThrowsOnServerErrorsAndRateLimits;
 use App\Services\Integrations\MusicBrainzService;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
@@ -10,7 +10,7 @@ use Saloon\Traits\Plugins\AcceptsJson;
 class MusicBrainzConnector extends Connector
 {
     use AcceptsJson;
-    use ThrowsOnServerErrorsAndRateLimits;
+    use OnlyThrowsOnServerErrorsAndRateLimits;
 
     public function resolveBaseUrl(): string
     {

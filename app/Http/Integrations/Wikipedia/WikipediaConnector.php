@@ -2,12 +2,12 @@
 
 namespace App\Http\Integrations\Wikipedia;
 
-use App\Http\Integrations\Concerns\ThrowsOnServerErrorsAndRateLimits;
+use App\Http\Integrations\Concerns\OnlyThrowsOnServerErrorsAndRateLimits;
 use Saloon\Http\Connector;
 
 class WikipediaConnector extends Connector
 {
-    use ThrowsOnServerErrorsAndRateLimits;
+    use OnlyThrowsOnServerErrorsAndRateLimits;
 
     public function resolveBaseUrl(): string
     {
