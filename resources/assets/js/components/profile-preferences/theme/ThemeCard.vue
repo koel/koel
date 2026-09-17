@@ -11,7 +11,7 @@
       border-width="1px"
       class="h-full rounded-[inherit]"
     >
-      <div class="thumbnail relative m-px h-[calc(100%-2px)] bg-center bg-cover rounded-[calc(var(--radius-lg)-1px)]">
+      <div class="thumbnail relative h-full bg-center bg-cover rounded-[inherit]">
         <button
           class="opacity-0 hover:opacity-100 absolute h-full rounded-[inherit] w-full top-0 left-0 flex items-center justify-center text-lg transition-opacity bg-k-bg-70 text-k-fg!"
           type="button"
