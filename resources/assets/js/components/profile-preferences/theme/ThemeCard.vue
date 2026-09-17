@@ -6,7 +6,7 @@
     @contextmenu.prevent="onContextMenu"
   >
     <WithGradientBorder
-      :color
+      :color="highlightColor"
       border-color="color-mix(in srgb, var(--color-fg), transparent 90%)"
       border-width="1px"
       class="h-full rounded-[inherit]"
@@ -47,7 +47,7 @@ const isCurrentTheme = computed(() => themeStore.isCurrentTheme(theme.value))
 const thumbnailColor = computed(() => theme.value.thumbnail_color)
 const thumbnailImage = computed(() => (theme.value.thumbnail_image ? `url(${theme.value.thumbnail_image})` : 'none'))
 
-const color = computed(
+const highlightColor = computed(
   () =>
     theme.value.properties?.['--color-highlight'] ||
     getComputedStyle(document.documentElement).getPropertyValue('--color-highlight').trim(),
