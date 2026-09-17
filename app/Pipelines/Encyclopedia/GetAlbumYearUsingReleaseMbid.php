@@ -5,7 +5,6 @@ namespace App\Pipelines\Encyclopedia;
 use App\Http\Integrations\MusicBrainz\MusicBrainzConnector;
 use App\Http\Integrations\MusicBrainz\Requests\GetReleaseGroupForReleaseRequest;
 use Closure;
-use Illuminate\Support\Str;
 
 class GetAlbumYearUsingReleaseMbid
 {
@@ -36,8 +35,6 @@ class GetAlbumYearUsingReleaseMbid
 
     private static function parseYear(?string $firstReleaseDate): ?int
     {
-        $year = Str::substr((string) $firstReleaseDate, 0, 4);
-
-        return preg_match('/^\d{4}$/', $year) ? (int) $year : null;
+        return preg_match('/^(\d{4})(-\d{2}){0,2}$/', (string) $firstReleaseDate, $matches) ? (int) $matches[1] : null;
     }
 }

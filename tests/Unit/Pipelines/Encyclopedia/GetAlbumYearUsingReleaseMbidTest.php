@@ -26,6 +26,7 @@ class GetAlbumYearUsingReleaseMbidTest extends TestCase
             'a bare year' => ['1991', 1991],
             'no date' => ['', null],
             'a missing date' => [null, null],
+            'a year followed by junk' => ['1991invalid', null],
         ];
     }
 
