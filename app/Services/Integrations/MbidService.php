@@ -6,6 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
+use App\Pipelines\Encyclopedia\GetAlbumYearUsingReleaseMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
 use Illuminate\Support\Arr;
@@ -14,7 +15,8 @@ use Illuminate\Support\Facades\Pipeline;
 use Illuminate\Support\Str;
 
 /**
- * Fetches MusicBrainz identifiers for albums and artists and stores the ones they are missing.
+ * Fetches MusicBrainz identifiers for albums and artists, plus the album years they unlock, and stores the ones
+ * they are missing.
  *
  * This runs whenever MusicBrainz is enabled, independently of which service currently supplies encyclopedia
  * entries — identifiers are useful regardless of who writes the prose. The lookups behind them are cached
@@ -55,6 +57,24 @@ class MbidService
             $tracks = Pipeline::send($albumMbid)->through([GetAlbumTracksUsingMbid::class])->thenReturn() ?: [];
 
             self::storeRecordingMbids($album, $tracks);
+        });
+    }
+
+    /**
+     * Only an album with no year gets one: a year the tags supply always wins. The year is the release group's
+     * first release, not the stored release's own date, which for a reissue can be decades later.
+     */
+    public function fetchAndStoreAlbumYear(Album $album): void
+    {
+        if ($album->year || !$album->mbid) {
+            return;
+        }
+
+        rescue_if(MusicBrainzService::enabled(), static function () use ($album): void {
+            /** @var int|null $year */
+            $year = Pipeline::send($album->mbid)->through([GetAlbumYearUsingReleaseMbid::class])->thenReturn();
+
+            $album->setYearIfMissing($year);
         });
     }
 

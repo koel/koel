@@ -14,6 +14,11 @@ trait HasMbid
             return;
         }
 
-        static::query()->whereKey($this->getKey())->whereNull('mbid')->update(['mbid' => $mbid]);
+        $claimed = static::query()->whereKey($this->getKey())->whereNull('mbid')->update(['mbid' => $mbid]);
+
+        if ($claimed) {
+            $this->mbid = $mbid;
+            $this->syncOriginalAttribute('mbid');
+        }
     }
 }

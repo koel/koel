@@ -42,6 +42,7 @@ class EncyclopediaServiceTest extends TestCase
         $this->coverArtArchiveService->allows('tryGetAlbumCover')->andReturnNull()->byDefault();
         $this->mbidService = Mockery::mock(MbidService::class);
         $this->mbidService->allows('fetchAndStoreAlbumMbids');
+        $this->mbidService->allows('fetchAndStoreAlbumYear');
         $this->mbidService->allows('fetchAndStoreArtistMbid');
 
         $this->encyclopediaService = new EncyclopediaService(
