@@ -8,7 +8,7 @@
     <div v-if="connected" data-testid="listenbrainz-connected">
       <p>Your ListenBrainz account is connected. {{ appName }} will submit your listens as you play.</p>
       <div class="mt-4">
-        <Btn type="button" variant="destructive" @click.prevent="disconnect">Disconnect</Btn>
+        <Btn type="button" variant="ghost" bordered @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>
 

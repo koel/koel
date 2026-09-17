@@ -128,6 +128,7 @@ return [
         'musicbrainz' => [
             'enabled' => env('USE_MUSICBRAINZ', true),
             'endpoint' => 'https://musicbrainz.org/ws/2',
+            'cover_art_endpoint' => 'https://coverartarchive.org',
             'user_agent' => env('MUSICBRAINZ_USER_AGENT'),
         ],
         'youtube' => [

@@ -2,12 +2,15 @@
 
 namespace App\Http\Integrations\MusicBrainz;
 
+use App\Http\Integrations\Concerns\OnlyThrowsOnServerErrorsAndRateLimits;
+use App\Services\Integrations\MusicBrainzService;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 
 class MusicBrainzConnector extends Connector
 {
     use AcceptsJson;
+    use OnlyThrowsOnServerErrorsAndRateLimits;
 
     public function resolveBaseUrl(): string
     {
@@ -19,12 +22,7 @@ class MusicBrainzConnector extends Connector
     {
         return [
             'Accept' => 'application/json',
-            'User-Agent' => config('koel.services.musicbrainz.user_agent') ?: sprintf(
-                '%s/%s( %s )',
-                config('app.name'),
-                koel_version(),
-                config('app.url'),
-            ),
+            'User-Agent' => MusicBrainzService::userAgent(),
         ];
     }
 }

@@ -3,7 +3,7 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Models\Album;
-use App\Services\Contracts\Encyclopedia;
+use App\Services\Integrations\EncyclopediaService;
 use App\Values\Album\AlbumInformation;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -19,7 +19,7 @@ class GetAlbumInfo2Test extends TestCase
         $album = Album::factory()->for($user)->createOne();
 
         $this
-            ->mock(Encyclopedia::class)
+            ->mock(EncyclopediaService::class)
             ->expects('getAlbumInformation')
             ->andReturn(AlbumInformation::make(
                 url: 'https://www.last.fm/album/Foo',
@@ -41,7 +41,7 @@ class GetAlbumInfo2Test extends TestCase
         $user = create_user();
         $album = Album::factory()->for($user)->createOne();
 
-        $this->mock(Encyclopedia::class)->expects('getAlbumInformation')->andReturnNull();
+        $this->mock(EncyclopediaService::class)->expects('getAlbumInformation')->andReturnNull();
 
         $response = $this->getJson(
             "/rest/getAlbumInfo2.view?apiKey={$user->subsonic_api_key}&f=json&id={$album->id}",
@@ -58,7 +58,7 @@ class GetAlbumInfo2Test extends TestCase
         $user = create_user();
         $album = Album::factory()->for($user)->createOne();
 
-        $this->mock(Encyclopedia::class)->expects('getAlbumInformation')->andReturnNull();
+        $this->mock(EncyclopediaService::class)->expects('getAlbumInformation')->andReturnNull();
 
         $response = $this->get("/rest/getAlbumInfo2.view?apiKey={$user->subsonic_api_key}&id={$album->id}")->assertOk();
 

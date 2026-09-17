@@ -9,6 +9,7 @@ export default (): Album => {
     name: faker.lorem.sentence(),
     cover: faker.image.url(),
     created_at: faker.date.past().toISOString(),
+    mbid: faker.string.uuid(),
     year: faker.date.past().getFullYear(),
     is_external: false,
     favorite: faker.datatype.boolean(),

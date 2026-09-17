@@ -62,6 +62,7 @@ class MusicBrainzServiceTest extends TestCase
             'Skid Row (American band)',
             File::json(test_path('fixtures/wikipedia/artist-page-summary.json')),
         );
+
         $artist = Artist::factory()->createOne(['name' => 'Skid Row']);
 
         $info = $this->service->getArtistInformation($artist);

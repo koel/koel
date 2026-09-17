@@ -153,6 +153,23 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function showIncludesTheMusicBrainzIdentifier(): void
+    {
+        $song = Song::factory()->createOne(['mbid' => '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d']);
+
+        $this->getAs("api/songs/{$song->id}")->assertJsonPath('mbid', '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d');
+    }
+
+    #[Test]
+    public function showOmitsTheMusicBrainzIdentifierWhenMusicBrainzIsDisabled(): void
+    {
+        config(['koel.services.musicbrainz.enabled' => false]);
+        $song = Song::factory()->createOne(['mbid' => '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d']);
+
+        $this->getAs("api/songs/{$song->id}")->assertJsonMissingPath('mbid');
+    }
+
+    #[Test]
     public function destroy(): void
     {
         Bus::fake();

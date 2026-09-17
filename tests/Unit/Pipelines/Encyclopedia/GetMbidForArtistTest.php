@@ -7,6 +7,7 @@ use App\Http\Integrations\MusicBrainz\Requests\SearchForArtistRequest;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Laravel\Facades\Saloon;
@@ -100,5 +101,46 @@ class GetMbidForArtistTest extends TestCase
         (new GetMbidForArtist(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
+    }
+
+    /** @return array<string, array{0: int}> */
+    public static function provideUnavailableStatuses(): array
+    {
+        return [
+            'busy' => [503],
+            'rate limited' => [429],
+            'broken' => [500],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideUnavailableStatuses')]
+    public function askAgainWhenMusicBrainzIsUnavailable(int $status): void
+    {
+        Saloon::fake([
+            SearchForArtistRequest::class => MockResponse::make(body: [
+                'error' => 'The MusicBrainz web server is currently busy. Please try again later.',
+            ], status: $status),
+        ]);
+
+        $mock = self::createNextClosureMock(null);
+
+        (new GetMbidForArtist(new MusicBrainzConnector()))('Motörhead', $mock->next(...)); // @phpstan-ignore-line
+
+        self::assertFalse(Cache::has(cache_key('artist mbid', 'Motörhead')));
+    }
+
+    #[Test]
+    public function rememberAnArtistMusicBrainzDoesNotKnow(): void
+    {
+        Saloon::fake([
+            SearchForArtistRequest::class => MockResponse::make(body: ['error' => 'Not Found'], status: 404),
+        ]);
+
+        $mock = self::createNextClosureMock(null);
+
+        (new GetMbidForArtist(new MusicBrainzConnector()))('Motörhead', $mock->next(...)); // @phpstan-ignore-line
+
+        self::assertTrue(Cache::has(cache_key('artist mbid', 'Motörhead')));
     }
 }

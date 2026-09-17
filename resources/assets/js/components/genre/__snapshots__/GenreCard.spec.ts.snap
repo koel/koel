@@ -2,10 +2,6 @@
 
 exports[`genreCard.vue > renders 1`] = `
 <li class="min-h-auto md:min-h-40" draggable="true" tabindex="0">
-  <div data-v-07fc2ee9="" class="gradient-border relative rounded-lg overflow-hidden relative h-full transition-transform active:transition-none active:scale-100">
-    <div data-v-07fc2ee9="" class="border-base absolute inset-0 rounded-[inherit]"></div>
-    <div data-v-07fc2ee9="" class="gradient-overlay absolute motion-reduce:hidden inset-0 rounded-[inherit]"></div>
-    <div data-v-07fc2ee9="" class="relative h-full rounded-[inherit] overflow-hidden"><a href="/#/genres/foo" title="Classical" class="flex flex-col justify-end h-full p-4 bg-k-fg-3"><span class="text-2xl truncate font-normal text-k-fg-90 Classical">Classical</span><span class="text-k-fg-70 text-lg">99 songs</span></a></div>
-  </div>
+  <div data-v-07fc2ee9="" class="gradient-border relative overflow-hidden rounded-lg overflow-hidden relative h-full transition-transform active:transition-none active:scale-100"><a href="/#/genres/foo" title="Classical" class="flex flex-col justify-end h-full p-4 bg-k-fg-3"><span class="text-2xl truncate font-normal text-k-fg-90 Classical">Classical</span><span class="text-k-fg-70 text-lg">99 songs</span></a></div>
 </li>
 `;

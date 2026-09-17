@@ -129,6 +129,30 @@ describe('albumContextMenu.vue', () => {
     expect(screen.queryByText('Embed…')).toBeNull()
   })
 
+  it('links to MusicBrainz', async () => {
+    commonStore.state.uses_musicbrainz = true
+    const openMock = h.mock(window, 'open')
+    const { album } = await renderComponent(h.factory('album').make())
+
+    await h.user.click(screen.getByText('View on MusicBrainz'))
+
+    expect(openMock).toHaveBeenCalledWith(`https://musicbrainz.org/release/${album.mbid}`, '_blank')
+  })
+
+  it('does not link to MusicBrainz when MusicBrainz is disabled', async () => {
+    commonStore.state.uses_musicbrainz = false
+    await renderComponent()
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
+  it('does not link to MusicBrainz when the album has no identifier', async () => {
+    commonStore.state.uses_musicbrainz = true
+    await renderComponent(h.factory('album').make({ mbid: null }))
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
   it('closes the menu after rating', async () => {
     h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue([])
     h.mock(albumStore, 'rate')

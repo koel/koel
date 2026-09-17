@@ -3,6 +3,8 @@
 namespace Tests\Integration\Casts;
 
 use App\Values\User\UserPreferences;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -310,5 +312,47 @@ class UserPreferencesCastTest extends TestCase
         self::assertSame('default', $prefs->visualizer);
         self::assertSame('Album', $prefs->activeExtraPanelTab);
         self::assertSame('session123', $prefs->lastFmSessionKey);
+    }
+
+    #[Test]
+    public function integrationTokensAreEncryptedAtRest(): void
+    {
+        $user = create_user([
+            'preferences' => [
+                'lastfm_session_key' => 'lastfm-secret',
+                'listenbrainz_token' => 'listenbrainz-secret',
+                'theme' => 'classic',
+            ],
+        ]);
+
+        $stored = json_decode(DB::table('users')->where('id', $user->id)->value('preferences'), true);
+
+        self::assertNotSame('lastfm-secret', $stored['lastfm_session_key']);
+        self::assertNotSame('listenbrainz-secret', $stored['listenbrainz_token']);
+        self::assertSame('lastfm-secret', Crypt::decryptString($stored['lastfm_session_key']));
+        self::assertSame('listenbrainz-secret', Crypt::decryptString($stored['listenbrainz_token']));
+        self::assertSame('classic', $stored['theme']);
+
+        $preferences = $user->refresh()->preferences;
+
+        self::assertSame('lastfm-secret', $preferences->lastFmSessionKey);
+        self::assertSame('listenbrainz-secret', $preferences->listenBrainzToken);
+    }
+
+    #[Test]
+    public function aTokenThatCannotBeDecryptedReadsAsMissing(): void
+    {
+        $user = create_user(['preferences' => ['theme' => 'classic']]);
+
+        DB::table('users')
+            ->where('id', $user->id)
+            ->update([
+                'preferences' => json_encode(['lastfm_session_key' => 'not-a-ciphertext', 'theme' => 'classic']),
+            ]);
+
+        $preferences = $user->refresh()->preferences;
+
+        self::assertNull($preferences->lastFmSessionKey);
+        self::assertSame('classic', $preferences->theme);
     }
 }

@@ -6,10 +6,12 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Contracts\Encyclopedia;
 use App\Services\Image\ImageStorage;
+use App\Services\Integrations\CoverArtArchiveService;
 use App\Services\Integrations\EncyclopediaService;
 use App\Services\Integrations\LastfmService;
 use App\Services\Integrations\MbidService;
 use App\Services\Integrations\SpotifyService;
+use App\Services\Integrations\WikidataService;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
 use Illuminate\Support\Facades\Cache;
@@ -24,6 +26,8 @@ class EncyclopediaServiceTest extends TestCase
     private Encyclopedia|MockInterface $encyclopedia;
     private ImageStorage|MockInterface $imageStorage;
     private SpotifyService|MockInterface $spotifyService;
+    private CoverArtArchiveService|MockInterface $coverArtArchiveService;
+    private WikidataService|MockInterface $wikidataService;
     private MbidService|MockInterface $mbidService;
     private EncyclopediaService $encyclopediaService;
 
@@ -36,14 +40,21 @@ class EncyclopediaServiceTest extends TestCase
         $this->encyclopedia = Mockery::mock(LastfmService::class);
         $this->imageStorage = Mockery::mock(ImageStorage::class);
         $this->spotifyService = Mockery::mock(SpotifyService::class);
+        $this->coverArtArchiveService = Mockery::mock(CoverArtArchiveService::class);
+        $this->coverArtArchiveService->allows('tryGetAlbumCover')->andReturnNull()->byDefault();
+        $this->wikidataService = Mockery::mock(WikidataService::class);
+        $this->wikidataService->allows('tryGetArtistImage')->andReturnNull()->byDefault();
         $this->mbidService = Mockery::mock(MbidService::class);
         $this->mbidService->allows('fetchAndStoreAlbumMbids');
+        $this->mbidService->allows('fetchAndStoreAlbumYear');
         $this->mbidService->allows('fetchAndStoreArtistMbid');
 
         $this->encyclopediaService = new EncyclopediaService(
             $this->encyclopedia,
             $this->imageStorage,
             $this->spotifyService,
+            $this->coverArtArchiveService,
+            $this->wikidataService,
             $this->mbidService,
         );
 
@@ -101,6 +112,29 @@ class EncyclopediaServiceTest extends TestCase
         $this->spotifyService->expects('tryGetAlbumCover')->with($album)->andReturn('https://spotify.com/cover.jpg');
 
         $this->imageStorage->expects('storeImage')->with('https://spotify.com/cover.jpg');
+
+        self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
+    }
+
+    #[Test]
+    public function getAlbumInformationPrefersTheCoverArtArchiveOverSpotify(): void
+    {
+        config()->set('koel.services.spotify', [
+            'client_id' => 'spotify-client-id',
+            'client_secret' => 'spotify-client-secret',
+        ]);
+        $album = Album::factory()->createOne(['cover' => '']);
+        $info = AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg');
+
+        $this->encyclopedia->expects('getAlbumInformation')->with($album)->andReturn($info);
+
+        $this->coverArtArchiveService
+            ->expects('tryGetAlbumCover')
+            ->with($album)
+            ->andReturn('https://coverartarchive.org/release/foo/bar-1200.jpg');
+
+        $this->spotifyService->expects('tryGetAlbumCover')->never();
+        $this->imageStorage->expects('storeImage')->with('https://coverartarchive.org/release/foo/bar-1200.jpg');
 
         self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
     }
@@ -179,5 +213,50 @@ class EncyclopediaServiceTest extends TestCase
         $this->encyclopedia->expects('getArtistInformation')->with($artist)->andReturn($info);
 
         self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
+    }
+
+    #[Test]
+    public function getArtistInformationFetchesTheWikidataImageWhateverTheEncyclopedia(): void
+    {
+        $artist = Artist::factory()->createOne(['image' => '', 'mbid' => '66c662b6-6e2f-4930-8610-912e24c63ed1']);
+
+        $this->encyclopedia->expects('getArtistInformation')->with($artist)->andReturn(ArtistInformation::make());
+
+        $this->wikidataService
+            ->expects('tryGetArtistImage')
+            ->with($artist)
+            ->andReturn('https://commons.wikimedia.org/wiki/Special:FilePath/AC%20DC.jpg?width=640');
+
+        $this->imageStorage
+            ->expects('storeImage')
+            ->with('https://commons.wikimedia.org/wiki/Special:FilePath/AC%20DC.jpg?width=640');
+
+        $this->encyclopediaService->getArtistInformation($artist);
+    }
+
+    #[Test]
+    public function getArtistInformationPrefersTheWikidataImageOverSpotify(): void
+    {
+        config()->set('koel.services.spotify', [
+            'client_id' => 'spotify-client-id',
+            'client_secret' => 'spotify-client-secret',
+        ]);
+
+        $artist = Artist::factory()->createOne(['image' => '', 'mbid' => '66c662b6-6e2f-4930-8610-912e24c63ed1']);
+
+        $this->encyclopedia->expects('getArtistInformation')->with($artist)->andReturn(ArtistInformation::make());
+
+        $this->wikidataService
+            ->expects('tryGetArtistImage')
+            ->with($artist)
+            ->andReturn('https://commons.wikimedia.org/wiki/Special:FilePath/AC%20DC.jpg?width=640');
+
+        $this->spotifyService->expects('tryGetArtistImage')->never();
+
+        $this->imageStorage
+            ->expects('storeImage')
+            ->with('https://commons.wikimedia.org/wiki/Special:FilePath/AC%20DC.jpg?width=640');
+
+        $this->encyclopediaService->getArtistInformation($artist);
     }
 }

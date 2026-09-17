@@ -107,17 +107,17 @@ class ImageWriter
         return strlen($source) < PHP_MAXPATHLEN && is_file($source);
     }
 
-    /**
-     * Koel poses as a browser here, as some hosts serve images only to recognized user agents.
-     */
     private static function fetch(string $url): string
     {
         try {
-            return Http::withUserAgent(http_user_agent())
-                ->get($url)
-                ->throwIfClientError()
-                ->throwIfServerError()
-                ->body();
+            $response = Http::withUserAgent(http_user_agent())->get($url);
+
+            // Some hosts serve images only to browsers, while others, like Wikimedia, refuse clients posing as one.
+            if ($response->clientError()) {
+                $response = Http::withUserAgent(koel_user_agent())->get($url);
+            }
+
+            return $response->throwIfClientError()->throwIfServerError()->body();
         } catch (Throwable $e) {
             throw new RuntimeException('Failed to fetch image from URL: ' . $url, previous: $e);
         }

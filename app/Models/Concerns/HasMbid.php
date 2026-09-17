@@ -4,16 +4,19 @@ namespace App\Models\Concerns;
 
 trait HasMbid
 {
-    /**
-     * Claim the identifier only if the record doesn't have one yet, in a single statement so that the first file
-     * to carry it wins regardless of how many other files reference the same album or artist during a scan.
-     */
     public function setMbidIfMissing(?string $mbid): void
     {
-        if (!$mbid) {
+        if (!$mbid || $this->mbid) {
             return;
         }
 
-        static::query()->whereKey($this->getKey())->whereNull('mbid')->update(['mbid' => $mbid]);
+        // A parallel scan runs several processes, each with its own cached copy of this record. Two of them can both
+        // see no identifier in memory, so the database must only accept a value when the column is still empty.
+        $stored = static::query()->whereKey($this->getKey())->whereNull('mbid')->update(['mbid' => $mbid]) > 0;
+
+        if ($stored) {
+            $this->mbid = $mbid;
+            $this->syncOriginalAttribute('mbid');
+        }
     }
 }

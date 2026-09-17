@@ -2,10 +2,13 @@
 
 namespace App\Http\Integrations\Wikidata;
 
+use App\Http\Integrations\Concerns\OnlyThrowsOnServerErrorsAndRateLimits;
 use Saloon\Http\Connector;
 
 class WikidataConnector extends Connector
 {
+    use OnlyThrowsOnServerErrorsAndRateLimits;
+
     public function resolveBaseUrl(): string
     {
         return 'https://www.wikidata.org/wiki/';
@@ -16,7 +19,7 @@ class WikidataConnector extends Connector
     {
         return [
             'Accept' => 'application/json',
-            'User-Agent' => sprintf('%s/%s( %s )', config('app.name'), koel_version(), config('app.url')),
+            'User-Agent' => koel_user_agent(),
         ];
     }
 }

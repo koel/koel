@@ -135,6 +135,11 @@
       <Separator />
       <MenuItem @click="deleteFromFilesystem">Delete from Filesystem</MenuItem>
     </template>
+
+    <template v-if="musicBrainzUrl">
+      <Separator />
+      <MenuItem @click="viewOnMusicBrainz">View on MusicBrainz</MenuItem>
+    </template>
   </ul>
 </template>
 
@@ -163,6 +168,7 @@ import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { usePlayableMenuMethods } from '@/composables/usePlayableMenuMethods'
 import { usePolicies } from '@/composables/usePolicies'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -217,6 +223,20 @@ const { currentUserCan } = usePolicies()
 const contentType = computed(() => getPlayableCollectionContentType(playables.value))
 const allowEdit = computed(() => contentType.value === 'songs' && currentUserCan.editSong(playables.value as Song[]))
 const onlyOneSelected = computed(() => playables.value.length === 1)
+
+const { useMusicBrainz } = useThirdPartyServices()
+
+const musicBrainzUrl = computed(() => {
+  if (!useMusicBrainz.value || !onlyOneSelected.value || !isSong(playables.value[0])) {
+    return null
+  }
+
+  const { mbid } = playables.value[0] as Song
+
+  return mbid ? `https://musicbrainz.org/recording/${mbid}` : null
+})
+
+const viewOnMusicBrainz = () => trigger(() => window.open(musicBrainzUrl.value!, '_blank'))
 const firstSongPlaying = computed(() =>
   playables.value.length ? playables.value[0].playback_state === 'Playing' : false,
 )
