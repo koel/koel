@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 
 use function Tests\test_path;
@@ -69,5 +70,22 @@ class ImageWriterTest extends TestCase
         Http::assertSentCount(1);
 
         File::delete($destination);
+    }
+
+    #[Test]
+    public function aFailedFetchNamesItsCause(): void
+    {
+        Http::fake(['https://example.com/cover.jpg' => Http::response('', 429)]);
+
+        $destination = sys_get_temp_dir() . '/' . Str::uuid() . '.img';
+
+        try {
+            (new ImageWriter())->write($destination, 'https://example.com/cover.jpg');
+            self::fail('A 429 should not produce an image');
+        } catch (RuntimeException $e) {
+            self::assertStringContainsString('https://example.com/cover.jpg', $e->getMessage());
+            self::assertStringContainsString('429', $e->getMessage());
+            self::assertNotNull($e->getPrevious());
+        }
     }
 }

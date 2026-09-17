@@ -127,7 +127,13 @@ class ImageWriter
 
             return $response->throwIfClientError()->throwIfServerError()->body();
         } catch (Throwable $e) {
-            throw new RuntimeException('Failed to fetch image from URL: ' . $url, previous: $e);
+            // Name the cause. Laravel's log line prints the outer message only, so without it
+            // a 429 from a rate limit, a 403 from a refused User-Agent and a 404 all read the
+            // same, and none can be acted on.
+            throw new RuntimeException(
+                sprintf('Failed to fetch image from URL: %s (%s)', $url, $e->getMessage()),
+                previous: $e,
+            );
         }
     }
 }
