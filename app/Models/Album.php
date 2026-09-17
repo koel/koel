@@ -147,13 +147,13 @@ class Album extends Model implements AuditableContract, Embeddable, Favoriteable
 
     public function setYearIfMissing(?int $year): void
     {
-        if (!$year) {
+        if (!$year || $this->year) {
             return;
         }
 
-        $wasMissing = static::query()->whereKey($this->getKey())->whereNull('year')->update(['year' => $year]) > 0;
+        $stored = static::query()->whereKey($this->getKey())->whereNull('year')->update(['year' => $year]) > 0;
 
-        if ($wasMissing) {
+        if ($stored) {
             $this->year = $year;
             $this->syncOriginalAttribute('year');
         }
