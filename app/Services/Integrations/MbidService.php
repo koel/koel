@@ -15,8 +15,7 @@ use Illuminate\Support\Facades\Pipeline;
 use Illuminate\Support\Str;
 
 /**
- * Fetches MusicBrainz identifiers for albums and artists, plus the album years they unlock, and stores the ones
- * they are missing.
+ * Fetches MusicBrainz identifiers for albums and artists and stores the ones they are missing.
  *
  * This runs whenever MusicBrainz is enabled, independently of which service currently supplies encyclopedia
  * entries — identifiers are useful regardless of who writes the prose. The lookups behind them are cached
@@ -60,10 +59,6 @@ class MbidService
         });
     }
 
-    /**
-     * Only an album with no year gets one: a year the tags supply always wins. The year is the release group's
-     * first release, not the stored release's own date, which for a reissue can be decades later.
-     */
     public function fetchAndStoreAlbumYear(Album $album): void
     {
         if ($album->year || !$album->mbid) {
