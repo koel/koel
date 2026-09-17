@@ -36,6 +36,21 @@ class GetArtistInfo2Test extends TestCase
     }
 
     #[Test]
+    public function returnsEmptyWhenThereIsNoInformation(): void
+    {
+        $user = create_user();
+        $artist = Artist::factory()->for($user)->createOne();
+
+        $this->mock(EncyclopediaService::class)->expects('getArtistInformation')->andReturn(ArtistInformation::make());
+
+        $response = $this->getJson(
+            "/rest/getArtistInfo2.view?apiKey={$user->subsonic_api_key}&f=json&id={$artist->id}",
+        )->assertOk();
+
+        self::assertStringContainsString('"artistInfo2":{}', $response->getContent());
+    }
+
+    #[Test]
     public function returnsEmptyWhenEncyclopediaReturnsNull(): void
     {
         $user = create_user();

@@ -8,6 +8,7 @@ use App\Http\Responses\Subsonic\Resources\ArtistInfoResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\ArtistRepository;
 use App\Services\Integrations\EncyclopediaService;
+use Illuminate\Support\Arr;
 use stdClass;
 
 /**
@@ -27,7 +28,7 @@ class GetArtistInfoController extends Controller
         $info = $this->encyclopedia->getArtistInformation($artist);
 
         return SubsonicResponse::ok([
-            'artistInfo' => $info === null ? new stdClass() : ArtistInfoResource::toArray($info),
+            'artistInfo' => Arr::whereNotNull($info ? ArtistInfoResource::toArray($info) : []) ?: new stdClass(),
         ]);
     }
 }

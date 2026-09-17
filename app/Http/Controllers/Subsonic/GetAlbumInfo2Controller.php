@@ -8,6 +8,7 @@ use App\Http\Responses\Subsonic\Resources\AlbumInfoResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Repositories\AlbumRepository;
 use App\Services\Integrations\EncyclopediaService;
+use Illuminate\Support\Arr;
 use stdClass;
 
 class GetAlbumInfo2Controller extends Controller
@@ -23,7 +24,7 @@ class GetAlbumInfo2Controller extends Controller
         $info = $this->encyclopedia->getAlbumInformation($album);
 
         return SubsonicResponse::ok([
-            'albumInfo' => $info ? AlbumInfoResource::toArray($info) : new stdClass(),
+            'albumInfo' => Arr::whereNotNull($info ? AlbumInfoResource::toArray($info) : []) ?: new stdClass(),
         ]);
     }
 }
