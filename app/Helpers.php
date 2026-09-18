@@ -49,7 +49,6 @@ function image_storage_url(?string $fileName, ?string $default = null): ?string
         return $default;
     }
 
-    // The disk knows its own prefix, which a hand-built URL would miss.
     return config('filesystems.disks.images.url')
         ? ImageStorage::disk()->url($fileName)
         : static_url(config('koel.image_storage_dir') . '/' . $fileName);

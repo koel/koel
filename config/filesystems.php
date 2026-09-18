@@ -45,7 +45,6 @@ return [
     'disks' => [
         'images' => [
             'driver' => env('IMAGE_STORAGE_DRIVER', 'local'),
-            // A local disk needs an absolute path; an S3 one treats this as a key prefix.
             'root' => env('IMAGE_STORAGE_DRIVER', 'local') === 'local'
                 ? public_path(env('IMAGE_STORAGE_DIR', 'storage/images'))
                 : trim(env('IMAGE_STORAGE_DIR', ''), '/'),

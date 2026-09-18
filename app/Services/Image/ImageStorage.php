@@ -56,9 +56,15 @@ class ImageStorage
             ->filter($this->exists(...))
             ->all();
 
-        if ($existing) {
-            self::disk()->delete($existing);
+        if (!$existing) {
+            return;
         }
+
+        throw_if(
+            self::disk()->delete($existing) === false,
+            RuntimeException::class,
+            'Failed to delete ' . implode(', ', $existing),
+        );
     }
 
     public static function disk(): Filesystem

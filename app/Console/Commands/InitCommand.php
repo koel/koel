@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\DotenvEditor;
+use App\Services\Image\LegacyArtworkMigrator;
 use App\Services\PublicStorageLinker;
 use App\Services\PwaManifestService;
 use Illuminate\Console\Command;
@@ -285,43 +286,29 @@ class InitCommand extends Command
 
     private function migrateLegacyImages(): void
     {
-        $legacyDir = public_path('img/storage');
+        $migrator = app(LegacyArtworkMigrator::class);
+        $count = $migrator->pendingCount();
 
-        if (!File::isDirectory($legacyDir)) {
+        if (!$migrator->hasLegacyDirectory()) {
             return;
         }
 
-        $files = File::files($legacyDir);
-
-        if (!count($files)) {
-            File::deleteDirectory($legacyDir);
+        if (!$count) {
+            $migrator->migrate();
 
             return;
         }
 
-        $allMigrated = true;
+        $migrated = true;
 
-        $this->components->task(
-            sprintf('Migrating %d legacy image(s) to storage/app/public/images/', count($files)),
-            static function () use ($files, &$allMigrated): void {
-                $destDir = storage_path('app/public/images');
-                File::ensureDirectoryExists($destDir);
+        $this->components->task(sprintf('Migrating %d legacy image(s)', $count), static function () use (
+            $migrator,
+            &$migrated,
+        ): void {
+            $migrated = $migrator->migrate();
+        });
 
-                foreach ($files as $file) {
-                    $dest = $destDir . DIRECTORY_SEPARATOR . $file->getFilename();
-
-                    $ok = File::exists($dest)
-                        ? File::delete($file->getPathname())
-                        : File::move($file->getPathname(), $dest);
-
-                    $allMigrated = $allMigrated && $ok;
-                }
-            },
-        );
-
-        if ($allMigrated) {
-            File::deleteDirectory($legacyDir);
-        } else {
+        if (!$migrated) {
             $this->components->warn(
                 'Some legacy images could not be migrated. Keeping public/img/storage for manual recovery.',
             );
