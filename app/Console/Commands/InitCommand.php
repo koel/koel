@@ -39,6 +39,7 @@ class InitCommand extends Command
         private readonly DotenvEditor $dotenvEditor,
         private readonly PublicStorageLinker $publicStorageLinker,
         private readonly PwaManifestService $pwaManifestService,
+        private readonly LegacyArtworkMigrator $legacyArtworkMigrator,
     ) {
         parent::__construct();
     }
@@ -286,26 +287,22 @@ class InitCommand extends Command
 
     private function migrateLegacyImages(): void
     {
-        $migrator = app(LegacyArtworkMigrator::class);
-        $count = $migrator->pendingCount();
-
-        if (!$migrator->hasLegacyDirectory()) {
+        if (!$this->legacyArtworkMigrator->hasLegacyDirectory()) {
             return;
         }
 
+        $count = $this->legacyArtworkMigrator->pendingCount();
+
         if (!$count) {
-            $migrator->migrate();
+            $this->legacyArtworkMigrator->migrate();
 
             return;
         }
 
         $migrated = true;
 
-        $this->components->task(sprintf('Migrating %d legacy image(s)', $count), static function () use (
-            $migrator,
-            &$migrated,
-        ): void {
-            $migrated = $migrator->migrate();
+        $this->components->task(sprintf('Migrating %d legacy image(s)', $count), function () use (&$migrated): void {
+            $migrated = $this->legacyArtworkMigrator->migrate();
         });
 
         if (!$migrated) {
