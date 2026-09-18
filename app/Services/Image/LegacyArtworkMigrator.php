@@ -10,7 +10,7 @@ class LegacyArtworkMigrator
 
     public function pendingCount(): int
     {
-        return $this->hasLegacyDirectory() ? count(File::files(self::legacyDirectory())) : 0;
+        return $this->hasLegacyDirectory() ? count(File::allFiles(self::legacyDirectory())) : 0;
     }
 
     /**
@@ -27,10 +27,9 @@ class LegacyArtworkMigrator
         $disk = ImageStorage::disk();
         $migrated = true;
 
-        foreach (File::files(self::legacyDirectory()) as $file) {
-            $stored =
-                $disk->exists($file->getFilename())
-                || $disk->put($file->getFilename(), File::get($file->getPathname())) !== false;
+        foreach (File::allFiles(self::legacyDirectory()) as $file) {
+            $key = $file->getRelativePathname();
+            $stored = $disk->exists($key) || $disk->put($key, File::get($file->getPathname())) !== false;
 
             $migrated = $stored && File::delete($file->getPathname()) && $migrated;
         }

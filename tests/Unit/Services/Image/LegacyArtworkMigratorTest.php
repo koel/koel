@@ -30,8 +30,9 @@ class LegacyArtworkMigratorTest extends TestCase
 
     private static function createLegacyImage(string $fileName, string $contents = 'legacy-bytes'): void
     {
-        File::ensureDirectoryExists(public_path(LegacyArtworkMigrator::LEGACY_DIR));
-        File::put(public_path(LegacyArtworkMigrator::LEGACY_DIR . '/' . $fileName), $contents);
+        $path = public_path(LegacyArtworkMigrator::LEGACY_DIR . '/' . $fileName);
+        File::ensureDirectoryExists(dirname($path));
+        File::put($path, $contents);
     }
 
     #[Test]
@@ -44,6 +45,19 @@ class LegacyArtworkMigratorTest extends TestCase
 
         $disk->assertExists('cover.webp');
         self::assertSame('legacy-bytes', $disk->get('cover.webp'));
+        self::assertDirectoryDoesNotExist(public_path(LegacyArtworkMigrator::LEGACY_DIR));
+    }
+
+    #[Test]
+    public function moveImagesNestedInSubdirectoriesToo(): void
+    {
+        $disk = Storage::fake(ImageStorage::DISK);
+        self::createLegacyImage('nested/deeper/cover.webp', 'nested-bytes');
+
+        self::assertSame(1, $this->migrator->pendingCount());
+        self::assertTrue($this->migrator->migrate());
+
+        self::assertSame('nested-bytes', $disk->get('nested/deeper/cover.webp'));
         self::assertDirectoryDoesNotExist(public_path(LegacyArtworkMigrator::LEGACY_DIR));
     }
 
