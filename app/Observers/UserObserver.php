@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Helpers\Uuid;
 use App\Models\User;
+use App\Services\Image\ImageStorage;
 use App\Services\Image\ModelImageObserver;
 use App\Services\Subsonic\AuthenticationService as SubsonicAuthenticationService;
 
@@ -13,8 +14,9 @@ class UserObserver
 
     public function __construct(
         private readonly SubsonicAuthenticationService $subsonicAuth,
+        ImageStorage $imageStorage,
     ) {
-        $this->avatarObserver = ModelImageObserver::make('avatar');
+        $this->avatarObserver = ModelImageObserver::make($imageStorage, 'avatar');
     }
 
     public function creating(User $user): void

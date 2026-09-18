@@ -8,13 +8,14 @@ use Illuminate\Support\Str;
 class ModelImageObserver
 {
     private function __construct(
+        private readonly ImageStorage $imageStorage,
         private readonly string $fieldName,
         private readonly bool $hasThumbnail,
     ) {}
 
-    public static function make(string $fieldName, bool $hasThumbnail = false): static
+    public static function make(ImageStorage $imageStorage, string $fieldName, bool $hasThumbnail = false): static
     {
-        return new static($fieldName, $hasThumbnail);
+        return new static($imageStorage, $fieldName, $hasThumbnail);
     }
 
     public function onModelUpdating(Model $model): void
@@ -41,7 +42,7 @@ class ModelImageObserver
             $fileNames[] = self::deriveThumbnailFilename($filename);
         }
 
-        rescue(static fn () => app(ImageStorage::class)->delete($fileNames), report: false);
+        rescue(fn () => $this->imageStorage->delete($fileNames), report: false);
     }
 
     private static function deriveThumbnailFilename(string $filename): string

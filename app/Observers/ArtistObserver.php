@@ -3,15 +3,17 @@
 namespace App\Observers;
 
 use App\Models\Artist;
+use App\Services\Image\ImageStorage;
 use App\Services\Image\ModelImageObserver;
 
 class ArtistObserver
 {
     private ModelImageObserver $imageObserver;
 
-    public function __construct()
-    {
-        $this->imageObserver = ModelImageObserver::make('image');
+    public function __construct(
+        private readonly ImageStorage $imageStorage,
+    ) {
+        $this->imageObserver = ModelImageObserver::make($imageStorage, 'image');
     }
 
     public function updating(Artist $artist): void
