@@ -179,5 +179,8 @@ Additional providers (Gemini, Ollama, etc.) can be configured in `config/ai.php`
 | `FORCE_HTTPS` | Force Koel to use HTTPS URLs. Set to `true` if automatic detection fails. | `false` |
 | `BACKUP_ON_DELETE` | Whether to create a backup of a song when deleting it from the filesystem. | `true` |
 | `CDN_URL` | A CDN URL mapped to Koel's home URL, used to serve media files. No trailing slash. | _(empty)_ |
+| `IMAGE_STORAGE_DRIVER` | The filesystem driver for artwork — album covers, artist images and avatars. Use `s3` to keep them on S3 or an S3-compatible service such as Cloudflare R2, reusing the `AWS_*` settings. | `local` |
+| `IMAGE_STORAGE_DIR` | Where artwork is stored, relative to Koel's `public` directory, when the driver is `local`. | `storage/images` |
+| `IMAGE_STORAGE_URL` | The public URL artwork is served from. Required when the driver is not `local`. No trailing slash. | _(empty)_ |
 | `MEDIA_BROWSER_ENABLED` | Whether to enable the media browser (experimental Koel Plus feature). | `false` |
 | `EMBED_ENABLED` | Whether to allow embedding songs, albums, artists, and playlists on external sites. Set to `false` to hide the "Embed…" menu entries and disable both creation and rendering of embed widgets. | `true` |

@@ -3,17 +3,14 @@
 namespace App\Observers;
 
 use App\Models\Theme;
-use Illuminate\Support\Facades\File;
+use App\Services\Image\ImageStorage;
 
 class ThemeObserver
 {
     public function deleted(Theme $theme): void
     {
         rescue_if($theme->properties->bgImage, static function () use ($theme): void {
-            File::delete([
-                image_storage_path($theme->properties->bgImage),
-                image_storage_path($theme->thumbnail),
-            ]);
+            app(ImageStorage::class)->delete([$theme->properties->bgImage, $theme->thumbnail]);
         });
     }
 }

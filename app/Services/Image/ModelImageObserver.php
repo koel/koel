@@ -3,7 +3,6 @@
 namespace App\Services\Image;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class ModelImageObserver
@@ -36,13 +35,13 @@ class ModelImageObserver
             return;
         }
 
-        $paths = [image_storage_path($filename)];
+        $fileNames = [$filename];
 
         if ($this->hasThumbnail) {
-            $paths[] = image_storage_path(self::deriveThumbnailFilename($filename));
+            $fileNames[] = self::deriveThumbnailFilename($filename);
         }
 
-        rescue(static fn () => File::delete($paths), report: false);
+        rescue(static fn () => app(ImageStorage::class)->delete($fileNames), report: false);
     }
 
     private static function deriveThumbnailFilename(string $filename): string

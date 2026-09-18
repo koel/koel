@@ -5,8 +5,8 @@ namespace App\Observers;
 use App\Facades\Dispatcher;
 use App\Jobs\GenerateAlbumThumbnailJob;
 use App\Models\Album;
+use App\Services\Image\ImageStorage;
 use App\Services\Image\ModelImageObserver;
-use Illuminate\Support\Facades\File;
 
 class AlbumObserver
 {
@@ -19,7 +19,7 @@ class AlbumObserver
 
     public function saved(Album $album): void
     {
-        if ($album->cover && !File::exists(image_storage_path($album->thumbnail))) {
+        if ($album->cover && !app(ImageStorage::class)->exists($album->thumbnail)) {
             Dispatcher::dispatch(new GenerateAlbumThumbnailJob($album));
         }
     }

@@ -71,6 +71,7 @@ abstract class TestCase extends BaseTestCase
         config([
             'koel.image_storage_dir' => sandbox_dir() . '/img/storage',
             'koel.artifacts_path' => sandbox_path('artifacts/'),
+            'filesystems.disks.images.root' => public_path(sandbox_dir() . '/img/storage'),
         ]);
 
         File::ensureDirectoryExists(public_path(config('koel.image_storage_dir')));

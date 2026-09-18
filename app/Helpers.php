@@ -44,7 +44,13 @@ function image_storage_path(?string $fileName, ?string $default = null, bool $en
 
 function image_storage_url(?string $fileName, ?string $default = null): ?string
 {
-    return $fileName ? static_url(config('koel.image_storage_dir') . '/' . $fileName) : $default;
+    if (!$fileName) {
+        return $default;
+    }
+
+    $diskUrl = trim((string) config('filesystems.disks.images.url'), '/ ');
+
+    return $diskUrl ? $diskUrl . '/' . $fileName : static_url(config('koel.image_storage_dir') . '/' . $fileName);
 }
 
 function artifact_path(?string $subPath = null, $ensureDirectoryExists = true): string

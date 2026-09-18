@@ -36,9 +36,7 @@ class GetCoverArtTest extends TestCase
             "/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&id={$album->id}",
         )->assertOk()->assertHeader('Content-Type', 'image/png');
 
-        $base = $response->baseResponse;
-        self::assertInstanceOf(BinaryFileResponse::class, $base);
-        self::assertSame(image_storage_path($filename), $base->getFile()->getRealPath());
+        self::assertSame(File::get(image_storage_path($filename)), $response->streamedContent());
     }
 
     #[Test]
