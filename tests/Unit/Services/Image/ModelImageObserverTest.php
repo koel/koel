@@ -5,6 +5,7 @@ namespace Tests\Unit\Services\Image;
 use App\Models\Playlist;
 use App\Services\Image\ImageStorage;
 use App\Services\Image\ModelImageObserver;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
@@ -12,8 +13,7 @@ use Tests\TestCase;
 
 class ModelImageObserverTest extends TestCase
 {
-    /** @return \Illuminate\Contracts\Filesystem\Filesystem */
-    private static function fakeDiskWith(string ...$fileNames)
+    private static function fakeDiskWith(string ...$fileNames): FilesystemAdapter
     {
         $disk = Storage::fake(ImageStorage::DISK);
 
