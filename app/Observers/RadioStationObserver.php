@@ -10,9 +10,8 @@ class RadioStationObserver
 {
     private ModelImageObserver $logoObserver;
 
-    public function __construct(
-        private readonly ImageStorage $imageStorage,
-    ) {
+    public function __construct(ImageStorage $imageStorage)
+    {
         $this->logoObserver = ModelImageObserver::make($imageStorage, 'logo');
     }
 

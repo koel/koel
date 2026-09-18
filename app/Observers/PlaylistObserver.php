@@ -10,9 +10,8 @@ class PlaylistObserver
 {
     private ModelImageObserver $coverObserver;
 
-    public function __construct(
-        private readonly ImageStorage $imageStorage,
-    ) {
+    public function __construct(ImageStorage $imageStorage)
+    {
         $this->coverObserver = ModelImageObserver::make($imageStorage, 'cover');
     }
 

@@ -10,9 +10,8 @@ class ArtistObserver
 {
     private ModelImageObserver $imageObserver;
 
-    public function __construct(
-        private readonly ImageStorage $imageStorage,
-    ) {
+    public function __construct(ImageStorage $imageStorage)
+    {
         $this->imageObserver = ModelImageObserver::make($imageStorage, 'image');
     }
 
