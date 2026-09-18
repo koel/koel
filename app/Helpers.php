@@ -1,6 +1,7 @@
 <?php
 
 use App\Facades\License;
+use App\Services\Image\ImageStorage;
 use App\Services\SettingService;
 use App\Values\Branding;
 use Illuminate\Support\Arr;
@@ -48,9 +49,10 @@ function image_storage_url(?string $fileName, ?string $default = null): ?string
         return $default;
     }
 
-    $diskUrl = trim((string) config('filesystems.disks.images.url'), '/ ');
-
-    return $diskUrl ? $diskUrl . '/' . $fileName : static_url(config('koel.image_storage_dir') . '/' . $fileName);
+    // The disk knows its own prefix, which a hand-built URL would miss.
+    return config('filesystems.disks.images.url')
+        ? ImageStorage::disk()->url($fileName)
+        : static_url(config('koel.image_storage_dir') . '/' . $fileName);
 }
 
 function artifact_path(?string $subPath = null, $ensureDirectoryExists = true): string

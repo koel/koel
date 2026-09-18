@@ -24,6 +24,24 @@ class ImageStorageUrlTest extends TestCase
     }
 
     #[Test]
+    public function includeTheDiskPrefixWhenImagesLiveInABucket(): void
+    {
+        config([
+            'filesystems.disks.images' => [
+                'driver' => 's3',
+                'root' => 'artwork',
+                'key' => 'dummy-key',
+                'secret' => 'dummy-secret',
+                'region' => 'eu-central-1',
+                'bucket' => 'dummy-bucket',
+                'url' => 'https://img.example.com',
+            ],
+        ]);
+
+        self::assertSame('https://img.example.com/artwork/cover.webp', image_storage_url('cover.webp'));
+    }
+
+    #[Test]
     public function fallBackWhenThereIsNoFileName(): void
     {
         self::assertNull(image_storage_url(null));
