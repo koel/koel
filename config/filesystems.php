@@ -45,7 +45,16 @@ return [
     'disks' => [
         'images' => [
             'driver' => env('IMAGE_STORAGE_DRIVER', 'local'),
-            'root' => public_path(env('IMAGE_STORAGE_DIR', 'storage/images')),
+            // A local disk needs an absolute path; an S3 one treats this as a key prefix.
+            'root' => env('IMAGE_STORAGE_DRIVER', 'local') === 'local'
+                ? public_path(env('IMAGE_STORAGE_DIR', 'storage/images'))
+                : trim(env('IMAGE_STORAGE_DIR', ''), '/'),
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'url' => env('IMAGE_STORAGE_URL'),
             'visibility' => 'public',
             'throw' => false,

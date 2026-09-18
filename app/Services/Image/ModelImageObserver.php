@@ -5,7 +5,7 @@ namespace App\Services\Image;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class ModelImageObserver
+final class ModelImageObserver
 {
     private function __construct(
         private readonly ImageStorage $imageStorage,
@@ -13,9 +13,9 @@ class ModelImageObserver
         private readonly bool $hasThumbnail,
     ) {}
 
-    public static function make(ImageStorage $imageStorage, string $fieldName, bool $hasThumbnail = false): static
+    public static function make(ImageStorage $imageStorage, string $fieldName, bool $hasThumbnail = false): self
     {
-        return new static($imageStorage, $fieldName, $hasThumbnail);
+        return new self($imageStorage, $fieldName, $hasThumbnail);
     }
 
     public function onModelUpdating(Model $model): void
