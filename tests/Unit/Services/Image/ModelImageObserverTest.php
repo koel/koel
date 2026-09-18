@@ -31,7 +31,7 @@ class ModelImageObserverTest extends TestCase
 
         $disk = self::fakeDiskWith('old.webp');
 
-        ModelImageObserver::make(app(ImageStorage::class), 'cover')->onModelUpdating($playlist);
+        ModelImageObserver::make('cover')->onModelUpdating($playlist);
 
         $disk->assertMissing('old.webp');
     }
@@ -43,7 +43,7 @@ class ModelImageObserverTest extends TestCase
 
         $disk = self::fakeDiskWith('cover.webp');
 
-        ModelImageObserver::make(app(ImageStorage::class), 'cover')->onModelUpdating($playlist);
+        ModelImageObserver::make('cover')->onModelUpdating($playlist);
 
         $disk->assertExists('cover.webp');
     }
@@ -55,7 +55,7 @@ class ModelImageObserverTest extends TestCase
 
         $disk = self::fakeDiskWith('cover.webp');
 
-        ModelImageObserver::make(app(ImageStorage::class), 'cover')->onModelDeleted($playlist);
+        ModelImageObserver::make('cover')->onModelDeleted($playlist);
 
         $disk->assertMissing('cover.webp');
     }
@@ -67,7 +67,7 @@ class ModelImageObserverTest extends TestCase
 
         $disk = self::fakeDiskWith('cover.webp', 'cover_thumb.webp');
 
-        ModelImageObserver::make(app(ImageStorage::class), 'cover', hasThumbnail: true)->onModelDeleted($playlist);
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
 
         $disk->assertMissing('cover.webp');
         $disk->assertMissing('cover_thumb.webp');
@@ -80,7 +80,7 @@ class ModelImageObserverTest extends TestCase
 
         $disk = self::fakeDiskWith('old.webp', 'old_thumb.webp');
 
-        ModelImageObserver::make(app(ImageStorage::class), 'cover', hasThumbnail: true)->onModelUpdating($playlist);
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelUpdating($playlist);
 
         $disk->assertMissing('old.webp');
         $disk->assertMissing('old_thumb.webp');
@@ -93,7 +93,7 @@ class ModelImageObserverTest extends TestCase
 
         $disk = self::fakeDiskWith('cover.webp');
 
-        ModelImageObserver::make(app(ImageStorage::class), 'cover', hasThumbnail: true)->onModelDeleted($playlist);
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
 
         $disk->assertExists('cover.webp');
     }
@@ -105,7 +105,7 @@ class ModelImageObserverTest extends TestCase
 
         $disk = self::fakeDiskWith('cover.webp');
 
-        ModelImageObserver::make(app(ImageStorage::class), 'cover', hasThumbnail: true)->onModelDeleted($playlist);
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
 
         $disk->assertExists('cover.webp');
     }
@@ -117,7 +117,7 @@ class ModelImageObserverTest extends TestCase
 
         $disk = self::fakeDiskWith('cover.with.dots.png', 'cover.with.dots_thumb.png');
 
-        ModelImageObserver::make(app(ImageStorage::class), 'cover', hasThumbnail: true)->onModelDeleted($playlist);
+        ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
 
         $disk->assertMissing('cover.with.dots.png');
         $disk->assertMissing('cover.with.dots_thumb.png');
@@ -130,7 +130,7 @@ class ModelImageObserverTest extends TestCase
 
         $this->mock(ImageStorage::class)->expects('delete')->andThrow(new RuntimeException('disk gone'));
 
-        ModelImageObserver::make(app(ImageStorage::class), 'cover')->onModelDeleted($playlist);
+        ModelImageObserver::make('cover')->onModelDeleted($playlist);
 
         // No exception bubbles up — rescue() swallowed it. Reaching this line is the assertion.
     }

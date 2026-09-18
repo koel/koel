@@ -3,16 +3,15 @@
 namespace App\Observers;
 
 use App\Models\Playlist;
-use App\Services\Image\ImageStorage;
 use App\Services\Image\ModelImageObserver;
 
 class PlaylistObserver
 {
     private ModelImageObserver $coverObserver;
 
-    public function __construct(ImageStorage $imageStorage)
+    public function __construct()
     {
-        $this->coverObserver = ModelImageObserver::make($imageStorage, 'cover');
+        $this->coverObserver = ModelImageObserver::make('cover');
     }
 
     public function updating(Playlist $playlist): void

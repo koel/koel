@@ -3,16 +3,15 @@
 namespace App\Observers;
 
 use App\Models\RadioStation;
-use App\Services\Image\ImageStorage;
 use App\Services\Image\ModelImageObserver;
 
 class RadioStationObserver
 {
     private ModelImageObserver $logoObserver;
 
-    public function __construct(ImageStorage $imageStorage)
+    public function __construct()
     {
-        $this->logoObserver = ModelImageObserver::make($imageStorage, 'logo');
+        $this->logoObserver = ModelImageObserver::make('logo');
     }
 
     public function updating(RadioStation $radioStation): void

@@ -7,15 +7,18 @@ use Illuminate\Support\Str;
 
 final class ModelImageObserver
 {
+    private readonly ImageStorage $imageStorage;
+
     private function __construct(
-        private readonly ImageStorage $imageStorage,
         private readonly string $fieldName,
         private readonly bool $hasThumbnail,
-    ) {}
+    ) {
+        $this->imageStorage = app(ImageStorage::class);
+    }
 
-    public static function make(ImageStorage $imageStorage, string $fieldName, bool $hasThumbnail = false): self
+    public static function make(string $fieldName, bool $hasThumbnail = false): self
     {
-        return new self($imageStorage, $fieldName, $hasThumbnail);
+        return new self($fieldName, $hasThumbnail);
     }
 
     public function onModelUpdating(Model $model): void

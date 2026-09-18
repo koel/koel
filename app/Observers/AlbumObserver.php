@@ -15,7 +15,7 @@ class AlbumObserver
     public function __construct(
         private readonly ImageStorage $imageStorage,
     ) {
-        $this->coverObserver = ModelImageObserver::make($imageStorage, fieldName: 'cover', hasThumbnail: true);
+        $this->coverObserver = ModelImageObserver::make(fieldName: 'cover', hasThumbnail: true);
     }
 
     public function saved(Album $album): void
