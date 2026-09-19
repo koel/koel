@@ -4,6 +4,7 @@ namespace Tests\Integration\Services;
 
 use App\Enums\Acl\Role;
 use App\Exceptions\UserProspectUpdateDeniedException;
+use App\Models\Organization;
 use App\Services\UserService;
 use App\Values\User\AvatarUpdateData;
 use App\Values\User\UserCreateData;
@@ -26,6 +27,53 @@ class UserServiceTest extends TestCase
         parent::setUp();
 
         $this->service = app(UserService::class);
+    }
+
+    #[Test]
+    public function theFirstUserOwnsTheOrganization(): void
+    {
+        $organization = Organization::factory()->createOne();
+        self::assertNull($organization->owner_id);
+
+        $owner = $this->service->createUser(
+            UserCreateData::make(
+                name: 'Bruce Dickinson',
+                email: 'bruce@dickinson.test',
+                plainTextPassword: 'FearOfTheDark',
+                role: Role::ADMIN,
+            ),
+            $organization,
+        );
+
+        self::assertTrue($organization->refresh()->owner->is($owner));
+    }
+
+    #[Test]
+    public function laterUsersDoNotTakeOverTheOrganization(): void
+    {
+        $organization = Organization::factory()->createOne();
+
+        $owner = $this->service->createUser(
+            UserCreateData::make(
+                name: 'Bruce Dickinson',
+                email: 'bruce@dickinson.test',
+                plainTextPassword: 'FearOfTheDark',
+                role: Role::ADMIN,
+            ),
+            $organization,
+        );
+
+        $this->service->createUser(
+            UserCreateData::make(
+                name: 'Steve Harris',
+                email: 'steve@harris.test',
+                plainTextPassword: 'TheTrooper',
+                role: Role::USER,
+            ),
+            $organization,
+        );
+
+        self::assertTrue($organization->refresh()->owner->is($owner));
     }
 
     #[Test]
