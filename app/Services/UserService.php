@@ -38,6 +38,8 @@ class UserService
         /** @var User $user */
         $user = $organization->users()->create($data);
 
+        $organization->claimOwnership($user);
+
         return $user->syncRoles($dto->role);
     }
 
