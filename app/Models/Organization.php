@@ -14,6 +14,8 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property string $id
+ * @property string $name
+ * @property string $slug
  * @property ?int $owner_id
  * @property ?User $owner
  * @property Carbon $created_at
@@ -30,9 +32,11 @@ class Organization extends Model
     use HasUlids;
     use HasFactory;
 
+    public const string DEFAULT_SLUG = 'koel';
+
     public static function default(): Organization
     {
-        return once(static fn (): Organization => self::query()->oldest('id')->firstOrCreate([]));
+        return once(static fn () => self::query()->firstOrCreate(['slug' => self::DEFAULT_SLUG], ['name' => 'Koel']));
     }
 
     public function users(): HasMany

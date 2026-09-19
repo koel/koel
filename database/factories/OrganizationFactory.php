@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Helpers\Ulid;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -15,6 +16,9 @@ class OrganizationFactory extends Factory
      */
     public function definition(): array
     {
-        return [];
+        return [
+            'name' => fake()->company(),
+            'slug' => Ulid::generate(),
+        ];
     }
 }

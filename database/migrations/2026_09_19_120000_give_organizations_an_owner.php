@@ -16,10 +16,5 @@ return new class extends Migration {
         DB::table('organizations')->update([
             'owner_id' => DB::table('users')->orderBy('id')->value('id'),
         ]);
-
-        Schema::table('organizations', static function (Blueprint $table): void {
-            $table->dropUnique(['slug']);
-            $table->dropColumn(['name', 'slug']);
-        });
     }
 };
