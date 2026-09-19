@@ -66,6 +66,8 @@ class FetchInitialDataController extends Controller
             'uses_media_browser' => MediaBrowser::used(),
             'uses_ai' => License::isPlus() && config('koel.ai.enabled'),
             'allows_embedding' => (bool) config('koel.embed.enabled'),
+            'uses_podcasts' => (bool) config('koel.podcasts.enabled'),
+            'uses_radio' => (bool) config('koel.radio.enabled'),
             'supports_batch_downloading' => extension_loaded('zip'),
             'media_path_set' => (bool) Setting::get('media_path'),
             'supports_transcoding' =>
