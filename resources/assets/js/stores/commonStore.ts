@@ -35,6 +35,8 @@ const initialState = {
   uses_spotify: false,
   uses_ticketmaster: false,
   uses_media_browser: false,
+  uses_podcasts: true,
+  uses_radio: true,
   uses_ai: false,
   users: [] as User[],
   uses_you_tube: false,

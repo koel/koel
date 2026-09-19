@@ -33,7 +33,7 @@
         {{ youtubeVideoTitle }}
       </YouTubeSidebarItem>
       <SidebarItem
-        v-if="!isDemo"
+        v-if="usesPodcasts && !isDemo"
         :href="url('podcasts.index')"
         :active="isCurrentScreen('Podcasts', 'Podcast', 'Episode')"
       >
@@ -42,7 +42,7 @@
         </template>
         Podcasts
       </SidebarItem>
-      <SidebarItem :href="url('radio-stations.index')" :active="isCurrentScreen('Radio.Stations')">
+      <SidebarItem v-if="usesRadio" :href="url('radio-stations.index')" :active="isCurrentScreen('Radio.Stations')">
         <template #icon>
           <RadioIcon :size="16" />
         </template>
@@ -79,6 +79,8 @@ const youtubeVideoTitle = ref<string | null>(null)
 const { url, isCurrentScreen } = useRouter()
 
 const usesMediaBrowser = toRef(commonStore.state, 'uses_media_browser')
+const usesPodcasts = toRef(commonStore.state, 'uses_podcasts')
+const usesRadio = toRef(commonStore.state, 'uses_radio')
 const { swReady, cachedSongCount } = useOfflinePlayback()
 const supportsOffline = computed(() => swReady.value && cachedSongCount.value > 0)
 const isDemo = window.KOEL.is_demo

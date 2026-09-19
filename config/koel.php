@@ -189,6 +189,14 @@ return [
         'enabled' => env('EMBED_ENABLED', true),
     ],
 
+    'podcasts' => [
+        'enabled' => env('PODCASTS_ENABLED', true),
+    ],
+
+    'radio' => [
+        'enabled' => env('RADIO_ENABLED', true),
+    ],
+
     /*
      |--------------------------------------------------------------------------
      | Ignore Dot Files

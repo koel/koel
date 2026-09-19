@@ -55,7 +55,9 @@ Route::middleware('web')->group(static function (): void {
     Route::middleware('audio.auth')->group(static function (): void {
         Route::get('play/{song}/{transcode?}', PlayController::class)->name('song.play');
 
-        Route::get('radio/stream/{radioStation}', StreamRadioController::class)->name('radio.stream');
+        Route::get('radio/stream/{radioStation}', StreamRadioController::class)->name('radio.stream')->middleware(
+            'radio.enabled',
+        );
 
         if (config('koel.download.allow')) {
             Route::prefix('download')->group(static function (): void {

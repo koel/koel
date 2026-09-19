@@ -207,7 +207,9 @@ Route::prefix('api')
             Route::put('songs/{song}/rating', RateSongController::class)->where(['song' => Uuid::REGEX]);
             Route::put('albums/{album}/rating', RateAlbumController::class);
             Route::put('artists/{artist}/rating', RateArtistController::class);
-            Route::put('podcasts/{podcast}/rating', RatePodcastController::class)->where(['podcast' => Uuid::REGEX]);
+            Route::put('podcasts/{podcast}/rating', RatePodcastController::class)->where([
+                'podcast' => Uuid::REGEX,
+            ])->middleware('podcasts.enabled');
 
             Route::apiResource('playlist-folders', PlaylistFolderController::class);
             Route::apiResource('playlist-folders.playlists', PlaylistFolderPlaylistController::class)->except(
@@ -292,16 +294,18 @@ Route::prefix('api')
             Route::delete('playlists/{playlist}/collaborators', [PlaylistCollaboratorController::class, 'destroy']);
 
             // Podcast routes
-            Route::apiResource('podcasts', PodcastController::class);
-            Route::apiResource('podcasts.episodes', PodcastEpisodeController::class);
-            Route::delete('podcasts/{podcast}/subscriptions', UnsubscribeFromPodcastController::class);
+            Route::middleware('podcasts.enabled')->group(static function (): void {
+                Route::apiResource('podcasts', PodcastController::class);
+                Route::apiResource('podcasts.episodes', PodcastEpisodeController::class);
+                Route::delete('podcasts/{podcast}/subscriptions', UnsubscribeFromPodcastController::class);
+            });
 
             // Media browser routes
             Route::get('browse/folders', FetchSubfoldersController::class);
             Route::get('browse/songs', PaginateFolderSongsController::class);
 
             // Radio station routes
-            Route::group(['prefix' => 'radio'], static function (): void {
+            Route::group(['prefix' => 'radio', 'middleware' => 'radio.enabled'], static function (): void {
                 Route::apiResource('stations', RadioStationController::class);
                 Route::get('stations/{radioStation}/now-playing', RadioStationNowPlayingController::class);
             });
