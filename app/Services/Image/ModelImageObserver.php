@@ -3,19 +3,22 @@
 namespace App\Services\Image;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-class ModelImageObserver
+final class ModelImageObserver
 {
+    private readonly ImageStorage $imageStorage;
+
     private function __construct(
         private readonly string $fieldName,
         private readonly bool $hasThumbnail,
-    ) {}
+    ) {
+        $this->imageStorage = app(ImageStorage::class);
+    }
 
-    public static function make(string $fieldName, bool $hasThumbnail = false): static
+    public static function make(string $fieldName, bool $hasThumbnail = false): self
     {
-        return new static($fieldName, $hasThumbnail);
+        return new self($fieldName, $hasThumbnail);
     }
 
     public function onModelUpdating(Model $model): void
@@ -36,13 +39,13 @@ class ModelImageObserver
             return;
         }
 
-        $paths = [image_storage_path($filename)];
+        $fileNames = [$filename];
 
         if ($this->hasThumbnail) {
-            $paths[] = image_storage_path(self::deriveThumbnailFilename($filename));
+            $fileNames[] = self::deriveThumbnailFilename($filename);
         }
 
-        rescue(static fn () => File::delete($paths), report: false);
+        rescue(fn () => $this->imageStorage->delete($fileNames), report: false);
     }
 
     private static function deriveThumbnailFilename(string $filename): string

@@ -10,7 +10,6 @@ use App\Values\Album\AlbumUpdateData;
 use App\Values\ImageWritingConfig;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 
 class AlbumService
@@ -83,9 +82,9 @@ class AlbumService
     public function generateAlbumThumbnail(Album $album): string
     {
         $this->imageStorage->storeImage(
-            source: image_storage_path($album->cover),
+            source: $this->imageStorage->get($album->cover),
             config: ImageWritingConfig::make(maxWidth: 48, blur: 10),
-            path: image_storage_path($album->thumbnail),
+            fileName: $album->thumbnail,
         );
 
         return $album->thumbnail;
@@ -93,9 +92,7 @@ class AlbumService
 
     public function getOrCreateAlbumThumbnail(Album $album): ?string
     {
-        $thumbnailPath = image_storage_path($album->thumbnail);
-
-        if ($thumbnailPath && !File::exists($thumbnailPath)) {
+        if ($album->thumbnail && !$this->imageStorage->exists($album->thumbnail)) {
             $this->generateAlbumThumbnail($album);
         }
 

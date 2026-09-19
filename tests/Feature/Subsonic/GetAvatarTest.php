@@ -4,7 +4,6 @@ namespace Tests\Feature\Subsonic;
 
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -36,9 +35,7 @@ class GetAvatarTest extends TestCase
             "/rest/getAvatar.view?apiKey={$user->subsonic_api_key}&username=" . urlencode($user->email),
         )->assertOk()->assertHeader('Content-Type', 'image/png');
 
-        $base = $response->baseResponse;
-        self::assertInstanceOf(BinaryFileResponse::class, $base);
-        self::assertSame($path, $base->getFile()->getRealPath());
+        self::assertSame(File::get($path), $response->streamedContent());
     }
 
     #[Test]

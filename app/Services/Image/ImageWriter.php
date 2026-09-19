@@ -73,6 +73,13 @@ class ImageWriter
 
     public function write(string $destination, mixed $source, ?ImageWritingConfig $config = null): void
     {
+        $bytes = $this->encode($source, $config);
+
+        throw_if(File::put($destination, $bytes) === false, RuntimeException::class, "Failed to write $destination");
+    }
+
+    public function encode(mixed $source, ?ImageWritingConfig $config = null): string
+    {
         $config ??= ImageWritingConfig::default();
 
         $image = self::read($source)
@@ -82,8 +89,9 @@ class ImageWriter
 
         $bytes = $image->toBytes();
 
-        throw_if($bytes === '', RuntimeException::class, "Encoding produced an empty image for $destination");
-        throw_if(File::put($destination, $bytes) === false, RuntimeException::class, "Failed to write $destination");
+        throw_if($bytes === '', RuntimeException::class, 'Encoding produced an empty image');
+
+        return $bytes;
     }
 
     /**
