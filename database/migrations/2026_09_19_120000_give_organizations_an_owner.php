@@ -13,8 +13,7 @@ return new class extends Migration {
             $table->foreign('owner_id')->references('id')->on('users')->nullOnDelete();
         });
 
-        DB::table('organizations')->update([
-            'owner_id' => DB::table('users')->orderBy('id')->value('id'),
-        ]);
+        DB::statement('update organizations set owner_id = '
+        . '(select min(id) from users where users.organization_id = organizations.id)');
     }
 };

@@ -48,4 +48,19 @@ class Organization extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+    public function claimOwnership(User $user): void
+    {
+        $claimed = static::query()
+            ->whereKey($this->getKey())
+            ->whereNull('owner_id')
+            ->update([
+                'owner_id' => $user->getKey(),
+            ]);
+
+        if ($claimed) {
+            $this->owner()->associate($user);
+            $this->syncOriginalAttribute('owner_id');
+        }
+    }
 }

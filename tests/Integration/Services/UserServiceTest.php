@@ -77,6 +77,38 @@ class UserServiceTest extends TestCase
     }
 
     #[Test]
+    public function aStaleOrganizationCannotStealOwnership(): void
+    {
+        $organization = Organization::factory()->createOne();
+
+        $owner = $this->service->createUser(
+            UserCreateData::make(
+                name: 'Bruce Dickinson',
+                email: 'bruce@dickinson.test',
+                plainTextPassword: 'FearOfTheDark',
+                role: Role::ADMIN,
+            ),
+            $organization,
+        );
+
+        // A copy loaded before the owner was set, as a concurrent request would hold.
+        $stale = Organization::query()->whereKey($organization->getKey())->first();
+        $stale->owner_id = null;
+
+        $this->service->createUser(
+            UserCreateData::make(
+                name: 'Steve Harris',
+                email: 'steve@harris.test',
+                plainTextPassword: 'TheTrooper',
+                role: Role::USER,
+            ),
+            $stale,
+        );
+
+        self::assertTrue($organization->refresh()->owner->is($owner));
+    }
+
+    #[Test]
     public function createUser(): void
     {
         $user = $this->service->createUser(UserCreateData::make(

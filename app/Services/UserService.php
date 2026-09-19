@@ -38,9 +38,7 @@ class UserService
         /** @var User $user */
         $user = $organization->users()->create($data);
 
-        if (!$organization->owner_id) {
-            $organization->owner()->associate($user)->save();
-        }
+        $organization->claimOwnership($user);
 
         return $user->syncRoles($dto->role);
     }
