@@ -6,6 +6,7 @@ use App\Models\Podcast;
 use App\Services\Podcast\ParallelPodcastSync;
 use App\Services\Podcast\PodcastService;
 use Illuminate\Console\Command;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -19,12 +20,20 @@ class SyncPodcastsCommand extends Command
     public function __construct(
         private readonly PodcastService $podcastService,
         private readonly ParallelPodcastSync $parallelSync,
+        #[Config('koel.podcasts.enabled')]
+        private readonly bool $enabled,
     ) {
         parent::__construct();
     }
 
     public function handle(): int
     {
+        if (!$this->enabled) {
+            $this->info('Podcasts are disabled.');
+
+            return self::SUCCESS;
+        }
+
         $ids = Podcast::query()->pluck('id')->all();
 
         if (!$ids) {

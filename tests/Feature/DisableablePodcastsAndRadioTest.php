@@ -72,6 +72,16 @@ class DisableablePodcastsAndRadioTest extends TestCase
     }
 
     #[Test]
+    public function skipThePodcastSyncWhenDisabled(): void
+    {
+        config(['koel.podcasts.enabled' => false]);
+
+        Podcast::factory()->createOne();
+
+        $this->artisan('koel:podcasts:sync')->expectsOutput('Podcasts are disabled.')->assertSuccessful();
+    }
+
+    #[Test]
     public function announceTheSwitchesInTheInitialData(): void
     {
         config(['koel.podcasts.enabled' => false, 'koel.radio.enabled' => true]);
