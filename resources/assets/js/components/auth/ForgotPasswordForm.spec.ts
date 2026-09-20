@@ -25,7 +25,7 @@ describe('forgotPasswordForm.vue', () => {
     await h.user.click(screen.getByText('Reset Password'))
     await h.tick()
 
-    expect(successMock).toHaveBeenCalledWith('If that address has an account, a password reset link is on its way.')
+    expect(successMock).toHaveBeenCalledWith('Check your mailbox for a reset link.')
   })
 
   it('cancels', async () => {
