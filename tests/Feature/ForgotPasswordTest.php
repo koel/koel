@@ -27,7 +27,7 @@ class ForgotPasswordTest extends TestCase
     }
 
     #[Test]
-    public function sendResetPasswordRequestFailed(): void
+    public function answerTheSameWayForAnAddressWithoutAnAccount(): void
     {
         $this
             ->mock(AuthenticationService::class)
@@ -35,7 +35,7 @@ class ForgotPasswordTest extends TestCase
             ->with('foo@bar.com')
             ->andReturnFalse();
 
-        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])->assertNotFound();
+        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])->assertNoContent();
     }
 
     #[Test]
