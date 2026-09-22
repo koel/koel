@@ -49,7 +49,7 @@ class FetchInitialDataController extends Controller
             ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
             : null;
 
-        return response()->json(Hooks::filter(Filter::INITIAL_DATA_FETCHED, [
+        return response()->json(Hooks::applyFilters(Filter::INITIAL_DATA_FETCHED, [
             'settings' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
                 ? $settingRepository->getAllAsKeyValueArray()
                 : [],
