@@ -140,12 +140,49 @@ class HookRegistryTest extends TestCase
     }
 
     #[Test]
-    public function forgetEveryCallbackForAHook(): void
+    public function removeOneFilterAndLeaveTheOthers(): void
     {
-        $this->registry->addFilter(Filter::INITIAL_DATA_FETCHED, static fn (array $data): array => [
-            'replaced' => true,
-        ]);
-        $this->registry->forget(Filter::INITIAL_DATA_FETCHED);
+        $handle = $this->registry->addFilter(
+            Filter::INITIAL_DATA_FETCHED,
+            static fn (array $data): array => $data + ['removed' => true],
+        );
+
+        $this->registry->addFilter(
+            Filter::INITIAL_DATA_FETCHED,
+            static fn (array $data): array => $data + ['kept' => true],
+        );
+
+        $this->registry->remove($handle);
+
+        self::assertSame(['kept' => true], $this->registry->applyFilters(Filter::INITIAL_DATA_FETCHED, []));
+    }
+
+    #[Test]
+    public function removeOneActionAndLeaveTheOthers(): void
+    {
+        $calls = [];
+
+        $handle = $this->registry->addAction(Action::APPLICATION_BOOTED, static function () use (&$calls): void {
+            $calls[] = 'removed';
+        });
+
+        $this->registry->addAction(Action::APPLICATION_BOOTED, static function () use (&$calls): void {
+            $calls[] = 'kept';
+        });
+
+        $this->registry->remove($handle);
+        $this->registry->doAction(Action::APPLICATION_BOOTED);
+
+        self::assertSame(['kept'], $calls);
+    }
+
+    #[Test]
+    public function shrugAtAHandleThatWasAlreadyRemoved(): void
+    {
+        $handle = $this->registry->addFilter(Filter::INITIAL_DATA_FETCHED, static fn (array $data): array => $data);
+
+        $this->registry->remove($handle);
+        $this->registry->remove($handle);
 
         self::assertSame(
             ['kept' => true],
