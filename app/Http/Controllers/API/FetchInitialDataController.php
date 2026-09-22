@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Enums\Acl\Permission;
 use App\Facades\Hooks;
 use App\Facades\License;
-use App\Hooks\Hook;
+use App\Hooks\Filter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
@@ -49,7 +49,7 @@ class FetchInitialDataController extends Controller
             ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
             : null;
 
-        return response()->json(Hooks::filter(Hook::INITIAL_DATA_FETCHED, [
+        return response()->json(Hooks::filter(Filter::INITIAL_DATA_FETCHED, [
             'settings' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
                 ? $settingRepository->getAllAsKeyValueArray()
                 : [],

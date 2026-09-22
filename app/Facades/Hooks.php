@@ -2,22 +2,22 @@
 
 namespace App\Facades;
 
-use App\Hooks\Hook;
-use App\Hooks\HookRegistry;
+use App\Hooks\Filter;
+use App\Hooks\FilterRegistry;
 use Closure;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static void listen(Hook $hook, Closure $callback)
- * @method static mixed filter(Hook $hook, mixed $payload)
- * @method static void forget(Hook $hook)
+ * @method static void listen(Filter $filter, Closure $callback)
+ * @method static mixed filter(Filter $filter, mixed $payload)
+ * @method static void forget(Filter $filter)
  *
- * @see \App\Hooks\HookRegistry
+ * @see \App\Hooks\FilterRegistry
  */
 class Hooks extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return HookRegistry::class;
+        return FilterRegistry::class;
     }
 }
