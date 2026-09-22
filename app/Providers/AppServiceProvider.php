@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Enums\Acl\Role;
 use App\Enums\Hooks\Action;
-use App\Facades\Hooks;
 use App\Hooks\HookRegistry;
 use App\Models\Album;
 use App\Models\Artist;
@@ -54,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
 
         self::grantAllPermissionsToSuperAdminRole();
 
-        Hooks::doAction(Action::APPLICATION_BOOTED);
+        do_action(Action::APPLICATION_BOOTED);
 
         $this->app->bind(SpotifySession::class, static function () {
             return SpotifyService::enabled()
