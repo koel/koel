@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Enums\Acl\Permission;
+use App\Facades\Hooks;
 use App\Facades\License;
+use App\Hooks\Hook;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
@@ -47,7 +49,7 @@ class FetchInitialDataController extends Controller
             ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
             : null;
 
-        return response()->json([
+        return response()->json(Hooks::filter(Hook::INITIAL_DATA_FETCHED, [
             'settings' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
                 ? $settingRepository->getAllAsKeyValueArray()
                 : [],
@@ -90,6 +92,6 @@ class FetchInitialDataController extends Controller
             'storage_driver' => config('koel.storage_driver'),
             'dir_separator' => DIRECTORY_SEPARATOR,
             'current_theme' => $theme ? ThemeResource::make($theme) : null,
-        ]);
+        ]));
     }
 }

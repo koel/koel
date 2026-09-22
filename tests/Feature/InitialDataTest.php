@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Facades\Hooks;
+use App\Hooks\Hook;
 use App\Models\PlaylistFolder;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -54,5 +56,22 @@ class InitialDataTest extends TestCase
 
         self::assertNull($folders->firstWhere('id', $parent->id)['parent_id']);
         self::assertSame($parent->id, $folders->firstWhere('id', $child->id)['parent_id']);
+    }
+
+    #[Test]
+    public function letAHookAddToThePayload(): void
+    {
+        Hooks::listen(Hook::INITIAL_DATA_FETCHED, static fn (array $data): array => array_merge($data, [
+            'added_by_a_hook' => true,
+        ]));
+
+        $this->getAs('/api/data', create_user())->assertJsonPath('added_by_a_hook', true);
+    }
+
+    public function tearDown(): void
+    {
+        Hooks::forget(Hook::INITIAL_DATA_FETCHED);
+
+        parent::tearDown();
     }
 }
