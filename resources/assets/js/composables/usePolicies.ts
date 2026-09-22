@@ -1,6 +1,8 @@
 import { arrayify } from '@/utils/helpers'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { Filter } from '@/config/hooks'
+import { applyFilters } from '@/hooks'
 
 export const usePolicies = () => {
   const { currentUser } = useAuthorization()
@@ -45,6 +47,6 @@ export const usePolicies = () => {
   }
 
   return {
-    currentUserCan,
+    currentUserCan: applyFilters(Filter.POLICIES, currentUserCan),
   }
 }
