@@ -1,9 +1,13 @@
 <?php
 
+use App\Enums\Hooks\Action;
+use App\Enums\Hooks\Filter;
+use App\Facades\Hooks;
 use App\Facades\License;
 use App\Services\Image\ImageStorage;
 use App\Services\SettingService;
 use App\Values\Branding;
+use App\Values\HookHandle;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -244,4 +248,41 @@ function koel_branding(?string $key = null): Branding|string|null
 function http_user_agent(): string
 {
     return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36';
+}
+
+function add_action(Action $action, Closure $callback, int $priority = 10): HookHandle
+{
+    return Hooks::addAction($action, $callback, $priority);
+}
+
+function do_action(Action $action, mixed ...$args): void
+{
+    Hooks::doAction($action, ...$args);
+}
+
+function add_filter(Filter $filter, Closure $callback, int $priority = 10): HookHandle
+{
+    return Hooks::addFilter($filter, $callback, $priority);
+}
+
+/**
+ * @template T
+ *
+ * @param T $value
+ *
+ * @return T
+ */
+function apply_filters(Filter $filter, mixed $value, mixed ...$args): mixed
+{
+    return Hooks::applyFilters($filter, $value, ...$args);
+}
+
+function remove_action(HookHandle $handle): void
+{
+    Hooks::remove($handle);
+}
+
+function remove_filter(HookHandle $handle): void
+{
+    Hooks::remove($handle);
 }
