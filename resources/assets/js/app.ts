@@ -15,7 +15,7 @@ import App from './App.vue'
 
 registerHooks()
 
-createApp(App)
+const app = createApp(App)
   .provide(RouterKey, new Router())
   .component('Icon', FontAwesomeIcon)
   .component('IconLayers', FontAwesomeLayers)
@@ -23,15 +23,16 @@ createApp(App)
   .directive('koel-tooltip', tooltip)
   .directive('koel-hide-broken-icon', hideBrokenIcon)
   .directive('koel-new-tab', newTab)
-  /**
-   * For Ancelot, the ancient cross of war
-   * for the holy town of Gods
-   * Gloria, gloria perpetua
-   * in this dawn of victory
-   */
-  .mount('#app')
 
-doAction(Action.APPLICATION_BOOTED)
+doAction(Action.APPLICATION_BOOTED, app)
+
+/**
+ * For Ancelot, the ancient cross of war
+ * for the holy town of Gods
+ * Gloria, gloria perpetua
+ * in this dawn of victory
+ */
+app.mount('#app')
 
 window.addEventListener('load', () => {
   navigator.serviceWorker?.register('./sw.js').then(registration => {
