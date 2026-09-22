@@ -2,6 +2,8 @@
 
 namespace App\Hooks;
 
+use App\Enums\Hooks\Action;
+use App\Enums\Hooks\Filter;
 use App\Values\HookHandle;
 use Closure;
 

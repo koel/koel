@@ -2,9 +2,9 @@
 
 namespace App\Values;
 
+use App\Enums\Hooks\Action;
+use App\Enums\Hooks\Filter;
 use App\Helpers\Ulid;
-use App\Hooks\Action;
-use App\Hooks\Filter;
 
 final readonly class HookHandle
 {

@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Enums\Acl\Role;
+use App\Enums\Hooks\Action;
 use App\Facades\Hooks;
-use App\Hooks\Action;
 use App\Hooks\HookRegistry;
 use App\Models\Album;
 use App\Models\Artist;

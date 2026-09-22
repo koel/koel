@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Hooks;
+namespace App\Enums\Hooks;
 
 enum Filter: string
 {
