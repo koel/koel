@@ -2,6 +2,7 @@
 
 namespace App\Values;
 
+use App\Helpers\Ulid;
 use App\Hooks\Action;
 use App\Hooks\Filter;
 
@@ -12,8 +13,8 @@ final readonly class HookHandle
         public string $id,
     ) {}
 
-    public static function make(Action|Filter $hook, string $id): self
+    public static function make(Action|Filter $hook): self
     {
-        return new self($hook, $id);
+        return new self($hook, Ulid::generate());
     }
 }
