@@ -1,5 +1,5 @@
 export const Action = {
-  APPLICATION_BOOTED: 'application-booted',
+  APPLICATION_CREATED: 'application-created',
 } as const
 
 export const Filter = {

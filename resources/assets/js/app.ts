@@ -24,7 +24,7 @@ const app = createApp(App)
   .directive('koel-hide-broken-icon', hideBrokenIcon)
   .directive('koel-new-tab', newTab)
 
-doAction(Action.APPLICATION_BOOTED, app)
+doAction(Action.APPLICATION_CREATED, app)
 
 /**
  * For Ancelot, the ancient cross of war

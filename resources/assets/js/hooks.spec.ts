@@ -41,19 +41,19 @@ describe('hooks', () => {
   it('runs actions in priority order with their arguments', () => {
     const calls: string[] = []
 
-    const late = addAction(Action.APPLICATION_BOOTED, (what: string) => calls.push(`late ${what}`), 20)
-    const early = addAction(Action.APPLICATION_BOOTED, (what: string) => calls.push(`early ${what}`), 5)
+    const late = addAction(Action.APPLICATION_CREATED, (what: string) => calls.push(`late ${what}`), 20)
+    const early = addAction(Action.APPLICATION_CREATED, (what: string) => calls.push(`early ${what}`), 5)
 
-    doAction(Action.APPLICATION_BOOTED, 'booted')
+    doAction(Action.APPLICATION_CREATED, 'created')
 
-    expect(calls).toEqual(['early booted', 'late booted'])
+    expect(calls).toEqual(['early created', 'late created'])
 
     removeAction(late)
     removeAction(early)
   })
 
   it('does nothing when nobody listens to an action', () => {
-    expect(() => doAction(Action.APPLICATION_BOOTED)).not.toThrow()
+    expect(() => doAction(Action.APPLICATION_CREATED)).not.toThrow()
   })
 
   it('removes one callback and leaves the others', () => {
