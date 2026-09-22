@@ -265,6 +265,13 @@ function add_filter(Filter $filter, Closure $callback, int $priority = 10): Hook
     return Hooks::addFilter($filter, $callback, $priority);
 }
 
+/**
+ * @template T
+ *
+ * @param T $value
+ *
+ * @return T
+ */
 function apply_filters(Filter $filter, mixed $value, mixed ...$args): mixed
 {
     return Hooks::applyFilters($filter, $value, ...$args);
