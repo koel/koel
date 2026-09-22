@@ -18,7 +18,7 @@ class HookRegistry
 
     public function addAction(Action $action, Closure $callback, int $priority = self::DEFAULT_PRIORITY): HookHandle
     {
-        $handle = HookHandle::make($action, $priority, Ulid::generate());
+        $handle = HookHandle::make($action, Ulid::generate());
 
         $this->actions[$action->value][$priority][$handle->id] = $callback;
         ksort($this->actions[$action->value]);
@@ -37,7 +37,7 @@ class HookRegistry
 
     public function addFilter(Filter $filter, Closure $callback, int $priority = self::DEFAULT_PRIORITY): HookHandle
     {
-        $handle = HookHandle::make($filter, $priority, Ulid::generate());
+        $handle = HookHandle::make($filter, Ulid::generate());
 
         $this->filters[$filter->value][$priority][$handle->id] = $callback;
         ksort($this->filters[$filter->value]);
@@ -66,11 +66,25 @@ class HookRegistry
     public function remove(HookHandle $handle): void
     {
         if ($handle->hook instanceof Action) {
-            unset($this->actions[$handle->hook->value][$handle->priority][$handle->id]);
+            $this->actions = self::without($this->actions, $handle);
 
             return;
         }
 
-        unset($this->filters[$handle->hook->value][$handle->priority][$handle->id]);
+        $this->filters = self::without($this->filters, $handle);
+    }
+
+    /**
+     * @param array<string, array<int, array<string, Closure>>> $callbacks
+     *
+     * @return array<string, array<int, array<string, Closure>>>
+     */
+    private static function without(array $callbacks, HookHandle $handle): array
+    {
+        foreach (array_keys($callbacks[$handle->hook->value] ?? []) as $priority) {
+            unset($callbacks[$handle->hook->value][$priority][$handle->id]);
+        }
+
+        return $callbacks;
     }
 }
