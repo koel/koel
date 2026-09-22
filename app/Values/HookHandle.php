@@ -10,10 +10,10 @@ final readonly class HookHandle
     private function __construct(
         public Action|Filter $hook,
         public int $priority,
-        public int $id,
+        public string $id,
     ) {}
 
-    public static function make(Action|Filter $hook, int $priority, int $id): self
+    public static function make(Action|Filter $hook, int $priority, string $id): self
     {
         return new self($hook, $priority, $id);
     }

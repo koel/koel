@@ -2,6 +2,7 @@
 
 namespace App\Hooks;
 
+use App\Helpers\Ulid;
 use App\Values\HookHandle;
 use Closure;
 
@@ -9,17 +10,15 @@ class HookRegistry
 {
     private const int DEFAULT_PRIORITY = 10;
 
-    /** @var array<string, array<int, array<int, Closure>>> */
+    /** @var array<string, array<int, array<string, Closure>>> */
     private array $actions = [];
 
-    /** @var array<string, array<int, array<int, Closure>>> */
+    /** @var array<string, array<int, array<string, Closure>>> */
     private array $filters = [];
-
-    private int $lastId = 0;
 
     public function addAction(Action $action, Closure $callback, int $priority = self::DEFAULT_PRIORITY): HookHandle
     {
-        $handle = HookHandle::make($action, $priority, ++$this->lastId);
+        $handle = HookHandle::make($action, $priority, Ulid::generate());
 
         $this->actions[$action->value][$priority][$handle->id] = $callback;
         ksort($this->actions[$action->value]);
@@ -38,7 +37,7 @@ class HookRegistry
 
     public function addFilter(Filter $filter, Closure $callback, int $priority = self::DEFAULT_PRIORITY): HookHandle
     {
-        $handle = HookHandle::make($filter, $priority, ++$this->lastId);
+        $handle = HookHandle::make($filter, $priority, Ulid::generate());
 
         $this->filters[$filter->value][$priority][$handle->id] = $callback;
         ksort($this->filters[$filter->value]);
