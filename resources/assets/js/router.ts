@@ -2,6 +2,8 @@ import type { Ref } from 'vue'
 import { ref, watch } from 'vue'
 import type { RouteName } from '@/config/routes'
 import { routes } from '@/config/routes'
+import { Filter } from '@/config/hooks'
+import { applyFilters } from '@/hooks'
 import { forceReloadWindow } from '@/utils/helpers'
 
 type RouteParams = Record<string, string>
@@ -23,6 +25,10 @@ export interface Route {
     redirect?: RedirectHook
   } & Record<string, any>
 }
+
+let filteredRoutes: Route[] | null = null
+
+const allRoutes = () => (filteredRoutes ??= applyFilters<Route[]>(Filter.ROUTES, [...routes]))
 
 interface CompiledRoute {
   regex: RegExp
@@ -62,11 +68,11 @@ export default class Router {
   }
 
   constructor() {
-    this.homeRoute = routes.find(({ screen }) => screen === 'Home')!
-    this.notFoundRoute = routes.find(({ screen }) => screen === '404')!
+    this.homeRoute = allRoutes().find(({ screen }) => screen === 'Home')!
+    this.notFoundRoute = allRoutes().find(({ screen }) => screen === '404')!
     this.$currentRoute = ref(this.homeRoute)
 
-    this.compiledRoutes = routes.map(this.compileRoute)
+    this.compiledRoutes = allRoutes().map(this.compileRoute)
 
     watch(
       this.$currentRoute,
@@ -163,7 +169,7 @@ export default class Router {
   }
 
   public static url(name: RouteName, params: object = {}) {
-    const route = routes.find(route => route.name === name)
+    const route = allRoutes().find(route => route.name === name)
 
     if (!route) {
       throw new Error(`Route "${name}" not found`)
