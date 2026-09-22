@@ -1,4 +1,7 @@
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
+import { registerPlugins } from '@/plugins'
+import { Action } from '@/config/hooks'
+import { doAction } from '@/hooks'
 import { createApp } from 'vue'
 import { focus } from '@/directives/focus'
 import { tooltip } from '@/directives/tooltip'
@@ -9,6 +12,8 @@ import Router from '@/router'
 import 'nouislider/distribute/nouislider.min.css'
 import '@/../css/app.pcss'
 import App from './App.vue'
+
+registerPlugins()
 
 createApp(App)
   .provide(RouterKey, new Router())
@@ -25,6 +30,8 @@ createApp(App)
    * in this dawn of victory
    */
   .mount('#app')
+
+doAction(Action.APPLICATION_BOOTED)
 
 window.addEventListener('load', () => {
   navigator.serviceWorker?.register('./sw.js').then(registration => {
