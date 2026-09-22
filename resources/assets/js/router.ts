@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import { ref, watch } from 'vue'
 import type { RouteName } from '@/config/routes'
-import { routes } from '@/config/routes'
+import { routes as builtInRoutes } from '@/config/routes'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
 import { forceReloadWindow } from '@/utils/helpers'
@@ -26,9 +26,9 @@ export interface Route {
   } & Record<string, any>
 }
 
-let filteredRoutes: Route[] | null = null
+let cachedRoutes: Route[] | null = null
 
-const allRoutes = () => (filteredRoutes ??= applyFilters<Route[]>(Filter.ROUTES, [...routes]))
+const routes = () => (cachedRoutes ??= applyFilters<Route[]>(Filter.ROUTES, [...builtInRoutes]))
 
 interface CompiledRoute {
   regex: RegExp
@@ -68,11 +68,13 @@ export default class Router {
   }
 
   constructor() {
-    this.homeRoute = allRoutes().find(({ screen }) => screen === 'Home')!
-    this.notFoundRoute = allRoutes().find(({ screen }) => screen === '404')!
+    const allRoutes = routes()
+
+    this.homeRoute = allRoutes.find(({ screen }) => screen === 'Home')!
+    this.notFoundRoute = allRoutes.find(({ screen }) => screen === '404')!
     this.$currentRoute = ref(this.homeRoute)
 
-    this.compiledRoutes = allRoutes().map(this.compileRoute)
+    this.compiledRoutes = allRoutes.map(this.compileRoute)
 
     watch(
       this.$currentRoute,
@@ -169,7 +171,7 @@ export default class Router {
   }
 
   public static url(name: RouteName, params: object = {}) {
-    const route = allRoutes().find(route => route.name === name)
+    const route = routes().find(route => route.name === name)
 
     if (!route) {
       throw new Error(`Route "${name}" not found`)
