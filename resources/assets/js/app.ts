@@ -1,5 +1,5 @@
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
-import { registerPlugins } from '@/plugins'
+import { registerHooks } from '@/registerHooks'
 import { Action } from '@/config/hooks'
 import { doAction } from '@/hooks'
 import { createApp } from 'vue'
@@ -13,7 +13,7 @@ import 'nouislider/distribute/nouislider.min.css'
 import '@/../css/app.pcss'
 import App from './App.vue'
 
-registerPlugins()
+registerHooks()
 
 createApp(App)
   .provide(RouterKey, new Router())
