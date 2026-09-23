@@ -36,7 +36,7 @@
         <Icon :icon="faCompactDisc" />
       </template>
       No albums found.
-      <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
+      <EmptyLibraryHint />
     </ScreenEmptyState>
 
     <ScreenEmptyState v-else-if="noFavoriteAlbums">
@@ -96,7 +96,6 @@ import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { usePolicies } from '@/composables/usePolicies'
 
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import AlbumGrid from '@/components/album/AlbumGrid.vue'
@@ -108,8 +107,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import AlbumListSorter from '@/components/album/AlbumListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
-
-const { currentUserCan } = usePolicies()
+import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 
 const grid = ref<InstanceType<typeof AlbumGrid>>()
 const albums = toRef(albumStore.state, 'albums')
