@@ -37,7 +37,9 @@ class HandlePresignedSongUploadJob extends QueuedJob
         $populatedSong = $songRepository->getOne($song->id, $this->uploader);
         $album = $albumRepository->getOne($populatedSong->album_id, $this->uploader);
 
-        broadcast(SongUploadResponse::make(song: $populatedSong, album: $album, uploadKey: $this->uploadKey));
+        if ($this->wasQueued()) {
+            broadcast(SongUploadResponse::make(song: $populatedSong, album: $album, uploadKey: $this->uploadKey));
+        }
 
         return $song;
     }

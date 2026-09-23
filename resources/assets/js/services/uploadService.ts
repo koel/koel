@@ -116,7 +116,9 @@ export const uploadService = {
         : await this.uploadDirectlyToServer(file, trackProgress)
 
       if (status === HTTP_ACCEPTED) {
-        file.status = 'Processing'
+        if (file.status === 'Uploading') {
+          file.status = 'Processing'
+        }
       } else {
         file.status = 'Uploaded'
         data && this.handleUploadResult(data)

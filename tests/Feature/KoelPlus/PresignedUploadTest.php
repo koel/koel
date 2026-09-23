@@ -3,9 +3,11 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
+use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\S3CompatibleStorage;
 use App\Services\SongStorages\SongStorage;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
@@ -99,6 +101,21 @@ class PresignedUploadTest extends PlusTestCase
             });
 
         $this->app->instance(SongStorage::class, $storage);
+    }
+
+    #[Test]
+    public function doesNotBroadcastWhenTheCallerAlreadyGetsTheSong(): void
+    {
+        Event::fake(SongUploadResponse::class);
+
+        $user = create_user();
+        $key = "{$user->public_id}__random__song.mp3";
+        Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
+        $this->fetchesTheObjectAsALocalCopy();
+
+        $this->postAs('api/upload/complete', ['key' => $key], $user)->assertSuccessful();
+
+        Event::assertNotDispatched(SongUploadResponse::class);
     }
 
     #[Test]

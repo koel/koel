@@ -170,6 +170,20 @@ describe('uploadService', () => {
     expect(handleMock).not.toHaveBeenCalled()
   })
 
+  it('keeps a file errored when its failure broadcast beats the 202', async () => {
+    mockPostWithProgress(null, 202)
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile({ uploadKey: '1__abc__song.mp3' })
+    uploadService.state.files = [file]
+
+    const uploading = uploadService.upload(file)
+    uploadService.handleUploadFailure({ upload_key: '1__abc__song.mp3', message: 'Empty file' })
+    await uploading
+
+    expect(file.status).toBe('Errored')
+  })
+
   it('does not count a processing file against the upload slots', () => {
     uploadService.state.files = [createUploadFile({ status: 'Processing' }), createUploadFile({ status: 'Uploading' })]
 

@@ -14,4 +14,13 @@ abstract class QueuedJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    /**
+     * False when Dispatcher ran the job inline, in which case the caller returns the result over
+     * HTTP and a broadcast would deliver it a second time.
+     */
+    protected function wasQueued(): bool
+    {
+        return (bool) $this->job;
+    }
 }
