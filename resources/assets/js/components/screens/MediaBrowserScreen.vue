@@ -17,7 +17,7 @@
 
     <ScreenEmptyState v-if="libraryEmpty">
       No files found.
-      <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
+      <EmptyLibraryHint />
     </ScreenEmptyState>
 
     <div v-else class="-m-6 h-full min-h-full flex flex-col flex-1 overflow-auto">
@@ -50,7 +50,6 @@ import { useRouter } from '@/composables/useRouter'
 import { mediaBrowser } from '@/services/mediaBrowser'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { eventBus } from '@/utils/eventBus'
-import { usePolicies } from '@/composables/usePolicies'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -59,8 +58,8 @@ import Breadcrumbs from '@/components/playable/media-browser/Breadcrumbs.vue'
 import MediaListView from '@/components/playable/media-browser/MediaListView.vue'
 import MediaListViewSkeleton from '@/components/playable/media-browser/MediaListViewSkeleton.vue'
 import Btn from '@/components/ui/form/Btn.vue'
+import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 
-const { currentUserCan } = usePolicies()
 const { onRouteChanged, getRouteParam, onScreenActivated } = useRouter()
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)

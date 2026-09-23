@@ -23,7 +23,7 @@
         <GuitarIcon :size="96" />
       </template>
       No genres found.
-      <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
+      <EmptyLibraryHint />
     </ScreenEmptyState>
 
     <template v-else>
@@ -54,7 +54,6 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { FilterKeywordsKey } from '@/config/symbols'
 import { orderBy } from 'lodash-es'
-import { usePolicies } from '@/composables/usePolicies'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import GenreCardSkeleton from '@/components/genre/GenreCardSkeleton.vue'
@@ -63,8 +62,8 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import GenreCard from '@/components/genre/GenreCard.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
 import GenreListSorter from '@/components/genre/GenreListSorter.vue'
+import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 
-const { currentUserCan } = usePolicies()
 const { handleHttpError } = useErrorHandler()
 
 const genres = ref<Genre[]>([])
