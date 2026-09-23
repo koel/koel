@@ -26,6 +26,15 @@ return [
         'timeout' => env('APP_MAX_SCAN_TIME', 600),
         'memory_limit' => env('MEMORY_LIMIT'),
         'jobs' => env('SCAN_JOBS', 4),
+
+        /*
+         * Refuse a scan whose result would delete more than this share of the library, as a
+         * fraction between 0 and 1. A scan that sees part of the library, because a subtree
+         * became unreadable or a mount dropped, looks exactly like a library that shrank, and
+         * Koel deletes every song row the scan did not see. Unset disables the check; exactly 1
+         * disables it explicitly; any other unreadable value refuses every deletion and logs why.
+         */
+        'max_deletion_ratio' => env('KOEL_MAX_SCAN_DELETION_RATIO'),
     ],
 
     /*

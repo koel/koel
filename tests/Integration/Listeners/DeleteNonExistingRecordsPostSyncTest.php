@@ -141,6 +141,94 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     }
 
     #[Test]
+    public function refusesADeletionAboveTheConfiguredShare(): void
+    {
+        Log::spy();
+        config(['koel.scan.max_deletion_ratio' => 0.2]);
+
+        // What a subtree the scanner cannot enter produces: a scan that completes and reports
+        // one file of five. Four of five is 80 percent, above the 20 percent allowed.
+        $songs = Song::factory()->createMany(5);
+        $result = ScanResultCollection::create()->add(ScanResult::success($songs[0]->path));
+
+        $this->listener->handle(new MediaScanCompleted($result));
+
+        $songs->each($this->assertModelExists(...));
+        Log::shouldHaveReceived('warning') // @phpstan-ignore-line
+            ->once()
+            ->withArgs(static fn (string $message) => str_contains($message, 'would delete 4 of 5'));
+    }
+
+    #[Test]
+    public function theShareIsMeasuredAgainstLocalSongsOnly(): void
+    {
+        Log::spy();
+        config(['koel.scan.max_deletion_ratio' => 0.5]);
+
+        // Nine cloud songs can never be deleted by a scan; with them in the denominator, losing
+        // two of three local songs would read as 2 of 12 and pass. It is 2 of 3.
+        Song::factory()->count(9)->create(['storage' => SongStorageType::S3]);
+        $local = Song::factory()->createMany(3);
+        $result = ScanResultCollection::create()->add(ScanResult::success($local[0]->path));
+
+        $this->listener->handle(new MediaScanCompleted($result));
+
+        $local->each($this->assertModelExists(...));
+        Log::shouldHaveReceived('warning') // @phpstan-ignore-line
+            ->once()
+            ->withArgs(static fn (string $message) => str_contains($message, 'would delete 2 of 3'));
+    }
+
+    #[Test]
+    public function stillDeletesWithinTheConfiguredShare(): void
+    {
+        config(['koel.scan.max_deletion_ratio' => 0.5]);
+
+        $songs = Song::factory()->createMany(4);
+        $result = ScanResultCollection::create()->add(ScanResult::success($songs[0]->path))->add(ScanResult::success($songs[1]->path))->add(ScanResult::success($songs[2]->path));
+
+        $this->listener->handle(new MediaScanCompleted($result));
+
+        $this->assertModelExists($songs[0]);
+        $this->assertModelMissing($songs[3]);
+    }
+
+    #[Test]
+    public function theShareCheckIsOffWhenUnsetAndWhenExactlyOne(): void
+    {
+        foreach ([null, 1, '1'] as $ratio) {
+            config(['koel.scan.max_deletion_ratio' => $ratio]);
+            $songs = Song::factory()->createMany(3);
+            $result = ScanResultCollection::create()->add(ScanResult::success($songs[0]->path));
+
+            $this->listener->handle(new MediaScanCompleted($result));
+
+            $this->assertModelExists($songs[0]);
+            $this->assertModelMissing($songs[1]);
+            $this->assertModelMissing($songs[2]);
+        }
+    }
+
+    #[Test]
+    public function anUnreadableShareRefusesEveryDeletionRatherThanNone(): void
+    {
+        // `20` meant as twenty percent, an empty value from `RATIO=` in a compose file, and a
+        // word: none is a share, and a bound that cannot be read must fail closed.
+        foreach (['20', '', 'twenty', '-0.1'] as $ratio) {
+            Log::spy();
+            config(['koel.scan.max_deletion_ratio' => $ratio]);
+            $songs = Song::factory()->createMany(2);
+            $result = ScanResultCollection::create()->add(ScanResult::success($songs[0]->path));
+
+            $this->listener->handle(new MediaScanCompleted($result));
+
+            $songs->each($this->assertModelExists(...));
+            Log::shouldHaveReceived('error') // @phpstan-ignore-line
+                ->withArgs(static fn (string $message) => str_contains($message, 'not a share between 0 and 1'));
+        }
+    }
+
+    #[Test]
     public function flushesOrphanedSongsFromSearchIndex(): void
     {
         $engine = Mockery::spy(Engine::class);

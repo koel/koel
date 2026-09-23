@@ -96,6 +96,7 @@ Required when `STORAGE_DRIVER=webdav`.
 | `MEMORY_LIMIT` | The memory limit in MB for the scanning process. Example: `2048`. | _(empty)_ |
 | `SCAN_JOBS` | The number of parallel worker processes for scanning. Set to `1` to disable parallel scanning. Can be overridden with `--jobs` flag. | `4` |
 | `IGNORE_DOT_FILES` | Whether to ignore dot files and folders when scanning. Greatly improves performance if your media root has folders like `.git` or `.cache`. | `true` |
+| `KOEL_MAX_SCAN_DELETION_RATIO` | Refuse a scan whose result would delete more than this share of the library, as a fraction between 0 and 1 (`0.2` is twenty percent). A partly unreadable media directory or a dropped mount looks exactly like a library that shrank. Unset disables the check; exactly `1` disables it explicitly; any other unreadable value refuses every deletion and logs why. | (unset) |
 | `SYNC_LOG_LEVEL` | The verbosity of sync logs (found under `storage/logs/`). Options: `all`, `error`. | `error` |
 
 ## Streaming & Transcoding
