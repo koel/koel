@@ -5,7 +5,9 @@ namespace Tests\Feature\Commands;
 use App\Models\Setting;
 use App\Models\Song;
 use Illuminate\Support\Facades\File;
+use Laravel\Scout\EngineManager;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Fakes\RecordingSearchEngine;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -48,6 +50,29 @@ class ScanChunkCommandTest extends TestCase
                 'path' => realpath($this->mediaPath . '/subdir/back-in-black.ogg'),
                 'owner_id' => $owner->id,
             ]);
+        } finally {
+            File::delete($manifest);
+        }
+    }
+
+    #[Test]
+    public function scanChunkDoesNotWriteToTheSearchIndex(): void
+    {
+        // Several workers writing to the one-writer TNTSearch index at once is the
+        // "database is locked" failure; the parent indexes what the workers saved.
+        $engine = new RecordingSearchEngine();
+        $this->app->make(EngineManager::class)->extend('recording', fn () => $engine); // @mago-ignore lint:prefer-static-closure
+        config(['scout.driver' => 'recording']);
+
+        $owner = create_admin();
+        $manifest = tempnam(sys_get_temp_dir(), 'koel_test_') . '.json';
+        File::put($manifest, json_encode([realpath($this->mediaPath . '/full.mp3')]));
+
+        try {
+            $this->artisan('koel:scan:chunk', ['manifest' => $manifest, '--owner' => $owner->id])->assertSuccessful();
+
+            $this->assertDatabaseHas(Song::class, ['path' => realpath($this->mediaPath . '/full.mp3')]);
+            self::assertSame([], $engine->updated);
         } finally {
             File::delete($manifest);
         }

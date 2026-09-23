@@ -59,6 +59,14 @@ class ScanChunkCommand extends Command
 
         $files = array_map(static fn (string $path) => new SplFileInfo($path), $paths);
 
+        // This worker must not write to the search index. The default driver is TNTSearch,
+        // whose SQLite index allows one writer, and several workers saving Searchable models
+        // at once collided on it ("database is locked"), which made a good file count as
+        // invalid. The parent process indexes everything the workers saved, once, afterwards
+        // (ScanIndexer). Set before the engine is first resolved, which nothing in this
+        // command does earlier.
+        config(['scout.driver' => 'null']);
+
         $this->scanner->scan($files, $config, function (ScanResult $result): void {
             $this->output->writeln(json_encode([
                 'path' => $result->path,
