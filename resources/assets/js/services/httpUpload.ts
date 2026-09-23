@@ -18,13 +18,38 @@ export const postWithProgress = <T>(
   data: FormData,
   onUploadProgress: (e: ProgressEvent) => void,
 ): UploadHandle<T> => {
+  return sendWithProgress<T>('POST', `${window.KOEL.base_url}api/${url}`, data, onUploadProgress, {
+    Accept: 'application/json',
+    Authorization: `Bearer ${authService.getApiToken()}`,
+    'X-Api-Version': 'v7',
+  })
+}
+
+/**
+ * Send a file straight to object storage with a presigned URL. Carries no Koel credentials: the
+ * signature in the URL is the authorization, and sending a bearer token would break it.
+ */
+export const putToStorageWithProgress = (
+  url: string,
+  file: File,
+  headers: Record<string, string>,
+  onUploadProgress: (e: ProgressEvent) => void,
+): UploadHandle<null> => {
+  return sendWithProgress<null>('PUT', url, file, onUploadProgress, headers)
+}
+
+const sendWithProgress = <T>(
+  method: 'POST' | 'PUT',
+  url: string,
+  body: FormData | File,
+  onUploadProgress: (e: ProgressEvent) => void,
+  headers: Record<string, string>,
+): UploadHandle<T> => {
   const xhr = new XMLHttpRequest()
 
   const promise = new Promise<UploadResponse<T>>((resolve, reject) => {
-    xhr.open('POST', `${window.KOEL.base_url}api/${url}`)
-    xhr.setRequestHeader('Accept', 'application/json')
-    xhr.setRequestHeader('Authorization', `Bearer ${authService.getApiToken()}`)
-    xhr.setRequestHeader('X-Api-Version', 'v7')
+    xhr.open(method, url)
+    Object.entries(headers).forEach(([name, value]) => xhr.setRequestHeader(name, value))
 
     xhr.upload.addEventListener('progress', onUploadProgress)
 
@@ -53,7 +78,7 @@ export const postWithProgress = <T>(
     xhr.addEventListener('error', () => reject(new Error('Network error')))
     xhr.addEventListener('abort', () => reject(new DOMException('Upload aborted', 'AbortError')))
 
-    xhr.send(data)
+    xhr.send(body)
   })
 
   return { promise, abort: () => xhr.abort() }

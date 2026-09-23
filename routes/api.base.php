@@ -86,11 +86,13 @@ use App\Http\Controllers\API\ToggleLikeSongController;
 use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
 use App\Http\Controllers\API\UpdateUserPreferenceController;
+use App\Http\Controllers\API\Upload\CompletePresignedUploadController;
 use App\Http\Controllers\API\Upload\DiscardAllDuplicateUploadsController;
 use App\Http\Controllers\API\Upload\DiscardDuplicateUploadController;
 use App\Http\Controllers\API\Upload\FetchDuplicateUploadsController;
 use App\Http\Controllers\API\Upload\KeepAllDuplicateUploadsController;
 use App\Http\Controllers\API\Upload\KeepDuplicateUploadController;
+use App\Http\Controllers\API\Upload\PresignUploadController;
 use App\Http\Controllers\API\Upload\UploadSongController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
@@ -173,6 +175,8 @@ Route::prefix('api')
             Route::get('songs/in-folder', FetchFolderSongsController::class);
 
             Route::post('upload', UploadSongController::class);
+            Route::post('upload/presign', PresignUploadController::class);
+            Route::post('upload/complete', CompletePresignedUploadController::class);
             Route::get('duplicate-uploads', FetchDuplicateUploadsController::class);
             Route::post('duplicate-uploads/{duplicateUpload}', KeepDuplicateUploadController::class);
             Route::post('duplicate-uploads', KeepAllDuplicateUploadsController::class);

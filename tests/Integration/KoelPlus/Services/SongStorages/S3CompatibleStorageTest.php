@@ -80,6 +80,35 @@ class S3CompatibleStorageTest extends PlusTestCase
     }
 
     #[Test]
+    public function presignUpload(): void
+    {
+        Ulid::freeze('random');
+        $user = create_user();
+
+        $presigned = $this->service->presignUpload('full.mp3', $user);
+
+        self::assertSame("{$user->id}__random__full.mp3", $presigned->key);
+        self::assertStringContainsString($presigned->key, $presigned->url);
+        self::assertTrue($presigned->expiresAt->isFuture());
+    }
+
+    #[Test]
+    public function onlyTheUploaderOwnsTheirKey(): void
+    {
+        $user = create_user();
+        $someoneElse = create_user();
+
+        self::assertTrue($this->service->ownsUploadKey("{$user->id}__random__full.mp3", $user));
+        self::assertFalse($this->service->ownsUploadKey("{$someoneElse->id}__random__full.mp3", $user));
+    }
+
+    #[Test]
+    public function locationFromKey(): void
+    {
+        self::assertSame('s3://koel/1__random__full.mp3', $this->service->locationFromKey('1__random__full.mp3'));
+    }
+
+    #[Test]
     public function getPresignedUrl(): void
     {
         $reference = $this->service->storeUploadedFile($this->uploadedFilePath, create_user());

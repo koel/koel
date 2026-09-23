@@ -1,6 +1,7 @@
 import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
+import { putToStorageWithProgress } from '@/services/httpUpload'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -8,6 +9,13 @@ import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 
 const HTTP_ACCEPTED = 202
+
+interface PresignedUpload {
+  key: string
+  url: string
+  headers: Record<string, string>
+  expires_at: string
+}
 
 export interface UploadResult {
   song: Song
@@ -90,19 +98,15 @@ export const uploadService = {
       return
     }
 
-    const formData = new FormData()
-    formData.append('file', file.file)
     file.progress = 0
     file.status = 'Uploading'
 
-    const { promise, abort } = postWithProgress<UploadResult | null>('upload', formData, (e: ProgressEvent) => {
-      file.progress = (e.loaded * 100) / e.total
-    })
-
-    this.abortHandles.set(file.id, abort)
+    const trackProgress = (e: ProgressEvent) => (file.progress = (e.loaded * 100) / e.total)
 
     try {
-      const { status, data } = await promise
+      const { status, data } = commonStore.state.supports_presigned_uploads
+        ? await this.uploadToStorage(file, trackProgress)
+        : await this.uploadThroughServer(file, trackProgress)
 
       file.status = 'Uploaded'
 
@@ -146,6 +150,26 @@ export const uploadService = {
     } finally {
       this.abortHandles.delete(file.id)
     }
+  },
+
+  async uploadThroughServer(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
+    const formData = new FormData()
+    formData.append('file', file.file)
+
+    const { promise, abort } = postWithProgress<UploadResult | null>('upload', formData, onProgress)
+    this.abortHandles.set(file.id, abort)
+
+    return await promise
+  },
+
+  async uploadToStorage(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
+    const presigned = await http.post<PresignedUpload>('upload/presign', { file_name: file.file.name })
+
+    const { promise, abort } = putToStorageWithProgress(presigned.url, file.file, presigned.headers, onProgress)
+    this.abortHandles.set(file.id, abort)
+    await promise
+
+    return await http.request<UploadResult | null>('post', 'upload/complete', { key: presigned.key })
   },
 
   async fetchDuplicates() {

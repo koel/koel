@@ -5,13 +5,16 @@ namespace App\Services\SongStorages;
 use App\Enums\SongStorageType;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
+use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
+use App\Values\PresignedUpload;
 use App\Values\UploadReference;
 use Illuminate\Container\Attributes\Config;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class S3CompatibleStorage extends CloudStorage
+class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadUrls
 {
     use DeletesUsingFilesystem;
 
@@ -19,6 +22,26 @@ class S3CompatibleStorage extends CloudStorage
         #[Config('filesystems.disks.s3.bucket')]
         private readonly ?string $bucket = null,
     ) {}
+
+    public function presignUpload(string $fileName, User $uploader): PresignedUpload
+    {
+        $key = $this->generateStorageKey($fileName, $uploader);
+        $expiresAt = Carbon::now()->addHour();
+
+        ['url' => $url, 'headers' => $headers] = Storage::disk('s3')->temporaryUploadUrl($key, $expiresAt);
+
+        return PresignedUpload::make(key: $key, url: $url, headers: $headers, expiresAt: $expiresAt);
+    }
+
+    public function ownsUploadKey(string $key, User $uploader): bool
+    {
+        return Str::startsWith($key, "{$uploader->id}__");
+    }
+
+    public function locationFromKey(string $key): string
+    {
+        return "s3://$this->bucket/$key";
+    }
 
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
