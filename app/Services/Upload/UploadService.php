@@ -31,7 +31,6 @@ class UploadService
         return $this->handleStoredUpload($this->storage->storeUploadedFile($filePath, $uploader), $uploader);
     }
 
-    /** Finish an upload whose bytes the client already sent to storage itself. */
     public function handleStoredUpload(UploadReference $uploadReference, User $uploader): Song
     {
         try {

@@ -42,10 +42,6 @@ class HandlePresignedSongUploadJob extends QueuedJob
         return $song;
     }
 
-    /**
-     * A file Koel cannot make sense of will not become readable on a retry, so tell the uploader
-     * instead of burning attempts and disappearing into the failed jobs table.
-     */
     public function failed(Throwable $exception): void
     {
         broadcast(SongUploadFailedResponse::make(

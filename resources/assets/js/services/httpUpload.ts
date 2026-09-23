@@ -25,10 +25,6 @@ export const postWithProgress = <T>(
   })
 }
 
-/**
- * Send a file straight to object storage with a presigned URL. Carries no Koel credentials: the
- * signature in the URL is the authorization, and sending a bearer token would break it.
- */
 export const putToStorageWithProgress = (
   url: string,
   file: File,
@@ -38,11 +34,6 @@ export const putToStorageWithProgress = (
   return send<null>('PUT', url, file, onUploadProgress, headers)
 }
 
-/**
- * Talk to Koel's API over XHR rather than the shared ky client, so upload errors keep the shape the
- * upload flow expects: ky's hooks attach only `responseData`, and treat every 400 as a session
- * expiry, which would log the user out over a single unscannable file.
- */
 export const postJson = <T>(url: string, data: Record<string, unknown>): UploadHandle<T> => {
   return send<T>('POST', `${window.KOEL.base_url}api/${url}`, JSON.stringify(data), () => {}, {
     Accept: 'application/json',
