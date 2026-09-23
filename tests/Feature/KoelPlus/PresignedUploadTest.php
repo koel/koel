@@ -79,7 +79,9 @@ class PresignedUploadTest extends PlusTestCase
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
         $this->fetchesTheObjectAsALocalCopy();
 
-        $this->postAs('api/upload/complete', ['key' => $key], $user)->assertSuccessful();
+        $this->postAs('api/upload/complete', ['key' => $key], $user)
+            ->assertOk()
+            ->assertJsonStructure(['song', 'album']);
 
         /** @var Song $song */
         $song = Song::query()->latest()->first();
@@ -113,7 +115,9 @@ class PresignedUploadTest extends PlusTestCase
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
         $this->fetchesTheObjectAsALocalCopy();
 
-        $this->postAs('api/upload/complete', ['key' => $key], $user)->assertSuccessful();
+        $this->postAs('api/upload/complete', ['key' => $key], $user)
+            ->assertOk()
+            ->assertJsonStructure(['song', 'album']);
 
         Event::assertNotDispatched(SongUploadResponse::class);
     }
