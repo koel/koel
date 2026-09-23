@@ -35,7 +35,7 @@ class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadU
 
     public function ownsUploadKey(string $key, User $uploader): bool
     {
-        return Str::startsWith($key, "{$uploader->id}__");
+        return Str::startsWith($key, "{$uploader->public_id}__");
     }
 
     public function sizeOfUpload(string $key): int

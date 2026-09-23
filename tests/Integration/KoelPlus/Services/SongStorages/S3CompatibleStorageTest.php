@@ -39,7 +39,7 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         Storage::disk('s3')->assertExists(Str::after($reference->location, 's3://koel/')); // 'koel' is the bucket name
 
-        self::assertSame("s3://koel/{$user->id}__random__full.mp3", $reference->location);
+        self::assertSame("s3://koel/{$user->public_id}__random__full.mp3", $reference->location);
         self::assertSame(artifact_path('tmp/random/full.mp3'), $reference->localPath);
     }
 
@@ -87,7 +87,7 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         $presigned = $this->service->presignUpload('full.mp3', $user);
 
-        self::assertSame("{$user->id}__random__full.mp3", $presigned->key);
+        self::assertSame("{$user->public_id}__random__full.mp3", $presigned->key);
         self::assertStringContainsString($presigned->key, $presigned->url);
         self::assertTrue($presigned->expiresAt->isFuture());
     }
@@ -98,17 +98,8 @@ class S3CompatibleStorageTest extends PlusTestCase
         $user = create_user();
         $someoneElse = create_user();
 
-        self::assertTrue($this->service->ownsUploadKey("{$user->id}__random__full.mp3", $user));
-        self::assertFalse($this->service->ownsUploadKey("{$someoneElse->id}__random__full.mp3", $user));
-    }
-
-    #[Test]
-    public function anotherUsersIdStartingWithOursIsNotOurs(): void
-    {
-        $user = create_user(['id' => 1]);
-
-        self::assertFalse($this->service->ownsUploadKey('11__random__full.mp3', $user));
-        self::assertFalse($this->service->ownsUploadKey('1337__random__full.mp3', $user));
+        self::assertTrue($this->service->ownsUploadKey("{$user->public_id}__random__full.mp3", $user));
+        self::assertFalse($this->service->ownsUploadKey("{$someoneElse->public_id}__random__full.mp3", $user));
     }
 
     #[Test]

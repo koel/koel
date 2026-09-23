@@ -36,7 +36,7 @@ class PresignedUploadTest extends PlusTestCase
             ->assertOk()
             ->assertJsonStructure(['key', 'url', 'headers', 'expires_at']);
 
-        self::assertStringStartsWith("{$user->id}__", $response->json('key'));
+        self::assertStringStartsWith("{$user->public_id}__", $response->json('key'));
     }
 
     #[Test]
@@ -55,7 +55,7 @@ class PresignedUploadTest extends PlusTestCase
     public function refusesToCompleteAnObjectLargerThanTheUploadLimit(): void
     {
         $user = create_user();
-        $key = "{$user->id}__random__song.mp3";
+        $key = "{$user->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
 
         $storage = Mockery::mock(S3CompatibleStorage::class . '[sizeOfUpload]', ['koel']);
@@ -73,7 +73,7 @@ class PresignedUploadTest extends PlusTestCase
     public function completeAnUpload(): void
     {
         $user = create_user();
-        $key = "{$user->id}__random__song.mp3";
+        $key = "{$user->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
         $this->fetchesTheObjectAsALocalCopy();
 
@@ -105,7 +105,7 @@ class PresignedUploadTest extends PlusTestCase
     public function cannotCompleteSomeoneElsesUpload(): void
     {
         $someoneElse = create_user();
-        $key = "{$someoneElse->id}__random__song.mp3";
+        $key = "{$someoneElse->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
 
         $this->postAs('api/upload/complete', ['key' => $key], create_user())->assertForbidden();
