@@ -4,6 +4,7 @@
   <MessageToaster ref="toaster" />
   <GlobalEventListeners />
   <OfflineNotification v-if="!online" />
+  <UpdateNotification />
 
   <main
     v-if="layout === 'default' && initialized"
@@ -55,6 +56,7 @@ import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 import Overlay from '@/components/ui/Overlay.vue'
 import OfflineNotification from '@/components/ui/OfflineNotification.vue'
+import UpdateNotification from '@/components/ui/UpdateNotification.vue'
 
 // Do not dynamic-import app footer, as it contains the <audio> element
 // that is necessary to properly initialize the playService and equalizer.
