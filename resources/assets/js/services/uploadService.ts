@@ -7,6 +7,8 @@ import { playableStore } from '@/stores/playableStore'
 import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 
+const HTTP_ACCEPTED = 202
+
 export interface UploadResult {
   song: Song
   album: Album
@@ -100,17 +102,15 @@ export const uploadService = {
     this.abortHandles.set(file.id, abort)
 
     try {
-      const result = await promise
+      const { status, data } = await promise
 
-      if (result?.song && result?.album) {
-        file.status = 'Uploaded'
-        this.handleUploadResult(result)
-        window.setTimeout(() => this.remove(file), 1000)
-      } else {
-        file.status = 'Errored'
-        file.message = 'Upload failed: Server returned an unexpected response.'
+      file.status = 'Uploaded'
+
+      if (status !== HTTP_ACCEPTED && data) {
+        this.handleUploadResult(data)
       }
 
+      window.setTimeout(() => this.remove(file), 1000)
       this.proceed()
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') {

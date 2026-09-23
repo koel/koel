@@ -36,9 +36,9 @@ describe('uploadService', () => {
     ...overrides,
   })
 
-  const mockPostWithProgress = (resolveValue: any) => {
+  const mockPostWithProgress = (data: any, status = 200) => {
     postWithProgressMock.mockReturnValue({
-      promise: Promise.resolve(resolveValue),
+      promise: Promise.resolve({ status, data }),
       abort: vi.fn(),
     })
   }
@@ -142,16 +142,15 @@ describe('uploadService', () => {
     expect(proceedMock).toHaveBeenCalled()
   })
 
-  it('marks file as errored if response is malformed', async () => {
-    mockPostWithProgress({ message: 'The POST data is too large.' })
+  it('marks a queued upload as sent and waits for the broadcast', async () => {
+    mockPostWithProgress(null, 202)
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
     await uploadService.upload(file)
 
-    expect(file.status).toBe('Errored')
-    expect(file.message).toContain('unexpected response')
+    expect(file.status).toBe('Uploaded')
     expect(handleMock).not.toHaveBeenCalled()
   })
 
@@ -159,7 +158,7 @@ describe('uploadService', () => {
     const result = { song: h.factory('song').make(), album: h.factory('album').make() }
     postWithProgressMock.mockImplementation((_url: string, _data: FormData, onProgress: Function) => {
       onProgress({ loaded: 50, total: 100 })
-      return { promise: Promise.resolve(result), abort: vi.fn() }
+      return { promise: Promise.resolve({ status: 200, data: result }), abort: vi.fn() }
     })
     h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
