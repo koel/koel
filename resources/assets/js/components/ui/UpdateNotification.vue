@@ -3,14 +3,14 @@
     v-if="newerVersionDeployed"
     class="text-k-primary p-4 bg-white rounded-md flex items-center gap-3 fixed z-10000 left-6 shadow-lg"
   >
-    <CircleFadingArrowUpIcon :size="20" class="shrink-0" />
+    <RocketIcon :size="20" class="shrink-0" />
     <span class="text-gray-800 whitespace-nowrap">Koel has been updated.</span>
     <Btn size="small" @click="forceReloadWindow">Reload</Btn>
   </article>
 </template>
 
 <script lang="ts" setup>
-import { CircleFadingArrowUpIcon } from 'lucide-vue-next'
+import { RocketIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { useEventListener } from '@vueuse/core'
 import { forceReloadWindow } from '@/utils/helpers'
