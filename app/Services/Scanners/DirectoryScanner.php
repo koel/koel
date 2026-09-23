@@ -21,6 +21,7 @@ class DirectoryScanner extends Scanner
         Finder $finder,
         private readonly SequentialScanStrategy $sequentialStrategy,
         private readonly ParallelScanStrategy $parallelStrategy,
+        private readonly ScanIndexer $indexer,
     ) {
         parent::__construct($fileHandler, $finder);
     }
@@ -39,9 +40,13 @@ class DirectoryScanner extends Scanner
             ? fn (ScanResult $result) => $this->events[ScanEvent::SCAN_PROGRESS->name]($result)
             : null;
 
-        $results = $jobs > 1
-            ? $this->parallelStrategy->scan($files, $config, $jobs, $onProgress)
-            : $this->sequentialStrategy->scan($files, $config, $onProgress);
+        if ($jobs > 1) {
+            $results = $this->parallelStrategy->scan($files, $config, $jobs, $onProgress);
+            // The workers saved with search syncing off; index what they saved, serially.
+            $this->indexer->reindex($results);
+        } else {
+            $results = $this->sequentialStrategy->scan($files, $config, $onProgress);
+        }
 
         event(new MediaScanCompleted($results));
 
