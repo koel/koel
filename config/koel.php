@@ -212,6 +212,8 @@ return [
 
     'sync_log_level' => env('SYNC_LOG_LEVEL', 'error'),
 
+    'scan_log_max_files' => env('SCAN_LOG_MAX_FILES', 30),
+
     'proxy_auth' => [
         'enabled' => env('PROXY_AUTH_ENABLED', false),
         'user_header' => env('PROXY_AUTH_USER_HEADER', 'remote-user'),
