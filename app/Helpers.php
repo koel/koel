@@ -250,17 +250,17 @@ function http_user_agent(): string
     return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36';
 }
 
-function add_action(Action $action, Closure $callback, int $priority = 10): HookHandle
+function add_action(Action|string $action, Closure $callback, int $priority = 10): HookHandle
 {
     return Hooks::addAction($action, $callback, $priority);
 }
 
-function do_action(Action $action, mixed ...$args): void
+function do_action(Action|string $action, mixed ...$args): void
 {
     Hooks::doAction($action, ...$args);
 }
 
-function add_filter(Filter $filter, Closure $callback, int $priority = 10): HookHandle
+function add_filter(Filter|string $filter, Closure $callback, int $priority = 10): HookHandle
 {
     return Hooks::addFilter($filter, $callback, $priority);
 }
@@ -272,7 +272,7 @@ function add_filter(Filter $filter, Closure $callback, int $priority = 10): Hook
  *
  * @return T
  */
-function apply_filters(Filter $filter, mixed $value, mixed ...$args): mixed
+function apply_filters(Filter|string $filter, mixed $value, mixed ...$args): mixed
 {
     return Hooks::applyFilters($filter, $value, ...$args);
 }

@@ -1,7 +1,9 @@
 import type { ActionName, FilterName } from '@/config/hooks'
 
+type HookName<KnownName extends string> = KnownName | (string & {})
+
 export interface HookHandle {
-  hook: ActionName | FilterName
+  hook: string
   id: string
 }
 
@@ -14,7 +16,7 @@ const filters: Record<string, Record<number, Record<string, Callback>>> = {}
 
 const register = (
   registry: Record<string, Record<number, Record<string, Callback>>>,
-  hook: ActionName | FilterName,
+  hook: string,
   callback: Callback,
   priority: number,
 ): HookHandle => {
@@ -32,22 +34,22 @@ const sortedPriorities = (buckets: Record<number, Record<string, Callback>> = {}
     .map(Number)
     .sort((one, other) => one - other)
 
-export const addAction = (action: ActionName, callback: Callback, priority = DEFAULT_PRIORITY) =>
+export const addAction = (action: HookName<ActionName>, callback: Callback, priority = DEFAULT_PRIORITY) =>
   register(actions, action, callback, priority)
 
-export const doAction = (action: ActionName, ...args: any[]) => {
+export const doAction = (action: HookName<ActionName>, ...args: any[]) => {
   sortedPriorities(actions[action]).forEach(priority => {
     Object.values(actions[action][priority]).forEach(callback => callback(...args))
   })
 }
 
 export const addFilter = <T>(
-  filter: FilterName,
+  filter: HookName<FilterName>,
   callback: (value: T, ...args: any[]) => T,
   priority = DEFAULT_PRIORITY,
 ) => register(filters, filter, callback as Callback, priority)
 
-export const applyFilters = <T>(filter: FilterName, value: T, ...args: any[]): T => {
+export const applyFilters = <T>(filter: HookName<FilterName>, value: T, ...args: any[]): T => {
   sortedPriorities(filters[filter]).forEach(priority => {
     Object.values(filters[filter][priority]).forEach(callback => (value = callback(value, ...args)))
   })

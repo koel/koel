@@ -75,4 +75,23 @@ describe('hooks', () => {
 
     expect(applyFilters(Filter.ROUTES, ['kept'])).toEqual(['kept'])
   })
+
+  it('filters through a custom hook name', () => {
+    const handle = addFilter<string[]>('plugin-payload', value => [...value, 'added'])
+
+    expect(applyFilters<string[]>('plugin-payload', [])).toEqual(['added'])
+
+    removeFilter(handle)
+  })
+
+  it('acts through a custom hook name', () => {
+    const calls: string[] = []
+    const handle = addAction('plugin-event', () => calls.push('called'))
+
+    doAction('plugin-event')
+
+    expect(calls).toEqual(['called'])
+
+    removeAction(handle)
+  })
 })

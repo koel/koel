@@ -189,4 +189,50 @@ class HookRegistryTest extends TestCase
             $this->registry->applyFilters(Filter::INITIAL_DATA_FETCHED, ['kept' => true]),
         );
     }
+
+    #[Test]
+    public function filterThroughACustomHookName(): void
+    {
+        $this->registry->addFilter('plugin-payload', static fn (array $data): array => $data + ['added' => true]);
+
+        self::assertSame(['added' => true], $this->registry->applyFilters('plugin-payload', []));
+    }
+
+    #[Test]
+    public function actThroughACustomHookName(): void
+    {
+        $calls = 0;
+
+        $this->registry->addAction('plugin-event', static function () use (&$calls): void {
+            $calls++;
+        });
+
+        $this->registry->doAction('plugin-event');
+
+        self::assertSame(1, $calls);
+    }
+
+    #[Test]
+    public function treatAnEnumAndItsValueAsTheSameHook(): void
+    {
+        $this->registry->addFilter(
+            Filter::INITIAL_DATA_FETCHED->value,
+            static fn (array $data): array => $data + ['added' => true],
+        );
+
+        self::assertSame(['added' => true], $this->registry->applyFilters(Filter::INITIAL_DATA_FETCHED, []));
+    }
+
+    #[Test]
+    public function keepAnActionApartFromAFilterOfTheSameName(): void
+    {
+        $calls = 0;
+
+        $this->registry->addAction('shared-name', static function () use (&$calls): void {
+            $calls++;
+        });
+
+        self::assertSame(['kept' => true], $this->registry->applyFilters('shared-name', ['kept' => true]));
+        self::assertSame(0, $calls);
+    }
 }
