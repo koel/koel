@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import { detectLoadFailureCause } from './loadFailure'
+import { isNewerVersionDeployed } from './deployment'
 
-describe('loadFailure', () => {
+describe('deployment', () => {
   createHarness()
 
   const addEntryScript = () => {
@@ -15,53 +15,43 @@ describe('loadFailure', () => {
   afterEach(() => {
     document.head.querySelectorAll('script[type="module"]').forEach(script => script.remove())
     vi.unstubAllGlobals()
-    vi.restoreAllMocks()
   })
 
-  it('reports offline when the browser has no connection', async () => {
-    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
-    const fetchMock = vi.fn()
-    vi.stubGlobal('fetch', fetchMock)
-
-    expect(await detectLoadFailureCause()).toBe('offline')
-    expect(fetchMock).not.toHaveBeenCalled()
-  })
-
-  it('reports outdated when the entry script is gone', async () => {
+  it('says a newer version is deployed when the entry script is gone', async () => {
     addEntryScript()
     const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 404 }))
     vi.stubGlobal('fetch', fetchMock)
 
-    expect(await detectLoadFailureCause()).toBe('outdated')
+    expect(await isNewerVersionDeployed()).toBe(true)
     expect(fetchMock).toHaveBeenCalledWith('https://koel.test/build/assets/app-abc123.js', { cache: 'no-store' })
   })
 
-  it('reports unknown when the entry script is still there', async () => {
+  it('says no when the entry script is still there', async () => {
     addEntryScript()
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('', { status: 200 })))
 
-    expect(await detectLoadFailureCause()).toBe('unknown')
+    expect(await isNewerVersionDeployed()).toBe(false)
   })
 
-  it('reports unknown when the server errors', async () => {
+  it('says no when the server errors', async () => {
     addEntryScript()
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 503 })))
 
-    expect(await detectLoadFailureCause()).toBe('unknown')
+    expect(await isNewerVersionDeployed()).toBe(false)
   })
 
-  it('reports unknown when the check itself fails', async () => {
+  it('says no when the check itself fails', async () => {
     addEntryScript()
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
 
-    expect(await detectLoadFailureCause()).toBe('unknown')
+    expect(await isNewerVersionDeployed()).toBe(false)
   })
 
-  it('reports unknown when there is no entry script to check', async () => {
+  it('says no when there is no entry script to check', async () => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)
 
-    expect(await detectLoadFailureCause()).toBe('unknown')
+    expect(await isNewerVersionDeployed()).toBe(false)
     expect(fetchMock).not.toHaveBeenCalled()
   })
 })

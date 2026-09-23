@@ -14,7 +14,6 @@ import { sha256 } from '@/utils/crypto'
 import { isSong } from '@/utils/typeGuards'
 
 import LoadingComponent from '@/components/ui/Loading.vue'
-import ErrorComponent from '@/components/ui/AsyncComponentFallback.vue'
 
 export const use = <T>(value: T | undefined | null, cb: (arg: T) => void) => {
   if (typeof value === 'undefined' || value === null) {
@@ -140,15 +139,10 @@ export const getPlayableProp = <SK extends keyof Song, EK extends keyof Episode>
   return isSong(playable) ? playable[songKey] : playable[episodeKey]
 }
 
-export const defineAsyncComponent = (
-  loader: AsyncComponentLoader,
-  loadingComponent?: Component,
-  errorComponent?: Component,
-) => {
+export const defineAsyncComponent = (loader: AsyncComponentLoader, loadingComponent?: Component) => {
   return baseDefineAsyncComponent({
     loader,
     loadingComponent: loadingComponent || LoadingComponent,
-    errorComponent: errorComponent || ErrorComponent,
   })
 }
 
