@@ -24,7 +24,9 @@ abstract class CloudStorage extends SongStorage implements MustDeleteTemporaryLo
 
     protected function generateStorageKey(string $filename, User $uploader): string
     {
-        return sprintf('%s__%s__%s', $uploader->public_id, Ulid::generate(), basename($filename));
+        $name = basename(str_replace('\\', '/', $filename));
+
+        return sprintf('%s__%s__%s', $uploader->public_id, Ulid::generate(), $name);
     }
 
     abstract public function uploadToStorage(string $key, string $path): void;

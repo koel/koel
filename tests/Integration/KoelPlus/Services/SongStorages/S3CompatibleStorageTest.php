@@ -112,14 +112,40 @@ class S3CompatibleStorageTest extends PlusTestCase
     }
 
     #[Test]
+    public function aDotInTheNameIsNotTraversal(): void
+    {
+        $user = create_user();
+
+        self::assertTrue($this->service->ownsUploadKey("{$user->public_id}__random__mix..live.mp3", $user));
+    }
+
+    #[Test]
     public function stripsAnyPathFromTheUploadedName(): void
     {
         Ulid::freeze('random');
         $user = create_user();
 
-        $presigned = $this->service->presignUpload('../../etc/passwd.mp3', $user);
+        self::assertSame(
+            "{$user->public_id}__random__passwd.mp3",
+            $this->service->presignUpload('../../etc/passwd.mp3', $user)->key,
+        );
 
-        self::assertSame("{$user->public_id}__random__passwd.mp3", $presigned->key);
+        self::assertSame(
+            "{$user->public_id}__random__song.mp3",
+            $this->service->presignUpload('..\\..\\windows\\song.mp3', $user)->key,
+        );
+    }
+
+    #[Test]
+    public function everyKeyItPresignsCanBeCompleted(): void
+    {
+        $user = create_user();
+
+        foreach (['../../etc/passwd.mp3', '..\\..\\song.mp3', 'mix..live.mp3', 'ordinary.mp3'] as $name) {
+            $key = $this->service->presignUpload($name, $user)->key;
+
+            self::assertTrue($this->service->ownsUploadKey($key, $user), "rejected its own key for $name");
+        }
     }
 
     #[Test]
