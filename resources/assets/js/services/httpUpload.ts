@@ -18,7 +18,7 @@ export const postWithProgress = <T>(
   data: FormData,
   onUploadProgress: (e: ProgressEvent) => void,
 ): UploadHandle<T> => {
-  return send<T>('POST', `${window.KOEL.base_url}api/${url}`, data, onUploadProgress, {
+  return request<T>('POST', `${window.KOEL.base_url}api/${url}`, data, onUploadProgress, {
     Accept: 'application/json',
     Authorization: `Bearer ${authService.getApiToken()}`,
     'X-Api-Version': 'v7',
@@ -31,11 +31,11 @@ export const putToStorageWithProgress = (
   headers: Record<string, string>,
   onUploadProgress: (e: ProgressEvent) => void,
 ): UploadHandle<null> => {
-  return send<null>('PUT', url, file, onUploadProgress, headers)
+  return request<null>('PUT', url, file, onUploadProgress, headers)
 }
 
 export const postJson = <T>(url: string, data: Record<string, unknown>): UploadHandle<T> => {
-  return send<T>('POST', `${window.KOEL.base_url}api/${url}`, JSON.stringify(data), () => {}, {
+  return request<T>('POST', `${window.KOEL.base_url}api/${url}`, JSON.stringify(data), () => {}, {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     Authorization: `Bearer ${authService.getApiToken()}`,
@@ -43,7 +43,7 @@ export const postJson = <T>(url: string, data: Record<string, unknown>): UploadH
   })
 }
 
-const send = <T>(
+const request = <T>(
   method: 'POST' | 'PUT',
   url: string,
   body: FormData | File | string,
