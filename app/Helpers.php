@@ -277,10 +277,10 @@ function apply_filters(string $filter, mixed $value, mixed ...$args): mixed
 
 function remove_action(HookHandle $handle): void
 {
-    Hooks::remove($handle);
+    Hooks::removeAction($handle);
 }
 
 function remove_filter(HookHandle $handle): void
 {
-    Hooks::remove($handle);
+    Hooks::removeFilter($handle);
 }

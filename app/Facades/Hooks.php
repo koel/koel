@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static void doAction(string $action, mixed ...$args)
  * @method static HookHandle addFilter(string $filter, Closure $callback, int $priority = 10)
  * @method static T applyFilters<T>(string $filter, T $value, mixed ...$args)
- * @method static void remove(HookHandle $handle)
+ * @method static void removeAction(HookHandle $handle)
+ * @method static void removeFilter(HookHandle $handle)
  *
  * @see \App\Hooks\HookRegistry
  */

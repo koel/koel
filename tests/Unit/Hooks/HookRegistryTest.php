@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Hooks;
 
+use App\Helpers\Ulid;
 use App\Hooks\Action;
 use App\Hooks\Filter;
 use App\Hooks\HookRegistry;
@@ -152,7 +153,7 @@ class HookRegistryTest extends TestCase
             static fn (array $data): array => $data + ['kept' => true],
         );
 
-        $this->registry->remove($handle);
+        $this->registry->removeFilter($handle);
 
         self::assertSame(['kept' => true], $this->registry->applyFilters(Filter::INITIAL_DATA_FETCHED, []));
     }
@@ -170,7 +171,7 @@ class HookRegistryTest extends TestCase
             $calls[] = 'kept';
         });
 
-        $this->registry->remove($handle);
+        $this->registry->removeAction($handle);
         $this->registry->doAction(Action::APPLICATION_BOOTED);
 
         self::assertSame(['kept'], $calls);
@@ -181,8 +182,8 @@ class HookRegistryTest extends TestCase
     {
         $handle = $this->registry->addFilter(Filter::INITIAL_DATA_FETCHED, static fn (array $data): array => $data);
 
-        $this->registry->remove($handle);
-        $this->registry->remove($handle);
+        $this->registry->removeFilter($handle);
+        $this->registry->removeFilter($handle);
 
         self::assertSame(
             ['kept' => true],
@@ -223,5 +224,23 @@ class HookRegistryTest extends TestCase
 
         self::assertSame(['kept' => true], $this->registry->applyFilters('shared-name', ['kept' => true]));
         self::assertSame(0, $calls);
+    }
+
+    #[Test]
+    public function removeAFilterWithoutTouchingAnActionThatSharesItsNameAndId(): void
+    {
+        Ulid::freeze();
+        $calls = 0;
+
+        $this->registry->addAction('shared-name', static function () use (&$calls): void {
+            $calls++;
+        });
+
+        $filter = $this->registry->addFilter('shared-name', static fn (array $data): array => $data);
+
+        $this->registry->removeFilter($filter);
+        $this->registry->doAction('shared-name');
+
+        self::assertSame(1, $calls);
     }
 }

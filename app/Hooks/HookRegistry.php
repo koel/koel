@@ -62,9 +62,13 @@ class HookRegistry
         return $value;
     }
 
-    public function remove(HookHandle $handle): void
+    public function removeAction(HookHandle $handle): void
     {
         $this->actions = self::without($this->actions, $handle);
+    }
+
+    public function removeFilter(HookHandle $handle): void
+    {
         $this->filters = self::without($this->filters, $handle);
     }
 
