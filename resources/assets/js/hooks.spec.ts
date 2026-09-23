@@ -94,4 +94,14 @@ describe('hooks', () => {
 
     removeAction(handle)
   })
+
+  it('keeps hook names that match built-in object properties apart from them', () => {
+    const handle = addFilter<string[]>('constructor', value => [...value, 'added'])
+
+    expect(applyFilters<string[]>('constructor', [])).toEqual(['added'])
+    expect(applyFilters<string[]>('toString', ['kept'])).toEqual(['kept'])
+    expect(Object.keys(Object)).toEqual([])
+
+    removeFilter(handle)
+  })
 })
