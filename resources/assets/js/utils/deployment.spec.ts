@@ -23,7 +23,10 @@ describe('deployment', () => {
     vi.stubGlobal('fetch', fetchMock)
 
     expect(await isNewerVersionDeployed()).toBe(true)
-    expect(fetchMock).toHaveBeenCalledWith('https://koel.test/build/assets/app-abc123.js', { cache: 'no-store' })
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://koel.test/build/assets/app-abc123.js',
+      expect.objectContaining({ cache: 'no-store', signal: expect.any(AbortSignal) }),
+    )
   })
 
   it('says no when the entry script is still there', async () => {
@@ -43,6 +46,13 @@ describe('deployment', () => {
   it('says no when the check itself fails', async () => {
     addEntryScript()
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
+
+    expect(await isNewerVersionDeployed()).toBe(false)
+  })
+
+  it('says no when the check times out', async () => {
+    addEntryScript()
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new DOMException('Timed out', 'TimeoutError')))
 
     expect(await isNewerVersionDeployed()).toBe(false)
   })

@@ -1,3 +1,5 @@
+const ENTRY_SCRIPT_CHECK_TIMEOUT_MS = 10_000
+
 const findEntryScriptUrl = () => document.querySelector<HTMLScriptElement>('script[type="module"][src]')?.src
 
 /**
@@ -12,7 +14,10 @@ export const isNewerVersionDeployed = async () => {
   }
 
   try {
-    const response = await fetch(entryScriptUrl, { cache: 'no-store' })
+    const response = await fetch(entryScriptUrl, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(ENTRY_SCRIPT_CHECK_TIMEOUT_MS),
+    })
     await response.body?.cancel()
 
     return response.status === 404
