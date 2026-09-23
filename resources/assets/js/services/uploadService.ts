@@ -259,6 +259,7 @@ export const uploadService = {
     file.status = 'Ready'
     file.progress = 0
     file.uploadKey = undefined
+    file.message = undefined
   },
 
   removeFailed() {
