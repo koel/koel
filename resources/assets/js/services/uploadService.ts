@@ -163,15 +163,18 @@ export const uploadService = {
   },
 
   async uploadToStorage(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
-    const { data: presigned } = await postJson<PresignedUpload>('upload/presign', {
-      file_name: file.file.name,
-    }).promise
+    const presigning = postJson<PresignedUpload>('upload/presign', { file_name: file.file.name })
+    this.abortHandles.set(file.id, presigning.abort)
+    const { data: presigned } = await presigning.promise
 
-    const { promise, abort } = putToStorageWithProgress(presigned.url, file.file, presigned.headers, onProgress)
-    this.abortHandles.set(file.id, abort)
-    await promise
+    const sending = putToStorageWithProgress(presigned.url, file.file, presigned.headers, onProgress)
+    this.abortHandles.set(file.id, sending.abort)
+    await sending.promise
 
-    return await postJson<UploadResult | null>('upload/complete', { key: presigned.key }).promise
+    const completing = postJson<UploadResult | null>('upload/complete', { key: presigned.key })
+    this.abortHandles.set(file.id, completing.abort)
+
+    return await completing.promise
   },
 
   async fetchDuplicates() {

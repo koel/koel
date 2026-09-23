@@ -256,6 +256,31 @@ describe('uploadService', () => {
     expect(file.message).toBe('Server error.')
   })
 
+  it('aborts a presigned upload while it is still being presigned', async () => {
+    commonStore.state.supports_presigned_uploads = true
+
+    const abortMock = vi.fn()
+    postJsonMock.mockReturnValue({
+      promise: new Promise((_, reject) => {
+        abortMock.mockImplementation(() => reject(new DOMException('Upload aborted', 'AbortError')))
+      }),
+      abort: (...args: any[]) => abortMock(...args),
+    })
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    const uploadPromise = uploadService.upload(file)
+
+    expect(uploadService.abortHandles.has(file.id)).toBe(true)
+
+    uploadService.abort(file)
+    await uploadPromise
+
+    expect(abortMock).toHaveBeenCalled()
+    expect(putToStorageMock).not.toHaveBeenCalled()
+    expect(file.status).toBe('Canceled')
+  })
+
   it('aborts an in-progress upload', async () => {
     const abortMock = vi.fn()
     postWithProgressMock.mockReturnValue({
