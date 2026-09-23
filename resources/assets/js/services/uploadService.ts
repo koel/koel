@@ -112,8 +112,8 @@ export const uploadService = {
 
     try {
       const { status, data } = commonStore.state.supports_presigned_uploads
-        ? await this.uploadToStorage(file, trackProgress)
-        : await this.uploadThroughServer(file, trackProgress)
+        ? await this.uploadViaPresignedUrl(file, trackProgress)
+        : await this.uploadDirectlyToServer(file, trackProgress)
 
       if (status === HTTP_ACCEPTED) {
         file.status = 'Processing'
@@ -160,7 +160,7 @@ export const uploadService = {
     }
   },
 
-  async uploadThroughServer(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
+  async uploadDirectlyToServer(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
     const formData = new FormData()
     formData.append('file', file.file)
 
@@ -170,7 +170,7 @@ export const uploadService = {
     return await promise
   },
 
-  async uploadToStorage(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
+  async uploadViaPresignedUrl(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
     const presigning = postJson<PresignedUpload>('upload/presign', { file_name: file.file.name })
     this.abortHandles.set(file.id, presigning.abort)
     const { data: presigned } = await presigning.promise
