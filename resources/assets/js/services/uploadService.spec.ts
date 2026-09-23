@@ -317,6 +317,14 @@ describe('uploadService', () => {
     expect(file.message).toBe('Server error.')
   })
 
+  it('clears the failure message when a file is reset', () => {
+    const file = createUploadFile({ status: 'Errored', message: 'Server error.' })
+
+    uploadService.resetFile(file)
+
+    expect(file.message).toBeUndefined()
+  })
+
   it('forgets the upload key when a file is reset', () => {
     const file = createUploadFile({ status: 'Errored', uploadKey: '1__abc__song.mp3' })
 

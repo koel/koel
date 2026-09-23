@@ -12,6 +12,9 @@
         <Btn variant="ghost" v-if="canRemove" class="px-3!" icon-only title="Remove" unrounded @click="remove">
           <Icon :icon="faTrashCan" />
         </Btn>
+        <span v-if="isProcessing" class="px-3 text-k-fg-70" title="Processing">
+          <Icon :icon="faSpinner" spin />
+        </span>
       </div>
     </div>
     <p class="text-[.90rem] mt-1 ml-4">
@@ -28,6 +31,7 @@
           >%
         </span>
       </span>
+      <span v-if="isProcessing">Processing&hellip;</span>
       <span v-if="file.status === 'Uploaded'" class="text-k-success">
         <Icon :icon="faCheckCircle" class="mr-1" />
         Uploaded.
@@ -43,6 +47,7 @@ import {
   faExclamationTriangle,
   faInfoCircle,
   faRotateBack,
+  faSpinner,
   faTrashCan,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
@@ -57,11 +62,19 @@ const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
 const { file } = toRefs(props)
 
+const isProcessing = computed(() => file.value.status === 'Processing')
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canAbort = computed(() => file.value.status === 'Uploading')
-const canRemove = computed(() => file.value.status !== 'Uploading')
+const canRemove = computed(() => file.value.status !== 'Uploading' && !isProcessing.value)
 const cssClass = computed(() => file.value.status.toLowerCase())
-const progressBarWidth = computed(() => (file.value.status === 'Uploading' ? `${file.value.progress}%` : '0'))
+
+const progressBarWidth = computed(() => {
+  if (isProcessing.value) {
+    return '100%'
+  }
+
+  return file.value.status === 'Uploading' ? `${file.value.progress}%` : '0'
+})
 
 const { showConfirmDialog } = useDialogBox()
 
