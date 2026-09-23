@@ -9,6 +9,7 @@ use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
 use App\Values\PresignedUpload;
 use App\Values\UploadReference;
 use Illuminate\Container\Attributes\Config;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -28,9 +29,18 @@ class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadU
         $key = $this->generateStorageKey($fileName, $uploader);
         $expiresAt = Carbon::now()->addHour();
 
-        ['url' => $url, 'headers' => $headers] = Storage::disk('s3')->temporaryUploadUrl($key, $expiresAt);
+        ['url' => $url, 'headers' => $headers] = Storage::disk('s3')->temporaryUploadUrl($key, $expiresAt, [
+            'IfNoneMatch' => '*',
+        ]);
 
-        return PresignedUpload::make(key: $key, url: $url, headers: $headers, expiresAt: $expiresAt);
+        $headers = Arr::map($headers, static fn (array|string $value): string => Arr::first(Arr::wrap($value)));
+
+        return PresignedUpload::make(
+            key: $key,
+            url: $url,
+            headers: [...$headers, 'If-None-Match' => '*'],
+            expiresAt: $expiresAt,
+        );
     }
 
     public function ownsUploadKey(string $key, User $uploader): bool

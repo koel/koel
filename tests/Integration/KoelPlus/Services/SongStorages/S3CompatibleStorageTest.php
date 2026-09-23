@@ -90,6 +90,7 @@ class S3CompatibleStorageTest extends PlusTestCase
         self::assertSame("{$user->public_id}__random__full.mp3", $presigned->key);
         self::assertStringContainsString($presigned->key, $presigned->url);
         self::assertTrue($presigned->expiresAt->isFuture());
+        self::assertSame('*', $presigned->headers['If-None-Match']);
     }
 
     #[Test]
