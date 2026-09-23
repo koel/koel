@@ -2,10 +2,7 @@
 
 namespace App\Hooks;
 
-use App\Enums\Hooks\Action;
-use App\Enums\Hooks\Filter;
 use App\Values\HookHandle;
-use BackedEnum;
 use Closure;
 
 class HookRegistry
@@ -18,37 +15,31 @@ class HookRegistry
     /** @var array<string, array<int, array<string, Closure>>> */
     private array $filters = [];
 
-    public function addAction(
-        Action|string $action,
-        Closure $callback,
-        int $priority = self::DEFAULT_PRIORITY,
-    ): HookHandle {
-        $handle = HookHandle::make(self::nameOf($action));
+    public function addAction(string $action, Closure $callback, int $priority = self::DEFAULT_PRIORITY): HookHandle
+    {
+        $handle = HookHandle::make($action);
 
-        $this->actions[$handle->hook][$priority][$handle->id] = $callback;
-        ksort($this->actions[$handle->hook]);
+        $this->actions[$action][$priority][$handle->id] = $callback;
+        ksort($this->actions[$action]);
 
         return $handle;
     }
 
-    public function doAction(Action|string $action, mixed ...$args): void
+    public function doAction(string $action, mixed ...$args): void
     {
-        foreach ($this->actions[self::nameOf($action)] ?? [] as $callbacks) {
+        foreach ($this->actions[$action] ?? [] as $callbacks) {
             foreach ($callbacks as $callback) {
                 $callback(...$args);
             }
         }
     }
 
-    public function addFilter(
-        Filter|string $filter,
-        Closure $callback,
-        int $priority = self::DEFAULT_PRIORITY,
-    ): HookHandle {
-        $handle = HookHandle::make(self::nameOf($filter));
+    public function addFilter(string $filter, Closure $callback, int $priority = self::DEFAULT_PRIORITY): HookHandle
+    {
+        $handle = HookHandle::make($filter);
 
-        $this->filters[$handle->hook][$priority][$handle->id] = $callback;
-        ksort($this->filters[$handle->hook]);
+        $this->filters[$filter][$priority][$handle->id] = $callback;
+        ksort($this->filters[$filter]);
 
         return $handle;
     }
@@ -60,9 +51,9 @@ class HookRegistry
      *
      * @return T
      */
-    public function applyFilters(Filter|string $filter, mixed $value, mixed ...$args): mixed
+    public function applyFilters(string $filter, mixed $value, mixed ...$args): mixed
     {
-        foreach ($this->filters[self::nameOf($filter)] ?? [] as $callbacks) {
+        foreach ($this->filters[$filter] ?? [] as $callbacks) {
             foreach ($callbacks as $callback) {
                 $value = $callback($value, ...$args);
             }
@@ -89,10 +80,5 @@ class HookRegistry
         }
 
         return $callbacks;
-    }
-
-    private static function nameOf(Action|Filter|string $hook): string
-    {
-        return $hook instanceof BackedEnum ? $hook->value : $hook;
     }
 }

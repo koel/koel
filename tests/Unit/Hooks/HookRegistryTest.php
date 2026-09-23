@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Hooks;
 
-use App\Enums\Hooks\Action;
-use App\Enums\Hooks\Filter;
+use App\Hooks\Action;
+use App\Hooks\Filter;
 use App\Hooks\HookRegistry;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -210,17 +210,6 @@ class HookRegistryTest extends TestCase
         $this->registry->doAction('plugin-event');
 
         self::assertSame(1, $calls);
-    }
-
-    #[Test]
-    public function treatAnEnumAndItsValueAsTheSameHook(): void
-    {
-        $this->registry->addFilter(
-            Filter::INITIAL_DATA_FETCHED->value,
-            static fn (array $data): array => $data + ['added' => true],
-        );
-
-        self::assertSame(['added' => true], $this->registry->applyFilters(Filter::INITIAL_DATA_FETCHED, []));
     }
 
     #[Test]
