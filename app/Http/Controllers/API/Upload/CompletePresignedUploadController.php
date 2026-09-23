@@ -53,7 +53,7 @@ class CompletePresignedUploadController extends Controller
         try {
             /** @var Song|PendingDispatch $dispatchedResult */
             $dispatchedResult = Dispatcher::dispatch(
-                new HandlePresignedSongUploadJob($storage->locationFromKey($request->key), $user),
+                new HandlePresignedSongUploadJob($storage->locationFromKey($request->key), $request->key, $user),
             );
 
             if ($dispatchedResult instanceof Song) {

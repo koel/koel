@@ -158,7 +158,7 @@ describe('uploadService', () => {
     expect(proceedMock).toHaveBeenCalled()
   })
 
-  it('marks a queued upload as sent and waits for the broadcast', async () => {
+  it('leaves a queued upload processing until the broadcast resolves it', async () => {
     mockPostWithProgress(null, 202)
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
@@ -166,8 +166,44 @@ describe('uploadService', () => {
     const file = createUploadFile()
     await uploadService.upload(file)
 
-    expect(file.status).toBe('Uploaded')
+    expect(file.status).toBe('Processing')
     expect(handleMock).not.toHaveBeenCalled()
+  })
+
+  it('does not count a processing file against the upload slots', () => {
+    uploadService.state.files = [createUploadFile({ status: 'Processing' }), createUploadFile({ status: 'Uploading' })]
+
+    expect(uploadService.getUploadingFiles()).toHaveLength(1)
+  })
+
+  it('completes a processing file when its broadcast arrives', () => {
+    const file = createUploadFile({ status: 'Processing', uploadKey: '1__abc__song.mp3' })
+    uploadService.state.files = [file]
+
+    uploadService.handleUploadResult({
+      song: h.factory('song').make(),
+      album: h.factory('album').make(),
+      upload_key: '1__abc__song.mp3',
+    })
+
+    expect(file.status).toBe('Uploaded')
+  })
+
+  it('errors a processing file when its upload fails server-side', () => {
+    const file = createUploadFile({ status: 'Processing', uploadKey: '1__abc__song.mp3' })
+    uploadService.state.files = [file]
+    h.mock(uploadService, 'proceed')
+
+    uploadService.handleUploadFailure({ upload_key: '1__abc__song.mp3', message: 'Empty file' })
+
+    expect(file.status).toBe('Errored')
+    expect(file.message).toBe('Upload failed: Empty file')
+  })
+
+  it('ignores a broadcast for a file it no longer has', () => {
+    uploadService.state.files = []
+
+    expect(() => uploadService.handleUploadFailure({ upload_key: 'gone', message: 'Empty file' })).not.toThrow()
   })
 
   it('sends the file straight to storage when the server presigns uploads', async () => {
@@ -194,7 +230,8 @@ describe('uploadService', () => {
     expect(putToStorageMock).toHaveBeenCalledWith(presigned.url, file.file, presigned.headers, expect.any(Function))
     expect(postJsonMock).toHaveBeenNthCalledWith(2, 'upload/complete', { key: presigned.key })
     expect(postWithProgressMock).not.toHaveBeenCalled()
-    expect(file.status).toBe('Uploaded')
+    expect(file.status).toBe('Processing')
+    expect(file.uploadKey).toBe(presigned.key)
     expect(handleMock).not.toHaveBeenCalled()
   })
 

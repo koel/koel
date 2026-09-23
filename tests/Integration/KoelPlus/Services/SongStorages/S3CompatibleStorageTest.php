@@ -103,6 +103,15 @@ class S3CompatibleStorageTest extends PlusTestCase
     }
 
     #[Test]
+    public function anotherUsersIdStartingWithOursIsNotOurs(): void
+    {
+        $user = create_user(['id' => 1]);
+
+        self::assertFalse($this->service->ownsUploadKey('11__random__full.mp3', $user));
+        self::assertFalse($this->service->ownsUploadKey('1337__random__full.mp3', $user));
+    }
+
+    #[Test]
     public function locationFromKey(): void
     {
         self::assertSame('s3://koel/1__random__full.mp3', $this->service->locationFromKey('1__random__full.mp3'));

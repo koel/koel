@@ -6,15 +6,18 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
+use App\Responses\SongUploadFailedResponse;
 use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\SongStorage;
 use App\Services\Upload\UploadService;
 use App\Values\UploadReference;
+use Throwable;
 
 class HandlePresignedSongUploadJob extends QueuedJob
 {
     public function __construct(
         public readonly string $location,
+        public readonly string $uploadKey,
         public readonly User $uploader,
     ) {}
 
@@ -34,8 +37,21 @@ class HandlePresignedSongUploadJob extends QueuedJob
         $populatedSong = $songRepository->getOne($song->id, $this->uploader);
         $album = $albumRepository->getOne($populatedSong->album_id, $this->uploader);
 
-        broadcast(SongUploadResponse::make(song: $populatedSong, album: $album));
+        broadcast(SongUploadResponse::make(song: $populatedSong, album: $album, uploadKey: $this->uploadKey));
 
         return $song;
+    }
+
+    /**
+     * A file Koel cannot make sense of will not become readable on a retry, so tell the uploader
+     * instead of burning attempts and disappearing into the failed jobs table.
+     */
+    public function failed(Throwable $exception): void
+    {
+        broadcast(SongUploadFailedResponse::make(
+            uploader: $this->uploader,
+            uploadKey: $this->uploadKey,
+            message: $exception->getMessage(),
+        ));
     }
 }

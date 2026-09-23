@@ -20,12 +20,19 @@ interface PresignedUpload {
 export interface UploadResult {
   song: Song
   album: Album
+  upload_key?: string | null
 }
 
-export type UploadStatus = 'Ready' | 'Uploading' | 'Uploaded' | 'Canceled' | 'Errored'
+export interface UploadFailure {
+  upload_key: string
+  message: string
+}
+
+export type UploadStatus = 'Ready' | 'Uploading' | 'Processing' | 'Uploaded' | 'Canceled' | 'Errored'
 
 export interface UploadFile {
   id: string
+  uploadKey?: string
   file: File
   status: UploadStatus
   name: string
@@ -108,13 +115,14 @@ export const uploadService = {
         ? await this.uploadToStorage(file, trackProgress)
         : await this.uploadThroughServer(file, trackProgress)
 
-      file.status = 'Uploaded'
-
-      if (status !== HTTP_ACCEPTED && data) {
-        this.handleUploadResult(data)
+      if (status === HTTP_ACCEPTED) {
+        file.status = 'Processing'
+      } else {
+        file.status = 'Uploaded'
+        data && this.handleUploadResult(data)
+        window.setTimeout(() => this.remove(file), 1000)
       }
 
-      window.setTimeout(() => this.remove(file), 1000)
       this.proceed()
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') {
@@ -166,6 +174,7 @@ export const uploadService = {
     const presigning = postJson<PresignedUpload>('upload/presign', { file_name: file.file.name })
     this.abortHandles.set(file.id, presigning.abort)
     const { data: presigned } = await presigning.promise
+    file.uploadKey = presigned.key
 
     const sending = putToStorageWithProgress(presigned.url, file.file, presigned.headers, onProgress)
     this.abortHandles.set(file.id, sending.abort)
@@ -203,12 +212,33 @@ export const uploadService = {
     this.state.duplicatedSongs = []
   },
 
-  handleUploadResult: (result: UploadResult) => {
+  handleUploadResult(result: UploadResult) {
     playableStore.syncWithVault(result.song)
     playableStore.invalidateAlbumAndArtistSongCaches(result.song)
     albumStore.syncWithVault(result.album)
     commonStore.state.song_length += 1
     eventBus.emit('SONG_UPLOADED', result.song)
+
+    const file = this.findByUploadKey(result.upload_key)
+
+    if (file) {
+      file.status = 'Uploaded'
+      window.setTimeout(() => this.remove(file), 1000)
+    }
+  },
+
+  handleUploadFailure(failure: UploadFailure) {
+    const file = this.findByUploadKey(failure.upload_key)
+
+    if (file) {
+      file.status = 'Errored'
+      file.message = `Upload failed: ${failure.message}`
+      this.proceed()
+    }
+  },
+
+  findByUploadKey(key?: string | null) {
+    return key ? this.state.files.find(file => file.uploadKey === key) : undefined
   },
 
   retry(file: UploadFile) {
