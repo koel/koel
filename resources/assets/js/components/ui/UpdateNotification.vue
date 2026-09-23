@@ -21,7 +21,9 @@ import Btn from '@/components/ui/form/Btn.vue'
 const newerVersionDeployed = ref(false)
 
 useEventListener(window, 'vite:preloadError', async () => {
-  newerVersionDeployed.value ||= await isNewerVersionDeployed()
+  if (await isNewerVersionDeployed()) {
+    newerVersionDeployed.value = true
+  }
 })
 </script>
 
