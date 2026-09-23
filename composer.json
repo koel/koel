@@ -27,7 +27,7 @@
     "laravel/sanctum": "^4.0",
     "laravel/scout": "^11.0",
     "jwilsson/spotify-web-api-php": "^5.2",
-    "meilisearch/meilisearch-php": "^0.24.0",
+    "meilisearch/meilisearch-php": "^1.0",
     "http-interop/http-factory-guzzle": "^1.2",
     "league/flysystem-aws-s3-v3": "^3.0",
     "spatie/flysystem-dropbox": "^3.0",
