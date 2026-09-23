@@ -79,7 +79,8 @@ class PresignedUploadTest extends PlusTestCase
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
         $this->fetchesTheObjectAsALocalCopy();
 
-        $this->postAs('api/upload/complete', ['key' => $key], $user)
+        $this
+            ->postAs('api/upload/complete', ['key' => $key], $user)
             ->assertOk()
             ->assertJsonStructure(['song', 'album']);
 
@@ -115,7 +116,8 @@ class PresignedUploadTest extends PlusTestCase
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
         $this->fetchesTheObjectAsALocalCopy();
 
-        $this->postAs('api/upload/complete', ['key' => $key], $user)
+        $this
+            ->postAs('api/upload/complete', ['key' => $key], $user)
             ->assertOk()
             ->assertJsonStructure(['song', 'album']);
 
