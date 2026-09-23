@@ -11,6 +11,7 @@ use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\SongStorage;
 use App\Services\Upload\UploadService;
 use App\Values\UploadReference;
+use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 class HandlePresignedSongUploadJob extends QueuedJob
@@ -44,8 +45,15 @@ class HandlePresignedSongUploadJob extends QueuedJob
         return $song;
     }
 
+    public static function claimKeyFor(string $location): string
+    {
+        return 'presigned-upload:' . simple_hash($location);
+    }
+
     public function failed(Throwable $exception): void
     {
+        Cache::forget(self::claimKeyFor($this->location));
+
         broadcast(SongUploadFailedResponse::make(
             uploader: $this->uploader,
             uploadKey: $this->uploadKey,

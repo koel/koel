@@ -20,6 +20,7 @@ use App\Services\SongStorages\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[DisabledInDemo]
@@ -56,6 +57,12 @@ class CompletePresignedUploadController extends Controller
             $storage->sizeOfUpload($request->key) > UploadedFile::getMaxFilesize(),
             Response::HTTP_REQUEST_ENTITY_TOO_LARGE,
             'The uploaded file is too large.',
+        );
+
+        abort_unless(
+            Cache::add(HandlePresignedSongUploadJob::claimKeyFor($location), true, now()->addHour()),
+            Response::HTTP_CONFLICT,
+            'This upload is already being processed.',
         );
 
         try {

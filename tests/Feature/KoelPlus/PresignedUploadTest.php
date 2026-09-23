@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\KoelPlus;
 
+use App\Jobs\HandlePresignedSongUploadJob;
 use App\Models\Song;
 use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\S3CompatibleStorage;
 use App\Services\SongStorages\SongStorage;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -136,6 +138,18 @@ class PresignedUploadTest extends PlusTestCase
         $this->postAs('api/upload/complete', ['key' => $key], $user)->assertConflict();
 
         self::assertSame(1, Song::query()->where('path', "s3://koel/$key")->count());
+    }
+
+    #[Test]
+    public function refusesASecondCompletionWhileTheFirstIsStillQueued(): void
+    {
+        $user = create_user();
+        $key = "{$user->public_id}__random__song.mp3";
+        Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
+
+        Cache::add(HandlePresignedSongUploadJob::claimKeyFor("s3://koel/$key"), true, now()->addHour());
+
+        $this->postAs('api/upload/complete', ['key' => $key], $user)->assertConflict();
     }
 
     #[Test]
