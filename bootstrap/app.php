@@ -20,6 +20,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Sentry\Laravel\Integration as SentryIntegration;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -68,6 +69,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo('/');
     })
     ->withExceptions(static function (Exceptions $exceptions): void {
+        if (config('sentry.dsn')) {
+            SentryIntegration::handles($exceptions);
+        }
+
         $exceptions->render(static function (
             AuthenticationException $e,
             Request $request,

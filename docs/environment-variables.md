@@ -177,6 +177,7 @@ Additional providers (Gemini, Ollama, etc.) can be configured in `config/ai.php`
 |---|---|---|
 | `TRUSTED_HOSTS` | A comma-separated list of hostnames allowed to access Koel. Leave empty to allow any hostname. Example: `localhost,192.168.0.1,yourdomain.com` | _(empty)_ |
 | `FORCE_HTTPS` | Force Koel to use HTTPS URLs. Set to `true` if automatic detection fails. | `false` |
+| `SENTRY_LARAVEL_DSN` | Report unhandled exceptions to [Sentry](https://sentry.io). Leave empty to disable reporting entirely. Events are tagged with `APP_ENV`. | _(empty)_ |
 | `BACKUP_ON_DELETE` | Whether to create a backup of a song when deleting it from the filesystem. | `true` |
 | `CDN_URL` | A CDN URL mapped to Koel's home URL, used to serve media files. No trailing slash. | _(empty)_ |
 | `IMAGE_STORAGE_DRIVER` | The filesystem driver for artwork — album covers, artist images and avatars. Use `s3` to keep them on S3 or an S3-compatible service such as Cloudflare R2, reusing the `AWS_*` settings. | `local` |

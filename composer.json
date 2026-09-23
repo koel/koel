@@ -54,7 +54,8 @@
     "league/flysystem-webdav": "^3.0",
     "mlocati/ip-lib": "^1.22",
     "robthree/twofactorauth": "^3.0",
-    "intervention/image": "^4.0"
+    "intervention/image": "^4.0",
+    "sentry/sentry-laravel": "^4.27"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
