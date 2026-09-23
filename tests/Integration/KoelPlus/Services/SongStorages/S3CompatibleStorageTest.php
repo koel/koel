@@ -103,6 +103,26 @@ class S3CompatibleStorageTest extends PlusTestCase
     }
 
     #[Test]
+    public function aKeyThatClimbsOutOfItsPrefixIsNotOurs(): void
+    {
+        $user = create_user();
+
+        self::assertFalse($this->service->ownsUploadKey("{$user->public_id}__random__../../secret.mp3", $user));
+        self::assertFalse($this->service->ownsUploadKey("{$user->public_id}__random__..\\secret.mp3", $user));
+    }
+
+    #[Test]
+    public function stripsAnyPathFromTheUploadedName(): void
+    {
+        Ulid::freeze('random');
+        $user = create_user();
+
+        $presigned = $this->service->presignUpload('../../etc/passwd.mp3', $user);
+
+        self::assertSame("{$user->public_id}__random__passwd.mp3", $presigned->key);
+    }
+
+    #[Test]
     public function locationFromKey(): void
     {
         self::assertSame('s3://koel/1__random__full.mp3', $this->service->locationFromKey('1__random__full.mp3'));

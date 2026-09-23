@@ -20,17 +20,19 @@ class SongStorageServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind(SongStorage::class, function () {
-            $concrete = match (config('koel.storage_driver')) {
-                's3' => S3CompatibleStorage::class,
-                'dropbox' => DropboxStorage::class,
-                'sftp' => SftpStorage::class,
-                'webdav' => WebDAVStorage::class,
-                default => LocalStorage::class,
-            };
+        $this->app->bind(SongStorage::class, fn () => $this->app->make(self::configuredStorageClass()));
+    }
 
-            return $this->app->make($concrete);
-        });
+    /** @return class-string<SongStorage> */
+    public static function configuredStorageClass(): string
+    {
+        return match (config('koel.storage_driver')) {
+            's3' => S3CompatibleStorage::class,
+            'dropbox' => DropboxStorage::class,
+            'sftp' => SftpStorage::class,
+            'webdav' => WebDAVStorage::class,
+            default => LocalStorage::class,
+        };
     }
 
     public function boot(): void

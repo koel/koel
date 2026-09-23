@@ -115,7 +115,7 @@ export const uploadService = {
         ? await this.uploadViaPresignedUrl(file, trackProgress)
         : await this.uploadDirectlyToServer(file, trackProgress)
 
-      if (status === HTTP_ACCEPTED) {
+      if (status === HTTP_ACCEPTED && file.uploadKey) {
         if (file.status === 'Uploading') {
           file.status = 'Processing'
         }

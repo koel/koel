@@ -158,12 +158,22 @@ describe('uploadService', () => {
     expect(proceedMock).toHaveBeenCalled()
   })
 
+  it('finishes a keyless queued upload rather than stranding it', async () => {
+    mockPostWithProgress(null, 202)
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Uploaded')
+  })
+
   it('leaves a queued upload processing until the broadcast resolves it', async () => {
     mockPostWithProgress(null, 202)
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
 
-    const file = createUploadFile()
+    const file = createUploadFile({ uploadKey: '1__abc__song.mp3' })
     await uploadService.upload(file)
 
     expect(file.status).toBe('Processing')

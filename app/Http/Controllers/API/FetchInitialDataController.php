@@ -13,6 +13,7 @@ use App\Http\Resources\ThemeResource;
 use App\Http\Resources\UserResource;
 use App\Models\Setting;
 use App\Models\User;
+use App\Providers\SongStorageServiceProvider;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
@@ -28,7 +29,6 @@ use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\MediaBrowser;
 use App\Services\QueueService;
 use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
-use App\Services\SongStorages\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class FetchInitialDataController extends Controller
@@ -43,7 +43,6 @@ class FetchInitialDataController extends Controller
         QueueService $queueService,
         ThemeRepository $themeRepository,
         LicenseServiceInterface $licenseService,
-        SongStorage $storage,
         Authenticatable $user,
     ) {
         $licenseStatus = $licenseService->getStatus();
@@ -92,7 +91,11 @@ class FetchInitialDataController extends Controller
                 'product_id' => config('lemonsqueezy.product_id'),
             ],
             'storage_driver' => config('koel.storage_driver'),
-            'supports_presigned_uploads' => $storage instanceof IssuesPresignedUploadUrls,
+            'supports_presigned_uploads' => is_a(
+                SongStorageServiceProvider::configuredStorageClass(),
+                IssuesPresignedUploadUrls::class,
+                allow_string: true,
+            ),
             'dir_separator' => DIRECTORY_SEPARATOR,
             'current_theme' => $theme ? ThemeResource::make($theme) : null,
         ]));
