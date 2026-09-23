@@ -4,6 +4,7 @@ namespace Tests\Unit\Hooks;
 
 use App\Enums\Hooks\Action;
 use App\Enums\Hooks\Filter;
+use App\Facades\Hooks;
 use App\Hooks\HookRegistry;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -14,7 +15,7 @@ class HookHelpersTest extends TestCase
     {
         parent::setUp();
 
-        $this->app->instance(HookRegistry::class, new HookRegistry());
+        Hooks::swap(new HookRegistry());
     }
 
     #[Test]
