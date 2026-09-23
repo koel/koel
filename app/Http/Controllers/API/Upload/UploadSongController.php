@@ -52,7 +52,7 @@ class UploadSongController extends Controller
                 return SongUploadResponse::make(song: $song, album: $album)->toResponse();
             }
 
-            return response()->noContent();
+            return response()->noContent(Response::HTTP_ACCEPTED);
         } catch (DuplicateSongUploadException $e) {
             return response()->json(new DuplicateUploadResource($e->duplicateUpload), Response::HTTP_CONFLICT);
         } catch (MediaPathNotSetException $e) {

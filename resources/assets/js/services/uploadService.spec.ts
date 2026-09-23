@@ -142,16 +142,15 @@ describe('uploadService', () => {
     expect(proceedMock).toHaveBeenCalled()
   })
 
-  it('marks file as errored if response is malformed', async () => {
-    mockPostWithProgress({ message: 'The POST data is too large.' })
+  it('marks a queued upload as sent and waits for the broadcast', async () => {
+    mockPostWithProgress(null)
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
     await uploadService.upload(file)
 
-    expect(file.status).toBe('Errored')
-    expect(file.message).toContain('unexpected response')
+    expect(file.status).toBe('Uploaded')
     expect(handleMock).not.toHaveBeenCalled()
   })
 
