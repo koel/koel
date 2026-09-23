@@ -13,14 +13,15 @@ export const socketService = {
     const { default: PusherLib } = await import('pusher-js')
 
     this.pusher = new PusherLib(window.KOEL.pusher.app_key, {
-      authEndpoint: `${window.KOEL.base_url}api/broadcasting/auth`,
-      auth: {
+      channelAuthorization: {
+        endpoint: `${window.KOEL.base_url}api/broadcasting/auth`,
+        transport: 'ajax',
         headers: {
           Authorization: `Bearer ${authService.getApiToken()}`,
         },
       },
       cluster: window.KOEL.pusher.app_cluster,
-      encrypted: true,
+      forceTLS: true,
     })
 
     this.channel = this.pusher.subscribe('private-koel')

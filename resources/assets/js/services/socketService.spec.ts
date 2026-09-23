@@ -26,6 +26,7 @@ vi.mock('@/services/authService', () => ({
   },
 }))
 
+import PusherLib from 'pusher-js'
 import { socketService } from './socketService'
 import { userStore } from '@/stores/userStore'
 
@@ -45,6 +46,16 @@ describe('socketService', () => {
     const result = await socketService.init()
     expect(result).toBe(true)
     expect(mockPusherInstance.subscribe).toHaveBeenCalledWith('private-koel')
+
+    expect(PusherLib).toHaveBeenCalledWith('test-key', {
+      cluster: 'mt1',
+      forceTLS: true,
+      channelAuthorization: {
+        endpoint: 'http://localhost/api/broadcasting/auth',
+        transport: 'ajax',
+        headers: { Authorization: 'Bearer test-token' },
+      },
+    })
   })
 
   it('broadcasts events', () => {
