@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Hooks;
 
-use App\Enums\Hooks\Action;
-use App\Enums\Hooks\Filter;
 use App\Facades\Hooks;
+use App\Hooks\Action;
+use App\Hooks\Filter;
 use App\Hooks\HookRegistry;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

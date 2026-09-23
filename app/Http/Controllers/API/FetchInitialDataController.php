@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Enums\Acl\Permission;
-use App\Enums\Hooks\Filter;
 use App\Facades\License;
+use App\Hooks\Filter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
