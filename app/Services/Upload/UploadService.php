@@ -11,6 +11,7 @@ use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
+use App\Values\UploadReference;
 use Illuminate\Support\Facades\File;
 use Throwable;
 
@@ -27,8 +28,11 @@ class UploadService
 
     public function handleUpload(string $filePath, User $uploader): Song
     {
-        $uploadReference = $this->storage->storeUploadedFile($filePath, $uploader);
+        return $this->handleStoredUpload($this->storage->storeUploadedFile($filePath, $uploader), $uploader);
+    }
 
+    public function handleStoredUpload(UploadReference $uploadReference, User $uploader): Song
+    {
         try {
             $this->duplicateUploadService->detectDuplicate($uploadReference->localPath, $uploadReference, $uploader);
 

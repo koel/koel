@@ -1,6 +1,7 @@
 import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
+import { postJson, putToStorageWithProgress } from '@/services/httpUpload'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -9,15 +10,29 @@ import { logger } from '@/utils/logger'
 
 const HTTP_ACCEPTED = 202
 
+interface PresignedUpload {
+  key: string
+  url: string
+  headers: Record<string, string>
+  expires_at: string
+}
+
 export interface UploadResult {
   song: Song
   album: Album
+  upload_key?: string | null
 }
 
-export type UploadStatus = 'Ready' | 'Uploading' | 'Uploaded' | 'Canceled' | 'Errored'
+export interface UploadFailure {
+  upload_key: string
+  message: string
+}
+
+export type UploadStatus = 'Ready' | 'Uploading' | 'Processing' | 'Uploaded' | 'Canceled' | 'Errored'
 
 export interface UploadFile {
   id: string
+  uploadKey?: string
   file: File
   status: UploadStatus
   name: string
@@ -90,27 +105,26 @@ export const uploadService = {
       return
     }
 
-    const formData = new FormData()
-    formData.append('file', file.file)
     file.progress = 0
     file.status = 'Uploading'
 
-    const { promise, abort } = postWithProgress<UploadResult | null>('upload', formData, (e: ProgressEvent) => {
-      file.progress = (e.loaded * 100) / e.total
-    })
-
-    this.abortHandles.set(file.id, abort)
+    const trackProgress = (e: ProgressEvent) => (file.progress = (e.loaded * 100) / e.total)
 
     try {
-      const { status, data } = await promise
+      const { status, data } = commonStore.state.supports_presigned_uploads
+        ? await this.uploadViaPresignedUrl(file, trackProgress)
+        : await this.uploadDirectlyToServer(file, trackProgress)
 
-      file.status = 'Uploaded'
-
-      if (status !== HTTP_ACCEPTED && data) {
-        this.handleUploadResult(data)
+      if (status === HTTP_ACCEPTED && file.uploadKey) {
+        if (file.status === 'Uploading') {
+          file.status = 'Processing'
+        }
+      } else {
+        file.status = 'Uploaded'
+        data && this.handleUploadResult(data)
+        window.setTimeout(() => this.remove(file), 1000)
       }
 
-      window.setTimeout(() => this.remove(file), 1000)
       this.proceed()
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') {
@@ -148,6 +162,32 @@ export const uploadService = {
     }
   },
 
+  async uploadDirectlyToServer(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
+    const formData = new FormData()
+    formData.append('file', file.file)
+
+    const { promise, abort } = postWithProgress<UploadResult | null>('upload', formData, onProgress)
+    this.abortHandles.set(file.id, abort)
+
+    return await promise
+  },
+
+  async uploadViaPresignedUrl(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
+    const presigning = postJson<PresignedUpload>('upload/presign', { file_name: file.file.name })
+    this.abortHandles.set(file.id, presigning.abort)
+    const { data: presigned } = await presigning.promise
+    file.uploadKey = presigned.key
+
+    const sending = putToStorageWithProgress(presigned.url, file.file, presigned.headers, onProgress)
+    this.abortHandles.set(file.id, sending.abort)
+    await sending.promise
+
+    const completing = postJson<UploadResult | null>('upload/complete', { key: presigned.key })
+    this.abortHandles.set(file.id, completing.abort)
+
+    return await completing.promise
+  },
+
   async fetchDuplicates() {
     this.state.duplicatedSongs = await http.get<DuplicateUpload[]>('duplicate-uploads')
   },
@@ -174,12 +214,33 @@ export const uploadService = {
     this.state.duplicatedSongs = []
   },
 
-  handleUploadResult: (result: UploadResult) => {
+  handleUploadResult(result: UploadResult) {
     playableStore.syncWithVault(result.song)
     playableStore.invalidateAlbumAndArtistSongCaches(result.song)
     albumStore.syncWithVault(result.album)
     commonStore.state.song_length += 1
     eventBus.emit('SONG_UPLOADED', result.song)
+
+    const file = this.findByUploadKey(result.upload_key)
+
+    if (file) {
+      file.status = 'Uploaded'
+      window.setTimeout(() => this.remove(file), 1000)
+    }
+  },
+
+  handleUploadFailure(failure: UploadFailure) {
+    const file = this.findByUploadKey(failure.upload_key)
+
+    if (file) {
+      file.status = 'Errored'
+      file.message = `Upload failed: ${failure.message}`
+      this.proceed()
+    }
+  },
+
+  findByUploadKey(key?: string | null) {
+    return key ? this.state.files.find(file => file.uploadKey === key) : undefined
   },
 
   retry(file: UploadFile) {
@@ -189,13 +250,15 @@ export const uploadService = {
   },
 
   retryAll() {
-    this.state.files.forEach(this.resetFile)
+    this.state.files.filter(({ status }) => status === 'Errored' || status === 'Canceled').forEach(this.resetFile)
+
     this.proceed()
   },
 
   resetFile: (file: UploadFile) => {
     file.status = 'Ready'
     file.progress = 0
+    file.uploadKey = undefined
   },
 
   removeFailed() {

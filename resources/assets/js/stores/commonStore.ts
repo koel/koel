@@ -41,6 +41,7 @@ const initialState = {
   users: [] as User[],
   uses_you_tube: false,
   storage_driver: 'local',
+  supports_presigned_uploads: false,
   song_count: 0,
   song_length: 0,
   queue_state: {

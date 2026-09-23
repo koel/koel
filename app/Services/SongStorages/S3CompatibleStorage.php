@@ -5,13 +5,17 @@ namespace App\Services\SongStorages;
 use App\Enums\SongStorageType;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
+use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
+use App\Values\PresignedUpload;
 use App\Values\UploadReference;
 use Illuminate\Container\Attributes\Config;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class S3CompatibleStorage extends CloudStorage
+class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadUrls
 {
     use DeletesUsingFilesystem;
 
@@ -19,6 +23,44 @@ class S3CompatibleStorage extends CloudStorage
         #[Config('filesystems.disks.s3.bucket')]
         private readonly ?string $bucket = null,
     ) {}
+
+    public function presignUpload(string $fileName, User $uploader): PresignedUpload
+    {
+        $key = $this->generateStorageKey($fileName, $uploader);
+        $expiresAt = Carbon::now()->addHour();
+
+        ['url' => $url, 'headers' => $headers] = Storage::disk('s3')->temporaryUploadUrl($key, $expiresAt, [
+            'IfNoneMatch' => '*',
+        ]);
+
+        $headers = Arr::map($headers, static fn (array|string $value): string => Arr::first(Arr::wrap($value)));
+
+        return PresignedUpload::make(
+            key: $key,
+            url: $url,
+            headers: [...$headers, 'If-None-Match' => '*'],
+            expiresAt: $expiresAt,
+        );
+    }
+
+    public function ownsUploadKey(string $key, User $uploader): bool
+    {
+        if (Str::contains($key, ['/', '\\'])) {
+            return false;
+        }
+
+        return Str::startsWith($key, "{$uploader->public_id}__");
+    }
+
+    public function sizeOfUpload(string $key): int
+    {
+        return Storage::disk('s3')->size($key);
+    }
+
+    public function locationFromKey(string $key): string
+    {
+        return "s3://$this->bucket/$key";
+    }
 
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
     {
