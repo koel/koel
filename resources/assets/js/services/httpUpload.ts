@@ -1,7 +1,12 @@
 import { authService } from '@/services/authService'
 
+export interface UploadResponse<T> {
+  status: number
+  data: T
+}
+
 export interface UploadHandle<T> {
-  promise: Promise<T>
+  promise: Promise<UploadResponse<T>>
   abort: () => void
 }
 
@@ -15,7 +20,7 @@ export const postWithProgress = <T>(
 ): UploadHandle<T> => {
   const xhr = new XMLHttpRequest()
 
-  const promise = new Promise<T>((resolve, reject) => {
+  const promise = new Promise<UploadResponse<T>>((resolve, reject) => {
     xhr.open('POST', `${window.KOEL.base_url}api/${url}`)
     xhr.setRequestHeader('Accept', 'application/json')
     xhr.setRequestHeader('Authorization', `Bearer ${authService.getApiToken()}`)
@@ -33,7 +38,7 @@ export const postWithProgress = <T>(
       }
 
       if (xhr.status >= 200 && xhr.status < 300) {
-        resolve(responseData as T)
+        resolve({ status: xhr.status, data: responseData as T })
       } else {
         const error = Object.assign(new Error(`Upload failed with status ${xhr.status}`), {
           responseData,

@@ -7,6 +7,8 @@ import { playableStore } from '@/stores/playableStore'
 import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 
+const HTTP_ACCEPTED = 202
+
 export interface UploadResult {
   song: Song
   album: Album
@@ -100,12 +102,12 @@ export const uploadService = {
     this.abortHandles.set(file.id, abort)
 
     try {
-      const result = await promise
+      const { status, data } = await promise
 
       file.status = 'Uploaded'
 
-      if (result?.song && result?.album) {
-        this.handleUploadResult(result)
+      if (status !== HTTP_ACCEPTED && data) {
+        this.handleUploadResult(data)
       }
 
       window.setTimeout(() => this.remove(file), 1000)
