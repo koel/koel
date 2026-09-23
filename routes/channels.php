@@ -7,7 +7,8 @@ Broadcast::channel('user.{publicId}', static function (User $user, $publicId): b
     return $user->is(User::query()->where('public_id', $publicId)->firstOrFail());
 });
 
-// Remote control is peer-to-peer: the browsers exchange client-* events over this channel and the
-// server never sees them. Every user of the installation shares it, with the event name carrying
-// the user id.
-Broadcast::channel('koel', static fn (User $user): bool => (bool) $user);
+// Remote control is peer-to-peer: a user's devices exchange client-* events here and the server
+// never sees them.
+Broadcast::channel('koel.{publicId}', static function (User $user, string $publicId): bool {
+    return $user->public_id === $publicId;
+});

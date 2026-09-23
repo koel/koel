@@ -129,7 +129,7 @@ Route::prefix('api')
             Route::get('one-time-token', GetOneTimeTokenController::class);
             // @mago-ignore lint:prefer-first-class-callable (a facade callable is resolved when the
             // route is defined, which hands Broadcast::auth the wrong request)
-            Route::post('broadcasting/auth', static fn (Request $request) => Broadcast::auth($request))->name(
+            Route::post('broadcasting/auth', static fn (Request $request): mixed => Broadcast::auth($request))->name(
                 'broadcasting.auth',
             );
 

@@ -42,10 +42,12 @@ describe('socketService', () => {
   it('inits with a Pusher app key', async () => {
     window.KOEL.pusher = { app_key: 'test-key', app_cluster: 'mt1' }
     window.KOEL.base_url = 'http://localhost/'
+    const user = h.factory('user').make() as CurrentUser
+    userStore.state.current = user
 
     const result = await socketService.init()
     expect(result).toBe(true)
-    expect(mockPusherInstance.subscribe).toHaveBeenCalledWith('private-koel')
+    expect(mockPusherInstance.subscribe).toHaveBeenCalledWith(`private-koel.${user.id}`)
 
     expect(PusherLib).toHaveBeenCalledWith('test-key', {
       cluster: 'mt1',
@@ -63,7 +65,7 @@ describe('socketService', () => {
     userStore.state.current = user
 
     socketService.broadcast('TEST_EVENT', { foo: 'bar' })
-    expect(mockChannel.trigger).toHaveBeenCalledWith(`client-TEST_EVENT.${user.id}`, { foo: 'bar' })
+    expect(mockChannel.trigger).toHaveBeenCalledWith('client-TEST_EVENT', { foo: 'bar' })
   })
 
   it('listens to events', () => {
@@ -72,7 +74,7 @@ describe('socketService', () => {
 
     const cb = vi.fn()
     socketService.listen('TEST_EVENT', cb)
-    expect(mockChannel.bind).toHaveBeenCalledWith(`client-TEST_EVENT.${user.id}`, expect.any(Function))
+    expect(mockChannel.bind).toHaveBeenCalledWith('client-TEST_EVENT', expect.any(Function))
   })
 
   it('returns itself for chaining', () => {

@@ -60,15 +60,32 @@ class BroadcastingAuthTest extends TestCase
     }
 
     #[Test]
-    public function signsTheSharedRemoteControlChannel(): void
+    public function signsTheUsersOwnRemoteControlChannel(): void
     {
+        $user = create_user();
+
         $this->postAs(
             'api/broadcasting/auth',
             [
-                'channel_name' => 'private-koel',
+                'channel_name' => "private-koel.$user->public_id",
+                'socket_id' => '1234.5678',
+            ],
+            $user,
+        )->assertOk();
+    }
+
+    #[Test]
+    public function refusesToSignAnotherUsersRemoteControlChannel(): void
+    {
+        $someoneElse = create_user();
+
+        $this->postAs(
+            'api/broadcasting/auth',
+            [
+                'channel_name' => "private-koel.$someoneElse->public_id",
                 'socket_id' => '1234.5678',
             ],
             create_user(),
-        )->assertOk();
+        )->assertForbidden();
     }
 }

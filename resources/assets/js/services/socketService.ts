@@ -24,18 +24,18 @@ export const socketService = {
       forceTLS: true,
     })
 
-    this.channel = this.pusher.subscribe('private-koel')
+    this.channel = this.pusher.subscribe(`private-koel.${userStore.current.id}`)
 
     return true
   },
 
   broadcast(eventName: string, data: any = {}) {
-    this.channel?.trigger(`client-${eventName}.${userStore.current.id}`, data)
+    this.channel?.trigger(`client-${eventName}`, data)
     return this
   },
 
   listen(eventName: string, cb: Closure) {
-    this.channel?.bind(`client-${eventName}.${userStore.current.id}`, data => cb(data))
+    this.channel?.bind(`client-${eventName}`, data => cb(data))
     return this
   },
 }
