@@ -96,8 +96,8 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
 use App\Http\Controllers\Download\CheckDownloadableCountController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use Pusher\Pusher;
 
 Route::prefix('api')
     ->middleware('api')
@@ -127,19 +127,11 @@ Route::prefix('api')
         // @mago-ignore lint:halstead (a flat list of route definitions, not logic to break up)
         Route::middleware('auth')->group(static function (): void {
             Route::get('one-time-token', GetOneTimeTokenController::class);
-            Route::post('broadcasting/auth', static function (Request $request) {
-                $pusher = new Pusher(
-                    config('broadcasting.connections.pusher.key'),
-                    config('broadcasting.connections.pusher.secret'),
-                    config('broadcasting.connections.pusher.app_id'),
-                    [
-                        'cluster' => config('broadcasting.connections.pusher.options.cluster'),
-                        'encrypted' => true,
-                    ],
-                );
-
-                return $pusher->authorizeChannel($request->input('channel_name'), $request->input('socket_id'));
-            })->name('broadcasting.auth');
+            // @mago-ignore lint:prefer-first-class-callable (a facade callable is resolved when the
+            // route is defined, which hands Broadcast::auth the wrong request)
+            Route::post('broadcasting/auth', static fn (Request $request): mixed => Broadcast::auth($request))->name(
+                'broadcasting.auth',
+            );
 
             Route::get('overview', FetchOverviewController::class);
             Route::get('data', FetchInitialDataController::class);

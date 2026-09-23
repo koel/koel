@@ -9,8 +9,7 @@ export const broadcastSubscriber = {
   echo: null as Echo<Broadcaster> | null,
 
   async newEchoInstance(): Promise<Echo<Broadcaster>> {
-    const key = import.meta.env.VITE_PUSHER_APP_KEY
-    const cluster = import.meta.env.VITE_PUSHER_APP_CLUSTER
+    const { app_key: key, app_cluster: cluster } = window.KOEL.pusher
 
     const { default: EchoLib } = await import('laravel-echo')
 
@@ -28,6 +27,7 @@ export const broadcastSubscriber = {
       cluster,
       broadcaster: 'pusher',
       forceTLS: true,
+      authEndpoint: `${window.KOEL.base_url}api/broadcasting/auth`,
       bearerToken: authService.getApiToken(),
     })
   },
