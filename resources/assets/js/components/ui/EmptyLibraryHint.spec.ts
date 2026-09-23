@@ -35,6 +35,18 @@ describe('emptyLibraryHint.vue', () => {
     expect(screen.queryByText('Have you set up your library yet?')).toBeNull()
   })
 
+  it('says nothing to an uploader who cannot fix the missing media path', async () => {
+    commonStore.state.storage_driver = 'local'
+    commonStore.state.media_path_set = false
+
+    await h.withPlusEdition(async () => {
+      h.actingAsUser(h.factory('user').make({ abilities: [] }) as CurrentUser).render(Component)
+
+      expect(screen.queryByText('Upload some music')).toBeNull()
+      expect(screen.queryByText('Have you set up your library yet?')).toBeNull()
+    })
+  })
+
   it('says nothing to a user who can neither configure nor upload', () => {
     commonStore.state.storage_driver = 'local'
     commonStore.state.media_path_set = false

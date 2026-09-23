@@ -1,5 +1,5 @@
 <template>
-  <span v-if="libraryNeedsSetup || allowsUpload" class="secondary block">
+  <span v-if="libraryNeedsSetup || canUploadIntoLibrary" class="secondary block">
     <template v-if="libraryNeedsSetup">Have you set up your library yet?</template>
     <template v-else> <a :href="url('upload')" class="inline">Upload some music</a> to get started. </template>
   </span>
@@ -16,4 +16,5 @@ const { url } = useRouter()
 const { allowsUpload, mediaPathSetUp } = useUpload()
 
 const libraryNeedsSetup = computed(() => !mediaPathSetUp.value && currentUserCan.manageSettings())
+const canUploadIntoLibrary = computed(() => mediaPathSetUp.value && allowsUpload.value)
 </script>
