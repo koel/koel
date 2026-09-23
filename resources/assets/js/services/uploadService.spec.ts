@@ -317,6 +317,20 @@ describe('uploadService', () => {
     expect(file.message).toBe('Server error.')
   })
 
+  it('retries only the files that can be retried', () => {
+    const errored = createUploadFile({ status: 'Errored' })
+    const processing = createUploadFile({ status: 'Processing' })
+    const uploading = createUploadFile({ status: 'Uploading' })
+    uploadService.state.files = [errored, processing, uploading]
+    h.mock(uploadService, 'proceed')
+
+    uploadService.retryAll()
+
+    expect(errored.status).toBe('Ready')
+    expect(processing.status).toBe('Processing')
+    expect(uploading.status).toBe('Uploading')
+  })
+
   it('aborts a presigned upload while it is still being presigned', async () => {
     commonStore.state.supports_presigned_uploads = true
 

@@ -44,6 +44,14 @@ class CompletePresignedUploadController extends Controller
 
         abort_unless($storage->ownsUploadKey($request->key, $user), Response::HTTP_FORBIDDEN);
 
+        $location = $storage->locationFromKey($request->key);
+
+        abort_if(
+            (bool) $songRepository->findOneByPath($location),
+            Response::HTTP_CONFLICT,
+            'This upload has already been completed.',
+        );
+
         abort_if(
             $storage->sizeOfUpload($request->key) > UploadedFile::getMaxFilesize(),
             Response::HTTP_REQUEST_ENTITY_TOO_LARGE,
@@ -52,9 +60,7 @@ class CompletePresignedUploadController extends Controller
 
         try {
             /** @var Song|PendingDispatch $dispatchedResult */
-            $dispatchedResult = Dispatcher::dispatch(
-                new HandlePresignedSongUploadJob($storage->locationFromKey($request->key), $request->key, $user),
-            );
+            $dispatchedResult = Dispatcher::dispatch(new HandlePresignedSongUploadJob($location, $request->key, $user));
 
             if ($dispatchedResult instanceof Song) {
                 $song = $songRepository->getOne($dispatchedResult->id);

@@ -125,6 +125,20 @@ class PresignedUploadTest extends PlusTestCase
     }
 
     #[Test]
+    public function refusesToCompleteTheSameUploadTwice(): void
+    {
+        $user = create_user();
+        $key = "{$user->public_id}__random__song.mp3";
+        Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
+        $this->fetchesTheObjectAsALocalCopy();
+
+        $this->postAs('api/upload/complete', ['key' => $key], $user)->assertOk();
+        $this->postAs('api/upload/complete', ['key' => $key], $user)->assertConflict();
+
+        self::assertSame(1, Song::query()->where('path', "s3://koel/$key")->count());
+    }
+
+    #[Test]
     public function cannotCompleteSomeoneElsesUpload(): void
     {
         $someoneElse = create_user();

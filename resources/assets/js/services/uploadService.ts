@@ -250,7 +250,8 @@ export const uploadService = {
   },
 
   retryAll() {
-    this.state.files.forEach(this.resetFile)
+    this.state.files.filter(({ status }) => status === 'Errored' || status === 'Canceled').forEach(this.resetFile)
+
     this.proceed()
   },
 
