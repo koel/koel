@@ -20,6 +20,7 @@ use App\Services\SongStorages\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[DisabledInDemo]
 class CompletePresignedUploadController extends Controller
@@ -42,6 +43,12 @@ class CompletePresignedUploadController extends Controller
         );
 
         abort_unless($storage->ownsUploadKey($request->key, $user), Response::HTTP_FORBIDDEN);
+
+        abort_if(
+            $storage->sizeOfUpload($request->key) > UploadedFile::getMaxFilesize(),
+            Response::HTTP_REQUEST_ENTITY_TOO_LARGE,
+            'The uploaded file is too large.',
+        );
 
         try {
             /** @var Song|PendingDispatch $dispatchedResult */

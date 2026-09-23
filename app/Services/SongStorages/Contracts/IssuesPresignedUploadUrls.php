@@ -12,4 +12,6 @@ interface IssuesPresignedUploadUrls
     public function ownsUploadKey(string $key, User $uploader): bool;
 
     public function locationFromKey(string $key): string;
+
+    public function sizeOfUpload(string $key): int;
 }

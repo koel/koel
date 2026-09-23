@@ -18,7 +18,7 @@ export const postWithProgress = <T>(
   data: FormData,
   onUploadProgress: (e: ProgressEvent) => void,
 ): UploadHandle<T> => {
-  return sendWithProgress<T>('POST', `${window.KOEL.base_url}api/${url}`, data, onUploadProgress, {
+  return send<T>('POST', `${window.KOEL.base_url}api/${url}`, data, onUploadProgress, {
     Accept: 'application/json',
     Authorization: `Bearer ${authService.getApiToken()}`,
     'X-Api-Version': 'v7',
@@ -35,13 +35,27 @@ export const putToStorageWithProgress = (
   headers: Record<string, string>,
   onUploadProgress: (e: ProgressEvent) => void,
 ): UploadHandle<null> => {
-  return sendWithProgress<null>('PUT', url, file, onUploadProgress, headers)
+  return send<null>('PUT', url, file, onUploadProgress, headers)
 }
 
-const sendWithProgress = <T>(
+/**
+ * Talk to Koel's API over XHR rather than the shared ky client, so upload errors keep the shape the
+ * upload flow expects: ky's hooks attach only `responseData`, and treat every 400 as a session
+ * expiry, which would log the user out over a single unscannable file.
+ */
+export const postJson = <T>(url: string, data: Record<string, unknown>): UploadHandle<T> => {
+  return send<T>('POST', `${window.KOEL.base_url}api/${url}`, JSON.stringify(data), () => {}, {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${authService.getApiToken()}`,
+    'X-Api-Version': 'v7',
+  })
+}
+
+const send = <T>(
   method: 'POST' | 'PUT',
   url: string,
-  body: FormData | File,
+  body: FormData | File | string,
   onUploadProgress: (e: ProgressEvent) => void,
   headers: Record<string, string>,
 ): UploadHandle<T> => {

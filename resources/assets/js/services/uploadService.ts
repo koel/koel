@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
-import { putToStorageWithProgress } from '@/services/httpUpload'
+import { postJson, putToStorageWithProgress } from '@/services/httpUpload'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -163,13 +163,15 @@ export const uploadService = {
   },
 
   async uploadToStorage(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
-    const presigned = await http.post<PresignedUpload>('upload/presign', { file_name: file.file.name })
+    const { data: presigned } = await postJson<PresignedUpload>('upload/presign', {
+      file_name: file.file.name,
+    }).promise
 
     const { promise, abort } = putToStorageWithProgress(presigned.url, file.file, presigned.headers, onProgress)
     this.abortHandles.set(file.id, abort)
     await promise
 
-    return await http.request<UploadResult | null>('post', 'upload/complete', { key: presigned.key })
+    return await postJson<UploadResult | null>('upload/complete', { key: presigned.key }).promise
   },
 
   async fetchDuplicates() {

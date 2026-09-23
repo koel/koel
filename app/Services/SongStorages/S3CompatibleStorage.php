@@ -38,6 +38,11 @@ class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadU
         return Str::startsWith($key, "{$uploader->id}__");
     }
 
+    public function sizeOfUpload(string $key): int
+    {
+        return Storage::disk('s3')->size($key);
+    }
+
     public function locationFromKey(string $key): string
     {
         return "s3://$this->bucket/$key";

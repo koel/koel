@@ -5,10 +5,12 @@ namespace Tests\Feature\KoelPlus;
 use App\Models\Song;
 use App\Services\SongStorages\S3CompatibleStorage;
 use App\Services\SongStorages\SongStorage;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -41,6 +43,30 @@ class PresignedUploadTest extends PlusTestCase
     public function presigningRequiresAFileName(): void
     {
         $this->postAs('api/upload/presign', [], create_user())->assertUnprocessable();
+    }
+
+    #[Test]
+    public function presigningRefusesSomethingThatIsNotAudio(): void
+    {
+        $this->postAs('api/upload/presign', ['file_name' => 'invoice.pdf'], create_user())->assertUnprocessable();
+    }
+
+    #[Test]
+    public function refusesToCompleteAnObjectLargerThanTheUploadLimit(): void
+    {
+        $user = create_user();
+        $key = "{$user->id}__random__song.mp3";
+        Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
+
+        $storage = Mockery::mock(S3CompatibleStorage::class . '[sizeOfUpload]', ['koel']);
+        $storage->shouldReceive('sizeOfUpload')->andReturn(UploadedFile::getMaxFilesize() + 1);
+        $this->app->instance(SongStorage::class, $storage);
+
+        $this->postAs(
+            'api/upload/complete',
+            ['key' => $key],
+            $user,
+        )->assertStatus(Response::HTTP_REQUEST_ENTITY_TOO_LARGE);
     }
 
     #[Test]

@@ -2,13 +2,13 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
-import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 
 const postWithProgressMock = vi.fn()
 const putToStorageMock = vi.fn()
+const postJsonMock = vi.fn()
 
 vi.mock('@/services/http', async importOriginal => {
   const actual = await importOriginal<typeof import('@/services/http')>()
@@ -23,6 +23,7 @@ vi.mock('@/services/httpUpload', async importOriginal => {
   return {
     ...actual,
     putToStorageWithProgress: (...args: any[]) => putToStorageMock(...args),
+    postJson: (...args: any[]) => postJsonMock(...args),
   }
 })
 
@@ -38,6 +39,7 @@ describe('uploadService', () => {
       commonStore.state.supports_presigned_uploads = false
       postWithProgressMock.mockClear()
       putToStorageMock.mockClear()
+      postJsonMock.mockReset()
     },
   })
 
@@ -178,8 +180,9 @@ describe('uploadService', () => {
       expires_at: '2099-01-01T00:00:00+00:00',
     }
 
-    const postMock = h.mock(http, 'post').mockResolvedValue(presigned)
-    const requestMock = h.mock(http, 'request').mockResolvedValue({ status: 202, data: null })
+    postJsonMock
+      .mockReturnValueOnce({ promise: Promise.resolve({ status: 200, data: presigned }), abort: vi.fn() })
+      .mockReturnValueOnce({ promise: Promise.resolve({ status: 202, data: null }), abort: vi.fn() })
     putToStorageMock.mockReturnValue({ promise: Promise.resolve({ status: 200, data: null }), abort: vi.fn() })
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
@@ -187,9 +190,9 @@ describe('uploadService', () => {
     const file = createUploadFile()
     await uploadService.upload(file)
 
-    expect(postMock).toHaveBeenCalledWith('upload/presign', { file_name: 'song.mp3' })
+    expect(postJsonMock).toHaveBeenNthCalledWith(1, 'upload/presign', { file_name: 'song.mp3' })
     expect(putToStorageMock).toHaveBeenCalledWith(presigned.url, file.file, presigned.headers, expect.any(Function))
-    expect(requestMock).toHaveBeenCalledWith('post', 'upload/complete', { key: presigned.key })
+    expect(postJsonMock).toHaveBeenNthCalledWith(2, 'upload/complete', { key: presigned.key })
     expect(postWithProgressMock).not.toHaveBeenCalled()
     expect(file.status).toBe('Uploaded')
     expect(handleMock).not.toHaveBeenCalled()

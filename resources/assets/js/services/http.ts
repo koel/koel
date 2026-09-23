@@ -99,7 +99,7 @@ class Http {
     const contentType = response.headers.get('content-type')
     const responseData = contentType?.includes('application/json') ? await response.json() : await response.text()
 
-    return { status: response.status, data: responseData as T }
+    return { data: responseData as T }
   }
 
   public async get<T>(url: string) {
