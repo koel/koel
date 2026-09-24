@@ -40,6 +40,7 @@ use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\FetchSongsToQueueByGenreController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\GenreController;
+use App\Http\Controllers\API\GetLastfmAuthorizationUrlController;
 use App\Http\Controllers\API\GetOneTimeTokenController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
@@ -246,6 +247,7 @@ Route::prefix('api')
             Route::delete('me/two-factor', DisableTwoFactorController::class);
 
             // Last.fm-related routes
+            Route::get('lastfm/authorization-url', GetLastfmAuthorizationUrlController::class);
             Route::post('lastfm/session-key', SetLastfmSessionKeyController::class);
             Route::delete('lastfm/disconnect', DisconnectFromLastfmController::class)->name('lastfm.disconnect');
 

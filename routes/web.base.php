@@ -33,12 +33,9 @@ Route::middleware('web')->group(static function (): void {
     Route::get('manifest.json', AppManifestController::class)->name('manifest');
     Route::get('manifest-remote.json', RemoteManifestController::class)->name('manifest.remote');
 
-    Route::middleware('auth')->group(static function (): void {
-        Route::prefix('lastfm')->group(static function (): void {
-            Route::get('connect', [LastfmController::class, 'connect'])->name('lastfm.connect');
-            Route::get('callback', [LastfmController::class, 'callback'])->name('lastfm.callback');
-        });
+    Route::get('lastfm/callback', [LastfmController::class, 'callback'])->name('lastfm.callback');
 
+    Route::middleware('auth')->group(static function (): void {
         if (ITunes::used()) {
             Route::get('itunes/song/{album}', ViewSongOnITunesController::class)->name('iTunes.viewSong');
         }

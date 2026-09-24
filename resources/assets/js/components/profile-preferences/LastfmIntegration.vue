@@ -41,7 +41,6 @@
 <script lang="ts" setup>
 import { faLastfm } from '@fortawesome/free-brands-svg-icons'
 import { computed, defineAsyncComponent } from 'vue'
-import { authService } from '@/services/authService'
 import { http } from '@/services/http'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
@@ -62,13 +61,13 @@ const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_se
  * Connect the current user to Last.fm.
  * This method opens a new window.
  * Koel will reload once the connection is successful.
+ * The window is opened before the request so that popup blockers don't stop it.
  */
-const connect = () =>
-  window.open(
-    `${window.KOEL.base_url}lastfm/connect?api_token=${authService.getApiToken()}`,
-    '_blank',
-    'toolbar=no,titlebar=no,location=no,width=1024,height=640',
-  )
+const connect = async () => {
+  const popup = window.open('', '_blank', 'toolbar=no,titlebar=no,location=no,width=1024,height=640')
+  const { url } = await http.get<{ url: string }>('lastfm/authorization-url')
+  popup?.location.assign(url)
+}
 
 const disconnect = async () => {
   await http.delete('lastfm/disconnect')
