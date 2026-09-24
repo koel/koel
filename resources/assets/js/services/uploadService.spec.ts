@@ -456,16 +456,6 @@ describe('uploadService', () => {
     expect(uploadService.state.files[0].status).toBe('Ready')
   })
 
-  it('warns upon window unload when files exist', () => {
-    uploadService.state.files = [createUploadFile()]
-    expect(uploadService.shouldWarnUponWindowUnload()).toBe(true)
-  })
-
-  it('does not warn when no files', () => {
-    uploadService.state.files = []
-    expect(uploadService.shouldWarnUponWindowUnload()).toBe(false)
-  })
-
   it('resets a file', () => {
     const file = createUploadFile({ status: 'Errored', progress: 75 })
 
