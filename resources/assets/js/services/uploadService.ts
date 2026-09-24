@@ -96,10 +96,6 @@ export const uploadService = {
     return this.state.files.find(({ status }) => status === 'Ready')
   },
 
-  shouldWarnUponWindowUnload() {
-    return this.state.files.length > 0
-  },
-
   async upload(file: UploadFile) {
     if (file.status === 'Uploading') {
       return

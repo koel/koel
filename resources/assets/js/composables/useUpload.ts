@@ -1,13 +1,15 @@
 import { computed } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { acceptsFile } from '@/utils/mediaHelper'
-import type { UploadFile } from '@/services/uploadService'
+import type { UploadFile, UploadStatus } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import { getAllFileEntries } from '@/utils/directoryReader'
 import { pluralize } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { usePolicies } from '@/composables/usePolicies'
+
+const UNFINISHED_UPLOAD_STATUSES: UploadStatus[] = ['Ready', 'Uploading']
 
 export const useUpload = () => {
   const { toastSuccess, toastWarning } = useMessageToaster()
@@ -20,6 +22,10 @@ export const useUpload = () => {
   })
 
   const allowsUpload = computed(() => currentUserCan.uploadSongs())
+
+  const unfinishedUploadCount = computed(
+    () => uploadService.state.files.filter(({ status }) => UNFINISHED_UPLOAD_STATUSES.includes(status)).length,
+  )
 
   const fileEntryToFile = async (entry: FileSystemFileEntry) => new Promise<File>(resolve => entry.file(resolve))
 
@@ -61,6 +67,7 @@ export const useUpload = () => {
   return {
     mediaPathSetUp,
     allowsUpload,
+    unfinishedUploadCount,
     handleDropEvent,
     queueFilesForUpload,
   }

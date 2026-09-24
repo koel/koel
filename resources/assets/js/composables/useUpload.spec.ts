@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { commonStore } from '@/stores/commonStore'
+import { uploadService } from '@/services/uploadService'
+import type { UploadFile, UploadStatus } from '@/services/uploadService'
 
 vi.mock('@/utils/mediaHelper', () => ({
   acceptedExtensions: ['mp3', 'flac', 'ogg'],
@@ -55,5 +57,12 @@ describe('useUpload', () => {
 
     expect(result.length).toBe(1)
     expect(result[0].name).toBe('song.mp3')
+  })
+
+  it('counts only the uploads that are queued or still uploading', () => {
+    const statuses: UploadStatus[] = ['Ready', 'Uploading', 'Processing', 'Uploaded', 'Canceled', 'Errored']
+    uploadService.state.files = statuses.map(status => ({ status }) as UploadFile)
+
+    expect(useUpload().unfinishedUploadCount.value).toBe(2)
   })
 })
