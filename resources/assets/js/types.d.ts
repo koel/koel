@@ -541,7 +541,7 @@ interface EqualizerPreset {
 
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'
 /** Keyed by screen name; add a screen by merging a key into this interface from another declaration file. */
-interface ScreenNameRegistry {
+interface ScreenNames {
   '404': true
   AI: true
   Album: true
@@ -577,7 +577,7 @@ interface ScreenNameRegistry {
   YouTube: true
 }
 
-declare type ScreenName = keyof ScreenNameRegistry
+declare type ScreenName = keyof ScreenNames
 
 declare type CardLayout = 'full' | 'compact'
 
