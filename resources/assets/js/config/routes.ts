@@ -238,4 +238,4 @@ export const routes = [
   },
 ] as const satisfies Route[]
 
-export type RouteName = (typeof routes)[number]['name']
+export type RouteName = (typeof routes)[number]['name'] | keyof RouteNames
