@@ -24,4 +24,14 @@ class HelperTest extends TestCase
 
         self::assertSame('http://music.example.com/', base_url());
     }
+
+    #[Test]
+    public function appUrlIgnoresTheHostTheRequestCameIn(): void
+    {
+        config(['app.url' => 'https://music.example.com/']);
+        url()->setRequest(Request::create('http://evil.example/'));
+
+        self::assertSame('https://music.example.com/#/reset-password/payload', app_url('/#/reset-password/payload'));
+        self::assertSame('https://music.example.com/', app_url());
+    }
 }

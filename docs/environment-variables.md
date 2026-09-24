@@ -175,7 +175,9 @@ Additional providers (Gemini, Ollama, etc.) can be configured in `config/ai.php`
 
 | Variable | Description | Default |
 |---|---|---|
-| `TRUSTED_HOSTS` | A comma-separated list of hostnames allowed to access Koel. Leave empty to allow any hostname. Example: `localhost,192.168.0.1,yourdomain.com` | _(empty)_ |
+| `APP_URL` | The address people use to reach Koel, e.g. `https://music.example.com`. Links in emails, such as password resets and invitations, point here, so make sure it is correct. | `http://localhost` |
+| `TRUSTED_HOSTS` | A comma-separated list of hostnames allowed to access Koel. Requests for any other hostname are rejected. Leave empty to allow any hostname. Example: `localhost,192.168.0.1,yourdomain.com` | _(empty)_ |
+| `TRUSTED_PROXIES` | A comma-separated list of IP addresses or ranges of the reverse proxies in front of Koel. Koel trusts `X-Forwarded-*` headers only from these. Set it if your proxy is on a public IP, such as Cloudflare. | `PRIVATE_SUBNETS` |
 | `FORCE_HTTPS` | Force Koel to use HTTPS URLs. Set to `true` if automatic detection fails. | `false` |
 | `SENTRY_LARAVEL_DSN` | Report unhandled exceptions to [Sentry](https://sentry.io). Leave empty to disable reporting entirely. Events are tagged with `APP_ENV`. | _(empty)_ |
 | `BACKUP_ON_DELETE` | Whether to create a backup of a song when deleting it from the filesystem. | `true` |

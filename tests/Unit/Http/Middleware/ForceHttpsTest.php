@@ -32,14 +32,7 @@ class ForceHttpsTest extends TestCase
         $this->url->expects('forceScheme')->with('https');
 
         $request = Mockery::mock(Request::class);
-        $request->expects('getClientIp')->andReturn('127.0.0.1');
-        $request->expects('setTrustedProxies')->with(
-            ['127.0.0.1'],
-            Request::HEADER_X_FORWARDED_FOR
-            | Request::HEADER_X_FORWARDED_HOST
-            | Request::HEADER_X_FORWARDED_PORT
-            | Request::HEADER_X_FORWARDED_PROTO,
-        );
+        $request->shouldNotReceive('setTrustedProxies');
 
         $response = Mockery::mock(Response::class);
         $next = static fn () => $response;

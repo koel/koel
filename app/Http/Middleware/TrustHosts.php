@@ -11,6 +11,10 @@ class TrustHosts extends IlluminateTrustHost
      */
     public function hosts(): array
     {
-        return config('app.trusted_hosts');
+        return collect(config('app.trusted_hosts'))
+            ->filter()
+            ->map(static fn (string $host): string => '^' . preg_quote(trim($host), '{') . '$')
+            ->values()
+            ->all();
     }
 }

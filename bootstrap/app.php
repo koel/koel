@@ -10,6 +10,7 @@ use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
 use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\RestrictPlusFeatures;
+use App\Http\Middleware\TrustHosts;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -36,6 +37,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(static function (Middleware $middleware): void {
+        $middleware->prepend(TrustHosts::class);
+
+        $middleware->trustProxies(
+            headers: Request::HEADER_X_FORWARDED_FOR
+            | Request::HEADER_X_FORWARDED_HOST
+            | Request::HEADER_X_FORWARDED_PORT
+            | Request::HEADER_X_FORWARDED_PROTO,
+        );
+
         $middleware->api(prepend: [
             AddRequestContextForLogging::class,
         ]);
