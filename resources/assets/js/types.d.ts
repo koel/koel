@@ -540,40 +540,44 @@ interface EqualizerPreset {
 }
 
 declare type PlaybackState = 'Stopped' | 'Playing' | 'Paused'
-declare type ScreenName =
-  | '404'
-  | 'AI'
-  | 'Album'
-  | 'Albums'
-  | 'Artist'
-  | 'Artists'
-  | 'Default'
-  | 'Embed'
-  | 'Episode'
-  | 'Favorites'
-  | 'Genre'
-  | 'Genres'
-  | 'Home'
-  | 'Invitation.Accept'
-  | 'MediaBrowser'
-  | 'OfflineSongs'
-  | 'Password.Reset'
-  | 'Playlist'
-  | 'Playlist.Collaborate'
-  | 'Podcast'
-  | 'Podcasts'
-  | 'Profile'
-  | 'Queue'
-  | 'Radio.Stations'
-  | 'RecentlyPlayed'
-  | 'Search.Excerpt'
-  | 'Search.Playables'
-  | 'Settings'
-  | 'Songs'
-  | 'Upload'
-  | 'Users'
-  | 'Visualizer'
-  | 'YouTube'
+/** Keyed by screen name; add a screen by merging a key into this interface from another declaration file. */
+interface ScreenNameRegistry {
+  '404': true
+  AI: true
+  Album: true
+  Albums: true
+  Artist: true
+  Artists: true
+  Default: true
+  Embed: true
+  Episode: true
+  Favorites: true
+  Genre: true
+  Genres: true
+  Home: true
+  'Invitation.Accept': true
+  MediaBrowser: true
+  OfflineSongs: true
+  'Password.Reset': true
+  Playlist: true
+  'Playlist.Collaborate': true
+  Podcast: true
+  Podcasts: true
+  Profile: true
+  Queue: true
+  'Radio.Stations': true
+  RecentlyPlayed: true
+  'Search.Excerpt': true
+  'Search.Playables': true
+  Settings: true
+  Songs: true
+  Upload: true
+  Users: true
+  Visualizer: true
+  YouTube: true
+}
+
+declare type ScreenName = keyof ScreenNameRegistry
 
 declare type CardLayout = 'full' | 'compact'
 
