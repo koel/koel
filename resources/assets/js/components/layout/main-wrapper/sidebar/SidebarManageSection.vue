@@ -14,6 +14,7 @@
         <template #icon>
           <Icon :icon="item.icon" fixed-width />
         </template>
+        <template v-if="item.badgeLabel" #badge>{{ item.badgeLabel }}</template>
         {{ item.label }}
       </SidebarItem>
     </ul>
@@ -40,6 +41,7 @@ export interface ManageSidebarItem {
   route: RouteName
   screens: ScreenName[]
   visible: () => boolean
+  badge?: () => string | null
 }
 
 const { url, isCurrentScreen } = useRouter()
@@ -71,5 +73,7 @@ const items = computed(() =>
   ]),
 )
 
-const visibleItems = computed(() => items.value.filter(item => item.visible()))
+const visibleItems = computed(() =>
+  items.value.filter(item => item.visible()).map(item => ({ ...item, badgeLabel: item.badge?.() ?? null })),
+)
 </script>
