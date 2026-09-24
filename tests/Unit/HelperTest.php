@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\Unit\Helpers;
+namespace Tests\Unit;
 
 use Illuminate\Http\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class BaseUrlTest extends TestCase
+class HelperTest extends TestCase
 {
     #[Test]
-    public function pointAtTheApplicationEvenWhenAssetsAreServedFromElsewhere(): void
+    public function baseUrlPointsAtTheApplicationEvenWhenAssetsAreServedFromElsewhere(): void
     {
         url()->useAssetOrigin('https://cdn.example.com');
 
@@ -18,7 +18,7 @@ class BaseUrlTest extends TestCase
     }
 
     #[Test]
-    public function followTheHostTheRequestCameIn(): void
+    public function baseUrlFollowsTheHostTheRequestCameIn(): void
     {
         url()->setRequest(Request::create('http://music.example.com/'));
 
