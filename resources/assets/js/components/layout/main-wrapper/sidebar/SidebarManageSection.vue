@@ -14,7 +14,7 @@
         <template #icon>
           <Icon :icon="item.icon" fixed-width />
         </template>
-        <template v-if="item.badge?.()" #badge>{{ item.badge() }}</template>
+        <template v-if="item.badgeLabel" #badge>{{ item.badgeLabel }}</template>
         {{ item.label }}
       </SidebarItem>
     </ul>
@@ -73,5 +73,7 @@ const items = computed(() =>
   ]),
 )
 
-const visibleItems = computed(() => items.value.filter(item => item.visible()))
+const visibleItems = computed(() =>
+  items.value.filter(item => item.visible()).map(item => ({ ...item, badgeLabel: item.badge?.() ?? null })),
+)
 </script>
