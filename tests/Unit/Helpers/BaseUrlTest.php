@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Helpers;
 
+use Illuminate\Http\Request;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -19,6 +20,8 @@ class BaseUrlTest extends TestCase
     #[Test]
     public function followTheHostTheRequestCameIn(): void
     {
-        $this->get('http://music.example.com/')->assertSee('"base_url":"http:\/\/music.example.com\/"', escape: false);
+        url()->setRequest(Request::create('http://music.example.com/'));
+
+        self::assertSame('http://music.example.com/', base_url());
     }
 }
