@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Enums\Acl\Role;
+use App\Hooks\Action;
+use App\Hooks\HookRegistry;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
@@ -50,6 +52,8 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping();
 
         self::grantAllPermissionsToSuperAdminRole();
+
+        do_action(Action::APPLICATION_BOOTED);
 
         $this->app->bind(SpotifySession::class, static function () {
             return SpotifyService::enabled()
@@ -109,6 +113,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->app->singleton(HookRegistry::class);
+
         if (class_exists('Laravel\Tinker\TinkerServiceProvider')) {
             $this->app->register('Laravel\Tinker\TinkerServiceProvider');
         }

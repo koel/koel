@@ -8,7 +8,7 @@ use App\Http\Requests\Subsonic\IdRequest;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\PodcastRepository;
-use Illuminate\Support\Facades\File;
+use App\Services\Image\ImageStorage;
 
 class GetCoverArtController extends Controller
 {
@@ -16,6 +16,7 @@ class GetCoverArtController extends Controller
         private readonly AlbumRepository $albumRepository,
         private readonly ArtistRepository $artistRepository,
         private readonly PodcastRepository $podcastRepository,
+        private readonly ImageStorage $imageStorage,
     ) {}
 
     public function __invoke(IdRequest $request)
@@ -30,11 +31,10 @@ class GetCoverArtController extends Controller
             return redirect($podcast->image);
         }
 
-        $filename = $album ? $album->cover : $artist?->image;
-        $path = $filename ? image_storage_path($filename, ensureDirectoryExists: false) : null;
+        $fileName = $album ? $album->cover : $artist?->image;
 
-        if ($path && File::isFile($path)) {
-            return response()->file($path);
+        if ($this->imageStorage->exists($fileName)) {
+            return ImageStorage::disk()->response($fileName);
         }
 
         return response()->file(resource_path('assets/img/covers/default.png'));

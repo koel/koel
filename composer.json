@@ -27,7 +27,7 @@
     "laravel/sanctum": "^4.0",
     "laravel/scout": "^11.0",
     "jwilsson/spotify-web-api-php": "^5.2",
-    "meilisearch/meilisearch-php": "^0.24.0",
+    "meilisearch/meilisearch-php": "^1.0",
     "http-interop/http-factory-guzzle": "^1.2",
     "league/flysystem-aws-s3-v3": "^3.0",
     "spatie/flysystem-dropbox": "^3.0",
@@ -54,7 +54,8 @@
     "league/flysystem-webdav": "^3.0",
     "mlocati/ip-lib": "^1.22",
     "robthree/twofactorauth": "^3.0",
-    "intervention/image": "^4.0"
+    "intervention/image": "^4.0",
+    "sentry/sentry-laravel": "^4.27"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

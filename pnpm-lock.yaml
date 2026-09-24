@@ -31,7 +31,7 @@ importers:
         version: 3.0.8(@fortawesome/fontawesome-svg-core@6.7.2)(vue@3.5.29(typescript@5.8.3))
       '@laravel/echo-vue':
         specifier: ^2.1.6
-        version: 2.1.6(pusher-js@4.4.0)(socket.io-client@4.8.1)(vue@3.5.29(typescript@5.8.3))
+        version: 2.1.6(pusher-js@8.6.0)(socket.io-client@4.8.1)(vue@3.5.29(typescript@5.8.3))
       butterchurn:
         specifier: ^2.6.7
         version: 2.6.7
@@ -164,7 +164,7 @@ importers:
         version: 26.1.0
       laravel-echo:
         specifier: ^2.1.6
-        version: 2.1.6(pusher-js@4.4.0)(socket.io-client@4.8.1)
+        version: 2.1.6(pusher-js@8.6.0)(socket.io-client@4.8.1)
       laravel-vite-plugin:
         specifier: ^2.1.0
         version: 2.1.0(@voidzero-dev/vite-plus-core@0.1.24(@types/node@24.0.7)(esbuild@0.27.3)(jiti@2.7.0)(typescript@5.8.3)(yaml@2.8.0))
@@ -178,8 +178,8 @@ importers:
         specifier: ^6.2.0
         version: 6.2.0(postcss@8.5.23)
       pusher-js:
-        specifier: ^4.4.0
-        version: 4.4.0
+        specifier: ^8.6.0
+        version: 8.6.0
       rollup-plugin-visualizer:
         specifier: ^6.0.3
         version: 6.0.3(rolldown@1.0.0-rc.9(@emnapi/core@1.9.0)(@emnapi/runtime@1.9.0))(rollup@4.59.0)
@@ -2277,10 +2277,6 @@ packages:
   fault@2.0.1:
     resolution: {integrity: sha512-WtySTkS4OKev5JtpHXnib4Gxiurzh5NCGvWrFaZ34m6JehfTUhKZvn9njTfw48t6JumVQOmrKqpmGcdwxnhqBQ==}
 
-  faye-websocket@0.9.4:
-    resolution: {integrity: sha512-5i9HTcrJrCCcmztcjIHpt+eWwu89Ed66rNBf5LtTy69QHbP/mtvjOTGqiOR01QrSbfoT1EP0v4XXvydpJj0r9w==}
-    engines: {node: '>=0.4.0'}
-
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
     engines: {node: '>=12.0.0'}
@@ -2432,9 +2428,6 @@ packages:
 
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
-
-  http-parser-js@0.5.10:
-    resolution: {integrity: sha512-Pysuw9XpUq5dVc/2SMHpuTY01RFl8fttgcyunjL7eEMhGM3cI4eOmiCycJDVCo/7O7ClfQD3SaI6ftDzqOXYMA==}
 
   http-proxy-agent@7.0.2:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
@@ -3223,8 +3216,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  pusher-js@4.4.0:
-    resolution: {integrity: sha512-oxSEG764hqeGAqW9Ryq5KdGQrbM/2sBy5L6Jsh62GyRbRO4z0qI9EjQ6IfQSDhR59b/tY0ANuXD8+ZOZY9AOyg==}
+  pusher-js@8.6.0:
+    resolution: {integrity: sha512-wShJPfCS/kYkCBVzVW67wa9cnQIgHTszEK2XHNrFkOgGruuGw081aERAxfRjfdFU+WcIt8x6dvbwkTW4iZuQ8Q==}
 
   qrcode@1.5.4:
     resolution: {integrity: sha512-1ca71Zgiu6ORjHqFBDpnSMTR2ReToX4l1Au1VFLyVeBTFavzQnv5JxMFr3ukHVKpSrSA2MCk0lNJSykjUfz7Zg==}
@@ -3319,9 +3312,6 @@ packages:
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
-
-  safe-buffer@5.2.1:
-    resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
 
   safe-regex-test@1.1.0:
     resolution: {integrity: sha512-x/+Cz4YrimQxQccJf5mKEbIa1NzeCRNI5Ecl/ekmlYaampdNLPalVyIcCZNNH3MvmqBugV5TMYZXv0ljslUlaw==}
@@ -3554,9 +3544,6 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
-  tweetnacl-util@0.15.1:
-    resolution: {integrity: sha512-RKJBIj8lySrShN4w6i/BonWp2Z/uxwC3h4y7xsRrpP59ZboCd0GpEVsOnMDYLMmKBpYhb5TgHzZXy7wTfYFBRw==}
-
   tweetnacl@1.0.3:
     resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
 
@@ -3668,14 +3655,6 @@ packages:
     resolution: {integrity: sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==}
     engines: {node: '>=12'}
 
-  websocket-driver@0.7.4:
-    resolution: {integrity: sha512-b17KeDIQVjvb0ssuSDF2cYXSg2iztliJ4B9WdsuB6J952qCPKmnVq4DyW5motImXHDC1cBT/1UezrJVsKw5zjg==}
-    engines: {node: '>=0.8.0'}
-
-  websocket-extensions@0.1.4:
-    resolution: {integrity: sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==}
-    engines: {node: '>=0.8.0'}
-
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
@@ -3766,10 +3745,6 @@ packages:
 
   xmlhttprequest-ssl@2.1.2:
     resolution: {integrity: sha512-TEU+nJVUUnA4CYJFLvK5X9AOeH4KvDvhIfm0vV1GaQRtchnG0hgK5p8hw/xjv8cunWYCsiPCSDzObPyhEwq3KQ==}
-    engines: {node: '>=0.4.0'}
-
-  xmlhttprequest@1.8.0:
-    resolution: {integrity: sha512-58Im/U0mlVBLM38NdZjHyhuMtCqa61469k2YP/AaPbvCoV9aQGUpbJBj1QRm2ytRiVQBD/fsw7L2bJGDVQswBA==}
     engines: {node: '>=0.4.0'}
 
   y18n@4.0.3:
@@ -4277,9 +4252,9 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@laravel/echo-vue@2.1.6(pusher-js@4.4.0)(socket.io-client@4.8.1)(vue@3.5.29(typescript@5.8.3))':
+  '@laravel/echo-vue@2.1.6(pusher-js@8.6.0)(socket.io-client@4.8.1)(vue@3.5.29(typescript@5.8.3))':
     dependencies:
-      pusher-js: 4.4.0
+      pusher-js: 8.6.0
       socket.io-client: 4.8.1
       vue: 3.5.29(typescript@5.8.3)
 
@@ -5579,10 +5554,6 @@ snapshots:
     dependencies:
       format: 0.2.2
 
-  faye-websocket@0.9.4:
-    dependencies:
-      websocket-driver: 0.7.4
-
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
       picomatch: 4.0.3
@@ -5742,8 +5713,6 @@ snapshots:
       whatwg-encoding: 3.1.1
 
   html-void-elements@3.0.0: {}
-
-  http-parser-js@0.5.10: {}
 
   http-proxy-agent@7.0.2:
     dependencies:
@@ -5965,9 +5934,9 @@ snapshots:
 
   ky@1.14.3: {}
 
-  laravel-echo@2.1.6(pusher-js@4.4.0)(socket.io-client@4.8.1):
+  laravel-echo@2.1.6(pusher-js@8.6.0)(socket.io-client@4.8.1):
     dependencies:
-      pusher-js: 4.4.0
+      pusher-js: 8.6.0
       socket.io-client: 4.8.1
 
   laravel-vite-plugin@2.1.0(@voidzero-dev/vite-plus-core@0.1.24(@types/node@24.0.7)(esbuild@0.27.3)(jiti@2.7.0)(typescript@5.8.3)(yaml@2.8.0)):
@@ -6582,12 +6551,9 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  pusher-js@4.4.0:
+  pusher-js@8.6.0:
     dependencies:
-      faye-websocket: 0.9.4
       tweetnacl: 1.0.3
-      tweetnacl-util: 0.15.1
-      xmlhttprequest: 1.8.0
 
   qrcode@1.5.4:
     dependencies:
@@ -6739,8 +6705,6 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
-
-  safe-buffer@5.2.1: {}
 
   safe-regex-test@1.1.0:
     dependencies:
@@ -6973,8 +6937,6 @@ snapshots:
 
   tslib@2.8.1:
     optional: true
-
-  tweetnacl-util@0.15.1: {}
 
   tweetnacl@1.0.3: {}
 
@@ -7209,14 +7171,6 @@ snapshots:
 
   webidl-conversions@7.0.0: {}
 
-  websocket-driver@0.7.4:
-    dependencies:
-      http-parser-js: 0.5.10
-      safe-buffer: 5.2.1
-      websocket-extensions: 0.1.4
-
-  websocket-extensions@0.1.4: {}
-
   whatwg-encoding@3.1.1:
     dependencies:
       iconv-lite: 0.6.3
@@ -7288,8 +7242,6 @@ snapshots:
   xmlchars@2.2.0: {}
 
   xmlhttprequest-ssl@2.1.2: {}
-
-  xmlhttprequest@1.8.0: {}
 
   y18n@4.0.3: {}
 

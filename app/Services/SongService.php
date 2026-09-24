@@ -14,6 +14,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Repositories\TranscodeRepository;
+use App\Services\Image\ImageStorage;
 use App\Services\Scanners\Contracts\ScannerCacheStrategy as CacheStrategy;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanInformation;
@@ -25,7 +26,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 
 // @mago-ignore lint:cyclomatic-complexity
 class SongService
@@ -34,6 +34,7 @@ class SongService
         private readonly SongRepository $songRepository,
         private readonly TranscodeRepository $transcodeRepository,
         private readonly AlbumService $albumService,
+        private readonly ImageStorage $imageStorage,
         private readonly CacheStrategy $cache,
     ) {}
 
@@ -249,7 +250,7 @@ class SongService
         $albumArtist->setMbidIfMissing(Arr::get($data, 'albumartist_mbid'));
         $album->setMbidIfMissing(Arr::get($data, 'album_mbid'));
 
-        $hasCover = $album->cover && File::exists(image_storage_path($album->cover));
+        $hasCover = $this->imageStorage->exists($album->cover);
 
         if (!$hasCover && !in_array('cover', $config->ignores, true)) {
             $coverData = Arr::get($data, 'cover.data');

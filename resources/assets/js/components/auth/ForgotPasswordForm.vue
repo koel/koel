@@ -35,9 +35,9 @@ const { data, loading, handleSubmit } = useForm<{ email: string }>({
   onSubmit: async ({ email }) => await authService.requestResetPasswordLink(email),
   onSuccess: () => {
     data.email = ''
-    toastSuccess('Password reset link sent. Please check your mailbox.')
+    toastSuccess('Check your mailbox for a reset link.')
   },
-  onError: error => handleHttpError(error, { 404: 'No user with this email address found.' }),
+  onError: error => handleHttpError(error),
 })
 
 const cancel = () => {

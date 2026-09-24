@@ -108,4 +108,17 @@ describe('uploadItem.vue', () => {
 
     expect(screen.queryByRole('button', { name: 'Remove' })).toBeNull()
   })
+
+  it('does not show remove button while processing', () => {
+    renderComponent('Processing')
+
+    expect(screen.queryByRole('button', { name: 'Remove' })).toBeNull()
+  })
+
+  it('shows a spinner while processing', () => {
+    renderComponent('Processing')
+
+    screen.getByTitle('Processing')
+    screen.getByText('Processing…')
+  })
 })

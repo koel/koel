@@ -6,10 +6,12 @@ use App\Helpers\Ulid;
 use App\Services\Image\ImageStorage;
 use App\Services\Image\ImageWriter;
 use App\Services\Image\SvgSanitizer;
-use Illuminate\Support\Facades\File;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Storage;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 
 class ImageStorageTest extends TestCase
@@ -34,10 +36,14 @@ class ImageStorageTest extends TestCase
         $ulid = Ulid::freeze();
         $logo = "$ulid.avif";
 
+        $disk = Storage::fake(ImageStorage::DISK);
+
         $this->imageWriter->allows('format')->andReturn('avif');
-        $this->imageWriter->expects('write')->with(image_storage_path($logo), 'dummy-logo-src', null);
+        $this->imageWriter->expects('encode')->with('dummy-logo-src', null)->andReturn('encoded-bytes');
 
         self::assertSame($logo, $this->service->storeImage('dummy-logo-src'));
+        $disk->assertExists($logo);
+        self::assertSame('encoded-bytes', $disk->get($logo));
     }
 
     #[Test]
@@ -47,10 +53,28 @@ class ImageStorageTest extends TestCase
         $ulid = Ulid::freeze();
         $logo = "$ulid.svg";
 
+        $disk = Storage::fake(ImageStorage::DISK);
+
         $this->svgSanitizer->expects('sanitize')->with('foo')->andReturn('foo');
 
-        File::expects('put')->with(image_storage_path($logo), 'foo');
-
         self::assertSame($logo, $this->service->storeImage($source));
+        self::assertSame('foo', $disk->get($logo));
+    }
+
+    #[Test]
+    public function complainWhenAnImageCannotBeDeleted(): void
+    {
+        Storage::fake(ImageStorage::DISK)->put('cover.webp', 'dummy');
+
+        Storage::shouldReceive('disk')
+            ->with(ImageStorage::DISK)
+            ->andReturn(Mockery::mock(Filesystem::class, static function (MockInterface $disk): void {
+                $disk->allows('exists')->andReturnTrue();
+                $disk->expects('delete')->andReturnFalse();
+            }));
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->delete('cover.webp');
     }
 }

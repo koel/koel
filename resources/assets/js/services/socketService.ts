@@ -13,28 +13,29 @@ export const socketService = {
     const { default: PusherLib } = await import('pusher-js')
 
     this.pusher = new PusherLib(window.KOEL.pusher.app_key, {
-      authEndpoint: `${window.KOEL.base_url}api/broadcasting/auth`,
-      auth: {
+      channelAuthorization: {
+        endpoint: `${window.KOEL.base_url}api/broadcasting/auth`,
+        transport: 'ajax',
         headers: {
           Authorization: `Bearer ${authService.getApiToken()}`,
         },
       },
       cluster: window.KOEL.pusher.app_cluster,
-      encrypted: true,
+      forceTLS: true,
     })
 
-    this.channel = this.pusher.subscribe('private-koel')
+    this.channel = this.pusher.subscribe(`private-koel.${userStore.current.id}`)
 
     return true
   },
 
   broadcast(eventName: string, data: any = {}) {
-    this.channel?.trigger(`client-${eventName}.${userStore.current.id}`, data)
+    this.channel?.trigger(`client-${eventName}`, data)
     return this
   },
 
   listen(eventName: string, cb: Closure) {
-    this.channel?.bind(`client-${eventName}.${userStore.current.id}`, data => cb(data))
+    this.channel?.bind(`client-${eventName}`, data => cb(data))
     return this
   },
 }

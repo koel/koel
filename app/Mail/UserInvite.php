@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Hooks\Filter;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -22,7 +23,11 @@ class UserInvite extends Mailable
     {
         return new Content(markdown: 'emails.users.invite', with: [
             'invitee' => $this->invitee,
-            'url' => url("/#/invitation/accept/{$this->invitee->invitation_token}"),
+            'url' => apply_filters(
+                Filter::INVITATION_URL,
+                app_url("/#/invitation/accept/{$this->invitee->invitation_token}"),
+                $this->invitee,
+            ),
         ]);
     }
 

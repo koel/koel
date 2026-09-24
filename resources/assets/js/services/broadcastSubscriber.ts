@@ -1,6 +1,6 @@
 import type Echo from 'laravel-echo'
 import { authService } from '@/services/authService'
-import type { UploadResult } from '@/services/uploadService'
+import type { UploadFailure, UploadResult } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 
 type Broadcaster = 'pusher' | 'null' // narrow down the supported broadcasters
@@ -9,8 +9,7 @@ export const broadcastSubscriber = {
   echo: null as Echo<Broadcaster> | null,
 
   async newEchoInstance(): Promise<Echo<Broadcaster>> {
-    const key = import.meta.env.VITE_PUSHER_APP_KEY
-    const cluster = import.meta.env.VITE_PUSHER_APP_CLUSTER
+    const { app_key: key, app_cluster: cluster } = window.KOEL.pusher
 
     const { default: EchoLib } = await import('laravel-echo')
 
@@ -28,6 +27,7 @@ export const broadcastSubscriber = {
       cluster,
       broadcaster: 'pusher',
       forceTLS: true,
+      authEndpoint: `${window.KOEL.base_url}api/broadcasting/auth`,
       bearerToken: authService.getApiToken(),
     })
   },
@@ -40,5 +40,6 @@ export const broadcastSubscriber = {
     return echo
       .private(`user.${userId}`)
       .listen('.song.uploaded', (event: UploadResult) => uploadService.handleUploadResult(event))
+      .listen('.song.upload_failed', (event: UploadFailure) => uploadService.handleUploadFailure(event))
   },
 }

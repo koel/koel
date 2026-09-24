@@ -40,6 +40,7 @@ use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\FetchSongsToQueueByGenreController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\GenreController;
+use App\Http\Controllers\API\GetLastfmAuthorizationUrlController;
 use App\Http\Controllers\API\GetOneTimeTokenController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
@@ -86,18 +87,20 @@ use App\Http\Controllers\API\ToggleLikeSongController;
 use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
 use App\Http\Controllers\API\UpdateUserPreferenceController;
+use App\Http\Controllers\API\Upload\CompletePresignedUploadController;
 use App\Http\Controllers\API\Upload\DiscardAllDuplicateUploadsController;
 use App\Http\Controllers\API\Upload\DiscardDuplicateUploadController;
 use App\Http\Controllers\API\Upload\FetchDuplicateUploadsController;
 use App\Http\Controllers\API\Upload\KeepAllDuplicateUploadsController;
 use App\Http\Controllers\API\Upload\KeepDuplicateUploadController;
+use App\Http\Controllers\API\Upload\PresignUploadController;
 use App\Http\Controllers\API\Upload\UploadSongController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
 use App\Http\Controllers\Download\CheckDownloadableCountController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use Pusher\Pusher;
 
 Route::prefix('api')
     ->middleware('api')
@@ -127,19 +130,11 @@ Route::prefix('api')
         // @mago-ignore lint:halstead (a flat list of route definitions, not logic to break up)
         Route::middleware('auth')->group(static function (): void {
             Route::get('one-time-token', GetOneTimeTokenController::class);
-            Route::post('broadcasting/auth', static function (Request $request) {
-                $pusher = new Pusher(
-                    config('broadcasting.connections.pusher.key'),
-                    config('broadcasting.connections.pusher.secret'),
-                    config('broadcasting.connections.pusher.app_id'),
-                    [
-                        'cluster' => config('broadcasting.connections.pusher.options.cluster'),
-                        'encrypted' => true,
-                    ],
-                );
-
-                return $pusher->authorizeChannel($request->input('channel_name'), $request->input('socket_id'));
-            })->name('broadcasting.auth');
+            // @mago-ignore lint:prefer-first-class-callable (a facade callable is resolved when the
+            // route is defined, which hands Broadcast::auth the wrong request)
+            Route::post('broadcasting/auth', static fn (Request $request): mixed => Broadcast::auth($request))->name(
+                'broadcasting.auth',
+            );
 
             Route::get('overview', FetchOverviewController::class);
             Route::get('data', FetchInitialDataController::class);
@@ -181,6 +176,8 @@ Route::prefix('api')
             Route::get('songs/in-folder', FetchFolderSongsController::class);
 
             Route::post('upload', UploadSongController::class);
+            Route::post('upload/presign', PresignUploadController::class);
+            Route::post('upload/complete', CompletePresignedUploadController::class);
             Route::get('duplicate-uploads', FetchDuplicateUploadsController::class);
             Route::post('duplicate-uploads/{duplicateUpload}', KeepDuplicateUploadController::class);
             Route::post('duplicate-uploads', KeepAllDuplicateUploadsController::class);
@@ -207,7 +204,9 @@ Route::prefix('api')
             Route::put('songs/{song}/rating', RateSongController::class)->where(['song' => Uuid::REGEX]);
             Route::put('albums/{album}/rating', RateAlbumController::class);
             Route::put('artists/{artist}/rating', RateArtistController::class);
-            Route::put('podcasts/{podcast}/rating', RatePodcastController::class)->where(['podcast' => Uuid::REGEX]);
+            Route::put('podcasts/{podcast}/rating', RatePodcastController::class)->where([
+                'podcast' => Uuid::REGEX,
+            ])->middleware('podcasts.enabled');
 
             Route::apiResource('playlist-folders', PlaylistFolderController::class);
             Route::apiResource('playlist-folders.playlists', PlaylistFolderPlaylistController::class)->except(
@@ -248,6 +247,7 @@ Route::prefix('api')
             Route::delete('me/two-factor', DisableTwoFactorController::class);
 
             // Last.fm-related routes
+            Route::get('lastfm/authorization-url', GetLastfmAuthorizationUrlController::class);
             Route::post('lastfm/session-key', SetLastfmSessionKeyController::class);
             Route::delete('lastfm/disconnect', DisconnectFromLastfmController::class)->name('lastfm.disconnect');
 
@@ -292,16 +292,18 @@ Route::prefix('api')
             Route::delete('playlists/{playlist}/collaborators', [PlaylistCollaboratorController::class, 'destroy']);
 
             // Podcast routes
-            Route::apiResource('podcasts', PodcastController::class);
-            Route::apiResource('podcasts.episodes', PodcastEpisodeController::class);
-            Route::delete('podcasts/{podcast}/subscriptions', UnsubscribeFromPodcastController::class);
+            Route::middleware('podcasts.enabled')->group(static function (): void {
+                Route::apiResource('podcasts', PodcastController::class);
+                Route::apiResource('podcasts.episodes', PodcastEpisodeController::class);
+                Route::delete('podcasts/{podcast}/subscriptions', UnsubscribeFromPodcastController::class);
+            });
 
             // Media browser routes
             Route::get('browse/folders', FetchSubfoldersController::class);
             Route::get('browse/songs', PaginateFolderSongsController::class);
 
             // Radio station routes
-            Route::group(['prefix' => 'radio'], static function (): void {
+            Route::group(['prefix' => 'radio', 'middleware' => 'radio.enabled'], static function (): void {
                 Route::apiResource('stations', RadioStationController::class);
                 Route::get('stations/{radioStation}/now-playing', RadioStationNowPlayingController::class);
             });

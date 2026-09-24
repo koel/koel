@@ -36,7 +36,7 @@
         <Icon :icon="faMicrophoneSlash" />
       </template>
       No artists found.
-      <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
+      <EmptyLibraryHint />
     </ScreenEmptyState>
 
     <ScreenEmptyState v-else-if="noFavoriteArtists">
@@ -90,7 +90,6 @@ import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
-import { usePolicies } from '@/composables/usePolicies'
 
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import ArtistGrid from '@/components/artist/ArtistGrid.vue'
@@ -102,8 +101,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
 import Btn from '@/components/ui/form/Btn.vue'
-
-const { currentUserCan } = usePolicies()
+import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 
 const grid = ref<InstanceType<typeof ArtistGrid>>()
 const artists = toRef(artistStore.state, 'artists')

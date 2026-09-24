@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Enums\Acl\Permission;
 use App\Facades\License;
+use App\Hooks\Filter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
@@ -12,6 +13,7 @@ use App\Http\Resources\ThemeResource;
 use App\Http\Resources\UserResource;
 use App\Models\Setting;
 use App\Models\User;
+use App\Providers\SongStorageServiceProvider;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SongRepository;
@@ -26,6 +28,7 @@ use App\Services\Integrations\YouTubeService;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\MediaBrowser;
 use App\Services\QueueService;
+use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class FetchInitialDataController extends Controller
@@ -47,7 +50,7 @@ class FetchInitialDataController extends Controller
             ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
             : null;
 
-        return response()->json([
+        return response()->json(apply_filters(Filter::INITIAL_DATA_FETCHED, [
             'settings' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
                 ? $settingRepository->getAllAsKeyValueArray()
                 : [],
@@ -66,6 +69,8 @@ class FetchInitialDataController extends Controller
             'uses_media_browser' => MediaBrowser::used(),
             'uses_ai' => License::isPlus() && config('koel.ai.enabled'),
             'allows_embedding' => (bool) config('koel.embed.enabled'),
+            'uses_podcasts' => (bool) config('koel.podcasts.enabled'),
+            'uses_radio' => (bool) config('koel.radio.enabled'),
             'supports_batch_downloading' => extension_loaded('zip'),
             'media_path_set' => (bool) Setting::get('media_path'),
             'supports_transcoding' =>
@@ -86,8 +91,13 @@ class FetchInitialDataController extends Controller
                 'product_id' => config('lemonsqueezy.product_id'),
             ],
             'storage_driver' => config('koel.storage_driver'),
+            'supports_presigned_uploads' => is_a(
+                SongStorageServiceProvider::configuredStorageClass(),
+                IssuesPresignedUploadUrls::class,
+                allow_string: true,
+            ),
             'dir_separator' => DIRECTORY_SEPARATOR,
             'current_theme' => $theme ? ThemeResource::make($theme) : null,
-        ]);
+        ]));
     }
 }

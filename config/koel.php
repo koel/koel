@@ -11,7 +11,7 @@ return [
     // or downloaded podcast episodes. By default, it is set to the system's temporary directory.
     'artifacts_path' => env('ARTIFACTS_PATH') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel',
 
-    'image_storage_dir' => 'storage/images',
+    'image_storage_dir' => env('IMAGE_STORAGE_DIR', 'storage/images'),
 
     /*
      |--------------------------------------------------------------------------
@@ -187,6 +187,14 @@ return [
 
     'embed' => [
         'enabled' => env('EMBED_ENABLED', true),
+    ],
+
+    'podcasts' => [
+        'enabled' => env('PODCASTS_ENABLED', true),
+    ],
+
+    'radio' => [
+        'enabled' => env('RADIO_ENABLED', true),
     ],
 
     /*

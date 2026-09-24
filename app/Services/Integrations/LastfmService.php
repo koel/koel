@@ -13,18 +13,23 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use App\Services\Contracts\Encyclopedia;
 use App\Services\Contracts\Scrobbler;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
 use Generator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use Illuminate\Support\Uri;
 use SensitiveParameter;
 
 class LastfmService implements Encyclopedia, Scrobbler
 {
     public function __construct(
         private readonly LastfmConnector $connector,
+        private readonly UserRepository $userRepository,
     ) {}
 
     /**
@@ -108,5 +113,23 @@ class LastfmService implements Encyclopedia, Scrobbler
     {
         $user->preferences->lastFmSessionKey = $sessionKey;
         $user->save();
+    }
+
+    public function getAuthorizationUrl(User $user): string
+    {
+        $state = Str::random(40);
+        Cache::put(cache_key('lastfm connect state', $state), $user->id, now()->addMinutes(10));
+
+        return Uri::of('https://www.last.fm/api/auth/')->withQuery([
+            'api_key' => config('koel.services.lastfm.key'),
+            'cb' => route('lastfm.callback', ['state' => $state]),
+        ])->value();
+    }
+
+    public function pullUserFromConnectState(#[SensitiveParameter] string $state): ?User
+    {
+        $userId = Cache::pull(cache_key('lastfm connect state', $state));
+
+        return $userId ? $this->userRepository->findOne($userId) : null;
     }
 }

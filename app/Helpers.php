@@ -1,8 +1,11 @@
 <?php
 
+use App\Facades\Hooks;
 use App\Facades\License;
+use App\Services\Image\ImageStorage;
 use App\Services\SettingService;
 use App\Values\Branding;
+use App\Values\HookHandle;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -24,7 +27,12 @@ function static_url(?string $name = null): string
 
 function base_url(): string
 {
-    return app()->runningUnitTests() ? config('app.url') : asset('');
+    return rtrim(url('/'), '/') . '/';
+}
+
+function app_url(string $path = ''): string
+{
+    return rtrim(config('app.url'), '/') . '/' . ltrim($path, '/');
 }
 
 function image_storage_path(?string $fileName, ?string $default = null, bool $ensureDirectoryExists = true): ?string
@@ -44,7 +52,13 @@ function image_storage_path(?string $fileName, ?string $default = null, bool $en
 
 function image_storage_url(?string $fileName, ?string $default = null): ?string
 {
-    return $fileName ? static_url(config('koel.image_storage_dir') . '/' . $fileName) : $default;
+    if (!$fileName) {
+        return $default;
+    }
+
+    return config('filesystems.disks.images.url')
+        ? ImageStorage::disk()->url($fileName)
+        : static_url(config('koel.image_storage_dir') . '/' . $fileName);
 }
 
 function artifact_path(?string $subPath = null, $ensureDirectoryExists = true): string
@@ -237,4 +251,41 @@ function koel_branding(?string $key = null): Branding|string|null
 function http_user_agent(): string
 {
     return 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36';
+}
+
+function add_action(string $action, Closure $callback, int $priority = 10): HookHandle
+{
+    return Hooks::addAction($action, $callback, $priority);
+}
+
+function do_action(string $action, mixed ...$args): void
+{
+    Hooks::doAction($action, ...$args);
+}
+
+function add_filter(string $filter, Closure $callback, int $priority = 10): HookHandle
+{
+    return Hooks::addFilter($filter, $callback, $priority);
+}
+
+/**
+ * @template T
+ *
+ * @param T $value
+ *
+ * @return T
+ */
+function apply_filters(string $filter, mixed $value, mixed ...$args): mixed
+{
+    return Hooks::applyFilters($filter, $value, ...$args);
+}
+
+function remove_action(HookHandle $handle): void
+{
+    Hooks::removeAction($handle);
+}
+
+function remove_filter(HookHandle $handle): void
+{
+    Hooks::removeFilter($handle);
 }

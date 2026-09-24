@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
-import { arrayify, flattenParams, gravatar, limitBy, use } from './helpers'
+import { defineComponent, h } from 'vue'
+import { render, screen } from '@testing-library/vue'
+import { arrayify, defineAsyncComponent, flattenParams, gravatar, limitBy, use } from './helpers'
 
 describe('helpers utils', () => {
   describe('gravatar()', () => {
@@ -89,6 +91,23 @@ describe('helpers utils', () => {
 
     it('skips null and undefined values', () => {
       expect(flattenParams({ type: 'favorites', id: null, extra: undefined })).toEqual({ type: 'favorites' })
+    })
+  })
+
+  describe('defineAsyncComponent', () => {
+    it('stops showing the loading state once the component fails to load', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+      vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      const FailingComponent = defineAsyncComponent(() =>
+        Promise.reject(new Error('Failed to fetch dynamically imported module')),
+      )
+
+      render(defineComponent({ render: () => h('div', h(FailingComponent)) }))
+
+      await new Promise(resolve => setTimeout(resolve, 300))
+
+      expect(screen.queryByRole('status', { name: 'Loading' })).toBeNull()
     })
   })
 })

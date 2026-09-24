@@ -175,9 +175,18 @@ Additional providers (Gemini, Ollama, etc.) can be configured in `config/ai.php`
 
 | Variable | Description | Default |
 |---|---|---|
-| `TRUSTED_HOSTS` | A comma-separated list of hostnames allowed to access Koel. Leave empty to allow any hostname. Example: `localhost,192.168.0.1,yourdomain.com` | _(empty)_ |
+| `APP_URL` | The address people use to reach Koel, e.g. `https://music.example.com`. Links in emails, such as password resets and invitations, point here, so make sure it is correct. | `http://localhost` |
+| `TRUSTED_HOSTS` | A comma-separated list of hostnames allowed to access Koel. Requests for any other hostname are rejected. Leave empty to allow any hostname. Example: `localhost,192.168.0.1,yourdomain.com` | _(empty)_ |
+| `TRUSTED_PROXIES` | A comma-separated list of IP addresses or ranges of the reverse proxies in front of Koel. Koel trusts `X-Forwarded-*` headers only from these. Set it if your proxy is on a public IP, such as Cloudflare. | `PRIVATE_SUBNETS` |
 | `FORCE_HTTPS` | Force Koel to use HTTPS URLs. Set to `true` if automatic detection fails. | `false` |
+| `SENTRY_LARAVEL_DSN` | Report unhandled exceptions to [Sentry](https://sentry.io). Leave empty to disable reporting entirely. Events are tagged with `APP_ENV`. | _(empty)_ |
 | `BACKUP_ON_DELETE` | Whether to create a backup of a song when deleting it from the filesystem. | `true` |
 | `CDN_URL` | A CDN URL mapped to Koel's home URL, used to serve media files. No trailing slash. | _(empty)_ |
+| `IMAGE_STORAGE_DRIVER` | The filesystem driver for artwork — album covers, artist images and avatars. Use `s3` to keep them on S3 or an S3-compatible service such as Cloudflare R2, reusing the `AWS_*` settings. | `local` |
+| `IMAGE_STORAGE_DIR` | Where artwork is stored: a path under Koel's `public` directory for the `local` driver, or a key prefix inside the bucket otherwise. | `storage/images` |
+| `IMAGE_STORAGE_BUCKET` | A separate, public bucket for artwork, so media can stay private. | _(`AWS_BUCKET`)_ |
+| `IMAGE_STORAGE_URL` | The public URL artwork is served from. Required when the driver is not `local`. No trailing slash. | _(empty)_ |
 | `MEDIA_BROWSER_ENABLED` | Whether to enable the media browser (experimental Koel Plus feature). | `false` |
 | `EMBED_ENABLED` | Whether to allow embedding songs, albums, artists, and playlists on external sites. Set to `false` to hide the "Embed…" menu entries and disable both creation and rendering of embed widgets. | `true` |
+| `PODCASTS_ENABLED` | Whether to enable podcasts. Set to `false` to hide podcasts from the interface and stop serving them over both Koel's own API and Subsonic. Existing subscriptions and episodes are left untouched. | `true` |
+| `RADIO_ENABLED` | Whether to enable radio stations. Set to `false` to hide radio from the interface and stop serving it over both Koel's own API and Subsonic. Existing stations are left untouched. | `true` |

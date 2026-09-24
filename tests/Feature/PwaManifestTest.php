@@ -66,9 +66,15 @@ class PwaManifestTest extends TestCase
     #[Test]
     public function eachPageLinksItsOwnManifest(): void
     {
-        $this->withoutVite()->get('/')->assertSee('rel="manifest" href="' . route('manifest') . '"', false);
+        $this->withoutVite()->get('/')->assertSee(
+            'rel="manifest" crossorigin="use-credentials" href="' . route('manifest') . '"',
+            false,
+        );
 
-        $this->withoutVite()->get('remote')->assertSee('rel="manifest" href="' . route('manifest.remote') . '"', false);
+        $this->withoutVite()->get('remote')->assertSee(
+            'rel="manifest" crossorigin="use-credentials" href="' . route('manifest.remote') . '"',
+            false,
+        );
     }
 
     #[Test]

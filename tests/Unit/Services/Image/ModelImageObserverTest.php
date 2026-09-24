@@ -3,22 +3,37 @@
 namespace Tests\Unit\Services\Image;
 
 use App\Models\Playlist;
+use App\Services\Image\ImageStorage;
 use App\Services\Image\ModelImageObserver;
-use Illuminate\Support\Facades\File;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
 
 class ModelImageObserverTest extends TestCase
 {
+    private static function fakeDiskWith(string ...$fileNames): FilesystemAdapter
+    {
+        $disk = Storage::fake(ImageStorage::DISK);
+
+        foreach ($fileNames as $fileName) {
+            $disk->put($fileName, 'dummy');
+        }
+
+        return $disk;
+    }
+
     #[Test]
     public function onModelUpdatingDeletesTheOriginalImageWhenTheFieldIsDirty(): void
     {
         $playlist = self::makePlaylistWithDirtyCover(original: 'old.webp', current: 'new.webp');
 
-        File::expects('delete')->with([image_storage_path('old.webp')]);
+        $disk = self::fakeDiskWith('old.webp');
 
         ModelImageObserver::make('cover')->onModelUpdating($playlist);
+
+        $disk->assertMissing('old.webp');
     }
 
     #[Test]
@@ -26,9 +41,11 @@ class ModelImageObserverTest extends TestCase
     {
         $playlist = self::makePlaylistWithCleanCover('cover.webp');
 
-        File::expects('delete')->never();
+        $disk = self::fakeDiskWith('cover.webp');
 
         ModelImageObserver::make('cover')->onModelUpdating($playlist);
+
+        $disk->assertExists('cover.webp');
     }
 
     #[Test]
@@ -36,9 +53,11 @@ class ModelImageObserverTest extends TestCase
     {
         $playlist = self::makePlaylistWithCleanCover('cover.webp');
 
-        File::expects('delete')->with([image_storage_path('cover.webp')]);
+        $disk = self::fakeDiskWith('cover.webp');
 
         ModelImageObserver::make('cover')->onModelDeleted($playlist);
+
+        $disk->assertMissing('cover.webp');
     }
 
     #[Test]
@@ -46,12 +65,12 @@ class ModelImageObserverTest extends TestCase
     {
         $playlist = self::makePlaylistWithCleanCover('cover.webp');
 
-        File::expects('delete')->with([
-            image_storage_path('cover.webp'),
-            image_storage_path('cover_thumb.webp'),
-        ]);
+        $disk = self::fakeDiskWith('cover.webp', 'cover_thumb.webp');
 
         ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
+
+        $disk->assertMissing('cover.webp');
+        $disk->assertMissing('cover_thumb.webp');
     }
 
     #[Test]
@@ -59,12 +78,12 @@ class ModelImageObserverTest extends TestCase
     {
         $playlist = self::makePlaylistWithDirtyCover(original: 'old.webp', current: 'new.webp');
 
-        File::expects('delete')->with([
-            image_storage_path('old.webp'),
-            image_storage_path('old_thumb.webp'),
-        ]);
+        $disk = self::fakeDiskWith('old.webp', 'old_thumb.webp');
 
         ModelImageObserver::make('cover', hasThumbnail: true)->onModelUpdating($playlist);
+
+        $disk->assertMissing('old.webp');
+        $disk->assertMissing('old_thumb.webp');
     }
 
     #[Test]
@@ -72,9 +91,11 @@ class ModelImageObserverTest extends TestCase
     {
         $playlist = self::makePlaylistWithCleanCover(null);
 
-        File::expects('delete')->never();
+        $disk = self::fakeDiskWith('cover.webp');
 
         ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
+
+        $disk->assertExists('cover.webp');
     }
 
     #[Test]
@@ -82,9 +103,11 @@ class ModelImageObserverTest extends TestCase
     {
         $playlist = self::makePlaylistWithCleanCover('');
 
-        File::expects('delete')->never();
+        $disk = self::fakeDiskWith('cover.webp');
 
         ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
+
+        $disk->assertExists('cover.webp');
     }
 
     #[Test]
@@ -92,12 +115,12 @@ class ModelImageObserverTest extends TestCase
     {
         $playlist = self::makePlaylistWithCleanCover('cover.with.dots.png');
 
-        File::expects('delete')->with([
-            image_storage_path('cover.with.dots.png'),
-            image_storage_path('cover.with.dots_thumb.png'),
-        ]);
+        $disk = self::fakeDiskWith('cover.with.dots.png', 'cover.with.dots_thumb.png');
 
         ModelImageObserver::make('cover', hasThumbnail: true)->onModelDeleted($playlist);
+
+        $disk->assertMissing('cover.with.dots.png');
+        $disk->assertMissing('cover.with.dots_thumb.png');
     }
 
     #[Test]
@@ -105,7 +128,7 @@ class ModelImageObserverTest extends TestCase
     {
         $playlist = self::makePlaylistWithCleanCover('cover.webp');
 
-        File::expects('delete')->andThrow(new RuntimeException('disk gone'));
+        $this->mock(ImageStorage::class)->expects('delete')->andThrow(new RuntimeException('disk gone'));
 
         ModelImageObserver::make('cover')->onModelDeleted($playlist);
 
