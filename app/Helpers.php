@@ -27,7 +27,7 @@ function static_url(?string $name = null): string
 
 function base_url(): string
 {
-    return app()->runningUnitTests() ? config('app.url') : asset('');
+    return rtrim(url('/'), '/') . '/';
 }
 
 function image_storage_path(?string $fileName, ?string $default = null, bool $ensureDirectoryExists = true): ?string
