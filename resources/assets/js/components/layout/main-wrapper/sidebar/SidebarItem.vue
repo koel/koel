@@ -19,6 +19,14 @@
           <slot />
         </MarqueeText>
       </span>
+
+      <span
+        v-if="$slots.badge"
+        class="shrink-0 rounded-full px-2 py-0.5 text-[0.6875rem] leading-none bg-k-fg-10 text-k-fg-70"
+        data-testid="sidebar-item-badge"
+      >
+        <slot name="badge" />
+      </span>
     </a>
   </li>
 </template>

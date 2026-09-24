@@ -14,6 +14,7 @@
         <template #icon>
           <Icon :icon="item.icon" fixed-width />
         </template>
+        <template v-if="item.badge?.()" #badge>{{ item.badge() }}</template>
         {{ item.label }}
       </SidebarItem>
     </ul>
@@ -40,6 +41,7 @@ export interface ManageSidebarItem {
   route: RouteName
   screens: ScreenName[]
   visible: () => boolean
+  badge?: () => string | null
 }
 
 const { url, isCurrentScreen } = useRouter()
