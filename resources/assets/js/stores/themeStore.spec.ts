@@ -46,6 +46,18 @@ describe('themeStore', () => {
     expect(setThemeMock).toHaveBeenCalledWith('classic')
   })
 
+  it.each([
+    ['#ffbd41', '#111111'],
+    ['#1a1a1a', '#ffffff'],
+  ])('picks readable text for a highlight of %s that is already in place at start', (highlight, foreground) => {
+    document.body.style.setProperty('--color-highlight', highlight)
+
+    themeStore.init()
+
+    expect(document.body.style.getPropertyValue('--color-highlight-fg')).toBe(foreground)
+    document.body.style.removeProperty('--color-highlight-fg')
+  })
+
   it('initializes the store with a custom theme', () => {
     const setThemeMock = h.mock(themeStore, 'setTheme')
 
