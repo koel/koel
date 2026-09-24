@@ -41,7 +41,7 @@ describe('offlineStorage.vue', () => {
 
   it('shows storage usage info', () => {
     h.render(Component)
-    screen.getByText('500.0 MB / 2.0 GB')
+    screen.getByText('500 MB / 2 GB')
     screen.getByText('0 songs available offline')
   })
 
