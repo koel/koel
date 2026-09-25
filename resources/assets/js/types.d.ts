@@ -111,6 +111,12 @@ interface Branding {
 type EncyclopediaDisplayMode = 'aside' | 'full'
 type ScreenHeaderLayout = 'expanded' | 'collapsed'
 
+interface ContextMenuAction {
+  id: string
+  label: () => string
+  action: () => void
+}
+
 interface AlbumTrack {
   readonly title: string
   readonly length: number
