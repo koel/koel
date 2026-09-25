@@ -53,6 +53,7 @@ HTMLDialogElement.prototype.close = vi.fn(function mock(this: HTMLDialogElement)
 
 window.KOEL = {
   base_url: 'http://test/',
+  build: null,
   is_demo: false,
   pusher: { app_key: '', app_cluster: '' },
   branding: { name: 'Koel', logo: '', cover: '' },
