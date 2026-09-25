@@ -1,8 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
+import { defineComponent, h as createVNode } from 'vue'
+import type { Component as VueComponent } from 'vue'
 import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import { eventBus } from '@/utils/eventBus'
+import { Filter } from '@/config/hooks'
+import { addFilter, removeFilter } from '@/hooks'
 import Component from './Sidebar.vue'
 
 const standardItems = ['All Songs', 'Albums', 'Artists', 'Genres', 'Favorites', 'Recently Played']
@@ -20,6 +24,17 @@ describe('sidebar.vue', () => {
   it('shows administrative items', () => {
     h.actingAsAdmin().render(Component)
     adminItems.forEach(label => screen.getByText(label))
+  })
+
+  it('shows the items other code adds to its footer', () => {
+    const FooterItem = defineComponent({ render: () => createVNode('div', { 'data-testid': 'extra-footer-item' }) })
+    const handle = addFilter<VueComponent[]>(Filter.SIDEBAR_FOOTER_ITEMS, items => [...items, FooterItem])
+
+    h.actingAsUser().render(Component)
+
+    screen.getByTestId('extra-footer-item')
+
+    removeFilter(handle)
   })
 
   it('shows the YouTube sidebar item on demand', async () => {

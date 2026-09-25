@@ -24,8 +24,8 @@
       <SidebarManageSection v-if="showManageOptions" />
     </section>
 
-    <section v-if="canUpgradeToPlus" class="p-6 flex-1 flex flex-col-reverse">
-      <BtnUpgradeToPlus />
+    <section v-if="footerItems.length" class="p-6 flex-1 flex flex-col justify-end gap-3">
+      <component :is="item" v-for="(item, index) in footerItems" :key="index" />
     </section>
 
     <SidebarToggleButton
@@ -39,11 +39,14 @@
 <script lang="ts" setup>
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import type { Component } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useRouter } from '@/composables/useRouter'
 import { usePolicies } from '@/composables/usePolicies'
+import { Filter } from '@/config/hooks'
+import { applyFilters } from '@/hooks'
 
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
 import HomeButton from '@/components/layout/main-wrapper/sidebar/HomeButton.vue'
@@ -140,6 +143,10 @@ const showManageOptions = computed(
 )
 
 const canUpgradeToPlus = computed(() => !isPlus.value && currentUserCan.manageSettings())
+
+const footerItems = computed(() =>
+  applyFilters<Component[]>(Filter.SIDEBAR_FOOTER_ITEMS, canUpgradeToPlus.value ? [BtnUpgradeToPlus] : []),
+)
 
 onRouteChanged(_ => (mobileShowing.value = false))
 
