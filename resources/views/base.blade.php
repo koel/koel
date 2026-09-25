@@ -1,4 +1,3 @@
-@use('Illuminate\Support\Facades\Vite')
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,7 +35,7 @@
     @php
         $koelGlobals = [
             'base_url' => base_url(),
-            'build' => Vite::manifestHash(),
+            'build' => koel_build_id(),
             'is_demo' => config('koel.misc.demo'),
             'pusher' => [
                 'app_key' => config('broadcasting.connections.pusher.key'),

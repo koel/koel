@@ -3,7 +3,7 @@
 namespace Tests\Unit\Http\Middleware;
 
 use App\Http\Middleware\AddBuildHeader;
-use Illuminate\Foundation\Vite;
+use App\Services\BuildIdentifier;
 use Illuminate\Http\Request;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -14,16 +14,16 @@ class AddBuildHeaderTest extends TestCase
 {
     private static function handleWithBuild(?string $build): Response
     {
-        $vite = Mockery::mock(Vite::class);
-        $vite->expects('manifestHash')->andReturn($build);
+        $buildIdentifier = Mockery::mock(BuildIdentifier::class);
+        $buildIdentifier->expects('getId')->andReturn($build);
 
-        return (new AddBuildHeader($vite))->handle(new Request(), static fn () => new Response());
+        return (new AddBuildHeader($buildIdentifier))->handle(new Request(), static fn () => new Response());
     }
 
     #[Test]
     public function tellTheClientWhichBuildIsLive(): void
     {
-        self::assertSame('abc123', self::handleWithBuild('abc123')->headers->get('X-Koel-Build'));
+        self::assertSame('1790000000', self::handleWithBuild('1790000000')->headers->get('X-Koel-Build'));
     }
 
     #[Test]
