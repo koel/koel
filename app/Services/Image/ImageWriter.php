@@ -2,11 +2,11 @@
 
 namespace App\Services\Image;
 
+use App\Services\Network\SafeHttp;
 use App\Values\ImageWritingConfig;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Image\Image as ProcessableImage;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
@@ -26,8 +26,11 @@ class ImageWriter
 
     private readonly string $format;
 
-    public function __construct(#[Config('images.default')] string $driver = 'gd')
-    {
+    public function __construct(
+        private readonly SafeHttp $http,
+        #[Config('images.default')]
+        string $driver = 'gd',
+    ) {
         $this->format = self::findSupportedFormat($driver);
     }
 
@@ -82,7 +85,8 @@ class ImageWriter
     {
         $config ??= ImageWritingConfig::default();
 
-        $image = self::read($source)
+        $image = $this
+            ->read($source)
             ->scale(width: $config->maxWidth)
             ->when($config->blur, static fn (ProcessableImage $image) => $image->blur($config->blur))
             ->optimize($this->format, $config->quality);
@@ -97,14 +101,14 @@ class ImageWriter
     /**
      * @param mixed $source A data URI, a base64-encoded image, a URL, a local file path, or raw image bytes.
      */
-    private static function read(mixed $source): ProcessableImage
+    private function read(mixed $source): ProcessableImage
     {
         if (Str::startsWith($source, 'data:')) {
             return Image::fromBase64(Str::after($source, 'base64,'));
         }
 
         if (Str::isUrl($source)) {
-            return Image::fromBytes(self::fetch($source));
+            return Image::fromBytes($this->fetch($source));
         }
 
         return self::isLocalFile($source) ? Image::fromPath($source) : Image::fromBytes($source);
@@ -115,14 +119,14 @@ class ImageWriter
         return strlen($source) < PHP_MAXPATHLEN && is_file($source);
     }
 
-    private static function fetch(string $url): string
+    private function fetch(string $url): string
     {
         try {
-            $response = Http::withUserAgent(http_user_agent())->get($url);
+            $response = $this->http->get($url, ['User-Agent' => http_user_agent()]);
 
             // Some hosts serve images only to browsers, while others, like Wikimedia, refuse clients posing as one.
             if ($response->clientError()) {
-                $response = Http::withUserAgent(koel_user_agent())->get($url);
+                $response = $this->http->get($url, ['User-Agent' => koel_user_agent()]);
             }
 
             return $response->throwIfClientError()->throwIfServerError()->body();

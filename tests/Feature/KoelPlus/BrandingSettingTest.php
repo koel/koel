@@ -3,6 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
@@ -85,6 +86,31 @@ class BrandingSettingTest extends PlusTestCase
         self::assertTrue(Str::isUrl($branding['cover']));
         self::assertNotSame(image_storage_url('old-logo.png'), $branding['logo']);
         self::assertNotSame(image_storage_url('old-cover.png'), $branding['cover']);
+    }
+
+    #[Test]
+    public function rejectsLogoAndCoverUrlsOtherThanTheCurrentOnes(): void
+    {
+        Http::fake();
+
+        Setting::set('branding', [
+            'name' => 'Koel',
+            'logo' => 'old-logo.png',
+            'cover' => 'old-cover.png',
+        ]);
+
+        $this->putAs(
+            'api/settings/branding',
+            [
+                'name' => 'Little Bird',
+                'logo' => 'http://169.254.169.254/latest/meta-data/',
+                'cover' => 'https://example.com/cover.png',
+            ],
+            create_admin(),
+        )->assertJsonValidationErrors(['logo', 'cover']);
+
+        Http::assertNothingSent();
+        self::assertSame('Koel', Setting::get('branding')['name']);
     }
 
     #[Test]
