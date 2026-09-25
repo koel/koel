@@ -35,7 +35,6 @@ import { useModal } from '@/composables/useModal'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
-import type { ContextMenuAction } from '@/components/ui/context-menu/ContextMenuItem.vue'
 
 import ContextMenuItem from '@/components/ui/context-menu/ContextMenuItem.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
