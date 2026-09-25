@@ -46,6 +46,45 @@ class TrustHostsTest extends TestCase
         $this->handleRequestFor('music.example.com.evil.example')->getHost();
     }
 
+    #[Test]
+    public function acceptsAnySubdomainOfAWildcardHost(): void
+    {
+        config(['app.trusted_hosts' => ['*.example.com']]);
+
+        self::assertSame('music.example.com', $this->handleRequestFor('music.example.com')->getHost());
+        self::assertSame('a.b.example.com', $this->handleRequestFor('a.b.example.com')->getHost());
+    }
+
+    #[Test]
+    public function rejectsTheBareDomainOfAWildcardHost(): void
+    {
+        config(['app.trusted_hosts' => ['*.example.com']]);
+
+        $this->expectException(SuspiciousOperationException::class);
+
+        $this->handleRequestFor('example.com')->getHost();
+    }
+
+    #[Test]
+    public function rejectsALookAlikeOfAWildcardHost(): void
+    {
+        config(['app.trusted_hosts' => ['*.example.com']]);
+
+        $this->expectException(SuspiciousOperationException::class);
+
+        $this->handleRequestFor('evil-example.com')->getHost();
+    }
+
+    #[Test]
+    public function treatsAnAsteriskElsewhereAsALiteralCharacter(): void
+    {
+        config(['app.trusted_hosts' => ['music.*.com']]);
+
+        $this->expectException(SuspiciousOperationException::class);
+
+        $this->handleRequestFor('music.example.com')->getHost();
+    }
+
     private function handleRequestFor(string $host): Request
     {
         $this->app['env'] = 'production';

@@ -111,6 +111,12 @@ interface Branding {
 type EncyclopediaDisplayMode = 'aside' | 'full'
 type ScreenHeaderLayout = 'expanded' | 'collapsed'
 
+interface ContextMenuAction {
+  id: string
+  label: () => string
+  action: () => void
+}
+
 interface AlbumTrack {
   readonly title: string
   readonly length: number
@@ -578,6 +584,9 @@ interface ScreenNames {
 }
 
 declare type ScreenName = keyof ScreenNames
+
+/** Route names added outside the built-in route table; add one by merging a key into this interface from another declaration file. */
+interface RouteNames {}
 
 declare type CardLayout = 'full' | 'compact'
 

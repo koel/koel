@@ -141,7 +141,7 @@ describe('sideSheet.vue', () => {
     renderComponent()
     await openProfileMenu()
 
-    await h.user.click(screen.getByTestId('about-btn'))
+    await h.user.click(screen.getByTestId('profile-menu-about'))
 
     await assertOpenModal(openModalMock, AboutKoelModal)
   })
@@ -161,7 +161,7 @@ describe('sideSheet.vue', () => {
     renderComponent()
     await openProfileMenu()
 
-    await h.user.click(screen.getByTestId('logout-btn'))
+    await h.user.click(screen.getByTestId('profile-menu-logout'))
 
     expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
   })
