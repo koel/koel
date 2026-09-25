@@ -25,6 +25,14 @@
   </li>
 </template>
 
+<script lang="ts">
+export interface ContextMenuAction {
+  id: string
+  label: () => string
+  action: () => void
+}
+</script>
+
 <script setup lang="ts">
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons'
 import { ref, useSlots } from 'vue'

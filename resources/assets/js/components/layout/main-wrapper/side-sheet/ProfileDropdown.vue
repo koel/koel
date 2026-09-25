@@ -24,14 +24,6 @@
   </div>
 </template>
 
-<script lang="ts">
-export interface ProfileMenuItem {
-  id: string
-  label: () => string
-  action: () => void
-}
-</script>
-
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
@@ -43,6 +35,7 @@ import { useModal } from '@/composables/useModal'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
+import type { ContextMenuAction } from '@/components/ui/context-menu/ContextMenuItem.vue'
 
 import ContextMenuItem from '@/components/ui/context-menu/ContextMenuItem.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
@@ -63,7 +56,7 @@ const close = () => (open.value = false)
 const openAbout = () => openModal<'ABOUT_KOEL'>(AboutKoelModal)
 
 const items = computed(() =>
-  applyFilters<ProfileMenuItem[]>(Filter.PROFILE_MENU_ITEMS, [
+  applyFilters<ContextMenuAction[]>(Filter.PROFILE_MENU_ITEMS, [
     { id: 'profile', label: () => 'Profile & Preferences', action: () => go(url('profile')) },
     { id: 'logout', label: () => 'Log Out', action: () => eventBus.emit('LOG_OUT') },
     {
@@ -74,7 +67,7 @@ const items = computed(() =>
   ]),
 )
 
-const choose = (item: ProfileMenuItem) => {
+const choose = (item: ContextMenuAction) => {
   close()
   item.action()
 }
