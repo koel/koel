@@ -143,10 +143,27 @@ export default class Router {
       return
     }
 
+    Router.navigate(path, 'push')
+
+    reload && forceReloadWindow()
+  }
+
+  public static replace(path: string) {
+    Router.navigate(path, 'replace')
+  }
+
+  private static navigate(path: string, mode: 'push' | 'replace') {
     if (usesCleanUrls()) {
-      history.pushState(null, '', `${basePath()}${toClientPath(path).substring(1)}`)
+      const url = `${basePath()}${toClientPath(path).substring(1)}`
+
+      if (mode === 'push') {
+        history.pushState(null, '', url)
+      } else {
+        history.replaceState(null, '', url)
+      }
+
       dispatchEvent(new PopStateEvent('popstate'))
-      reload && forceReloadWindow()
+
       return
     }
 
@@ -158,17 +175,22 @@ export default class Router {
       path = `/#${path}`
     }
 
-    path = path.substring(1, path.length)
-    location.assign(`${location.origin}${location.pathname}${path}`)
+    const url = `${location.origin}${location.pathname}${path.substring(1)}`
 
-    reload && forceReloadWindow()
+    if (mode === 'push') {
+      location.assign(url)
+    } else {
+      location.replace(url)
+    }
   }
 
   public resolve(path?: string) {
     path = path ?? currentClientPath()
 
-    if (['', '/', '#/', '#!/'].includes(path)) {
-      Router.go(this.homeRoute.path)
+    const [pathWithoutQuery, query] = path.split('?')
+
+    if (['', '/', '#', '#/', '#!/'].includes(pathWithoutQuery)) {
+      Router.replace(query ? `${this.homeRoute.path}?${query}` : this.homeRoute.path)
       return null
     }
 

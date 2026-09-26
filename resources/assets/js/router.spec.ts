@@ -53,13 +53,21 @@ describe('Router', () => {
   })
 
   describe('resolve', () => {
-    it('redirects empty hashes to home', () => {
-      const goSpy = vi.spyOn(Router, 'go').mockImplementation(() => {})
+    it('sends empty hashes home without adding a history entry', () => {
+      const replaceSpy = vi.spyOn(Router, 'replace').mockImplementation(() => {})
 
       for (const hash of ['', '#/', '#!/']) {
         router.resolve(hash)
-        expect(goSpy).toHaveBeenCalledWith('/home')
+        expect(replaceSpy).toHaveBeenCalledWith('/home')
       }
+    })
+
+    it('keeps the query string when sending the root home', () => {
+      const replaceSpy = vi.spyOn(Router, 'replace').mockImplementation(() => {})
+
+      router.resolve('#/?source=email')
+
+      expect(replaceSpy).toHaveBeenCalledWith('/home?source=email')
     })
 
     it('resolves a matching route', () => {
@@ -204,6 +212,16 @@ describe('Router', () => {
 
     it('generates plain paths', () => {
       expect(Router.url('genres.show', { id: 'rock' })).toBe('/genres/rock')
+    })
+
+    it('sends the root home in place of the current history entry', () => {
+      history.replaceState(null, '', '/?source=email')
+      const entries = history.length
+
+      router.resolve()
+
+      expect(`${location.pathname}${location.search}`).toBe('/home?source=email')
+      expect(history.length).toBe(entries)
     })
 
     it('resolves the route from the path', () => {
