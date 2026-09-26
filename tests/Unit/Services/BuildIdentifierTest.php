@@ -18,30 +18,41 @@ class BuildIdentifierTest extends TestCase
         return new BuildIdentifier($vite);
     }
 
-    #[Test]
-    public function identifyTheBuildByWhenItsManifestWasWritten(): void
+    private static function writeBuildId(string $content): string
     {
-        $manifest = tempnam(sys_get_temp_dir(), 'manifest');
-        touch($manifest, 1_790_000_000);
+        $path = tempnam(sys_get_temp_dir(), 'build-id');
+        file_put_contents($path, $content);
 
-        self::assertSame('1790000000', self::makeIdentifier()->getId($manifest));
-
-        unlink($manifest);
+        return $path;
     }
 
     #[Test]
-    public function reportNoBuildWithoutAManifest(): void
+    public function readTheIdTheBuildWrote(): void
     {
-        self::assertNull(self::makeIdentifier()->getId('/no/such/manifest.json'));
+        $path = self::writeBuildId("61b52f5f215511f5\n");
+
+        self::assertSame('61b52f5f215511f5', self::makeIdentifier()->getId($path));
+
+        unlink($path);
+    }
+
+    #[Test]
+    public function reportNoBuildWithoutAnId(): void
+    {
+        self::assertNull(self::makeIdentifier()->getId('/no/such/build-id'));
+
+        $path = self::writeBuildId('');
+        self::assertNull(self::makeIdentifier()->getId($path));
+        unlink($path);
     }
 
     #[Test]
     public function reportNoBuildWhileTheDevServerIsRunning(): void
     {
-        $manifest = tempnam(sys_get_temp_dir(), 'manifest');
+        $path = self::writeBuildId('61b52f5f215511f5');
 
-        self::assertNull(self::makeIdentifier(hot: true)->getId($manifest));
+        self::assertNull(self::makeIdentifier(hot: true)->getId($path));
 
-        unlink($manifest);
+        unlink($path);
     }
 }

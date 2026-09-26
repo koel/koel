@@ -1,12 +1,23 @@
 /// <reference types="vite-plus/test" />
 import { defineConfig } from 'vite-plus'
+import type { Plugin } from 'vite-plus'
 import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import laravel from 'laravel-vite-plugin'
 import { resolve } from 'path'
+import { createHash } from 'crypto'
 import { visualizer } from 'rollup-plugin-visualizer'
 
-const __dirname = import.meta.dirname
+const projectRoot = import.meta.dirname
+
+const writeBuildId = (): Plugin => ({
+  name: 'koel:build-id',
+  apply: 'build',
+  generateBundle(_options, bundle) {
+    const buildId = createHash('sha256').update(Object.keys(bundle).sort().join('\n')).digest('hex').slice(0, 16)
+    this.emitFile({ type: 'asset', fileName: 'build-id', source: buildId })
+  },
+})
 
 export default defineConfig({
   staged: {
@@ -73,6 +84,7 @@ export default defineConfig({
             input: ['resources/assets/js/app.ts', 'resources/assets/js/remote/app.ts'],
             refresh: true,
           }),
+          writeBuildId(),
           visualizer({
             filename: 'stats.html',
           }),
@@ -84,17 +96,17 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './resources/assets/js'),
-      '@modules': resolve(__dirname, './node_modules'),
+      '@': resolve(projectRoot, './resources/assets/js'),
+      '@modules': resolve(projectRoot, './node_modules'),
       lodash: 'lodash-es',
     },
   },
   test: {
     environment: 'jsdom',
-    setupFiles: resolve(__dirname, './resources/assets/js/__tests__/setup.ts'),
+    setupFiles: resolve(projectRoot, './resources/assets/js/__tests__/setup.ts'),
     server: {
       deps: {
-        cacheDir: resolve(__dirname, 'node_modules/.vitest'),
+        cacheDir: resolve(projectRoot, 'node_modules/.vitest'),
       },
     },
   },

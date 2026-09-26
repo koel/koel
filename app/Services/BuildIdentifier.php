@@ -10,14 +10,14 @@ class BuildIdentifier
         private readonly Vite $vite,
     ) {}
 
-    public function getId(?string $manifestPath = null): ?string
+    public function getId(?string $buildIdPath = null): ?string
     {
-        $manifestPath ??= public_path('build/manifest.json');
+        $buildIdPath ??= public_path('build/build-id');
 
-        if ($this->vite->isRunningHot() || !is_file($manifestPath)) {
+        if ($this->vite->isRunningHot() || !is_file($buildIdPath)) {
             return null;
         }
 
-        return (string) filemtime($manifestPath);
+        return trim((string) file_get_contents($buildIdPath)) ?: null;
     }
 }
