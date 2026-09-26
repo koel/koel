@@ -7,6 +7,11 @@ use App\Values\EqualizerPresetCollection;
 
 class EqualizerPresetsPreference extends Preference
 {
+    public function isCustomizable(): bool
+    {
+        return false;
+    }
+
     public function getDefaultValue(): EqualizerPresetCollection
     {
         return new EqualizerPresetCollection();
