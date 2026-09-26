@@ -30,7 +30,7 @@ class S3UploadUrlSigner
 
         $request = serialize($command)->withHeader('Content-Length', (string) $size);
 
-        $signedRequest = self::makeSizeBindingSigner($client)
+        $signedRequest = self::makeSizeAndNoOverwriteBindingSigner($client)
             ->presign($request, $client->getCredentials()->wait(), $expiresAt);
 
         return PresignedUpload::make(
@@ -41,14 +41,14 @@ class S3UploadUrlSigner
         );
     }
 
-    private static function makeSizeBindingSigner(S3Client $client): S3SignatureV4
+    private static function makeSizeAndNoOverwriteBindingSigner(S3Client $client): S3SignatureV4
     {
         return new class('s3', $client->getConfig('signing_region')) extends S3SignatureV4 {
             /** @return array<string, true> */
             protected function getHeaderBlacklist(): array
             {
                 $blacklist = parent::getHeaderBlacklist();
-                unset($blacklist['content-length']);
+                unset($blacklist['content-length'], $blacklist['if-none-match']);
 
                 return $blacklist;
             }

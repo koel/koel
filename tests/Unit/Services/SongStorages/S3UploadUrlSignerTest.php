@@ -26,7 +26,7 @@ class S3UploadUrlSignerTest extends TestCase
     }
 
     #[Test]
-    public function signsTheDeclaredSizeIntoTheUrl(): void
+    public function signsTheDeclaredSizeAndNoOverwriteIntoTheUrl(): void
     {
         $expiresAt = Carbon::now()->addHour();
 
@@ -34,7 +34,7 @@ class S3UploadUrlSignerTest extends TestCase
         $query = Uri::of($presigned->url)->query();
 
         self::assertSame('https://storage.example.com/koel/1__random__song.mp3', Str::before($presigned->url, '?'));
-        self::assertSame('content-length;host', $query->get('X-Amz-SignedHeaders'));
+        self::assertSame('content-length;host;if-none-match', $query->get('X-Amz-SignedHeaders'));
         self::assertSame(['If-None-Match' => '*'], $presigned->headers);
         self::assertSame('1__random__song.mp3', $presigned->key);
         self::assertTrue($presigned->expiresAt->eq($expiresAt));
