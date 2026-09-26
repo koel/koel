@@ -187,7 +187,7 @@ Additional providers (Gemini, Ollama, etc.) can be configured in `config/ai.php`
 | `IMAGE_STORAGE_BUCKET` | A separate, public bucket for artwork, so media can stay private. | _(`AWS_BUCKET`)_ |
 | `IMAGE_STORAGE_URL` | The public URL artwork is served from. Required when the driver is not `local`. No trailing slash. | _(empty)_ |
 | `MEDIA_BROWSER_ENABLED` | Whether to enable the media browser (experimental Koel Plus feature). | `false` |
-| `CLEAN_URLS_ENABLED` | Whether to use plain URLs like `/albums` instead of `/#/albums`. Your web server must send every path that isn't a real file to Koel (`index.php`); Koel's `.htaccess` and `nginx.conf.example` already do. Old `#/` links keep working. | `false` |
+| `CLEAN_URLS_ENABLED` | Whether to use plain URLs like `/albums` instead of `/#/albums`. | `false` |
 | `EMBED_ENABLED` | Whether to allow embedding songs, albums, artists, and playlists on external sites. Set to `false` to hide the "Embed…" menu entries and disable both creation and rendering of embed widgets. | `true` |
 | `PODCASTS_ENABLED` | Whether to enable podcasts. Set to `false` to hide podcasts from the interface and stop serving them over both Koel's own API and Subsonic. Existing subscriptions and episodes are left untouched. | `true` |
 | `RADIO_ENABLED` | Whether to enable radio stations. Set to `false` to hide radio from the interface and stop serving it over both Koel's own API and Subsonic. Existing stations are left untouched. | `true` |
