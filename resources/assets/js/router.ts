@@ -93,7 +93,7 @@ export default class Router {
 
     if (usesCleanUrls()) {
       this.rewriteHashUrl()
-      addEventListener('click', this.keepLinkInApp)
+      addEventListener('click', this.interceptLinkClick)
     }
   }
 
@@ -103,7 +103,7 @@ export default class Router {
     }
   }
 
-  private keepLinkInApp = (event: MouseEvent) => {
+  private interceptLinkClick = (event: MouseEvent) => {
     if (
       event.defaultPrevented ||
       event.button !== 0 ||
