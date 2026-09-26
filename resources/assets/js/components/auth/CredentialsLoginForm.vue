@@ -57,7 +57,7 @@ const takeLoginHint = () => {
   const url = new URL(window.location.href)
   const hint = url.searchParams.get('login_hint') ?? ''
 
-  if (hint) {
+  if (url.searchParams.has('login_hint')) {
     url.searchParams.delete('login_hint')
     window.history.replaceState(window.history.state, '', url)
   }

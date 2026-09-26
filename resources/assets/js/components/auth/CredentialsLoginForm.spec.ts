@@ -30,6 +30,16 @@ describe('credentialsLoginForm.vue', () => {
     window.history.replaceState(null, '', '/')
   })
 
+  it('drops an empty login hint from the address and focuses the email', async () => {
+    window.history.replaceState(null, '', '/?login_hint=#/home')
+    h.render(Component)
+
+    expect(screen.getByPlaceholderText('Your email address').hasAttribute('autofocus')).toBe(true)
+    expect(window.location.search).toBe('')
+
+    window.history.replaceState(null, '', '/')
+  })
+
   it('emits loggedIn on successful login', async () => {
     const loginMock = h.mock(authService, 'login')
     const { emitted } = h.render(Component)
