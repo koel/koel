@@ -36,6 +36,13 @@ function app_url(string $path = ''): string
     return rtrim(config('app.url'), '/') . '/' . ltrim($path, '/');
 }
 
+function client_url(string $path): string
+{
+    $path = ltrim($path, '/');
+
+    return app_url(config('koel.clean_urls.enabled') ? $path : "#/$path");
+}
+
 function image_storage_path(?string $fileName, ?string $default = null, bool $ensureDirectoryExists = true): ?string
 {
     if (!$fileName) {

@@ -62,6 +62,7 @@ type SSOProvider = 'Google' | 'OpenID Connect' | 'Reverse Proxy'
 
 interface KoelGlobals {
   base_url: string
+  clean_urls?: boolean
   build: string | null
   is_demo: boolean
   pusher: {

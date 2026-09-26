@@ -28,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         ResetPassword::createUrlUsing(static function (User $user, #[SensitiveParameter] string $token): string {
             $payload = base64_encode($user->getEmailForPasswordReset() . "|$token");
 
-            return app_url("/#/reset-password/$payload");
+            return client_url("reset-password/$payload");
         });
     }
 
