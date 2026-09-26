@@ -2,7 +2,7 @@ export const usesCleanUrls = () => Boolean(window.KOEL?.clean_urls)
 
 export const basePath = () => new URL(window.KOEL?.base_url ?? '/', location.origin).pathname
 
-export const toScreenPath = (path: string) => {
+export const toClientPath = (path: string) => {
   path = path.replace(/^\/?#/, '')
 
   if (usesCleanUrls() && path.startsWith(basePath())) {
@@ -12,5 +12,5 @@ export const toScreenPath = (path: string) => {
   return path.startsWith('/') ? path : `/${path}`
 }
 
-export const screenUrl = (path: string) =>
-  `${window.KOEL.base_url}${usesCleanUrls() ? '' : '#/'}${toScreenPath(path).substring(1)}`
+export const clientUrl = (path: string) =>
+  `${window.KOEL.base_url}${usesCleanUrls() ? '' : '#/'}${toClientPath(path).substring(1)}`

@@ -16,7 +16,7 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { playlistStore } from '@/stores/playlistStore'
-import { screenUrl } from '@/utils/screenUrl'
+import { clientUrl } from '@/utils/clientUrl'
 
 export interface SongUpdateData {
   title?: string
@@ -198,7 +198,7 @@ export const playableStore = {
       : `${commonStore.state.cdn_url}play/${playable.id}?t=${authService.getAudioToken()}`
   },
 
-  getShareableUrl: (song: Playable) => screenUrl(`/songs/${song.id}`),
+  getShareableUrl: (song: Playable) => clientUrl(`/songs/${song.id}`),
 
   ensureNotDeleted: (songs: MaybeArray<Song>) => arrayify(songs).filter(({ deleted }) => !deleted),
 

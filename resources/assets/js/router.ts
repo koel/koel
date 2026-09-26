@@ -5,7 +5,7 @@ import { routes as builtInRoutes } from '@/config/routes'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
 import { forceReloadWindow } from '@/utils/helpers'
-import { basePath, toScreenPath, usesCleanUrls } from '@/utils/screenUrl'
+import { basePath, toClientPath, usesCleanUrls } from '@/utils/clientUrl'
 
 type RouteParams = Record<string, string>
 type ResolvedHook = (params: RouteParams) => Promise<boolean | void> | boolean | void
@@ -31,8 +31,8 @@ let cachedRoutes: Route[] | null = null
 
 const routes = () => (cachedRoutes ??= applyFilters<Route[]>(Filter.ROUTES, [...builtInRoutes]))
 
-const currentScreenPath = () =>
-  usesCleanUrls() ? toScreenPath(`${location.pathname}${location.search}`) : location.hash
+const currentClientPath = () =>
+  usesCleanUrls() ? toClientPath(`${location.pathname}${location.search}`) : location.hash
 
 interface CompiledRoute {
   regex: RegExp
@@ -127,7 +127,7 @@ export default class Router {
       return
     }
 
-    const path = toScreenPath(`${url.pathname}${url.search}`)
+    const path = toClientPath(`${url.pathname}${url.search}`)
 
     if (!this.tryMatchRoute(path)) {
       return
@@ -144,7 +144,7 @@ export default class Router {
     }
 
     if (usesCleanUrls()) {
-      history.pushState(null, '', `${basePath()}${toScreenPath(path).substring(1)}`)
+      history.pushState(null, '', `${basePath()}${toClientPath(path).substring(1)}`)
       dispatchEvent(new PopStateEvent('popstate'))
       reload && forceReloadWindow()
       return
@@ -165,7 +165,7 @@ export default class Router {
   }
 
   public resolve(path?: string) {
-    path = path ?? currentScreenPath()
+    path = path ?? currentClientPath()
 
     if (['', '/', '#/', '#!/'].includes(path)) {
       Router.go(this.homeRoute.path)

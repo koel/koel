@@ -36,7 +36,7 @@ function app_url(string $path = ''): string
     return rtrim(config('app.url'), '/') . '/' . ltrim($path, '/');
 }
 
-function screen_url(string $path): string
+function client_url(string $path): string
 {
     $path = ltrim($path, '/');
 

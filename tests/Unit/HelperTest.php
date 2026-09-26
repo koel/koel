@@ -36,18 +36,18 @@ class HelperTest extends TestCase
     }
 
     #[Test]
-    public function screenUrlUsesAHashWithoutCleanUrls(): void
+    public function clientUrlUsesAHashWithoutCleanUrls(): void
     {
         config(['app.url' => 'https://music.example.com', 'koel.clean_urls.enabled' => false]);
 
-        self::assertSame('https://music.example.com/#/albums/123', screen_url('/albums/123'));
+        self::assertSame('https://music.example.com/#/albums/123', client_url('/albums/123'));
     }
 
     #[Test]
-    public function screenUrlUsesAPlainPathWithCleanUrls(): void
+    public function clientUrlUsesAPlainPathWithCleanUrls(): void
     {
         config(['app.url' => 'https://music.example.com/koel', 'koel.clean_urls.enabled' => true]);
 
-        self::assertSame('https://music.example.com/koel/albums/123', screen_url('albums/123'));
+        self::assertSame('https://music.example.com/koel/albums/123', client_url('albums/123'));
     }
 }
