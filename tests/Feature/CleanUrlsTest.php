@@ -10,6 +10,13 @@ use Tests\TestCase;
 
 class CleanUrlsTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withoutVite();
+    }
+
     #[Test]
     public function serveTheAppForAScreenPathWhenEnabled(): void
     {
