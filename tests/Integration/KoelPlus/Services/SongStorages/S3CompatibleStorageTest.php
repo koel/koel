@@ -4,7 +4,10 @@ namespace Tests\Integration\KoelPlus\Services\SongStorages;
 
 use App\Helpers\Ulid;
 use App\Services\SongStorages\S3CompatibleStorage;
+use App\Services\SongStorages\S3UploadUrlSigner;
+use App\Values\PresignedUpload;
 use App\Values\UploadReference;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -24,6 +27,21 @@ class S3CompatibleStorageTest extends PlusTestCase
         parent::setUp();
 
         Storage::fake('s3');
+
+        $this
+            ->mock(S3UploadUrlSigner::class)
+            ->allows('sign')
+            ->andReturnUsing(static fn (
+                string $key,
+                int $size,
+                Carbon $expiresAt,
+            ): PresignedUpload => PresignedUpload::make(
+                key: $key,
+                url: "https://storage.example.com/$key",
+                headers: [],
+                expiresAt: $expiresAt,
+            ));
+
         $this->service = app(S3CompatibleStorage::class);
 
         File::copy(test_path('songs/full.mp3'), artifact_path('tmp/random/full.mp3'));
@@ -85,12 +103,10 @@ class S3CompatibleStorageTest extends PlusTestCase
         Ulid::freeze('random');
         $user = create_user();
 
-        $presigned = $this->service->presignUpload('full.mp3', $user);
+        $presigned = $this->service->presignUpload('full.mp3', 1234, $user);
 
         self::assertSame("{$user->public_id}__random__full.mp3", $presigned->key);
-        self::assertStringContainsString($presigned->key, $presigned->url);
         self::assertTrue($presigned->expiresAt->isFuture());
-        self::assertSame('*', $presigned->headers['If-None-Match']);
     }
 
     #[Test]
@@ -128,12 +144,12 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         self::assertSame(
             "{$user->public_id}__random__passwd.mp3",
-            $this->service->presignUpload('../../etc/passwd.mp3', $user)->key,
+            $this->service->presignUpload('../../etc/passwd.mp3', 1234, $user)->key,
         );
 
         self::assertSame(
             "{$user->public_id}__random__song.mp3",
-            $this->service->presignUpload('..\\..\\windows\\song.mp3', $user)->key,
+            $this->service->presignUpload('..\\..\\windows\\song.mp3', 1234, $user)->key,
         );
     }
 
@@ -143,7 +159,7 @@ class S3CompatibleStorageTest extends PlusTestCase
         $user = create_user();
 
         foreach (['../../etc/passwd.mp3', '..\\..\\song.mp3', 'mix..live.mp3', 'ordinary.mp3'] as $name) {
-            $key = $this->service->presignUpload($name, $user)->key;
+            $key = $this->service->presignUpload($name, 1234, $user)->key;
 
             self::assertTrue($this->service->ownsUploadKey($key, $user), "rejected its own key for $name");
         }

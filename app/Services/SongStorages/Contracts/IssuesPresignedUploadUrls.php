@@ -7,7 +7,7 @@ use App\Values\PresignedUpload;
 
 interface IssuesPresignedUploadUrls
 {
-    public function presignUpload(string $fileName, User $uploader): PresignedUpload;
+    public function presignUpload(string $fileName, int $fileSize, User $uploader): PresignedUpload;
 
     public function ownsUploadKey(string $key, User $uploader): bool;
 
