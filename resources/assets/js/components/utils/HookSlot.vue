@@ -9,5 +9,8 @@ const props = withDefaults(defineProps<{ name: HookSlotName; context?: Record<st
   context: () => ({}),
 })
 
-const components = useHookSlot(props.name, () => props.context)
+const components = useHookSlot(
+  () => props.name,
+  () => props.context,
+)
 </script>
