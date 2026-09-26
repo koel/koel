@@ -7,6 +7,10 @@ use App\Values\EqualizerPresetCollection;
 
 class EqualizerPresetsPreference extends Preference
 {
+    /**
+     * Presets are saved and deleted through the `me/equalizer-presets` endpoints, which validate them.
+     * Saving them through the generic preferences endpoint would skip that validation.
+     */
     public function isCustomizable(): bool
     {
         return false;
