@@ -250,7 +250,10 @@ describe('uploadService', () => {
     const file = createUploadFile()
     await uploadService.upload(file)
 
-    expect(postJsonMock).toHaveBeenNthCalledWith(1, 'upload/presign', { file_name: 'song.mp3' })
+    expect(postJsonMock).toHaveBeenNthCalledWith(1, 'upload/presign', {
+      file_name: 'song.mp3',
+      file_size: file.file.size,
+    })
     expect(putToStorageMock).toHaveBeenCalledWith(presigned.url, file.file, presigned.headers, expect.any(Function))
     expect(postJsonMock).toHaveBeenNthCalledWith(2, 'upload/complete', { key: presigned.key })
     expect(postWithProgressMock).not.toHaveBeenCalled()

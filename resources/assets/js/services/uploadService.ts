@@ -169,7 +169,10 @@ export const uploadService = {
   },
 
   async uploadViaPresignedUrl(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
-    const presigning = postJson<PresignedUpload>('upload/presign', { file_name: file.file.name })
+    const presigning = postJson<PresignedUpload>('upload/presign', {
+      file_name: file.file.name,
+      file_size: file.file.size,
+    })
     this.abortHandles.set(file.id, presigning.abort)
     const { data: presigned } = await presigning.promise
     file.uploadKey = presigned.key

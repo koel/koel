@@ -9,7 +9,6 @@ use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
 use App\Values\PresignedUpload;
 use App\Values\UploadReference;
 use Illuminate\Container\Attributes\Config;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -20,26 +19,17 @@ class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadU
     use DeletesUsingFilesystem;
 
     public function __construct(
+        private readonly S3UploadUrlSigner $uploadUrlSigner,
         #[Config('filesystems.disks.s3.bucket')]
         private readonly ?string $bucket = null,
     ) {}
 
-    public function presignUpload(string $fileName, User $uploader): PresignedUpload
+    public function presignUpload(string $fileName, int $fileSize, User $uploader): PresignedUpload
     {
-        $key = $this->generateStorageKey($fileName, $uploader);
-        $expiresAt = Carbon::now()->addHour();
-
-        ['url' => $url, 'headers' => $headers] = Storage::disk('s3')->temporaryUploadUrl($key, $expiresAt, [
-            'IfNoneMatch' => '*',
-        ]);
-
-        $headers = Arr::map($headers, static fn (array|string $value): string => Arr::first(Arr::wrap($value)));
-
-        return PresignedUpload::make(
-            key: $key,
-            url: $url,
-            headers: [...$headers, 'If-None-Match' => '*'],
-            expiresAt: $expiresAt,
+        return $this->uploadUrlSigner->sign(
+            key: $this->generateStorageKey($fileName, $uploader),
+            size: $fileSize,
+            expiresAt: Carbon::now()->addHour(),
         );
     }
 

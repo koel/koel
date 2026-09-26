@@ -6,8 +6,11 @@ use App\Jobs\HandlePresignedSongUploadJob;
 use App\Models\Song;
 use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\S3CompatibleStorage;
+use App\Services\SongStorages\S3UploadUrlSigner;
 use App\Services\SongStorages\SongStorage;
+use App\Values\PresignedUpload;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -35,24 +38,61 @@ class PresignedUploadTest extends PlusTestCase
     {
         $user = create_user();
 
-        $response = $this
-            ->postAs('api/upload/presign', ['file_name' => 'song.mp3'], $user)
+        $this
+            ->mock(S3UploadUrlSigner::class)
+            ->expects('sign')
+            ->with(
+                Mockery::on(static fn (string $key): bool => str_starts_with($key, "{$user->public_id}__")),
+                1234,
+                Mockery::any(),
+            )
+            ->andReturnUsing(static fn (
+                string $key,
+                int $size,
+                Carbon $expiresAt,
+            ): PresignedUpload => PresignedUpload::make(
+                key: $key,
+                url: "https://storage.example.com/$key",
+                headers: [],
+                expiresAt: $expiresAt,
+            ));
+
+        $this
+            ->postAs('api/upload/presign', ['file_name' => 'song.mp3', 'file_size' => 1234], $user)
             ->assertOk()
             ->assertJsonStructure(['key', 'url', 'headers', 'expires_at']);
-
-        self::assertStringStartsWith("{$user->public_id}__", $response->json('key'));
     }
 
     #[Test]
     public function presigningRequiresAFileName(): void
     {
-        $this->postAs('api/upload/presign', [], create_user())->assertUnprocessable();
+        $this->postAs('api/upload/presign', ['file_size' => 1234], create_user())->assertUnprocessable();
+    }
+
+    #[Test]
+    public function presigningRequiresAFileSize(): void
+    {
+        $this->postAs('api/upload/presign', ['file_name' => 'song.mp3'], create_user())->assertUnprocessable();
+    }
+
+    #[Test]
+    public function presigningRefusesAFileLargerThanTheUploadLimit(): void
+    {
+        $this->postAs(
+            'api/upload/presign',
+            ['file_name' => 'song.mp3', 'file_size' => UploadedFile::getMaxFilesize() + 1],
+            create_user(),
+        )->assertUnprocessable();
     }
 
     #[Test]
     public function presigningRefusesSomethingThatIsNotAudio(): void
     {
-        $this->postAs('api/upload/presign', ['file_name' => 'invoice.pdf'], create_user())->assertUnprocessable();
+        $this->postAs(
+            'api/upload/presign',
+            ['file_name' => 'invoice.pdf', 'file_size' => 1234],
+            create_user(),
+        )->assertUnprocessable();
     }
 
     #[Test]
@@ -62,7 +102,10 @@ class PresignedUploadTest extends PlusTestCase
         $key = "{$user->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
 
-        $storage = Mockery::mock(S3CompatibleStorage::class . '[sizeOfUpload]', ['koel']);
+        $storage = Mockery::mock(S3CompatibleStorage::class . '[sizeOfUpload]', [
+            Mockery::mock(S3UploadUrlSigner::class),
+            'koel',
+        ]);
         $storage->shouldReceive('sizeOfUpload')->andReturn(UploadedFile::getMaxFilesize() + 1);
         $this->app->instance(SongStorage::class, $storage);
 
@@ -94,7 +137,10 @@ class PresignedUploadTest extends PlusTestCase
 
     private function fetchesTheObjectAsALocalCopy(): void
     {
-        $storage = Mockery::mock(S3CompatibleStorage::class . '[getLocalPath]', ['koel']);
+        $storage = Mockery::mock(S3CompatibleStorage::class . '[getLocalPath]', [
+            Mockery::mock(S3UploadUrlSigner::class),
+            'koel',
+        ]);
 
         $storage
             ->shouldReceive('getLocalPath')
