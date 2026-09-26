@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import Router from './router'
 
 describe('Router', () => {
@@ -167,6 +167,86 @@ describe('Router', () => {
       router.triggerNotFound()
 
       expect(router.$currentRoute.value.screen).toBe('404')
+    })
+  })
+
+  describe('with clean URLs', () => {
+    const clickLink = (href: string, init: MouseEventInit = {}) => {
+      const link = document.createElement('a')
+      link.href = href
+      document.body.appendChild(link)
+
+      let claimedByRouter = false
+
+      const recordAndStop = (event: Event) => {
+        claimedByRouter = event.defaultPrevented
+        event.preventDefault()
+      }
+
+      window.addEventListener('click', recordAndStop)
+      link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0, ...init }))
+      window.removeEventListener('click', recordAndStop)
+      link.remove()
+
+      return claimedByRouter
+    }
+
+    beforeEach(() => {
+      vi.restoreAllMocks()
+      window.KOEL.clean_urls = true
+      history.replaceState(null, '', '/')
+    })
+
+    afterEach(() => {
+      window.KOEL.clean_urls = false
+      history.replaceState(null, '', '/')
+    })
+
+    it('generates plain paths', () => {
+      expect(Router.url('genres.show', { id: 'rock' })).toBe('/genres/rock')
+    })
+
+    it('resolves the route from the path', () => {
+      history.replaceState(null, '', '/songs')
+
+      expect(router.resolve()!.screen).toBe('Songs')
+    })
+
+    it('navigates without leaving the page', () => {
+      const resolveSpy = vi.spyOn(router, 'resolve')
+
+      Router.go('/albums')
+
+      expect(location.pathname).toBe('/albums')
+      expect(resolveSpy).toHaveBeenCalled()
+    })
+
+    it('turns an old hash URL into a plain path', () => {
+      history.replaceState(null, '', '/#/albums')
+
+      new Router()
+
+      expect([location.pathname, location.hash]).toEqual(['/albums', ''])
+    })
+
+    it('keeps a click on a link to a screen inside the app', () => {
+      const cleanRouter = new Router()
+
+      expect(clickLink('/albums')).toBe(true)
+      expect(location.pathname).toBe('/albums')
+      expect(cleanRouter.$currentRoute.value.screen).toBe('Albums')
+    })
+
+    it('leaves a link to something that is not a screen to the browser', () => {
+      new Router()
+
+      expect(clickLink('/download/songs')).toBe(false)
+    })
+
+    it('leaves a click with a modifier key to the browser', () => {
+      new Router()
+
+      expect(clickLink('/albums', { metaKey: true })).toBe(false)
     })
   })
 })

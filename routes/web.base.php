@@ -19,14 +19,23 @@ use App\Http\Controllers\SSO\OpenIDConnectCallbackController;
 use App\Http\Controllers\StreamEmbedController;
 use App\Http\Controllers\StreamRadioController;
 use App\Http\Controllers\ViewSongOnITunesController;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::middleware('web')->group(static function (): void {
     // Using a closure to determine the controller instead of static configuration to allow for testing.
-    Route::get('/', static fn () => app()->call(
+    $showApp = static fn () => app()->call(
         config('koel.misc.demo') ? DemoIndexController::class : IndexController::class,
-    ));
+    );
+
+    Route::get('/', $showApp);
+
+    Route::fallback(static function () use ($showApp) {
+        abort_unless(config('koel.clean_urls.enabled') && !request()->is('api/*'), Response::HTTP_NOT_FOUND);
+
+        return $showApp();
+    });
 
     Route::get('remote', static fn () => view('remote'));
 

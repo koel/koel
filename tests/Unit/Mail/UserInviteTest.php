@@ -23,4 +23,17 @@ class UserInviteTest extends TestCase
             escape: false,
         );
     }
+
+    #[Test]
+    public function invitationLinkUsesACleanUrlWhenEnabled(): void
+    {
+        config(['app.url' => 'https://music.example.com', 'koel.clean_urls.enabled' => true]);
+
+        $invitee = User::factory()->prospect()->createOne(['invitation_token' => 'invitation-token']);
+
+        (new UserInvite($invitee))->assertSeeInHtml(
+            'https://music.example.com/invitation/accept/invitation-token',
+            escape: false,
+        );
+    }
 }

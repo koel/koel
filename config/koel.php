@@ -185,6 +185,10 @@ return [
         'enabled' => env('MEDIA_BROWSER_ENABLED', false),
     ],
 
+    'clean_urls' => [
+        'enabled' => env('CLEAN_URLS_ENABLED', false),
+    ],
+
     'embed' => [
         'enabled' => env('EMBED_ENABLED', true),
     ],

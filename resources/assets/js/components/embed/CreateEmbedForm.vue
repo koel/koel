@@ -48,6 +48,7 @@ import { copyText } from '@/utils/helpers'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useForm } from '@/composables/useForm'
+import { screenUrl } from '@/utils/screenUrl'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import EmbedOptionsPanel from '@/components/embed/EmbedOptionsPanel.vue'
@@ -89,7 +90,7 @@ const embedSrc = computed(() => {
     return null
   }
 
-  return `${window.KOEL.base_url}#/embed/${embed.value.id}/${encryptedOptions.value}`
+  return screenUrl(`/embed/${embed.value.id}/${encryptedOptions.value}`)
 })
 
 const code = computed(() => {

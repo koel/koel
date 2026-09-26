@@ -1,5 +1,6 @@
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
+import { screenUrl } from '@/utils/screenUrl'
 
 export const playlistCollaborationService = {
   async createInviteLink(playlist: Playlist) {
@@ -8,7 +9,7 @@ export const playlistCollaborationService = {
     }
 
     const token = (await http.post<{ token: string }>(`playlists/${playlist.id}/collaborators/invite`)).token
-    return `${window.location.origin}/#/playlist/collaborate/${token}`
+    return screenUrl(`/playlist/collaborate/${token}`)
   },
 
   async acceptInvite(token: string) {
