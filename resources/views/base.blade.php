@@ -35,6 +35,7 @@
     @php
         $koelGlobals = [
             'base_url' => base_url(),
+            'build' => koel_build_id(),
             'is_demo' => config('koel.misc.demo'),
             'pusher' => [
                 'app_key' => config('broadcasting.connections.pusher.key'),

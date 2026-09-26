@@ -32,6 +32,12 @@ class Http {
 
             const token = response.headers.get('authorization')
             token && authService.setApiToken(token)
+
+            const build = response.headers.get('x-koel-build')
+
+            if (build && window.KOEL.build && build !== window.KOEL.build) {
+              eventBus.emit('NEW_VERSION_DEPLOYED')
+            }
           },
         ],
         beforeError: [

@@ -2,6 +2,7 @@
 
 use App\Facades\Hooks;
 use App\Facades\License;
+use App\Services\BuildIdentifier;
 use App\Services\Image\ImageStorage;
 use App\Services\SettingService;
 use App\Values\Branding;
@@ -228,6 +229,16 @@ function find_ffmpeg_path(): ?string
     }
 
     return null;
+}
+
+function koel_build_id(): ?string
+{
+    return once(static function (): ?string {
+        /** @var BuildIdentifier $buildIdentifier */
+        $buildIdentifier = app(BuildIdentifier::class);
+
+        return $buildIdentifier->getId();
+    });
 }
 
 function koel_branding(?string $key = null): Branding|string|null
