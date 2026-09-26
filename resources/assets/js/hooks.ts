@@ -1,3 +1,5 @@
+import type { Component } from 'vue'
+import { Filter } from '@/config/hooks'
 import type { ActionName, FilterName } from '@/config/hooks'
 
 type HookName<KnownName extends string> = KnownName | (string & {})
@@ -48,6 +50,13 @@ export const addFilter = <T>(
   callback: (value: T, ...args: any[]) => T,
   priority = DEFAULT_PRIORITY,
 ) => register(filters, filter, callback as Callback, priority)
+
+export const addToHookSlot = (name: HookSlotName, component: Component, priority = DEFAULT_PRIORITY) =>
+  addFilter<Component[]>(
+    Filter.SLOT,
+    (components, slotName: HookSlotName) => (slotName === name ? [...components, component] : components),
+    priority,
+  )
 
 export const applyFilters = <T>(filter: HookName<FilterName>, value: T, ...args: any[]): T => {
   sortedPriorities(filters[filter]).forEach(priority => {

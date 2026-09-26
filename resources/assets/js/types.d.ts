@@ -586,6 +586,13 @@ interface ScreenNames {
 
 declare type ScreenName = keyof ScreenNames
 
+interface HookSlotNames {
+  'sidebar.footer': true
+  'screen.top': true
+}
+
+declare type HookSlotName = keyof HookSlotNames
+
 /** Route names added outside the built-in route table; add one by merging a key into this interface from another declaration file. */
 interface RouteNames {}
 
