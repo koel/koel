@@ -9,12 +9,17 @@
     <slot name="header" />
 
     <main class="scroll-mask-y overflow-scroll flex flex-col b-16 md:b-6 p-6 flex-1 place-content-start">
+      <HookSlot :context="{ screen: getCurrentScreen() }" name="screen.top" />
       <slot />
     </main>
   </section>
 </template>
 
 <script lang="ts" setup>
+import { useRouter } from '@/composables/useRouter'
+
+import HookSlot from '@/components/utils/HookSlot.vue'
+
 withDefaults(
   defineProps<{
     backgroundImage?: string
@@ -23,6 +28,8 @@ withDefaults(
     backgroundImage: undefined,
   },
 )
+
+const { getCurrentScreen } = useRouter()
 </script>
 
 <style lang="postcss" scoped>
