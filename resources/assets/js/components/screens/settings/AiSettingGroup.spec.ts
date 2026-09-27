@@ -26,7 +26,7 @@ describe('aiSettingGroup.vue', () => {
   })
 
   it('keeps the saved key when the field is left empty', async () => {
-    settingStore.state.ai = { enabled: true, provider: 'openai', has_api_key: true }
+    settingStore.state.ai = { source: 'organization', enabled: true, provider: 'openai', has_api_key: true }
     const updateMock = h.mock(settingStore, 'updateAi').mockResolvedValue(undefined)
     h.render(Component)
 
@@ -37,7 +37,7 @@ describe('aiSettingGroup.vue', () => {
   })
 
   it('asks for a new key when the provider changes', async () => {
-    settingStore.state.ai = { enabled: true, provider: 'openai', has_api_key: true }
+    settingStore.state.ai = { source: 'organization', enabled: true, provider: 'openai', has_api_key: true }
     h.render(Component)
 
     expect((screen.getByTestId('input') as HTMLInputElement).required).toBe(false)
@@ -45,5 +45,20 @@ describe('aiSettingGroup.vue', () => {
     await h.user.selectOptions(screen.getByRole('combobox'), 'anthropic')
 
     expect((screen.getByTestId('input') as HTMLInputElement).required).toBe(true)
+  })
+
+  it('says when the server configuration is in effect', () => {
+    settingStore.state.ai = { source: 'environment', enabled: true, provider: 'ollama', has_api_key: false }
+    h.render(Component)
+
+    screen.getByTestId('server-configuration-notice')
+    expect((screen.getByTestId('input') as HTMLInputElement).required).toBe(true)
+  })
+
+  it('says nothing about the server when the organization has its own setup', () => {
+    settingStore.state.ai = { source: 'organization', enabled: false, provider: 'openai', has_api_key: true }
+    h.render(Component)
+
+    expect(screen.queryByTestId('server-configuration-notice')).toBeNull()
   })
 })

@@ -4,6 +4,9 @@
       <template #title>AI Assistant</template>
 
       <div class="space-y-4">
+        <p v-if="usesServerConfiguration" data-testid="server-configuration-notice">
+          The assistant is currently set up in the server's configuration. Saving here replaces that setup.
+        </p>
         <FormRow>
           <span>
             <CheckBox v-model="data.enabled" name="enabled" />
@@ -59,6 +62,9 @@ const PROVIDERS: Record<AiProvider, string> = {
   gemini: 'Google Gemini',
 }
 
+const isOfferedProvider = (provider: string | null | undefined): provider is AiProvider =>
+  Boolean(provider && provider in PROVIDERS)
+
 const { showConfirmDialog } = useDialogBox()
 
 const current = computed(() => settingStore.state.ai)
@@ -66,7 +72,7 @@ const current = computed(() => settingStore.state.ai)
 const { data, loading, handleSubmit } = useForm<{ enabled: boolean; provider: AiProvider; api_key: string }>({
   initialValues: {
     enabled: current.value?.enabled ?? false,
-    provider: current.value?.provider ?? 'openai',
+    provider: isOfferedProvider(current.value?.provider) ? current.value.provider : 'openai',
     api_key: '',
   },
   onSubmit: async ({ enabled, provider, api_key }) =>
@@ -80,5 +86,12 @@ const { data, loading, handleSubmit } = useForm<{ enabled: boolean; provider: Ai
   },
 })
 
-const canKeepApiKey = computed(() => Boolean(current.value?.has_api_key) && data.provider === current.value?.provider)
+const canKeepApiKey = computed(
+  () =>
+    current.value?.source === 'organization' && current.value.has_api_key && data.provider === current.value.provider,
+)
+
+const usesServerConfiguration = computed(
+  () => current.value?.source === 'environment' && current.value.enabled && Boolean(current.value.provider),
+)
 </script>

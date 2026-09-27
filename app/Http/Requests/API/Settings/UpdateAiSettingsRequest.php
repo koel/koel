@@ -40,8 +40,7 @@ class UpdateAiSettingsRequest extends Request
             'api_key',
             'required',
             static fn (Fluent $input): bool => (
-                (bool) $input->get('enabled')
-                && (!$current->apiKey || $input->get('provider') !== $current->provider?->value)
+                (bool) $input->get('enabled') && !$current->hasOrganizationKeyFor((string) $input->get('provider'))
             ),
         );
 

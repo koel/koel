@@ -2,38 +2,53 @@
 
 namespace App\Values;
 
-use App\Enums\AiProvider;
+use App\Enums\AiSettingsSource;
 use SensitiveParameter;
 
 final readonly class AiSettings
 {
     private function __construct(
+        public AiSettingsSource $source,
         public bool $enabled,
-        public ?AiProvider $provider,
+        public ?string $provider,
         #[SensitiveParameter]
         public ?string $apiKey,
     ) {}
 
     public static function make(
+        AiSettingsSource $source,
         bool $enabled = false,
-        ?AiProvider $provider = null,
+        ?string $provider = null,
         #[SensitiveParameter]
         ?string $apiKey = null,
     ): self {
-        return new self(enabled: $enabled, provider: $provider, apiKey: $apiKey);
+        return new self(source: $source, enabled: $enabled, provider: $provider, apiKey: $apiKey);
     }
 
+    /**
+     * A key saved for the organization is required; the server's configuration may name a provider that needs none.
+     */
     public function isUsable(): bool
     {
-        return $this->enabled && $this->provider && $this->apiKey;
+        if (!$this->enabled || !$this->provider) {
+            return false;
+        }
+
+        return $this->source === AiSettingsSource::Environment || (bool) $this->apiKey;
     }
 
-    /** @return array{enabled: bool, provider: ?string, has_api_key: bool} */
+    public function hasOrganizationKeyFor(string $provider): bool
+    {
+        return $this->source === AiSettingsSource::Organization && $this->apiKey && $this->provider === $provider;
+    }
+
+    /** @return array{source: string, enabled: bool, provider: ?string, has_api_key: bool} */
     public function toArrayWithoutApiKey(): array
     {
         return [
+            'source' => $this->source->value,
             'enabled' => $this->enabled,
-            'provider' => $this->provider?->value,
+            'provider' => $this->provider,
             'has_api_key' => (bool) $this->apiKey,
         ];
     }

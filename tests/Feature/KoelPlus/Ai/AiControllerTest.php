@@ -62,6 +62,23 @@ class AiControllerTest extends PlusTestCase
     }
 
     #[Test]
+    public function promptsWithTheServerConfigurationWhenTheOrganizationHasNoSetting(): void
+    {
+        KoelAssistant::fake(['Sure.']);
+        config(['koel.ai.enabled' => true, 'ai.default' => 'anthropic', 'ai.providers.anthropic.key' => 'sk-server']);
+
+        $this->postAs('api/ai/prompt', ['prompt' => 'Play some jazz'], create_user())->assertSuccessful();
+
+        KoelAssistant::assertPrompted(
+            static fn (AgentPrompt $prompt) => (
+                $prompt->provider instanceof Provider
+                && $prompt->provider->name() === 'anthropic'
+                && $prompt->provider->providerCredentials()['key'] === 'sk-server'
+            ),
+        );
+    }
+
+    #[Test]
     public function refusesAnOrganizationWithoutTheAssistant(): void
     {
         KoelAssistant::fake();

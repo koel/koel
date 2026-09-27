@@ -17,6 +17,11 @@ use function Tests\create_user;
 
 class AiSettingTest extends PlusTestCase
 {
+    private static function configureTheServer(): void
+    {
+        config(['koel.ai.enabled' => true, 'ai.default' => 'ollama']);
+    }
+
     private function updateAiSettings(User $user, array $data): TestResponse
     {
         return $this->putAs('api/settings/ai', $data, $user);
@@ -35,12 +40,17 @@ class AiSettingTest extends PlusTestCase
         $this
             ->updateAiSettings($admin, ['enabled' => true, 'provider' => 'anthropic', 'api_key' => 'sk-ant-test'])
             ->assertOk()
-            ->assertExactJson(['enabled' => true, 'provider' => 'anthropic', 'has_api_key' => true]);
+            ->assertExactJson([
+                'source' => 'organization',
+                'enabled' => true,
+                'provider' => 'anthropic',
+                'has_api_key' => true,
+            ]);
 
         $settings = self::getAiSettings($admin->organization);
 
         self::assertTrue($settings->enabled);
-        self::assertSame(AiProvider::Anthropic, $settings->provider);
+        self::assertSame('anthropic', $settings->provider);
         self::assertSame('sk-ant-test', $settings->apiKey);
     }
 
@@ -102,13 +112,14 @@ class AiSettingTest extends PlusTestCase
 
         $settings = self::getAiSettings($admin->organization);
 
-        self::assertSame(AiProvider::Anthropic, $settings->provider);
+        self::assertSame('anthropic', $settings->provider);
         self::assertNull($settings->apiKey);
     }
 
     #[Test]
-    public function treatAKeyThatCannotBeDecryptedAsMissing(): void
+    public function treatAKeyThatCannotBeDecryptedAsMissingWithoutFallingBackToTheServer(): void
     {
+        self::configureTheServer();
         $admin = create_admin();
         Setting::set(
             'ai',
@@ -119,6 +130,48 @@ class AiSettingTest extends PlusTestCase
         $this->getAs('api/data', $admin)->assertOk()->assertJsonPath('uses_ai', false);
 
         self::assertNull(self::getAiSettings($admin->organization)->apiKey);
+    }
+
+    #[Test]
+    public function fallBackToTheServerWhenTheOrganizationHasNoSetting(): void
+    {
+        self::configureTheServer();
+        $admin = create_admin();
+
+        $this
+            ->getAs('api/data', $admin)
+            ->assertJsonPath('uses_ai', true)
+            ->assertJsonPath('settings.ai', [
+                'source' => 'environment',
+                'enabled' => true,
+                'provider' => 'ollama',
+                'has_api_key' => false,
+            ]);
+    }
+
+    #[Test]
+    public function letAnOrganizationSettingTurnOffTheServerConfiguration(): void
+    {
+        self::configureTheServer();
+        $admin = create_admin();
+        app(SettingService::class)->updateAiSettings($admin->organization, false, AiProvider::OpenAi, 'sk-test');
+
+        $this->getAs('api/data', $admin)->assertJsonPath('uses_ai', false);
+    }
+
+    #[Test]
+    public function requireAKeyWhenSwitchingFromTheServerConfiguration(): void
+    {
+        config([
+            'koel.ai.enabled' => true,
+            'ai.default' => 'openai',
+            'ai.providers.openai.key' => 'sk-server',
+        ]);
+
+        $this->updateAiSettings(create_admin(), [
+            'enabled' => true,
+            'provider' => 'openai',
+        ])->assertJsonValidationErrors('api_key');
     }
 
     #[Test]
@@ -149,7 +202,12 @@ class AiSettingTest extends PlusTestCase
 
         $this
             ->getAs('api/data', $admin)
-            ->assertJsonPath('settings.ai', ['enabled' => true, 'provider' => 'gemini', 'has_api_key' => true])
+            ->assertJsonPath('settings.ai', [
+                'source' => 'organization',
+                'enabled' => true,
+                'provider' => 'gemini',
+                'has_api_key' => true,
+            ])
             ->assertJsonPath('uses_ai', true);
     }
 

@@ -7,6 +7,7 @@ use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Serializers\AiResultSerializerRegistry;
 use App\Attributes\RequiresPlus;
+use App\Enums\AiSettingsSource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\AiRequest;
 use App\Models\User;
@@ -26,8 +27,11 @@ class AiController extends Controller
 
         abort_unless($aiSettings->isUsable(), Response::HTTP_NOT_FOUND);
 
-        $provider = $aiSettings->provider->value;
-        config(["ai.providers.$provider.key" => $aiSettings->apiKey]);
+        $provider = $aiSettings->provider;
+
+        if ($aiSettings->source === AiSettingsSource::Organization) {
+            config(["ai.providers.$provider.key" => $aiSettings->apiKey]);
+        }
 
         // Bind as a singleton so the same instance is shared between the controller and the tools
         // resolved by the container. This allows tools to write to $result during execution,

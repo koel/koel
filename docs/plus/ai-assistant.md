@@ -30,11 +30,20 @@ An admin turns the assistant on under **Settings → AI Assistant**:
 
 Koel stores the key encrypted and never shows it again; to change it, paste a new one. Switching providers needs a new key.
 
-:::tip Upgrading from an earlier version
-If you had set up the assistant with `AI_ENABLED`, `AI_PROVIDER` and a provider key in `.env`, upgrading moves that setup into Settings, as long as the provider was OpenAI, Anthropic or Gemini. Afterwards those `.env` variables are no longer read and can be removed.
-:::
+### Setting up through `.env` instead
 
-The AI assistant is powered by [Laravel's AI SDK](https://laravel.com/docs/12.x/ai-sdk).
+If you'd rather keep the setup in the server's configuration, or want a provider not offered in Settings, set these in `.env`:
+
+```dotenv
+AI_ENABLED=true
+AI_PROVIDER=openai
+OPENAI_API_KEY=your-openai-api-key
+```
+
+`AI_PROVIDER` must match one of the provider keys defined in `config/ai.php` (e.g., `openai`, `anthropic`, `gemini`, `ollama`).
+For the full list of providers and their options, see the [Laravel AI SDK documentation](https://laravel.com/docs/12.x/ai-sdk).
+
+`.env` is only used until an admin saves the AI settings. From then on, Settings take over completely, even if the assistant is turned off there.
 
 ## Using the Assistant
 
