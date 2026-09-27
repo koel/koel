@@ -43,8 +43,10 @@ const value = defineModel<T>({ required: true })
 const container = ref<HTMLElement>()
 const indicator = ref<{ left: number; top: number; width: number; height: number } | null>(null)
 
+const getSelectedLabel = () => container.value?.querySelector<HTMLInputElement>('input:checked')?.parentElement
+
 const moveIndicatorToSelectedOption = () => {
-  const selectedLabel = container.value?.querySelector<HTMLInputElement>('input:checked')?.parentElement
+  const selectedLabel = getSelectedLabel()
 
   indicator.value = selectedLabel?.offsetWidth
     ? {
@@ -56,17 +58,19 @@ const moveIndicatorToSelectedOption = () => {
     : null
 }
 
-onMounted(() => nextTick(moveIndicatorToSelectedOption))
 const scrollSelectedOptionIntoView = () => {
-  const selectedLabel = container.value?.querySelector<HTMLInputElement>('input:checked')?.parentElement
+  const selectedLabel = getSelectedLabel()
 
   if (!container.value || !selectedLabel) {
     return
   }
 
   const centeredLeft = selectedLabel.offsetLeft - (container.value.clientWidth - selectedLabel.offsetWidth) / 2
+
   container.value.scrollTo({ left: centeredLeft, behavior: 'smooth' })
 }
+
+onMounted(() => nextTick(moveIndicatorToSelectedOption))
 
 watch(value, () =>
   nextTick(() => {
@@ -74,5 +78,6 @@ watch(value, () =>
     scrollSelectedOptionIntoView()
   }),
 )
+
 useResizeObserver(container, moveIndicatorToSelectedOption)
 </script>
