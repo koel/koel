@@ -26,6 +26,7 @@
             <PasswordField
               v-model="data.api_key"
               :required="data.enabled && !canKeepApiKey"
+              :placeholder="canKeepApiKey ? '•••••••• saved — type to replace' : ''"
               autocomplete="off"
               name="api_key"
             />
