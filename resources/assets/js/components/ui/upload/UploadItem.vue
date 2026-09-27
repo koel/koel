@@ -132,6 +132,6 @@ article > div::before {
 }
 
 .errored {
-  @apply bg-k-danger/10;
+  @apply border border-k-danger/15;
 }
 </style>
