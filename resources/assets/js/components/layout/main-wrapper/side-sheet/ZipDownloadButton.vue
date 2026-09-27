@@ -60,7 +60,7 @@ const act = async () => {
     return
   }
 
-  if (await showConfirmDialog(`Stop preparing ${state.archiveName}?`)) {
+  if (await showConfirmDialog('Cancel downloading process?')) {
     zipDownloadService.cancel()
   }
 }
