@@ -41,15 +41,4 @@ final readonly class AiSettings
     {
         return $this->source === AiSettingsSource::Organization && $this->apiKey && $this->provider === $provider;
     }
-
-    /** @return array{source: string, enabled: bool, provider: ?string, has_api_key: bool} */
-    public function toArrayWithoutApiKey(): array
-    {
-        return [
-            'source' => $this->source->value,
-            'enabled' => $this->enabled,
-            'provider' => $this->provider,
-            'has_api_key' => (bool) $this->apiKey,
-        ];
-    }
 }

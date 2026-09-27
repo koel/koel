@@ -82,4 +82,18 @@ class SettingTest extends TestCase
         self::assertNull(Setting::get('foo', $otherOrganization));
         self::assertNull(Setting::get('foo'));
     }
+
+    #[Test]
+    public function forgetOnlyTheSettingOfTheGivenOrganization(): void
+    {
+        $organization = Organization::factory()->createOne();
+
+        Setting::set('foo', 'install-wide');
+        Setting::set('foo', 'organization', $organization);
+
+        Setting::forget('foo', $organization);
+
+        self::assertNull(Setting::get('foo', $organization));
+        self::assertSame('install-wide', Setting::get('foo'));
+    }
 }

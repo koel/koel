@@ -44,6 +44,7 @@ OPENAI_API_KEY=your-openai-api-key
 For the full list of providers and their options, see the [Laravel AI SDK documentation](https://laravel.com/docs/12.x/ai-sdk).
 
 `.env` is only used until an admin saves the AI settings. From then on, Settings take over completely, even if the assistant is turned off there.
+To go back to the `.env` setup, click **Use the server's setup instead** under **Settings → AI Assistant**.
 
 ## Using the Assistant
 

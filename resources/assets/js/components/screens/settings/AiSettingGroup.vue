@@ -25,18 +25,28 @@
             <span v-if="canKeepApiKey">A key is saved. Leave this empty to keep it.</span>
             <span v-else>Your provider bills the assistant's use to this key.</span>
           </template>
-          <PasswordField
-            v-model="data.api_key"
-            :required="data.enabled && !canKeepApiKey"
-            autocomplete="off"
-            class="md:w-2/3"
-            name="api_key"
-          />
+          <div class="md:w-2/3">
+            <PasswordField
+              v-model="data.api_key"
+              :required="data.enabled && !canKeepApiKey"
+              autocomplete="off"
+              name="api_key"
+            />
+          </div>
         </FormRow>
       </div>
 
       <template #footer>
         <Btn :disabled="loading" type="submit">Save</Btn>
+        <Btn
+          v-if="current?.source === 'organization'"
+          :disabled="loading"
+          data-testid="use-server-setup"
+          variant="ghost"
+          @click.prevent="useServerSetup"
+        >
+          Use the server's setup instead
+        </Btn>
       </template>
     </SettingGroup>
   </form>
@@ -85,6 +95,22 @@ const { data, loading, handleSubmit } = useForm<{ enabled: boolean; provider: Ai
     }
   },
 })
+
+const useServerSetup = async () => {
+  const message = current.value?.server_setup_usable
+    ? "Remove these settings and use the server's setup for the assistant?"
+    : 'Remove these settings? The server has no setup, so the assistant will be off.'
+
+  if (!(await showConfirmDialog(message))) {
+    return
+  }
+
+  await settingStore.removeAi()
+
+  if (await showConfirmDialog('Settings removed. Reload to apply the changes?')) {
+    forceReloadWindow()
+  }
+}
 
 const canKeepApiKey = computed(
   () =>

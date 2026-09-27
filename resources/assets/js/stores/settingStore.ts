@@ -26,4 +26,8 @@ export const settingStore = {
   async updateAi(data: { enabled: boolean; provider: AiProvider; api_key?: string }) {
     this.state.ai = await http.put<AiSettings>('settings/ai', data)
   },
+
+  async removeAi() {
+    this.state.ai = await http.delete<AiSettings>('settings/ai')
+  },
 }

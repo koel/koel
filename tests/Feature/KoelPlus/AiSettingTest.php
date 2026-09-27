@@ -45,6 +45,7 @@ class AiSettingTest extends PlusTestCase
                 'enabled' => true,
                 'provider' => 'anthropic',
                 'has_api_key' => true,
+                'server_setup_usable' => false,
             ]);
 
         $settings = self::getAiSettings($admin->organization);
@@ -146,6 +147,7 @@ class AiSettingTest extends PlusTestCase
                 'enabled' => true,
                 'provider' => 'ollama',
                 'has_api_key' => false,
+                'server_setup_usable' => true,
             ]);
     }
 
@@ -172,6 +174,41 @@ class AiSettingTest extends PlusTestCase
             'enabled' => true,
             'provider' => 'openai',
         ])->assertJsonValidationErrors('api_key');
+    }
+
+    #[Test]
+    public function goBackToTheServerSetupByRemovingTheOrganizationSetting(): void
+    {
+        self::configureTheServer();
+        $admin = create_admin();
+        app(SettingService::class)->updateAiSettings($admin->organization, false, AiProvider::OpenAi, 'sk-test');
+
+        $this
+            ->deleteAs('api/settings/ai', [], $admin)
+            ->assertOk()
+            ->assertJson(['source' => 'environment', 'enabled' => true, 'provider' => 'ollama']);
+
+        self::assertNull(Setting::get('ai', $admin->organization));
+        $this->getAs('api/data', $admin)->assertJsonPath('uses_ai', true);
+    }
+
+    #[Test]
+    public function removeOnlyTheOrganizationsOwnSetting(): void
+    {
+        $admin = create_admin();
+        $otherOrganization = Organization::factory()->createOne();
+        app(SettingService::class)->updateAiSettings($admin->organization, true, AiProvider::OpenAi, 'sk-test');
+        app(SettingService::class)->updateAiSettings($otherOrganization, true, AiProvider::OpenAi, 'sk-other');
+
+        $this->deleteAs('api/settings/ai', [], $admin)->assertOk();
+
+        self::assertSame('sk-other', self::getAiSettings($otherOrganization)->apiKey);
+    }
+
+    #[Test]
+    public function refuseToRemoveForAUserWhoCannotManageSettings(): void
+    {
+        $this->deleteAs('api/settings/ai', [], create_user())->assertForbidden();
     }
 
     #[Test]
@@ -207,6 +244,7 @@ class AiSettingTest extends PlusTestCase
                 'enabled' => true,
                 'provider' => 'gemini',
                 'has_api_key' => true,
+                'server_setup_usable' => false,
             ])
             ->assertJsonPath('uses_ai', true);
     }

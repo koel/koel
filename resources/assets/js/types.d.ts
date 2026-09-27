@@ -506,6 +506,7 @@ interface AiSettings {
   enabled: boolean
   provider: string | null
   has_api_key: boolean
+  server_setup_usable: boolean
 }
 
 interface Settings {

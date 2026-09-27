@@ -44,12 +44,7 @@ class SettingService
         $stored = Setting::get('ai', $organization);
 
         if ($stored === null) {
-            return AiSettings::make(
-                source: AiSettingsSource::Environment,
-                enabled: $this->aiEnabledInEnvironment,
-                provider: $this->defaultAiProvider,
-                apiKey: Arr::get($this->aiProviders, "{$this->defaultAiProvider}.key"),
-            );
+            return $this->getServerAiSettings();
         }
 
         $stored = Arr::wrap($stored);
@@ -61,6 +56,21 @@ class SettingService
             provider: Arr::get($stored, 'provider'),
             apiKey: $encryptedApiKey ? self::decryptApiKey($encryptedApiKey) : null,
         );
+    }
+
+    public function getServerAiSettings(): AiSettings
+    {
+        return AiSettings::make(
+            source: AiSettingsSource::Environment,
+            enabled: $this->aiEnabledInEnvironment,
+            provider: $this->defaultAiProvider,
+            apiKey: Arr::get($this->aiProviders, "{$this->defaultAiProvider}.key"),
+        );
+    }
+
+    public function removeAiSettings(Organization $organization): void
+    {
+        Setting::forget('ai', $organization);
     }
 
     private static function decryptApiKey(#[SensitiveParameter] string $encryptedApiKey): ?string
