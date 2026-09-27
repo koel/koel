@@ -18,7 +18,7 @@
         </span>
       </p>
       <p class="text-k-fg-70 tabular-nums">
-        {{ formatBytes(sentBytes) }} of {{ formatBytes(totalBytes) }}
+        {{ formatBytes(sentBytes) }} of {{ formatBytes(totalBytes) }} uploaded
         <span v-if="secondsLeft !== null" :data-seconds="Math.round(secondsLeft)" data-testid="time-left">
           · about {{ secondsToHumanReadable(secondsLeft) }} left
         </span>
