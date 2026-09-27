@@ -13,10 +13,8 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
-      <DuplicateUploadList v-if="duplicatedSongs.length" :songs="duplicatedSongs" class="mb-4" />
-
-      <div v-if="files.length" class="pb-4 flex flex-col gap-4">
-        <UploadSummary class="mb-4" />
+      <div v-if="files.length || duplicatedSongs.length" class="pb-4 flex flex-col gap-4">
+        <UploadSummary v-if="files.length" class="mb-4" />
 
         <Tabs class="-mx-6">
           <TabList>
@@ -24,14 +22,14 @@
               v-for="(label, tab) in TAB_LABELS"
               :key="tab"
               :aria-controls="`uploadPane-${tab}`"
-              :data-count="filesByTab[tab].length"
+              :data-count="tabCounts[tab]"
               :data-testid="`upload-tab-${tab}`"
               :selected="currentTab === tab"
               @click="currentTab = tab"
             >
               {{ label }}
               <span class="ml-1 rounded-full bg-k-fg-10 px-2 py-0.5 text-[.8rem] tabular-nums">
-                {{ filesByTab[tab].length }}
+                {{ tabCounts[tab] }}
               </span>
             </TabButton>
           </TabList>
@@ -49,8 +47,10 @@
                 </Btn>
               </BtnGroup>
 
+              <DuplicateUploadList v-if="currentTab === 'duplicated'" :songs="duplicatedSongs" />
+
               <UploadItem
-                v-for="file in filesByTab[currentTab]"
+                v-for="file in currentTab === 'duplicated' ? [] : filesByTab[currentTab]"
                 :key="file.id"
                 :file="file"
                 data-testid="upload-item"
@@ -118,16 +118,18 @@ import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
 
-type UploadTab = 'in-progress' | 'done' | 'skipped' | 'errored'
+type FileTab = 'in-progress' | 'done' | 'skipped' | 'errored'
+type UploadTab = FileTab | 'duplicated'
 
 const TAB_LABELS: Record<UploadTab, string> = {
   'in-progress': 'In Progress',
   done: 'Done',
   skipped: 'Skipped',
   errored: 'Errored',
+  duplicated: 'Duplicated',
 }
 
-const TAB_STATUSES: Record<UploadTab, UploadStatus[]> = {
+const TAB_STATUSES: Record<FileTab, UploadStatus[]> = {
   'in-progress': ['Ready', 'Uploading', 'Retrying', 'Processing'],
   done: ['Uploaded'],
   skipped: ['Skipped'],
@@ -150,8 +152,16 @@ const filesByTab = computed(
         tab,
         files.value.filter(({ status }) => statuses.includes(status)),
       ]),
-    ) as Record<UploadTab, UploadFile[]>,
+    ) as Record<FileTab, UploadFile[]>,
 )
+const tabCounts = computed<Record<UploadTab, number>>(() => ({
+  'in-progress': filesByTab.value['in-progress'].length,
+  done: filesByTab.value.done.length,
+  skipped: filesByTab.value.skipped.length,
+  errored: filesByTab.value.errored.length,
+  duplicated: duplicatedSongs.value.length,
+}))
+
 const droppable = ref(false)
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
@@ -180,7 +190,13 @@ const onDrop = async (event: DragEvent) => {
 const retryAll = () => uploadService.retryAll()
 const removeFailedEntries = () => uploadService.removeFailed()
 
-onMounted(() => uploadService.fetchDuplicates())
+onMounted(async () => {
+  await uploadService.fetchDuplicates()
+
+  if (!files.value.length && duplicatedSongs.value.length) {
+    currentTab.value = 'duplicated'
+  }
+})
 </script>
 
 <style lang="postcss" scoped>
