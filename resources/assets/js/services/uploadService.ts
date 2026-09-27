@@ -135,10 +135,10 @@ export const uploadService = {
 
       const err = error as {
         status?: number
-        responseData?: unknown
+        data?: unknown
       }
 
-      const responseData = err.responseData
+      const responseData = err.data
       const isObjectResponse = responseData !== null && typeof responseData === 'object'
 
       if (err.status === 409 && isObjectResponse) {
