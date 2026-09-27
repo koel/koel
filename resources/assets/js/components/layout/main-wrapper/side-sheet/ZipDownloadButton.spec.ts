@@ -30,6 +30,22 @@ describe('zipDownloadButton.vue', () => {
     expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('25')
   })
 
+  it('shows its tooltip for a few seconds when zipping starts', async () => {
+    vi.useFakeTimers()
+    const dispatchSpy = vi.spyOn(HTMLElement.prototype, 'dispatchEvent')
+    const dispatchedTypes = () => dispatchSpy.mock.calls.map(([event]) => event.type)
+    h.render(Component)
+
+    zipDownloadService.state.status = 'zipping'
+    await vi.advanceTimersByTimeAsync(0)
+    expect(dispatchedTypes()).toContain('mouseenter')
+    expect(dispatchedTypes()).not.toContain('mouseleave')
+
+    await vi.advanceTimersByTimeAsync(3_000)
+    expect(dispatchedTypes()).toContain('mouseleave')
+    vi.useRealTimers()
+  })
+
   it('cancels after the user confirms', async () => {
     zipDownloadService.state.status = 'zipping'
     mockShowConfirmDialog.mockResolvedValue(true)

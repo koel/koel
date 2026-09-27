@@ -7,6 +7,7 @@
   >
     <span v-if="state.status !== 'idle'" class="block">
       <SideSheetButton
+        ref="button"
         v-koel-tooltip.left="description"
         :aria-label="description"
         :data-status="state.status"
@@ -28,14 +29,52 @@
 
 <script lang="ts" setup>
 import { FileArchiveIcon } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, nextTick, onBeforeUnmount, useTemplateRef, watch } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { zipDownloadService } from '@/services/zipDownloadService'
 
 import ProgressRing from '@/components/ui/ProgressRing.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 
+const TOOLTIP_ON_START_MS = 3_000
+
 const { state } = zipDownloadService
+const button = useTemplateRef<InstanceType<typeof SideSheetButton>>('button')
+let hideTooltipTimer: number | null = null
+
+const clearHideTooltipTimer = () => {
+  if (hideTooltipTimer) {
+    window.clearTimeout(hideTooltipTimer)
+    hideTooltipTimer = null
+  }
+}
+
+const showTooltipBriefly = async () => {
+  await nextTick()
+  const element = button.value?.$el as HTMLElement | undefined
+
+  if (!element) {
+    return
+  }
+
+  element.dispatchEvent(new Event('mouseenter'))
+  clearHideTooltipTimer()
+
+  hideTooltipTimer = window.setTimeout(() => {
+    hideTooltipTimer = null
+
+    if (!element.matches(':hover')) {
+      element.dispatchEvent(new Event('mouseleave'))
+    }
+  }, TOOLTIP_ON_START_MS)
+}
+
+watch(
+  () => state.status,
+  (status, previousStatus) => status === 'zipping' && previousStatus !== 'zipping' && showTooltipBriefly(),
+)
+
+onBeforeUnmount(clearHideTooltipTimer)
 const { showConfirmDialog } = useDialogBox()
 
 const progress = computed(() => {
