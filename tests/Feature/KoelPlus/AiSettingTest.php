@@ -2,14 +2,15 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Enums\AiProvider;
 use App\Models\Organization;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\SettingService;
 use App\Values\AiSettings;
 use Illuminate\Testing\TestResponse;
+use Laravel\Ai\Enums\Lab;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use Tests\PlusTestCase;
 
 use function Tests\create_admin;
@@ -40,7 +41,7 @@ class AiSettingTest extends PlusTestCase
         $settings = self::getAiSettings($admin->organization);
 
         self::assertTrue($settings->enabled);
-        self::assertSame(AiProvider::Anthropic, $settings->provider);
+        self::assertSame(Lab::Anthropic, $settings->provider);
         self::assertSame('sk-ant-test', $settings->apiKey);
     }
 
@@ -62,7 +63,7 @@ class AiSettingTest extends PlusTestCase
     public function keepTheStoredKeyWhenNoneIsSent(): void
     {
         $admin = create_admin();
-        app(SettingService::class)->updateAiSettings($admin->organization, true, AiProvider::OpenAi, 'sk-test');
+        app(SettingService::class)->updateAiSettings($admin->organization, true, Lab::OpenAI, 'sk-test');
 
         $this->updateAiSettings($admin, ['enabled' => false, 'provider' => 'openai'])->assertOk();
 
@@ -85,7 +86,7 @@ class AiSettingTest extends PlusTestCase
     public function requireANewKeyWhenTheProviderChanges(): void
     {
         $admin = create_admin();
-        app(SettingService::class)->updateAiSettings($admin->organization, true, AiProvider::OpenAi, 'sk-test');
+        app(SettingService::class)->updateAiSettings($admin->organization, true, Lab::OpenAI, 'sk-test');
 
         $this->updateAiSettings($admin, ['enabled' => true, 'provider' => 'anthropic'])->assertJsonValidationErrors(
             'api_key',
@@ -96,13 +97,13 @@ class AiSettingTest extends PlusTestCase
     public function dropTheStoredKeyWhenTheProviderChangesWithoutANewOne(): void
     {
         $admin = create_admin();
-        app(SettingService::class)->updateAiSettings($admin->organization, true, AiProvider::OpenAi, 'sk-test');
+        app(SettingService::class)->updateAiSettings($admin->organization, true, Lab::OpenAI, 'sk-test');
 
         $this->updateAiSettings($admin, ['enabled' => false, 'provider' => 'anthropic'])->assertOk();
 
         $settings = self::getAiSettings($admin->organization);
 
-        self::assertSame(AiProvider::Anthropic, $settings->provider);
+        self::assertSame(Lab::Anthropic, $settings->provider);
         self::assertNull($settings->apiKey);
     }
 
@@ -119,6 +120,20 @@ class AiSettingTest extends PlusTestCase
         $this->getAs('api/data', $admin)->assertOk()->assertJsonPath('uses_ai', false);
 
         self::assertNull(self::getAiSettings($admin->organization)->apiKey);
+    }
+
+    #[Test]
+    #[TestWith(['deepseek'])]
+    #[TestWith(['groq'])]
+    #[TestWith(['mistral'])]
+    #[TestWith(['openrouter'])]
+    #[TestWith(['xai'])]
+    public function acceptEveryProviderThatNeedsOnlyAKey(string $provider): void
+    {
+        $this
+            ->updateAiSettings(create_admin(), ['enabled' => true, 'provider' => $provider, 'api_key' => 'k-test'])
+            ->assertOk()
+            ->assertJsonPath('provider', $provider);
     }
 
     #[Test]
@@ -145,7 +160,7 @@ class AiSettingTest extends PlusTestCase
     public function tellAnAdminTheSettingsWithoutTheKey(): void
     {
         $admin = create_admin();
-        app(SettingService::class)->updateAiSettings($admin->organization, true, AiProvider::Gemini, 'gm-test');
+        app(SettingService::class)->updateAiSettings($admin->organization, true, Lab::Gemini, 'gm-test');
 
         $this
             ->getAs('api/data', $admin)
@@ -157,7 +172,7 @@ class AiSettingTest extends PlusTestCase
     public function offerTheAssistantOnlyToOrganizationsThatTurnedItOn(): void
     {
         $admin = create_admin();
-        app(SettingService::class)->updateAiSettings($admin->organization, true, AiProvider::OpenAi, 'sk-test');
+        app(SettingService::class)->updateAiSettings($admin->organization, true, Lab::OpenAI, 'sk-test');
 
         $outsider = User::factory()->for(Organization::factory())->createOne();
 

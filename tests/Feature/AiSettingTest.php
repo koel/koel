@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Ai\Agents\KoelAssistant;
-use App\Enums\AiProvider;
 use App\Services\SettingService;
+use Laravel\Ai\Enums\Lab;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -28,7 +28,7 @@ class AiSettingTest extends TestCase
         KoelAssistant::fake();
 
         $admin = create_admin();
-        app(SettingService::class)->updateAiSettings($admin->organization, true, AiProvider::OpenAi, 'sk-test');
+        app(SettingService::class)->updateAiSettings($admin->organization, true, Lab::OpenAI, 'sk-test');
 
         $this->postAs('api/ai/prompt', ['prompt' => 'Play some jazz'], $admin)->assertNotFound();
 

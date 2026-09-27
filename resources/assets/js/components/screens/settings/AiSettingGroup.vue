@@ -56,6 +56,11 @@ const PROVIDERS: Record<AiProvider, string> = {
   openai: 'OpenAI',
   anthropic: 'Anthropic',
   gemini: 'Google Gemini',
+  deepseek: 'DeepSeek',
+  groq: 'Groq',
+  mistral: 'Mistral',
+  openrouter: 'OpenRouter',
+  xai: 'xAI',
 }
 
 const { showConfirmDialog } = useDialogBox()

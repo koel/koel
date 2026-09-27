@@ -4,13 +4,13 @@ namespace App\Http\Controllers\API\Settings;
 
 use App\Attributes\RequiresPlus;
 use App\Enums\Acl\Permission;
-use App\Enums\AiProvider;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Settings\UpdateAiSettingsRequest;
 use App\Models\User;
 use App\Services\SettingService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
+use Laravel\Ai\Enums\Lab;
 
 #[RequiresPlus]
 class UpdateAiSettingsController extends Controller
@@ -28,7 +28,7 @@ class UpdateAiSettingsController extends Controller
         $this->settingService->updateAiSettings(
             $this->user->organization,
             (bool) $request->enabled,
-            AiProvider::from($request->provider),
+            Lab::from($request->provider),
             $request->api_key ?: null,
         );
 

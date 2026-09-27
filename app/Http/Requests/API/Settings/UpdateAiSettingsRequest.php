@@ -2,14 +2,15 @@
 
 namespace App\Http\Requests\API\Settings;
 
-use App\Enums\AiProvider;
 use App\Http\Requests\API\Request;
 use App\Models\User;
 use App\Services\SettingService;
+use App\Values\AiSettings;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Fluent;
 use Illuminate\Validation\Rule;
+use Laravel\Ai\Enums\Lab;
 
 /**
  * @property-read bool $enabled
@@ -23,7 +24,7 @@ class UpdateAiSettingsRequest extends Request
     {
         return [
             'enabled' => ['required', 'boolean'],
-            'provider' => ['required', Rule::enum(AiProvider::class)],
+            'provider' => ['required', Rule::enum(Lab::class)->only(AiSettings::PROVIDERS)],
             'api_key' => ['nullable', 'string', 'max:500'],
         ];
     }

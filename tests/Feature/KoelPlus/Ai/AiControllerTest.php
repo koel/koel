@@ -3,9 +3,9 @@
 namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\Agents\KoelAssistant;
-use App\Enums\AiProvider;
 use App\Models\User;
 use App\Services\SettingService;
+use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Prompts\AgentPrompt;
 use Laravel\Ai\Providers\Provider;
 use PHPUnit\Framework\Attributes\Test;
@@ -17,7 +17,7 @@ class AiControllerTest extends PlusTestCase
 {
     private static function enableAiFor(User $user): void
     {
-        app(SettingService::class)->updateAiSettings($user->organization, true, AiProvider::Anthropic, 'sk-ant-test');
+        app(SettingService::class)->updateAiSettings($user->organization, true, Lab::Anthropic, 'sk-ant-test');
     }
 
     #[Test]

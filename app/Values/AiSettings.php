@@ -2,21 +2,33 @@
 
 namespace App\Values;
 
-use App\Enums\AiProvider;
+use Laravel\Ai\Enums\Lab;
 use SensitiveParameter;
 
 final readonly class AiSettings
 {
+    /** The labs that can run the assistant with nothing but an API key. */
+    public const array PROVIDERS = [
+        Lab::OpenAI,
+        Lab::Anthropic,
+        Lab::Gemini,
+        Lab::DeepSeek,
+        Lab::Groq,
+        Lab::Mistral,
+        Lab::OpenRouter,
+        Lab::xAI,
+    ];
+
     private function __construct(
         public bool $enabled,
-        public ?AiProvider $provider,
+        public ?Lab $provider,
         #[SensitiveParameter]
         public ?string $apiKey,
     ) {}
 
     public static function make(
         bool $enabled = false,
-        ?AiProvider $provider = null,
+        ?Lab $provider = null,
         #[SensitiveParameter]
         ?string $apiKey = null,
     ): self {

@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Migrations;
 
-use App\Enums\AiProvider;
 use App\Models\Organization;
 use App\Models\Setting;
 use App\Services\SettingService;
+use Laravel\Ai\Enums\Lab;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -40,7 +40,7 @@ class MoveAiSettingsIntoTheDefaultOrganizationTest extends TestCase
         $settings = app(SettingService::class)->getAiSettings(Organization::default());
 
         self::assertTrue($settings->enabled);
-        self::assertSame(AiProvider::Anthropic, $settings->provider);
+        self::assertSame(Lab::Anthropic, $settings->provider);
         self::assertSame('sk-ant-test', $settings->apiKey);
     }
 

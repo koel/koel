@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\AiProvider;
 use App\Facades\License;
 use App\Models\Organization;
 use App\Models\Setting;
@@ -13,6 +12,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
+use Laravel\Ai\Enums\Lab;
 use SensitiveParameter;
 
 class SettingService
@@ -35,7 +35,7 @@ class SettingService
 
         return AiSettings::make(
             enabled: (bool) Arr::get($stored, 'enabled'),
-            provider: AiProvider::tryFrom((string) Arr::get($stored, 'provider')),
+            provider: Lab::tryFrom((string) Arr::get($stored, 'provider')),
             apiKey: $encryptedApiKey ? self::decryptApiKey($encryptedApiKey) : null,
         );
     }
@@ -57,7 +57,7 @@ class SettingService
     public function updateAiSettings(
         Organization $organization,
         bool $enabled,
-        AiProvider $provider,
+        Lab $provider,
         #[SensitiveParameter]
         ?string $apiKey,
     ): void {

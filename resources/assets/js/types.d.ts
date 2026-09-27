@@ -499,7 +499,7 @@ type CurrentUser = User & {
   two_factor: boolean
 }
 
-type AiProvider = 'openai' | 'anthropic' | 'gemini'
+type AiProvider = 'openai' | 'anthropic' | 'gemini' | 'deepseek' | 'groq' | 'mistral' | 'openrouter' | 'xai'
 
 interface AiSettings {
   enabled: boolean

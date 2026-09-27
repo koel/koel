@@ -1,16 +1,19 @@
 <?php
 
-use App\Enums\AiProvider;
 use App\Models\Organization;
+use App\Values\AiSettings;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Laravel\Ai\Enums\Lab;
 
 return new class extends Migration {
     public function up(): void
     {
-        $provider = AiProvider::tryFrom((string) config('ai.default'));
-        $apiKey = $provider ? config("ai.providers.{$provider->value}.key") : null;
+        $provider = Lab::tryFrom((string) config('ai.default'));
+        $apiKey = in_array($provider, AiSettings::PROVIDERS, strict: true)
+            ? config("ai.providers.{$provider->value}.key")
+            : null;
 
         if (!$apiKey) {
             return;
