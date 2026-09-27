@@ -123,8 +123,12 @@ article > div::before {
   @apply absolute h-full top-0 left-0 z-0 duration-200 ease-out bg-k-highlight;
 }
 
-.uploaded:hover {
-  @apply bg-k-fg-10;
+.uploaded {
+  @apply bg-k-success/10;
+
+  &:hover {
+    @apply bg-k-success/20;
+  }
 }
 
 .errored {
