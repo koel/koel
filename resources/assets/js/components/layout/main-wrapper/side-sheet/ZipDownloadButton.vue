@@ -122,3 +122,10 @@ const act = async () => {
   }
 }
 </script>
+
+<style lang="postcss" scoped>
+:deep([role='progressbar'] circle) {
+  transition-duration: 800ms;
+  transition-timing-function: linear;
+}
+</style>
