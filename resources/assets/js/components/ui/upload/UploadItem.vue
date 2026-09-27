@@ -124,10 +124,10 @@ article > div::before {
 }
 
 .uploaded {
-  @apply bg-k-success/10;
+  @apply border border-k-success;
 
   &:hover {
-    @apply bg-k-success/20;
+    @apply bg-k-fg-10;
   }
 }
 
