@@ -51,7 +51,7 @@ const { useMusicBrainz, useLastfm, useSpotify, useYouTube, useTicketmaster } = u
 
 const DOCS_URL = 'https://docs.koel.dev'
 
-const services = computed(() => [
+const allServices = computed(() => [
   {
     id: 'musicbrainz',
     name: 'MusicBrainz',
@@ -102,6 +102,10 @@ const services = computed(() => [
       ]
     : []),
 ])
+
+const services = computed(() =>
+  [...allServices.value].sort((first, second) => Number(second.enabled) - Number(first.enabled)),
+)
 </script>
 
 <style lang="postcss" scoped>

@@ -17,6 +17,22 @@ describe('servicesSettingGroup.vue', () => {
     expect(screen.getByTestId('service-spotify').dataset.enabled).toBe('false')
   })
 
+  it('lists the enabled services first', () => {
+    commonStore.state.uses_musicbrainz = false
+    commonStore.state.uses_last_fm = false
+    commonStore.state.uses_spotify = true
+    commonStore.state.uses_you_tube = true
+
+    h.render(Component)
+
+    expect(screen.getAllByTestId(/^service-/).map(service => service.dataset.testid)).toEqual([
+      'service-spotify',
+      'service-youtube',
+      'service-musicbrainz',
+      'service-lastfm',
+    ])
+  })
+
   it('leaves Ticketmaster out of the Community edition', () => {
     h.render(Component)
     expect(screen.queryByTestId('service-ticketmaster')).toBeNull()
