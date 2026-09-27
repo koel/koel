@@ -26,7 +26,7 @@
         <p>{{ service.description }}</p>
         <p v-if="!service.enabled" class="mt-2 text-k-fg-70">
           Check the
-          <a :href="service.docsUrl" class="text-k-highlight hover:underline" target="_blank">documentation</a> to set
+          <a :href="service.docsUrl" class="text-k-highlight hover:text-k-fg" target="_blank">documentation</a> to set
           it up.
         </p>
       </section>
