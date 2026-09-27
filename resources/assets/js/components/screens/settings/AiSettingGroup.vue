@@ -18,10 +18,7 @@
         </FormRow>
         <FormRow>
           <template #label>API key</template>
-          <template #help>
-            <span v-if="canKeepApiKey">A key is saved. Leave this empty to keep it.</span>
-            <span v-else>Your provider bills the assistant's use to this key.</span>
-          </template>
+          <template #help>Your provider bills the assistant's use to this key.</template>
           <div class="md:w-2/3">
             <PasswordField
               v-model="data.api_key"
