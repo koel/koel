@@ -206,13 +206,29 @@ class PresignedUploadTest extends PlusTestCase
         Event::fake();
 
         $location = 's3://koel/1__random__song.mp3';
-        HandlePresignedSongUploadJob::makeProcessingLock($location)->get();
+        $lock = HandlePresignedSongUploadJob::makeProcessingLock($location);
+        $lock->get();
 
-        (new HandlePresignedSongUploadJob($location, '1__random__song.mp3', create_user()))->failed(
+        (new HandlePresignedSongUploadJob($location, '1__random__song.mp3', create_user(), $lock->owner()))->failed(
             new RuntimeException('Scanning failed'),
         );
 
         self::assertTrue(HandlePresignedSongUploadJob::makeProcessingLock($location)->get());
+    }
+
+    #[Test]
+    public function aFailedUploadLeavesAnotherCompletionsLockAlone(): void
+    {
+        Event::fake();
+
+        $location = 's3://koel/1__random__song.mp3';
+        HandlePresignedSongUploadJob::makeProcessingLock($location)->get();
+
+        (new HandlePresignedSongUploadJob($location, '1__random__song.mp3', create_user(), 'expired-owner'))->failed(
+            new RuntimeException('Scanning failed'),
+        );
+
+        self::assertFalse(HandlePresignedSongUploadJob::makeProcessingLock($location)->get());
     }
 
     #[Test]

@@ -21,6 +21,7 @@ class HandlePresignedSongUploadJob extends QueuedJob
         public readonly string $location,
         public readonly string $uploadKey,
         public readonly User $uploader,
+        public readonly ?string $processingLockOwner = null,
     ) {}
 
     public function handle(
@@ -46,14 +47,14 @@ class HandlePresignedSongUploadJob extends QueuedJob
         return $song;
     }
 
-    public static function makeProcessingLock(string $location): Lock
+    public static function makeProcessingLock(string $location, ?string $owner = null): Lock
     {
-        return Cache::lock('presigned-upload:' . simple_hash($location), 3600);
+        return Cache::lock('presigned-upload:' . simple_hash($location), 3600, $owner);
     }
 
     public function failed(Throwable $exception): void
     {
-        self::makeProcessingLock($this->location)->forceRelease();
+        self::makeProcessingLock($this->location, $this->processingLockOwner)->release();
 
         broadcast(SongUploadFailedResponse::make(
             uploader: $this->uploader,
