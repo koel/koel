@@ -8,6 +8,7 @@ export const Filter = {
   MANAGE_SIDEBAR_ITEMS: 'manage-sidebar-items',
   SLOT: 'slot',
   PROFILE_MENU_ITEMS: 'profile-menu-items',
+  PROFILE_INTEGRATIONS: 'profile-integrations',
   POLICIES: 'policies',
 } as const
 
