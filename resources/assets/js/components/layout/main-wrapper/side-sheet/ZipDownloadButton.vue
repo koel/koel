@@ -16,7 +16,7 @@
       >
         <ProgressRing
           :class="state.status === 'failed' ? 'text-k-danger' : 'text-k-highlight'"
-          :thickness="1.25"
+          :thickness="1.75"
           :value="progress"
           class="absolute inset-0 size-full"
         />
