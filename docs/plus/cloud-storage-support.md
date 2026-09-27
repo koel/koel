@@ -120,7 +120,7 @@ While a file is being uploaded, it's kept under the `pending/` prefix of your bu
 }
 ```
 
-For example, with the AWS CLI:
+To apply it with the AWS CLI, save it as `lifecycle.json` and run the command below. The command replaces the bucket's existing lifecycle rules, so if your bucket already has some, add them to `lifecycle.json` first. You can list them with `aws s3api get-bucket-lifecycle-configuration --bucket <your-bucket>`.
 
 ```bash
 aws s3api put-bucket-lifecycle-configuration --bucket <your-bucket> --lifecycle-configuration file://lifecycle.json

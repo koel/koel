@@ -3,6 +3,7 @@
 namespace App\Services\SongStorages;
 
 use App\Enums\SongStorageType;
+use App\Exceptions\SongUploadFailedException;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
@@ -53,7 +54,10 @@ class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadU
 
     public function moveUploadOutOfPending(string $key): void
     {
-        Storage::disk('s3')->move($key, Str::after($key, self::PENDING_UPLOAD_PREFIX));
+        $storageKey = Str::after($key, self::PENDING_UPLOAD_PREFIX);
+        $moved = rescue(static fn (): bool => Storage::disk('s3')->move($key, $storageKey), false);
+
+        throw_unless($moved, SongUploadFailedException::make('The uploaded file could not be stored.'));
     }
 
     public function sizeOfUpload(string $key): int

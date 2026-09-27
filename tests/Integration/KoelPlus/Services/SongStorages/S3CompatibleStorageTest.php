@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\KoelPlus\Services\SongStorages;
 
+use App\Exceptions\SongUploadFailedException;
 use App\Helpers\Ulid;
 use App\Services\SongStorages\S3CompatibleStorage;
 use App\Services\SongStorages\S3UploadUrlSigner;
@@ -136,6 +137,14 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         Storage::disk('s3')->assertMissing('pending/123__random__song.mp3');
         Storage::disk('s3')->assertExists('123__random__song.mp3');
+    }
+
+    #[Test]
+    public function failsWhenAPendingUploadCannotBeMoved(): void
+    {
+        $this->expectException(SongUploadFailedException::class);
+
+        $this->service->moveUploadOutOfPending('pending/123__random__missing.mp3');
     }
 
     #[Test]
