@@ -26,7 +26,7 @@ An admin turns the assistant on under **Settings → AI**:
 
 1. Tick **Use AI assistant**.
 2. Pick a provider.
-3. Paste the provider's API key and save. The provider bills the assistant's use to this key.
+3. Paste the provider's API key and save.
 
 Koel stores the key encrypted and never shows it again; to change it, paste a new one. Switching providers needs a new key.
 

@@ -17,7 +17,6 @@
         </FormRow>
         <FormRow>
           <template #label>API key</template>
-          <template #help>Your provider bills the assistant's use to this key.</template>
           <div class="md:w-2/3">
             <PasswordField
               v-model="data.api_key"
