@@ -2,6 +2,7 @@
 
 use App\Facades\Hooks;
 use App\Facades\License;
+use App\Repositories\OrganizationRepository;
 use App\Services\BuildIdentifier;
 use App\Services\Image\ImageStorage;
 use App\Services\SettingService;
@@ -256,7 +257,7 @@ function koel_branding(?string $key = null): Branding|string|null
         /** @var SettingService $service */
         $service = app(SettingService::class);
 
-        return $service->getBranding();
+        return $service->getBranding(app(OrganizationRepository::class)->getRequestedOrganization());
     });
 
     if (!$key) {

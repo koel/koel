@@ -21,10 +21,10 @@ class SettingService
         private readonly ImageStorage $imageStorage,
     ) {}
 
-    public function getBranding(): Branding
+    public function getBranding(Organization $organization): Branding
     {
         return License::isPlus()
-            ? Branding::fromArray(Arr::wrap(Setting::get('branding')))
+            ? Branding::fromArray(Arr::wrap(Setting::get('branding', $organization)))
             : Branding::make(name: config('app.name'));
     }
 
@@ -100,9 +100,9 @@ class SettingService
         return $real ?: $path;
     }
 
-    public function updateBranding(string $name, ?string $logo, ?string $cover): void
+    public function updateBranding(Organization $organization, string $name, ?string $logo, ?string $cover): void
     {
-        $branding = $this->getBranding()->withName($name);
+        $branding = $this->getBranding($organization)->withName($name);
 
         if ($logo && $logo !== $branding->logo) {
             $branding = $branding->withLogo($this->imageStorage->storeImage($logo));
@@ -116,6 +116,6 @@ class SettingService
             $branding = $branding->withoutCover();
         }
 
-        Setting::set('branding', $branding->toArray());
+        Setting::set('branding', $branding->toArray(), $organization);
     }
 }
