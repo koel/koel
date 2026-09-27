@@ -1,5 +1,9 @@
 <template>
-  <div ref="container" class="relative inline-flex flex-wrap gap-1 rounded-full bg-k-fg-5 p-1" role="radiogroup">
+  <div
+    ref="container"
+    class="relative inline-flex flex-wrap gap-1 rounded-full bg-k-fg-5 p-1 shadow-sm"
+    role="radiogroup"
+  >
     <span
       v-if="indicator"
       :style="{
@@ -8,7 +12,7 @@
         width: `${indicator.width}px`,
         height: `${indicator.height}px`,
       }"
-      class="absolute rounded-full bg-k-fg-10 transition-all duration-200 ease-out"
+      class="absolute rounded-full bg-k-fg-10 shadow-sm transition-all duration-200 ease-out"
       data-testid="segmented-control-indicator"
     />
     <label
