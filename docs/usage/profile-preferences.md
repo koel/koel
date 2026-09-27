@@ -56,9 +56,9 @@ These preferences are saved immediately upon change and synced across all of you
 If you have songs [cached for offline playback](./offline-playback), this section displays your current storage usage
 with a progress bar showing used vs. available space. You can clear all cached songs at once by clicking the "Clear All" button.
 
-## Service Integration Statuses
+## Service Integrations
 
-If your Koel installation is [integrated](../service-integrations) with any external services, such as Last.fm or Spotify, you can see their statuses here along with the ability to connect or disconnect them when applicable.
+Connect your own [Last.fm](../service-integrations#last-fm) or [ListenBrainz](../service-integrations#listenbrainz) account here, so Koel can submit what you listen to. You can disconnect them at any time.
 
 ## Subsonic API Key
 
