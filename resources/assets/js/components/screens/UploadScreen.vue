@@ -16,7 +16,7 @@
       <div v-if="showsFilters" :class="{ 'flex-1': !showsDropPrompt }" class="min-h-0 flex flex-col gap-4">
         <UploadSummary v-if="files.length" class="mb-4" />
 
-        <SegmentedControl v-model="currentFilter" :options="filterOptions" class="self-start" name="upload-filter">
+        <SegmentedControl v-model="currentFilter" :options="filterOptions" class="self-center" name="upload-filter">
           <template #default="{ option }">
             {{ option.label }}
             <span
