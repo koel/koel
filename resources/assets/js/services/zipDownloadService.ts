@@ -15,6 +15,7 @@ export const MAX_ZIP_BYTES = 4_000_000_000
 
 const ARCHIVE_FILE_PREFIX = 'download-'
 const ARCHIVE_RETENTION_MS = 5 * 60_000
+const LEFTOVER_ARCHIVE_AGE_MS = 24 * 60 * 60_000
 const UNSAFE_FILE_NAME_CHARACTERS = '\\/:*?"<>|'
 const FIRST_PRINTABLE_CHARACTER_CODE = 32
 
@@ -71,6 +72,12 @@ export const getExtensionFromResponse = (response: Response) => {
   return extension ? `.${extension.toLowerCase()}` : ''
 }
 
+export const isArchiveCreatedBefore = (fileName: string, time: number) => {
+  const createdAt = Number(/^download-(\d+)-/.exec(fileName)?.[1])
+
+  return Number.isFinite(createdAt) && createdAt < time
+}
+
 export const getTotalBytes = (songs: Song[]) => songs.reduce((total, song) => total + (song.file_size ?? 0), 0)
 
 const getDownloadUrl = (song: Song) =>
@@ -96,7 +103,6 @@ export const zipDownloadService = {
 
   abortController: null as AbortController | null,
   building: Promise.resolve(),
-  retainedArchiveFileNames: new Set<string>(),
 
   isSupported: () => typeof navigator.storage?.getDirectory === 'function',
 
@@ -137,14 +143,15 @@ export const zipDownloadService = {
   },
 
   async build(songs: Song[], numbering: ZipEntryNumbering, signal: AbortSignal) {
-    const directory = await navigator.storage.getDirectory()
-    await this.removeLeftoverArchives(directory)
-
-    const archiveFileName = `${ARCHIVE_FILE_PREFIX}${Date.now()}.zip`
+    const archiveFileName = `${ARCHIVE_FILE_PREFIX}${Date.now()}-${crypto.randomUUID()}.zip`
     const writeAborter = new AbortController()
+    let directory: FileSystemDirectoryHandle | null = null
     let writing: Promise<void> = Promise.resolve()
 
     try {
+      directory = await navigator.storage.getDirectory()
+      await this.removeLeftoverArchives(directory)
+
       const { ZipWriter, configure } = await import('@zip.js/zip.js')
       configure({ useWebWorkers: false })
 
@@ -168,14 +175,14 @@ export const zipDownloadService = {
       await writing
       signal.throwIfAborted()
 
-      this.retainedArchiveFileNames.add(archiveFileName)
       this.state.fileUrl = URL.createObjectURL(await handle.getFile())
       this.state.status = 'ready'
-      this.save(() => this.removeArchive(directory, archiveFileName))
+      const archiveDirectory = directory
+      this.save(() => this.removeArchive(archiveDirectory, archiveFileName))
     } catch (error: unknown) {
       writeAborter.abort()
       await writing.catch(() => {})
-      await directory.removeEntry(archiveFileName).catch(() => {})
+      await directory?.removeEntry(archiveFileName).catch(() => {})
 
       if (signal.aborted) {
         this.dismiss()
@@ -190,15 +197,16 @@ export const zipDownloadService = {
   },
 
   async removeLeftoverArchives(directory: FileSystemDirectoryHandle) {
+    const oldestKeptTime = Date.now() - LEFTOVER_ARCHIVE_AGE_MS
+
     for await (const name of directory.keys()) {
-      if (name.startsWith(ARCHIVE_FILE_PREFIX) && !this.retainedArchiveFileNames.has(name)) {
+      if (isArchiveCreatedBefore(name, oldestKeptTime)) {
         await directory.removeEntry(name).catch(() => {})
       }
     }
   },
 
   async removeArchive(directory: FileSystemDirectoryHandle, archiveFileName: string) {
-    this.retainedArchiveFileNames.delete(archiveFileName)
     await directory.removeEntry(archiveFileName).catch(() => {})
   },
 

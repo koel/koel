@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import {
   getExtensionFromResponse,
+  isArchiveCreatedBefore,
   makeEntryBaseName,
   makeUniqueName,
   MAX_ZIP_BYTES,
@@ -172,7 +173,7 @@ describe('zipDownloadService', () => {
     zipDownloadService.start([makeSong()], 'Songs', 'none')
     await zipDownloadService.building
 
-    expect(directory.removeEntry).toHaveBeenCalledWith(expect.stringMatching(/^download-\d+\.zip$/))
+    expect(directory.removeEntry).toHaveBeenCalledWith(expect.stringMatching(/^download-\d+-[\w-]+\.zip$/))
   })
 
   it('does not save an archive cancelled while it was being finished', async () => {
@@ -195,6 +196,21 @@ describe('zipDownloadService', () => {
 
     expect(saveMock).not.toHaveBeenCalled()
     expect(zipDownloadService.state.status).toBe('idle')
+  })
+
+  it('treats only archives older than the cutoff as leftovers', () => {
+    expect(isArchiveCreatedBefore('download-1000-abc.zip', 2000)).toBe(true)
+    expect(isArchiveCreatedBefore('download-3000-abc.zip', 2000)).toBe(false)
+    expect(isArchiveCreatedBefore('something-else.zip', 2000)).toBe(false)
+  })
+
+  it('fails instead of hanging when private storage cannot be opened', async () => {
+    vi.stubGlobal('navigator', { storage: { getDirectory: vi.fn().mockRejectedValue(new Error('No storage')) } })
+
+    zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.building
+
+    expect(zipDownloadService.state.status).toBe('failed')
   })
 
   it('stops once the songs received go past the cap', () => {
