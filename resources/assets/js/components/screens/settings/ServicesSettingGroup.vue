@@ -1,40 +1,52 @@
 <template>
-  <SettingGroup>
-    <template #subtitle>Services {{ appName }} uses for everyone on this installation.</template>
-
-    <ul class="divide-y divide-k-fg-10">
-      <li
-        v-for="service in services"
-        :key="service.id"
+  <div class="space-y-4">
+    <WithGradientBorder
+      v-for="service in services"
+      :key="service.id"
+      :color="service.color"
+      border-color="color-mix(in srgb, var(--color-fg), transparent 97%)"
+      border-width="1px"
+      class="rounded-lg"
+    >
+      <section
         :data-enabled="service.enabled"
         :data-testid="`service-${service.id}`"
-        class="flex items-center justify-between gap-4 py-2 first:pt-0 last:pb-0"
+        class="bg-k-fg-5 p-5 rounded-[inherit]"
       >
-        <span>{{ service.name }}</span>
-        <span v-if="service.enabled" class="text-k-success">Enabled</span>
-        <span v-else class="text-k-fg-50">
-          Not enabled
-          <template v-if="service.docsUrl">
-            ·
-            <a :href="service.docsUrl" target="_blank">Set up</a>
-          </template>
-        </span>
-      </li>
-    </ul>
-  </SettingGroup>
+        <h3 class="text-2xl mb-2 flex items-center gap-2">
+          <span :style="{ color: service.color }" class="mr-2">
+            <img v-if="service.logo" :alt="`${service.name} logo`" :src="service.logo" height="20" width="20" />
+            <Icon v-else :icon="service.icon" />
+          </span>
+          {{ service.name }}
+        </h3>
+
+        <p>{{ service.description }}</p>
+        <p v-if="service.enabled" class="mt-2 text-k-success">Enabled.</p>
+        <p v-else class="mt-2 text-k-fg-70">
+          Not enabled. Check the
+          <a :href="service.docsUrl" target="_blank">documentation</a>
+          to set it up.
+        </p>
+      </section>
+    </WithGradientBorder>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import { faLastfm, faSpotify, faYoutube } from '@fortawesome/free-brands-svg-icons'
+import { faTicket } from '@fortawesome/free-solid-svg-icons'
 import { computed } from 'vue'
+import musicbrainzLogo from '@/../img/logos/musicbrainz.svg'
 import { useBranding } from '@/composables/useBranding'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 
-import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
+import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
 
 const { name: appName } = useBranding()
 const { isPlus } = useKoelPlus()
-const { useMusicBrainz, useLastfm, useSpotify, useYouTube, useAppleMusic, useTicketmaster } = useThirdPartyServices()
+const { useMusicBrainz, useLastfm, useSpotify, useYouTube, useTicketmaster } = useThirdPartyServices()
 
 const DOCS_URL = 'https://docs.koel.dev'
 
@@ -42,19 +54,48 @@ const services = computed(() => [
   {
     id: 'musicbrainz',
     name: 'MusicBrainz',
+    logo: musicbrainzLogo,
+    color: '#ba478f',
     enabled: useMusicBrainz.value,
+    description: `Fills in album and artist information, artist images and album covers from MusicBrainz, Wikipedia and the Cover Art Archive.`,
     docsUrl: `${DOCS_URL}/service-integrations#musicbrainz-wikipedia`,
   },
-  { id: 'lastfm', name: 'Last.fm', enabled: useLastfm.value, docsUrl: `${DOCS_URL}/service-integrations#last-fm` },
-  { id: 'spotify', name: 'Spotify', enabled: useSpotify.value, docsUrl: `${DOCS_URL}/service-integrations#spotify` },
-  { id: 'youtube', name: 'YouTube', enabled: useYouTube.value, docsUrl: `${DOCS_URL}/service-integrations#youtube` },
-  { id: 'apple-music', name: 'Apple Music', enabled: useAppleMusic.value, docsUrl: null },
+  {
+    id: 'lastfm',
+    name: 'Last.fm',
+    icon: faLastfm,
+    color: '#d31f27',
+    enabled: useLastfm.value,
+    description: `Fills in album and artist details from Last.fm, and lets each user connect their Last.fm account to scrobble what they play in ${appName}.`,
+    docsUrl: `${DOCS_URL}/service-integrations#last-fm`,
+  },
+  {
+    id: 'spotify',
+    name: 'Spotify',
+    icon: faSpotify,
+    color: '#1db954',
+    enabled: useSpotify.value,
+    description: `Fetches album covers and artist images from Spotify.`,
+    docsUrl: `${DOCS_URL}/service-integrations#spotify`,
+  },
+  {
+    id: 'youtube',
+    name: 'YouTube',
+    icon: faYoutube,
+    color: '#ff0033',
+    enabled: useYouTube.value,
+    description: `Shows YouTube videos related to the song being played, to watch without leaving ${appName}.`,
+    docsUrl: `${DOCS_URL}/service-integrations#youtube`,
+  },
   ...(isPlus.value
     ? [
         {
           id: 'ticketmaster',
           name: 'Ticketmaster',
+          icon: faTicket,
+          color: '#026cdf',
           enabled: useTicketmaster.value,
+          description: `Lists an artist's upcoming concerts from Ticketmaster on the artist's page, with links to buy tickets.`,
           docsUrl: `${DOCS_URL}/plus/ticketmaster`,
         },
       ]
