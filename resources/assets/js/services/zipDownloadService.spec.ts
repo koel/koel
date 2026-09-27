@@ -139,19 +139,20 @@ describe('zipDownloadService', () => {
     await expect(zipDownloadService.start([makeSong()], 'Songs', 'none')).rejects.toThrow(ZipInProgressError)
   })
 
-  it('zips the songs in order, leaves episodes out, and saves the archive', async () => {
+  it('zips songs and episodes in order and saves the archive', async () => {
     stubPrivateStorage()
     stubSongDownloads()
-    const songs = [makeSong({ title: 'One' }), h.factory('episode').make(), makeSong({ title: 'Two' })]
+    const episode = h.factory('episode').make({ podcast_title: 'The Show', title: 'Pilot' })
+    const playables = [makeSong({ title: 'One' }), episode, makeSong({ title: 'Two' })]
     const saveMock = h.mock(zipDownloadService, 'save')
 
-    await zipDownloadService.start(songs, 'My Mix', 'position')
+    await zipDownloadService.start(playables, 'My Mix', 'position')
     await zipDownloadService.building
 
-    expect(addedEntries).toEqual(['01 Dio - One.mp3', '02 Dio - Two.mp3'])
+    expect(addedEntries).toEqual(['01 Dio - One.mp3', '02 The Show - Pilot.mp3', '03 Dio - Two.mp3'])
     expect(saveMock).toHaveBeenCalled()
     expect(zipDownloadService.state.archiveName).toBe('My Mix.zip')
-    expect(zipDownloadService.state.bytesDone).toBe(10)
+    expect(zipDownloadService.state.bytesDone).toBe(15)
   })
 
   it('fails with a message when a song cannot be downloaded', async () => {

@@ -28,8 +28,7 @@ class DownloadService
         }
 
         if ($song->isEpisode()) {
-            // If the song is an episode, get the episode's media URL ("path").
-            return $song->path;
+            return EpisodePlayable::getForEpisode($song, $this->http)->path;
         }
 
         $storage = SongStorageFactory::make($song->storage);

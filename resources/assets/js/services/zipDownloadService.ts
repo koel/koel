@@ -27,15 +27,26 @@ export const toSafeFileName = (name: string) =>
 
 const padNumber = (value: number, width: number) => String(value).padStart(width, '0')
 
-export const makeEntryBaseName = (song: Song, position: number, count: number, numbering: ZipEntryNumbering) => {
-  const title = song.artist_name ? `${song.artist_name} - ${song.title}` : song.title
+const getCreditedTitle = (playable: Playable) => {
+  const credit = playable.type === 'songs' ? playable.artist_name : playable.podcast_title
+
+  return credit ? `${credit} - ${playable.title}` : playable.title
+}
+
+export const makeEntryBaseName = (
+  playable: Playable,
+  position: number,
+  count: number,
+  numbering: ZipEntryNumbering,
+) => {
+  const title = getCreditedTitle(playable)
 
   if (numbering === 'position') {
     return `${padNumber(position, Math.max(2, String(count).length))} ${title}`
   }
 
-  if (numbering === 'track' && song.track) {
-    return `${padNumber(song.track, 2)} ${title}`
+  if (numbering === 'track' && playable.type === 'songs' && playable.track) {
+    return `${padNumber(playable.track, 2)} ${title}`
   }
 
   return title
@@ -76,10 +87,13 @@ export const isArchiveCreatedBefore = (fileName: string, time: number) => {
   return Number.isFinite(createdAt) && createdAt < time
 }
 
-export const getTotalBytes = (songs: Song[]) => songs.reduce((total, song) => total + (song.file_size ?? 0), 0)
+const getFileSize = (playable: Playable) => (playable.type === 'songs' ? (playable.file_size ?? 0) : 0)
 
-const getDownloadUrl = (song: Song) =>
-  `${window.KOEL.base_url}download/songs?songs[]=${song.id}&t=${authService.getAudioToken()}`
+export const getTotalBytes = (playables: Playable[]) =>
+  playables.reduce((total, playable) => total + getFileSize(playable), 0)
+
+const getDownloadUrl = (playable: Playable) =>
+  `${window.KOEL.base_url}download/songs?songs[]=${playable.id}&t=${authService.getAudioToken()}`
 
 const countBytesInto = (onBytes: (count: number) => void) =>
   new TransformStream<Uint8Array, Uint8Array>({
@@ -105,15 +119,13 @@ export const zipDownloadService = {
   isSupported: () => typeof navigator.storage?.getDirectory === 'function',
 
   /**
-   * Checks the songs, then builds the archive in the background; `building` settles when it is done.
+   * Checks the items, then builds the archive in the background; `building` settles when it is done.
    *
-   * @throws {ZipTooLargeError} when the songs need more space than the browser allows the site
+   * @throws {ZipTooLargeError} when the items need more space than the browser allows the site
    * @throws {ZipUnsupportedError} when the browser can't write the archive to its private storage
    * @throws {ZipInProgressError} when another archive is still being built
    */
   async start(playables: Playable[], archiveName: string, numbering: ZipEntryNumbering) {
-    const songs = playables.filter((playable): playable is Song => playable.type === 'songs')
-
     if (this.state.status === 'zipping') {
       throw new ZipInProgressError('Another download is already in progress.')
     }
@@ -122,7 +134,7 @@ export const zipDownloadService = {
       throw new ZipUnsupportedError('This browser can’t download these at once.')
     }
 
-    if (getTotalBytes(songs) > (await this.getAvailableStorageBytes())) {
+    if (getTotalBytes(playables) > (await this.getAvailableStorageBytes())) {
       throw new ZipTooLargeError('Download too large for this browser.')
     }
 
@@ -132,15 +144,15 @@ export const zipDownloadService = {
       status: 'zipping',
       archiveName: `${toSafeFileName(archiveName)}.zip`,
       bytesDone: 0,
-      bytesTotal: getTotalBytes(songs),
+      bytesTotal: getTotalBytes(playables),
       error: '',
     })
 
     this.abortController = new AbortController()
-    this.building = this.build(songs, numbering, this.abortController.signal)
+    this.building = this.build(playables, numbering, this.abortController.signal)
   },
 
-  async build(songs: Song[], numbering: ZipEntryNumbering, signal: AbortSignal) {
+  async build(playables: Playable[], numbering: ZipEntryNumbering, signal: AbortSignal) {
     const archiveFileName = `${ARCHIVE_FILE_PREFIX}${Date.now()}-${crypto.randomUUID()}.zip`
     const writeAborter = new AbortController()
     let directory: FileSystemDirectoryHandle | null = null
@@ -164,9 +176,9 @@ export const zipDownloadService = {
 
       const usedNames = new Set<string>()
 
-      for (const [index, song] of songs.entries()) {
-        const baseName = toSafeFileName(makeEntryBaseName(song, index + 1, songs.length, numbering))
-        await this.addSong(zipWriter, song, baseName, usedNames, signal)
+      for (const [index, playable] of playables.entries()) {
+        const baseName = toSafeFileName(makeEntryBaseName(playable, index + 1, playables.length, numbering))
+        await this.addPlayable(zipWriter, playable, baseName, usedNames, signal)
       }
 
       await zipWriter.close()
@@ -208,15 +220,15 @@ export const zipDownloadService = {
     await directory.removeEntry(archiveFileName).catch(() => {})
   },
 
-  async addSong(
+  async addPlayable(
     zipWriter: ZipWriter<unknown>,
-    song: Song,
+    playable: Playable,
     baseName: string,
     usedNames: Set<string>,
     signal: AbortSignal,
   ) {
     try {
-      const response = await fetch(getDownloadUrl(song), { signal })
+      const response = await fetch(getDownloadUrl(playable), { signal })
 
       if (!response.ok || !response.body) {
         throw new Error(`the server answered ${response.status}`)
@@ -233,7 +245,7 @@ export const zipDownloadService = {
       }
 
       const reason = error instanceof Error ? error.message : String(error)
-      throw new Error(`“${song.title}” could not be downloaded (${reason}).`, { cause: error })
+      throw new Error(`“${playable.title}” could not be downloaded (${reason}).`, { cause: error })
     }
   },
 
