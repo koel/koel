@@ -68,7 +68,7 @@ const act = async () => {
     return
   }
 
-  if (await showConfirmDialog('Cancel downloading process?')) {
+  if (await showConfirmDialog('Cancel the download?')) {
     zipDownloadService.cancel()
   }
 }
