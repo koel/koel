@@ -1,6 +1,6 @@
 <template>
   <fieldset class="flex items-start gap-4 py-3">
-    <img :src="model" alt="" class="size-[104px] shrink-0 rounded-md bg-k-fg-5 object-contain p-1" />
+    <img :src="model" alt="" class="size-[96px] shrink-0 rounded-md bg-k-fg-5 object-contain p-1" />
 
     <div class="min-w-0 flex-1">
       <h4 class="text-k-fg">
