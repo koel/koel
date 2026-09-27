@@ -1,31 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader layout="collapsed">
-        Upload Media
-
-        <template #controls>
-          <Btn
-            v-if="hasFinishedFiles"
-            bordered
-            data-testid="upload-clear-finished-btn"
-            variant="ghost"
-            @click="clearFinished"
-          >
-            Clear Finished
-          </Btn>
-          <BtnGroup v-if="hasUploadFailures" uppercase>
-            <Btn variant="success" data-testid="upload-retry-all-btn" @click="retryAll">
-              <Icon :icon="faRotateRight" />
-              Retry All
-            </Btn>
-            <Btn variant="highlight" data-testid="upload-remove-all-btn" @click="removeFailedEntries">
-              <Icon :icon="faTrashCan" />
-              Remove Failed
-            </Btn>
-          </BtnGroup>
-        </template>
-      </ScreenHeader>
+      <ScreenHeader layout="collapsed"> Upload Media </ScreenHeader>
     </template>
 
     <div
@@ -37,18 +13,51 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
-      <UnfinishedUploadsNotice v-if="unfinishedLastTime.length" :names="unfinishedLastTime" class="mb-4" />
       <DuplicateUploadList v-if="duplicatedSongs.length" :songs="duplicatedSongs" class="mb-4" />
 
-      <div v-if="files.length" class="pb-4 space-y-4">
-        <UploadSummary />
-        <UploadItem v-for="file in pendingFiles" :key="file.id" :file="file" data-testid="upload-item" />
-        <details v-if="uploadedFiles.length" data-testid="uploaded-files" open>
-          <summary class="cursor-pointer text-k-fg-70">Uploaded ({{ uploadedFiles.length }})</summary>
-          <div class="mt-4 space-y-4">
-            <UploadItem v-for="file in uploadedFiles" :key="file.id" :file="file" data-testid="upload-item" />
-          </div>
-        </details>
+      <div v-if="files.length" class="pb-4 flex flex-col gap-4">
+        <UploadSummary class="mb-4" />
+
+        <Tabs class="-mx-6">
+          <TabList>
+            <TabButton
+              v-for="(label, tab) in TAB_LABELS"
+              :key="tab"
+              :aria-controls="`uploadPane-${tab}`"
+              :data-count="filesByTab[tab].length"
+              :data-testid="`upload-tab-${tab}`"
+              :selected="currentTab === tab"
+              @click="currentTab = tab"
+            >
+              {{ label }}
+              <span class="ml-1 rounded-full bg-k-fg-10 px-2 py-0.5 text-[.8rem] tabular-nums">
+                {{ filesByTab[tab].length }}
+              </span>
+            </TabButton>
+          </TabList>
+
+          <TabPanelContainer>
+            <TabPanel :id="`uploadPane-${currentTab}`" class="flex flex-col gap-4">
+              <BtnGroup v-if="currentTab === 'errored' && filesByTab.errored.length" class="self-start" uppercase>
+                <Btn variant="success" data-testid="upload-retry-all-btn" @click="retryAll">
+                  <Icon :icon="faRotateRight" />
+                  Retry All
+                </Btn>
+                <Btn variant="highlight" data-testid="upload-remove-all-btn" @click="removeFailedEntries">
+                  <Icon :icon="faTrashCan" />
+                  Remove Failed
+                </Btn>
+              </BtnGroup>
+
+              <UploadItem
+                v-for="file in filesByTab[currentTab]"
+                :key="file.id"
+                :file="file"
+                data-testid="upload-item"
+              />
+            </TabPanel>
+          </TabPanelContainer>
+        </Tabs>
       </div>
 
       <ScreenEmptyState v-else-if="!files.length && !duplicatedSongs.length">
@@ -90,6 +99,7 @@ import { computed, defineAsyncComponent, ref, toRef, onMounted } from 'vue'
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
 import { acceptedExtensions } from '@/utils/mediaHelper'
 import { uploadService } from '@/services/uploadService'
+import type { UploadFile, UploadStatus } from '@/services/uploadService'
 import { useUpload } from '@/composables/useUpload'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -98,11 +108,31 @@ import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 import DuplicateUploadList from '@/components/ui/DuplicateUploadList.vue'
-import UnfinishedUploadsNotice from '@/components/ui/upload/UnfinishedUploadsNotice.vue'
 import UploadSummary from '@/components/ui/upload/UploadSummary.vue'
+import Tabs from '@/components/ui/tabs/Tabs.vue'
+import TabList from '@/components/ui/tabs/TabList.vue'
+import TabButton from '@/components/ui/tabs/TabButton.vue'
+import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
+import TabPanel from '@/components/ui/tabs/TabPanel.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
+
+type UploadTab = 'in-progress' | 'done' | 'skipped' | 'errored'
+
+const TAB_LABELS: Record<UploadTab, string> = {
+  'in-progress': 'In Progress',
+  done: 'Done',
+  skipped: 'Skipped',
+  errored: 'Errored',
+}
+
+const TAB_STATUSES: Record<UploadTab, UploadStatus[]> = {
+  'in-progress': ['Ready', 'Uploading', 'Retrying', 'Processing'],
+  done: ['Uploaded'],
+  skipped: ['Skipped'],
+  errored: ['Errored', 'Canceled'],
+}
 
 const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 
@@ -111,13 +141,18 @@ const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = u
 const duplicatedSongs = toRef(uploadService.state, 'duplicatedSongs')
 
 const files = toRef(uploadService.state, 'files')
-const unfinishedLastTime = toRef(uploadService.state, 'unfinishedLastTime')
-const pendingFiles = computed(() => files.value.filter(({ status }) => status !== 'Uploaded'))
-const uploadedFiles = computed(() => files.value.filter(({ status }) => status === 'Uploaded'))
-const hasFinishedFiles = computed(() => files.value.some(({ status }) => status === 'Uploaded' || status === 'Skipped'))
-const droppable = ref(false)
+const currentTab = ref<UploadTab>('in-progress')
 
-const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
+const filesByTab = computed(
+  () =>
+    Object.fromEntries(
+      Object.entries(TAB_STATUSES).map(([tab, statuses]) => [
+        tab,
+        files.value.filter(({ status }) => statuses.includes(status)),
+      ]),
+    ) as Record<UploadTab, UploadFile[]>,
+)
+const droppable = ref(false)
 
 const onDragEnter = () => (droppable.value = allowsUpload.value)
 
@@ -142,14 +177,10 @@ const onDrop = async (event: DragEvent) => {
   await handleDropEvent(event)
 }
 
-const clearFinished = () => uploadService.clearFinished()
 const retryAll = () => uploadService.retryAll()
 const removeFailedEntries = () => uploadService.removeFailed()
 
-onMounted(() => {
-  uploadService.recallUnfinishedUploads()
-  uploadService.fetchDuplicates()
-})
+onMounted(() => uploadService.fetchDuplicates())
 </script>
 
 <style lang="postcss" scoped>

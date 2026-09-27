@@ -27,12 +27,7 @@ export const useUploadProgress = () => {
   const totalBytes = computed(() => batch.value.reduce((total, file) => total + file.file.size, 0))
   const sentBytes = computed(() => batch.value.reduce((total, file) => total + getSentBytes(file), 0))
 
-  const counts = computed(() => ({
-    uploaded: countWithStatus(files.value, ['Uploaded']),
-    failed: countWithStatus(files.value, ['Errored']),
-    inProgress: countWithStatus(files.value, IN_PROGRESS_STATUSES),
-    skipped: countWithStatus(files.value, ['Skipped']),
-  }))
+  const hasFilesInProgress = computed(() => countWithStatus(files.value, IN_PROGRESS_STATUSES) > 0)
 
   const bytesPerSecond = ref(0)
   let lastSample = { bytes: sentBytes.value, at: Date.now() }
@@ -56,12 +51,12 @@ export const useUploadProgress = () => {
   onBeforeUnmount(() => window.clearInterval(sampler))
 
   const secondsLeft = computed(() => {
-    if (!counts.value.inProgress || bytesPerSecond.value <= 0) {
+    if (!hasFilesInProgress.value || bytesPerSecond.value <= 0) {
       return null
     }
 
     return (totalBytes.value - sentBytes.value) / bytesPerSecond.value
   })
 
-  return { counts, totalBytes, sentBytes, secondsLeft }
+  return { totalBytes, sentBytes, secondsLeft }
 }

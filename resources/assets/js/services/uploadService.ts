@@ -1,10 +1,9 @@
-import { reactive, watch } from 'vue'
+import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
 import { postJson, putToStorageWithProgress } from '@/services/httpUpload'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
-import { useLocalStorage } from '@/composables/useLocalStorage'
 import { playableStore } from '@/stores/playableStore'
 import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
@@ -17,7 +16,6 @@ const MAX_ATTEMPTS = 3
 const RETRY_DELAY_MS = 2000
 const TRANSIENT_FAILURE_STATUSES = [502, 503, 504]
 const UNFINISHED_STATUSES: UploadStatus[] = ['Ready', 'Uploading', 'Retrying']
-const UNFINISHED_UPLOADS_STORAGE_KEY = 'unfinished-uploads'
 
 interface PresignedUpload {
   key: string
@@ -72,7 +70,6 @@ export const uploadService = {
   state: reactive({
     files: [] as UploadFile[],
     duplicatedSongs: [] as DuplicateUpload[],
-    unfinishedLastTime: [] as string[],
   }),
 
   leavingIsGuarded: false,
@@ -103,22 +100,6 @@ export const uploadService = {
         event.preventDefault()
       }
     })
-
-    watch(
-      () => this.getUnfinishedFiles().map(({ name }) => name),
-      names => useLocalStorage().set(UNFINISHED_UPLOADS_STORAGE_KEY, names),
-    )
-  },
-
-  recallUnfinishedUploads() {
-    if (!this.state.files.length) {
-      this.state.unfinishedLastTime = useLocalStorage().get<string[]>(UNFINISHED_UPLOADS_STORAGE_KEY) ?? []
-    }
-  },
-
-  forgetUnfinishedUploads() {
-    this.state.unfinishedLastTime = []
-    useLocalStorage().remove(UNFINISHED_UPLOADS_STORAGE_KEY)
   },
 
   remove(file: UploadFile) {
@@ -355,10 +336,6 @@ export const uploadService = {
   },
 
   removeFailed() {
-    this.state.files = this.state.files.filter(({ status }) => status !== 'Errored')
-  },
-
-  clearFinished() {
-    this.state.files = this.state.files.filter(({ status }) => status !== 'Uploaded' && status !== 'Skipped')
+    this.state.files = this.state.files.filter(({ status }) => status !== 'Errored' && status !== 'Canceled')
   },
 }

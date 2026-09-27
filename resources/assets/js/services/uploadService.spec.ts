@@ -205,37 +205,6 @@ describe('uploadService', () => {
     expect(uploadService.parallelUploadLimit).toBe(3)
   })
 
-  it('remembers the files that have not finished, for after a reload', async () => {
-    h.mock(uploadService, 'proceed')
-    uploadService.queue(createUploadFile({ name: 'unfinished.mp3' }))
-    await h.tick()
-
-    uploadService.state.files = []
-    uploadService.recallUnfinishedUploads()
-
-    expect(uploadService.state.unfinishedLastTime).toEqual(['unfinished.mp3'])
-  })
-
-  it('forgets the unfinished files once dismissed', () => {
-    uploadService.state.unfinishedLastTime = ['unfinished.mp3']
-
-    uploadService.forgetUnfinishedUploads()
-    uploadService.recallUnfinishedUploads()
-
-    expect(uploadService.state.unfinishedLastTime).toEqual([])
-  })
-
-  it('clears finished and skipped files', () => {
-    const [uploaded, skipped, queued] = [createUploadFile(), createUploadFile(), createUploadFile()]
-    uploaded.status = 'Uploaded'
-    skipped.status = 'Skipped'
-    uploadService.state.files = [uploaded, skipped, queued]
-
-    uploadService.clearFinished()
-
-    expect(uploadService.state.files).toEqual([queued])
-  })
-
   it('finishes a keyless queued upload rather than stranding it', async () => {
     mockPostWithProgress(null, 202)
     h.mock(uploadService, 'proceed')
@@ -525,11 +494,11 @@ describe('uploadService', () => {
     expect(proceedMock).toHaveBeenCalled()
   })
 
-  it('removes failed files', () => {
+  it('removes failed and canceled files', () => {
     uploadService.state.files = [
       createUploadFile({ status: 'Errored' }),
       createUploadFile({ status: 'Ready' }),
-      createUploadFile({ status: 'Errored' }),
+      createUploadFile({ status: 'Canceled' }),
     ]
 
     uploadService.removeFailed()

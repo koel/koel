@@ -19,7 +19,7 @@ describe('uploadSummary.vue', () => {
   beforeEach(() => vi.useFakeTimers())
   afterEach(() => vi.useRealTimers())
 
-  it('counts the files by state and shows how much is sent', () => {
+  it('shows how much of the batch is sent', () => {
     uploadService.state.files = [
       makeFile('Uploaded'),
       makeFile('Uploading', 50),
@@ -29,10 +29,6 @@ describe('uploadSummary.vue', () => {
 
     h.render(Component)
 
-    expect(screen.getByTestId('uploaded-count').dataset.count).toBe('1')
-    expect(screen.getByTestId('in-progress-count').dataset.count).toBe('1')
-    expect(screen.getByTestId('failed-count').dataset.count).toBe('1')
-    expect(screen.getByTestId('skipped-count').dataset.count).toBe('1')
     expect((screen.getByTestId('upload-progress') as HTMLProgressElement).value).toBe(1500)
     expect((screen.getByTestId('upload-progress') as HTMLProgressElement).max).toBe(3000)
   })

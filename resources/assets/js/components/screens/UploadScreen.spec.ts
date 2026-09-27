@@ -58,6 +58,7 @@ describe('uploadScreen.vue', () => {
     ]
 
     h.render(Component)
+    await h.user.click(await screen.findByTestId('upload-tab-errored'))
 
     await waitFor(() => {
       screen.getByTestId('upload-retry-all-btn')
@@ -84,10 +85,9 @@ describe('uploadScreen.vue', () => {
     ]
 
     h.render(Component)
+    await h.user.click(await screen.findByTestId('upload-tab-errored'))
 
-    await waitFor(async () => {
-      await h.user.click(screen.getByTestId('upload-retry-all-btn'))
-    })
+    await h.user.click(await screen.findByTestId('upload-retry-all-btn'))
 
     expect(retryAllMock).toHaveBeenCalled()
   })
@@ -100,40 +100,33 @@ describe('uploadScreen.vue', () => {
     ]
 
     h.render(Component)
+    await h.user.click(await screen.findByTestId('upload-tab-errored'))
 
-    await waitFor(async () => {
-      await h.user.click(screen.getByTestId('upload-remove-all-btn'))
-    })
+    await h.user.click(await screen.findByTestId('upload-remove-all-btn'))
 
     expect(removeFailedMock).toHaveBeenCalled()
   })
 
-  it('keeps finished uploads in their own group, and clears them on request', async () => {
-    const clearMock = h.mock(uploadService, 'clearFinished')
+  it('sorts the files into tabs by state', async () => {
     uploadService.state.files = [
       { id: '1', file: new File([], 'done.mp3'), status: 'Uploaded', name: 'done.mp3', progress: 100 },
       { id: '2', file: new File([], 'going.mp3'), status: 'Uploading', name: 'going.mp3', progress: 30 },
+      { id: '3', file: new File([], 'queued.mp3'), status: 'Ready', name: 'queued.mp3', progress: 0 },
+      { id: '4', file: new File([], 'notes.txt'), status: 'Skipped', name: 'notes.txt', progress: 0 },
+      { id: '5', file: new File([], 'bad.mp3'), status: 'Canceled', name: 'bad.mp3', progress: 0 },
     ]
 
     h.render(Component)
 
+    expect((await screen.findByTestId('upload-tab-in-progress')).dataset.count).toBe('2')
+    expect(screen.getByTestId('upload-tab-done').dataset.count).toBe('1')
+    expect(screen.getByTestId('upload-tab-skipped').dataset.count).toBe('1')
+    expect(screen.getByTestId('upload-tab-errored').dataset.count).toBe('1')
     await waitFor(() => expect(screen.getAllByTestId('upload-item')).toHaveLength(2))
-    expect(screen.getByTestId('uploaded-files').querySelectorAll('[data-testid="upload-item"]')).toHaveLength(1)
 
-    await h.user.click(screen.getByTestId('upload-clear-finished-btn'))
+    await h.user.click(screen.getByTestId('upload-tab-done'))
 
-    expect(clearMock).toHaveBeenCalled()
-  })
-
-  it('lists the files that did not finish last time', async () => {
-    uploadService.state.files = []
-    h.mock(uploadService, 'recallUnfinishedUploads').mockImplementation(() => {
-      uploadService.state.unfinishedLastTime = ['left-behind.mp3']
-    })
-
-    h.render(Component)
-
-    await waitFor(() => screen.getByTestId('unfinished-uploads'))
-    uploadService.state.unfinishedLastTime = []
+    await waitFor(() => expect(screen.getAllByTestId('upload-item')).toHaveLength(1))
+    expect(screen.queryByTestId('upload-retry-all-btn')).toBeNull()
   })
 })
