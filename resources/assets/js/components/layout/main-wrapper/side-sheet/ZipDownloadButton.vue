@@ -23,7 +23,6 @@ import { FileArchiveIcon } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { zipDownloadService } from '@/services/zipDownloadService'
-import { formatBytes } from '@/utils/formatters'
 
 import ProgressRing from '@/components/ui/ProgressRing.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
@@ -42,7 +41,7 @@ const progress = computed(() => {
 const description = computed(() => {
   switch (state.status) {
     case 'zipping':
-      return `Preparing ${state.archiveName}: ${state.songsDone} of ${state.songsTotal} songs, ${formatBytes(state.bytesDone)} of ${formatBytes(state.bytesTotal)}. Click to cancel.`
+      return `Preparing download – ${Math.floor(progress.value)}%`
     case 'ready':
       return `${state.archiveName} is ready. Click to save.`
     default:

@@ -139,7 +139,6 @@ describe('zipDownloadService', () => {
     expect(saveMock).toHaveBeenCalled()
     expect(zipDownloadService.state.archiveName).toBe('My Mix.zip')
     expect(zipDownloadService.state.bytesDone).toBe(10)
-    expect(zipDownloadService.state.songsDone).toBe(2)
   })
 
   it('fails with a message when a song cannot be downloaded', async () => {

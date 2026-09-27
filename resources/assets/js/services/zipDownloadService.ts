@@ -84,8 +84,6 @@ export const zipDownloadService = {
     archiveName: '',
     bytesDone: 0,
     bytesTotal: 0,
-    songsDone: 0,
-    songsTotal: 0,
     error: '',
     fileUrl: null as string | null,
   }),
@@ -125,8 +123,6 @@ export const zipDownloadService = {
       archiveName: `${toSafeFileName(archiveName)}.zip`,
       bytesDone: 0,
       bytesTotal: getTotalBytes(songs),
-      songsDone: 0,
-      songsTotal: songs.length,
       error: '',
     })
 
@@ -153,7 +149,6 @@ export const zipDownloadService = {
       for (const [index, song] of songs.entries()) {
         const baseName = toSafeFileName(makeEntryBaseName(song, index + 1, songs.length, numbering))
         await this.addSong(zipWriter, song, baseName, usedNames, signal)
-        this.state.songsDone++
       }
 
       await zipWriter.close()
@@ -234,8 +229,6 @@ export const zipDownloadService = {
       error: '',
       bytesDone: 0,
       bytesTotal: 0,
-      songsDone: 0,
-      songsTotal: 0,
     })
   },
 }
