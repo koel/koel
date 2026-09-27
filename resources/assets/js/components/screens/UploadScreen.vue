@@ -36,17 +36,6 @@
 
           <TabPanelContainer>
             <TabPanel :id="`uploadPane-${currentTab}`" class="flex flex-col gap-4">
-              <BtnGroup v-if="currentTab === 'errored' && filesByTab.errored.length" class="self-start" uppercase>
-                <Btn variant="success" data-testid="upload-retry-all-btn" @click="retryAll">
-                  <Icon :icon="faRotateRight" />
-                  Retry All
-                </Btn>
-                <Btn variant="highlight" data-testid="upload-remove-all-btn" @click="removeFailedEntries">
-                  <Icon :icon="faTrashCan" />
-                  Remove Failed
-                </Btn>
-              </BtnGroup>
-
               <DuplicateUploadList v-if="currentTab === 'duplicated'" :songs="duplicatedSongs" />
 
               <UploadItem
@@ -55,6 +44,18 @@
                 :file="file"
                 data-testid="upload-item"
               />
+
+              <footer v-if="currentTab === 'errored' && filesByTab.errored.length" class="flex justify-end gap-2">
+                <Btn
+                  size="small"
+                  variant="destructive"
+                  data-testid="upload-remove-all-btn"
+                  @click="removeFailedEntries"
+                >
+                  Remove Failed
+                </Btn>
+                <Btn size="small" variant="success" data-testid="upload-retry-all-btn" @click="retryAll">Retry All</Btn>
+              </footer>
             </TabPanel>
           </TabPanelContainer>
         </Tabs>
@@ -93,7 +94,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faRotateRight, faTrashCan, faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
+import { faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { computed, defineAsyncComponent, ref, toRef, onMounted } from 'vue'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
@@ -104,7 +105,6 @@ import { useUpload } from '@/composables/useUpload'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
-import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 import DuplicateUploadList from '@/components/ui/DuplicateUploadList.vue'
