@@ -5,7 +5,7 @@ namespace App\Http\Requests\Download;
 /**
  * @property array $songs
  */
-class DownloadSongsRequest extends Request
+class DownloadSongRequest extends Request
 {
     /** @inheritdoc */
     public function rules(): array
