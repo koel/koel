@@ -94,9 +94,6 @@ via the "Download" buttons found on according screens or context menus.
 Your browser builds the zip file itself, fetching each song and showing the progress in the bottom-right corner, so
 the server does no extra work. Click "Save" when the zip file is ready. A single download can be up to 4 GB.
 
-If your songs are stored on S3 or another cloud storage, the bucket's CORS configuration must allow `GET` requests from
-Koel's domain, which streaming needs anyway. See [Cloud Storage Support](../plus/cloud-storage-support).
-
 ## Deleting Songs
 
 As a user with `manage songs` permission (Community edition) or the song owner (Koel Plus), you can delete a song by
