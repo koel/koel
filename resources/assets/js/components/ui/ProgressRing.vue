@@ -7,11 +7,11 @@
     role="progressbar"
     viewBox="0 0 24 24"
   >
-    <circle :stroke-width="thickness" class="stroke-k-fg-20" cx="12" cy="12" fill="none" :r="RADIUS" />
+    <circle :stroke-width="thickness" class="stroke-k-fg-20" cx="12" cy="12" fill="none" :r="radius" />
     <circle
-      :r="RADIUS"
-      :stroke-dasharray="CIRCUMFERENCE"
-      :stroke-dashoffset="CIRCUMFERENCE * (1 - value / 100)"
+      :r="radius"
+      :stroke-dasharray="circumference"
+      :stroke-dashoffset="circumference * (1 - value / 100)"
       class="stroke-current transition-[stroke-dashoffset] duration-200"
       cx="12"
       cy="12"
@@ -23,8 +23,12 @@
 </template>
 
 <script lang="ts" setup>
-const RADIUS = 9
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS
+import { computed } from 'vue'
 
-withDefaults(defineProps<{ value: number; thickness?: number }>(), { thickness: 3 })
+const HALF_SIZE = 12
+
+const props = withDefaults(defineProps<{ value: number; thickness?: number }>(), { thickness: 3 })
+
+const radius = computed(() => HALF_SIZE - props.thickness / 2)
+const circumference = computed(() => 2 * Math.PI * radius.value)
 </script>
