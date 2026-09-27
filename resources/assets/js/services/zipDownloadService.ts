@@ -11,8 +11,6 @@ export type ZipEntryNumbering = 'position' | 'track' | 'none'
 
 type ZipStatus = 'idle' | 'zipping' | 'ready' | 'failed'
 
-export const MAX_ZIP_BYTES = 4_000_000_000
-
 const ARCHIVE_FILE_PREFIX = 'download-'
 const ARCHIVE_RETENTION_MS = 5 * 60_000
 const LEFTOVER_ARCHIVE_AGE_MS = 24 * 60 * 60_000
@@ -109,11 +107,11 @@ export const zipDownloadService = {
   /**
    * Checks the songs, then builds the archive in the background; `building` settles when it is done.
    *
-   * @throws {ZipTooLargeError} when the songs add up to more than MAX_ZIP_BYTES
+   * @throws {ZipTooLargeError} when the songs need more space than the browser allows the site
    * @throws {ZipUnsupportedError} when the browser can't write the archive to its private storage
    * @throws {ZipInProgressError} when another archive is still being built
    */
-  start(playables: Playable[], archiveName: string, numbering: ZipEntryNumbering) {
+  async start(playables: Playable[], archiveName: string, numbering: ZipEntryNumbering) {
     const songs = playables.filter((playable): playable is Song => playable.type === 'songs')
 
     if (this.state.status === 'zipping') {
@@ -124,8 +122,10 @@ export const zipDownloadService = {
       throw new ZipUnsupportedError('This browser can’t prepare downloads of several songs.')
     }
 
-    if (getTotalBytes(songs) > MAX_ZIP_BYTES) {
-      throw new ZipTooLargeError('These songs add up to more than 4 GB. Please download fewer at a time.')
+    if (getTotalBytes(songs) > (await this.getAvailableStorageBytes())) {
+      throw new ZipTooLargeError(
+        'These songs need more space than your browser allows this site. Please download fewer at a time.',
+      )
     }
 
     this.dismiss()
@@ -160,7 +160,7 @@ export const zipDownloadService = {
       writing = readable.pipeTo(await handle.createWritable(), { signal: writeAborter.signal })
 
       const zipWriter = new ZipWriter(writable, {
-        zip64: songs.some(song => !song.file_size),
+        zip64: true,
         dataDescriptor: true,
       })
 
@@ -226,11 +226,11 @@ export const zipDownloadService = {
 
       await zipWriter.add(
         makeUniqueName(baseName + getExtensionFromResponse(response), usedNames),
-        response.body.pipeThrough(countBytesInto(count => this.countReceivedBytes(count))),
+        response.body.pipeThrough(countBytesInto(count => (this.state.bytesDone += count))),
         { level: 0, signal },
       )
     } catch (error: unknown) {
-      if (signal.aborted || error instanceof ZipTooLargeError) {
+      if (signal.aborted) {
         throw error
       }
 
@@ -239,12 +239,10 @@ export const zipDownloadService = {
     }
   },
 
-  countReceivedBytes(count: number) {
-    this.state.bytesDone += count
+  async getAvailableStorageBytes() {
+    const { quota, usage = 0 } = (await navigator.storage.estimate?.()) ?? {}
 
-    if (this.state.bytesDone > MAX_ZIP_BYTES) {
-      throw new ZipTooLargeError('These songs add up to more than 4 GB. Please download fewer at a time.')
-    }
+    return quota === undefined ? Number.POSITIVE_INFINITY : quota - usage
   },
 
   save(releaseArchive: Closure = () => {}) {

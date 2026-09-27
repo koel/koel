@@ -5,7 +5,6 @@ import {
   isArchiveCreatedBefore,
   makeEntryBaseName,
   makeUniqueName,
-  MAX_ZIP_BYTES,
   toSafeFileName,
   ZipInProgressError,
   ZipTooLargeError,
@@ -56,6 +55,7 @@ describe('zipDownloadService', () => {
 
     vi.stubGlobal('navigator', {
       storage: {
+        estimate: vi.fn().mockResolvedValue({ quota: 10_000, usage: 0 }),
         getDirectory: vi.fn().mockResolvedValue(
           Object.assign(directory, {
             getFileHandle: vi.fn().mockResolvedValue(handle),
@@ -119,24 +119,24 @@ describe('zipDownloadService', () => {
     expect(getExtensionFromResponse(fromUrl)).toBe('.m4a')
   })
 
-  it('refuses songs that add up to more than the cap', () => {
+  it('refuses songs that need more space than the browser allows', async () => {
     stubPrivateStorage()
 
-    expect(() => zipDownloadService.start([makeSong({ file_size: MAX_ZIP_BYTES }), makeSong()], 'Big', 'none')).toThrow(
-      ZipTooLargeError,
-    )
+    await expect(
+      zipDownloadService.start([makeSong({ file_size: 9_000 }), makeSong({ file_size: 2_000 })], 'Big', 'none'),
+    ).rejects.toThrow(ZipTooLargeError)
   })
 
-  it('refuses when the browser has no private storage', () => {
+  it('refuses when the browser has no private storage', async () => {
     vi.stubGlobal('navigator', {})
 
-    expect(() => zipDownloadService.start([makeSong()], 'Songs', 'none')).toThrow(ZipUnsupportedError)
+    await expect(zipDownloadService.start([makeSong()], 'Songs', 'none')).rejects.toThrow(ZipUnsupportedError)
   })
 
-  it('refuses a second archive while one is being prepared', () => {
+  it('refuses a second archive while one is being prepared', async () => {
     zipDownloadService.state.status = 'zipping'
 
-    expect(() => zipDownloadService.start([makeSong()], 'Songs', 'none')).toThrow(ZipInProgressError)
+    await expect(zipDownloadService.start([makeSong()], 'Songs', 'none')).rejects.toThrow(ZipInProgressError)
   })
 
   it('zips the songs in order, leaves episodes out, and saves the archive', async () => {
@@ -145,7 +145,7 @@ describe('zipDownloadService', () => {
     const songs = [makeSong({ title: 'One' }), h.factory('episode').make(), makeSong({ title: 'Two' })]
     const saveMock = h.mock(zipDownloadService, 'save')
 
-    zipDownloadService.start(songs, 'My Mix', 'position')
+    await zipDownloadService.start(songs, 'My Mix', 'position')
     await zipDownloadService.building
 
     expect(addedEntries).toEqual(['01 Dio - One.mp3', '02 Dio - Two.mp3'])
@@ -158,7 +158,7 @@ describe('zipDownloadService', () => {
     stubPrivateStorage()
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 404 })))
 
-    zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.start([makeSong()], 'Songs', 'none')
     await zipDownloadService.building
 
     expect(zipDownloadService.state.status).toBe('failed')
@@ -170,7 +170,7 @@ describe('zipDownloadService', () => {
     directory.removeEntry.mockClear()
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 500 })))
 
-    zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.start([makeSong()], 'Songs', 'none')
     await zipDownloadService.building
 
     expect(directory.removeEntry).toHaveBeenCalledWith(expect.stringMatching(/^download-\d+-[\w-]+\.zip$/))
@@ -189,7 +189,7 @@ describe('zipDownloadService', () => {
       })
     })
 
-    zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.start([makeSong()], 'Songs', 'none')
     await addedLastSong
     zipDownloadService.cancel()
     await zipDownloadService.building
@@ -207,15 +207,9 @@ describe('zipDownloadService', () => {
   it('fails instead of hanging when private storage cannot be opened', async () => {
     vi.stubGlobal('navigator', { storage: { getDirectory: vi.fn().mockRejectedValue(new Error('No storage')) } })
 
-    zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.start([makeSong()], 'Songs', 'none')
     await zipDownloadService.building
 
     expect(zipDownloadService.state.status).toBe('failed')
-  })
-
-  it('stops once the songs received go past the cap', () => {
-    zipDownloadService.state.bytesDone = MAX_ZIP_BYTES
-
-    expect(() => zipDownloadService.countReceivedBytes(1)).toThrow(ZipTooLargeError)
   })
 })

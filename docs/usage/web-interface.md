@@ -91,7 +91,6 @@ on it and choosing "Download."
 
 You can also download several songs, all songs from an album, all songs by an artist, or a whole playlist as a zip file
 via the "Download" buttons found on according screens or context menus.
-A zip download of several songs can be up to 4 GB, the most a standard zip file can hold.
 
 ## Deleting Songs
 

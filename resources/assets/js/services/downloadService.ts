@@ -12,19 +12,19 @@ export const downloadService = {
       return
     }
 
-    zipDownloadService.start(items, 'Songs', 'none')
+    await zipDownloadService.start(items, 'Songs', 'none')
   },
 
   async fromAlbum(album: Album) {
-    zipDownloadService.start(await playableStore.fetchSongsForAlbum(album), album.name, 'track')
+    await zipDownloadService.start(await playableStore.fetchSongsForAlbum(album), album.name, 'track')
   },
 
   async fromArtist(artist: Artist) {
-    zipDownloadService.start(await playableStore.fetchSongsForArtist(artist), artist.name, 'none')
+    await zipDownloadService.start(await playableStore.fetchSongsForArtist(artist), artist.name, 'none')
   },
 
   async fromPlaylist(playlist: Playlist) {
-    zipDownloadService.start(await playableStore.fetchForPlaylist(playlist), playlist.name, 'position')
+    await zipDownloadService.start(await playableStore.fetchForPlaylist(playlist), playlist.name, 'position')
   },
 
   async fromFavorites() {
@@ -32,7 +32,7 @@ export const downloadService = {
       return
     }
 
-    zipDownloadService.start(playableStore.state.favorites, 'Favorites', 'none')
+    await zipDownloadService.start(playableStore.state.favorites, 'Favorites', 'none')
   },
 
   trigger: (playable: Playable) => {
