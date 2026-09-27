@@ -1,21 +1,29 @@
 <template>
-  <SideSheetButton
-    v-if="state.status !== 'idle'"
-    v-koel-tooltip.left="description"
-    :aria-label="description"
-    :data-status="state.status"
-    class="opacity-100 text-k-fg"
-    data-testid="zip-download-button"
-    @click.prevent="act"
+  <Transition
+    enter-active-class="transition duration-300 ease-out"
+    enter-from-class="scale-0 opacity-0"
+    leave-active-class="transition duration-300 ease-in"
+    leave-to-class="scale-0 opacity-0"
   >
-    <ProgressRing
-      :class="state.status === 'failed' ? 'text-k-danger' : 'text-k-highlight'"
-      :thickness="1.25"
-      :value="progress"
-      class="absolute inset-0 size-full"
-    />
-    <FileArchiveIcon :size="14" />
-  </SideSheetButton>
+    <span v-if="state.status !== 'idle'" class="block">
+      <SideSheetButton
+        v-koel-tooltip.left="description"
+        :aria-label="description"
+        :data-status="state.status"
+        class="opacity-100 text-k-fg"
+        data-testid="zip-download-button"
+        @click.prevent="act"
+      >
+        <ProgressRing
+          :class="state.status === 'failed' ? 'text-k-danger' : 'text-k-highlight'"
+          :thickness="1.25"
+          :value="progress"
+          class="absolute inset-0 size-full"
+        />
+        <FileArchiveIcon :size="14" />
+      </SideSheetButton>
+    </span>
+  </Transition>
 </template>
 
 <script lang="ts" setup>
