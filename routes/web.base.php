@@ -5,10 +5,6 @@ use App\Http\Controllers\AppManifestController;
 use App\Http\Controllers\AuthorizeDropboxController;
 use App\Http\Controllers\Demo\IndexController as DemoIndexController;
 use App\Http\Controllers\Demo\NewSessionController;
-use App\Http\Controllers\Download\DownloadAlbumController;
-use App\Http\Controllers\Download\DownloadArtistController;
-use App\Http\Controllers\Download\DownloadFavoritesController;
-use App\Http\Controllers\Download\DownloadPlaylistController;
 use App\Http\Controllers\Download\DownloadSongsController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LastfmController;
@@ -68,10 +64,6 @@ Route::middleware('web')->group(static function (): void {
         if (config('koel.download.allow')) {
             Route::prefix('download')->group(static function (): void {
                 Route::get('songs', DownloadSongsController::class);
-                Route::get('album/{album}', DownloadAlbumController::class);
-                Route::get('artist/{artist}', DownloadArtistController::class);
-                Route::get('playlist/{playlist}', DownloadPlaylistController::class);
-                Route::get('favorites', DownloadFavoritesController::class);
             });
         }
     });

@@ -1,4 +1,5 @@
 import { downloadService, DownloadLimitExceededError } from '@/services/downloadService'
+import { ZipInProgressError, ZipTooLargeError, ZipUnsupportedError } from '@/services/zipDownloadService'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 
 export const useDownload = () => {
@@ -8,7 +9,12 @@ export const useDownload = () => {
     try {
       await fn()
     } catch (error) {
-      if (error instanceof DownloadLimitExceededError) {
+      if (
+        error instanceof DownloadLimitExceededError ||
+        error instanceof ZipTooLargeError ||
+        error instanceof ZipUnsupportedError ||
+        error instanceof ZipInProgressError
+      ) {
         toastError(error.message)
         return
       }

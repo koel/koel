@@ -3,6 +3,7 @@ export class DownloadLimitExceededError extends Error {}
 import { getHttpErrorBody, isHttpError } from '@/services/http'
 import { authService } from '@/services/authService'
 import { http } from '@/services/http'
+import { zipDownloadService } from '@/services/zipDownloadService'
 import { playableStore } from '@/stores/playableStore'
 import { arrayify, flattenParams } from '@/utils/helpers'
 
@@ -11,29 +12,27 @@ export const downloadService = {
     const items = arrayify(playables)
 
     if (items.length === 1) {
-      this.trigger(`songs?songs[]=${items[0].id}`)
+      this.trigger(items[0])
       return
     }
 
     await this.checkDownloadable({ type: 'songs', ids: items.map(p => p.id) })
-
-    const query = items.reduce((q, playable) => `songs[]=${playable.id}&${q}`, '')
-    this.trigger(`songs?${query}`)
+    await zipDownloadService.start(items, 'Songs', 'none')
   },
 
   async fromAlbum(album: Album) {
     await this.checkDownloadable({ type: 'album', id: album.id })
-    this.trigger(`album/${album.id}`)
+    await zipDownloadService.start(await playableStore.fetchSongsForAlbum(album), album.name, 'track')
   },
 
   async fromArtist(artist: Artist) {
     await this.checkDownloadable({ type: 'artist', id: artist.id })
-    this.trigger(`artist/${artist.id}`)
+    await zipDownloadService.start(await playableStore.fetchSongsForArtist(artist), artist.name, 'none')
   },
 
   async fromPlaylist(playlist: Playlist) {
     await this.checkDownloadable({ type: 'playlist', id: playlist.id })
-    this.trigger(`playlist/${playlist.id}`)
+    await zipDownloadService.start(await playableStore.fetchForPlaylist(playlist), playlist.name, 'position')
   },
 
   async fromFavorites() {
@@ -42,7 +41,7 @@ export const downloadService = {
     }
 
     await this.checkDownloadable({ type: 'favorites' })
-    this.trigger('favorites')
+    await zipDownloadService.start(playableStore.state.favorites, 'Favorites', 'none')
   },
 
   /**
@@ -60,10 +59,7 @@ export const downloadService = {
     }
   },
 
-  trigger: (uri: string) => {
-    const sep = uri.includes('?') ? '&' : '?'
-    const url = `${window.KOEL.base_url}download/${uri}${sep}t=${authService.getAudioToken()}`
-
-    open(url)
+  trigger: (playable: Playable) => {
+    open(`${window.KOEL.base_url}download/songs?songs[]=${playable.id}&t=${authService.getAudioToken()}`)
   },
 }

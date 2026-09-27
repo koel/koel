@@ -91,14 +91,16 @@ on it and choosing "Download."
 
 You can also download several songs, all songs from an album, all songs by an artist, or a whole playlist as a zip file
 via the "Download" buttons found on according screens or context menus.
-This feature requires the [`zip` extension](https://www.php.net/manual/en/book.zip.php) to be installed and enabled on
-the server.
+Your browser builds the zip file itself, fetching each song and showing the progress in the bottom-right corner, so
+the server does no extra work. Click "Save" when the zip file is ready. A single download can be up to 4 GB.
+
+If your songs are stored on S3 or another cloud storage, the bucket's CORS configuration must allow `GET` requests from
+Koel's domain, which streaming needs anyway. See [Cloud Storage Support](../plus/cloud-storage-support).
 
 ### Download Limit
 
 By default, there is no limit to the number of songs that can be downloaded at once.
-However, it is recommended to set a limit via the `DOWNLOAD_LIMIT` environment variable to avoid excessive memory usage
-and disk space consumption during zip file creation.
+To set one, use the `DOWNLOAD_LIMIT` environment variable.
 For example, setting `DOWNLOAD_LIMIT=100` will prevent downloading more than 100 songs at once.
 A value of `0` (the default) means no limit. Single-song downloads are always allowed regardless of this setting.
 

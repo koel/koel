@@ -5,6 +5,7 @@
   <GlobalEventListeners />
   <OfflineNotification v-if="!online" />
   <UpdateNotification />
+  <ZipDownloadPanel />
 
   <main
     v-if="layout === 'default' && initialized"
@@ -57,6 +58,7 @@ import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 import Overlay from '@/components/ui/Overlay.vue'
 import OfflineNotification from '@/components/ui/OfflineNotification.vue'
 import UpdateNotification from '@/components/ui/UpdateNotification.vue'
+import ZipDownloadPanel from '@/components/ui/ZipDownloadPanel.vue'
 
 // Do not dynamic-import app footer, as it contains the <audio> element
 // that is necessary to properly initialize the playService and equalizer.

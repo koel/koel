@@ -12,9 +12,7 @@ use App\Services\SongStorages\CloudStorage;
 use App\Services\SongStorages\SongStorageFactory;
 use App\Values\Downloadable;
 use App\Values\Podcast\EpisodePlayable;
-use App\Values\SongZipArchive;
 use Illuminate\Container\Attributes\Config;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\File;
 
 class DownloadService
@@ -49,26 +47,9 @@ class DownloadService
         $this->assertWithinLimit($count);
     }
 
-    /**
-     * @param Collection<Song>|array<array-key, Song> $songs
-     */
-    public function getDownloadable(Collection $songs): ?Downloadable
+    public function getDownloadable(Song $song): ?Downloadable
     {
-        $this->assertWithinLimit($songs->count());
-
-        if ($songs->count() === 1) {
-            return optional(
-                $this->getLocalPathOrDownloadableUrl($songs->first()), // @phpstan-ignore-line
-                Downloadable::make(...),
-            );
-        }
-
-        return Downloadable::make(
-            (new SongZipArchive())
-                ->addSongs($songs)
-                ->finish()
-                ->getPath(),
-        );
+        return optional($this->getLocalPathOrDownloadableUrl($song), Downloadable::make(...));
     }
 
     private function assertWithinLimit(int $count): void

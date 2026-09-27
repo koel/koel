@@ -219,6 +219,7 @@ interface Song extends BasePlayable {
   is_public: boolean
   is_external: boolean
   mbid?: string | null
+  file_size?: number | null
   basename?: string
   deleted?: boolean
   collaboration?: {

@@ -30,6 +30,14 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function includeTheFileSize(): void
+    {
+        $song = Song::factory()->createOne(['file_size' => 12_345_678]);
+
+        $this->getAs("api/songs/{$song->id}", $song->owner)->assertJsonPath('file_size', 12_345_678);
+    }
+
+    #[Test]
     public function indexWithCursorReturnsCursorPagination(): void
     {
         Song::factory()->createMany(51);

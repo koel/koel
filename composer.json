@@ -69,9 +69,6 @@
     "carthage-software/mago": "^1.8.0",
     "brianium/paratest": "^7.0"
   },
-  "suggest": {
-    "ext-zip": "Allow downloading multiple songs as Zip archives"
-  },
   "autoload": {
     "classmap": [
       "database"
