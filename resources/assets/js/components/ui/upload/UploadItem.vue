@@ -4,6 +4,7 @@
       <div class="absolute z-1 h-full w-full flex items-center">
         <ProgressRing
           v-if="showsProgressRing"
+          :aria-label="`Upload progress for ${file.name}`"
           :value="file.status === 'Ready' ? 0 : file.progress"
           class="size-4 shrink-0 ml-4"
           data-testid="upload-item-progress"
@@ -21,7 +22,7 @@
           class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)]"
           >{{ file.name }}</span
         >
-        <span v-if="showsReasonInRow" class="shrink-0 px-4 text-k-fg-50" data-testid="upload-item-reason">
+        <span v-if="showsReasonInRow" class="min-w-0 truncate px-4 text-k-fg-50" data-testid="upload-item-reason">
           {{ file.message }}
         </span>
         <span v-if="file.status === 'Retrying'" class="shrink-0 px-3 text-k-fg-50" data-testid="upload-item-state">

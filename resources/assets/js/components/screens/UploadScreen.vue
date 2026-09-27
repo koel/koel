@@ -32,10 +32,14 @@
         </SegmentedControl>
 
         <div class="flex-1 min-h-0 flex flex-col gap-4">
-          <DuplicateUploadList v-if="currentFilter === 'duplicated'" :songs="duplicatedSongs" class="flex-1 min-h-0" />
+          <DuplicateUploadList
+            v-if="currentFilter === 'duplicated' && duplicatedSongs.length"
+            :songs="duplicatedSongs"
+            class="flex-1 min-h-0"
+          />
 
           <VirtualScroller
-            v-else-if="filesByFilter[currentFilter].length"
+            v-else-if="currentFilter !== 'duplicated' && filesByFilter[currentFilter].length"
             :item-height="ROW_HEIGHT"
             :items="filesByFilter[currentFilter]"
             class="flex-1 -mr-6 pr-6"

@@ -2,6 +2,7 @@ import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
 import { postJson, putToStorageWithProgress } from '@/services/httpUpload'
+import type { UploadResponse } from '@/services/httpUpload'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -145,22 +146,12 @@ export const uploadService = {
 
     const trackProgress = (e: ProgressEvent) => (file.progress = (e.loaded * 100) / e.total)
 
+    let response: UploadResponse<UploadResult | null>
+
     try {
-      const { status, data } = commonStore.state.supports_presigned_uploads
+      response = commonStore.state.supports_presigned_uploads
         ? await this.uploadViaPresignedUrl(file, trackProgress)
         : await this.uploadDirectlyToServer(file, trackProgress)
-
-      if (status === HTTP_ACCEPTED && file.uploadKey) {
-        if (file.status === 'Uploading') {
-          file.status = 'Processing'
-        }
-      } else {
-        file.status = 'Uploaded'
-        data && this.handleUploadResult(data, file)
-      }
-
-      this.speedUp()
-      this.proceed()
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         file.status = 'Canceled'
@@ -200,9 +191,23 @@ export const uploadService = {
       file.message = typeof message === 'string' && message ? message : 'Server error'
 
       this.proceed() // upload the next file
+
+      return
     } finally {
       this.abortHandles.delete(file.id)
     }
+
+    if (response.status === HTTP_ACCEPTED && file.uploadKey) {
+      if (file.status === 'Uploading') {
+        file.status = 'Processing'
+      }
+    } else {
+      file.status = 'Uploaded'
+      response.data && this.handleUploadResult(response.data, file)
+    }
+
+    this.speedUp()
+    this.proceed()
   },
 
   async uploadDirectlyToServer(file: UploadFile, onProgress: (e: ProgressEvent) => void) {

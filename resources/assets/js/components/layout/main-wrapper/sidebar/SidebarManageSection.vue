@@ -16,6 +16,7 @@
         </template>
         <template v-if="item.badgeLabel" #badge>{{ item.badgeLabel }}</template>
         {{ item.label }}
+        <span aria-live="polite" class="sr-only">{{ item.busy ? 'in progress' : '' }}</span>
       </SidebarItem>
     </ul>
   </SidebarSection>

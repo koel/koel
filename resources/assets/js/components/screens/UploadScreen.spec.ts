@@ -161,6 +161,18 @@ describe('uploadScreen.vue', () => {
     )
   })
 
+  it('offers no bulk duplicate actions when there are no duplicates', async () => {
+    uploadService.state.files = [
+      { id: '1', file: new File([], 'song.mp3'), status: 'Uploading', name: 'song.mp3', progress: 0 },
+    ]
+
+    h.render(Component)
+
+    await h.user.click(await screen.findByTestId('upload-filter-duplicated'))
+
+    expect(screen.queryByRole('button', { name: 'Keep All' })).toBeNull()
+  })
+
   it('offers the drop prompt while nothing is in progress', async () => {
     uploadService.state.files = [
       { id: '1', file: new File([], 'done.mp3'), status: 'Uploaded', name: 'done.mp3', progress: 100 },
