@@ -5,7 +5,7 @@
         <a
           v-if="file.song"
           :href="url('albums.show', { id: file.song.album_id })"
-          class="name px-4 flex-1 flex items-center hover:underline"
+          class="name px-4 flex-1 flex items-center text-current hover:underline focus:text-current"
           data-testid="upload-item-album-link"
         >
           {{ file.name }}
@@ -25,7 +25,7 @@
         </span>
       </div>
     </div>
-    <p class="text-[.90rem] mt-1 ml-4">
+    <p v-if="file.status !== 'Uploaded'" class="text-[.90rem] mt-1 ml-4">
       <span v-if="file.status === 'Errored'" class="text-k-danger">
         <Icon :icon="faExclamationCircle" class="mr-1" />
         {{ file.message }}
