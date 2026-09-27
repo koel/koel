@@ -45,7 +45,7 @@
                 class="flex-1 -mr-6 pr-6"
               >
                 <template #default="{ item }: { item: UploadFile }">
-                  <div :key="item.id" :style="{ height: `${ROW_HEIGHT}px` }" class="pb-[12px]">
+                  <div :key="item.id" :style="{ height: `${ROW_HEIGHT}px`, paddingBottom: `${ROW_GAP}px` }">
                     <UploadItem :file="item" class="h-full" data-testid="upload-item" />
                   </div>
                 </template>
@@ -143,7 +143,8 @@ const TAB_STATUSES: Record<FileTab, UploadStatus[]> = {
   errored: ['Errored', 'Canceled'],
 }
 
-const ROW_HEIGHT = 48
+const ROW_GAP = 6
+const ROW_HEIGHT = 36 + ROW_GAP
 
 const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 

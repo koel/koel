@@ -2,7 +2,7 @@
   <section class="flex flex-col gap-4">
     <VirtualScroller :item-height="ROW_HEIGHT" :items="songs" class="flex-1 -mr-6 pr-6">
       <template #default="{ item }: { item: DuplicateUpload }">
-        <div :key="item.id" :style="{ height: `${ROW_HEIGHT}px` }" class="pb-[12px]">
+        <div :key="item.id" :style="{ height: `${ROW_HEIGHT}px`, paddingBottom: `${ROW_GAP}px` }">
           <DuplicateUploadItem :upload="item" class="h-full" />
         </div>
       </template>
@@ -27,7 +27,8 @@ import type { DuplicateUpload } from '@/services/uploadService'
 
 defineProps<{ songs: DuplicateUpload[] }>()
 
-const ROW_HEIGHT = 48
+const ROW_GAP = 6
+const ROW_HEIGHT = 36 + ROW_GAP
 
 const { showConfirmDialog } = useDialogBox()
 
