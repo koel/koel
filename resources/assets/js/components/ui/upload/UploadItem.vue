@@ -2,6 +2,12 @@
   <article :title="file.message" class="upload-item relative">
     <div :class="cssClass" class="h-full w-full min-h-[32px] bg-k-fg-5 relative rounded-lg overflow-hidden">
       <div class="absolute z-1 h-full w-full flex items-center">
+        <ProgressRing
+          v-if="showsProgressRing"
+          :value="file.status === 'Ready' ? 0 : file.progress"
+          class="size-4 shrink-0 ml-4"
+          data-testid="upload-item-progress"
+        />
         <a
           v-if="file.song"
           :href="url('albums.show', { id: file.song.album_id })"
@@ -23,6 +29,9 @@
         >
           {{ file.message }}
         </span>
+        <span v-if="file.status === 'Retrying'" class="shrink-0 px-3 text-k-fg-70" data-testid="upload-item-state">
+          Retrying&hellip;
+        </span>
         <Btn variant="ghost" v-if="canRetry" class="px-3!" icon-only title="Retry" unrounded @click="retry">
           <Icon :icon="faRotateBack" />
         </Btn>
@@ -37,18 +46,6 @@
         </span>
       </div>
     </div>
-    <p v-if="showsStatusLine" class="text-[.90rem] mt-1 ml-4">
-      <span v-if="file.status === 'Ready'">Queued.</span>
-      <span v-if="file.status === 'Retrying'">Connection problem. Retrying shortly&hellip;</span>
-      <span v-if="file.status === 'Uploading'">
-        Uploading
-        <span class="tabular-nums">
-          <strong>{{ Math.round(file.progress * 100) / 100 }}</strong
-          >%
-        </span>
-      </span>
-      <span v-if="isProcessing">Processing&hellip;</span>
-    </p>
   </article>
 </template>
 
@@ -67,6 +64,8 @@ import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import { useRouter } from '@/composables/useRouter'
 
+import ProgressRing from '@/components/ui/ProgressRing.vue'
+
 const props = defineProps<{ file: UploadFile }>()
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
@@ -75,6 +74,7 @@ const { file } = toRefs(props)
 const { url } = useRouter()
 
 const isProcessing = computed(() => file.value.status === 'Processing')
+const showsProgressRing = computed(() => ['Ready', 'Uploading', 'Retrying'].includes(file.value.status))
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canAbort = computed(() => file.value.status === 'Uploading')
 const canRemove = computed(
@@ -82,7 +82,6 @@ const canRemove = computed(
 )
 const cssClass = computed(() => file.value.status.toLowerCase())
 const showsReasonInRow = computed(() => ['Skipped', 'Errored', 'Canceled'].includes(file.value.status))
-const showsStatusLine = computed(() => ['Ready', 'Uploading', 'Retrying', 'Processing'].includes(file.value.status))
 
 const progressBarWidth = computed(() => {
   if (isProcessing.value) {

@@ -116,8 +116,28 @@ describe('uploadItem.vue', () => {
     renderComponent('Processing')
 
     screen.getByTitle('Processing')
-    screen.getByText('Processing…')
   })
+
+  it('shows the upload progress as a ring while uploading', () => {
+    renderComponent('Uploading')
+
+    expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('42')
+  })
+
+  it('shows an empty progress ring for a queued file', () => {
+    renderComponent('Ready')
+
+    expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('0')
+  })
+
+  it.each<[UploadStatus]>([['Processing'], ['Uploaded'], ['Errored']])(
+    'shows no progress ring for a %s file',
+    status => {
+      renderComponent(status)
+
+      expect(screen.queryByRole('progressbar')).toBeNull()
+    },
+  )
 
   it('links an uploaded song to its album', () => {
     const song = h.factory('song').make()
