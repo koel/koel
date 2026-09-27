@@ -41,6 +41,9 @@
         <Btn variant="ghost" v-if="canRemove" class="px-3!" icon-only title="Remove" unrounded @click="remove">
           <Icon :icon="faTrashCan" />
         </Btn>
+        <span v-if="file.status === 'Uploaded'" class="px-3 text-k-success" title="Uploaded">
+          <Icon :icon="faCircleCheck" />
+        </span>
         <span v-if="isProcessing" class="px-3 text-k-fg-70" title="Processing">
           <Icon :icon="faSpinner" spin />
         </span>
@@ -51,6 +54,7 @@
 
 <script lang="ts" setup>
 import {
+  faCircleCheck,
   faExclamationTriangle,
   faInfoCircle,
   faRotateBack,
@@ -109,10 +113,6 @@ article > div::before {
   width: v-bind(progressBarWidth);
   content: '';
   @apply absolute h-full top-0 left-0 z-0 duration-200 ease-out bg-k-highlight;
-}
-
-.uploaded {
-  @apply bg-k-success;
 }
 
 .errored {

@@ -112,6 +112,12 @@ describe('uploadItem.vue', () => {
     expect(screen.queryByRole('button', { name: 'Remove' })).toBeNull()
   })
 
+  it('marks an uploaded file with a check', () => {
+    renderComponent('Uploaded')
+
+    screen.getByTitle('Uploaded')
+  })
+
   it('shows a spinner while processing', () => {
     renderComponent('Processing')
 
