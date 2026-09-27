@@ -7,16 +7,16 @@
     <div
       v-if="mediaPathSetUp"
       :class="{ droppable }"
-      class="relative flex-1 flex flex-col"
+      class="relative flex-1 min-h-0 flex flex-col"
       @dragenter.prevent="onDragEnter"
       @dragleave.prevent="onDragLeave"
       @drop.prevent="onDrop"
       @dragover.prevent
     >
-      <div v-if="showsTabs" class="pb-4 flex flex-col gap-4">
+      <div v-if="showsTabs" :class="{ 'flex-1': !showsDropPrompt }" class="min-h-0 pb-4 flex flex-col gap-4">
         <UploadSummary v-if="files.length" class="mb-4" />
 
-        <Tabs class="-mx-6">
+        <Tabs class="-mx-6 flex-1 min-h-0">
           <TabList>
             <TabButton
               v-for="(label, tab) in TAB_LABELS"
@@ -34,16 +34,22 @@
             </TabButton>
           </TabList>
 
-          <TabPanelContainer>
-            <TabPanel :id="`uploadPane-${currentTab}`" class="flex flex-col gap-4">
-              <DuplicateUploadList v-if="currentTab === 'duplicated'" :songs="duplicatedSongs" />
+          <TabPanelContainer class="flex-1 min-h-0 flex flex-col">
+            <TabPanel :id="`uploadPane-${currentTab}`" class="flex-1 min-h-0 flex flex-col gap-4">
+              <DuplicateUploadList v-if="currentTab === 'duplicated'" :songs="duplicatedSongs" class="flex-1 min-h-0" />
 
-              <UploadItem
-                v-for="file in currentTab === 'duplicated' ? [] : filesByTab[currentTab]"
-                :key="file.id"
-                :file="file"
-                data-testid="upload-item"
-              />
+              <VirtualScroller
+                v-else-if="filesByTab[currentTab].length"
+                :item-height="48"
+                :items="filesByTab[currentTab]"
+                class="flex-1"
+              >
+                <template #default="{ item }: { item: UploadFile }">
+                  <div :key="item.id" class="h-12 pb-4">
+                    <UploadItem :file="item" class="h-full" data-testid="upload-item" />
+                  </div>
+                </template>
+              </VirtualScroller>
 
               <footer v-if="currentTab === 'errored' && filesByTab.errored.length" class="flex justify-end gap-2">
                 <Btn
@@ -114,6 +120,7 @@ import TabList from '@/components/ui/tabs/TabList.vue'
 import TabButton from '@/components/ui/tabs/TabButton.vue'
 import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
 import TabPanel from '@/components/ui/tabs/TabPanel.vue'
+import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))

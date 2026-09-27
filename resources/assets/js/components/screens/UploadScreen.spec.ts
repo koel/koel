@@ -130,6 +130,21 @@ describe('uploadScreen.vue', () => {
     expect(screen.queryByTestId('upload-retry-all-btn')).toBeNull()
   })
 
+  it('renders only the rows in view for a long list', async () => {
+    uploadService.state.files = Array.from({ length: 100 }, (_, i) => ({
+      id: `${i}`,
+      file: new File([], `song-${i}.mp3`),
+      status: 'Ready' as const,
+      name: `song-${i}.mp3`,
+      progress: 0,
+    }))
+
+    h.render(Component)
+
+    await waitFor(() => expect(screen.getAllByTestId('upload-item').length).toBeGreaterThan(0))
+    expect(screen.getAllByTestId('upload-item').length).toBeLessThan(100)
+  })
+
   it('offers the drop prompt while nothing is in progress', async () => {
     uploadService.state.files = [
       { id: '1', file: new File([], 'done.mp3'), status: 'Uploaded', name: 'done.mp3', progress: 100 },
