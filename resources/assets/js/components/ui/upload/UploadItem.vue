@@ -118,15 +118,7 @@ article > div::before {
   @apply absolute h-full top-0 left-0 z-0 duration-200 ease-out bg-k-highlight;
 }
 
-.uploaded {
-  @apply border border-k-success/15;
-
-  &:hover {
-    @apply bg-k-fg-10;
-  }
-}
-
-.errored {
-  @apply border border-k-danger/15;
+.uploaded:hover {
+  @apply bg-k-fg-10;
 }
 </style>
