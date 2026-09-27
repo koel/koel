@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmit">
+  <form class="md:w-1/2" @submit.prevent="handleSubmit">
     <SettingGroup>
       <div class="space-y-4">
         <FormRow>
@@ -10,14 +10,14 @@
         </FormRow>
         <FormRow>
           <template #label>Provider</template>
-          <SelectBox v-model="data.provider" class="md:w-2/3" name="provider" required>
+          <SelectBox v-model="data.provider" name="provider" required>
             <option disabled value="">Choose a provider</option>
             <option v-for="(label, provider) in PROVIDERS" :key="provider" :value="provider">{{ label }}</option>
           </SelectBox>
         </FormRow>
         <FormRow>
           <template #label>API key</template>
-          <div class="md:w-2/3">
+          <div>
             <PasswordField
               v-model="data.api_key"
               :required="data.enabled && !canKeepApiKey"

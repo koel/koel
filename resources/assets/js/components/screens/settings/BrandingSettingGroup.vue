@@ -1,7 +1,7 @@
 <template>
-  <form @submit.prevent="handleSubmit">
+  <form class="md:w-1/2" @submit.prevent="handleSubmit">
     <SettingGroup>
-      <div class="flex flex-col gap-2 md:w-2/3">
+      <div class="flex flex-col gap-2">
         <section class="flex flex-col gap-3">
           <div>
             <label class="text-k-fg" for="brandingName">App name</label>
