@@ -3,11 +3,11 @@
     <SettingGroup>
       <div class="flex flex-col gap-3">
         <section class="flex flex-col gap-4 rounded-lg border border-k-fg-10 bg-k-fg-5 p-4 md:flex-row md:items-center">
-          <div class="min-w-0 flex-1">
+          <div class="min-w-0 md:w-1/2">
             <label class="text-k-fg" for="brandingName">App name</label>
             <p class="text-[.95rem] text-k-fg-50">Shown in the browser tab and around the app.</p>
           </div>
-          <TextInput id="brandingName" v-model="data.name" class="md:w-72" name="name" placeholder="Koel" />
+          <TextInput id="brandingName" v-model="data.name" class="md:w-1/2" name="name" placeholder="Koel" />
         </section>
 
         <BrandingImageField v-model="data.logo" :default="koelBirdLogo" name="logo">
