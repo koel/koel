@@ -32,14 +32,22 @@
         <span v-if="file.status === 'Retrying'" class="shrink-0 px-3 text-k-fg-70" data-testid="upload-item-state">
           Retrying&hellip;
         </span>
-        <Btn variant="ghost" v-if="canRetry" class="px-3!" icon-only title="Retry" unrounded @click="retry">
-          <Icon :icon="faRotateBack" />
-        </Btn>
         <Btn variant="ghost" v-if="canAbort" class="px-3!" icon-only title="Abort" unrounded @click="abort">
           <Icon :icon="faXmark" />
         </Btn>
-        <Btn variant="ghost" v-if="canRemove" class="px-3!" icon-only title="Remove" unrounded @click="remove">
+        <Btn
+          v-if="canRemove"
+          class="h-full px-4!"
+          icon-only
+          title="Remove"
+          unrounded
+          variant="destructive"
+          @click="remove"
+        >
           <Icon :icon="faTrashCan" />
+        </Btn>
+        <Btn v-if="canRetry" class="h-full px-4!" icon-only title="Retry" unrounded variant="success" @click="retry">
+          <Icon :icon="faRotateBack" />
         </Btn>
         <span v-if="file.status === 'Uploaded'" class="px-3 text-k-success" title="Uploaded">
           <Icon :icon="faCircleCheck" />
