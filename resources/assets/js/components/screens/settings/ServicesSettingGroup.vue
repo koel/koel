@@ -19,14 +19,13 @@
             <Icon v-else :icon="service.icon" />
           </span>
           {{ service.name }}
+          <span v-if="service.enabled" class="badge bg-k-success text-white">Enabled</span>
+          <span v-else class="badge bg-k-fg-10 text-k-fg-70">Disabled</span>
         </h3>
 
         <p>{{ service.description }}</p>
-        <p v-if="service.enabled" class="mt-2 text-k-success">Enabled.</p>
-        <p v-else class="mt-2 text-k-fg-70">
-          Not enabled. Check the
-          <a :href="service.docsUrl" target="_blank">documentation</a>
-          to set it up.
+        <p v-if="!service.enabled" class="mt-2 text-k-fg-70">
+          Check the <a :href="service.docsUrl" target="_blank">documentation</a> to set it up.
         </p>
       </section>
     </WithGradientBorder>
@@ -102,3 +101,10 @@ const services = computed(() => [
     : []),
 ])
 </script>
+
+<style lang="postcss" scoped>
+@reference '@css/app.pcss';
+.badge {
+  @apply rounded-full px-2 py-0.5 text-[.8rem] font-normal leading-none;
+}
+</style>
