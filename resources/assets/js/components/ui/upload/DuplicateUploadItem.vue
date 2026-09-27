@@ -5,9 +5,13 @@
     >
       {{ upload.song_title ? `${upload.artist_name} — ${upload.song_title}` : upload.filename }}
     </span>
-    <span class="self-center shrink-0 px-4 text-k-fg-50"
-      >Uploaded {{ new Date(upload.created_at).toLocaleDateString() }}</span
+    <time
+      :datetime="upload.created_at"
+      :title="uploadedAt.toLocaleString()"
+      class="self-center shrink-0 px-4 text-k-fg-50"
     >
+      Uploaded {{ uploadedAgo }}
+    </time>
     <Btn class="h-full px-4!" icon-only title="Discard" unrounded variant="destructive" @click="confirmDiscard">
       <Icon :icon="faTrashCan" />
     </Btn>
@@ -19,6 +23,7 @@
 
 <script setup lang="ts">
 import { faCheck, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { useTimeAgo } from '@vueuse/core'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { uploadService } from '@/services/uploadService'
 
@@ -27,6 +32,9 @@ import Btn from '@/components/ui/form/Btn.vue'
 import type { DuplicateUpload } from '@/services/uploadService'
 
 const props = defineProps<{ upload: DuplicateUpload }>()
+
+const uploadedAt = new Date(props.upload.created_at)
+const uploadedAgo = useTimeAgo(uploadedAt)
 
 const { showConfirmDialog } = useDialogBox()
 
