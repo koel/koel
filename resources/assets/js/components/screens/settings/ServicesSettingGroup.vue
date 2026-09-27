@@ -13,7 +13,7 @@
         :data-testid="`service-${service.id}`"
         class="bg-k-fg-5 p-5 rounded-[inherit]"
       >
-        <h3 class="text-2xl mb-2 flex items-center gap-2">
+        <h3 class="text-2xl leading-none mb-3 flex items-center gap-2">
           <span :style="{ color: service.color }" class="mr-2">
             <img v-if="service.logo" :alt="`${service.name} logo`" :src="service.logo" height="20" width="20" />
             <Icon v-else :icon="service.icon" />
