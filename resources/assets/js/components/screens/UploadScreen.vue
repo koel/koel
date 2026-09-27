@@ -23,7 +23,7 @@
               :data-count="filterCounts[option.value]"
               :data-filter="option.value"
               :data-testid="`upload-filter-count-${option.value}`"
-              class="count inline-flex items-center justify-center h-[20px] min-w-[20px] px-[6px] rounded-full bg-k-fg-10 text-[.8rem] leading-none tabular-nums"
+              class="count inline-flex items-center justify-center h-[16px] min-w-[16px] px-[5px] rounded-full bg-k-fg-10 text-[.8rem] leading-none tabular-nums"
               data-badge
             >
               {{ filterCounts[option.value] }}
