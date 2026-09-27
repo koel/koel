@@ -1,6 +1,6 @@
 <template>
   <section class="flex flex-col gap-4">
-    <VirtualScroller :item-height="48" :items="songs" class="flex-1">
+    <VirtualScroller :item-height="48" :items="songs" class="flex-1 -mr-6 pr-6">
       <template #default="{ item }: { item: DuplicateUpload }">
         <div :key="item.id" class="h-[48px] pb-4">
           <DuplicateUploadItem :upload="item" class="h-full" />

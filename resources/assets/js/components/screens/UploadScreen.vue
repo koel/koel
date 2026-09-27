@@ -42,7 +42,7 @@
                 v-else-if="filesByTab[currentTab].length"
                 :item-height="48"
                 :items="filesByTab[currentTab]"
-                class="flex-1"
+                class="flex-1 -mr-6 pr-6"
               >
                 <template #default="{ item }: { item: UploadFile }">
                   <div :key="item.id" class="h-[48px] pb-4">
