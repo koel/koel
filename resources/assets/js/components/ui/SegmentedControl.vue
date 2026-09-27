@@ -40,7 +40,7 @@ const indicator = ref<{ left: number; top: number; width: number; height: number
 const moveIndicatorToSelectedOption = () => {
   const selectedLabel = container.value?.querySelector<HTMLInputElement>('input:checked')?.parentElement
 
-  indicator.value = selectedLabel
+  indicator.value = selectedLabel?.offsetWidth
     ? {
         left: selectedLabel.offsetLeft,
         top: selectedLabel.offsetTop,

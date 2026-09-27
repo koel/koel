@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './SegmentedControl.vue'
 
@@ -20,9 +20,19 @@ describe('segmentedControl.vue', () => {
   })
 
   it('shows the sliding indicator behind the selected option', async () => {
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(40)
     h.render(Component, { props: { name: 'segments', options, modelValue: 'one' } })
 
     await screen.findByTestId('segmented-control-indicator')
+  })
+
+  it('hides the sliding indicator while the control is not displayed', async () => {
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(0)
+    h.render(Component, { props: { name: 'segments', options, modelValue: 'one' } })
+
+    await nextTick()
+
+    expect(screen.queryByTestId('segmented-control-indicator')).toBeNull()
   })
 
   it('updates the model when an option is picked', async () => {
