@@ -1,8 +1,6 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <SettingGroup>
-      <template #title>AI Assistant</template>
-
       <div class="space-y-4">
         <FormRow>
           <span>

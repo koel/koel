@@ -1,7 +1,6 @@
 <template>
   <form @submit.prevent="confirmThenSave">
     <SettingGroup>
-      <template #title>Media Path</template>
       <p v-if="storageDriver !== 'local'">
         Since you’re not using the local storage, there’s no need to set a media path.
       </p>

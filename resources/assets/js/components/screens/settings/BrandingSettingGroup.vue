@@ -1,8 +1,6 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <SettingGroup>
-      <template #title>Branding</template>
-
       <div class="space-y-4">
         <FormRow>
           <template #label>App name</template>

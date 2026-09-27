@@ -1,6 +1,5 @@
 <template>
   <SettingGroup>
-    <template #title>Services</template>
     <template #subtitle>Services {{ appName }} uses for everyone on this installation.</template>
 
     <ul class="divide-y divide-k-fg-10">
