@@ -124,7 +124,7 @@ article > div::before {
 }
 
 .uploaded {
-  @apply border border-k-success/30;
+  @apply border border-k-success/15;
 
   &:hover {
     @apply bg-k-fg-10;
