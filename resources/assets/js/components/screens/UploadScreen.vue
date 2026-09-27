@@ -45,7 +45,7 @@
                 class="flex-1"
               >
                 <template #default="{ item }: { item: UploadFile }">
-                  <div :key="item.id" class="h-12 pb-4">
+                  <div :key="item.id" class="h-[48px] pb-4">
                     <UploadItem :file="item" class="h-full" data-testid="upload-item" />
                   </div>
                 </template>
