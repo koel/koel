@@ -22,28 +22,19 @@ to rephrase your request if the result isn't what you expected.
 
 ## Setup
 
-To enable the AI assistant, you need to configure an AI provider. Set the following environment variables in your `.env` file:
+An admin turns the assistant on under **Settings → AI Assistant**:
 
-```dotenv
-AI_ENABLED=true
-AI_PROVIDER=openai
-OPENAI_API_KEY=your-openai-api-key
-```
+1. Tick **Turn on the AI assistant**.
+2. Pick a provider: OpenAI, Anthropic or Google Gemini.
+3. Paste the provider's API key and save. The provider bills the assistant's use to this key.
 
-Or, if you prefer Anthropic:
+Koel stores the key encrypted and never shows it again; to change it, paste a new one. Switching providers needs a new key.
 
-```dotenv
-AI_ENABLED=true
-AI_PROVIDER=anthropic
-ANTHROPIC_API_KEY=your-anthropic-api-key
-```
+:::tip Upgrading from an earlier version
+If you had set up the assistant with `AI_ENABLED`, `AI_PROVIDER` and a provider key in `.env`, upgrading moves that setup into Settings, as long as the provider was OpenAI, Anthropic or Gemini. Afterwards those `.env` variables are no longer read and can be removed.
+:::
 
-`AI_PROVIDER` must match one of the provider keys defined in `config/ai.php` (e.g., `openai`, `anthropic`, `gemini`, `ollama`).
-
-The AI assistant is powered by [Laravel's AI SDK](https://laravel.com/docs/12.x/ai-sdk),
-which supports a wide range of providers including Anthropic, Gemini, DeepSeek, Mistral, Groq, Ollama, and more.
-For the full list of supported providers and their configuration options,
-refer to the [Laravel AI SDK documentation](https://laravel.com/docs/12.x/ai-sdk).
+The AI assistant is powered by [Laravel's AI SDK](https://laravel.com/docs/12.x/ai-sdk).
 
 ## Using the Assistant
 

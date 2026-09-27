@@ -7,6 +7,7 @@
     <main class="space-y-6">
       <MediaPathSettingGroup open />
       <BrandingSettingGroup v-if="isPlus" :current-branding="currentBranding" />
+      <AiSettingGroup v-if="isPlus" />
     </main>
   </ScreenBase>
 </template>
@@ -16,6 +17,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import MediaPathSettingGroup from '@/components/screens/settings/MediaPathSettingGroup.vue'
 import BrandingSettingGroup from '@/components/screens/settings/BrandingSettingGroup.vue'
+import AiSettingGroup from '@/components/screens/settings/AiSettingGroup.vue'
 
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useBranding } from '@/composables/useBranding'

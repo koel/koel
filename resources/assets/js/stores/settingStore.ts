@@ -22,4 +22,8 @@ export const settingStore = {
   async updateBranding(data: Partial<Branding>) {
     await http.put('settings/branding', data)
   },
+
+  async updateAi(data: { enabled: boolean; provider: AiProvider; api_key?: string }) {
+    this.state.ai = await http.put<AiSettings>('settings/ai', data)
+  },
 }

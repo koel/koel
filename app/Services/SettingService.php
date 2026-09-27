@@ -2,11 +2,16 @@
 
 namespace App\Services;
 
+use App\Enums\AiProvider;
 use App\Facades\License;
+use App\Models\Organization;
 use App\Models\Setting;
 use App\Services\Image\ImageStorage;
+use App\Values\AiSettings;
 use App\Values\Branding;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Crypt;
+use SensitiveParameter;
 
 class SettingService
 {
@@ -19,6 +24,41 @@ class SettingService
         return License::isPlus()
             ? Branding::fromArray(Arr::wrap(Setting::get('branding')))
             : Branding::make(name: config('app.name'));
+    }
+
+    public function getAiSettings(Organization $organization): AiSettings
+    {
+        $stored = Arr::wrap(Setting::get('ai', $organization));
+        $encryptedApiKey = Arr::get($stored, 'api_key');
+
+        return AiSettings::make(
+            enabled: (bool) Arr::get($stored, 'enabled'),
+            provider: AiProvider::tryFrom((string) Arr::get($stored, 'provider')),
+            apiKey: $encryptedApiKey ? Crypt::decryptString($encryptedApiKey) : null,
+        );
+    }
+
+    /**
+     * @param ?string $apiKey a new key, or null to keep the one already stored
+     */
+    public function updateAiSettings(
+        Organization $organization,
+        bool $enabled,
+        AiProvider $provider,
+        #[SensitiveParameter]
+        ?string $apiKey,
+    ): void {
+        $apiKey ??= $this->getAiSettings($organization)->apiKey;
+
+        Setting::set(
+            'ai',
+            [
+                'enabled' => $enabled,
+                'provider' => $provider->value,
+                'api_key' => $apiKey ? Crypt::encryptString($apiKey) : null,
+            ],
+            $organization,
+        );
     }
 
     public function updateMediaPath(string $path): string

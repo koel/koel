@@ -499,8 +499,17 @@ type CurrentUser = User & {
   two_factor: boolean
 }
 
+type AiProvider = 'openai' | 'anthropic' | 'gemini'
+
+interface AiSettings {
+  enabled: boolean
+  provider: AiProvider | null
+  has_api_key: boolean
+}
+
 interface Settings {
   media_path?: string
+  ai?: AiSettings
 }
 
 interface Interaction {
