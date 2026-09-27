@@ -1,3 +1,4 @@
+import type { ZipWriter } from '@zip.js/zip.js'
 import { reactive } from 'vue'
 import { authService } from '@/services/authService'
 
@@ -83,21 +84,26 @@ export const zipDownloadService = {
     archiveName: '',
     bytesDone: 0,
     bytesTotal: 0,
+    songsDone: 0,
+    songsTotal: 0,
     error: '',
     fileUrl: null as string | null,
   }),
 
   abortController: null as AbortController | null,
+  building: Promise.resolve(),
   revokeTimer: null as number | null,
 
   isSupported: () => typeof navigator.storage?.getDirectory === 'function',
 
   /**
+   * Checks the songs, then builds the archive in the background; `building` settles when it is done.
+   *
    * @throws {ZipTooLargeError} when the songs add up to more than MAX_ZIP_BYTES
    * @throws {ZipUnsupportedError} when the browser can't write the archive to its private storage
    * @throws {ZipInProgressError} when another archive is still being built
    */
-  async start(playables: Playable[], archiveName: string, numbering: ZipEntryNumbering) {
+  start(playables: Playable[], archiveName: string, numbering: ZipEntryNumbering) {
     const songs = playables.filter((playable): playable is Song => playable.type === 'songs')
 
     if (this.state.status === 'zipping') {
@@ -119,12 +125,16 @@ export const zipDownloadService = {
       archiveName: `${toSafeFileName(archiveName)}.zip`,
       bytesDone: 0,
       bytesTotal: getTotalBytes(songs),
+      songsDone: 0,
+      songsTotal: songs.length,
       error: '',
     })
 
     this.abortController = new AbortController()
-    const { signal } = this.abortController
+    this.building = this.build(songs, numbering, this.abortController.signal)
+  },
 
+  async build(songs: Song[], numbering: ZipEntryNumbering, signal: AbortSignal) {
     try {
       const { ZipWriter, configure } = await import('@zip.js/zip.js')
       configure({ useWebWorkers: false })
@@ -141,20 +151,9 @@ export const zipDownloadService = {
       const usedNames = new Map<string, number>()
 
       for (const [index, song] of songs.entries()) {
-        const response = await fetch(getDownloadUrl(song), { signal })
-
-        if (!response.ok || !response.body) {
-          throw new Error(`“${song.title}” could not be downloaded.`)
-        }
-
-        const baseName = makeEntryBaseName(song, index + 1, songs.length, numbering)
-        const entryName = makeUniqueName(toSafeFileName(baseName) + getExtensionFromResponse(response), usedNames)
-
-        await zipWriter.add(
-          entryName,
-          response.body.pipeThrough(countBytesInto(count => (this.state.bytesDone += count))),
-          { level: 0, signal },
-        )
+        const baseName = toSafeFileName(makeEntryBaseName(song, index + 1, songs.length, numbering))
+        await this.addSong(zipWriter, song, baseName, usedNames, signal)
+        this.state.songsDone++
       }
 
       await zipWriter.close()
@@ -171,6 +170,35 @@ export const zipDownloadService = {
       this.state.error = error instanceof Error ? error.message : 'The download could not be prepared.'
     } finally {
       this.abortController = null
+    }
+  },
+
+  async addSong(
+    zipWriter: ZipWriter<unknown>,
+    song: Song,
+    baseName: string,
+    usedNames: Map<string, number>,
+    signal: AbortSignal,
+  ) {
+    try {
+      const response = await fetch(getDownloadUrl(song), { signal })
+
+      if (!response.ok || !response.body) {
+        throw new Error(`the server answered ${response.status}`)
+      }
+
+      await zipWriter.add(
+        makeUniqueName(baseName + getExtensionFromResponse(response), usedNames),
+        response.body.pipeThrough(countBytesInto(count => (this.state.bytesDone += count))),
+        { level: 0, signal },
+      )
+    } catch (error: unknown) {
+      if (signal.aborted) {
+        throw error
+      }
+
+      const reason = error instanceof Error ? error.message : String(error)
+      throw new Error(`“${song.title}” could not be downloaded (${reason}).`, { cause: error })
     }
   },
 
@@ -199,6 +227,14 @@ export const zipDownloadService = {
       URL.revokeObjectURL(this.state.fileUrl)
     }
 
-    Object.assign(this.state, { status: 'idle', fileUrl: null, error: '', bytesDone: 0, bytesTotal: 0 })
+    Object.assign(this.state, {
+      status: 'idle',
+      fileUrl: null,
+      error: '',
+      bytesDone: 0,
+      bytesTotal: 0,
+      songsDone: 0,
+      songsTotal: 0,
+    })
   },
 }

@@ -19,7 +19,7 @@ describe('downloadService', () => {
   })
 
   it('zips multiple playables', async () => {
-    const zipMock = h.mock(zipDownloadService, 'start').mockResolvedValue(undefined)
+    const zipMock = h.mock(zipDownloadService, 'start')
     const songs = h.factory('song').make(2)
 
     await downloadService.fromPlayables(songs)
@@ -28,7 +28,7 @@ describe('downloadService', () => {
   })
 
   it('zips an artist’s songs', async () => {
-    const zipMock = h.mock(zipDownloadService, 'start').mockResolvedValue(undefined)
+    const zipMock = h.mock(zipDownloadService, 'start')
     const artist = h.factory('artist').make()
     const songs = h.factory('song').make(3)
     h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValue(songs)
@@ -39,7 +39,7 @@ describe('downloadService', () => {
   })
 
   it('zips an album’s songs numbered by track', async () => {
-    const zipMock = h.mock(zipDownloadService, 'start').mockResolvedValue(undefined)
+    const zipMock = h.mock(zipDownloadService, 'start')
     const album = h.factory('album').make()
     const songs = h.factory('song').make(3)
     h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue(songs)
@@ -50,7 +50,7 @@ describe('downloadService', () => {
   })
 
   it('zips a playlist numbered by position', async () => {
-    const zipMock = h.mock(zipDownloadService, 'start').mockResolvedValue(undefined)
+    const zipMock = h.mock(zipDownloadService, 'start')
     const playlist = h.factory('playlist').make()
     const songs = h.factory('song').make(3)
     h.mock(playableStore, 'fetchForPlaylist').mockResolvedValue(songs)
@@ -61,7 +61,7 @@ describe('downloadService', () => {
   })
 
   it('zips favorites if there are any', async () => {
-    const zipMock = h.mock(zipDownloadService, 'start').mockResolvedValue(undefined)
+    const zipMock = h.mock(zipDownloadService, 'start')
     playableStore.state.favorites = h.factory('song').make(5)
 
     await downloadService.fromFavorites()

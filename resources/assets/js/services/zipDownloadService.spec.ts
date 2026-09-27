@@ -106,24 +106,24 @@ describe('zipDownloadService', () => {
     expect(getExtensionFromResponse(fromUrl)).toBe('.m4a')
   })
 
-  it('refuses songs that add up to more than the cap', async () => {
+  it('refuses songs that add up to more than the cap', () => {
     stubPrivateStorage()
 
-    await expect(
-      zipDownloadService.start([makeSong({ file_size: MAX_ZIP_BYTES }), makeSong()], 'Big', 'none'),
-    ).rejects.toThrow(ZipTooLargeError)
+    expect(() => zipDownloadService.start([makeSong({ file_size: MAX_ZIP_BYTES }), makeSong()], 'Big', 'none')).toThrow(
+      ZipTooLargeError,
+    )
   })
 
-  it('refuses when the browser has no private storage', async () => {
+  it('refuses when the browser has no private storage', () => {
     vi.stubGlobal('navigator', {})
 
-    await expect(zipDownloadService.start([makeSong()], 'Songs', 'none')).rejects.toThrow(ZipUnsupportedError)
+    expect(() => zipDownloadService.start([makeSong()], 'Songs', 'none')).toThrow(ZipUnsupportedError)
   })
 
-  it('refuses a second archive while one is being prepared', async () => {
+  it('refuses a second archive while one is being prepared', () => {
     zipDownloadService.state.status = 'zipping'
 
-    await expect(zipDownloadService.start([makeSong()], 'Songs', 'none')).rejects.toThrow(ZipInProgressError)
+    expect(() => zipDownloadService.start([makeSong()], 'Songs', 'none')).toThrow(ZipInProgressError)
   })
 
   it('zips the songs in order, leaves episodes out, and gets ready to save', async () => {
@@ -131,19 +131,22 @@ describe('zipDownloadService', () => {
     stubSongDownloads()
     const songs = [makeSong({ title: 'One' }), h.factory('episode').make(), makeSong({ title: 'Two' })]
 
-    await zipDownloadService.start(songs, 'My Mix', 'position')
+    zipDownloadService.start(songs, 'My Mix', 'position')
+    await zipDownloadService.building
 
     expect(addedEntries).toEqual(['01 Dio - One.mp3', '02 Dio - Two.mp3'])
     expect(zipDownloadService.state.status).toBe('ready')
     expect(zipDownloadService.state.archiveName).toBe('My Mix.zip')
     expect(zipDownloadService.state.bytesDone).toBe(10)
+    expect(zipDownloadService.state.songsDone).toBe(2)
   })
 
   it('fails with a message when a song cannot be downloaded', async () => {
     stubPrivateStorage()
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 404 })))
 
-    await zipDownloadService.start([makeSong()], 'Songs', 'none')
+    zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.building
 
     expect(zipDownloadService.state.status).toBe('failed')
     expect(zipDownloadService.state.error).not.toBe('')
