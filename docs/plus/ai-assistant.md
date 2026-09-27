@@ -24,7 +24,7 @@ to rephrase your request if the result isn't what you expected.
 
 An admin turns the assistant on under **Settings → AI Assistant**:
 
-1. Tick **Turn on the AI assistant**.
+1. Tick **Use AI assistant**.
 2. Pick a provider: OpenAI, Anthropic or Google Gemini.
 3. Paste the provider's API key and save. The provider bills the assistant's use to this key.
 

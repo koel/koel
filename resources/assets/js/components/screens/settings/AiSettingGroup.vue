@@ -10,7 +10,7 @@
         <FormRow>
           <span>
             <CheckBox v-model="data.enabled" name="enabled" />
-            <span class="ml-2">Turn on the AI assistant</span>
+            <span class="ml-2">Use AI assistant</span>
           </span>
         </FormRow>
         <FormRow>
