@@ -1,5 +1,5 @@
 <template>
-  <article :title="file.message" class="upload-item relative">
+  <article class="upload-item relative">
     <div :class="cssClass" class="h-full w-full min-h-[32px] bg-k-fg-5 relative rounded-lg overflow-hidden">
       <div class="absolute z-1 h-full w-full flex items-center">
         <ProgressRing

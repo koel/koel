@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`uploadItem.vue > renders 1`] = `
-<article data-v-c7c7e2e2="" title="" class="upload-item relative">
+<article data-v-c7c7e2e2="" class="upload-item relative">
   <div data-v-c7c7e2e2="" class="canceled h-full w-full min-h-[32px] bg-k-fg-5 relative rounded-lg overflow-hidden">
     <div data-v-c7c7e2e2="" class="absolute z-1 h-full w-full flex items-center">
       <!--v-if--><span data-v-c7c7e2e2="" class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)]">Sample Track</span><span data-v-c7c7e2e2="" class="text-k-fg-70 shrink-0 px-4" data-testid="upload-item-reason"></span>
