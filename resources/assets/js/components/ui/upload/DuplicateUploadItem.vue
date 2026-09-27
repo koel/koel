@@ -12,11 +12,11 @@
     >
       Uploaded {{ uploadedAgo }}
     </time>
-    <Btn class="h-full px-4!" icon-only title="Discard" unrounded variant="destructive" @click="confirmDiscard">
-      <Icon :icon="faTrashCan" />
-    </Btn>
     <Btn class="h-full px-4!" icon-only title="Keep" unrounded variant="success" @click="keep">
       <Icon :icon="faCheck" />
+    </Btn>
+    <Btn class="h-full px-4!" icon-only title="Discard" unrounded variant="destructive" @click="confirmDiscard">
+      <Icon :icon="faTrashCan" />
     </Btn>
   </article>
 </template>

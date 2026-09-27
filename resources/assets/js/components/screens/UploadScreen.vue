@@ -52,6 +52,7 @@
               </VirtualScroller>
 
               <footer v-if="currentTab === 'errored' && filesByTab.errored.length" class="flex justify-end gap-2">
+                <Btn size="small" variant="success" data-testid="upload-retry-all-btn" @click="retryAll">Retry All</Btn>
                 <Btn
                   size="small"
                   variant="destructive"
@@ -60,7 +61,6 @@
                 >
                   Remove Failed
                 </Btn>
-                <Btn size="small" variant="success" data-testid="upload-retry-all-btn" @click="retryAll">Retry All</Btn>
               </footer>
             </TabPanel>
           </TabPanelContainer>

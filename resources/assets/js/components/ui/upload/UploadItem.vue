@@ -35,6 +35,9 @@
         <Btn variant="ghost" v-if="canAbort" class="px-3!" icon-only title="Abort" unrounded @click="abort">
           <Icon :icon="faXmark" />
         </Btn>
+        <Btn v-if="canRetry" class="h-full px-4!" icon-only title="Retry" unrounded variant="success" @click="retry">
+          <Icon :icon="faRotateBack" />
+        </Btn>
         <Btn
           v-if="canRemove"
           class="h-full px-4!"
@@ -45,9 +48,6 @@
           @click="remove"
         >
           <Icon :icon="faTrashCan" />
-        </Btn>
-        <Btn v-if="canRetry" class="h-full px-4!" icon-only title="Retry" unrounded variant="success" @click="retry">
-          <Icon :icon="faRotateBack" />
         </Btn>
         <span v-if="file.status === 'Uploaded'" class="px-3 text-k-success" title="Uploaded">
           <Icon :icon="faCircleCheck" />
