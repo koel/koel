@@ -9,8 +9,8 @@
     </VirtualScroller>
 
     <footer class="flex justify-end gap-2">
-      <Btn size="small" variant="success" @click="keepAll">Keep All</Btn>
-      <Btn size="small" variant="destructive" @click="confirmDiscardAll">Discard All</Btn>
+      <Btn variant="success" @click="keepAll">Keep All</Btn>
+      <Btn variant="destructive" @click="confirmDiscardAll">Discard All</Btn>
     </footer>
   </section>
 </template>
