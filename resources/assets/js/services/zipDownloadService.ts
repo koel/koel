@@ -13,8 +13,8 @@ type ZipStatus = 'idle' | 'zipping' | 'ready' | 'failed'
 
 export const MAX_ZIP_BYTES = 4_000_000_000
 
-const ARCHIVE_FILE_NAME = 'download.zip'
-const OBJECT_URL_LIFETIME_MS = 60_000
+const ARCHIVE_FILE_PREFIX = 'download-'
+const ARCHIVE_RETENTION_MS = 5 * 60_000
 const UNSAFE_FILE_NAME_CHARACTERS = '\\/:*?"<>|'
 const FIRST_PRINTABLE_CHARACTER_CODE = 32
 
@@ -42,19 +42,24 @@ export const makeEntryBaseName = (song: Song, position: number, count: number, n
   return title
 }
 
-export const makeUniqueName = (name: string, usedNames: Map<string, number>) => {
-  const timesUsed = usedNames.get(name) ?? 0
-  usedNames.set(name, timesUsed + 1)
-
-  if (!timesUsed) {
-    return name
-  }
-
+const withCopyNumber = (name: string, copyNumber: number) => {
   const extensionStart = name.lastIndexOf('.')
 
   return extensionStart > 0
-    ? `${name.slice(0, extensionStart)} (${timesUsed + 1})${name.slice(extensionStart)}`
-    : `${name} (${timesUsed + 1})`
+    ? `${name.slice(0, extensionStart)} (${copyNumber})${name.slice(extensionStart)}`
+    : `${name} (${copyNumber})`
+}
+
+export const makeUniqueName = (name: string, usedNames: Set<string>) => {
+  let uniqueName = name
+
+  for (let copyNumber = 2; usedNames.has(uniqueName); copyNumber++) {
+    uniqueName = withCopyNumber(name, copyNumber)
+  }
+
+  usedNames.add(uniqueName)
+
+  return uniqueName
 }
 
 export const getExtensionFromResponse = (response: Response) => {
@@ -91,7 +96,7 @@ export const zipDownloadService = {
 
   abortController: null as AbortController | null,
   building: Promise.resolve(),
-  revokeTimer: null as number | null,
+  retainedArchiveFileNames: new Set<string>(),
 
   isSupported: () => typeof navigator.storage?.getDirectory === 'function',
 
@@ -132,20 +137,27 @@ export const zipDownloadService = {
   },
 
   async build(songs: Song[], numbering: ZipEntryNumbering, signal: AbortSignal) {
+    const directory = await navigator.storage.getDirectory()
+    await this.removeLeftoverArchives(directory)
+
+    const archiveFileName = `${ARCHIVE_FILE_PREFIX}${Date.now()}.zip`
+    const writeAborter = new AbortController()
+    let writing: Promise<void> = Promise.resolve()
+
     try {
       const { ZipWriter, configure } = await import('@zip.js/zip.js')
       configure({ useWebWorkers: false })
 
-      const directory = await navigator.storage.getDirectory()
-      await directory.removeEntry(ARCHIVE_FILE_NAME).catch(() => {})
-      const handle = await directory.getFileHandle(ARCHIVE_FILE_NAME, { create: true })
+      const handle = await directory.getFileHandle(archiveFileName, { create: true })
+      const { readable, writable } = new TransformStream<Uint8Array, Uint8Array>()
+      writing = readable.pipeTo(await handle.createWritable(), { signal: writeAborter.signal })
 
-      const zipWriter = new ZipWriter(await handle.createWritable(), {
+      const zipWriter = new ZipWriter(writable, {
         zip64: songs.some(song => !song.file_size),
         bufferedWrite: true,
       })
 
-      const usedNames = new Map<string, number>()
+      const usedNames = new Set<string>()
 
       for (const [index, song] of songs.entries()) {
         const baseName = toSafeFileName(makeEntryBaseName(song, index + 1, songs.length, numbering))
@@ -153,11 +165,18 @@ export const zipDownloadService = {
       }
 
       await zipWriter.close()
+      await writing
+      signal.throwIfAborted()
 
+      this.retainedArchiveFileNames.add(archiveFileName)
       this.state.fileUrl = URL.createObjectURL(await handle.getFile())
       this.state.status = 'ready'
-      this.save()
+      this.save(() => this.removeArchive(directory, archiveFileName))
     } catch (error: unknown) {
+      writeAborter.abort()
+      await writing.catch(() => {})
+      await directory.removeEntry(archiveFileName).catch(() => {})
+
       if (signal.aborted) {
         this.dismiss()
         return
@@ -170,11 +189,24 @@ export const zipDownloadService = {
     }
   },
 
+  async removeLeftoverArchives(directory: FileSystemDirectoryHandle) {
+    for await (const name of directory.keys()) {
+      if (name.startsWith(ARCHIVE_FILE_PREFIX) && !this.retainedArchiveFileNames.has(name)) {
+        await directory.removeEntry(name).catch(() => {})
+      }
+    }
+  },
+
+  async removeArchive(directory: FileSystemDirectoryHandle, archiveFileName: string) {
+    this.retainedArchiveFileNames.delete(archiveFileName)
+    await directory.removeEntry(archiveFileName).catch(() => {})
+  },
+
   async addSong(
     zipWriter: ZipWriter<unknown>,
     song: Song,
     baseName: string,
-    usedNames: Map<string, number>,
+    usedNames: Set<string>,
     signal: AbortSignal,
   ) {
     try {
@@ -186,11 +218,11 @@ export const zipDownloadService = {
 
       await zipWriter.add(
         makeUniqueName(baseName + getExtensionFromResponse(response), usedNames),
-        response.body.pipeThrough(countBytesInto(count => (this.state.bytesDone += count))),
+        response.body.pipeThrough(countBytesInto(count => this.countReceivedBytes(count))),
         { level: 0, signal },
       )
     } catch (error: unknown) {
-      if (signal.aborted) {
+      if (signal.aborted || error instanceof ZipTooLargeError) {
         throw error
       }
 
@@ -199,7 +231,15 @@ export const zipDownloadService = {
     }
   },
 
-  save() {
+  countReceivedBytes(count: number) {
+    this.state.bytesDone += count
+
+    if (this.state.bytesDone > MAX_ZIP_BYTES) {
+      throw new ZipTooLargeError('These songs add up to more than 4 GB. Please download fewer at a time.')
+    }
+  },
+
+  save(releaseArchive: Closure = () => {}) {
     if (!this.state.fileUrl) {
       return
     }
@@ -210,10 +250,11 @@ export const zipDownloadService = {
     this.state.fileUrl = null
     this.state.status = 'idle'
     eventBus.emit('DOWNLOAD_ARCHIVE_SAVED')
-    this.revokeTimer = window.setTimeout(() => {
+
+    window.setTimeout(() => {
       URL.revokeObjectURL(fileUrl)
-      this.revokeTimer = null
-    }, OBJECT_URL_LIFETIME_MS)
+      releaseArchive()
+    }, ARCHIVE_RETENTION_MS)
   },
 
   cancel() {

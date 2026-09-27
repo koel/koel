@@ -17,12 +17,16 @@ const addedEntries: string[] = []
 vi.mock('@zip.js/zip.js', () => ({
   configure: vi.fn(),
   ZipWriter: class {
+    constructor(private readonly writable: WritableStream) {}
+
     async add(name: string, stream: ReadableStream) {
       addedEntries.push(name)
       await new Response(stream).arrayBuffer()
     }
 
-    async close() {}
+    async close() {
+      await this.writable.close()
+    }
   },
 }))
 
@@ -37,6 +41,12 @@ describe('zipDownloadService', () => {
   const makeSong = (overrides: Partial<Song> = {}) =>
     h.factory('song').make({ artist_name: 'Dio', title: 'Holy Diver', track: 3, file_size: 10, ...overrides })
 
+  const directory = {
+    keys: async function* () {},
+    removeEntry: vi.fn().mockResolvedValue(undefined),
+    getFileHandle: vi.fn(),
+  }
+
   const stubPrivateStorage = () => {
     const handle = {
       createWritable: vi.fn().mockResolvedValue(new WritableStream()),
@@ -45,10 +55,11 @@ describe('zipDownloadService', () => {
 
     vi.stubGlobal('navigator', {
       storage: {
-        getDirectory: vi.fn().mockResolvedValue({
-          removeEntry: vi.fn().mockResolvedValue(undefined),
-          getFileHandle: vi.fn().mockResolvedValue(handle),
-        }),
+        getDirectory: vi.fn().mockResolvedValue(
+          Object.assign(directory, {
+            getFileHandle: vi.fn().mockResolvedValue(handle),
+          }),
+        ),
       },
     })
   }
@@ -89,11 +100,12 @@ describe('zipDownloadService', () => {
     expect(makeEntryBaseName(makeSong({ track: null }), 7, 9, 'track')).toBe('Dio - Holy Diver')
   })
 
-  it('numbers a name that is already taken', () => {
-    const usedNames = new Map<string, number>()
+  it('numbers a name that is already taken, skipping numbered names in use', () => {
+    const usedNames = new Set<string>()
 
     expect(makeUniqueName('Song.mp3', usedNames)).toBe('Song.mp3')
     expect(makeUniqueName('Song.mp3', usedNames)).toBe('Song (2).mp3')
+    expect(makeUniqueName('Song (2).mp3', usedNames)).toBe('Song (2) (2).mp3')
     expect(makeUniqueName('Song.mp3', usedNames)).toBe('Song (3).mp3')
   })
 
@@ -150,5 +162,44 @@ describe('zipDownloadService', () => {
 
     expect(zipDownloadService.state.status).toBe('failed')
     expect(zipDownloadService.state.error).not.toBe('')
+  })
+
+  it('deletes the archive file of a failed download', async () => {
+    stubPrivateStorage()
+    directory.removeEntry.mockClear()
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 500 })))
+
+    zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.building
+
+    expect(directory.removeEntry).toHaveBeenCalledWith(expect.stringMatching(/^download-\d+\.zip$/))
+  })
+
+  it('does not save an archive cancelled while it was being finished', async () => {
+    stubPrivateStorage()
+    stubSongDownloads()
+    const saveMock = h.mock(zipDownloadService, 'save')
+    const addedLastSong = new Promise<void>(resolve => {
+      const originalFetch = globalThis.fetch
+      vi.stubGlobal('fetch', async (...args: Parameters<typeof fetch>) => {
+        const response = await originalFetch(...args)
+        resolve()
+        return response
+      })
+    })
+
+    zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await addedLastSong
+    zipDownloadService.cancel()
+    await zipDownloadService.building
+
+    expect(saveMock).not.toHaveBeenCalled()
+    expect(zipDownloadService.state.status).toBe('idle')
+  })
+
+  it('stops once the songs received go past the cap', () => {
+    zipDownloadService.state.bytesDone = MAX_ZIP_BYTES
+
+    expect(() => zipDownloadService.countReceivedBytes(1)).toThrow(ZipTooLargeError)
   })
 })

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DownloadSongRequest;
 use App\Models\Song;
 use App\Services\DownloadService;
+use Illuminate\Http\Response;
 
 class DownloadSongController extends Controller
 {
@@ -14,6 +15,9 @@ class DownloadSongController extends Controller
         $song = Song::query()->findOrFail($request->songs[0]);
         $this->authorize('download', $song);
 
-        return $service->getDownloadable($song)?->toResponse();
+        $downloadable = $service->getDownloadable($song);
+        abort_unless((bool) $downloadable, Response::HTTP_NOT_FOUND);
+
+        return $downloadable->toResponse();
     }
 }

@@ -50,6 +50,18 @@ class DownloadTest extends TestCase
     }
 
     #[Test]
+    public function answerNotFoundWhenTheSongCannotBeServed(): void
+    {
+        $song = Song::factory()->createOne();
+
+        $this->downloadService->expects('getDownloadable')->andReturnNull();
+
+        $this->get(
+            "download/songs?songs[]={$song->id}&api_token=" . create_user()->createToken('Koel')->plainTextToken,
+        )->assertNotFound();
+    }
+
+    #[Test]
     public function refuseToDownloadSeveralSongsAtOnce(): void
     {
         $songs = Song::factory()->createMany(2);
