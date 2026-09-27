@@ -106,7 +106,7 @@ export const zipDownloadService = {
     const songs = playables.filter((playable): playable is Song => playable.type === 'songs')
 
     if (this.state.status === 'zipping') {
-      throw new ZipInProgressError('Another download is still being prepared.')
+      throw new ZipInProgressError('Another download is already in progress.')
     }
 
     if (!this.isSupported()) {
