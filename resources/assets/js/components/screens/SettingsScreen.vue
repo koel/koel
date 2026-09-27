@@ -19,7 +19,7 @@
         </TabButton>
       </TabList>
 
-      <TabPanelContainer>
+      <TabPanelContainer class="scroll-mask-y">
         <TabPanel
           v-for="tab in tabs"
           v-show="currentTabId === tab.id"
