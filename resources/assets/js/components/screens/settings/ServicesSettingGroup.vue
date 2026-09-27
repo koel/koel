@@ -35,9 +35,9 @@
 
 <script lang="ts" setup>
 import { faLastfm, faSpotify, faYoutube } from '@fortawesome/free-brands-svg-icons'
-import { faTicket } from '@fortawesome/free-solid-svg-icons'
 import { computed } from 'vue'
 import musicbrainzLogo from '@/../img/logos/musicbrainz.svg'
+import ticketmasterLogo from '@/../img/logos/ticketmaster.png'
 import { useBranding } from '@/composables/useBranding'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
@@ -92,7 +92,7 @@ const services = computed(() => [
         {
           id: 'ticketmaster',
           name: 'Ticketmaster',
-          icon: faTicket,
+          logo: ticketmasterLogo,
           color: '#026cdf',
           enabled: useTicketmaster.value,
           description: `Lists an artist's upcoming concerts from Ticketmaster on the artist's page, with links to buy tickets.`,
