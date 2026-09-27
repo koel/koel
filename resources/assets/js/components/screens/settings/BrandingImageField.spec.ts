@@ -30,6 +30,15 @@ describe('brandImageField.vue', () => {
     }
   }
 
+  it('names the file input after its field', () => {
+    h.render(Component, {
+      props: { default: 'default-image.jpg', name: 'logo', modelValue: 'default-image.jpg' },
+      slots: { label: 'App logo' },
+    })
+
+    screen.getByLabelText('Change App logo')
+  })
+
   it('emits the input event when a file is selected', async () => {
     const { model } = renderComponent()
 

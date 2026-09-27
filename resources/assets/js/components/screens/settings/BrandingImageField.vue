@@ -3,7 +3,7 @@
     <img :src="model" alt="" class="size-[100px] shrink-0 rounded-md bg-k-fg-5 object-contain p-1" />
 
     <div class="min-w-0 flex-1">
-      <h4 class="text-k-fg">
+      <h4 :id="`${fieldId}-label`" class="text-k-fg">
         <slot name="label" />
       </h4>
       <p class="text-[.95rem] text-k-fg-50">
@@ -15,8 +15,15 @@
         <label
           class="relative inline-flex cursor-pointer items-center rounded-md border border-k-fg-20 px-3 py-1.5 hover:bg-k-fg-10 has-focus-visible:outline-2 has-focus-visible:outline-k-highlight"
         >
-          <input accept="image/*" :name class="sr-only" type="file" @change="onImageInputChange" />
-          Change
+          <input
+            :aria-labelledby="`${fieldId}-change ${fieldId}-label`"
+            :name
+            accept="image/*"
+            class="sr-only"
+            type="file"
+            @change="onImageInputChange"
+          />
+          <span :id="`${fieldId}-change`">Change</span>
         </label>
         <button
           v-if="hasCustomValue"
@@ -32,12 +39,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, useId } from 'vue'
 import { useImageFileInput } from '@/composables/useImageFileInput'
 
 const props = defineProps<{ default: string; name: string }>()
 
 const model = defineModel<string>()
+const fieldId = useId()
 let initialValue: typeof model.value
 
 const hasCustomValue = computed(() => model.value && model.value !== props.default)
