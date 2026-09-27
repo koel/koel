@@ -1,22 +1,24 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <SettingGroup>
-      <div class="flex w-fit max-w-full flex-col gap-6">
-        <FormRow>
-          <template #label>App name</template>
-          <TextInput v-model="data.name" name="name" placeholder="Koel" />
-        </FormRow>
+      <div class="flex flex-col gap-3">
+        <section class="flex flex-col gap-4 rounded-lg border border-k-fg-10 bg-k-fg-5 p-4 md:flex-row md:items-center">
+          <div class="min-w-0 flex-1">
+            <label class="text-k-fg" for="brandingName">App name</label>
+            <p class="text-[.95rem] text-k-fg-50">Shown in the browser tab and around the app.</p>
+          </div>
+          <TextInput id="brandingName" v-model="data.name" class="md:w-72" name="name" placeholder="Koel" />
+        </section>
 
-        <div class="flex flex-wrap gap-x-10 gap-y-6">
-          <BrandingImageField v-model="data.logo" :default="koelBirdLogo" name="logo">
-            <template #label>App logo</template>
-            <template #help>Favicon, app icon and logo. Square, 512×512 or larger.</template>
-          </BrandingImageField>
-          <BrandingImageField v-model="data.cover" :default="koelBirdCover" name="cover">
-            <template #label>App cover</template>
-            <template #help>For albums, artists and playlists without an image. Square, 512×512 or larger.</template>
-          </BrandingImageField>
-        </div>
+        <BrandingImageField v-model="data.logo" :default="koelBirdLogo" name="logo">
+          <template #label>App logo</template>
+          <template #help>Favicon, app icon and logo. Square, 512×512 or larger.</template>
+        </BrandingImageField>
+
+        <BrandingImageField v-model="data.cover" :default="koelBirdCover" name="cover">
+          <template #label>App cover</template>
+          <template #help>For albums, artists and playlists without an image. Square, 512×512 or larger.</template>
+        </BrandingImageField>
       </div>
 
       <template #footer>
@@ -34,7 +36,6 @@ import { forceReloadWindow } from '@/utils/helpers'
 import { useDialogBox } from '@/composables/useDialogBox'
 
 import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
-import FormRow from '@/components/ui/form/FormRow.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import BrandingImageField from '@/components/screens/settings/BrandingImageField.vue'

@@ -40,21 +40,21 @@ describe('brandImageField.vue', () => {
 
   it('resets the image to the default value', async () => {
     const { model } = renderComponent('custom.jpg')
-    await h.user.click(screen.getByRole('button', { name: 'Reset to default' }))
+    await h.user.click(screen.getByRole('button', { name: 'Reset' }))
 
     await waitFor(() => expect(model.value).toBe('default-image.jpg'))
   })
 
-  it('picking an image and clicking Reset to default should reset the image to the custom value', async () => {
+  it('picking an image and clicking Reset should reset the image to the custom value', async () => {
     const { model } = renderComponent('custom.jpg')
 
-    await h.user.click(screen.getByRole('button', { name: 'Reset to default' }))
+    await h.user.click(screen.getByRole('button', { name: 'Reset' }))
     await waitFor(() => expect(model.value).toBe('default-image.jpg'))
 
     await h.user.upload(screen.getByLabelText('Change'), new File(['bytes'], 'cover.png', { type: 'image/png' }))
 
     await waitFor(async () => {
-      await h.user.click(screen.getByRole('button', { name: 'Reset to default' }))
+      await h.user.click(screen.getByRole('button', { name: 'Reset' }))
       await waitFor(() => expect(model.value).toBe('custom.jpg'))
     })
   })

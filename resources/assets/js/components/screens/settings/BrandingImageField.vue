@@ -1,33 +1,32 @@
 <template>
-  <fieldset class="flex w-72 flex-col gap-3">
-    <h4 class="text-k-fg">
-      <slot name="label" />
-    </h4>
+  <fieldset class="flex items-center gap-4 rounded-lg border border-k-fg-10 bg-k-fg-5 p-4">
+    <img :src="model" alt="" class="size-14 shrink-0 rounded-md bg-k-fg-5 object-contain p-1" />
 
-    <div class="flex items-center gap-4">
-      <img :src="model" alt="" class="size-32 shrink-0 rounded-lg border border-k-fg-10 bg-k-fg-5 object-contain p-2" />
-
-      <div class="flex flex-col items-start gap-2">
-        <label
-          class="relative inline-flex cursor-pointer items-center rounded-md border border-k-fg-20 px-3 py-1.5 hover:bg-k-fg-10 has-focus-visible:outline-2 has-focus-visible:outline-k-highlight"
-        >
-          <input accept="image/*" :name class="sr-only" type="file" @change="onImageInputChange" />
-          Change
-        </label>
-        <button
-          v-if="hasCustomValue"
-          class="text-k-fg-70 hover:text-k-fg"
-          type="button"
-          @click.prevent="removeCustomValue"
-        >
-          Reset to default
-        </button>
-      </div>
+    <div class="min-w-0 flex-1">
+      <h4 class="text-k-fg">
+        <slot name="label" />
+      </h4>
+      <p class="text-[.95rem] text-k-fg-50">
+        <slot name="help" />
+      </p>
     </div>
 
-    <p class="text-[.95rem] text-k-fg-50">
-      <slot name="help" />
-    </p>
+    <div class="flex shrink-0 items-center gap-4">
+      <button
+        v-if="hasCustomValue"
+        class="text-k-fg-70 hover:text-k-fg"
+        type="button"
+        @click.prevent="removeCustomValue"
+      >
+        Reset
+      </button>
+      <label
+        class="relative inline-flex cursor-pointer items-center rounded-md border border-k-fg-20 px-3 py-1.5 hover:bg-k-fg-10 has-focus-visible:outline-2 has-focus-visible:outline-k-highlight"
+      >
+        <input accept="image/*" :name class="sr-only" type="file" @change="onImageInputChange" />
+        Change
+      </label>
+    </div>
   </fieldset>
 </template>
 
