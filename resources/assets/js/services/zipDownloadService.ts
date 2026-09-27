@@ -123,7 +123,7 @@ export const zipDownloadService = {
     }
 
     if (getTotalBytes(songs) > (await this.getAvailableStorageBytes())) {
-      throw new ZipTooLargeError('Too many songs to download at once.')
+      throw new ZipTooLargeError('Download too large for this browser.')
     }
 
     this.dismiss()
