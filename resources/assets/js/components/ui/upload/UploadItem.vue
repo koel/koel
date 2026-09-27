@@ -77,7 +77,9 @@ const { url } = useRouter()
 const isProcessing = computed(() => file.value.status === 'Processing')
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canAbort = computed(() => file.value.status === 'Uploading')
-const canRemove = computed(() => file.value.status !== 'Uploading' && !isProcessing.value)
+const canRemove = computed(
+  () => file.value.status !== 'Uploading' && file.value.status !== 'Skipped' && !isProcessing.value,
+)
 const cssClass = computed(() => file.value.status.toLowerCase())
 
 const progressBarWidth = computed(() => {

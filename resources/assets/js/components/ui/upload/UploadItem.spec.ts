@@ -140,4 +140,10 @@ describe('uploadItem.vue', () => {
 
     expect(screen.getByTestId('upload-item-album-link').getAttribute('href')).toContain(song.album_id)
   })
+
+  it('offers no removal for a skipped file', () => {
+    renderComponent('Skipped')
+
+    expect(screen.queryByRole('button', { name: 'Remove' })).toBeNull()
+  })
 })
