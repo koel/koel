@@ -28,7 +28,7 @@
               @click="currentTab = tab"
             >
               {{ label }}
-              <span class="ml-1 rounded-full bg-k-fg-10 px-2 py-0.5 text-[.8rem] tabular-nums">
+              <span :data-tab="tab" class="count ml-1 rounded-full bg-k-fg-10 px-2 py-0.5 text-[.8rem] tabular-nums">
                 {{ tabCounts[tab] }}
               </span>
             </TabButton>
@@ -218,5 +218,23 @@ onMounted(async () => {
 @reference '@css/app.pcss';
 .droppable {
   @apply border-2 border-dashed border-white/40 bg-black/20 rounded-3xl;
+}
+
+.count {
+  &[data-tab='in-progress'] {
+    @apply bg-k-primary text-white;
+  }
+
+  &[data-tab='done'] {
+    @apply bg-k-success text-white;
+  }
+
+  &[data-tab='errored'] {
+    @apply bg-k-danger text-white;
+  }
+
+  &[data-tab='duplicated'] {
+    @apply bg-k-warning text-white;
+  }
 }
 </style>
