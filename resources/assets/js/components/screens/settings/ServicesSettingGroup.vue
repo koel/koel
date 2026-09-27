@@ -105,6 +105,6 @@ const services = computed(() => [
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 .badge {
-  @apply rounded-full px-2 py-0.5 text-[.8rem] font-normal leading-none;
+  @apply rounded-full px-2 py-1 text-[.8rem] font-normal leading-none;
 }
 </style>
