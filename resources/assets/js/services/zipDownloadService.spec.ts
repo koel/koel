@@ -126,16 +126,17 @@ describe('zipDownloadService', () => {
     expect(() => zipDownloadService.start([makeSong()], 'Songs', 'none')).toThrow(ZipInProgressError)
   })
 
-  it('zips the songs in order, leaves episodes out, and gets ready to save', async () => {
+  it('zips the songs in order, leaves episodes out, and saves the archive', async () => {
     stubPrivateStorage()
     stubSongDownloads()
     const songs = [makeSong({ title: 'One' }), h.factory('episode').make(), makeSong({ title: 'Two' })]
+    const saveMock = h.mock(zipDownloadService, 'save')
 
     zipDownloadService.start(songs, 'My Mix', 'position')
     await zipDownloadService.building
 
     expect(addedEntries).toEqual(['01 Dio - One.mp3', '02 Dio - Two.mp3'])
-    expect(zipDownloadService.state.status).toBe('ready')
+    expect(saveMock).toHaveBeenCalled()
     expect(zipDownloadService.state.archiveName).toBe('My Mix.zip')
     expect(zipDownloadService.state.bytesDone).toBe(10)
     expect(zipDownloadService.state.songsDone).toBe(2)

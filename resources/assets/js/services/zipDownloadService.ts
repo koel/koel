@@ -160,6 +160,7 @@ export const zipDownloadService = {
 
       this.state.fileUrl = URL.createObjectURL(await handle.getFile())
       this.state.status = 'ready'
+      this.save()
     } catch (error: unknown) {
       if (signal.aborted) {
         this.dismiss()
