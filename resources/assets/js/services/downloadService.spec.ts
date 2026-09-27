@@ -24,7 +24,7 @@ describe('downloadService', () => {
 
     await downloadService.fromPlayables(songs)
 
-    expect(zipMock).toHaveBeenCalledWith(songs, 'Songs', 'none')
+    expect(zipMock).toHaveBeenCalledWith(songs, 'Koel', 'none')
   })
 
   it('zips an artist’s songs', async () => {

@@ -12,7 +12,7 @@ export const downloadService = {
       return
     }
 
-    await zipDownloadService.start(items, 'Songs', 'none')
+    await zipDownloadService.start(items, 'Koel', 'none')
   },
 
   async fromAlbum(album: Album) {

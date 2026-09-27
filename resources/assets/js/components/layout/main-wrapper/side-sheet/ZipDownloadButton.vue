@@ -72,7 +72,7 @@ const showTooltipBriefly = () => {
 }
 
 const { toastSuccess } = useMessageToaster()
-const announceSavedArchive = () => toastSuccess('Songs downloaded.')
+const announceSavedArchive = () => toastSuccess('Download complete.')
 
 eventBus.on('DOWNLOAD_ARCHIVE_SAVED', announceSavedArchive)
 

@@ -119,7 +119,7 @@ export const zipDownloadService = {
     }
 
     if (!this.isSupported()) {
-      throw new ZipUnsupportedError('This browser can’t download several songs.')
+      throw new ZipUnsupportedError('This browser can’t download these at once.')
     }
 
     if (getTotalBytes(songs) > (await this.getAvailableStorageBytes())) {
