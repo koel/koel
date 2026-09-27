@@ -25,10 +25,10 @@ describe('settingsScreen.vue', () => {
 
   const tabIds = () => screen.getAllByTestId(/^settings-tab-/).map(tab => tab.dataset.testid)
 
-  it('offers the library and services tabs in the Community edition', () => {
+  it('offers the media path and services tabs in the Community edition', () => {
     renderComponent()
 
-    expect(tabIds()).toEqual(['settings-tab-library', 'settings-tab-services'])
+    expect(tabIds()).toEqual(['settings-tab-media-path', 'settings-tab-services'])
     screen.getByTestId('media-path-setting-group')
   })
 
@@ -37,7 +37,7 @@ describe('settingsScreen.vue', () => {
       renderComponent()
 
       expect(tabIds()).toEqual([
-        'settings-tab-library',
+        'settings-tab-media-path',
         'settings-tab-branding',
         'settings-tab-ai',
         'settings-tab-services',
@@ -45,7 +45,7 @@ describe('settingsScreen.vue', () => {
     })
   })
 
-  it('leaves out the library tab when the storage is not local', () => {
+  it('leaves out the media path tab when the storage is not local', () => {
     commonStore.state.storage_driver = 's3'
 
     renderComponent()
@@ -70,6 +70,6 @@ describe('settingsScreen.vue', () => {
 
     expect(
       screen.getByTestId('media-path-setting-group').closest('[role=tabpanel]')?.getAttribute('aria-labelledby'),
-    ).toBe(screen.getByTestId('settings-tab-library').id)
+    ).toBe(screen.getByTestId('settings-tab-media-path').id)
   })
 })

@@ -68,7 +68,7 @@ const { isPlus } = useKoelPlus()
 const usesLocalStorage = commonStore.state.storage_driver === 'local'
 
 const tabs = applyFilters<SettingsTab[]>(Filter.SETTINGS_TABS, [
-  ...(usesLocalStorage ? [{ id: 'library', label: 'Library', component: MediaPathSettingGroup }] : []),
+  ...(usesLocalStorage ? [{ id: 'media-path', label: 'Media Path', component: MediaPathSettingGroup }] : []),
   ...(isPlus.value
     ? [
         { id: 'branding', label: 'Branding', component: BrandingSettingGroup, props: { currentBranding } },
