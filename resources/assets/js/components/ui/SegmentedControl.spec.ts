@@ -19,6 +19,12 @@ describe('segmentedControl.vue', () => {
     expect(screen.getByTestId('segment-two').querySelector('input')?.checked).toBe(true)
   })
 
+  it('shows the sliding indicator behind the selected option', async () => {
+    h.render(Component, { props: { name: 'segments', options, modelValue: 'one' } })
+
+    await screen.findByTestId('segmented-control-indicator')
+  })
+
   it('updates the model when an option is picked', async () => {
     const selected = ref('one')
 
