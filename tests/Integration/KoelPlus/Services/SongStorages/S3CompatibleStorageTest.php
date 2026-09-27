@@ -105,7 +105,7 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         $presigned = $this->service->presignUpload('full.mp3', 1234, $user);
 
-        self::assertSame("{$user->public_id}__random__full.mp3", $presigned->key);
+        self::assertSame("pending/{$user->public_id}__random__full.mp3", $presigned->key);
         self::assertTrue($presigned->expiresAt->isFuture());
     }
 
@@ -115,8 +115,27 @@ class S3CompatibleStorageTest extends PlusTestCase
         $user = create_user();
         $someoneElse = create_user();
 
-        self::assertTrue($this->service->ownsUploadKey("{$user->public_id}__random__full.mp3", $user));
-        self::assertFalse($this->service->ownsUploadKey("{$someoneElse->public_id}__random__full.mp3", $user));
+        self::assertTrue($this->service->ownsUploadKey("pending/{$user->public_id}__random__full.mp3", $user));
+        self::assertFalse($this->service->ownsUploadKey("pending/{$someoneElse->public_id}__random__full.mp3", $user));
+    }
+
+    #[Test]
+    public function aKeyOutsideThePendingPrefixIsNotAnUpload(): void
+    {
+        $user = create_user();
+
+        self::assertFalse($this->service->ownsUploadKey("{$user->public_id}__random__full.mp3", $user));
+    }
+
+    #[Test]
+    public function movesACompletedUploadOutOfPending(): void
+    {
+        Storage::disk('s3')->put('pending/123__random__song.mp3', 'fake content');
+
+        $this->service->moveUploadOutOfPending('pending/123__random__song.mp3');
+
+        Storage::disk('s3')->assertMissing('pending/123__random__song.mp3');
+        Storage::disk('s3')->assertExists('123__random__song.mp3');
     }
 
     #[Test]
@@ -124,8 +143,8 @@ class S3CompatibleStorageTest extends PlusTestCase
     {
         $user = create_user();
 
-        self::assertFalse($this->service->ownsUploadKey("{$user->public_id}__random__../../secret.mp3", $user));
-        self::assertFalse($this->service->ownsUploadKey("{$user->public_id}__random__..\\secret.mp3", $user));
+        self::assertFalse($this->service->ownsUploadKey("pending/{$user->public_id}__random__../../secret.mp3", $user));
+        self::assertFalse($this->service->ownsUploadKey("pending/{$user->public_id}__random__..\\secret.mp3", $user));
     }
 
     #[Test]
@@ -133,7 +152,7 @@ class S3CompatibleStorageTest extends PlusTestCase
     {
         $user = create_user();
 
-        self::assertTrue($this->service->ownsUploadKey("{$user->public_id}__random__mix..live.mp3", $user));
+        self::assertTrue($this->service->ownsUploadKey("pending/{$user->public_id}__random__mix..live.mp3", $user));
     }
 
     #[Test]
@@ -143,12 +162,12 @@ class S3CompatibleStorageTest extends PlusTestCase
         $user = create_user();
 
         self::assertSame(
-            "{$user->public_id}__random__passwd.mp3",
+            "pending/{$user->public_id}__random__passwd.mp3",
             $this->service->presignUpload('../../etc/passwd.mp3', 1234, $user)->key,
         );
 
         self::assertSame(
-            "{$user->public_id}__random__song.mp3",
+            "pending/{$user->public_id}__random__song.mp3",
             $this->service->presignUpload('..\\..\\windows\\song.mp3', 1234, $user)->key,
         );
     }
@@ -168,7 +187,10 @@ class S3CompatibleStorageTest extends PlusTestCase
     #[Test]
     public function locationFromKey(): void
     {
-        self::assertSame('s3://koel/1__random__full.mp3', $this->service->locationFromKey('1__random__full.mp3'));
+        self::assertSame(
+            's3://koel/1__random__full.mp3',
+            $this->service->locationFromKey('pending/1__random__full.mp3'),
+        );
     }
 
     #[Test]

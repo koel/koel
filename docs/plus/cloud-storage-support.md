@@ -103,6 +103,8 @@ In order to use S3 for streaming, you'll also need to set up a cross-origin reso
 ]
 ```
 
+While a file is being uploaded, it's kept under the `pending/` prefix of your bucket and moves out once the upload finishes. To clean up uploads that never finish, add a lifecycle rule that deletes objects under `pending/` after a day. Amazon S3, DigitalOcean Spaces, and Cloudflare R2 all support such rules.
+
 ### DigitalOcean Spaces
 
 To use [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces), you can follow the same steps as with Amazon S3. Below are some screenshots to help you get started.

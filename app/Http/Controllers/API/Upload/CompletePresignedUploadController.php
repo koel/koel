@@ -66,6 +66,8 @@ class CompletePresignedUploadController extends Controller
         );
 
         try {
+            $storage->moveUploadOutOfPending($request->key);
+
             /** @var Song|PendingDispatch $dispatchedResult */
             $dispatchedResult = Dispatcher::dispatch(new HandlePresignedSongUploadJob($location, $request->key, $user));
 
