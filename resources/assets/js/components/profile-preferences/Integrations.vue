@@ -22,8 +22,6 @@ import { applyFilters } from '@/hooks'
 
 import LastfmIntegration from '@/components/profile-preferences/LastfmIntegration.vue'
 import ListenBrainzIntegration from '@/components/profile-preferences/ListenBrainzIntegration.vue'
-import SpotifyIntegration from '@/components/profile-preferences/SpotifyIntegration.vue'
-import MusicBrainzIntegration from '@/components/profile-preferences/MusicBrainzIntegration.vue'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
 
 export interface ProfileIntegration {
@@ -33,9 +31,7 @@ export interface ProfileIntegration {
 }
 
 const integrations = applyFilters<ProfileIntegration[]>(Filter.PROFILE_INTEGRATIONS, [
-  { id: 'musicbrainz', component: MusicBrainzIntegration, color: '#ba478f' },
   { id: 'listenbrainz', component: ListenBrainzIntegration, color: '#eb743b' },
-  { id: 'spotify', component: SpotifyIntegration, color: '#1db954' },
   { id: 'lastfm', component: LastfmIntegration, color: '#d31f27' },
 ])
 </script>
