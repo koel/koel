@@ -21,12 +21,7 @@
           class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)]"
           >{{ file.name }}</span
         >
-        <span
-          v-if="showsReasonInRow"
-          :class="file.status === 'Errored' ? 'text-k-danger' : 'text-k-fg-70'"
-          class="shrink-0 px-4"
-          data-testid="upload-item-reason"
-        >
+        <span v-if="showsReasonInRow" class="shrink-0 px-4 text-k-fg-70" data-testid="upload-item-reason">
           {{ file.message }}
         </span>
         <span v-if="file.status === 'Retrying'" class="shrink-0 px-3 text-k-fg-70" data-testid="upload-item-state">
