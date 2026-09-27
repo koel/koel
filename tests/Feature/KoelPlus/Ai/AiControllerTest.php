@@ -6,6 +6,8 @@ use App\Ai\Agents\KoelAssistant;
 use App\Enums\AiProvider;
 use App\Models\User;
 use App\Services\SettingService;
+use Laravel\Ai\Prompts\AgentPrompt;
+use Laravel\Ai\Providers\Provider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -51,8 +53,9 @@ class AiControllerTest extends PlusTestCase
         $this->postAs('api/ai/prompt', ['prompt' => 'Play some jazz'], $user)->assertSuccessful();
 
         KoelAssistant::assertPrompted(
-            static fn ($prompt) => (
-                $prompt->provider->name() === 'anthropic'
+            static fn (AgentPrompt $prompt) => (
+                $prompt->provider instanceof Provider
+                && $prompt->provider->name() === 'anthropic'
                 && $prompt->provider->providerCredentials()['key'] === 'sk-ant-test'
             ),
         );

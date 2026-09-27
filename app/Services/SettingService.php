@@ -9,8 +9,10 @@ use App\Models\Setting;
 use App\Services\Image\ImageStorage;
 use App\Values\AiSettings;
 use App\Values\Branding;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use SensitiveParameter;
 
 class SettingService
@@ -34,12 +36,23 @@ class SettingService
         return AiSettings::make(
             enabled: (bool) Arr::get($stored, 'enabled'),
             provider: AiProvider::tryFrom((string) Arr::get($stored, 'provider')),
-            apiKey: $encryptedApiKey ? Crypt::decryptString($encryptedApiKey) : null,
+            apiKey: $encryptedApiKey ? self::decryptApiKey($encryptedApiKey) : null,
         );
     }
 
+    private static function decryptApiKey(#[SensitiveParameter] string $encryptedApiKey): ?string
+    {
+        try {
+            return Crypt::decryptString($encryptedApiKey);
+        } catch (DecryptException) {
+            Log::warning('The stored AI API key could not be decrypted, most likely because APP_KEY changed.');
+
+            return null;
+        }
+    }
+
     /**
-     * @param ?string $apiKey a new key, or null to keep the one already stored
+     * @param ?string $apiKey a new key, or null to keep the stored one; a changed provider drops the stored key
      */
     public function updateAiSettings(
         Organization $organization,
@@ -48,7 +61,8 @@ class SettingService
         #[SensitiveParameter]
         ?string $apiKey,
     ): void {
-        $apiKey ??= $this->getAiSettings($organization)->apiKey;
+        $current = $this->getAiSettings($organization);
+        $apiKey ??= $current->provider === $provider ? $current->apiKey : null;
 
         Setting::set(
             'ai',

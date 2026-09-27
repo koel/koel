@@ -35,4 +35,15 @@ describe('aiSettingGroup.vue', () => {
 
     expect(updateMock).toHaveBeenCalledWith({ enabled: false, provider: 'openai' })
   })
+
+  it('asks for a new key when the provider changes', async () => {
+    settingStore.state.ai = { enabled: true, provider: 'openai', has_api_key: true }
+    h.render(Component)
+
+    expect((screen.getByTestId('input') as HTMLInputElement).required).toBe(false)
+
+    await h.user.selectOptions(screen.getByRole('combobox'), 'anthropic')
+
+    expect((screen.getByTestId('input') as HTMLInputElement).required).toBe(true)
+  })
 })

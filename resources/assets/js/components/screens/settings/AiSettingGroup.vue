@@ -19,12 +19,12 @@
         <FormRow>
           <template #label>API key</template>
           <template #help>
-            <span v-if="hasApiKey">A key is saved. Leave this empty to keep it.</span>
+            <span v-if="canKeepApiKey">A key is saved. Leave this empty to keep it.</span>
             <span v-else>Your provider bills the assistant's use to this key.</span>
           </template>
           <PasswordField
             v-model="data.api_key"
-            :required="data.enabled && !hasApiKey"
+            :required="data.enabled && !canKeepApiKey"
             autocomplete="off"
             class="md:w-2/3"
             name="api_key"
@@ -62,7 +62,6 @@ const PROVIDERS: Record<AiProvider, string> = {
 const { showConfirmDialog } = useDialogBox()
 
 const current = computed(() => settingStore.state.ai)
-const hasApiKey = computed(() => Boolean(current.value?.has_api_key))
 
 const { data, loading, handleSubmit } = useForm<{ enabled: boolean; provider: AiProvider; api_key: string }>({
   initialValues: {
@@ -80,4 +79,6 @@ const { data, loading, handleSubmit } = useForm<{ enabled: boolean; provider: Ai
     }
   },
 })
+
+const canKeepApiKey = computed(() => Boolean(current.value?.has_api_key) && data.provider === current.value?.provider)
 </script>

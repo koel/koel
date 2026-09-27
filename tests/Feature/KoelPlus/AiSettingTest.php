@@ -7,6 +7,8 @@ use App\Models\Organization;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\SettingService;
+use App\Values\AiSettings;
+use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -15,12 +17,12 @@ use function Tests\create_user;
 
 class AiSettingTest extends PlusTestCase
 {
-    private function updateAiSettings(User $user, array $data)
+    private function updateAiSettings(User $user, array $data): TestResponse
     {
         return $this->putAs('api/settings/ai', $data, $user);
     }
 
-    private static function getAiSettings(Organization $organization)
+    private static function getAiSettings(Organization $organization): AiSettings
     {
         return app(SettingService::class)->getAiSettings($organization);
     }
@@ -88,6 +90,35 @@ class AiSettingTest extends PlusTestCase
         $this->updateAiSettings($admin, ['enabled' => true, 'provider' => 'anthropic'])->assertJsonValidationErrors(
             'api_key',
         );
+    }
+
+    #[Test]
+    public function dropTheStoredKeyWhenTheProviderChangesWithoutANewOne(): void
+    {
+        $admin = create_admin();
+        app(SettingService::class)->updateAiSettings($admin->organization, true, AiProvider::OpenAi, 'sk-test');
+
+        $this->updateAiSettings($admin, ['enabled' => false, 'provider' => 'anthropic'])->assertOk();
+
+        $settings = self::getAiSettings($admin->organization);
+
+        self::assertSame(AiProvider::Anthropic, $settings->provider);
+        self::assertNull($settings->apiKey);
+    }
+
+    #[Test]
+    public function treatAKeyThatCannotBeDecryptedAsMissing(): void
+    {
+        $admin = create_admin();
+        Setting::set(
+            'ai',
+            ['enabled' => true, 'provider' => 'openai', 'api_key' => 'not-encrypted'],
+            $admin->organization,
+        );
+
+        $this->getAs('api/data', $admin)->assertOk()->assertJsonPath('uses_ai', false);
+
+        self::assertNull(self::getAiSettings($admin->organization)->apiKey);
     }
 
     #[Test]
