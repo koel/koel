@@ -1,7 +1,9 @@
 import { screen } from '@testing-library/vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { MessageToasterStub } from '@/__tests__/stubs'
 import { zipDownloadService } from '@/services/zipDownloadService'
+import { eventBus } from '@/utils/eventBus'
 import Component from './ZipDownloadButton.vue'
 
 const mockShowConfirmDialog = vi.fn()
@@ -44,6 +46,15 @@ describe('zipDownloadButton.vue', () => {
     await vi.advanceTimersByTimeAsync(3_000)
     expect(dispatchedTypes()).toContain('mouseleave')
     vi.useRealTimers()
+  })
+
+  it('announces a saved archive', () => {
+    const toastMock = h.mock(MessageToasterStub.value, 'success')
+    h.render(Component)
+
+    eventBus.emit('DOWNLOAD_ARCHIVE_SAVED')
+
+    expect(toastMock).toHaveBeenCalled()
   })
 
   it('cancels after the user confirms', async () => {

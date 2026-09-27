@@ -31,6 +31,8 @@
 import { FileArchiveIcon } from 'lucide-vue-next'
 import { computed, nextTick, onBeforeUnmount, useTemplateRef, watch } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { eventBus } from '@/utils/eventBus'
 import { zipDownloadService } from '@/services/zipDownloadService'
 
 import ProgressRing from '@/components/ui/ProgressRing.vue'
@@ -74,7 +76,15 @@ watch(
   (status, previousStatus) => status === 'zipping' && previousStatus !== 'zipping' && showTooltipBriefly(),
 )
 
-onBeforeUnmount(clearHideTooltipTimer)
+const { toastSuccess } = useMessageToaster()
+const announceSavedArchive = () => toastSuccess('Songs downloaded.')
+
+eventBus.on('DOWNLOAD_ARCHIVE_SAVED', announceSavedArchive)
+
+onBeforeUnmount(() => {
+  clearHideTooltipTimer()
+  eventBus.off('DOWNLOAD_ARCHIVE_SAVED', announceSavedArchive)
+})
 const { showConfirmDialog } = useDialogBox()
 
 const progress = computed(() => {

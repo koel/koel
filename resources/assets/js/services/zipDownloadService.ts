@@ -1,6 +1,7 @@
 import type { ZipWriter } from '@zip.js/zip.js'
 import { reactive } from 'vue'
 import { authService } from '@/services/authService'
+import { eventBus } from '@/utils/eventBus'
 
 export class ZipTooLargeError extends Error {}
 export class ZipUnsupportedError extends Error {}
@@ -208,6 +209,7 @@ export const zipDownloadService = {
 
     this.state.fileUrl = null
     this.state.status = 'idle'
+    eventBus.emit('DOWNLOAD_ARCHIVE_SAVED')
     this.revokeTimer = window.setTimeout(() => {
       URL.revokeObjectURL(fileUrl)
       this.revokeTimer = null
