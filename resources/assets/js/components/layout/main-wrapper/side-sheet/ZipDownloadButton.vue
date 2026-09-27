@@ -10,10 +10,11 @@
   >
     <ProgressRing
       :class="state.status === 'failed' ? 'text-k-danger' : 'text-k-highlight'"
+      :thickness="1.25"
       :value="progress"
       class="absolute inset-0 size-full"
     />
-    <FileArchiveIcon :size="18" />
+    <FileArchiveIcon :size="14" />
   </SideSheetButton>
 </template>
 

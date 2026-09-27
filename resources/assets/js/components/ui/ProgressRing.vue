@@ -7,7 +7,7 @@
     role="progressbar"
     viewBox="0 0 24 24"
   >
-    <circle class="stroke-k-fg-20" cx="12" cy="12" fill="none" :r="RADIUS" stroke-width="3" />
+    <circle :stroke-width="thickness" class="stroke-k-fg-20" cx="12" cy="12" fill="none" :r="RADIUS" />
     <circle
       :r="RADIUS"
       :stroke-dasharray="CIRCUMFERENCE"
@@ -16,8 +16,8 @@
       cx="12"
       cy="12"
       fill="none"
+      :stroke-width="thickness"
       stroke-linecap="round"
-      stroke-width="3"
     />
   </svg>
 </template>
@@ -26,5 +26,5 @@
 const RADIUS = 9
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
-defineProps<{ value: number }>()
+withDefaults(defineProps<{ value: number; thickness?: number }>(), { thickness: 3 })
 </script>
