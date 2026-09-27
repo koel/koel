@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 use Tests\PlusTestCase;
 
 use function Tests\create_admin;
+use function Tests\create_manager;
 use function Tests\create_user;
 
 class AiSettingTest extends PlusTestCase
@@ -154,6 +155,26 @@ class AiSettingTest extends PlusTestCase
             'provider' => 'openai',
             'api_key' => 'sk-test',
         ])->assertForbidden();
+    }
+
+    #[Test]
+    public function refuseAManager(): void
+    {
+        $this->updateAiSettings(create_manager(), [
+            'enabled' => true,
+            'provider' => 'openai',
+            'api_key' => 'sk-test',
+        ])->assertForbidden();
+    }
+
+    #[Test]
+    public function keepTheSettingsFromAnyoneButAnAdmin(): void
+    {
+        $manager = create_manager();
+        app(SettingService::class)->updateAiSettings($manager->organization, true, Lab::OpenAI, 'sk-test');
+
+        $this->getAs('api/data', $manager)->assertJsonMissingPath('settings.ai');
+        $this->getAs('api/data', create_user())->assertJsonMissingPath('settings.ai');
     }
 
     #[Test]
