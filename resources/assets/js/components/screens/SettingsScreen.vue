@@ -8,6 +8,7 @@
       <TabList>
         <TabButton
           v-for="tab in tabs"
+          :id="`settingsTab-${tab.id}`"
           :key="tab.id"
           :aria-controls="`settingsPane-${tab.id}`"
           :data-testid="`settings-tab-${tab.id}`"
@@ -20,11 +21,13 @@
 
       <TabPanelContainer>
         <TabPanel
-          v-if="currentTab"
-          :id="`settingsPane-${currentTab.id}`"
-          :aria-labelledby="`settingsPane-${currentTab.id}`"
+          v-for="tab in tabs"
+          v-show="currentTabId === tab.id"
+          :id="`settingsPane-${tab.id}`"
+          :key="tab.id"
+          :aria-labelledby="`settingsTab-${tab.id}`"
         >
-          <component :is="currentTab.component" v-bind="currentTab.props" />
+          <component :is="tab.component" v-bind="tab.props" />
         </TabPanel>
       </TabPanelContainer>
     </Tabs>
@@ -33,7 +36,7 @@
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
 import { commonStore } from '@/stores/commonStore'
@@ -76,5 +79,4 @@ const tabs = applyFilters<SettingsTab[]>(Filter.SETTINGS_TABS, [
 ])
 
 const currentTabId = ref(tabs[0]?.id)
-const currentTab = computed(() => tabs.find(tab => tab.id === currentTabId.value))
 </script>

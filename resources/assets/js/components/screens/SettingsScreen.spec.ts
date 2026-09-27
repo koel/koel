@@ -54,12 +54,22 @@ describe('settingsScreen.vue', () => {
     screen.getByTestId('services-setting-group')
   })
 
-  it('shows the picked tab', async () => {
+  it('shows the picked tab and keeps the others mounted', async () => {
     renderComponent()
 
     await h.user.click(screen.getByTestId('settings-tab-services'))
 
-    screen.getByTestId('services-setting-group')
-    expect(screen.queryByTestId('media-path-setting-group')).toBeNull()
+    const panelOf = (testId: string) => screen.getByTestId(testId).closest<HTMLElement>('[role=tabpanel]')
+
+    expect(panelOf('services-setting-group')?.style.display).toBe('')
+    expect(panelOf('media-path-setting-group')?.style.display).toBe('none')
+  })
+
+  it('labels each panel with its tab', () => {
+    renderComponent()
+
+    expect(
+      screen.getByTestId('media-path-setting-group').closest('[role=tabpanel]')?.getAttribute('aria-labelledby'),
+    ).toBe(screen.getByTestId('settings-tab-library').id)
   })
 })
