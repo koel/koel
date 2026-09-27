@@ -23,7 +23,7 @@
         />
       </FormRow>
 
-      <template #footer>
+      <template v-if="storageDriver === 'local'" #footer>
         <Btn data-testid="submit" type="submit">Save &amp; Scan</Btn>
       </template>
     </SettingGroup>
