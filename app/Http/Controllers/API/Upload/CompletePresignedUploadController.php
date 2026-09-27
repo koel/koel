@@ -20,7 +20,6 @@ use App\Services\SongStorages\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[DisabledInDemo]
@@ -60,7 +59,7 @@ class CompletePresignedUploadController extends Controller
         );
 
         abort_unless(
-            Cache::add(HandlePresignedSongUploadJob::claimKeyFor($location), true, now()->addHour()),
+            HandlePresignedSongUploadJob::makeProcessingLock($location)->get(),
             Response::HTTP_CONFLICT,
             'This upload is already being processed.',
         );
