@@ -15,7 +15,12 @@
     <form v-else data-testid="listenbrainz-form" @submit.prevent="handleSubmit">
       <p>
         Connect your ListenBrainz account to submit your listens as you play. Grab your user token from your
-        <a class="text-k-highlight" href="https://listenbrainz.org/settings/" rel="noopener" target="_blank">
+        <a
+          class="text-k-highlight hover:text-k-fg"
+          href="https://listenbrainz.org/settings/"
+          rel="noopener"
+          target="_blank"
+        >
           ListenBrainz settings
         </a>
         and paste it below.

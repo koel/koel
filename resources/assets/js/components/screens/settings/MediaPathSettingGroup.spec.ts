@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { settingStore } from '@/stores/settingStore'
-import { commonStore } from '@/stores/commonStore'
 import Router from '@/router'
 import { screen, waitFor } from '@testing-library/vue'
 import { DialogBoxStub } from '@/__tests__/stubs'
@@ -46,12 +45,5 @@ describe('mediaPathSettingGroup.vue', () => {
       expect(goMock).not.toHaveBeenCalled()
       expect(confirmMock).toHaveBeenCalled()
     })
-  })
-
-  it('offers nothing to save when the songs are not stored locally', () => {
-    commonStore.state.storage_driver = 's3'
-    renderComponent()
-
-    expect(screen.queryByTestId('submit')).toBeNull()
   })
 })

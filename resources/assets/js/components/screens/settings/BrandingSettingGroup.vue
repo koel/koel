@@ -1,24 +1,26 @@
 <template>
-  <form @submit.prevent="handleSubmit">
+  <form class="md:w-1/2" @submit.prevent="handleSubmit">
     <SettingGroup>
-      <template #title>Branding</template>
+      <div class="flex flex-col gap-2">
+        <section class="flex flex-col gap-3">
+          <div>
+            <label class="text-k-fg" for="brandingName">App name</label>
+            <p class="text-[.95rem] text-k-fg-50">Shown in the browser tab and around the app.</p>
+          </div>
+          <TextInput id="brandingName" v-model="data.name" name="name" placeholder="Koel" />
+        </section>
 
-      <div class="space-y-4">
-        <FormRow>
-          <template #label>App name</template>
-          <TextInput v-model="data.name" class="md:w-2/3" name="name" placeholder="Koel" />
-        </FormRow>
         <BrandingImageField v-model="data.logo" :default="koelBirdLogo" name="logo">
           <template #label>App logo</template>
-          <template #help>To be used as the favicon, app icon, and logo throughout the app.</template>
+          <template #help>Favicon, app icon and logo.</template>
         </BrandingImageField>
+
         <BrandingImageField v-model="data.cover" :default="koelBirdCover" name="cover">
           <template #label>App cover</template>
-          <template #help>
-            To be used as the placeholder if no album art, artist image, playlist cover etc. is available.
-          </template>
+          <template #help>For albums, artists and playlists without an image.</template>
         </BrandingImageField>
       </div>
+
       <template #footer>
         <Btn type="submit" :disabled="loading">Save</Btn>
       </template>
@@ -34,7 +36,6 @@ import { forceReloadWindow } from '@/utils/helpers'
 import { useDialogBox } from '@/composables/useDialogBox'
 
 import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
-import FormRow from '@/components/ui/form/FormRow.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import BrandingImageField from '@/components/screens/settings/BrandingImageField.vue'

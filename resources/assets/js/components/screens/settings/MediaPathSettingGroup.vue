@@ -1,11 +1,7 @@
 <template>
-  <form @submit.prevent="confirmThenSave">
+  <form class="md:w-1/2" @submit.prevent="confirmThenSave">
     <SettingGroup>
-      <template #title>Media Path</template>
-      <p v-if="storageDriver !== 'local'">
-        Since you’re not using the local storage, there’s no need to set a media path.
-      </p>
-      <FormRow v-else>
+      <FormRow>
         <template #help>
           <span id="mediaPathHelp">
             The <em>absolute</em> path to the server directory containing your media. Koel will scan this directory for
@@ -17,13 +13,12 @@
         <TextInput
           v-model="mediaPath"
           aria-describedby="mediaPathHelp"
-          class="md:w-2/3"
           name="media_path"
           placeholder="/path/to/your/music"
         />
       </FormRow>
 
-      <template v-if="storageDriver === 'local'" #footer>
+      <template #footer>
         <Btn data-testid="submit" type="submit">Save &amp; Scan</Btn>
       </template>
     </SettingGroup>
@@ -32,7 +27,6 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { commonStore } from '@/stores/commonStore'
 import { settingStore } from '@/stores/settingStore'
 import { useRouter } from '@/composables/useRouter'
 import { useDialogBox } from '@/composables/useDialogBox'
@@ -50,17 +44,12 @@ const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
 const { showOverlay, hideOverlay } = useOverlay()
 
-const storageDriver = ref(commonStore.state.storage_driver)
 const mediaPath = ref(settingStore.state.media_path)
 const originalMediaPath = mediaPath.value
 
 const shouldWarn = computed(() => {
   // Warn the user if the media path is not empty and about to change.
   if (!originalMediaPath || !mediaPath.value) {
-    return false
-  }
-
-  if (storageDriver.value !== 'local') {
     return false
   }
 
