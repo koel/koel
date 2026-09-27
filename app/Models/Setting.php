@@ -39,14 +39,6 @@ class Setting extends Model implements AuditableContract
     }
 
     /**
-     * @param ?Organization $organization the organization the setting belongs to, or null for an install-wide one
-     */
-    public static function forget(string $key, ?Organization $organization = null): void
-    {
-        self::query()->where('key', $key)->where('organization_id', $organization?->id)->delete();
-    }
-
-    /**
      * Set a setting (no pun) value.
      *
      * @param array|string $key the key of the setting, or an associative array of settings,

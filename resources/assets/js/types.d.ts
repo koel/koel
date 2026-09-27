@@ -502,11 +502,9 @@ type CurrentUser = User & {
 type AiProvider = 'openai' | 'anthropic' | 'gemini'
 
 interface AiSettings {
-  source: 'organization' | 'environment'
   enabled: boolean
-  provider: string | null
+  provider: AiProvider | null
   has_api_key: boolean
-  server_setup_usable: boolean
 }
 
 interface Settings {

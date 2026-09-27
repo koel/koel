@@ -6,7 +6,6 @@ use App\Enums\Acl\Permission;
 use App\Facades\License;
 use App\Hooks\Filter;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AiSettingsResource;
 use App\Http\Resources\PlaylistFolderResource;
 use App\Http\Resources\PlaylistResource;
 use App\Http\Resources\QueueStateResource;
@@ -60,7 +59,7 @@ class FetchInitialDataController extends Controller
                 !$managesSettings => [],
                 License::isPlus() => [
                     ...$settingRepository->getInstallWideAsKeyValueArray(),
-                    'ai' => AiSettingsResource::make($aiSettings, $settingService->getServerAiSettings()),
+                    'ai' => $aiSettings->toArrayWithoutApiKey(),
                 ],
                 default => $settingRepository->getInstallWideAsKeyValueArray(),
             },

@@ -7,7 +7,6 @@ use App\Enums\Acl\Permission;
 use App\Enums\AiProvider;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Settings\UpdateAiSettingsRequest;
-use App\Http\Resources\AiSettingsResource;
 use App\Models\User;
 use App\Services\SettingService;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -33,9 +32,8 @@ class UpdateAiSettingsController extends Controller
             $request->api_key ?: null,
         );
 
-        return AiSettingsResource::make(
-            $this->settingService->getAiSettings($this->user->organization),
-            $this->settingService->getServerAiSettings(),
+        return response()->json(
+            $this->settingService->getAiSettings($this->user->organization)->toArrayWithoutApiKey(),
         );
     }
 }

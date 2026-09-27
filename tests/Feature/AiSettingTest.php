@@ -23,12 +23,6 @@ class AiSettingTest extends TestCase
     }
 
     #[Test]
-    public function removalNotAccessibleInCommunityLicense(): void
-    {
-        $this->deleteAs('api/settings/ai', [], create_admin())->assertNotFound();
-    }
-
-    #[Test]
     public function keepTheAssistantOffInCommunityLicenseEvenWithAKey(): void
     {
         KoelAssistant::fake();

@@ -3,14 +3,12 @@
 namespace App\Services;
 
 use App\Enums\AiProvider;
-use App\Enums\AiSettingsSource;
 use App\Facades\License;
 use App\Models\Organization;
 use App\Models\Setting;
 use App\Services\Image\ImageStorage;
 use App\Values\AiSettings;
 use App\Values\Branding;
-use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Crypt;
@@ -19,17 +17,8 @@ use SensitiveParameter;
 
 class SettingService
 {
-    /**
-     * @param array<string, array<string, mixed>> $aiProviders
-     */
     public function __construct(
         private readonly ImageStorage $imageStorage,
-        #[Config('koel.ai.enabled')]
-        private readonly bool $aiEnabledInEnvironment = false,
-        #[Config('ai.default')]
-        private readonly ?string $defaultAiProvider = null,
-        #[Config('ai.providers')]
-        private readonly array $aiProviders = [],
     ) {}
 
     public function getBranding(): Branding
@@ -41,36 +30,14 @@ class SettingService
 
     public function getAiSettings(Organization $organization): AiSettings
     {
-        $stored = Setting::get('ai', $organization);
-
-        if ($stored === null) {
-            return $this->getServerAiSettings();
-        }
-
-        $stored = Arr::wrap($stored);
+        $stored = Arr::wrap(Setting::get('ai', $organization));
         $encryptedApiKey = Arr::get($stored, 'api_key');
 
         return AiSettings::make(
-            source: AiSettingsSource::Organization,
             enabled: (bool) Arr::get($stored, 'enabled'),
-            provider: Arr::get($stored, 'provider'),
+            provider: AiProvider::tryFrom((string) Arr::get($stored, 'provider')),
             apiKey: $encryptedApiKey ? self::decryptApiKey($encryptedApiKey) : null,
         );
-    }
-
-    public function getServerAiSettings(): AiSettings
-    {
-        return AiSettings::make(
-            source: AiSettingsSource::Environment,
-            enabled: $this->aiEnabledInEnvironment,
-            provider: $this->defaultAiProvider,
-            apiKey: Arr::get($this->aiProviders, "{$this->defaultAiProvider}.key"),
-        );
-    }
-
-    public function removeAiSettings(Organization $organization): void
-    {
-        Setting::forget('ai', $organization);
     }
 
     private static function decryptApiKey(#[SensitiveParameter] string $encryptedApiKey): ?string
@@ -85,7 +52,7 @@ class SettingService
     }
 
     /**
-     * @param ?string $apiKey a new key, or null to keep the organization's key for the same provider
+     * @param ?string $apiKey a new key, or null to keep the stored one; a changed provider drops the stored key
      */
     public function updateAiSettings(
         Organization $organization,
@@ -95,10 +62,7 @@ class SettingService
         ?string $apiKey,
     ): void {
         $current = $this->getAiSettings($organization);
-
-        if ($apiKey === null && $current->hasOrganizationKeyFor($provider->value)) {
-            $apiKey = $current->apiKey;
-        }
+        $apiKey ??= $current->provider === $provider ? $current->apiKey : null;
 
         Setting::set(
             'ai',
