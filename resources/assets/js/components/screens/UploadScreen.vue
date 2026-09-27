@@ -13,7 +13,7 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
-      <div v-if="showsTabs" :class="{ 'flex-1': !showsDropPrompt }" class="min-h-0 pb-4 flex flex-col gap-4">
+      <div v-if="showsTabs" :class="{ 'flex-1': !showsDropPrompt }" class="min-h-0 flex flex-col gap-4">
         <UploadSummary v-if="files.length" class="mb-4" />
 
         <Tabs class="-mx-6 flex-1 min-h-0">
@@ -34,7 +34,7 @@
             </TabButton>
           </TabList>
 
-          <TabPanelContainer class="flex-1 min-h-0 flex flex-col">
+          <TabPanelContainer class="flex-1 min-h-0 flex flex-col pb-0">
             <TabPanel :id="`uploadPane-${currentTab}`" class="flex-1 min-h-0 flex flex-col gap-4">
               <DuplicateUploadList v-if="currentTab === 'duplicated'" :songs="duplicatedSongs" class="flex-1 min-h-0" />
 
