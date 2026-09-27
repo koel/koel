@@ -96,7 +96,7 @@
 
 <script lang="ts" setup>
 import { faUpload, faWarning } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref, toRef, onMounted } from 'vue'
+import { computed, defineAsyncComponent, ref, toRef, onMounted, watch } from 'vue'
 
 import { isDirectoryReadingSupported as canDropFolders } from '@/utils/supports'
 import { acceptedExtensions } from '@/utils/mediaHelper'
@@ -198,6 +198,15 @@ const onDrop = async (event: DragEvent) => {
 }
 
 const retryAll = () => uploadService.retryAll()
+
+watch(
+  () => filesByTab.value.errored.length,
+  erroredCount => {
+    if (!erroredCount && currentTab.value === 'errored') {
+      currentTab.value = 'in-progress'
+    }
+  },
+)
 const removeFailedEntries = () => uploadService.removeFailed()
 
 onMounted(async () => {

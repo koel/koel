@@ -145,6 +145,19 @@ describe('uploadScreen.vue', () => {
     expect(screen.getAllByTestId('upload-item').length).toBeLessThan(100)
   })
 
+  it('switches to In Progress once nothing is left in Errored', async () => {
+    uploadService.state.files = [
+      { id: '1', file: new File([], 'bad.mp3'), status: 'Errored', name: 'bad.mp3', progress: 0 },
+    ]
+
+    h.render(Component)
+
+    await h.user.click(await screen.findByTestId('upload-tab-errored'))
+    uploadService.state.files[0].status = 'Ready'
+
+    await waitFor(() => expect(screen.getByTestId('upload-tab-in-progress').getAttribute('aria-selected')).toBe('true'))
+  })
+
   it('offers the drop prompt while nothing is in progress', async () => {
     uploadService.state.files = [
       { id: '1', file: new File([], 'done.mp3'), status: 'Uploaded', name: 'done.mp3', progress: 100 },
