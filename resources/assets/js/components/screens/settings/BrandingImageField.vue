@@ -1,5 +1,5 @@
 <template>
-  <fieldset class="flex items-center gap-4 py-5 last:pb-0">
+  <fieldset class="flex items-center gap-4 py-5">
     <img :src="model" alt="" class="size-[80px] shrink-0 rounded-md bg-k-fg-5 object-contain p-1" />
 
     <div class="min-w-0 flex-1">
