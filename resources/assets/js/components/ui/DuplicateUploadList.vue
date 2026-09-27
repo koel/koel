@@ -3,7 +3,7 @@
     <DuplicateUploadItem v-for="upload in songs" :key="upload.id" :upload />
 
     <footer class="flex justify-end gap-2">
-      <Btn size="small" variant="highlight" @click="confirmDiscardAll">Discard All</Btn>
+      <Btn size="small" variant="destructive" @click="confirmDiscardAll">Discard All</Btn>
       <Btn size="small" variant="success" @click="keepAll">Keep All</Btn>
     </footer>
   </section>
