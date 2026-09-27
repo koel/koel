@@ -14,4 +14,6 @@ interface IssuesPresignedUploadUrls
     public function locationFromKey(string $key): string;
 
     public function sizeOfUpload(string $key): int;
+
+    public function moveUploadOutOfPending(string $key): void;
 }

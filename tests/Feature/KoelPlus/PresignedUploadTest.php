@@ -42,7 +42,7 @@ class PresignedUploadTest extends PlusTestCase
             ->mock(S3UploadUrlSigner::class)
             ->expects('sign')
             ->with(
-                Mockery::on(static fn (string $key): bool => str_starts_with($key, "{$user->public_id}__")),
+                Mockery::on(static fn (string $key): bool => str_starts_with($key, "pending/{$user->public_id}__")),
                 1234,
                 Mockery::any(),
             )
@@ -99,7 +99,7 @@ class PresignedUploadTest extends PlusTestCase
     public function refusesToCompleteAnObjectLargerThanTheUploadLimit(): void
     {
         $user = create_user();
-        $key = "{$user->public_id}__random__song.mp3";
+        $key = "pending/{$user->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
 
         $storage = Mockery::mock(S3CompatibleStorage::class . '[sizeOfUpload]', [
@@ -120,7 +120,7 @@ class PresignedUploadTest extends PlusTestCase
     public function completeAnUpload(): void
     {
         $user = create_user();
-        $key = "{$user->public_id}__random__song.mp3";
+        $key = "pending/{$user->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
         $this->fetchesTheObjectAsALocalCopy();
 
@@ -131,7 +131,9 @@ class PresignedUploadTest extends PlusTestCase
 
         /** @var Song $song */
         $song = Song::query()->latest()->first();
-        self::assertSame("s3://koel/$key", $song->path);
+        self::assertSame("s3://koel/{$user->public_id}__random__song.mp3", $song->path);
+        Storage::disk('s3')->assertMissing($key);
+        Storage::disk('s3')->assertExists("{$user->public_id}__random__song.mp3");
         self::assertSame($user->id, $song->owner_id);
     }
 
@@ -160,7 +162,7 @@ class PresignedUploadTest extends PlusTestCase
         Event::fake(SongUploadResponse::class);
 
         $user = create_user();
-        $key = "{$user->public_id}__random__song.mp3";
+        $key = "pending/{$user->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
         $this->fetchesTheObjectAsALocalCopy();
 
@@ -176,24 +178,28 @@ class PresignedUploadTest extends PlusTestCase
     public function refusesToCompleteTheSameUploadTwice(): void
     {
         $user = create_user();
-        $key = "{$user->public_id}__random__song.mp3";
+        $key = "pending/{$user->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
         $this->fetchesTheObjectAsALocalCopy();
 
         $this->postAs('api/upload/complete', ['key' => $key], $user)->assertOk();
         $this->postAs('api/upload/complete', ['key' => $key], $user)->assertConflict();
 
-        self::assertSame(1, Song::query()->where('path', "s3://koel/$key")->count());
+        self::assertSame(1, Song::query()->where('path', "s3://koel/{$user->public_id}__random__song.mp3")->count());
     }
 
     #[Test]
     public function refusesASecondCompletionWhileTheFirstIsStillQueued(): void
     {
         $user = create_user();
-        $key = "{$user->public_id}__random__song.mp3";
+        $key = "pending/{$user->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
 
-        Cache::add(HandlePresignedSongUploadJob::claimKeyFor("s3://koel/$key"), true, now()->addHour());
+        Cache::add(
+            HandlePresignedSongUploadJob::claimKeyFor("s3://koel/{$user->public_id}__random__song.mp3"),
+            true,
+            now()->addHour(),
+        );
 
         $this->postAs('api/upload/complete', ['key' => $key], $user)->assertConflict();
     }
@@ -202,7 +208,7 @@ class PresignedUploadTest extends PlusTestCase
     public function cannotCompleteSomeoneElsesUpload(): void
     {
         $someoneElse = create_user();
-        $key = "{$someoneElse->public_id}__random__song.mp3";
+        $key = "pending/{$someoneElse->public_id}__random__song.mp3";
         Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
 
         $this->postAs('api/upload/complete', ['key' => $key], create_user())->assertForbidden();
