@@ -5,7 +5,7 @@
     >
       {{ upload.song_title ? `${upload.artist_name} — ${upload.song_title}` : upload.filename }}
     </span>
-    <span class="self-center shrink-0 px-4 text-k-fg-70"
+    <span class="self-center shrink-0 px-4 text-k-fg-50"
       >Uploaded {{ new Date(upload.created_at).toLocaleDateString() }}</span
     >
     <Btn class="h-full px-4!" icon-only title="Discard" unrounded variant="destructive" @click="confirmDiscard">
