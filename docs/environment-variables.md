@@ -114,7 +114,6 @@ Required when `STORAGE_DRIVER=webdav`.
 | Variable | Description | Default |
 |---|---|---|
 | `ALLOW_DOWNLOAD` | Whether to allow song downloading. | `true` |
-| `DOWNLOAD_LIMIT` | The maximum number of songs allowed in a single download. `0` means unlimited. Single-song downloads are always allowed. | `0` |
 
 ## Service Integrations
 

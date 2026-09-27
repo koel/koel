@@ -97,13 +97,6 @@ the server does no extra work. Click "Save" when the zip file is ready. A single
 If your songs are stored on S3 or another cloud storage, the bucket's CORS configuration must allow `GET` requests from
 Koel's domain, which streaming needs anyway. See [Cloud Storage Support](../plus/cloud-storage-support).
 
-### Download Limit
-
-By default, there is no limit to the number of songs that can be downloaded at once.
-To set one, use the `DOWNLOAD_LIMIT` environment variable.
-For example, setting `DOWNLOAD_LIMIT=100` will prevent downloading more than 100 songs at once.
-A value of `0` (the default) means no limit. Single-song downloads are always allowed regardless of this setting.
-
 ## Deleting Songs
 
 As a user with `manage songs` permission (Community edition) or the song owner (Koel Plus), you can delete a song by

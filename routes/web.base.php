@@ -5,7 +5,7 @@ use App\Http\Controllers\AppManifestController;
 use App\Http\Controllers\AuthorizeDropboxController;
 use App\Http\Controllers\Demo\IndexController as DemoIndexController;
 use App\Http\Controllers\Demo\NewSessionController;
-use App\Http\Controllers\Download\DownloadSongController;
+use App\Http\Controllers\DownloadSongController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LastfmController;
 use App\Http\Controllers\PlayController;
