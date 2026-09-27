@@ -28,6 +28,7 @@ use App\Services\Integrations\YouTubeService;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\MediaBrowser;
 use App\Services\QueueService;
+use App\Services\SettingService;
 use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -43,17 +44,25 @@ class FetchInitialDataController extends Controller
         QueueService $queueService,
         ThemeRepository $themeRepository,
         LicenseServiceInterface $licenseService,
+        SettingService $settingService,
         Authenticatable $user,
     ) {
         $licenseStatus = $licenseService->getStatus();
+        $aiSettings = $settingService->getAiSettings($user->organization);
+        $managesSettings = $user->hasPermissionTo(Permission::MANAGE_SETTINGS);
         $theme = $licenseStatus->isValid()
             ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
             : null;
 
         return response()->json(apply_filters(Filter::INITIAL_DATA_FETCHED, [
-            'settings' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
-                ? $settingRepository->getAllAsKeyValueArray()
-                : [],
+            'settings' => match (true) {
+                !$managesSettings => [],
+                License::isPlus() => [
+                    ...$settingRepository->getInstallWideAsKeyValueArray(),
+                    'ai' => $aiSettings->toArrayWithoutApiKey(),
+                ],
+                default => $settingRepository->getInstallWideAsKeyValueArray(),
+            },
             'playlists' => PlaylistResource::collection($playlistRepository->getAllAccessibleByUser($user)),
             'playlist_folders' => PlaylistFolderResource::collection($user->playlistFolders),
             'current_user' => UserResource::make($user),
@@ -67,7 +76,7 @@ class FetchInitialDataController extends Controller
             'allows_download' => config('koel.download.allow'),
             'download_limit' => (int) config('koel.download.limit'),
             'uses_media_browser' => MediaBrowser::used(),
-            'uses_ai' => License::isPlus() && config('koel.ai.enabled'),
+            'uses_ai' => License::isPlus() && $aiSettings->isUsable(),
             'allows_embedding' => (bool) config('koel.embed.enabled'),
             'uses_podcasts' => (bool) config('koel.podcasts.enabled'),
             'uses_radio' => (bool) config('koel.radio.enabled'),
@@ -77,7 +86,7 @@ class FetchInitialDataController extends Controller
                 config('koel.streaming.ffmpeg_path') && is_executable(config('koel.streaming.ffmpeg_path')),
             'cdn_url' => static_url(),
             'current_version' => koel_version(),
-            'latest_version' => $user->hasPermissionTo(Permission::MANAGE_SETTINGS)
+            'latest_version' => $managesSettings
                 ? $applicationInformationService->getLatestVersionNumber()
                 : koel_version(),
             'song_count' => $songRepository->countSongs(),

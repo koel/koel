@@ -26,6 +26,10 @@
         <env name="BROADCAST_CONNECTION" value="log"/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
+        <env name="AI_ENABLED" value="false"/>
+        <env name="OPENAI_API_KEY" value=""/>
+        <env name="ANTHROPIC_API_KEY" value=""/>
+        <env name="GEMINI_API_KEY" value=""/>
         <env name="LASTFM_API_KEY" value="foo"/>
         <env name="LASTFM_API_SECRET" value="bar"/>
         <!-- Spotify integration during tests must be opt-in -->

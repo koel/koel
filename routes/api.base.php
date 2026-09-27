@@ -78,6 +78,7 @@ use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
 use App\Http\Controllers\API\SearchYouTubeController;
 use App\Http\Controllers\API\SetLastfmSessionKeyController;
+use App\Http\Controllers\API\Settings\UpdateAiSettingsController;
 use App\Http\Controllers\API\Settings\UpdateBrandingController;
 use App\Http\Controllers\API\Settings\UpdateMediaPathController;
 use App\Http\Controllers\API\SongController;
@@ -146,6 +147,7 @@ Route::prefix('api')
 
             Route::put('settings/media-path', UpdateMediaPathController::class);
             Route::put('settings/branding', UpdateBrandingController::class);
+            Route::put('settings/ai', UpdateAiSettingsController::class);
 
             Route::get('download/check', CheckDownloadableCountController::class);
 
