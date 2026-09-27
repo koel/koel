@@ -5,7 +5,13 @@
         Upload Media
 
         <template #controls>
-          <Btn v-if="hasFinishedFiles" data-testid="upload-clear-finished-btn" variant="ghost" @click="clearFinished">
+          <Btn
+            v-if="hasFinishedFiles"
+            bordered
+            data-testid="upload-clear-finished-btn"
+            variant="ghost"
+            @click="clearFinished"
+          >
             Clear Finished
           </Btn>
           <BtnGroup v-if="hasUploadFailures" uppercase>
