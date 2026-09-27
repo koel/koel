@@ -59,19 +59,19 @@ const request = <T>(
     xhr.upload.addEventListener('progress', onUploadProgress)
 
     xhr.addEventListener('load', () => {
-      let responseData: unknown
+      let data: unknown
 
       try {
-        responseData = JSON.parse(xhr.responseText)
+        data = JSON.parse(xhr.responseText)
       } catch {
-        responseData = undefined
+        data = undefined
       }
 
       if (xhr.status >= 200 && xhr.status < 300) {
-        resolve({ status: xhr.status, data: responseData as T })
+        resolve({ status: xhr.status, data: data as T })
       } else {
         const error = Object.assign(new Error(`Upload failed with status ${xhr.status}`), {
-          responseData,
+          data,
           status: xhr.status,
           statusText: xhr.statusText,
         })

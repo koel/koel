@@ -280,7 +280,7 @@ describe('uploadService', () => {
 
   it('handles upload error with message', async () => {
     const error = Object.assign(new Error('Upload failed with status 413'), {
-      responseData: { message: 'File too large' },
+      data: { message: 'File too large' },
     })
 
     mockPostWithProgressRejection(error)
@@ -304,10 +304,10 @@ describe('uploadService', () => {
     expect(file.message).toBe('Server error.')
   })
 
-  it('shows a generic server error when responseData cannot be parsed', async () => {
+  it('shows a generic server error when the response cannot be parsed', async () => {
     const error = Object.assign(new Error('Upload failed with status 413'), {
       status: 413,
-      responseData: undefined,
+      data: undefined,
     })
 
     mockPostWithProgressRejection(error)

@@ -1,6 +1,6 @@
 export class DownloadLimitExceededError extends Error {}
 
-import { isHttpError } from '@/services/http'
+import { getHttpErrorBody, isHttpError } from '@/services/http'
 import { authService } from '@/services/authService'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
@@ -53,7 +53,7 @@ export const downloadService = {
       await http.get<void>(`download/check?${new URLSearchParams(flattenParams(params))}`)
     } catch (error: unknown) {
       if (isHttpError(error) && error.response?.status === 403) {
-        throw new DownloadLimitExceededError((error as any).responseData?.message)
+        throw new DownloadLimitExceededError(getHttpErrorBody(error)?.message)
       }
 
       throw error
