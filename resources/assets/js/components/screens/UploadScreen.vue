@@ -28,7 +28,10 @@
               @click="currentTab = tab"
             >
               {{ label }}
-              <span :data-tab="tab" class="count ml-1 rounded-full bg-k-fg-10 px-2 py-0.5 text-[.8rem] tabular-nums">
+              <span
+                :data-tab="tab"
+                class="count ml-1 rounded-full border border-k-fg-20 bg-k-fg-10 px-2 py-0.5 text-[.8rem] tabular-nums"
+              >
                 {{ tabCounts[tab] }}
               </span>
             </TabButton>
@@ -223,18 +226,22 @@ onMounted(async () => {
 .count {
   &[data-tab='in-progress'] {
     @apply bg-k-primary text-white;
+    border-color: color-mix(in srgb, var(--color-primary), black 25%);
   }
 
   &[data-tab='done'] {
     @apply bg-k-success text-white;
+    border-color: color-mix(in srgb, var(--color-success), black 25%);
   }
 
   &[data-tab='errored'] {
     @apply bg-k-danger text-white;
+    border-color: color-mix(in srgb, var(--color-danger), black 25%);
   }
 
   &[data-tab='duplicated'] {
     @apply bg-k-warning text-white;
+    border-color: color-mix(in srgb, var(--color-warning), black 25%);
   }
 }
 </style>
