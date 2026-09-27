@@ -91,8 +91,8 @@ on it and choosing "Download."
 
 You can also download several songs, all songs from an album, all songs by an artist, or a whole playlist as a zip file
 via the "Download" buttons found on according screens or context menus.
-Your browser builds the zip file itself, fetching each song and showing the progress in the bottom-right corner, so
-the server does no extra work. Click "Save" when the zip file is ready. A single download can be up to 4 GB.
+Your browser builds the zip file itself, so the server does no extra work. A ring on the right-hand side shows the
+progress, and the zip file is saved as soon as it's ready. A single download can be up to 4 GB.
 
 ## Deleting Songs
 
