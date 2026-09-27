@@ -161,7 +161,7 @@ export const zipDownloadService = {
 
       const zipWriter = new ZipWriter(writable, {
         zip64: songs.some(song => !song.file_size),
-        bufferedWrite: true,
+        dataDescriptor: true,
       })
 
       const usedNames = new Set<string>()
