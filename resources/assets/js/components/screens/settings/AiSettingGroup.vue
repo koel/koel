@@ -13,6 +13,7 @@
         <FormRow>
           <template #label>Provider</template>
           <SelectBox v-model="data.provider" class="md:w-2/3" name="provider" required>
+            <option disabled value="">Choose a provider</option>
             <option v-for="(label, provider) in PROVIDERS" :key="provider" :value="provider">{{ label }}</option>
           </SelectBox>
         </FormRow>
@@ -67,14 +68,14 @@ const { showConfirmDialog } = useDialogBox()
 
 const current = computed(() => settingStore.state.ai)
 
-const { data, loading, handleSubmit } = useForm<{ enabled: boolean; provider: AiProvider; api_key: string }>({
+const { data, loading, handleSubmit } = useForm<{ enabled: boolean; provider: AiProvider | ''; api_key: string }>({
   initialValues: {
-    enabled: current.value?.enabled ?? false,
-    provider: current.value?.provider ?? 'openai',
+    enabled: Boolean(current.value?.enabled),
+    provider: current.value?.provider ?? '',
     api_key: '',
   },
   onSubmit: async ({ enabled, provider, api_key }) =>
-    await settingStore.updateAi({ enabled, provider, ...(api_key ? { api_key } : {}) }),
+    await settingStore.updateAi({ enabled, provider: provider as AiProvider, ...(api_key ? { api_key } : {}) }),
   onSuccess: async () => {
     data.api_key = ''
 
