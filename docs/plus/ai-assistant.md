@@ -22,7 +22,7 @@ to rephrase your request if the result isn't what you expected.
 
 ## Setup
 
-An admin turns the assistant on under **Settings → AI Assistant**:
+An admin turns the assistant on under **Settings → AI**:
 
 1. Tick **Use AI assistant**.
 2. Pick a provider.
