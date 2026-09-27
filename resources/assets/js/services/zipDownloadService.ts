@@ -250,7 +250,7 @@ export const zipDownloadService = {
   },
 
   async getAvailableStorageBytes() {
-    const { quota, usage = 0 } = (await navigator.storage.estimate?.()) ?? {}
+    const { quota, usage = 0 } = (await navigator.storage.estimate?.().catch(() => undefined)) ?? {}
 
     return quota === undefined ? Number.POSITIVE_INFINITY : quota - usage
   },

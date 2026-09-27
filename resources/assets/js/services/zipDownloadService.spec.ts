@@ -127,6 +127,18 @@ describe('zipDownloadService', () => {
     ).rejects.toThrow(ZipTooLargeError)
   })
 
+  it('starts when the browser cannot estimate its storage', async () => {
+    stubPrivateStorage()
+    stubSongDownloads()
+    navigator.storage.estimate = vi.fn().mockRejectedValue(new Error('No estimate'))
+    h.mock(zipDownloadService, 'save')
+
+    await zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.building
+
+    expect(addedEntries).toHaveLength(1)
+  })
+
   it('refuses when the browser has no private storage', async () => {
     vi.stubGlobal('navigator', {})
 
