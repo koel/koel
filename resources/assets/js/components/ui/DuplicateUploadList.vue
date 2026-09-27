@@ -1,8 +1,8 @@
 <template>
   <section class="flex flex-col gap-4">
-    <VirtualScroller :item-height="48" :items="songs" class="flex-1 -mr-6 pr-6">
+    <VirtualScroller :item-height="ROW_HEIGHT" :items="songs" class="flex-1 -mr-6 pr-6">
       <template #default="{ item }: { item: DuplicateUpload }">
-        <div :key="item.id" class="h-[48px] pb-4">
+        <div :key="item.id" :style="{ height: `${ROW_HEIGHT}px` }" class="pb-[12px]">
           <DuplicateUploadItem :upload="item" class="h-full" />
         </div>
       </template>
@@ -26,6 +26,8 @@ import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import type { DuplicateUpload } from '@/services/uploadService'
 
 defineProps<{ songs: DuplicateUpload[] }>()
+
+const ROW_HEIGHT = 48
 
 const { showConfirmDialog } = useDialogBox()
 

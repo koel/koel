@@ -40,12 +40,12 @@
 
               <VirtualScroller
                 v-else-if="filesByTab[currentTab].length"
-                :item-height="48"
+                :item-height="ROW_HEIGHT"
                 :items="filesByTab[currentTab]"
                 class="flex-1 -mr-6 pr-6"
               >
                 <template #default="{ item }: { item: UploadFile }">
-                  <div :key="item.id" class="h-[48px] pb-4">
+                  <div :key="item.id" :style="{ height: `${ROW_HEIGHT}px` }" class="pb-[12px]">
                     <UploadItem :file="item" class="h-full" data-testid="upload-item" />
                   </div>
                 </template>
@@ -142,6 +142,8 @@ const TAB_STATUSES: Record<FileTab, UploadStatus[]> = {
   skipped: ['Skipped'],
   errored: ['Errored', 'Canceled'],
 }
+
+const ROW_HEIGHT = 48
 
 const acceptAttribute = acceptedExtensions.map(ext => `.${ext}`).join(',')
 
