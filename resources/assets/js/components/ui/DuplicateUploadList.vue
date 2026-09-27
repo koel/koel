@@ -1,8 +1,8 @@
 <template>
-  <section class="rounded-lg border border-k-fg-10 overflow-hidden">
+  <section class="flex flex-col gap-4">
     <DuplicateUploadItem v-for="upload in songs" :key="upload.id" :upload />
 
-    <footer class="flex justify-end gap-2 px-4 py-3 bg-k-fg-3">
+    <footer class="flex justify-end gap-2">
       <Btn size="small" variant="highlight" @click="confirmDiscardAll">Discard All</Btn>
       <Btn size="small" variant="success" @click="keepAll">Keep All</Btn>
     </footer>

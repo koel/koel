@@ -1,19 +1,22 @@
 <template>
-  <div class="flex items-center gap-2 px-4 py-2.5 border-b border-k-fg-5 last:border-b-0">
-    <span class="flex-1 min-w-0">
-      <span class="block truncate">
-        {{ upload.song_title ? `${upload.artist_name} — ${upload.song_title}` : upload.filename }}
-      </span>
-      <span class="block text-k-fg-50 text-[0.85rem]">
-        Uploaded {{ new Date(upload.created_at).toLocaleDateString() }}
-      </span>
+  <article class="flex items-center min-h-[32px] bg-k-fg-5 rounded-lg overflow-hidden">
+    <span
+      class="min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)]"
+    >
+      {{ upload.song_title ? `${upload.artist_name} — ${upload.song_title}` : upload.filename }}
     </span>
-    <Btn size="small" variant="highlight" bordered @click="confirmDiscard">Discard</Btn>
-    <Btn size="small" variant="success" bordered @click="keep">Keep</Btn>
-  </div>
+    <span class="shrink-0 px-4 text-k-fg-70">Uploaded {{ new Date(upload.created_at).toLocaleDateString() }}</span>
+    <Btn variant="ghost" class="px-3!" icon-only title="Keep" unrounded @click="keep">
+      <Icon :icon="faCheck" />
+    </Btn>
+    <Btn variant="ghost" class="px-3!" icon-only title="Discard" unrounded @click="confirmDiscard">
+      <Icon :icon="faTrashCan" />
+    </Btn>
+  </article>
 </template>
 
 <script setup lang="ts">
+import { faCheck, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { uploadService } from '@/services/uploadService'
 
