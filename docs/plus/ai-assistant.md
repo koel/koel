@@ -25,13 +25,13 @@ to rephrase your request if the result isn't what you expected.
 An admin turns the assistant on under **Settings → AI Assistant**:
 
 1. Tick **Use AI assistant**.
-2. Pick a provider: OpenAI, Anthropic, Google Gemini, DeepSeek, Groq, Mistral, OpenRouter or xAI.
+2. Pick a provider.
 3. Paste the provider's API key and save. The provider bills the assistant's use to this key.
 
 Koel stores the key encrypted and never shows it again; to change it, paste a new one. Switching providers needs a new key.
 
 :::tip Upgrading from an earlier version
-If you had set up the assistant with `AI_ENABLED`, `AI_PROVIDER` and a provider key in `.env`, upgrading moves that setup into Settings, as long as the provider is one of those listed above. Afterwards those `.env` variables are no longer read and can be removed.
+If you had set up the assistant with `AI_ENABLED`, `AI_PROVIDER` and a provider key in `.env`, upgrading moves that setup into Settings, as long as Settings offers that provider. Afterwards those `.env` variables are no longer read and can be removed.
 :::
 
 The AI assistant is powered by [Laravel's AI SDK](https://laravel.com/docs/12.x/ai-sdk).
