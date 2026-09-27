@@ -9,6 +9,7 @@
       <p class="text-[.95rem] text-k-fg-50">
         <slot name="help" />
       </p>
+      <p class="text-[.95rem] text-k-fg-50">Recommended size: 512×512 pixels or larger.</p>
     </div>
 
     <div class="flex shrink-0 items-center gap-4">
