@@ -36,6 +36,7 @@ describe('uploadService', () => {
     beforeEach: () => {
       uploadService.state.files = []
       uploadService.abortHandles.clear()
+      uploadService.parallelUploadLimit = 5
       commonStore.state.supports_presigned_uploads = false
       postWithProgressMock.mockClear()
       putToStorageMock.mockClear()
@@ -154,8 +155,68 @@ describe('uploadService', () => {
     await uploadService.upload(file)
 
     expect(file.status).toBe('Uploaded')
-    expect(handleMock).toHaveBeenCalledWith(result)
+    expect(handleMock).toHaveBeenCalledWith(result, file)
     expect(proceedMock).toHaveBeenCalled()
+  })
+
+  it('does not send a file again when handling its upload result fails', async () => {
+    mockPostWithProgress({ song: h.factory('song').make(), album: h.factory('album').make() })
+    h.mock(uploadService, 'handleUploadResult').mockImplementation(() => {
+      throw new Error('Store sync failed')
+    })
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+
+    await expect(uploadService.upload(file)).rejects.toThrow('Store sync failed')
+    expect(file.status).not.toBe('Retrying')
+    expect(postWithProgressMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps an uploaded file in the list with its song', () => {
+    const file = createUploadFile()
+    file.status = 'Uploading'
+    uploadService.state.files = [file]
+    const song = h.factory('song').make()
+
+    uploadService.handleUploadResult({ song, album: h.factory('album').make() }, file)
+
+    expect(uploadService.state.files).toEqual([file])
+    expect(file.status).toBe('Uploaded')
+    expect(file.song).toBe(song)
+  })
+
+  it('retries a file that failed on the network, and uploads fewer at once', async () => {
+    mockPostWithProgressRejection(new Error('Network error'))
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Retrying')
+    expect(uploadService.parallelUploadLimit).toBe(2)
+  })
+
+  it('gives up on a network failure after the last attempt', async () => {
+    mockPostWithProgressRejection(new Error('Network error'))
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    file.attempts = 2
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Errored')
+  })
+
+  it('uploads more at once again after a success', async () => {
+    mockPostWithProgress({ song: h.factory('song').make(), album: h.factory('album').make() })
+    h.mock(uploadService, 'handleUploadResult')
+    h.mock(uploadService, 'proceed')
+    uploadService.parallelUploadLimit = 2
+
+    await uploadService.upload(createUploadFile())
+
+    expect(uploadService.parallelUploadLimit).toBe(3)
   })
 
   it('finishes a keyless queued upload rather than stranding it', async () => {
@@ -221,7 +282,7 @@ describe('uploadService', () => {
     uploadService.handleUploadFailure({ upload_key: '1__abc__song.mp3', message: 'Empty file' })
 
     expect(file.status).toBe('Errored')
-    expect(file.message).toBe('Upload failed: Empty file')
+    expect(file.message).toBe('Empty file')
   })
 
   it('ignores a broadcast for a file it no longer has', () => {
@@ -280,6 +341,7 @@ describe('uploadService', () => {
 
   it('handles upload error with message', async () => {
     const error = Object.assign(new Error('Upload failed with status 413'), {
+      status: 413,
       data: { message: 'File too large' },
     })
 
@@ -294,14 +356,14 @@ describe('uploadService', () => {
   })
 
   it('handles upload error without message', async () => {
-    mockPostWithProgressRejection(new Error('network error'))
+    mockPostWithProgressRejection(Object.assign(new Error('Upload failed with status 500'), { status: 500 }))
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
     await uploadService.upload(file)
 
     expect(file.status).toBe('Errored')
-    expect(file.message).toBe('Server error.')
+    expect(file.message).toBe('Server error')
   })
 
   it('shows a generic server error when the response cannot be parsed', async () => {
@@ -317,7 +379,7 @@ describe('uploadService', () => {
     await uploadService.upload(file)
 
     expect(file.status).toBe('Errored')
-    expect(file.message).toBe('Server error.')
+    expect(file.message).toBe('Server error')
   })
 
   it('clears the failure message when a file is reset', () => {
@@ -446,11 +508,11 @@ describe('uploadService', () => {
     expect(proceedMock).toHaveBeenCalled()
   })
 
-  it('removes failed files', () => {
+  it('removes failed and canceled files', () => {
     uploadService.state.files = [
       createUploadFile({ status: 'Errored' }),
       createUploadFile({ status: 'Ready' }),
-      createUploadFile({ status: 'Errored' }),
+      createUploadFile({ status: 'Canceled' }),
     ]
 
     uploadService.removeFailed()

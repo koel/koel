@@ -9,7 +9,7 @@ import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { usePolicies } from '@/composables/usePolicies'
 
-const UNFINISHED_UPLOAD_STATUSES: UploadStatus[] = ['Ready', 'Uploading']
+const UNFINISHED_UPLOAD_STATUSES: UploadStatus[] = ['Ready', 'Uploading', 'Retrying']
 
 export const useUpload = () => {
   const { toastSuccess, toastWarning } = useMessageToaster()
@@ -30,21 +30,21 @@ export const useUpload = () => {
   const fileEntryToFile = async (entry: FileSystemFileEntry) => new Promise<File>(resolve => entry.file(resolve))
 
   const queueFilesForUpload = (files: Array<File>) => {
-    const uploadCandidates = files
-      .filter(file => acceptsFile(file))
-      .map(
-        (file): UploadFile => ({
-          file,
-          id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
-          status: 'Ready',
-          name: file.name,
-          progress: 0,
-        }),
-      )
+    const entries = files.map(
+      (file): UploadFile => ({
+        file,
+        id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
+        status: acceptsFile(file) ? 'Ready' : 'Skipped',
+        message: acceptsFile(file) ? undefined : 'Unsupported format',
+        name: file.name,
+        progress: 0,
+      }),
+    )
 
-    uploadService.queue(uploadCandidates)
+    const acceptedEntries = entries.filter(({ status }) => status === 'Ready')
+    uploadService.queue(entries)
 
-    return uploadCandidates
+    return acceptedEntries
   }
 
   const handleDropEvent = async (event: DragEvent) => {

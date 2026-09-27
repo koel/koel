@@ -59,10 +59,28 @@ describe('useUpload', () => {
     expect(result[0].name).toBe('song.mp3')
   })
 
+  it('lists a file it cannot play as skipped rather than dropping it', () => {
+    const { queueFilesForUpload } = useUpload()
+
+    const result = queueFilesForUpload([new File(['content'], 'notes.txt', { type: 'text/plain' })])
+
+    expect(result).toEqual([])
+    expect(uploadService.state.files.map(({ name, status }) => [name, status])).toContainEqual(['notes.txt', 'Skipped'])
+  })
+
   it('counts only the uploads that are queued or still uploading', () => {
-    const statuses: UploadStatus[] = ['Ready', 'Uploading', 'Processing', 'Uploaded', 'Canceled', 'Errored']
+    const statuses: UploadStatus[] = [
+      'Ready',
+      'Uploading',
+      'Retrying',
+      'Processing',
+      'Uploaded',
+      'Canceled',
+      'Errored',
+      'Skipped',
+    ]
     uploadService.state.files = statuses.map(status => ({ status }) as UploadFile)
 
-    expect(useUpload().unfinishedUploadCount.value).toBe(2)
+    expect(useUpload().unfinishedUploadCount.value).toBe(3)
   })
 })
