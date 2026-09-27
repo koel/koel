@@ -1,5 +1,5 @@
 <template>
-  <article class="flex items-stretch min-h-[32px] bg-k-fg-5 rounded-lg overflow-hidden">
+  <article class="flex items-stretch min-h-[32px] bg-k-fg-5 border border-k-warning/15 rounded-lg overflow-hidden">
     <span
       class="self-center min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)]"
     >
