@@ -55,9 +55,14 @@ class FetchInitialDataController extends Controller
             : null;
 
         return response()->json(apply_filters(Filter::INITIAL_DATA_FETCHED, [
-            'settings' => $managesSettings
-                ? [...$settingRepository->getInstallWideAsKeyValueArray(), 'ai' => $aiSettings->toArrayWithoutApiKey()]
-                : [],
+            'settings' => match (true) {
+                !$managesSettings => [],
+                License::isPlus() => [
+                    ...$settingRepository->getInstallWideAsKeyValueArray(),
+                    'ai' => $aiSettings->toArrayWithoutApiKey(),
+                ],
+                default => $settingRepository->getInstallWideAsKeyValueArray(),
+            },
             'playlists' => PlaylistResource::collection($playlistRepository->getAllAccessibleByUser($user)),
             'playlist_folders' => PlaylistFolderResource::collection($user->playlistFolders),
             'current_user' => UserResource::make($user),
