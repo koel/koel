@@ -58,7 +58,7 @@ describe('uploadScreen.vue', () => {
     ]
 
     h.render(Component)
-    await h.user.click(await screen.findByTestId('upload-tab-errored'))
+    await h.user.click(await screen.findByTestId('upload-filter-errored'))
 
     await waitFor(() => {
       screen.getByTestId('upload-retry-all-btn')
@@ -85,7 +85,7 @@ describe('uploadScreen.vue', () => {
     ]
 
     h.render(Component)
-    await h.user.click(await screen.findByTestId('upload-tab-errored'))
+    await h.user.click(await screen.findByTestId('upload-filter-errored'))
 
     await h.user.click(await screen.findByTestId('upload-retry-all-btn'))
 
@@ -100,7 +100,7 @@ describe('uploadScreen.vue', () => {
     ]
 
     h.render(Component)
-    await h.user.click(await screen.findByTestId('upload-tab-errored'))
+    await h.user.click(await screen.findByTestId('upload-filter-errored'))
 
     await h.user.click(await screen.findByTestId('upload-remove-all-btn'))
 
@@ -118,13 +118,13 @@ describe('uploadScreen.vue', () => {
 
     h.render(Component)
 
-    expect((await screen.findByTestId('upload-tab-in-progress')).dataset.count).toBe('2')
-    expect(screen.getByTestId('upload-tab-done').dataset.count).toBe('1')
-    expect(screen.getByTestId('upload-tab-skipped').dataset.count).toBe('1')
-    expect(screen.getByTestId('upload-tab-errored').dataset.count).toBe('1')
+    expect((await screen.findByTestId('upload-filter-count-in-progress')).dataset.count).toBe('2')
+    expect(screen.getByTestId('upload-filter-count-done').dataset.count).toBe('1')
+    expect(screen.getByTestId('upload-filter-count-skipped').dataset.count).toBe('1')
+    expect(screen.getByTestId('upload-filter-count-errored').dataset.count).toBe('1')
     await waitFor(() => expect(screen.getAllByTestId('upload-item')).toHaveLength(2))
 
-    await h.user.click(screen.getByTestId('upload-tab-done'))
+    await h.user.click(screen.getByTestId('upload-filter-done'))
 
     await waitFor(() => expect(screen.getAllByTestId('upload-item')).toHaveLength(1))
     expect(screen.queryByTestId('upload-retry-all-btn')).toBeNull()
@@ -152,10 +152,12 @@ describe('uploadScreen.vue', () => {
 
     h.render(Component)
 
-    await h.user.click(await screen.findByTestId('upload-tab-errored'))
+    await h.user.click(await screen.findByTestId('upload-filter-errored'))
     uploadService.state.files[0].status = 'Ready'
 
-    await waitFor(() => expect(screen.getByTestId('upload-tab-in-progress').getAttribute('aria-selected')).toBe('true'))
+    await waitFor(() =>
+      expect(screen.getByTestId('upload-filter-in-progress').querySelector('input')?.checked).toBe(true),
+    )
   })
 
   it('offers the drop prompt while nothing is in progress', async () => {
@@ -167,7 +169,7 @@ describe('uploadScreen.vue', () => {
 
     await screen.findByTestId('upload-drop-prompt')
 
-    await h.user.click(screen.getByTestId('upload-tab-done'))
+    await h.user.click(screen.getByTestId('upload-filter-done'))
 
     expect(screen.queryByTestId('upload-drop-prompt')).toBeNull()
   })
