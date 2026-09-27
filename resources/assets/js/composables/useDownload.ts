@@ -1,9 +1,11 @@
 import { downloadService } from '@/services/downloadService'
 import { ZipInProgressError, ZipTooLargeError, ZipUnsupportedError } from '@/services/zipDownloadService'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 
 export const useDownload = () => {
   const { toastError } = useMessageToaster()
+  const { handleHttpError } = useErrorHandler()
 
   const handle = async (fn: () => Promise<void>) => {
     try {
@@ -18,7 +20,7 @@ export const useDownload = () => {
         return
       }
 
-      throw error
+      handleHttpError(error)
     }
   }
 
