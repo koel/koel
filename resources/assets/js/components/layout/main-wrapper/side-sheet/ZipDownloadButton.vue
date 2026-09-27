@@ -124,8 +124,14 @@ const act = async () => {
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
+
 :deep([role='progressbar'] circle) {
   transition-duration: 800ms;
   transition-timing-function: linear;
+
+  &:first-child {
+    @apply stroke-k-fg-10;
+  }
 }
 </style>
