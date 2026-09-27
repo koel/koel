@@ -11,7 +11,7 @@
         <a
           v-if="file.song"
           :href="url('albums.show', { id: file.song.album_id })"
-          class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)] text-current hover:underline focus:text-current"
+          class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)] text-current focus:text-current"
           data-testid="upload-item-album-link"
         >
           {{ file.name }}
@@ -113,6 +113,10 @@ article > div::before {
   width: v-bind(progressBarWidth);
   content: '';
   @apply absolute h-full top-0 left-0 z-0 duration-200 ease-out bg-k-highlight;
+}
+
+.uploaded:hover {
+  @apply bg-k-fg-10;
 }
 
 .errored {

@@ -8,6 +8,7 @@ exports[`uploadItem.vue > renders 1`] = `
       <!--v-if--><button data-v-8943c846="" data-v-c7c7e2e2="" data-variant="ghost" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded-sm cursor-pointer px-3!" type="button" icon-only="" title="Retry" unrounded=""><br data-v-c7c7e2e2="" data-testid="Icon" icon="[object Object]"></button>
       <!--v-if--><button data-v-8943c846="" data-v-c7c7e2e2="" data-variant="ghost" class="text-base text-white border border-transparent bg-k-primary px-3.5 py-2 rounded-sm cursor-pointer px-3!" type="button" icon-only="" title="Remove" unrounded=""><br data-v-c7c7e2e2="" data-testid="Icon" icon="[object Object]"></button>
       <!--v-if-->
+      <!--v-if-->
     </div>
   </div>
 </article>
