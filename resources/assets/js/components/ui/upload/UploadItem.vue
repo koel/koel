@@ -84,9 +84,11 @@ const isProcessing = computed(() => file.value.status === 'Processing')
 const showsProgressRing = computed(() => ['Ready', 'Uploading', 'Retrying'].includes(file.value.status))
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canAbort = computed(() => file.value.status === 'Uploading')
+
 const canRemove = computed(
   () => !['Uploading', 'Uploaded', 'Skipped'].includes(file.value.status) && !isProcessing.value,
 )
+
 const cssClass = computed(() => file.value.status.toLowerCase())
 const showsReasonInRow = computed(() => ['Skipped', 'Errored', 'Canceled'].includes(file.value.status))
 

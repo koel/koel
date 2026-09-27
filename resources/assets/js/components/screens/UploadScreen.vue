@@ -149,6 +149,7 @@ const filesByFilter = computed(
       ]),
     ) as Record<FileFilter, UploadFile[]>,
 )
+
 const filterOptions = computed(() =>
   (Object.keys(FILTER_LABELS) as UploadFilter[]).map(filter => ({
     value: filter,
@@ -156,6 +157,7 @@ const filterOptions = computed(() =>
     testId: `upload-filter-${filter}`,
   })),
 )
+
 const filterCounts = computed<Record<UploadFilter, number>>(() => ({
   'in-progress': filesByFilter.value['in-progress'].length,
   done: filesByFilter.value.done.length,
@@ -165,6 +167,7 @@ const filterCounts = computed<Record<UploadFilter, number>>(() => ({
 }))
 
 const showsFilters = computed(() => files.value.length > 0 || duplicatedSongs.value.length > 0)
+
 const showsDropPrompt = computed(
   () => !showsFilters.value || (currentFilter.value === 'in-progress' && !filesByFilter.value['in-progress'].length),
 )
@@ -195,6 +198,7 @@ const onDrop = async (event: DragEvent) => {
 }
 
 const retryAll = () => uploadService.retryAll()
+const removeFailedEntries = () => uploadService.removeFailed()
 
 watch(
   () => filesByFilter.value.errored.length,
@@ -204,7 +208,6 @@ watch(
     }
   },
 )
-const removeFailedEntries = () => uploadService.removeFailed()
 
 onMounted(async () => {
   await uploadService.fetchDuplicates()
