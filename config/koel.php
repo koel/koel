@@ -178,7 +178,6 @@ return [
 
     'download' => [
         'allow' => env('ALLOW_DOWNLOAD', true),
-        'limit' => max((int) env('DOWNLOAD_LIMIT', 0), 0),
     ],
 
     'media_browser' => [
