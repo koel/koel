@@ -1,18 +1,20 @@
 <template>
   <section class="flex flex-col gap-2" data-testid="upload-summary">
     <div class="flex flex-wrap items-baseline justify-between gap-2">
-      <p class="flex flex-wrap gap-3">
+      <p
+        class="flex flex-wrap gap-2 [&>span+span]:before:mr-2 [&>span+span]:before:text-k-fg-50 [&>span+span]:before:content-['·']"
+      >
         <span v-if="counts.uploaded" :data-count="counts.uploaded" data-testid="uploaded-count">
-          {{ counts.uploaded }} uploaded
+          <strong class="font-semibold tabular-nums text-k-success">{{ counts.uploaded }}</strong> uploaded
         </span>
         <span v-if="counts.inProgress" :data-count="counts.inProgress" data-testid="in-progress-count">
-          {{ counts.inProgress }} in progress
+          <strong class="font-semibold tabular-nums text-k-highlight">{{ counts.inProgress }}</strong> in progress
         </span>
-        <span v-if="counts.failed" :data-count="counts.failed" class="text-k-danger" data-testid="failed-count">
-          {{ counts.failed }} failed
+        <span v-if="counts.failed" :data-count="counts.failed" data-testid="failed-count">
+          <strong class="font-semibold tabular-nums text-k-danger">{{ counts.failed }}</strong> failed
         </span>
-        <span v-if="counts.skipped" :data-count="counts.skipped" class="text-k-fg-70" data-testid="skipped-count">
-          {{ counts.skipped }} skipped
+        <span v-if="counts.skipped" :data-count="counts.skipped" data-testid="skipped-count">
+          <strong class="font-semibold tabular-nums text-k-fg-50">{{ counts.skipped }}</strong> skipped
         </span>
       </p>
       <p class="text-k-fg-70 tabular-nums">
