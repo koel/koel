@@ -12,12 +12,12 @@
 
         <BrandingImageField v-model="data.logo" :default="koelBirdLogo" name="logo">
           <template #label>App logo</template>
-          <template #help>Favicon, app icon and logo. Square, 512×512 or larger.</template>
+          <template #help>Used as the favicon, app icon and logo.</template>
         </BrandingImageField>
 
         <BrandingImageField v-model="data.cover" :default="koelBirdCover" name="cover">
           <template #label>App cover</template>
-          <template #help>For albums, artists and playlists without an image. Square, 512×512 or larger.</template>
+          <template #help>Shown for albums, artists and playlists without an image.</template>
         </BrandingImageField>
       </div>
 
