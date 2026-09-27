@@ -1,11 +1,15 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { nextTick, ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './SegmentedControl.vue'
 
 describe('segmentedControl.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => {
+      Element.prototype.scrollTo = vi.fn()
+    },
+  })
 
   const options = [
     { value: 'one', label: 'One', testId: 'segment-one' },
@@ -50,5 +54,13 @@ describe('segmentedControl.vue', () => {
     await h.user.click(screen.getByTestId('segment-two'))
 
     expect(selected.value).toBe('two')
+  })
+
+  it('scrolls the picked option into view', async () => {
+    h.render(Component, { props: { name: 'segments', options, modelValue: 'one' } })
+
+    await h.user.click(screen.getByTestId('segment-two'))
+
+    await waitFor(() => expect(Element.prototype.scrollTo).toHaveBeenCalled())
   })
 })

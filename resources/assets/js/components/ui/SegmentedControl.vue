@@ -1,29 +1,31 @@
 <template>
-  <div
-    ref="container"
-    class="relative inline-flex flex-wrap gap-1 rounded-full bg-k-fg-5 p-1 shadow-sm"
-    role="radiogroup"
-  >
-    <span
-      v-if="indicator"
-      :style="{
-        left: `${indicator.left}px`,
-        top: `${indicator.top}px`,
-        width: `${indicator.width}px`,
-        height: `${indicator.height}px`,
-      }"
-      class="absolute rounded-full bg-k-fg-10 shadow-sm transition-all duration-200 ease-out"
-      data-testid="segmented-control-indicator"
-    />
-    <label
-      v-for="option in options"
-      :key="option.value"
-      :data-testid="option.testId"
-      class="relative flex items-center gap-2 rounded-full px-4 has-[[data-badge]]:pr-[6px] py-1.5 cursor-pointer text-k-fg-70 hover:text-k-fg has-checked:text-k-fg has-focus-visible:outline-2 has-focus-visible:outline-k-highlight"
+  <div class="inline-flex max-w-full rounded-full bg-k-fg-10 shadow-sm">
+    <div
+      ref="container"
+      class="scroll-mask-x-from-85% relative flex gap-1 overflow-x-auto p-1 [scrollbar-width:none]"
+      role="radiogroup"
     >
-      <input v-model="value" :name :value="option.value" class="sr-only" type="radio" />
-      <slot :option>{{ option.label }}</slot>
-    </label>
+      <span
+        v-if="indicator"
+        :style="{
+          left: `${indicator.left}px`,
+          top: `${indicator.top}px`,
+          width: `${indicator.width}px`,
+          height: `${indicator.height}px`,
+        }"
+        class="absolute rounded-full bg-k-fg-20 shadow-sm transition-all duration-200 ease-out"
+        data-testid="segmented-control-indicator"
+      />
+      <label
+        v-for="option in options"
+        :key="option.value"
+        :data-testid="option.testId"
+        class="relative shrink-0 whitespace-nowrap flex items-center gap-2 rounded-full px-4 has-[[data-badge]]:pr-[6px] py-1.5 cursor-pointer text-k-fg-70 hover:text-k-fg has-checked:text-k-fg has-focus-visible:outline-2 has-focus-visible:outline-k-highlight"
+      >
+        <input v-model="value" :name :value="option.value" class="sr-only" type="radio" />
+        <slot :option>{{ option.label }}</slot>
+      </label>
+    </div>
   </div>
 </template>
 
@@ -55,6 +57,22 @@ const moveIndicatorToSelectedOption = () => {
 }
 
 onMounted(() => nextTick(moveIndicatorToSelectedOption))
-watch(value, () => nextTick(moveIndicatorToSelectedOption))
+const scrollSelectedOptionIntoView = () => {
+  const selectedLabel = container.value?.querySelector<HTMLInputElement>('input:checked')?.parentElement
+
+  if (!container.value || !selectedLabel) {
+    return
+  }
+
+  const centeredLeft = selectedLabel.offsetLeft - (container.value.clientWidth - selectedLabel.offsetWidth) / 2
+  container.value.scrollTo({ left: centeredLeft, behavior: 'smooth' })
+}
+
+watch(value, () =>
+  nextTick(() => {
+    moveIndicatorToSelectedOption()
+    scrollSelectedOptionIntoView()
+  }),
+)
 useResizeObserver(container, moveIndicatorToSelectedOption)
 </script>

@@ -24,6 +24,7 @@ describe('uploadScreen.vue', () => {
   const h = createHarness()
 
   beforeEach(() => {
+    Element.prototype.scrollTo = vi.fn()
     vi.spyOn(uploadService, 'fetchDuplicates').mockResolvedValue(undefined)
     uploadService.state.duplicatedSongs = []
   })
