@@ -1,40 +1,39 @@
 <template>
-  <fieldset>
+  <fieldset class="flex w-72 flex-col gap-3">
     <h4 class="text-k-fg">
       <slot name="label" />
     </h4>
 
-    <span class="w-48 h-48 my-4 aspect-square relative block rounded-md">
-      <img :src="model" alt="" class="rounded-sm object-cover" />
-      <button
-        v-if="hasCustomValue"
-        class="absolute top-2 right-2 w-9 active:scale-95 bg-black/50 hover:bg-black/70 aspect-square border border-k-fg-10 rounded-sm"
-        type="button"
-        @click.prevent="removeCustomValue"
-      >
-        <Icon :icon="faTrashCan" />
-        <span class="sr-only">Remove</span>
-      </button>
-    </span>
+    <div class="flex items-center gap-4">
+      <img :src="model" alt="" class="size-32 shrink-0 rounded-lg border border-k-fg-10 bg-k-fg-5 object-contain p-2" />
 
-    <FormRow v-if="!hasCustomValue">
-      <FileInput accept="image/*" :name @change="onImageInputChange">Select an image</FileInput>
-      <template #help>Recommended size: 512×512 pixels.</template>
-    </FormRow>
+      <div class="flex flex-col items-start gap-2">
+        <label
+          class="relative inline-flex cursor-pointer items-center rounded-md border border-k-fg-20 px-3 py-1.5 hover:bg-k-fg-10 has-focus-visible:outline-2 has-focus-visible:outline-k-highlight"
+        >
+          <input accept="image/*" :name class="sr-only" type="file" @change="onImageInputChange" />
+          Change
+        </label>
+        <button
+          v-if="hasCustomValue"
+          class="text-k-fg-70 hover:text-k-fg"
+          type="button"
+          @click.prevent="removeCustomValue"
+        >
+          Reset to default
+        </button>
+      </div>
+    </div>
 
-    <p class="text-[.95rem]">
+    <p class="text-[.95rem] text-k-fg-50">
       <slot name="help" />
     </p>
   </fieldset>
 </template>
 
 <script setup lang="ts">
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted } from 'vue'
 import { useImageFileInput } from '@/composables/useImageFileInput'
-
-import FileInput from '@/components/ui/form/FileInput.vue'
-import FormRow from '@/components/ui/form/FormRow.vue'
 
 const props = defineProps<{ default: string; name: string }>()
 

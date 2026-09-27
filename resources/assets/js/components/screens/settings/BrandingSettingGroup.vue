@@ -1,22 +1,24 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <SettingGroup>
-      <div class="space-y-4">
+      <div class="flex w-fit max-w-full flex-col gap-6">
         <FormRow>
           <template #label>App name</template>
-          <TextInput v-model="data.name" class="md:w-2/3" name="name" placeholder="Koel" />
+          <TextInput v-model="data.name" name="name" placeholder="Koel" />
         </FormRow>
-        <BrandingImageField v-model="data.logo" :default="koelBirdLogo" name="logo">
-          <template #label>App logo</template>
-          <template #help>To be used as the favicon, app icon, and logo throughout the app.</template>
-        </BrandingImageField>
-        <BrandingImageField v-model="data.cover" :default="koelBirdCover" name="cover">
-          <template #label>App cover</template>
-          <template #help>
-            To be used as the placeholder if no album art, artist image, playlist cover etc. is available.
-          </template>
-        </BrandingImageField>
+
+        <div class="flex flex-wrap gap-x-10 gap-y-6">
+          <BrandingImageField v-model="data.logo" :default="koelBirdLogo" name="logo">
+            <template #label>App logo</template>
+            <template #help>Favicon, app icon and logo. Square, 512×512 or larger.</template>
+          </BrandingImageField>
+          <BrandingImageField v-model="data.cover" :default="koelBirdCover" name="cover">
+            <template #label>App cover</template>
+            <template #help>For albums, artists and playlists without an image. Square, 512×512 or larger.</template>
+          </BrandingImageField>
+        </div>
       </div>
+
       <template #footer>
         <Btn type="submit" :disabled="loading">Save</Btn>
       </template>

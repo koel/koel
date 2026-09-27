@@ -33,34 +33,28 @@ describe('brandImageField.vue', () => {
   it('emits the input event when a file is selected', async () => {
     const { model } = renderComponent()
 
-    await h.user.upload(
-      screen.getByLabelText('Select an image'),
-      new File(['bytes'], 'cover.png', { type: 'image/png' }),
-    )
+    await h.user.upload(screen.getByLabelText('Change'), new File(['bytes'], 'cover.png', { type: 'image/png' }))
 
     await waitFor(() => expect(model.value).toBe('data:image/png;base64,Ynl0ZXM='))
   })
 
   it('resets the image to the default value', async () => {
     const { model } = renderComponent('custom.jpg')
-    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+    await h.user.click(screen.getByRole('button', { name: 'Reset to default' }))
 
     await waitFor(() => expect(model.value).toBe('default-image.jpg'))
   })
 
-  it('picking an image and clicking Remove should reset the image to the custom value', async () => {
+  it('picking an image and clicking Reset to default should reset the image to the custom value', async () => {
     const { model } = renderComponent('custom.jpg')
 
-    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+    await h.user.click(screen.getByRole('button', { name: 'Reset to default' }))
     await waitFor(() => expect(model.value).toBe('default-image.jpg'))
 
-    await h.user.upload(
-      screen.getByLabelText('Select an image'),
-      new File(['bytes'], 'cover.png', { type: 'image/png' }),
-    )
+    await h.user.upload(screen.getByLabelText('Change'), new File(['bytes'], 'cover.png', { type: 'image/png' }))
 
     await waitFor(async () => {
-      await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+      await h.user.click(screen.getByRole('button', { name: 'Reset to default' }))
       await waitFor(() => expect(model.value).toBe('custom.jpg'))
     })
   })
