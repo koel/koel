@@ -129,4 +129,18 @@ describe('uploadScreen.vue', () => {
     await waitFor(() => expect(screen.getAllByTestId('upload-item')).toHaveLength(1))
     expect(screen.queryByTestId('upload-retry-all-btn')).toBeNull()
   })
+
+  it('offers the drop prompt while nothing is in progress', async () => {
+    uploadService.state.files = [
+      { id: '1', file: new File([], 'done.mp3'), status: 'Uploaded', name: 'done.mp3', progress: 100 },
+    ]
+
+    h.render(Component)
+
+    await screen.findByTestId('upload-drop-prompt')
+
+    await h.user.click(screen.getByTestId('upload-tab-done'))
+
+    expect(screen.queryByTestId('upload-drop-prompt')).toBeNull()
+  })
 })

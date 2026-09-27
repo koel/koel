@@ -13,7 +13,7 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
-      <div v-if="files.length || duplicatedSongs.length" class="pb-4 flex flex-col gap-4">
+      <div v-if="showsTabs" class="pb-4 flex flex-col gap-4">
         <UploadSummary v-if="files.length" class="mb-4" />
 
         <Tabs class="-mx-6">
@@ -60,7 +60,7 @@
         </Tabs>
       </div>
 
-      <ScreenEmptyState v-else-if="!files.length && !duplicatedSongs.length">
+      <ScreenEmptyState v-if="showsDropPrompt" data-testid="upload-drop-prompt">
         <template #icon>
           <Icon :icon="faUpload" />
         </template>
@@ -161,6 +161,11 @@ const tabCounts = computed<Record<UploadTab, number>>(() => ({
   errored: filesByTab.value.errored.length,
   duplicated: duplicatedSongs.value.length,
 }))
+
+const showsTabs = computed(() => files.value.length > 0 || duplicatedSongs.value.length > 0)
+const showsDropPrompt = computed(
+  () => !showsTabs.value || (currentTab.value === 'in-progress' && !filesByTab.value['in-progress'].length),
+)
 
 const droppable = ref(false)
 
