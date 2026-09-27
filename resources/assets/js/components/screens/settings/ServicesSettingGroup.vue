@@ -23,11 +23,9 @@
           <span v-else class="badge bg-k-fg-10 text-k-fg-70">Disabled</span>
         </h3>
 
-        <p>{{ service.description }}</p>
-        <p v-if="!service.enabled" class="mt-2 text-k-fg-70">
-          Check the
-          <a :href="service.docsUrl" class="text-k-highlight hover:text-k-fg" target="_blank">documentation</a> to set
-          it up.
+        <p>
+          {{ service.description }}
+          <a :href="service.docsUrl" class="text-k-highlight hover:text-k-fg" target="_blank">Documentation</a>
         </p>
       </section>
     </WithGradientBorder>
