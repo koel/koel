@@ -59,4 +59,22 @@ class AiProviderRegistrarTest extends TestCase
 
         self::assertSame('sk-new', self::resolveProvider($name)->providerCredentials()['key']);
     }
+
+    #[Test]
+    public function keepTheRestOfTheProviderConfiguration(): void
+    {
+        config(['ai.providers.openai.url' => 'https://proxy.example.com/v1']);
+        $organization = Organization::factory()->createOne();
+
+        $name = app(AiProviderRegistrar::class)->registerOrganizationProvider($organization, AiSettings::make(
+            enabled: true,
+            provider: Lab::OpenAI,
+            apiKey: 'sk-test',
+        ));
+
+        $provider = self::resolveProvider($name);
+
+        self::assertSame('https://proxy.example.com/v1', $provider->additionalConfiguration()['url']);
+        self::assertSame('sk-test', $provider->providerCredentials()['key']);
+    }
 }
