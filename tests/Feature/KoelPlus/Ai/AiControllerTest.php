@@ -55,7 +55,7 @@ class AiControllerTest extends PlusTestCase
         KoelAssistant::assertPrompted(
             static fn (AgentPrompt $prompt) => (
                 $prompt->provider instanceof Provider
-                && $prompt->provider->name() === 'anthropic'
+                && $prompt->provider->driver() === 'anthropic'
                 && $prompt->provider->providerCredentials()['key'] === 'sk-ant-test'
             ),
         );
