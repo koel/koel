@@ -30,7 +30,7 @@ describe('uploadSummary.vue', () => {
     h.render(Component)
 
     expect((screen.getByTestId('upload-progress') as HTMLProgressElement).value).toBe(1500)
-    expect((screen.getByTestId('upload-progress') as HTMLProgressElement).max).toBe(3000)
+    expect((screen.getByTestId('upload-progress') as HTMLProgressElement).max).toBe(2000)
   })
 
   it('estimates the time left from the upload speed', async () => {

@@ -7,7 +7,7 @@ const SPEED_SMOOTHING = 0.3
 
 const FULLY_SENT_STATUSES: UploadStatus[] = ['Processing', 'Uploaded']
 const IN_PROGRESS_STATUSES: UploadStatus[] = ['Ready', 'Uploading', 'Retrying', 'Processing']
-const OUTSIDE_BATCH_STATUSES: UploadStatus[] = ['Skipped', 'Canceled']
+const OUTSIDE_BATCH_STATUSES: UploadStatus[] = ['Skipped', 'Canceled', 'Errored']
 
 const countWithStatus = (files: UploadFile[], statuses: UploadStatus[]) =>
   files.filter(({ status }) => statuses.includes(status)).length
