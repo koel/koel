@@ -36,10 +36,10 @@ describe('zipDownloadButton.vue', () => {
     vi.useFakeTimers()
     const dispatchSpy = vi.spyOn(HTMLElement.prototype, 'dispatchEvent')
     const dispatchedTypes = () => dispatchSpy.mock.calls.map(([event]) => event.type)
-    h.render(Component)
+    h.render(Component, { global: { stubs: { transition: false } } })
 
     zipDownloadService.state.status = 'zipping'
-    await vi.advanceTimersByTimeAsync(0)
+    await vi.advanceTimersByTimeAsync(50)
     expect(dispatchedTypes()).toContain('mouseenter')
     expect(dispatchedTypes()).not.toContain('mouseleave')
 

@@ -4,6 +4,7 @@
     enter-from-class="scale-0 opacity-0"
     leave-active-class="transition duration-300 ease-in"
     leave-to-class="scale-0 opacity-0"
+    @after-enter="showTooltipBriefly"
   >
     <span v-if="state.status !== 'idle'" class="block">
       <SideSheetButton
@@ -29,7 +30,7 @@
 
 <script lang="ts" setup>
 import { FileArchiveIcon } from 'lucide-vue-next'
-import { computed, nextTick, onBeforeUnmount, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, useTemplateRef } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { eventBus } from '@/utils/eventBus'
@@ -51,8 +52,7 @@ const clearHideTooltipTimer = () => {
   }
 }
 
-const showTooltipBriefly = async () => {
-  await nextTick()
+const showTooltipBriefly = () => {
   const element = button.value?.$el as HTMLElement | undefined
 
   if (!element) {
@@ -70,11 +70,6 @@ const showTooltipBriefly = async () => {
     }
   }, TOOLTIP_ON_START_MS)
 }
-
-watch(
-  () => state.status,
-  (status, previousStatus) => status === 'zipping' && previousStatus !== 'zipping' && showTooltipBriefly(),
-)
 
 const { toastSuccess } = useMessageToaster()
 const announceSavedArchive = () => toastSuccess('Songs downloaded.')
