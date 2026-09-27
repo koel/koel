@@ -5,12 +5,24 @@
         <a
           v-if="file.song"
           :href="url('albums.show', { id: file.song.album_id })"
-          class="name px-4 flex-1 flex items-center text-current hover:underline focus:text-current"
+          class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)] text-current hover:underline focus:text-current"
           data-testid="upload-item-album-link"
         >
           {{ file.name }}
         </a>
-        <span v-else class="name px-4 flex-1 flex items-center">{{ file.name }}</span>
+        <span
+          v-else
+          class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)]"
+          >{{ file.name }}</span
+        >
+        <span
+          v-if="showsReasonInRow"
+          :class="file.status === 'Errored' ? 'text-k-danger' : 'text-k-fg-70'"
+          class="shrink-0 px-4"
+          data-testid="upload-item-reason"
+        >
+          {{ file.message }}
+        </span>
         <Btn variant="ghost" v-if="canRetry" class="px-3!" icon-only title="Retry" unrounded @click="retry">
           <Icon :icon="faRotateBack" />
         </Btn>
@@ -25,15 +37,9 @@
         </span>
       </div>
     </div>
-    <p v-if="file.status !== 'Uploaded'" class="text-[.90rem] mt-1 ml-4">
-      <span v-if="file.status === 'Errored'" class="text-k-danger">
-        <Icon :icon="faExclamationCircle" class="mr-1" />
-        {{ file.message }}
-      </span>
-      <span v-if="file.status === 'Canceled'">Canceled.</span>
+    <p v-if="showsStatusLine" class="text-[.90rem] mt-1 ml-4">
       <span v-if="file.status === 'Ready'">Queued.</span>
       <span v-if="file.status === 'Retrying'">Connection problem. Retrying shortly&hellip;</span>
-      <span v-if="file.status === 'Skipped'" class="text-k-fg-70">{{ file.message }}</span>
       <span v-if="file.status === 'Uploading'">
         Uploading
         <span class="tabular-nums">
@@ -48,7 +54,6 @@
 
 <script lang="ts" setup>
 import {
-  faExclamationCircle,
   faExclamationTriangle,
   faInfoCircle,
   faRotateBack,
@@ -76,6 +81,8 @@ const canRemove = computed(
   () => !['Uploading', 'Uploaded', 'Skipped'].includes(file.value.status) && !isProcessing.value,
 )
 const cssClass = computed(() => file.value.status.toLowerCase())
+const showsReasonInRow = computed(() => ['Skipped', 'Errored', 'Canceled'].includes(file.value.status))
+const showsStatusLine = computed(() => ['Ready', 'Uploading', 'Retrying', 'Processing'].includes(file.value.status))
 
 const progressBarWidth = computed(() => {
   if (isProcessing.value) {

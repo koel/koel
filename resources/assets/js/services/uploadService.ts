@@ -164,7 +164,7 @@ export const uploadService = {
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         file.status = 'Canceled'
-        file.message = 'Upload cancelled.'
+        file.message = 'Canceled'
         this.proceed()
         return
       }
@@ -197,7 +197,7 @@ export const uploadService = {
       const message =
         isObjectResponse && 'message' in responseData ? (responseData as { message?: unknown }).message : undefined
 
-      file.message = typeof message === 'string' && message ? `Upload failed: ${message}` : 'Server error.'
+      file.message = typeof message === 'string' && message ? message : 'Server error'
 
       this.proceed() // upload the next file
     } finally {
@@ -306,7 +306,7 @@ export const uploadService = {
 
     if (file) {
       file.status = 'Errored'
-      file.message = `Upload failed: ${failure.message}`
+      file.message = failure.message
       this.proceed()
     }
   },

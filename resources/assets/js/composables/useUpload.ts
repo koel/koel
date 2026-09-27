@@ -35,7 +35,7 @@ export const useUpload = () => {
         file,
         id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
         status: acceptsFile(file) ? 'Ready' : 'Skipped',
-        message: acceptsFile(file) ? undefined : 'Skipped: unsupported format.',
+        message: acceptsFile(file) ? undefined : 'Unsupported format',
         name: file.name,
         progress: 0,
       }),

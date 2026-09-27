@@ -143,4 +143,13 @@ describe('uploadItem.vue', () => {
 
     expect(screen.queryByRole('button', { name: 'Remove' })).toBeNull()
   })
+
+  it.each<[UploadStatus]>([['Skipped'], ['Errored'], ['Canceled']])(
+    'shows why a %s file did not upload in its row',
+    status => {
+      renderComponent(status)
+
+      screen.getByTestId('upload-item-reason')
+    },
+  )
 })

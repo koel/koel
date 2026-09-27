@@ -268,7 +268,7 @@ describe('uploadService', () => {
     uploadService.handleUploadFailure({ upload_key: '1__abc__song.mp3', message: 'Empty file' })
 
     expect(file.status).toBe('Errored')
-    expect(file.message).toBe('Upload failed: Empty file')
+    expect(file.message).toBe('Empty file')
   })
 
   it('ignores a broadcast for a file it no longer has', () => {
@@ -349,7 +349,7 @@ describe('uploadService', () => {
     await uploadService.upload(file)
 
     expect(file.status).toBe('Errored')
-    expect(file.message).toBe('Server error.')
+    expect(file.message).toBe('Server error')
   })
 
   it('shows a generic server error when the response cannot be parsed', async () => {
@@ -365,7 +365,7 @@ describe('uploadService', () => {
     await uploadService.upload(file)
 
     expect(file.status).toBe('Errored')
-    expect(file.message).toBe('Server error.')
+    expect(file.message).toBe('Server error')
   })
 
   it('clears the failure message when a file is reset', () => {
