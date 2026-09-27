@@ -14,6 +14,8 @@ exports[`uploadItem.vue > renders 1`] = `
     <!--v-if-->
     <!--v-if-->
     <!--v-if-->
+    <!--v-if-->
+    <!--v-if-->
   </p>
 </article>
 `;

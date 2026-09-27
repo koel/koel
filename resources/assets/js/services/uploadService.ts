@@ -1,14 +1,23 @@
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
 import { postJson, putToStorageWithProgress } from '@/services/httpUpload'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
+import { useLocalStorage } from '@/composables/useLocalStorage'
 import { playableStore } from '@/stores/playableStore'
 import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 
 const HTTP_ACCEPTED = 202
+
+const MAX_PARALLEL_UPLOADS = 5
+const MIN_PARALLEL_UPLOADS = 2
+const MAX_ATTEMPTS = 3
+const RETRY_DELAY_MS = 2000
+const TRANSIENT_FAILURE_STATUSES = [502, 503, 504]
+const UNFINISHED_STATUSES: UploadStatus[] = ['Ready', 'Uploading', 'Retrying']
+const UNFINISHED_UPLOADS_STORAGE_KEY = 'unfinished-uploads'
 
 interface PresignedUpload {
   key: string
@@ -28,7 +37,15 @@ export interface UploadFailure {
   message: string
 }
 
-export type UploadStatus = 'Ready' | 'Uploading' | 'Processing' | 'Uploaded' | 'Canceled' | 'Errored'
+export type UploadStatus =
+  | 'Ready'
+  | 'Uploading'
+  | 'Retrying'
+  | 'Processing'
+  | 'Uploaded'
+  | 'Canceled'
+  | 'Errored'
+  | 'Skipped'
 
 export interface UploadFile {
   id: string
@@ -38,6 +55,8 @@ export interface UploadFile {
   name: string
   progress: number
   message?: string
+  attempts?: number
+  song?: Song
 }
 
 export interface DuplicateUpload {
@@ -53,15 +72,53 @@ export const uploadService = {
   state: reactive({
     files: [] as UploadFile[],
     duplicatedSongs: [] as DuplicateUpload[],
+    unfinishedLastTime: [] as string[],
   }),
+
+  leavingIsGuarded: false,
 
   abortHandles: new Map<string, () => void>(),
 
-  simultaneousUploads: 5,
+  parallelUploadLimit: MAX_PARALLEL_UPLOADS,
 
   queue(file: UploadFile | UploadFile[]) {
+    this.ensureLeavingIsGuarded()
     this.state.files = this.state.files.concat(file)
     this.proceed()
+  },
+
+  getUnfinishedFiles() {
+    return this.state.files.filter(({ status }) => UNFINISHED_STATUSES.includes(status))
+  },
+
+  ensureLeavingIsGuarded() {
+    if (this.leavingIsGuarded) {
+      return
+    }
+
+    this.leavingIsGuarded = true
+
+    window.addEventListener('beforeunload', event => {
+      if (this.getUnfinishedFiles().length) {
+        event.preventDefault()
+      }
+    })
+
+    watch(
+      () => this.getUnfinishedFiles().map(({ name }) => name),
+      names => useLocalStorage().set(UNFINISHED_UPLOADS_STORAGE_KEY, names),
+    )
+  },
+
+  recallUnfinishedUploads() {
+    if (!this.state.files.length) {
+      this.state.unfinishedLastTime = useLocalStorage().get<string[]>(UNFINISHED_UPLOADS_STORAGE_KEY) ?? []
+    }
+  },
+
+  forgetUnfinishedUploads() {
+    this.state.unfinishedLastTime = []
+    useLocalStorage().remove(UNFINISHED_UPLOADS_STORAGE_KEY)
   },
 
   remove(file: UploadFile) {
@@ -76,7 +133,7 @@ export const uploadService = {
   },
 
   proceed() {
-    const remainingSlots = this.simultaneousUploads - this.getUploadingFiles().length
+    const remainingSlots = this.parallelUploadLimit - this.getUploadingFiles().length
 
     if (remainingSlots <= 0) {
       return
@@ -103,6 +160,7 @@ export const uploadService = {
 
     file.progress = 0
     file.status = 'Uploading'
+    file.attempts = (file.attempts ?? 0) + 1
 
     const trackProgress = (e: ProgressEvent) => (file.progress = (e.loaded * 100) / e.total)
 
@@ -117,10 +175,10 @@ export const uploadService = {
         }
       } else {
         file.status = 'Uploaded'
-        data && this.handleUploadResult(data)
-        window.setTimeout(() => this.remove(file), 1000)
+        data && this.handleUploadResult(data, file)
       }
 
+      this.speedUp()
       this.proceed()
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') {
@@ -131,12 +189,20 @@ export const uploadService = {
       }
 
       logger.error(error)
-      file.status = 'Errored'
 
       const err = error as {
         status?: number
         data?: unknown
       }
+
+      if (this.isTransientFailure(err) && file.attempts < MAX_ATTEMPTS) {
+        this.slowDown()
+        this.retryLater(file)
+        this.proceed()
+        return
+      }
+
+      file.status = 'Errored'
 
       const responseData = err.data
       const isObjectResponse = responseData !== null && typeof responseData === 'object'
@@ -213,18 +279,44 @@ export const uploadService = {
     this.state.duplicatedSongs = []
   },
 
-  handleUploadResult(result: UploadResult) {
+  isTransientFailure: (failure: { status?: number }) =>
+    failure.status === undefined || TRANSIENT_FAILURE_STATUSES.includes(failure.status),
+
+  retryLater(file: UploadFile) {
+    file.status = 'Retrying'
+    file.progress = 0
+
+    window.setTimeout(
+      () => {
+        if (file.status === 'Retrying') {
+          file.status = 'Ready'
+          this.proceed()
+        }
+      },
+      RETRY_DELAY_MS * (file.attempts ?? 1),
+    )
+  },
+
+  slowDown() {
+    this.parallelUploadLimit = MIN_PARALLEL_UPLOADS
+  },
+
+  speedUp() {
+    this.parallelUploadLimit = Math.min(MAX_PARALLEL_UPLOADS, this.parallelUploadLimit + 1)
+  },
+
+  handleUploadResult(result: UploadResult, uploadedFile?: UploadFile) {
     playableStore.syncWithVault(result.song)
     playableStore.invalidateAlbumAndArtistSongCaches(result.song)
     albumStore.syncWithVault(result.album)
     commonStore.state.song_length += 1
     eventBus.emit('SONG_UPLOADED', result.song)
 
-    const file = this.findByUploadKey(result.upload_key)
+    const file = uploadedFile ?? this.findByUploadKey(result.upload_key)
 
     if (file) {
       file.status = 'Uploaded'
-      window.setTimeout(() => this.remove(file), 1000)
+      file.song = result.song
     }
   },
 
@@ -259,9 +351,14 @@ export const uploadService = {
     file.progress = 0
     file.uploadKey = undefined
     file.message = undefined
+    file.attempts = 0
   },
 
   removeFailed() {
     this.state.files = this.state.files.filter(({ status }) => status !== 'Errored')
+  },
+
+  clearFinished() {
+    this.state.files = this.state.files.filter(({ status }) => status !== 'Uploaded' && status !== 'Skipped')
   },
 }

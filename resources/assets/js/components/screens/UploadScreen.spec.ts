@@ -107,4 +107,33 @@ describe('uploadScreen.vue', () => {
 
     expect(removeFailedMock).toHaveBeenCalled()
   })
+
+  it('keeps finished uploads in their own group, and clears them on request', async () => {
+    const clearMock = h.mock(uploadService, 'clearFinished')
+    uploadService.state.files = [
+      { id: '1', file: new File([], 'done.mp3'), status: 'Uploaded', name: 'done.mp3', progress: 100 },
+      { id: '2', file: new File([], 'going.mp3'), status: 'Uploading', name: 'going.mp3', progress: 30 },
+    ]
+
+    h.render(Component)
+
+    await waitFor(() => expect(screen.getAllByTestId('upload-item')).toHaveLength(2))
+    expect(screen.getByTestId('uploaded-files').querySelectorAll('[data-testid="upload-item"]')).toHaveLength(1)
+
+    await h.user.click(screen.getByTestId('upload-clear-finished-btn'))
+
+    expect(clearMock).toHaveBeenCalled()
+  })
+
+  it('lists the files that did not finish last time', async () => {
+    uploadService.state.files = []
+    h.mock(uploadService, 'recallUnfinishedUploads').mockImplementation(() => {
+      uploadService.state.unfinishedLastTime = ['left-behind.mp3']
+    })
+
+    h.render(Component)
+
+    await waitFor(() => screen.getByTestId('unfinished-uploads'))
+    uploadService.state.unfinishedLastTime = []
+  })
 })

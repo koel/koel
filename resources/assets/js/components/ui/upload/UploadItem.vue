@@ -2,7 +2,15 @@
   <article :title="file.message" class="upload-item relative">
     <div :class="cssClass" class="h-full w-full min-h-[32px] bg-k-fg-5 relative rounded-lg overflow-hidden">
       <div class="absolute z-1 h-full w-full flex items-center">
-        <span class="name px-4 flex-1 flex items-center">{{ file.name }}</span>
+        <a
+          v-if="file.song"
+          :href="url('albums.show', { id: file.song.album_id })"
+          class="name px-4 flex-1 flex items-center hover:underline"
+          data-testid="upload-item-album-link"
+        >
+          {{ file.name }}
+        </a>
+        <span v-else class="name px-4 flex-1 flex items-center">{{ file.name }}</span>
         <Btn variant="ghost" v-if="canRetry" class="px-3!" icon-only title="Retry" unrounded @click="retry">
           <Icon :icon="faRotateBack" />
         </Btn>
@@ -24,6 +32,8 @@
       </span>
       <span v-if="file.status === 'Canceled'">Canceled.</span>
       <span v-if="file.status === 'Ready'">Queued.</span>
+      <span v-if="file.status === 'Retrying'">Connection problem. Retrying shortly&hellip;</span>
+      <span v-if="file.status === 'Skipped'" class="text-k-fg-70">{{ file.message }}</span>
       <span v-if="file.status === 'Uploading'">
         Uploading
         <span class="tabular-nums">
@@ -55,12 +65,14 @@ import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
+import { useRouter } from '@/composables/useRouter'
 
 const props = defineProps<{ file: UploadFile }>()
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
 const { file } = toRefs(props)
+const { url } = useRouter()
 
 const isProcessing = computed(() => file.value.status === 'Processing')
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')

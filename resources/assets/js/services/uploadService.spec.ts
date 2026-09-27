@@ -36,6 +36,7 @@ describe('uploadService', () => {
     beforeEach: () => {
       uploadService.state.files = []
       uploadService.abortHandles.clear()
+      uploadService.parallelUploadLimit = 5
       commonStore.state.supports_presigned_uploads = false
       postWithProgressMock.mockClear()
       putToStorageMock.mockClear()
@@ -154,8 +155,85 @@ describe('uploadService', () => {
     await uploadService.upload(file)
 
     expect(file.status).toBe('Uploaded')
-    expect(handleMock).toHaveBeenCalledWith(result)
+    expect(handleMock).toHaveBeenCalledWith(result, file)
     expect(proceedMock).toHaveBeenCalled()
+  })
+
+  it('keeps an uploaded file in the list with its song', () => {
+    const file = createUploadFile()
+    file.status = 'Uploading'
+    uploadService.state.files = [file]
+    const song = h.factory('song').make()
+
+    uploadService.handleUploadResult({ song, album: h.factory('album').make() }, file)
+
+    expect(uploadService.state.files).toEqual([file])
+    expect(file.status).toBe('Uploaded')
+    expect(file.song).toBe(song)
+  })
+
+  it('retries a file that failed on the network, and uploads fewer at once', async () => {
+    mockPostWithProgressRejection(new Error('Network error'))
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Retrying')
+    expect(uploadService.parallelUploadLimit).toBe(2)
+  })
+
+  it('gives up on a network failure after the last attempt', async () => {
+    mockPostWithProgressRejection(new Error('Network error'))
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    file.attempts = 2
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Errored')
+  })
+
+  it('uploads more at once again after a success', async () => {
+    mockPostWithProgress({ song: h.factory('song').make(), album: h.factory('album').make() })
+    h.mock(uploadService, 'handleUploadResult')
+    h.mock(uploadService, 'proceed')
+    uploadService.parallelUploadLimit = 2
+
+    await uploadService.upload(createUploadFile())
+
+    expect(uploadService.parallelUploadLimit).toBe(3)
+  })
+
+  it('remembers the files that have not finished, for after a reload', async () => {
+    h.mock(uploadService, 'proceed')
+    uploadService.queue(createUploadFile({ name: 'unfinished.mp3' }))
+    await h.tick()
+
+    uploadService.state.files = []
+    uploadService.recallUnfinishedUploads()
+
+    expect(uploadService.state.unfinishedLastTime).toEqual(['unfinished.mp3'])
+  })
+
+  it('forgets the unfinished files once dismissed', () => {
+    uploadService.state.unfinishedLastTime = ['unfinished.mp3']
+
+    uploadService.forgetUnfinishedUploads()
+    uploadService.recallUnfinishedUploads()
+
+    expect(uploadService.state.unfinishedLastTime).toEqual([])
+  })
+
+  it('clears finished and skipped files', () => {
+    const [uploaded, skipped, queued] = [createUploadFile(), createUploadFile(), createUploadFile()]
+    uploaded.status = 'Uploaded'
+    skipped.status = 'Skipped'
+    uploadService.state.files = [uploaded, skipped, queued]
+
+    uploadService.clearFinished()
+
+    expect(uploadService.state.files).toEqual([queued])
   })
 
   it('finishes a keyless queued upload rather than stranding it', async () => {
@@ -280,6 +358,7 @@ describe('uploadService', () => {
 
   it('handles upload error with message', async () => {
     const error = Object.assign(new Error('Upload failed with status 413'), {
+      status: 413,
       data: { message: 'File too large' },
     })
 
@@ -294,7 +373,7 @@ describe('uploadService', () => {
   })
 
   it('handles upload error without message', async () => {
-    mockPostWithProgressRejection(new Error('network error'))
+    mockPostWithProgressRejection(Object.assign(new Error('Upload failed with status 500'), { status: 500 }))
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()

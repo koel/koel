@@ -121,4 +121,23 @@ describe('uploadItem.vue', () => {
     screen.getByTitle('Processing')
     screen.getByText('Processing…')
   })
+
+  it('links an uploaded song to its album', () => {
+    const song = h.factory('song').make()
+
+    h.render(Component, {
+      props: {
+        file: {
+          status: 'Uploaded',
+          file: new File([], 'sample.mp3'),
+          id: 'x-file',
+          name: 'Sample Track',
+          progress: 100,
+          song,
+        },
+      },
+    })
+
+    expect(screen.getByTestId('upload-item-album-link').getAttribute('href')).toContain(song.album_id)
+  })
 })

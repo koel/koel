@@ -5,6 +5,9 @@
         Upload Media
 
         <template #controls>
+          <Btn v-if="hasFinishedFiles" data-testid="upload-clear-finished-btn" variant="ghost" @click="clearFinished">
+            Clear Finished
+          </Btn>
           <BtnGroup v-if="hasUploadFailures" uppercase>
             <Btn variant="success" data-testid="upload-retry-all-btn" @click="retryAll">
               <Icon :icon="faRotateRight" />
@@ -28,10 +31,18 @@
       @drop.prevent="onDrop"
       @dragover.prevent
     >
+      <UnfinishedUploadsNotice v-if="unfinishedLastTime.length" :names="unfinishedLastTime" class="mb-4" />
       <DuplicateUploadList v-if="duplicatedSongs.length" :songs="duplicatedSongs" class="mb-4" />
 
       <div v-if="files.length" class="pb-4 space-y-4">
-        <UploadItem v-for="file in files" :key="file.id" :file="file" data-testid="upload-item" />
+        <UploadSummary />
+        <UploadItem v-for="file in pendingFiles" :key="file.id" :file="file" data-testid="upload-item" />
+        <details v-if="uploadedFiles.length" data-testid="uploaded-files" open>
+          <summary class="cursor-pointer text-k-fg-70">Uploaded ({{ uploadedFiles.length }})</summary>
+          <div class="mt-4 space-y-4">
+            <UploadItem v-for="file in uploadedFiles" :key="file.id" :file="file" data-testid="upload-item" />
+          </div>
+        </details>
       </div>
 
       <ScreenEmptyState v-else-if="!files.length && !duplicatedSongs.length">
@@ -81,6 +92,8 @@ import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 
 import DuplicateUploadList from '@/components/ui/DuplicateUploadList.vue'
+import UnfinishedUploadsNotice from '@/components/ui/upload/UnfinishedUploadsNotice.vue'
+import UploadSummary from '@/components/ui/upload/UploadSummary.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const UploadItem = defineAsyncComponent(() => import('@/components/ui/upload/UploadItem.vue'))
@@ -92,6 +105,10 @@ const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = u
 const duplicatedSongs = toRef(uploadService.state, 'duplicatedSongs')
 
 const files = toRef(uploadService.state, 'files')
+const unfinishedLastTime = toRef(uploadService.state, 'unfinishedLastTime')
+const pendingFiles = computed(() => files.value.filter(({ status }) => status !== 'Uploaded'))
+const uploadedFiles = computed(() => files.value.filter(({ status }) => status === 'Uploaded'))
+const hasFinishedFiles = computed(() => files.value.some(({ status }) => status === 'Uploaded' || status === 'Skipped'))
 const droppable = ref(false)
 
 const hasUploadFailures = computed(() => files.value.filter(({ status }) => status === 'Errored').length > 0)
@@ -119,10 +136,14 @@ const onDrop = async (event: DragEvent) => {
   await handleDropEvent(event)
 }
 
+const clearFinished = () => uploadService.clearFinished()
 const retryAll = () => uploadService.retryAll()
 const removeFailedEntries = () => uploadService.removeFailed()
 
-onMounted(() => uploadService.fetchDuplicates())
+onMounted(() => {
+  uploadService.recallUnfinishedUploads()
+  uploadService.fetchDuplicates()
+})
 </script>
 
 <style lang="postcss" scoped>
