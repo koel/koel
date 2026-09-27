@@ -128,6 +128,6 @@ article > div::before {
 }
 
 .errored {
-  @apply bg-k-danger/15;
+  @apply bg-k-danger/10;
 }
 </style>
