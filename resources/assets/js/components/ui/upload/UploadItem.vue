@@ -42,17 +42,12 @@
         </span>
       </span>
       <span v-if="isProcessing">Processing&hellip;</span>
-      <span v-if="file.status === 'Uploaded'" class="text-k-success">
-        <Icon :icon="faCheckCircle" class="mr-1" />
-        Uploaded.
-      </span>
     </p>
   </article>
 </template>
 
 <script lang="ts" setup>
 import {
-  faCheckCircle,
   faExclamationCircle,
   faExclamationTriangle,
   faInfoCircle,
@@ -78,7 +73,7 @@ const isProcessing = computed(() => file.value.status === 'Processing')
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canAbort = computed(() => file.value.status === 'Uploading')
 const canRemove = computed(
-  () => file.value.status !== 'Uploading' && file.value.status !== 'Skipped' && !isProcessing.value,
+  () => !['Uploading', 'Uploaded', 'Skipped'].includes(file.value.status) && !isProcessing.value,
 )
 const cssClass = computed(() => file.value.status.toLowerCase())
 

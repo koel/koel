@@ -55,17 +55,14 @@ describe('uploadItem.vue', () => {
     expect(mock).toHaveBeenCalled()
   })
 
-  it.each<[UploadStatus]>([['Uploaded'], ['Errored'], ['Canceled']])(
-    'allows removal if not uploading',
-    async status => {
-      const mock = h.mock(uploadService, 'remove')
-      renderComponent(status)
+  it.each<[UploadStatus]>([['Errored'], ['Canceled']])('allows removing a file that did not upload', async status => {
+    const mock = h.mock(uploadService, 'remove')
+    renderComponent(status)
 
-      await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
 
-      expect(mock).toHaveBeenCalled()
-    },
-  )
+    expect(mock).toHaveBeenCalled()
+  })
 
   it('aborts upload after confirmation', async () => {
     mockShowConfirmDialog.mockResolvedValue(true)
@@ -141,8 +138,8 @@ describe('uploadItem.vue', () => {
     expect(screen.getByTestId('upload-item-album-link').getAttribute('href')).toContain(song.album_id)
   })
 
-  it('offers no removal for a skipped file', () => {
-    renderComponent('Skipped')
+  it.each<[UploadStatus]>([['Skipped'], ['Uploaded']])('offers no removal for a %s file', status => {
+    renderComponent(status)
 
     expect(screen.queryByRole('button', { name: 'Remove' })).toBeNull()
   })
