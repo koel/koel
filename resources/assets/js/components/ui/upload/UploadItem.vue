@@ -21,10 +21,10 @@
           class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)]"
           >{{ file.name }}</span
         >
-        <span v-if="showsReasonInRow" class="shrink-0 px-4 text-k-fg-70" data-testid="upload-item-reason">
+        <span v-if="showsReasonInRow" class="shrink-0 px-4 text-k-fg-50" data-testid="upload-item-reason">
           {{ file.message }}
         </span>
-        <span v-if="file.status === 'Retrying'" class="shrink-0 px-3 text-k-fg-70" data-testid="upload-item-state">
+        <span v-if="file.status === 'Retrying'" class="shrink-0 px-3 text-k-fg-50" data-testid="upload-item-state">
           Retrying&hellip;
         </span>
         <Btn variant="ghost" v-if="canAbort" class="px-3!" icon-only title="Abort" unrounded @click="abort">
@@ -47,7 +47,7 @@
         <span v-if="file.status === 'Uploaded'" class="px-3 text-k-success" title="Uploaded">
           <Icon :icon="faCircleCheck" />
         </span>
-        <span v-if="isProcessing" class="px-3 text-k-fg-70" title="Processing">
+        <span v-if="isProcessing" class="px-3 text-k-fg-50" title="Processing">
           <Icon :icon="faSpinner" spin />
         </span>
       </div>
