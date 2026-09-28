@@ -1,12 +1,12 @@
 <template>
   <article
     v-if="!dismissed"
-    class="text-orange-600 p-4 bg-white rounded-md flex items-center gap-3 fixed z-10000 left-6 shadow-lg cursor-pointer max-w-xs"
+    class="fixed z-10000 left-4 flex items-center gap-3 max-w-xs py-3 px-4 rounded-xl border border-k-fg-10 bg-k-bg-context-menu text-k-fg shadow-lg cursor-pointer"
     title="Click to dismiss"
     @click="dismissed = true"
   >
-    <WifiOff :size="20" class="shrink-0" />
-    <span class="text-gray-800">You're offline.</span>
+    <WifiOff :size="18" class="shrink-0 text-k-warning" />
+    <span>You're offline.</span>
   </article>
 </template>
 
@@ -28,6 +28,6 @@ watch(online, isOnline => {
 
 <style lang="postcss" scoped>
 article {
-  bottom: calc(var(--footer-height) + 1.2rem);
+  bottom: calc(var(--footer-height) + 2rem);
 }
 </style>

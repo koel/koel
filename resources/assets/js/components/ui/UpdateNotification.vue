@@ -2,11 +2,11 @@
   <article
     v-if="newerVersionDeployed"
     data-testid="update-notification"
-    class="text-k-primary p-4 bg-white rounded-md flex items-center gap-3 fixed z-10000 left-6 shadow-lg"
+    class="fixed z-10000 left-4 flex items-center gap-3 py-3 pl-4 pr-3 rounded-xl border border-k-fg-10 bg-k-bg-context-menu text-k-fg shadow-lg"
   >
-    <RocketIcon :size="20" class="shrink-0" />
-    <span class="text-gray-800 whitespace-nowrap">Koel has been updated.</span>
-    <Btn size="small" @click="forceReloadWindow">Reload</Btn>
+    <RocketIcon :size="18" class="shrink-0 text-k-fg-70" />
+    <span class="whitespace-nowrap">Koel has been updated.</span>
+    <Btn size="small" variant="highlight" @click="forceReloadWindow">Reload</Btn>
   </article>
 </template>
 
@@ -38,6 +38,6 @@ useEventListener(window, 'vite:preloadError', async () => {
 
 <style lang="postcss" scoped>
 article {
-  bottom: calc(var(--footer-height) + 1.2rem);
+  bottom: calc(var(--footer-height) + 2rem);
 }
 </style>
