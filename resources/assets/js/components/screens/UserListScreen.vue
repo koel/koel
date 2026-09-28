@@ -16,34 +16,38 @@
       </ScreenHeader>
     </template>
 
-    <ul class="space-y-3">
-      <li v-for="user in users" :key="user.id">
-        <UserCard :user />
-      </li>
-    </ul>
-
-    <template v-if="prospects.length">
-      <h2
-        class="px-0 pt-6 pb-3 uppercase tracking-widest text-center relative flex justify-center"
-        data-testid="prospects-heading"
+    <div class="flex flex-col gap-4">
+      <SegmentedControl
+        v-if="prospects.length"
+        v-model="currentFilter"
+        :options="filterOptions"
+        class="self-center"
+        name="user-filter"
       >
-        <i class="invited-heading-decoration" />
-        <span class="px-4 py-1 relative">Invited</span>
-        <i class="invited-heading-decoration" />
-      </h2>
+        <template #default="{ option }">
+          {{ option.label }}
+          <span
+            :data-testid="`user-filter-count-${option.value}`"
+            class="inline-flex items-center justify-center h-[16px] min-w-[16px] px-[5px] rounded-full bg-k-fg-10 text-[.8rem] leading-none tabular-nums"
+            data-badge
+          >
+            {{ usersByFilter[option.value].length }}
+          </span>
+        </template>
+      </SegmentedControl>
 
       <ul class="space-y-3">
-        <li v-for="user in prospects" :key="user.id">
+        <li v-for="user in usersByFilter[currentFilter]" :key="user.id">
           <UserCard :user />
         </li>
       </ul>
-    </template>
+    </div>
   </ScreenBase>
 </template>
 
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { computed, onMounted, toRef } from 'vue'
+import { computed, onMounted, ref, toRef, watch } from 'vue'
 import { userStore } from '@/stores/userStore'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { useAuthorization } from '@/composables/useAuthorization'
@@ -53,6 +57,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import UserCard from '@/components/user/UserCard.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 const AddUserForm = defineAsyncComponent(() => import('@/components/user/AddUserForm.vue'))
@@ -73,6 +78,26 @@ const users = computed(() =>
 
 const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_prospect))
 
+type UserFilter = 'active' | 'invited'
+
+const currentFilter = ref<UserFilter>('active')
+
+const usersByFilter = computed<Record<UserFilter, User[]>>(() => ({
+  active: users.value,
+  invited: prospects.value,
+}))
+
+const filterOptions: { value: UserFilter; label: string; testId: string }[] = [
+  { value: 'active', label: 'Active', testId: 'user-filter-active' },
+  { value: 'invited', label: 'Invited', testId: 'user-filter-invited' },
+]
+
+watch(prospects, () => {
+  if (!prospects.value.length) {
+    currentFilter.value = 'active'
+  }
+})
+
 const canInvite = window.KOEL.mailer_configured
 
 const showAddUserForm = () => openModal<'ADD_USER_FORM'>(AddUserForm)
@@ -80,11 +105,3 @@ const showInviteUserForm = () => openModal<'INVITE_USER_FORM'>(InviteUserForm)
 
 onMounted(async () => await userStore.fetch())
 </script>
-
-<style lang="postcss" scoped>
-@reference '@css/app.pcss';
-.invited-heading-decoration {
-  @apply relative flex-1 before:absolute before:top-1/2;
-  @apply before:left-0 before:right-0 before:h-px before:opacity-20 before:bg-k-fg-70;
-}
-</style>
