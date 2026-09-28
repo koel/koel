@@ -1,5 +1,5 @@
 <template>
-  <form class="md:w-1/2" @submit.prevent="confirmThenSave">
+  <form class="md:w-2/3" @submit.prevent="confirmThenSave">
     <SettingGroup>
       <FormRow>
         <template #help>

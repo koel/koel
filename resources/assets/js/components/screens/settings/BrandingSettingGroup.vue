@@ -1,5 +1,5 @@
 <template>
-  <form class="md:w-1/2" @submit.prevent="handleSubmit">
+  <form class="md:w-2/3" @submit.prevent="handleSubmit">
     <SettingGroup>
       <div class="flex flex-col gap-2">
         <section class="flex flex-col gap-3">

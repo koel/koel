@@ -6,7 +6,7 @@
       <h4 :id="`${fieldId}-label`" class="text-k-fg">
         <slot name="label" />
       </h4>
-      <p class="text-[.95rem] text-k-fg-50">
+      <p class="text-[.95rem] text-k-fg-50 text-pretty">
         <slot name="help" />
       </p>
       <p class="text-[.95rem] text-k-fg-50">Recommended size: 512×512 pixels or larger.</p>
