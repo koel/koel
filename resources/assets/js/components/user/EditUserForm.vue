@@ -64,7 +64,7 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { user } = props
 
-const { toastSuccess } = useMessageToaster()
+const { toastSuccess, toastInfo } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
@@ -84,7 +84,12 @@ const { data, isPristine, handleSubmit } = useForm<UpdateUserData>({
     await userStore.update(user, formattedData)
   },
   onSuccess: () => {
-    toastSuccess('User profile updated.')
+    if (data.email === user.email) {
+      toastSuccess('User profile updated.')
+    } else {
+      toastInfo(`Confirmation email sent to ${data.email}.`)
+    }
+
     close()
   },
 })

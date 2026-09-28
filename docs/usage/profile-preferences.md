@@ -13,6 +13,8 @@ To update your profile, you must first authenticate yourself by entering your cu
 After that, you can update your name and email, and set a new password.
 Leaving the New Password field blank will keep your current password intact.
 
+If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, a new email address only takes effect once you confirm it: Koel sends a confirmation link to the new address, valid for 24 hours, and lets your old address know about the change. Until then, you keep logging in with your old address.
+
 :::tip Pick a strong password
 Koel enforces a strong password policy.
 Make sure to pick a password that is at least 10 characters long and contains a mix of letters, numbers, and special characters.

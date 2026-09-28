@@ -50,4 +50,16 @@ describe('editUserForm.vue', () => {
       expect(alertMock).toHaveBeenCalledWith('User profile updated.')
     })
   })
+
+  it('asks to confirm a new email address that has not taken effect yet', async () => {
+    h.mock(userStore, 'update')
+    const infoMock = h.mock(MessageToasterStub.value, 'info')
+
+    renderComponent(h.factory('user').make({ email: 'old@example.com' }))
+
+    await h.type(screen.getByRole('textbox', { name: 'Email' }), 'new@example.com')
+    await h.user.click(screen.getByRole('button', { name: 'Update' }))
+
+    await waitFor(() => expect(infoMock).toHaveBeenCalled())
+  })
 })

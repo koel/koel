@@ -23,6 +23,7 @@ class UserService
         private readonly UserRepository $repository,
         private readonly ImageStorage $imageStorage,
         private readonly OrganizationService $organizationService,
+        private readonly EmailChangeService $emailChangeService,
         #[Config('koel.sso.default_role')]
         private readonly Role $defaultSsoRole = Role::USER,
     ) {}
@@ -86,7 +87,17 @@ class UserService
             Arr::forget($data, ['password', 'email']);
         }
 
+        $emailChangeRequiresConfirmation = $this->emailChangeService->requiresConfirmation($user, $dto->email);
+
+        if ($emailChangeRequiresConfirmation) {
+            Arr::forget($data, 'email');
+        }
+
         $user->update($data);
+
+        if ($emailChangeRequiresConfirmation) {
+            $this->emailChangeService->requestChange($user, $dto->email);
+        }
 
         if ($dto->role && $user->role !== $dto->role) {
             $user->syncRoles($dto->role);
