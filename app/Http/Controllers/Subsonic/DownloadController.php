@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\IdRequest;
 use App\Repositories\SongRepository;
 use App\Services\DownloadService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class DownloadController extends Controller
@@ -21,10 +20,6 @@ class DownloadController extends Controller
         $song = $this->songRepository->getOne($request->id);
         $this->authorize('access', $song);
 
-        return (
-            $this->downloadService
-                ->getDownloadable(new Collection([$song]))
-                ?->toResponse() ?? throw new ModelNotFoundException()
-        );
+        return $this->downloadService->getDownloadable($song)?->toResponse() ?? throw new ModelNotFoundException();
     }
 }

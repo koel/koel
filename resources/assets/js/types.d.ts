@@ -62,6 +62,8 @@ type SSOProvider = 'Google' | 'OpenID Connect' | 'Reverse Proxy'
 
 interface KoelGlobals {
   base_url: string
+  clean_urls?: boolean
+  build: string | null
   is_demo: boolean
   pusher: {
     readonly app_key: string
@@ -217,6 +219,7 @@ interface Song extends BasePlayable {
   is_public: boolean
   is_external: boolean
   mbid?: string | null
+  file_size?: number | null
   basename?: string
   deleted?: boolean
   collaboration?: {
@@ -497,8 +500,17 @@ type CurrentUser = User & {
   two_factor: boolean
 }
 
+type AiProvider = 'openai' | 'anthropic' | 'gemini' | 'deepseek' | 'groq' | 'mistral' | 'openrouter' | 'xai'
+
+interface AiSettings {
+  enabled: boolean
+  provider: AiProvider | null
+  has_api_key: boolean
+}
+
 interface Settings {
   media_path?: string
+  ai?: AiSettings
 }
 
 interface Interaction {
@@ -584,6 +596,13 @@ interface ScreenNames {
 }
 
 declare type ScreenName = keyof ScreenNames
+
+interface HookSlotNames {
+  'sidebar.footer': true
+  'screen.top': true
+}
+
+declare type HookSlotName = keyof HookSlotNames
 
 /** Route names added outside the built-in route table; add one by merging a key into this interface from another declaration file. */
 interface RouteNames {}

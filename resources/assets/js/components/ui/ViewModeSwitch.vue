@@ -1,5 +1,6 @@
 <template>
-  <span class="flex w-[64px] border border-solid border-k-fg-20 rounded-md overflow-hidden">
+  <span class="relative flex gap-1 w-[64px] p-[3px] rounded-md bg-k-fg-10 shadow-sm">
+    <span :class="{ secondary: value !== 'grid' }" class="indicator" />
     <label v-koel-tooltip :class="{ active: value === 'grid' }" data-testid="view-mode-grid" title="View as grid">
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="grid" />
       <LayoutGridIcon :size="16" />
@@ -43,10 +44,18 @@ const value = defineModel<ViewMode>({ default: 'grid' })
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 label {
-  @apply flex-1 min-w-0 flex items-center justify-center py-2 mb-0 cursor-pointer;
+  @apply relative flex-1 min-w-0 flex items-center justify-center py-[4.5px] mb-0 rounded-sm cursor-pointer text-k-fg-70 hover:text-k-fg;
 
   &.active {
-    @apply bg-k-fg text-k-bg;
+    @apply text-k-fg;
+  }
+}
+
+.indicator {
+  @apply absolute inset-y-[3px] left-[3px] w-[calc(50%-5px)] rounded-sm bg-k-fg-20 shadow-sm transition-all duration-200 ease-out;
+
+  &.secondary {
+    @apply translate-x-[calc(100%+4px)];
   }
 }
 </style>

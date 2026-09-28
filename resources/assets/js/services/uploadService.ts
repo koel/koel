@@ -2,6 +2,7 @@ import { reactive } from 'vue'
 import { http } from '@/services/http'
 import { postWithProgress } from '@/services/http'
 import { postJson, putToStorageWithProgress } from '@/services/httpUpload'
+import type { UploadResponse } from '@/services/httpUpload'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -9,6 +10,13 @@ import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 
 const HTTP_ACCEPTED = 202
+
+const MAX_PARALLEL_UPLOADS = 5
+const MIN_PARALLEL_UPLOADS = 2
+const MAX_ATTEMPTS = 3
+const RETRY_DELAY_MS = 2000
+const TRANSIENT_FAILURE_STATUSES = [502, 503, 504]
+const UNFINISHED_STATUSES: UploadStatus[] = ['Ready', 'Uploading', 'Retrying']
 
 interface PresignedUpload {
   key: string
@@ -28,7 +36,15 @@ export interface UploadFailure {
   message: string
 }
 
-export type UploadStatus = 'Ready' | 'Uploading' | 'Processing' | 'Uploaded' | 'Canceled' | 'Errored'
+export type UploadStatus =
+  | 'Ready'
+  | 'Uploading'
+  | 'Retrying'
+  | 'Processing'
+  | 'Uploaded'
+  | 'Canceled'
+  | 'Errored'
+  | 'Skipped'
 
 export interface UploadFile {
   id: string
@@ -38,6 +54,8 @@ export interface UploadFile {
   name: string
   progress: number
   message?: string
+  attempts?: number
+  song?: Song
 }
 
 export interface DuplicateUpload {
@@ -55,13 +73,34 @@ export const uploadService = {
     duplicatedSongs: [] as DuplicateUpload[],
   }),
 
+  leavingIsGuarded: false,
+
   abortHandles: new Map<string, () => void>(),
 
-  simultaneousUploads: 5,
+  parallelUploadLimit: MAX_PARALLEL_UPLOADS,
 
   queue(file: UploadFile | UploadFile[]) {
+    this.ensureLeavingIsGuarded()
     this.state.files = this.state.files.concat(file)
     this.proceed()
+  },
+
+  getUnfinishedFiles() {
+    return this.state.files.filter(({ status }) => UNFINISHED_STATUSES.includes(status))
+  },
+
+  ensureLeavingIsGuarded() {
+    if (this.leavingIsGuarded) {
+      return
+    }
+
+    this.leavingIsGuarded = true
+
+    window.addEventListener('beforeunload', event => {
+      if (this.getUnfinishedFiles().length) {
+        event.preventDefault()
+      }
+    })
   },
 
   remove(file: UploadFile) {
@@ -76,7 +115,7 @@ export const uploadService = {
   },
 
   proceed() {
-    const remainingSlots = this.simultaneousUploads - this.getUploadingFiles().length
+    const remainingSlots = this.parallelUploadLimit - this.getUploadingFiles().length
 
     if (remainingSlots <= 0) {
       return
@@ -103,42 +142,41 @@ export const uploadService = {
 
     file.progress = 0
     file.status = 'Uploading'
+    file.attempts = (file.attempts ?? 0) + 1
 
     const trackProgress = (e: ProgressEvent) => (file.progress = (e.loaded * 100) / e.total)
 
+    let response: UploadResponse<UploadResult | null>
+
     try {
-      const { status, data } = commonStore.state.supports_presigned_uploads
+      response = commonStore.state.supports_presigned_uploads
         ? await this.uploadViaPresignedUrl(file, trackProgress)
         : await this.uploadDirectlyToServer(file, trackProgress)
-
-      if (status === HTTP_ACCEPTED && file.uploadKey) {
-        if (file.status === 'Uploading') {
-          file.status = 'Processing'
-        }
-      } else {
-        file.status = 'Uploaded'
-        data && this.handleUploadResult(data)
-        window.setTimeout(() => this.remove(file), 1000)
-      }
-
-      this.proceed()
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         file.status = 'Canceled'
-        file.message = 'Upload cancelled.'
+        file.message = 'Canceled'
         this.proceed()
         return
       }
 
       logger.error(error)
-      file.status = 'Errored'
 
       const err = error as {
         status?: number
-        responseData?: unknown
+        data?: unknown
       }
 
-      const responseData = err.responseData
+      if (this.isTransientFailure(err) && file.attempts < MAX_ATTEMPTS) {
+        this.slowDown()
+        this.retryLater(file)
+        this.proceed()
+        return
+      }
+
+      file.status = 'Errored'
+
+      const responseData = err.data
       const isObjectResponse = responseData !== null && typeof responseData === 'object'
 
       if (err.status === 409 && isObjectResponse) {
@@ -150,12 +188,26 @@ export const uploadService = {
       const message =
         isObjectResponse && 'message' in responseData ? (responseData as { message?: unknown }).message : undefined
 
-      file.message = typeof message === 'string' && message ? `Upload failed: ${message}` : 'Server error.'
+      file.message = typeof message === 'string' && message ? message : 'Server error'
 
       this.proceed() // upload the next file
+
+      return
     } finally {
       this.abortHandles.delete(file.id)
     }
+
+    if (response.status === HTTP_ACCEPTED && file.uploadKey) {
+      if (file.status === 'Uploading') {
+        file.status = 'Processing'
+      }
+    } else {
+      file.status = 'Uploaded'
+      response.data && this.handleUploadResult(response.data, file)
+    }
+
+    this.speedUp()
+    this.proceed()
   },
 
   async uploadDirectlyToServer(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
@@ -169,7 +221,10 @@ export const uploadService = {
   },
 
   async uploadViaPresignedUrl(file: UploadFile, onProgress: (e: ProgressEvent) => void) {
-    const presigning = postJson<PresignedUpload>('upload/presign', { file_name: file.file.name })
+    const presigning = postJson<PresignedUpload>('upload/presign', {
+      file_name: file.file.name,
+      file_size: file.file.size,
+    })
     this.abortHandles.set(file.id, presigning.abort)
     const { data: presigned } = await presigning.promise
     file.uploadKey = presigned.key
@@ -210,18 +265,44 @@ export const uploadService = {
     this.state.duplicatedSongs = []
   },
 
-  handleUploadResult(result: UploadResult) {
+  isTransientFailure: (failure: { status?: number }) =>
+    failure.status === undefined || TRANSIENT_FAILURE_STATUSES.includes(failure.status),
+
+  retryLater(file: UploadFile) {
+    file.status = 'Retrying'
+    file.progress = 0
+
+    window.setTimeout(
+      () => {
+        if (file.status === 'Retrying') {
+          file.status = 'Ready'
+          this.proceed()
+        }
+      },
+      RETRY_DELAY_MS * (file.attempts ?? 1),
+    )
+  },
+
+  slowDown() {
+    this.parallelUploadLimit = MIN_PARALLEL_UPLOADS
+  },
+
+  speedUp() {
+    this.parallelUploadLimit = Math.min(MAX_PARALLEL_UPLOADS, this.parallelUploadLimit + 1)
+  },
+
+  handleUploadResult(result: UploadResult, uploadedFile?: UploadFile) {
     playableStore.syncWithVault(result.song)
     playableStore.invalidateAlbumAndArtistSongCaches(result.song)
     albumStore.syncWithVault(result.album)
     commonStore.state.song_length += 1
     eventBus.emit('SONG_UPLOADED', result.song)
 
-    const file = this.findByUploadKey(result.upload_key)
+    const file = uploadedFile ?? this.findByUploadKey(result.upload_key)
 
     if (file) {
       file.status = 'Uploaded'
-      window.setTimeout(() => this.remove(file), 1000)
+      file.song = result.song
     }
   },
 
@@ -230,7 +311,7 @@ export const uploadService = {
 
     if (file) {
       file.status = 'Errored'
-      file.message = `Upload failed: ${failure.message}`
+      file.message = failure.message
       this.proceed()
     }
   },
@@ -256,9 +337,10 @@ export const uploadService = {
     file.progress = 0
     file.uploadKey = undefined
     file.message = undefined
+    file.attempts = 0
   },
 
   removeFailed() {
-    this.state.files = this.state.files.filter(({ status }) => status !== 'Errored')
+    this.state.files = this.state.files.filter(({ status }) => status !== 'Errored' && status !== 'Canceled')
   },
 }

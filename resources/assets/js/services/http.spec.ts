@@ -102,6 +102,21 @@ describe('http service', () => {
       expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
     })
 
+    it.each([
+      ['build-b', true],
+      ['build-a', false],
+    ])('announces a new version when the API reports build %s', async (build, announced) => {
+      window.KOEL.build = 'build-a'
+      mockFetch(200, { result: 'ok' }, { 'x-koel-build': build })
+      h.restoreAllMocks()
+      const emitMock = h.mock(eventBus, 'emit')
+
+      await http.get('endpoint')
+
+      expect(emitMock.mock.calls.some(([event]) => event === 'NEW_VERSION_DEPLOYED')).toBe(announced)
+      window.KOEL.build = null
+    })
+
     it('saves token from response header', async () => {
       mockFetch(200, { result: 'ok' }, { authorization: 'new-token' })
       h.restoreAllMocks()

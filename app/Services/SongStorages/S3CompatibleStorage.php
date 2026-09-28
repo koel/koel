@@ -3,53 +3,61 @@
 namespace App\Services\SongStorages;
 
 use App\Enums\SongStorageType;
+use App\Exceptions\SongUploadFailedException;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
 use App\Values\PresignedUpload;
 use App\Values\UploadReference;
 use Illuminate\Container\Attributes\Config;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+// @mago-ignore lint:too-many-methods
 class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadUrls
 {
     use DeletesUsingFilesystem;
 
+    private const string PENDING_UPLOAD_PREFIX = 'pending/';
+
     public function __construct(
+        private readonly S3UploadUrlSigner $uploadUrlSigner,
         #[Config('filesystems.disks.s3.bucket')]
         private readonly ?string $bucket = null,
     ) {}
 
-    public function presignUpload(string $fileName, User $uploader): PresignedUpload
+    public function presignUpload(string $fileName, int $fileSize, User $uploader): PresignedUpload
     {
-        $key = $this->generateStorageKey($fileName, $uploader);
-        $expiresAt = Carbon::now()->addHour();
-
-        ['url' => $url, 'headers' => $headers] = Storage::disk('s3')->temporaryUploadUrl($key, $expiresAt, [
-            'IfNoneMatch' => '*',
-        ]);
-
-        $headers = Arr::map($headers, static fn (array|string $value): string => Arr::first(Arr::wrap($value)));
-
-        return PresignedUpload::make(
-            key: $key,
-            url: $url,
-            headers: [...$headers, 'If-None-Match' => '*'],
-            expiresAt: $expiresAt,
+        return $this->uploadUrlSigner->sign(
+            key: self::PENDING_UPLOAD_PREFIX . $this->generateStorageKey($fileName, $uploader),
+            size: $fileSize,
+            expiresAt: Carbon::now()->addHour(),
         );
     }
 
     public function ownsUploadKey(string $key, User $uploader): bool
     {
-        if (Str::contains($key, ['/', '\\'])) {
+        if (!Str::startsWith($key, self::PENDING_UPLOAD_PREFIX)) {
             return false;
         }
 
-        return Str::startsWith($key, "{$uploader->public_id}__");
+        $storageKey = Str::after($key, self::PENDING_UPLOAD_PREFIX);
+
+        if (Str::contains($storageKey, ['/', '\\'])) {
+            return false;
+        }
+
+        return Str::startsWith($storageKey, "{$uploader->public_id}__");
+    }
+
+    public function moveUploadOutOfPending(string $key): void
+    {
+        $storageKey = Str::after($key, self::PENDING_UPLOAD_PREFIX);
+        $moved = rescue(static fn (): bool => Storage::disk('s3')->move($key, $storageKey), false);
+
+        throw_unless($moved, SongUploadFailedException::make('The uploaded file could not be stored.'));
     }
 
     public function sizeOfUpload(string $key): int
@@ -59,7 +67,7 @@ class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadU
 
     public function locationFromKey(string $key): string
     {
-        return "s3://$this->bucket/$key";
+        return "s3://$this->bucket/" . Str::after($key, self::PENDING_UPLOAD_PREFIX);
     }
 
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference

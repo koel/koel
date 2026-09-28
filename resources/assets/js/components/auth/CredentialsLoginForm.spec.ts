@@ -16,6 +16,30 @@ describe('credentialsLoginForm.vue', () => {
     await h.user.click(screen.getByTestId('submit'))
   }
 
+  it('fills in the email from the login hint, focuses the password and drops the hint from the address', async () => {
+    window.history.replaceState(null, '', '/?login_hint=john%40doe.com#/home')
+    h.render(Component)
+
+    expect(screen.getByPlaceholderText<HTMLInputElement>('Your email address').value).toBe('john@doe.com')
+    expect(screen.getByPlaceholderText<HTMLInputElement>('Your email address').readOnly).toBe(false)
+    expect(screen.getByPlaceholderText('Your email address').hasAttribute('autofocus')).toBe(false)
+    expect(screen.getByPlaceholderText('Your password').hasAttribute('autofocus')).toBe(true)
+    expect(window.location.search).toBe('')
+    expect(window.location.hash).toBe('#/home')
+
+    window.history.replaceState(null, '', '/')
+  })
+
+  it('drops an empty login hint from the address and focuses the email', async () => {
+    window.history.replaceState(null, '', '/?login_hint=#/home')
+    h.render(Component)
+
+    expect(screen.getByPlaceholderText('Your email address').hasAttribute('autofocus')).toBe(true)
+    expect(window.location.search).toBe('')
+
+    window.history.replaceState(null, '', '/')
+  })
+
   it('emits loggedIn on successful login', async () => {
     const loginMock = h.mock(authService, 'login')
     const { emitted } = h.render(Component)

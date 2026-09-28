@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vite-plus/test'
+import { defineComponent } from 'vue'
+import type { Component } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { Action, Filter } from '@/config/hooks'
-import { addAction, addFilter, applyFilters, doAction, removeAction, removeFilter } from '@/hooks'
+import { addAction, addFilter, addToHookSlot, applyFilters, doAction, removeAction, removeFilter } from '@/hooks'
 
 describe('hooks', () => {
   createHarness()
@@ -101,6 +103,16 @@ describe('hooks', () => {
     expect(applyFilters<string[]>('constructor', [])).toEqual(['added'])
     expect(applyFilters<string[]>('toString', ['kept'])).toEqual(['kept'])
     expect(Object.keys(Object)).toEqual([])
+
+    removeFilter(handle)
+  })
+
+  it('adds a component to the one slot it names', () => {
+    const Extra = defineComponent({ render: () => null })
+    const handle = addToHookSlot('sidebar.footer', Extra)
+
+    expect(applyFilters<Component[]>(Filter.SLOT, [], 'sidebar.footer')).toEqual([Extra])
+    expect(applyFilters<Component[]>(Filter.SLOT, [], 'screen.top')).toEqual([])
 
     removeFilter(handle)
   })

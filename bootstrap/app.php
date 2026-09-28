@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\SubsonicAwareErrorRenderer;
+use App\Http\Middleware\AddBuildHeader;
 use App\Http\Middleware\AddRequestContextForLogging;
 use App\Http\Middleware\AuthenticateAudioRequests;
 use App\Http\Middleware\EnsureEmbedsEnabled;
@@ -55,6 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->api(append: [
+            AddBuildHeader::class,
             RestrictPlusFeatures::class,
             HandleDemoMode::class,
             ForceHttps::class,

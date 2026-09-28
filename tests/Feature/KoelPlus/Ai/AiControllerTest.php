@@ -3,6 +3,11 @@
 namespace Tests\Feature\KoelPlus\Ai;
 
 use App\Ai\Agents\KoelAssistant;
+use App\Models\User;
+use App\Services\SettingService;
+use Laravel\Ai\Enums\Lab;
+use Laravel\Ai\Prompts\AgentPrompt;
+use Laravel\Ai\Providers\Provider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -10,12 +15,18 @@ use function Tests\create_user;
 
 class AiControllerTest extends PlusTestCase
 {
+    private static function enableAiFor(User $user): void
+    {
+        app(SettingService::class)->updateAiSettings($user->organization, true, Lab::Anthropic, 'sk-ant-test');
+    }
+
     #[Test]
     public function promptsTheAgent(): void
     {
         KoelAssistant::fake(['Hello, how can I help you with your music?']);
 
         $user = create_user();
+        self::enableAiFor($user);
 
         $this
             ->postAs(
@@ -29,6 +40,35 @@ class AiControllerTest extends PlusTestCase
             ->assertJsonStructure(['message', 'action', 'data', 'conversation_id']);
 
         KoelAssistant::assertPrompted(static fn ($prompt) => $prompt->contains('Play some jazz'));
+    }
+
+    #[Test]
+    public function promptsWithTheProviderAndKeyOfTheOrganization(): void
+    {
+        KoelAssistant::fake(['Sure.']);
+
+        $user = create_user();
+        self::enableAiFor($user);
+
+        $this->postAs('api/ai/prompt', ['prompt' => 'Play some jazz'], $user)->assertSuccessful();
+
+        KoelAssistant::assertPrompted(
+            static fn (AgentPrompt $prompt) => (
+                $prompt->provider instanceof Provider
+                && $prompt->provider->driver() === 'anthropic'
+                && $prompt->provider->providerCredentials()['key'] === 'sk-ant-test'
+            ),
+        );
+    }
+
+    #[Test]
+    public function refusesAnOrganizationWithoutTheAssistant(): void
+    {
+        KoelAssistant::fake();
+
+        $this->postAs('api/ai/prompt', ['prompt' => 'Play some jazz'], create_user())->assertNotFound();
+
+        KoelAssistant::assertNeverPrompted();
     }
 
     #[Test]

@@ -17,6 +17,10 @@ on:
       - .github/workflows/lint-frontend.yml
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}
+  cancel-in-progress: true
+
 env:
   LARAVEL_BYPASS_ENV_CHECK: 1
 

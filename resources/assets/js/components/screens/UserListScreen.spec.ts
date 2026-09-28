@@ -23,6 +23,7 @@ describe('userListScreen.vue', () => {
   const h = createHarness({
     beforeEach: () => {
       openModalMock.mockClear()
+      Element.prototype.scrollTo = vi.fn()
       h.actingAsAdmin()
     },
   })
@@ -49,19 +50,23 @@ describe('userListScreen.vue', () => {
     await h.tick(2)
   }
 
-  it('displays a list of users', async () => {
+  it('displays a list of users without filters when nobody is invited', async () => {
     await renderComponent()
 
     expect(screen.getAllByTestId('user-card')).toHaveLength(6)
-    expect(screen.queryByTestId('prospects-heading')).toBeNull()
+    expect(screen.queryByRole('radiogroup')).toBeNull()
   })
 
-  it('displays a list of user prospects', async () => {
+  it('filters between users and invited prospects', async () => {
     const users = [...factory('user').state('prospect').make(2), ...h.factory('user').make(3)]
     await renderComponent(users)
 
-    expect(screen.getAllByTestId('user-card')).toHaveLength(5)
-    screen.getByTestId('prospects-heading')
+    expect(screen.getAllByTestId('user-card')).toHaveLength(3)
+    expect(screen.getByTestId('user-filter-count-invited').textContent?.trim()).toBe('2')
+
+    await h.user.click(screen.getByTestId('user-filter-invited'))
+
+    expect(screen.getAllByTestId('user-card')).toHaveLength(2)
   })
 
   it('triggers create user modal', async () => {

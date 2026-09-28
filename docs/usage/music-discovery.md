@@ -41,7 +41,7 @@ opt for other methods instead.
 :::
 
 Upload your songs into a readable directory on your server and configure Koel to scan and sync it by setting a "media
-path" under Manage → Settings.
+path" under Manage → Settings → Media Path.
 
 ![Settings Screen](../assets/img/settings.webp)
 

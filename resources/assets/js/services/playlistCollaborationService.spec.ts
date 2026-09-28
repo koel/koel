@@ -14,7 +14,7 @@ describe('playlistCollaborationService', () => {
     const link = await service.createInviteLink(playlist)
 
     expect(postMock).toHaveBeenCalledWith(`playlists/${playlist.id}/collaborators/invite`)
-    expect(link).toBe('http://localhost:3000/#/playlist/collaborate/abc123')
+    expect(link).toBe(`${window.KOEL.base_url}#/playlist/collaborate/abc123`)
   })
 
   it('throws if trying to create invite link for smart playlist', async () => {

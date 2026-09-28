@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { eventBus } from '@/utils/eventBus'
 
 const isNewerVersionDeployedMock = vi.fn<() => Promise<boolean>>()
 const forceReloadWindowMock = vi.fn()
@@ -70,5 +71,13 @@ describe('updateNotification', () => {
     await nextTick()
 
     screen.getByText('Koel has been updated.')
+  })
+
+  it('offers a reload when the API reports a newer build', async () => {
+    h.render(Component)
+
+    eventBus.emit('NEW_VERSION_DEPLOYED')
+
+    await screen.findByTestId('update-notification')
   })
 })

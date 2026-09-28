@@ -2,6 +2,7 @@ import type { SongUpdateResult } from '@/stores/playableStore'
 
 export interface Events {
   LOG_OUT: () => void
+  NEW_VERSION_DEPLOYED: () => void
   TOGGLE_SIDEBAR: () => void
   FOCUS_SEARCH_FIELD: () => void
   PLAY_YOUTUBE_VIDEO: (payload: { id: string; title: string }) => void
@@ -21,6 +22,7 @@ export interface Events {
   SONGS_UPDATED: (result: SongUpdateResult) => void
   SONGS_DELETED: (songs: Song[]) => void
   SONG_UPLOADED: (song: Song) => void
+  DOWNLOAD_ARCHIVE_SAVED: () => void
 
   EPISODE_PROGRESS_UPDATED: (episode: Episode, progress: number) => void
 

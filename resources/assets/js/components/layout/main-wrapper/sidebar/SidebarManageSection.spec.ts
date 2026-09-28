@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vite-plus/test'
 import { faTools } from '@fortawesome/free-solid-svg-icons'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { uploadService } from '@/services/uploadService'
 import { Filter } from '@/config/hooks'
 import { addFilter, removeFilter } from '@/hooks'
 import Component, { type ManageSidebarItem } from './SidebarManageSection.vue'
@@ -46,5 +47,18 @@ describe('sidebarManageSection.vue', () => {
     expect(screen.queryAllByTestId('sidebar-item-badge')).toHaveLength(badgeCount)
 
     removeFilter(handle)
+  })
+
+  it.each([
+    ['Uploading', 1],
+    ['Uploaded', 0],
+  ] as const)('spins the upload icon only while files are uploading (%s)', (status, spinnerCount) => {
+    uploadService.state.files = [{ id: '1', file: new File([], 'song.mp3'), status, name: 'song.mp3', progress: 0 }]
+
+    const { container } = h.actingAsAdmin().render(Component)
+
+    expect(container.querySelectorAll('[spin="true"]')).toHaveLength(spinnerCount)
+
+    uploadService.state.files = []
   })
 })

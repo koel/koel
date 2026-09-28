@@ -34,4 +34,20 @@ class HelperTest extends TestCase
         self::assertSame('https://music.example.com/#/reset-password/payload', app_url('/#/reset-password/payload'));
         self::assertSame('https://music.example.com/', app_url());
     }
+
+    #[Test]
+    public function clientUrlUsesAHashWithoutCleanUrls(): void
+    {
+        config(['app.url' => 'https://music.example.com', 'koel.clean_urls.enabled' => false]);
+
+        self::assertSame('https://music.example.com/#/albums/123', client_url('/albums/123'));
+    }
+
+    #[Test]
+    public function clientUrlUsesAPlainPathWithCleanUrls(): void
+    {
+        config(['app.url' => 'https://music.example.com/koel', 'koel.clean_urls.enabled' => true]);
+
+        self::assertSame('https://music.example.com/koel/albums/123', client_url('albums/123'));
+    }
 }

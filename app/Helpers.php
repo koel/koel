@@ -2,6 +2,8 @@
 
 use App\Facades\Hooks;
 use App\Facades\License;
+use App\Repositories\OrganizationRepository;
+use App\Services\BuildIdentifier;
 use App\Services\Image\ImageStorage;
 use App\Services\SettingService;
 use App\Values\Branding;
@@ -33,6 +35,13 @@ function base_url(): string
 function app_url(string $path = ''): string
 {
     return rtrim(config('app.url'), '/') . '/' . ltrim($path, '/');
+}
+
+function client_url(string $path): string
+{
+    $path = ltrim($path, '/');
+
+    return app_url(config('koel.clean_urls.enabled') ? $path : "#/$path");
 }
 
 function image_storage_path(?string $fileName, ?string $default = null, bool $ensureDirectoryExists = true): ?string
@@ -230,6 +239,16 @@ function find_ffmpeg_path(): ?string
     return null;
 }
 
+function koel_build_id(): ?string
+{
+    return once(static function (): ?string {
+        /** @var BuildIdentifier $buildIdentifier */
+        $buildIdentifier = app(BuildIdentifier::class);
+
+        return $buildIdentifier->getId();
+    });
+}
+
 function koel_branding(?string $key = null): Branding|string|null
 {
     Assert::inArray($key, [null, 'name', 'logo', 'cover']);
@@ -238,7 +257,7 @@ function koel_branding(?string $key = null): Branding|string|null
         /** @var SettingService $service */
         $service = app(SettingService::class);
 
-        return $service->getBranding();
+        return $service->getBranding(app(OrganizationRepository::class)->getRequestedOrganization());
     });
 
     if (!$key) {

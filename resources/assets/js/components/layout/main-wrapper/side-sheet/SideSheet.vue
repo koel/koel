@@ -14,6 +14,7 @@
       </div>
 
       <div class="btn-group">
+        <ZipDownloadButton />
         <AiButton v-if="usesAi" />
         <ProfileDropdown />
       </div>
@@ -92,6 +93,7 @@ import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
 import { CurrentStreamableKey } from '@/config/symbols'
 
 import AiButton from '@/components/layout/main-wrapper/side-sheet/AiButton.vue'
+import ZipDownloadButton from '@/components/layout/main-wrapper/side-sheet/ZipDownloadButton.vue'
 import ProfileDropdown from '@/components/layout/main-wrapper/side-sheet/ProfileDropdown.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 import SideSheetPanelLazyWrapper from '@/components/layout/main-wrapper/side-sheet/SideSheetPanelLazyWrapper.vue'

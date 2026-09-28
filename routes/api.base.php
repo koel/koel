@@ -78,6 +78,7 @@ use App\Http\Controllers\API\ResetPasswordController;
 use App\Http\Controllers\API\ScrobbleController;
 use App\Http\Controllers\API\SearchYouTubeController;
 use App\Http\Controllers\API\SetLastfmSessionKeyController;
+use App\Http\Controllers\API\Settings\UpdateAiSettingsController;
 use App\Http\Controllers\API\Settings\UpdateBrandingController;
 use App\Http\Controllers\API\Settings\UpdateMediaPathController;
 use App\Http\Controllers\API\SongController;
@@ -97,7 +98,6 @@ use App\Http\Controllers\API\Upload\PresignUploadController;
 use App\Http\Controllers\API\Upload\UploadSongController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
-use App\Http\Controllers\Download\CheckDownloadableCountController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -146,8 +146,7 @@ Route::prefix('api')
 
             Route::put('settings/media-path', UpdateMediaPathController::class);
             Route::put('settings/branding', UpdateBrandingController::class);
-
-            Route::get('download/check', CheckDownloadableCountController::class);
+            Route::put('settings/ai', UpdateAiSettingsController::class);
 
             Route::get('albums/random', FetchRandomAlbumsController::class);
             Route::apiResource('albums', AlbumController::class);

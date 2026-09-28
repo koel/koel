@@ -1,21 +1,20 @@
 <template>
-  <article class="flex flex-col md:flex-row gap-4">
-    <header class="w-full md:w-64">
-      <h3 class="font-semibold text-k-fg">
+  <article class="flex flex-col gap-4">
+    <header v-if="$slots.title || $slots.subtitle">
+      <h3 v-if="$slots.title" class="text-lg font-semibold text-k-fg">
         <slot name="title" />
       </h3>
-      <p v-if="$slots.subtitle">
+      <p v-if="$slots.subtitle" class="text-k-fg-70">
         <slot name="subtitle" />
       </p>
     </header>
-    <main class="flex-1 bg-k-fg-5 border border-k-fg-10 rounded-md">
-      <div class="p-4">
-        <slot />
-      </div>
 
-      <footer v-if="$slots.footer" class="p-4 border-t border-k-fg-10">
-        <slot name="footer" />
-      </footer>
-    </main>
+    <div>
+      <slot />
+    </div>
+
+    <footer v-if="$slots.footer">
+      <slot name="footer" />
+    </footer>
   </article>
 </template>

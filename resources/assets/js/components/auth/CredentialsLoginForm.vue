@@ -1,11 +1,16 @@
 <template>
   <AuthFormCard :failed data-testid="login-form" @submit="handleSubmit">
     <FormRow>
-      <TextInput v-model="data.email" autofocus :placeholder="emailPlaceholder" required type="email" />
+      <TextInput v-model="data.email" :autofocus="!loginHint" :placeholder="emailPlaceholder" required type="email" />
     </FormRow>
 
     <FormRow>
-      <PasswordField v-model="data.password" :placeholder="passwordPlaceholder" required />
+      <PasswordField
+        v-model="data.password"
+        :autofocus="Boolean(loginHint)"
+        :placeholder="passwordPlaceholder"
+        required
+      />
     </FormRow>
 
     <FormRow>
@@ -48,6 +53,20 @@ const canResetPassword = window.KOEL.mailer_configured && !window.KOEL.is_demo
 const emailPlaceholder = window.KOEL.is_demo ? demoAccount.email : 'Your email address'
 const passwordPlaceholder = window.KOEL.is_demo ? demoAccount.password : 'Your password'
 
+const takeLoginHint = () => {
+  const url = new URL(window.location.href)
+  const hint = url.searchParams.get('login_hint') ?? ''
+
+  if (url.searchParams.has('login_hint')) {
+    url.searchParams.delete('login_hint')
+    window.history.replaceState(window.history.state, '', url)
+  }
+
+  return hint
+}
+
+const loginHint = takeLoginHint()
+
 let errorResetTimer: number | null = null
 
 const clearErrorResetTimer = () => {
@@ -61,7 +80,7 @@ const { data, handleSubmit } = useForm<{ email: string; password: string }>({
   initialValues: window.KOEL.is_demo
     ? demoAccount
     : {
-        email: '',
+        email: loginHint,
         password: '',
       },
   onSubmit: async ({ email, password }) => await authService.login(email, password),

@@ -13,7 +13,6 @@ const initialState = {
   allows_download: false,
   allows_embedding: true,
   assignable_roles: [] as Array<{ id: Role; label: string; description: string }>,
-  download_limit: 0,
   cdn_url: '',
   current_user: null! as CurrentUser,
   current_version: '',

@@ -5,6 +5,7 @@ import { routes as builtInRoutes } from '@/config/routes'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
 import { forceReloadWindow } from '@/utils/helpers'
+import { basePath, toClientPath, usesCleanUrls } from '@/utils/clientUrl'
 
 type RouteParams = Record<string, string>
 type ResolvedHook = (params: RouteParams) => Promise<boolean | void> | boolean | void
@@ -29,6 +30,9 @@ export interface Route {
 let cachedRoutes: Route[] | null = null
 
 const routes = () => (cachedRoutes ??= applyFilters<Route[]>(Filter.ROUTES, [...builtInRoutes]))
+
+const currentClientPath = () =>
+  usesCleanUrls() ? toClientPath(`${location.pathname}${location.search}`) : location.hash
 
 interface CompiledRoute {
   regex: RegExp
@@ -86,11 +90,80 @@ export default class Router {
     )
 
     addEventListener('popstate', () => this.resolve(), true)
+
+    if (usesCleanUrls()) {
+      this.rewriteHashUrl()
+      addEventListener('click', this.interceptLinkClick)
+    }
+  }
+
+  private rewriteHashUrl() {
+    if (location.hash.startsWith('#/')) {
+      history.replaceState(null, '', `${basePath()}${location.hash.substring(2)}`)
+    }
+  }
+
+  private interceptLinkClick = (event: MouseEvent) => {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return
+    }
+
+    const link = (event.target as Element | null)?.closest('a')
+
+    if (!link || (link.target && link.target !== '_self') || link.hasAttribute('download')) {
+      return
+    }
+
+    const url = new URL(link.href, location.href)
+
+    if (url.origin !== location.origin || !url.pathname.startsWith(basePath())) {
+      return
+    }
+
+    const path = toClientPath(`${url.pathname}${url.search}`)
+
+    if (!this.tryMatchRoute(path)) {
+      return
+    }
+
+    event.preventDefault()
+    Router.go(path)
   }
 
   public static go(path: string | number, reload = false) {
     if (typeof path === 'number') {
       history.go(path)
+      return
+    }
+
+    Router.navigate(path, 'push')
+
+    reload && forceReloadWindow()
+  }
+
+  public static replace(path: string) {
+    Router.navigate(path, 'replace')
+  }
+
+  private static navigate(path: string, mode: 'push' | 'replace') {
+    if (usesCleanUrls()) {
+      const url = `${basePath()}${toClientPath(path).substring(1)}`
+
+      if (mode === 'push') {
+        history.pushState(null, '', url)
+      } else {
+        history.replaceState(null, '', url)
+      }
+
+      dispatchEvent(new PopStateEvent('popstate'))
+
       return
     }
 
@@ -102,21 +175,26 @@ export default class Router {
       path = `/#${path}`
     }
 
-    path = path.substring(1, path.length)
-    location.assign(`${location.origin}${location.pathname}${path}`)
+    const url = `${location.origin}${location.pathname}${path.substring(1)}`
 
-    reload && forceReloadWindow()
+    if (mode === 'push') {
+      location.assign(url)
+    } else {
+      location.replace(url)
+    }
   }
 
-  public resolve(hash?: string) {
-    hash = hash ?? location.hash
+  public resolve(path?: string) {
+    path = path ?? currentClientPath()
 
-    if (['', '#/', '#!/'].includes(hash)) {
-      Router.go(this.homeRoute.path)
+    const [pathWithoutQuery, query] = path.split('?')
+
+    if (['', '/', '#', '#/', '#!/'].includes(pathWithoutQuery)) {
+      Router.replace(query ? `${this.homeRoute.path}?${query}` : this.homeRoute.path)
       return null
     }
 
-    const matchedRoute = this.tryMatchRoute(hash)
+    const matchedRoute = this.tryMatchRoute(path)
     const [route, params] = matchedRoute ? [matchedRoute.originalRoute, matchedRoute.params] : [null, null]
 
     if (!route) {
@@ -144,8 +222,8 @@ export default class Router {
     this.$currentRoute.value.params = params
   }
 
-  private tryMatchRoute(hash: string): MatchedRoute | null {
-    const [path, queryString] = hash.replace(/^#?/, '').split('?')
+  private tryMatchRoute(screenPath: string): MatchedRoute | null {
+    const [path, queryString] = screenPath.replace(/^#?/, '').split('?')
 
     for (const route of this.compiledRoutes) {
       const match = path.match(route.regex)
@@ -199,6 +277,10 @@ export default class Router {
 
     if (!path.startsWith('/')) {
       path = `/${path}`
+    }
+
+    if (usesCleanUrls()) {
+      return `${basePath()}${path.substring(1)}`
     }
 
     if (!path.startsWith('/#')) {

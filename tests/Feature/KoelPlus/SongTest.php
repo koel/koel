@@ -78,6 +78,25 @@ class SongTest extends PlusTestCase
     }
 
     #[Test]
+    public function cannotEditPublicSongsOwnedByOthers(): void
+    {
+        $publicSong = Song::factory()->for(create_user(), 'owner')->public()->createOne(['title' => 'Original']);
+
+        $this->putAs(
+            'api/songs',
+            [
+                'songs' => [$publicSong->id],
+                'data' => [
+                    'title' => 'New Title',
+                ],
+            ],
+            create_user(),
+        )->assertForbidden();
+
+        self::assertSame('Original', $publicSong->refresh()->title);
+    }
+
+    #[Test]
     public function deleteSongsPolicy(): void
     {
         $currentUser = create_user();

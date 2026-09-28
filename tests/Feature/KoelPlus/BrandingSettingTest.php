@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\KoelPlus;
 
+use App\Models\Organization;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
@@ -27,7 +29,7 @@ class BrandingSettingTest extends PlusTestCase
             create_admin(),
         )->assertNoContent();
 
-        $branding = Setting::get('branding');
+        $branding = Setting::get('branding', Organization::default());
 
         self::assertSame('Little Bird', $branding['name']);
         self::assertTrue(Str::isUrl($branding['logo']));
@@ -37,11 +39,15 @@ class BrandingSettingTest extends PlusTestCase
     #[Test]
     public function updateBrandingWithNoLogoOrCoverChanges(): void
     {
-        Setting::set('branding', [
-            'name' => 'Koel',
-            'logo' => 'old-logo.png',
-            'cover' => 'old-cover.png',
-        ]);
+        Setting::set(
+            'branding',
+            [
+                'name' => 'Koel',
+                'logo' => 'old-logo.png',
+                'cover' => 'old-cover.png',
+            ],
+            Organization::default(),
+        );
 
         $this->putAs(
             'api/settings/branding',
@@ -53,7 +59,7 @@ class BrandingSettingTest extends PlusTestCase
             create_admin(),
         )->assertNoContent();
 
-        $branding = Setting::get('branding');
+        $branding = Setting::get('branding', Organization::default());
 
         self::assertSame('Little Bird', $branding['name']);
         self::assertSame(image_storage_url('old-logo.png'), $branding['logo']);
@@ -63,11 +69,15 @@ class BrandingSettingTest extends PlusTestCase
     #[Test]
     public function updateBrandingReplacingLogoAndCover(): void
     {
-        Setting::set('branding', [
-            'name' => 'Koel',
-            'logo' => 'old-logo.png',
-            'cover' => 'old-cover.png',
-        ]);
+        Setting::set(
+            'branding',
+            [
+                'name' => 'Koel',
+                'logo' => 'old-logo.png',
+                'cover' => 'old-cover.png',
+            ],
+            Organization::default(),
+        );
 
         $this->putAs(
             'api/settings/branding',
@@ -79,7 +89,7 @@ class BrandingSettingTest extends PlusTestCase
             create_admin(),
         )->assertNoContent();
 
-        $branding = Setting::get('branding');
+        $branding = Setting::get('branding', Organization::default());
 
         self::assertSame('Little Bird', $branding['name']);
         self::assertTrue(Str::isUrl($branding['logo']));
@@ -93,11 +103,15 @@ class BrandingSettingTest extends PlusTestCase
     {
         Http::fake();
 
-        Setting::set('branding', [
-            'name' => 'Koel',
-            'logo' => 'old-logo.png',
-            'cover' => 'old-cover.png',
-        ]);
+        Setting::set(
+            'branding',
+            [
+                'name' => 'Koel',
+                'logo' => 'old-logo.png',
+                'cover' => 'old-cover.png',
+            ],
+            Organization::default(),
+        );
 
         $this->putAs(
             'api/settings/branding',
@@ -110,7 +124,7 @@ class BrandingSettingTest extends PlusTestCase
         )->assertJsonValidationErrors(['logo', 'cover']);
 
         Http::assertNothingSent();
-        self::assertSame('Koel', Setting::get('branding')['name']);
+        self::assertSame('Koel', Setting::get('branding', Organization::default())['name']);
     }
 
     #[Test]
@@ -125,5 +139,17 @@ class BrandingSettingTest extends PlusTestCase
             ],
             create_user(),
         )->assertForbidden();
+    }
+
+    #[Test]
+    public function keepEachOrganizationsBrandingToItself(): void
+    {
+        Setting::set('branding', ['name' => 'Koel'], Organization::default());
+        $otherAdmin = User::factory()->admin()->for(Organization::factory())->createOne();
+
+        $this->putAs('api/settings/branding', ['name' => 'Little Bird'], $otherAdmin)->assertNoContent();
+
+        self::assertSame('Little Bird', Setting::get('branding', $otherAdmin->organization)['name']);
+        self::assertSame('Koel', Setting::get('branding', Organization::default())['name']);
     }
 }

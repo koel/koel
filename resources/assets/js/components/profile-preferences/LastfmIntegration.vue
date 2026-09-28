@@ -16,7 +16,13 @@
       <p v-else>You can also connect your Last.fm account here.</p>
       <p>
         Connecting {{ appName }} and your Last.fm account enables such exciting features as
-        <a href="https://www.last.fm/about/trackmymusic" rel="noopener" target="_blank">scrobbling</a>.
+        <a
+          class="text-k-highlight hover:text-k-fg"
+          href="https://www.last.fm/about/trackmymusic"
+          rel="noopener"
+          target="_blank"
+          >scrobbling</a
+        >.
       </p>
       <div class="buttons mt-4 space-x-2">
         <Btn @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
@@ -29,7 +35,12 @@
         Last.fm integration is not enabled.
         <span v-if="currentUserCan.manageSettings()" data-testid="lastfm-admin-instruction">
           Check
-          <a href="https://docs.koel.dev/service-integrations#last-fm" target="_blank">Documentation</a>
+          <a
+            class="text-k-highlight hover:text-k-fg"
+            href="https://docs.koel.dev/service-integrations#last-fm"
+            target="_blank"
+            >documentation</a
+          >
           for integration instructions.
         </span>
         <span v-else data-testid="lastfm-user-instruction"> Try politely asking an administrator to enable it. </span>

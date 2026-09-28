@@ -26,6 +26,8 @@ class PresignUploadController extends Controller
             'This storage does not support presigned uploads.',
         );
 
-        return response()->json($storage->presignUpload($request->file_name, $user)->toArray());
+        return response()->json(
+            $storage->presignUpload($request->file_name, (int) $request->file_size, $user)->toArray(),
+        );
     }
 }

@@ -25,7 +25,7 @@ class UserInvite extends Mailable
             'invitee' => $this->invitee,
             'url' => apply_filters(
                 Filter::INVITATION_URL,
-                app_url("/#/invitation/accept/{$this->invitee->invitation_token}"),
+                client_url("invitation/accept/{$this->invitee->invitation_token}"),
                 $this->invitee,
             ),
         ]);

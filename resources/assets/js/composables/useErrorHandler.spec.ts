@@ -31,7 +31,7 @@ describe('useErrorHandler', () => {
 
     const request = new Request('http://test/api/test')
     const error = new HTTPError(response, request, {} as any)
-    ;(error as any).responseData = data
+    error.data = data
 
     return error
   }

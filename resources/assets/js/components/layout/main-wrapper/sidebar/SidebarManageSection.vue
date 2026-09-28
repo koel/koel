@@ -12,10 +12,11 @@
         :active="isCurrentScreen(...item.screens)"
       >
         <template #icon>
-          <Icon :icon="item.icon" fixed-width />
+          <Icon :icon="item.busy ? faSpinner : item.icon" :spin="item.busy" fixed-width />
         </template>
         <template v-if="item.badgeLabel" #badge>{{ item.badgeLabel }}</template>
         {{ item.label }}
+        <span aria-live="polite" class="sr-only">{{ item.busy ? 'in progress' : '' }}</span>
       </SidebarItem>
     </ul>
   </SidebarSection>
@@ -23,11 +24,12 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { faTools, faUpload, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner, faTools, faUpload, faUsers } from '@fortawesome/free-solid-svg-icons'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import type { RouteName } from '@/config/routes'
 import { useRouter } from '@/composables/useRouter'
 import { usePolicies } from '@/composables/usePolicies'
+import { uploadService } from '@/services/uploadService'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
 
@@ -42,6 +44,7 @@ export interface ManageSidebarItem {
   screens: ScreenName[]
   visible: () => boolean
   badge?: () => string | null
+  isBusy?: () => boolean
 }
 
 const { url, isCurrentScreen } = useRouter()
@@ -62,6 +65,7 @@ const items = computed(() =>
       route: 'upload',
       screens: ['Upload'],
       visible: () => currentUserCan.uploadSongs(),
+      isBusy: () => uploadService.getUnfinishedFiles().length > 0,
     },
     {
       label: 'Users',
@@ -74,6 +78,8 @@ const items = computed(() =>
 )
 
 const visibleItems = computed(() =>
-  items.value.filter(item => item.visible()).map(item => ({ ...item, badgeLabel: item.badge?.() ?? null })),
+  items.value
+    .filter(item => item.visible())
+    .map(item => ({ ...item, badgeLabel: item.badge?.() ?? null, busy: item.isBusy?.() ?? false })),
 )
 </script>

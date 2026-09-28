@@ -25,6 +25,10 @@ on:
       - .github/workflows/test-proxy-auth-e2e.yml
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 

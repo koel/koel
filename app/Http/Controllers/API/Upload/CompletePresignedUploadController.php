@@ -20,7 +20,6 @@ use App\Services\SongStorages\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[DisabledInDemo]
@@ -59,15 +58,17 @@ class CompletePresignedUploadController extends Controller
             'The uploaded file is too large.',
         );
 
-        abort_unless(
-            Cache::add(HandlePresignedSongUploadJob::claimKeyFor($location), true, now()->addHour()),
-            Response::HTTP_CONFLICT,
-            'This upload is already being processed.',
-        );
+        $processingLock = HandlePresignedSongUploadJob::makeProcessingLock($location);
+
+        abort_unless($processingLock->get(), Response::HTTP_CONFLICT, 'This upload is already being processed.');
 
         try {
+            $storage->moveUploadOutOfPending($request->key);
+
             /** @var Song|PendingDispatch $dispatchedResult */
-            $dispatchedResult = Dispatcher::dispatch(new HandlePresignedSongUploadJob($location, $request->key, $user));
+            $dispatchedResult = Dispatcher::dispatch(
+                new HandlePresignedSongUploadJob($location, $request->key, $user, $processingLock->owner()),
+            );
 
             if ($dispatchedResult instanceof Song) {
                 $song = $songRepository->getOne($dispatchedResult->id);

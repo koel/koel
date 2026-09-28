@@ -103,6 +103,31 @@ In order to use S3 for streaming, you'll also need to set up a cross-origin reso
 ]
 ```
 
+#### Cleaning up unfinished uploads
+
+While a file is being uploaded, it's kept under the `pending/` prefix of your bucket and moves out once the upload finishes. An upload that never finishes (for example, because the browser tab was closed) stays under `pending/`. To clean those up, add a lifecycle rule that deletes objects under `pending/` after a day. In the AWS console, go to your bucket's Management tab → Create lifecycle rule, or apply this configuration:
+
+```json
+{
+  "Rules": [
+    {
+      "ID": "delete-unfinished-uploads",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "pending/" },
+      "Expiration": { "Days": 1 }
+    }
+  ]
+}
+```
+
+To apply it with the AWS CLI, save it as `lifecycle.json` and run the command below. The command replaces the bucket's existing lifecycle rules, so if your bucket already has some, add them to `lifecycle.json` first. You can list them with `aws s3api get-bucket-lifecycle-configuration --bucket <your-bucket>`.
+
+```bash
+aws s3api put-bucket-lifecycle-configuration --bucket <your-bucket> --lifecycle-configuration file://lifecycle.json
+```
+
+DigitalOcean Spaces accepts the same configuration through its S3-compatible API. On Cloudflare R2, go to your bucket's Settings → Object lifecycle rules → Add rule, set the prefix to `pending/`, and delete objects 1 day after upload.
+
 ### DigitalOcean Spaces
 
 To use [DigitalOcean Spaces](https://www.digitalocean.com/products/spaces), you can follow the same steps as with Amazon S3. Below are some screenshots to help you get started.

@@ -178,11 +178,14 @@ return [
 
     'download' => [
         'allow' => env('ALLOW_DOWNLOAD', true),
-        'limit' => max((int) env('DOWNLOAD_LIMIT', 0), 0),
     ],
 
     'media_browser' => [
         'enabled' => env('MEDIA_BROWSER_ENABLED', false),
+    ],
+
+    'clean_urls' => [
+        'enabled' => env('CLEAN_URLS_ENABLED', false),
     ],
 
     'embed' => [

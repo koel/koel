@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Settings;
 
 use App\Http\Requests\API\Request;
+use App\Models\User;
 use App\Rules\ValidImageData;
 use App\Services\SettingService;
 use Illuminate\Contracts\Validation\Factory;
@@ -29,7 +30,9 @@ class UpdateBrandingRequest extends Request
     public function validator(Factory $factory, SettingService $settingService): Validator
     {
         $validator = $this->createDefaultValidator($factory);
-        $currentBranding = $settingService->getBranding();
+        /** @var User $user */
+        $user = $this->user();
+        $currentBranding = $settingService->getBranding($user->organization);
 
         $validator->sometimes(
             'logo',
