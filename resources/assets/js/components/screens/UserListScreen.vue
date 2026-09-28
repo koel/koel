@@ -78,23 +78,23 @@ const users = computed(() =>
 
 const prospects = computed(() => allUsers.value.filter(({ is_prospect }) => is_prospect))
 
-type UserFilter = 'users' | 'invited'
+type UserFilter = 'active' | 'invited'
 
-const currentFilter = ref<UserFilter>('users')
+const currentFilter = ref<UserFilter>('active')
 
 const usersByFilter = computed<Record<UserFilter, User[]>>(() => ({
-  users: users.value,
+  active: users.value,
   invited: prospects.value,
 }))
 
 const filterOptions: { value: UserFilter; label: string; testId: string }[] = [
-  { value: 'users', label: 'Users', testId: 'user-filter-users' },
+  { value: 'active', label: 'Active', testId: 'user-filter-active' },
   { value: 'invited', label: 'Invited', testId: 'user-filter-invited' },
 ]
 
 watch(prospects, () => {
   if (!prospects.value.length) {
-    currentFilter.value = 'users'
+    currentFilter.value = 'active'
   }
 })
 
