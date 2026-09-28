@@ -26,7 +26,7 @@ class SongPolicy
 
     public function edit(User $user, Song $song): bool
     {
-        return License::isCommunity() ? $user->hasPermissionTo(Permission::MANAGE_SONGS) : $song->accessibleBy($user);
+        return License::isCommunity() ? $user->hasPermissionTo(Permission::MANAGE_SONGS) : $song->ownedBy($user);
     }
 
     public function download(User $user, Song $song): bool
