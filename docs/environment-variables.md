@@ -97,6 +97,7 @@ Required when `STORAGE_DRIVER=webdav`.
 | `SCAN_JOBS` | The number of parallel worker processes for scanning. Set to `1` to disable parallel scanning. Can be overridden with `--jobs` flag. | `4` |
 | `IGNORE_DOT_FILES` | Whether to ignore dot files and folders when scanning. Greatly improves performance if your media root has folders like `.git` or `.cache`. | `true` |
 | `SYNC_LOG_LEVEL` | The verbosity of sync logs (found under `storage/logs/`). Options: `all`, `error`. | `error` |
+| `SCAN_LOG_MAX_FILES` | How many scan logs to keep under `storage/logs/`. A scan with nothing to report writes none. `0` keeps them all. | `30` |
 
 ## Streaming & Transcoding
 
