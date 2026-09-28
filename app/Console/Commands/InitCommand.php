@@ -118,9 +118,19 @@ class InitCommand extends Command
 
     private function ensureEnvFileExists(): void
     {
-        if (!File::exists(base_path('.env'))) {
-            $this->components->task('Copying .env file', static function (): void {
-                File::copy(base_path('.env.example'), base_path('.env'));
+        $envFilePath = $this->laravel->environmentFilePath();
+
+        if (File::isDirectory($envFilePath)) {
+            $this->components->error(
+                '.env is a directory. If you mount it with Docker, create the file on the host first.',
+            );
+
+            throw new InstallationFailedException('.env is a directory.');
+        }
+
+        if (!File::exists($envFilePath)) {
+            $this->components->task('Copying .env file', static function () use ($envFilePath): void {
+                File::copy(base_path('.env.example'), $envFilePath);
             });
         } else {
             $this->components->task('.env file exists -- skipping');
