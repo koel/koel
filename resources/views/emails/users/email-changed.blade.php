@@ -3,5 +3,5 @@ Hey {{ $user->name }},
 
 The email address of your {{ config('app.name') }} account was changed from {{ $previousEmail }} to {{ $newEmail }}.
 
-If this wasn't expected, contact us right away.
+If this wasn't expected, change your password right away.
 </x-mail::message>
