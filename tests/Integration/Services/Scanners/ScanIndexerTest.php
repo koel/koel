@@ -11,6 +11,7 @@ use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Support\Facades\Log;
 use Laravel\Scout\EngineManager;
+use Laravel\Scout\Engines\Engine;
 use Laravel\Scout\Engines\NullEngine;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
@@ -25,11 +26,8 @@ class ScanIndexerTest extends TestCase
     {
         parent::setUp();
 
-        $engine = new RecordingSearchEngine();
-        $this->engine = $engine;
-        // Not static: the Manager binds the closure to itself, so $this inside would be the manager.
-        $this->app->make(EngineManager::class)->extend('recording', fn () => $engine); // @mago-ignore lint:prefer-static-closure
-        config(['scout.driver' => 'recording']);
+        $this->engine = new RecordingSearchEngine();
+        $this->useSearchEngine('tntsearch', $this->engine);
     }
 
     #[Test]
@@ -41,7 +39,6 @@ class ScanIndexerTest extends TestCase
         /** @var Song $failed */
         $failed = Song::factory()->create();
 
-        // Factories index on save; only what reindex() does from here on counts.
         $this->engine->updated = [];
 
         (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::success($saved->path))->add(ScanResult::error(
@@ -85,14 +82,12 @@ class ScanIndexerTest extends TestCase
         Log::spy();
         /** @var Song $song */
         $song = Song::factory()->create();
-        // @mago-ignore lint:prefer-static-closure
-        $this->app->make(EngineManager::class)->extend('failing', fn () => new class extends NullEngine {
-            public function update($models): void
+        $this->useSearchEngine('tntsearch', new class extends NullEngine {
+            public function update(mixed $models): void
             {
                 throw new RuntimeException('database is locked');
             }
         });
-        config(['scout.driver' => 'failing']);
 
         (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
 
@@ -113,5 +108,28 @@ class ScanIndexerTest extends TestCase
         (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::skipped('/media/foo.mp3')));
 
         self::assertSame([], $this->engine->updated);
+    }
+
+    #[Test]
+    public function indexesNothingWithOtherSearchDrivers(): void
+    {
+        $engine = new RecordingSearchEngine();
+        $this->useSearchEngine('meilisearch', $engine);
+        /** @var Song $song */
+        $song = Song::factory()->create();
+        $engine->updated = [];
+
+        (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+
+        self::assertSame([], $engine->updated);
+    }
+
+    private function useSearchEngine(string $driver, Engine $engine): void
+    {
+        $manager = $this->app->make(EngineManager::class);
+        // @mago-ignore lint:prefer-static-closure
+        $manager->extend($driver, fn () => $engine);
+        $manager->forgetDrivers();
+        config(['scout.driver' => $driver]);
     }
 }
