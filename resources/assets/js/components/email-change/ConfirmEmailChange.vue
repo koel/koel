@@ -3,7 +3,7 @@
     <div v-if="newEmail" class="w-full sm:w-[320px] p-7 sm:bg-k-fg-10 rounded-lg flex flex-col space-y-5">
       <template v-if="changed">
         <p data-testid="changed">Your email address is now {{ newEmail }}.</p>
-        <Btn href="/" tag="a">Open Koel</Btn>
+        <Btn class="text-center" href="/" tag="a">Go to {{ appName }}</Btn>
       </template>
 
       <form v-else class="flex flex-col space-y-5" @submit.prevent="confirm">
@@ -19,6 +19,7 @@ import { ref } from 'vue'
 import { authService } from '@/services/authService'
 import { base64Decode } from '@/utils/crypto'
 import { logger } from '@/utils/logger'
+import { useBranding } from '@/composables/useBranding'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useRouter } from '@/composables/useRouter'
@@ -26,6 +27,7 @@ import { useRouter } from '@/composables/useRouter'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const { getRouteParam } = useRouter()
+const { name: appName } = useBranding()
 const { handleHttpError } = useErrorHandler('dialog')
 const { toastError } = useMessageToaster()
 
