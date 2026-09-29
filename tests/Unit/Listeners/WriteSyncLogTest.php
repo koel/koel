@@ -8,6 +8,7 @@ use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -28,8 +29,6 @@ class WriteSyncLogTest extends TestCase
         $this->originalLogLevel = config('koel.sync_log_level');
         Carbon::setTestNow(Carbon::create(2021, 1, 2, 12, 34, 56));
 
-        // Pruning deletes files, so these tests get a storage path of their own rather than
-        // the checkout's real storage/logs, which may hold scan logs worth keeping.
         $this->originalStoragePath = $this->app->storagePath();
         $this->storagePath = sys_get_temp_dir() . '/koel-write-scan-log-test-' . uniqid();
         File::makeDirectory($this->storagePath . '/logs', 0o755, true);
@@ -68,17 +67,27 @@ class WriteSyncLogTest extends TestCase
 
         $this->listener->handle(self::createSyncCompleteEvent());
 
-        // The newest two survive: the one just written and the newest of the old ones.
         self::assertFileExists(storage_path('logs/sync-20210102-123456.log'));
         self::assertFileExists(storage_path('logs/sync-20200103-000000.log'));
         self::assertFileDoesNotExist(storage_path('logs/sync-20200102-000000.log'));
         self::assertFileDoesNotExist(storage_path('logs/sync-20200101-000000.log'));
     }
 
-    #[Test]
-    public function handleFallsBackToTheDefaultRetentionWhenTheSettingIsNotANumber(): void
+    /** @return array<string, array{0: int|string}> */
+    public static function provideInvalidRetentionValues(): array
     {
-        config(['koel.sync_log_level' => 'error', 'koel.scan_log_max_files' => '']);
+        return [
+            'empty string' => [''],
+            'not a number' => ['abc'],
+            'negative' => [-1],
+        ];
+    }
+
+    #[DataProvider('provideInvalidRetentionValues')]
+    #[Test]
+    public function handleFallsBackToTheDefaultRetentionWhenTheSettingIsInvalid(int|string $value): void
+    {
+        config(['koel.sync_log_level' => 'error', 'koel.scan_log_max_files' => $value]);
 
         foreach (range(1, 31) as $day) {
             File::put(storage_path(sprintf('logs/sync-202001%02d-000000.log', $day)), 'old');
@@ -86,7 +95,6 @@ class WriteSyncLogTest extends TestCase
 
         $this->listener->handle(self::createSyncCompleteEvent());
 
-        // 31 old plus the new one, default 30 kept: the two oldest go.
         self::assertCount(30, File::glob(storage_path('logs/sync-*.log')));
         self::assertFileDoesNotExist(storage_path('logs/sync-20200101-000000.log'));
     }
