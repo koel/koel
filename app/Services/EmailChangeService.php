@@ -48,7 +48,12 @@ class EmailChangeService
             absolute: false,
         );
 
-        $confirmationUrl = apply_filters(Filter::EMAIL_CHANGE_URL, url($path), $user);
+        $signedApiPath = Str::after($path, '/api/');
+        $confirmationUrl = apply_filters(
+            Filter::EMAIL_CHANGE_URL,
+            client_url('email-change/' . base64_encode($signedApiPath)),
+            $user,
+        );
 
         Mail::to($newEmail)->queue(new ConfirmEmailChange($user, $newEmail, $confirmationUrl));
         Mail::to($user->email)->queue(new EmailChangeRequested($user, $newEmail));

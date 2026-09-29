@@ -3,7 +3,6 @@
 use App\Facades\ITunes;
 use App\Http\Controllers\AppManifestController;
 use App\Http\Controllers\AuthorizeDropboxController;
-use App\Http\Controllers\ConfirmEmailChangeController;
 use App\Http\Controllers\Demo\IndexController as DemoIndexController;
 use App\Http\Controllers\Demo\NewSessionController;
 use App\Http\Controllers\DownloadSongController;
@@ -40,15 +39,6 @@ Route::middleware('web')->group(static function (): void {
     Route::get('manifest-remote.json', RemoteManifestController::class)->name('manifest.remote');
 
     Route::get('lastfm/callback', [LastfmController::class, 'callback'])->name('lastfm.callback');
-
-    Route::get('email-change/confirm/{user}', [ConfirmEmailChangeController::class, 'show'])->middleware([
-        'signed:relative',
-        'throttle:10,1',
-    ])->name('email-change.confirm');
-
-    Route::post('email-change/confirm/{user}', [ConfirmEmailChangeController::class, 'confirm'])
-        ->middleware(['signed:relative', 'throttle:10,1'])
-        ->name('email-change.confirm.submit');
 
     Route::middleware('auth')->group(static function (): void {
         if (ITunes::used()) {

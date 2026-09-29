@@ -212,6 +212,18 @@ export const routes = [
     },
   },
   {
+    name: 'email-change.confirm',
+    path: '/email-change/:payload',
+    screen: 'EmailChange.Confirm',
+    meta: {
+      public: true,
+      layout: 'email-change',
+    },
+    constraints: {
+      payload: '[a-zA-Z0-9\\+/=]+',
+    },
+  },
+  {
     name: 'ai',
     path: '/ai',
     screen: 'AI',

@@ -7,6 +7,7 @@ use App\Mail\ConfirmEmailChange;
 use App\Repositories\UserRepository;
 use App\Services\EmailChangeService;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Support\Uri;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -85,7 +86,8 @@ class EmailChangeServiceTest extends TestCase
         $service->requestChange($user, 'new@koel.test');
 
         $confirmationUrl = Mail::queued(ConfirmEmailChange::class)->sole()->confirmationUrl;
-        $query = Uri::of($confirmationUrl)->query();
+        $signedApiPath = base64_decode(Str::after($confirmationUrl, 'email-change/'), true);
+        $query = Uri::of($signedApiPath)->query();
 
         $result = $service->confirmChange($user, 'new@koel.test', $query->get('current'), $query->get('token'));
 

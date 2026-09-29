@@ -7,6 +7,7 @@ use App\Mail\EmailChanged;
 use App\Mail\EmailChangeRequested;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -33,7 +34,7 @@ class EmailChangeTest extends TestCase
 
         self::assertNotNull($mail);
 
-        return $mail->confirmationUrl;
+        return 'api/' . base64_decode(Str::after($mail->confirmationUrl, 'email-change/'), true);
     }
 
     #[Test]
@@ -67,18 +68,18 @@ class EmailChangeTest extends TestCase
         $user = create_user(['email' => 'old@koel.test']);
         $confirmationUrl = $this->requestEmailChange($user, 'new@koel.test');
 
-        $this->post($confirmationUrl)->assertOk();
+        $this->postJson($confirmationUrl)->assertNoContent();
 
         self::assertSame('new@koel.test', $user->refresh()->email);
     }
 
     #[Test]
-    public function onlyShowTheConfirmationPageWhenTheLinkIsOpened(): void
+    public function neverChangeTheEmailWhenTheLinkIsMerelyOpened(): void
     {
         $user = create_user(['email' => 'old@koel.test']);
         $confirmationUrl = $this->requestEmailChange($user, 'new@koel.test');
 
-        $this->get($confirmationUrl)->assertOk()->assertSee('new@koel.test');
+        $this->getJson($confirmationUrl)->assertClientError();
 
         self::assertSame('old@koel.test', $user->refresh()->email);
     }
@@ -90,7 +91,7 @@ class EmailChangeTest extends TestCase
         $confirmationUrl = $this->requestEmailChange($user, 'new@koel.test');
         $user->update(['sso_provider' => 'Google', 'sso_id' => '123']);
 
-        $this->post($confirmationUrl)->assertOk();
+        $this->postJson($confirmationUrl)->assertForbidden();
 
         self::assertSame('old@koel.test', $user->refresh()->email);
     }
@@ -101,7 +102,7 @@ class EmailChangeTest extends TestCase
         $user = create_user(['email' => 'old@koel.test']);
         $confirmationUrl = $this->requestEmailChange($user, 'new@koel.test');
 
-        $this->post(str_replace('new%40koel.test', 'attacker%40koel.test', $confirmationUrl))->assertForbidden();
+        $this->postJson(str_replace('new%40koel.test', 'attacker%40koel.test', $confirmationUrl))->assertForbidden();
 
         self::assertSame('old@koel.test', $user->refresh()->email);
     }
@@ -114,7 +115,7 @@ class EmailChangeTest extends TestCase
 
         $this->travel(25)->hours();
 
-        $this->post($confirmationUrl)->assertForbidden();
+        $this->postJson($confirmationUrl)->assertForbidden();
         self::assertSame('old@koel.test', $user->refresh()->email);
     }
 
@@ -125,8 +126,8 @@ class EmailChangeTest extends TestCase
         $firstLink = $this->requestEmailChange($user, 'first@koel.test');
         $secondLink = $this->requestEmailChange($user, 'second@koel.test');
 
-        $this->post($secondLink)->assertOk();
-        $this->post($firstLink)->assertOk();
+        $this->postJson($secondLink)->assertNoContent();
+        $this->postJson($firstLink)->assertForbidden();
 
         self::assertSame('second@koel.test', $user->refresh()->email);
     }
@@ -138,10 +139,10 @@ class EmailChangeTest extends TestCase
         $firstLink = $this->requestEmailChange($user, 'typo@koel.test');
         $secondLink = $this->requestEmailChange($user, 'fixed@koel.test');
 
-        $this->post($firstLink)->assertOk();
+        $this->postJson($firstLink)->assertForbidden();
         self::assertSame('old@koel.test', $user->refresh()->email);
 
-        $this->post($secondLink)->assertOk();
+        $this->postJson($secondLink)->assertNoContent();
         self::assertSame('fixed@koel.test', $user->refresh()->email);
     }
 
@@ -152,7 +153,7 @@ class EmailChangeTest extends TestCase
         $confirmationUrl = $this->requestEmailChange($user, 'new@koel.test');
         create_user(['email' => 'new@koel.test']);
 
-        $this->post($confirmationUrl)->assertOk();
+        $this->postJson($confirmationUrl)->assertConflict();
 
         self::assertSame('old@koel.test', $user->refresh()->email);
     }

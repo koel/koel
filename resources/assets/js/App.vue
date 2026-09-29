@@ -27,6 +27,7 @@
 
   <AcceptInvitation v-if="layout === 'invitation'" />
   <ResetPasswordForm v-if="layout === 'reset-password'" />
+  <ConfirmEmailChange v-if="layout === 'email-change'" />
 
   <AppInitializer v-if="authenticated" @error="onInitError" @success="onInitSuccess" />
 
@@ -75,6 +76,7 @@ const AiAssistantScreen = defineAsyncComponent(() => import('@/components/ai/AiA
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
 const AcceptInvitation = defineAsyncComponent(() => import('@/components/invitation/AcceptInvitation.vue'))
 const ResetPasswordForm = defineAsyncComponent(() => import('@/components/auth/ResetPasswordForm.vue'))
+const ConfirmEmailChange = defineAsyncComponent(() => import('@/components/email-change/ConfirmEmailChange.vue'))
 const Embed = defineAsyncComponent(() => import('@/components/embed/widget/EmbedWidget.vue'))
 
 const overlay = ref<InstanceType<typeof Overlay>>()

@@ -567,6 +567,7 @@ interface ScreenNames {
   Artist: true
   Artists: true
   Default: true
+  'EmailChange.Confirm': true
   Embed: true
   Episode: true
   Favorites: true
