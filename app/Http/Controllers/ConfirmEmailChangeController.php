@@ -16,11 +16,13 @@ class ConfirmEmailChangeController extends Controller
 
     public function confirm(User $user, ConfirmEmailChangeRequest $request, EmailChangeService $emailChangeService)
     {
-        [$title, $details] = match ($emailChangeService->confirmChange($user, $request->email, $request->current)) {
+        $result = $emailChangeService->confirmChange($user, $request->email, $request->current, $request->token);
+
+        [$title, $details] = match ($result) {
             EmailChangeResult::CHANGED => ['Email changed', "Your email address is now {$request->email}."],
             EmailChangeResult::OUTDATED => [
                 'Link out of date',
-                'This email address has changed since the link was sent.',
+                'A newer link was sent, or the email address has changed.',
             ],
             EmailChangeResult::TAKEN => ['Address in use', 'Another account already uses this email address.'],
             EmailChangeResult::SINGLE_SIGN_ON => [

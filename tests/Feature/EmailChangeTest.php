@@ -132,6 +132,20 @@ class EmailChangeTest extends TestCase
     }
 
     #[Test]
+    public function refuseAnOlderLinkOnceANewerOneWasSent(): void
+    {
+        $user = create_user(['email' => 'old@koel.test']);
+        $firstLink = $this->requestEmailChange($user, 'typo@koel.test');
+        $secondLink = $this->requestEmailChange($user, 'fixed@koel.test');
+
+        $this->post($firstLink)->assertOk();
+        self::assertSame('old@koel.test', $user->refresh()->email);
+
+        $this->post($secondLink)->assertOk();
+        self::assertSame('fixed@koel.test', $user->refresh()->email);
+    }
+
+    #[Test]
     public function refuseAnAddressAnotherAccountTookMeanwhile(): void
     {
         $user = create_user(['email' => 'old@koel.test']);
