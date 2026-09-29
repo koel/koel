@@ -96,4 +96,15 @@ class ImageWriterTest extends TestCase
             Http::assertNothingSent();
         }
     }
+
+    #[Test]
+    public function aFailedFetchNamesItsCause(): void
+    {
+        Http::fake(['https://example.com/cover.jpg' => Http::response('', 429)]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageMatches('/example\.com\/cover\.jpg.*429/');
+
+        $this->writer->encode('https://example.com/cover.jpg');
+    }
 }
