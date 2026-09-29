@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\EmailChangeResult;
 use App\Hooks\Filter;
 use App\Mail\ConfirmEmailChange;
+use App\Mail\EmailChanged;
 use App\Mail\EmailChangeRequested;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -37,6 +38,16 @@ class EmailChangeService
 
         Mail::to($newEmail)->queue(new ConfirmEmailChange($user, $newEmail, $confirmationUrl));
         Mail::to($user->email)->queue(new EmailChangeRequested($user, $newEmail));
+    }
+
+    public function notifyChange(User $user, string $previousEmail): void
+    {
+        if (!mailer_configured()) {
+            return;
+        }
+
+        Mail::to($previousEmail)->queue(new EmailChanged($user, $previousEmail));
+        Mail::to($user->email)->queue(new EmailChanged($user, $previousEmail));
     }
 
     public function confirmChange(User $user, string $newEmail, string $currentEmailFingerprint): EmailChangeResult

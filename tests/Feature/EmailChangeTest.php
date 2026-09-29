@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Mail\ConfirmEmailChange;
+use App\Mail\EmailChanged;
 use App\Mail\EmailChangeRequested;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -120,7 +121,7 @@ class EmailChangeTest extends TestCase
     }
 
     #[Test]
-    public function requireConfirmationWhenAnAdminChangesSomeoneElsesEmail(): void
+    public function applyAnAdminsChangeRightAwayAndTellBothAddresses(): void
     {
         $user = create_user(['email' => 'old@koel.test']);
 
@@ -130,9 +131,9 @@ class EmailChangeTest extends TestCase
             create_admin(),
         )->assertOk();
 
-        self::assertSame('old@koel.test', $user->refresh()->email);
-        Mail::assertQueued(ConfirmEmailChange::class, static fn (ConfirmEmailChange $mail): bool => $mail->hasTo(
-            'new@koel.test',
-        ));
+        self::assertSame('new@koel.test', $user->refresh()->email);
+        Mail::assertNotQueued(ConfirmEmailChange::class);
+        Mail::assertQueued(EmailChanged::class, static fn (EmailChanged $mail): bool => $mail->hasTo('old@koel.test'));
+        Mail::assertQueued(EmailChanged::class, static fn (EmailChanged $mail): bool => $mail->hasTo('new@koel.test'));
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services;
 
 use App\Services\EmailChangeService;
+use Illuminate\Support\Facades\Mail;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -52,5 +53,16 @@ class EmailChangeServiceTest extends TestCase
         $user = create_user(['email' => 'old@koel.test', 'sso_provider' => 'Google', 'sso_id' => '123']);
 
         self::assertFalse($this->service->requiresConfirmation($user, 'new@koel.test'));
+    }
+
+    #[Test]
+    public function sendNoChangeNoticeWithoutMail(): void
+    {
+        config(['mail.default' => 'log']);
+        Mail::fake();
+
+        $this->service->notifyChange(create_user(['email' => 'new@koel.test']), 'old@koel.test');
+
+        Mail::assertNothingQueued();
     }
 }
