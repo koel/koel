@@ -66,7 +66,7 @@ class EmailChangeService
         }
 
         try {
-            $user->getConnection()->transaction(static fn () => $user->update(['email' => $newEmail]));
+            $user->getConnection()->transaction(static fn (): bool => $user->update(['email' => $newEmail]));
         } catch (UniqueConstraintViolationException) {
             return EmailChangeResult::TAKEN;
         }
