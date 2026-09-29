@@ -17,6 +17,7 @@ class EmailChanged extends Mailable
     public function __construct(
         public readonly User $user,
         public readonly string $previousEmail,
+        public readonly string $newEmail,
     ) {}
 
     public function content(): Content
@@ -24,6 +25,7 @@ class EmailChanged extends Mailable
         return new Content(markdown: 'emails.users.email-changed', with: [
             'user' => $this->user,
             'previousEmail' => $this->previousEmail,
+            'newEmail' => $this->newEmail,
         ]);
     }
 

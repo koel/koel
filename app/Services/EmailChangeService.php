@@ -47,8 +47,8 @@ class EmailChangeService
             return;
         }
 
-        Mail::to($previousEmail)->queue(new EmailChanged($user, $previousEmail));
-        Mail::to($user->email)->queue(new EmailChanged($user, $previousEmail));
+        Mail::to($previousEmail)->queue(new EmailChanged($user, $previousEmail, $user->email));
+        Mail::to($user->email)->queue(new EmailChanged($user, $previousEmail, $user->email));
     }
 
     public function confirmChange(User $user, string $newEmail, string $currentEmailFingerprint): EmailChangeResult

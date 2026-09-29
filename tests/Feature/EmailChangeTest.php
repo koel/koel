@@ -157,6 +157,12 @@ class EmailChangeTest extends TestCase
         self::assertSame('new@koel.test', $user->refresh()->email);
         Mail::assertNotQueued(ConfirmEmailChange::class);
         Mail::assertQueued(EmailChanged::class, static fn (EmailChanged $mail): bool => $mail->hasTo('old@koel.test'));
-        Mail::assertQueued(EmailChanged::class, static fn (EmailChanged $mail): bool => $mail->hasTo('new@koel.test'));
+        Mail::assertQueued(
+            EmailChanged::class,
+            static fn (EmailChanged $mail): bool => (
+                $mail->hasTo('new@koel.test')
+                && $mail->newEmail === 'new@koel.test'
+            ),
+        );
     }
 }
