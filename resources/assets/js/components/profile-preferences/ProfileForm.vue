@@ -58,7 +58,7 @@ import AlertBox from '@/components/ui/AlertBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
-const { toastSuccess } = useMessageToaster()
+const { toastSuccess, toastInfo } = useMessageToaster()
 const { currentUser } = useAuthorization()
 
 const isDemo = window.KOEL.is_demo
@@ -77,7 +77,14 @@ const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
   },
   onSuccess: () => {
     data.avatar = undefined
-    toastSuccess('Profile updated.')
+
+    if (data.email === currentUser.value.email) {
+      toastSuccess('Profile updated.')
+      return
+    }
+
+    toastInfo('Confirmation email sent.')
+    data.email = currentUser.value.email
   },
 })
 </script>

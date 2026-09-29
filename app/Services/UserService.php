@@ -23,6 +23,7 @@ class UserService
         private readonly UserRepository $repository,
         private readonly ImageStorage $imageStorage,
         private readonly OrganizationService $organizationService,
+        private readonly EmailChangeService $emailChangeService,
         #[Config('koel.sso.default_role')]
         private readonly Role $defaultSsoRole = Role::USER,
     ) {}
@@ -68,6 +69,32 @@ class UserService
 
     public function updateUser(User $user, UserUpdateData $dto): User
     {
+        $previousEmail = $user->email;
+
+        $this->applyUpdate($user, $dto, keepCurrentEmail: false);
+
+        if ($user->email !== $previousEmail) {
+            $this->emailChangeService->notifyChange($user, $previousEmail);
+        }
+
+        return $user->refresh(); // make sure the roles and permissions are refreshed
+    }
+
+    public function updateOwnProfile(User $user, UserUpdateData $dto): User
+    {
+        $emailChangeRequiresConfirmation = $this->emailChangeService->requiresConfirmation($user, $dto->email);
+
+        $this->applyUpdate($user, $dto, keepCurrentEmail: $emailChangeRequiresConfirmation);
+
+        if ($emailChangeRequiresConfirmation) {
+            $this->emailChangeService->requestChange($user, $dto->email);
+        }
+
+        return $user->refresh(); // make sure the roles and permissions are refreshed
+    }
+
+    private function applyUpdate(User $user, UserUpdateData $dto, bool $keepCurrentEmail): void
+    {
         throw_if($user->is_prospect, new UserProspectUpdateDeniedException());
         $dto->role?->assertAvailable();
 
@@ -86,13 +113,15 @@ class UserService
             Arr::forget($data, ['password', 'email']);
         }
 
+        if ($keepCurrentEmail) {
+            Arr::forget($data, 'email');
+        }
+
         $user->update($data);
 
         if ($dto->role && $user->role !== $dto->role) {
             $user->syncRoles($dto->role);
         }
-
-        return $user->refresh(); // make sure the roles and permissions are refreshed
     }
 
     /**

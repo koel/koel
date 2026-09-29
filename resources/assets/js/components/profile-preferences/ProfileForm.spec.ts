@@ -14,7 +14,9 @@ describe('profileForm.vue', () => {
   }
 
   it('updates profile', async () => {
-    const updateMock = h.mock(authService, 'updateProfile')
+    const updateMock = h.mock(authService, 'updateProfile', async (data: { email: string }) => {
+      userStore.state.current.email = data.email
+    })
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
     renderComponent(
@@ -51,5 +53,19 @@ describe('profileForm.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
     await waitFor(() => expect(screen.getByRole('img').getAttribute('src')).toBe('https://gravatar.com/new-email'))
+  })
+
+  it('asks to confirm a new email address that has not taken effect yet', async () => {
+    h.mock(authService, 'updateProfile')
+    const infoMock = h.mock(MessageToasterStub.value, 'info')
+    const user = h.factory('user').make({ email: 'old@example.com' }) as CurrentUser
+
+    renderComponent(user)
+
+    await h.type(screen.getByTestId('email'), 'new@example.com')
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => expect(infoMock).toHaveBeenCalled())
+    expect(screen.getByTestId<HTMLInputElement>('email').value).toBe('old@example.com')
   })
 })

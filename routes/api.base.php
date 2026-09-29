@@ -20,6 +20,7 @@ use App\Http\Controllers\API\Auth\TwoFactor\EnrollController as EnrollTwoFactorC
 use App\Http\Controllers\API\Auth\TwoFactor\RegenerateRecoveryCodesController;
 use App\Http\Controllers\API\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\API\ChangePasswordController;
+use App\Http\Controllers\API\ConfirmEmailChangeController;
 use App\Http\Controllers\API\DisconnectFromLastfmController;
 use App\Http\Controllers\API\Embed\EmbedController;
 use App\Http\Controllers\API\Embed\EmbedOptionsController;
@@ -120,6 +121,10 @@ Route::prefix('api')
 
             Route::get('invitations', [UserInvitationController::class, 'get']);
             Route::post('invitations/accept', [UserInvitationController::class, 'accept']);
+
+            Route::post('email-change/confirm/{user}', ConfirmEmailChangeController::class)
+                ->middleware('signed:relative')
+                ->name('email-change.confirm');
 
             Route::middleware('embeds.enabled')->group(static function (): void {
                 Route::get('embeds/{embed}/{options}', [EmbedController::class, 'getPayload'])->name('embeds.payload');

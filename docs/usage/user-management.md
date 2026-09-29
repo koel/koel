@@ -43,6 +43,8 @@ With the `manage users` permission (admin and manager roles), you can add more u
 Manage → Users. If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, you can also invite a user via email.
 You cannot add, invite, edit, or delete users whose roles are higher than yours.
 
+When you change a user's email address, it takes effect right away. If a mailer is configured, Koel lets the user know at both the old and the new address.
+
 ## Changing User Roles
 
 User roles can be changed via the web interface from the Users page if the current user has the `manage users`

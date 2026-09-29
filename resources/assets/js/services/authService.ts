@@ -100,6 +100,8 @@ export const authService = {
     return await http.post('reset-password', { email, password, token })
   },
 
+  confirmEmailChange: async (signedPath: string) => await http.post(signedPath),
+
   getOneTimeToken: async () => (await http.get<{ token: string }>('one-time-token')).token,
 
   setRedirect: (url?: string) => lsSet(REDIRECT_KEY, url || location.toString()),
