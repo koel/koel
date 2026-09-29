@@ -83,7 +83,7 @@ const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
       return
     }
 
-    toastInfo(`Confirmation email sent to ${data.email}.`)
+    toastInfo('Confirmation email sent.')
     data.email = currentUser.value.email
   },
 })
