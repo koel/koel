@@ -108,6 +108,17 @@ class EmailChangeTest extends TestCase
     }
 
     #[Test]
+    public function ignoreAnAddressSentOutsideTheSignedLink(): void
+    {
+        $user = create_user(['email' => 'old@koel.test']);
+        $confirmationUrl = $this->requestEmailChange($user, 'new@koel.test');
+
+        $this->postJson($confirmationUrl, ['email' => 'unconfirmed@koel.test'])->assertNoContent();
+
+        self::assertSame('new@koel.test', $user->refresh()->email);
+    }
+
+    #[Test]
     public function refuseAnExpiredLink(): void
     {
         $user = create_user(['email' => 'old@koel.test']);

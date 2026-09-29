@@ -2,11 +2,6 @@
 
 namespace App\Http\Requests\API;
 
-/**
- * @property-read string $email
- * @property-read string $current
- * @property-read string $token
- */
 class ConfirmEmailChangeRequest extends Request
 {
     /** @inheritdoc */
@@ -17,5 +12,11 @@ class ConfirmEmailChangeRequest extends Request
             'current' => ['required', 'string'],
             'token' => ['required', 'string'],
         ];
+    }
+
+    /** @return array<string, mixed> */
+    public function validationData(): array
+    {
+        return $this->query();
     }
 }

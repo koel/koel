@@ -13,7 +13,12 @@ class ConfirmEmailChangeController extends Controller
 {
     public function __invoke(User $user, ConfirmEmailChangeRequest $request, EmailChangeService $emailChangeService)
     {
-        $result = $emailChangeService->confirmChange($user, $request->email, $request->current, $request->token);
+        $result = $emailChangeService->confirmChange(
+            $user,
+            $request->validated('email'),
+            $request->validated('current'),
+            $request->validated('token'),
+        );
 
         return match ($result) {
             EmailChangeResult::CHANGED => response()->noContent(),
