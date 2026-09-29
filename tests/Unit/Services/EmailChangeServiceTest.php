@@ -2,8 +2,11 @@
 
 namespace Tests\Unit\Services;
 
+use App\Enums\EmailChangeResult;
+use App\Repositories\UserRepository;
 use App\Services\EmailChangeService;
 use Illuminate\Support\Facades\Mail;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -64,5 +67,24 @@ class EmailChangeServiceTest extends TestCase
         $this->service->notifyChange(create_user(['email' => 'new@koel.test']), 'old@koel.test');
 
         Mail::assertNothingQueued();
+    }
+
+    #[Test]
+    public function reportTheAddressAsTakenWhenAnotherAccountClaimsItFirst(): void
+    {
+        $user = create_user(['email' => 'old@koel.test']);
+        create_user(['email' => 'new@koel.test']);
+
+        $repository = Mockery::mock(UserRepository::class);
+        $repository->allows('findOneByEmail')->andReturnNull();
+
+        $result = (new EmailChangeService($repository))->confirmChange(
+            $user,
+            'new@koel.test',
+            hash('sha256', 'old@koel.test'),
+        );
+
+        self::assertSame(EmailChangeResult::TAKEN, $result);
+        self::assertSame('old@koel.test', $user->refresh()->email);
     }
 }

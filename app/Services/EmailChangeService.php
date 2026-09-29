@@ -9,6 +9,7 @@ use App\Mail\EmailChanged;
 use App\Mail\EmailChangeRequested;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
@@ -52,6 +53,10 @@ class EmailChangeService
 
     public function confirmChange(User $user, string $newEmail, string $currentEmailFingerprint): EmailChangeResult
     {
+        if ($user->sso_provider) {
+            return EmailChangeResult::SINGLE_SIGN_ON;
+        }
+
         if (!hash_equals(self::fingerprint($user->email), $currentEmailFingerprint)) {
             return EmailChangeResult::OUTDATED;
         }
@@ -60,7 +65,11 @@ class EmailChangeService
             return EmailChangeResult::TAKEN;
         }
 
-        $user->update(['email' => $newEmail]);
+        try {
+            $user->update(['email' => $newEmail]);
+        } catch (UniqueConstraintViolationException) {
+            return EmailChangeResult::TAKEN;
+        }
 
         return EmailChangeResult::CHANGED;
     }

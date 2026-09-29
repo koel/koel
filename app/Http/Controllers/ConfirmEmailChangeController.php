@@ -9,7 +9,12 @@ use App\Services\EmailChangeService;
 
 class ConfirmEmailChangeController extends Controller
 {
-    public function __invoke(User $user, ConfirmEmailChangeRequest $request, EmailChangeService $emailChangeService)
+    public function show(User $user, ConfirmEmailChangeRequest $request)
+    {
+        return view('email-change-confirm', ['newEmail' => $request->email, 'action' => $request->fullUrl()]);
+    }
+
+    public function confirm(User $user, ConfirmEmailChangeRequest $request, EmailChangeService $emailChangeService)
     {
         [$title, $details] = match ($emailChangeService->confirmChange($user, $request->email, $request->current)) {
             EmailChangeResult::CHANGED => ['Email changed', "Your email address is now {$request->email}."],
@@ -18,6 +23,10 @@ class ConfirmEmailChangeController extends Controller
                 'This email address has changed since the link was sent.',
             ],
             EmailChangeResult::TAKEN => ['Address in use', 'Another account already uses this email address.'],
+            EmailChangeResult::SINGLE_SIGN_ON => [
+                'Not possible',
+                'This account signs in with single sign-on, so its email address cannot change here.',
+            ],
         };
 
         return view('email-change', ['title' => $title, 'details' => $details]);
