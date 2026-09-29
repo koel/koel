@@ -39,9 +39,13 @@ readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
             return;
         }
 
-        Song::deleteWhereValueNotIn($paths, 'path', static function (Builder $builder): Builder {
+        $deleted = Song::deleteWhereValueNotIn($paths, 'path', static function (Builder $builder): Builder {
             return $builder->whereNull('podcast_id');
         });
+
+        if ($deleted > 0) {
+            Log::info(sprintf('Removed %d song(s) no longer found in the media directory.', $deleted));
+        }
 
         $this->libraryManager->prune();
     }
