@@ -21,8 +21,8 @@ class ConfirmEmailChangeController extends Controller
         [$title, $details] = match ($result) {
             EmailChangeResult::CHANGED => ['Email changed', "Your email address is now {$request->email}."],
             EmailChangeResult::OUTDATED => [
-                'Link out of date',
-                'A newer link was sent, or the email address has changed.',
+                'Invalid link',
+                'The link is invalid or has expired.',
             ],
             EmailChangeResult::TAKEN => ['Address in use', 'Another account already uses this email address.'],
             EmailChangeResult::SINGLE_SIGN_ON => [
