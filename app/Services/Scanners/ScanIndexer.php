@@ -23,7 +23,7 @@ class ScanIndexer
         }
 
         $results
-            ->success()
+            ->reject(static fn (ScanResult $result): bool => $result->isSkipped())
             ->map(static fn (ScanResult $result): string => $result->path)
             ->chunk(self::CHUNK_SIZE)
             ->each(static function (Collection $paths): void {

@@ -36,14 +36,12 @@ class ScanIndexerTest extends TestCase
         /** @var Song $saved */
         $saved = Song::factory()->create();
         $saved->syncGenres('Rock');
-        /** @var Song $failed */
-        $failed = Song::factory()->create();
 
         $this->engine->updated = [];
 
         (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::success($saved->path))->add(ScanResult::error(
-            $failed->path,
-            'database is locked',
+            '/media/unreadable.mp3',
+            'Unsupported file',
         ))->add(ScanResult::skipped('/media/untouched.mp3')));
 
         self::assertSame([(string) $saved->id], $this->engine->updatedKeysOf(Song::class));
@@ -57,6 +55,21 @@ class ScanIndexerTest extends TestCase
                 ->all(),
             $this->engine->updatedKeysOf(Genre::class),
         );
+    }
+
+    #[Test]
+    public function indexesASongThatWasSavedBeforeItsScanFailed(): void
+    {
+        /** @var Song $song */
+        $song = Song::factory()->create();
+        $this->engine->updated = [];
+
+        (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::error(
+            $song->path,
+            'Genre sync failed',
+        )));
+
+        self::assertSame([(string) $song->id], $this->engine->updatedKeysOf(Song::class));
     }
 
     #[Test]
