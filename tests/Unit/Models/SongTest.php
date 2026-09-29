@@ -7,6 +7,7 @@ use App\Models\Genre;
 use App\Models\Song;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 use App\Values\SongStorageMetadata\S3LambdaMetadata;
+use Illuminate\Database\Eloquent\Builder;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -95,5 +96,20 @@ class SongTest extends TestCase
         Song::deleteByChunk(Song::query()->get()->modelKeys(), 1);
 
         self::assertSame(0, Song::query()->count());
+    }
+
+    #[Test]
+    public function deletingWhereValueNotInKeepsRowsExcludedByTheModifierWhenDeletingInChunks(): void
+    {
+        $episode = Song::factory()->asEpisode()->createOne();
+        Song::factory()->createMany(999);
+
+        Song::deleteWhereValueNotIn(
+            array_map(static fn (int $i) => "/missing/$i.mp3", range(1, 1_000)),
+            'path',
+            static fn (Builder $builder) => $builder->whereNull('podcast_id'),
+        );
+
+        self::assertSame([$episode->id], Song::query()->pluck('id')->all());
     }
 }
