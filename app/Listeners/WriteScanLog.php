@@ -36,13 +36,11 @@ readonly class WriteScanLog implements ShouldQueue
 
     private static function pruneOldLogs(): void
     {
-        $maxFiles = filter_var(config('koel.scan_log_max_files'), FILTER_VALIDATE_INT);
+        $maxFiles = filter_var(config('koel.scan_log_max_files'), FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 0, 'default' => self::DEFAULT_MAX_FILES],
+        ]);
 
-        if ($maxFiles === false) {
-            $maxFiles = self::DEFAULT_MAX_FILES;
-        }
-
-        if ($maxFiles <= 0) {
+        if ($maxFiles === 0) {
             return;
         }
 
