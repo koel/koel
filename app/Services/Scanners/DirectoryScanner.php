@@ -42,7 +42,6 @@ class DirectoryScanner extends Scanner
 
         if ($jobs > 1) {
             $results = $this->parallelStrategy->scan($files, $config, $jobs, $onProgress);
-            // The workers saved with search syncing off; index what they saved, serially.
             $this->indexer->reindex($results);
         } else {
             $results = $this->sequentialStrategy->scan($files, $config, $onProgress);

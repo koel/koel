@@ -56,13 +56,33 @@ class ScanChunkCommandTest extends TestCase
     }
 
     #[Test]
-    public function scanChunkDoesNotWriteToTheSearchIndex(): void
+    public function scanChunkLeavesTheTntSearchIndexToTheParentProcess(): void
     {
-        // Several workers writing to the one-writer TNTSearch index at once is the
-        // "database is locked" failure; the parent indexes what the workers saved.
+        $engine = $this->scanOneFileWithSearchDriver('tntsearch');
+
+        self::assertSame([], $engine->updated);
+    }
+
+    #[Test]
+    public function scanChunkIndexesAsUsualWithOtherSearchDrivers(): void
+    {
+        $engine = $this->scanOneFileWithSearchDriver('meilisearch');
+
+        $songId = Song::query()
+            ->where('path', realpath($this->mediaPath . '/full.mp3'))
+            ->value('id');
+
+        self::assertSame([(string) $songId], $engine->updatedKeysOf(Song::class));
+    }
+
+    private function scanOneFileWithSearchDriver(string $driver): RecordingSearchEngine
+    {
         $engine = new RecordingSearchEngine();
-        $this->app->make(EngineManager::class)->extend('recording', fn () => $engine); // @mago-ignore lint:prefer-static-closure
-        config(['scout.driver' => 'recording']);
+        $manager = $this->app->make(EngineManager::class);
+        // @mago-ignore lint:prefer-static-closure
+        $manager->extend($driver, fn () => $engine);
+        $manager->forgetDrivers();
+        config(['scout.driver' => $driver]);
 
         $owner = create_admin();
         $manifest = tempnam(sys_get_temp_dir(), 'koel_test_') . '.json';
@@ -70,12 +90,11 @@ class ScanChunkCommandTest extends TestCase
 
         try {
             $this->artisan('koel:scan:chunk', ['manifest' => $manifest, '--owner' => $owner->id])->assertSuccessful();
-
-            $this->assertDatabaseHas(Song::class, ['path' => realpath($this->mediaPath . '/full.mp3')]);
-            self::assertSame([], $engine->updated);
         } finally {
             File::delete($manifest);
         }
+
+        return $engine;
     }
 
     #[Test]
