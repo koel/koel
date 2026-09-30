@@ -2,14 +2,15 @@
 
 namespace Tests\Feature\Commands;
 
-use App\Http\Integrations\MusicBrainz\MusicBrainzConnector;
-use App\Http\Integrations\MusicBrainz\ThrottledMusicBrainzConnector;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Pipelines\Encyclopedia\GetAlbumTracksUsingMbid;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
 use App\Pipelines\Encyclopedia\GetReleaseAndReleaseGroupMbidsForAlbum;
+use App\Services\Integrations\MusicBrainzRateLimiter;
+use Closure;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -159,14 +160,18 @@ class FetchMbidsCommandTest extends TestCase
     }
 
     #[Test]
-    public function throttleTheLookupsMusicBrainzReceives(): void
+    public function waitForTheSharedMusicBrainzSlotInsteadOfGivingUp(): void
     {
         $this->allowPipelinePipe(GetMbidForArtist::class, 'found-artist-mbid');
         Artist::factory()->createOne(['mbid' => null]);
 
-        $this->artisan('koel:fetch-mbids')->assertSuccessful();
+        $this
+            ->mock(MusicBrainzRateLimiter::class)
+            ->expects('waitUpTo')
+            ->with(60.0, Mockery::type(Closure::class))
+            ->andReturnUsing(static fn (float $seconds, Closure $callback): mixed => $callback());
 
-        self::assertInstanceOf(ThrottledMusicBrainzConnector::class, app(MusicBrainzConnector::class));
+        $this->artisan('koel:fetch-mbids')->assertSuccessful();
     }
 
     #[Test]

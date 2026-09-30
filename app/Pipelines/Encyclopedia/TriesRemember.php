@@ -2,9 +2,11 @@
 
 namespace App\Pipelines\Encyclopedia;
 
+use App\Exceptions\MusicBrainzBusyException;
 use Closure;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 trait TriesRemember
 {
@@ -40,22 +42,26 @@ trait TriesRemember
             return $cached === self::NOTHING_FOUND ? null : $cached;
         }
 
-        return rescue(static function () use ($key, $ttl, $nothingFoundTtl, $callback): mixed {
-            $value = $callback();
+        return rescue(
+            static function () use ($key, $ttl, $nothingFoundTtl, $callback): mixed {
+                $value = $callback();
 
-            if ($value === null) {
-                Cache::put($key, self::NOTHING_FOUND, $nothingFoundTtl);
+                if ($value === null) {
+                    Cache::put($key, self::NOTHING_FOUND, $nothingFoundTtl);
 
-                return null;
-            }
+                    return null;
+                }
 
-            if ($ttl === null) {
-                Cache::forever($key, $value);
-            } else {
-                Cache::put($key, $value, $ttl);
-            }
+                if ($ttl === null) {
+                    Cache::forever($key, $value);
+                } else {
+                    Cache::put($key, $value, $ttl);
+                }
 
-            return $value;
-        });
+                return $value;
+            },
+            static fn (Throwable $e) => $e instanceof MusicBrainzBusyException ? throw $e : null,
+            report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
+        );
     }
 }

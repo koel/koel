@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Models\Album;
+use App\Services\Integrations\EncyclopediaService;
+use App\Services\Integrations\MusicBrainzRateLimiter;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+
+class FetchAlbumInformationJob extends QueuedJob implements ShouldBeUnique
+{
+    private const float SLOT_WAIT_SECONDS = 60.0;
+
+    public function __construct(
+        private readonly Album $album,
+    ) {}
+
+    public function uniqueId(): string
+    {
+        return (string) $this->album->id;
+    }
+
+    public function handle(EncyclopediaService $encyclopediaService, MusicBrainzRateLimiter $rateLimiter): void
+    {
+        $rateLimiter->waitUpTo(self::SLOT_WAIT_SECONDS, fn () => $encyclopediaService->getAlbumInformation($this->album));
+    }
+}

@@ -43,7 +43,7 @@ class GetAlbumYearUsingReleaseMbidTest extends TestCase
 
         $mock = self::createNextClosureMock($year);
 
-        (new GetAlbumYearUsingReleaseMbid(new MusicBrainzConnector()))('sample-release-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetAlbumYearUsingReleaseMbid(app(MusicBrainzConnector::class)))('sample-release-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(
             static fn (GetReleaseGroupForReleaseRequest $request): bool => (
@@ -61,7 +61,7 @@ class GetAlbumYearUsingReleaseMbidTest extends TestCase
 
         $mock = self::createNextClosureMock(1991);
 
-        (new GetAlbumYearUsingReleaseMbid(new MusicBrainzConnector()))('sample-release-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetAlbumYearUsingReleaseMbid(app(MusicBrainzConnector::class)))('sample-release-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -72,7 +72,7 @@ class GetAlbumYearUsingReleaseMbidTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        (new GetAlbumYearUsingReleaseMbid(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetAlbumYearUsingReleaseMbid(app(MusicBrainzConnector::class)))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

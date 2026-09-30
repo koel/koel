@@ -30,7 +30,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         $mock = self::createNextClosureMock('Q461269');
 
-        (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetArtistWikidataIdUsingMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (GetArtistUrlRelationshipsRequest $request): bool {
             self::assertSame(['inc' => 'url-rels'], $request->query()->all());
@@ -50,7 +50,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         $mock = self::createNextClosureMock('Q461269');
 
-        (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetArtistWikidataIdUsingMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -62,7 +62,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         $mock = self::createNextClosureMock(null);
 
-        (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetArtistWikidataIdUsingMbid(app(MusicBrainzConnector::class)))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

@@ -2,11 +2,14 @@
 
 namespace Tests\Unit\Pipelines\Encyclopedia;
 
+use App\Exceptions\MusicBrainzBusyException;
 use App\Http\Integrations\MusicBrainz\MusicBrainzConnector;
 use App\Http\Integrations\MusicBrainz\Requests\SearchForArtistRequest;
 use App\Pipelines\Encyclopedia\GetMbidForArtist;
+use App\Services\Integrations\MusicBrainzRateLimiter;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
@@ -31,7 +34,7 @@ class GetMbidForArtistTest extends TestCase
 
         $mock = self::createNextClosureMock('6da0515e-a27d-449d-84cc-00713c38a140');
 
-        (new GetMbidForArtist(new MusicBrainzConnector()))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
+        (new GetMbidForArtist(app(MusicBrainzConnector::class)))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (SearchForArtistRequest $request): bool {
             self::assertSame(
@@ -55,7 +58,7 @@ class GetMbidForArtistTest extends TestCase
         Cache::put(cache_key('artist mbid', 'Skid Row'), 'sample-mbid');
         $mock = self::createNextClosureMock('sample-mbid');
 
-        (new GetMbidForArtist(new MusicBrainzConnector()))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
+        (new GetMbidForArtist(app(MusicBrainzConnector::class)))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -67,7 +70,7 @@ class GetMbidForArtistTest extends TestCase
             SearchForArtistRequest::class => MockResponse::make(body: ['artists' => []]),
         ]);
 
-        $pipe = new GetMbidForArtist(new MusicBrainzConnector());
+        $pipe = new GetMbidForArtist(app(MusicBrainzConnector::class));
 
         $pipe('Nobody At All', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
         $pipe('Nobody At All', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
@@ -82,7 +85,7 @@ class GetMbidForArtistTest extends TestCase
             SearchForArtistRequest::class => MockResponse::make(body: ['artists' => []]),
         ]);
 
-        $pipe = new GetMbidForArtist(new MusicBrainzConnector());
+        $pipe = new GetMbidForArtist(app(MusicBrainzConnector::class));
         $pipe('Nobody At All', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
 
         $this->travel(8)->days();
@@ -98,7 +101,7 @@ class GetMbidForArtistTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        (new GetMbidForArtist(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetMbidForArtist(app(MusicBrainzConnector::class)))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -125,7 +128,7 @@ class GetMbidForArtistTest extends TestCase
 
         $mock = self::createNextClosureMock(null);
 
-        (new GetMbidForArtist(new MusicBrainzConnector()))('Motörhead', $mock->next(...)); // @phpstan-ignore-line
+        (new GetMbidForArtist(app(MusicBrainzConnector::class)))('Motörhead', $mock->next(...)); // @phpstan-ignore-line
 
         self::assertFalse(Cache::has(cache_key('artist mbid', 'Motörhead')));
     }
@@ -139,8 +142,22 @@ class GetMbidForArtistTest extends TestCase
 
         $mock = self::createNextClosureMock(null);
 
-        (new GetMbidForArtist(new MusicBrainzConnector()))('Motörhead', $mock->next(...)); // @phpstan-ignore-line
+        (new GetMbidForArtist(app(MusicBrainzConnector::class)))('Motörhead', $mock->next(...)); // @phpstan-ignore-line
 
         self::assertTrue(Cache::has(cache_key('artist mbid', 'Motörhead')));
+    }
+
+    #[Test]
+    public function rememberNothingWhenNoMusicBrainzSlotIsFree(): void
+    {
+        $rateLimiter = Mockery::mock(MusicBrainzRateLimiter::class);
+        $rateLimiter->expects('takeSlot')->andThrow(MusicBrainzBusyException::create());
+
+        try {
+            (new GetMbidForArtist(new MusicBrainzConnector($rateLimiter)))('Skid Row', static fn (): null => null);
+            self::fail('The busy lookup was swallowed.');
+        } catch (MusicBrainzBusyException) {
+            self::assertFalse(Cache::has(cache_key('artist mbid', 'Skid Row')));
+        }
     }
 }

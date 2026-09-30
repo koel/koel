@@ -2,6 +2,9 @@
 
 namespace Tests\Unit\Services\Integrations;
 
+use App\Exceptions\MusicBrainzBusyException;
+use App\Jobs\FetchAlbumInformationJob;
+use App\Jobs\FetchArtistInformationJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Contracts\Encyclopedia;
@@ -10,10 +13,12 @@ use App\Services\Integrations\CoverArtArchiveService;
 use App\Services\Integrations\EncyclopediaService;
 use App\Services\Integrations\LastfmService;
 use App\Services\Integrations\MbidService;
+use App\Services\Integrations\MusicBrainzRateLimiter;
 use App\Services\Integrations\SpotifyService;
 use App\Services\Integrations\WikidataService;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Mockery;
 use Mockery\MockInterface;
@@ -56,6 +61,7 @@ class EncyclopediaServiceTest extends TestCase
             $this->coverArtArchiveService,
             $this->wikidataService,
             $this->mbidService,
+            new MusicBrainzRateLimiter('redis'),
         );
 
         $this->spotifyConfig = config('koel.services.spotify');
@@ -258,5 +264,53 @@ class EncyclopediaServiceTest extends TestCase
             ->with('https://commons.wikimedia.org/wiki/Special:FilePath/AC%20DC.jpg?width=640');
 
         $this->encyclopediaService->getArtistInformation($artist);
+    }
+
+    #[Test]
+    public function leaveABusyAlbumLookupUncachedAndFillItInLater(): void
+    {
+        Bus::fake();
+        $album = Album::factory()->createOne();
+        $this->encyclopedia->expects('getAlbumInformation')->twice()->andThrow(MusicBrainzBusyException::create());
+
+        self::assertEquals(AlbumInformation::make(), $this->encyclopediaService->getAlbumInformation($album));
+        $this->encyclopediaService->getAlbumInformation($album);
+
+        Bus::assertDispatched(FetchAlbumInformationJob::class);
+    }
+
+    #[Test]
+    public function leaveABusyArtistLookupUncachedAndFillItInLater(): void
+    {
+        Bus::fake();
+        $artist = Artist::factory()->createOne();
+        $this->encyclopedia->expects('getArtistInformation')->twice()->andThrow(MusicBrainzBusyException::create());
+
+        self::assertEquals(ArtistInformation::make(), $this->encyclopediaService->getArtistInformation($artist));
+        $this->encyclopediaService->getArtistInformation($artist);
+
+        Bus::assertDispatched(FetchArtistInformationJob::class);
+    }
+
+    #[Test]
+    public function queueNothingForABusyLookupWithoutAQueue(): void
+    {
+        Bus::fake();
+        $album = Album::factory()->createOne();
+        $this->encyclopedia->expects('getAlbumInformation')->andThrow(MusicBrainzBusyException::create());
+
+        $encyclopediaService = new EncyclopediaService(
+            $this->encyclopedia,
+            $this->imageStorage,
+            $this->spotifyService,
+            $this->coverArtArchiveService,
+            $this->wikidataService,
+            $this->mbidService,
+            new MusicBrainzRateLimiter('sync'),
+        );
+
+        $encyclopediaService->getAlbumInformation($album);
+
+        Bus::assertNothingDispatched();
     }
 }

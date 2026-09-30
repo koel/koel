@@ -2,6 +2,9 @@
 
 namespace App\Services\Integrations;
 
+use App\Exceptions\MusicBrainzBusyException;
+use App\Jobs\FetchAlbumInformationJob;
+use App\Jobs\FetchArtistInformationJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Contracts\Encyclopedia;
@@ -9,6 +12,7 @@ use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 // @mago-ignore lint:cyclomatic-complexity
 class EncyclopediaService
@@ -20,6 +24,7 @@ class EncyclopediaService
         private readonly CoverArtArchiveService $coverArtArchiveService,
         private readonly WikidataService $wikidataService,
         private readonly MbidService $mbidService,
+        private readonly MusicBrainzRateLimiter $rateLimiter,
     ) {}
 
     public function getAlbumInformation(Album $album): ?AlbumInformation
@@ -32,14 +37,23 @@ class EncyclopediaService
         $this->mbidService->fetchAndStoreAlbumMbids($album);
         $this->mbidService->fetchAndStoreAlbumYear($album);
 
-        return rescue(
-            fn () => Cache::remember(
-                cache_key('album information', $album->name, $album->artist->name),
-                now()->addWeek(),
-                fn () => $this->fetchAlbumInformation($album),
-            ),
-            fn () => $this->fetchAlbumInformation($album),
-        );
+        try {
+            return rescue(
+                fn () => Cache::remember(
+                    cache_key('album information', $album->name, $album->artist->name),
+                    now()->addWeek(),
+                    fn () => $this->fetchAlbumInformation($album),
+                ),
+                fn (Throwable $e) => $e instanceof MusicBrainzBusyException
+                    ? throw $e
+                    : $this->fetchAlbumInformation($album),
+                report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
+            );
+        } catch (MusicBrainzBusyException) {
+            $this->fillInLater(new FetchAlbumInformationJob($album));
+
+            return AlbumInformation::make();
+        }
     }
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation
@@ -50,14 +64,30 @@ class EncyclopediaService
 
         $this->mbidService->fetchAndStoreArtistMbid($artist);
 
-        return rescue(
-            fn () => Cache::remember(
-                cache_key('artist information', $artist->name),
-                now()->addWeek(),
-                fn () => $this->fetchArtistInformation($artist),
-            ),
-            fn () => $this->fetchArtistInformation($artist),
-        );
+        try {
+            return rescue(
+                fn () => Cache::remember(
+                    cache_key('artist information', $artist->name),
+                    now()->addWeek(),
+                    fn () => $this->fetchArtistInformation($artist),
+                ),
+                fn (Throwable $e) => $e instanceof MusicBrainzBusyException
+                    ? throw $e
+                    : $this->fetchArtistInformation($artist),
+                report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
+            );
+        } catch (MusicBrainzBusyException) {
+            $this->fillInLater(new FetchArtistInformationJob($artist));
+
+            return ArtistInformation::make();
+        }
+    }
+
+    private function fillInLater(FetchAlbumInformationJob|FetchArtistInformationJob $job): void
+    {
+        if ($this->rateLimiter->fillsInBackground()) {
+            dispatch($job);
+        }
     }
 
     private function fetchAlbumInformation(Album $album): AlbumInformation
