@@ -87,4 +87,19 @@ class MusicBrainzRateLimiterTest extends TestCase
         self::assertTrue((new MusicBrainzRateLimiter('redis'))->fillsInBackground());
         self::assertFalse((new MusicBrainzRateLimiter('sync'))->fillsInBackground());
     }
+
+    #[Test]
+    public function neverShortenABackOffAlreadyUnderWay(): void
+    {
+        $limiter = new MusicBrainzRateLimiter('redis');
+        $limiter->backOff();
+
+        $this->travel(-20)->seconds();
+        $limiter->backOff();
+        $this->travel(35)->seconds();
+
+        $this->expectException(MusicBrainzBusyException::class);
+
+        $limiter->takeSlot();
+    }
 }

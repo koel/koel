@@ -78,7 +78,11 @@ class MusicBrainzRateLimiter
 
     public function backOff(): void
     {
-        Cache::forever(self::NEXT_SLOT_KEY, self::now() + self::BACK_OFF_SECONDS);
+        Cache::lock(self::SLOT_MUTEX_KEY, 5)->block(1, static function (): void {
+            $backOffUntil = self::now() + self::BACK_OFF_SECONDS;
+
+            Cache::forever(self::NEXT_SLOT_KEY, max($backOffUntil, (float) Cache::get(self::NEXT_SLOT_KEY, 0)));
+        });
     }
 
     private function resolveWaitBudgetSeconds(): float
