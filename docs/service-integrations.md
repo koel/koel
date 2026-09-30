@@ -49,6 +49,8 @@ scrobbling. To enable the connection:
 2. Populate the two variables `LASTFM_API_KEY` and `LASTFM_API_SECRET` in `.env` with the credentials grabbed from step 1. This enables Koel to retrieve media information from Last.fm.
 3. To enable scrobbling, go to `https://<your-koel-host>/#/profile` and click the **Connect** button under Last.fm Integration. This connection is per-user, i.e. each user can connect their own Last.fm account.
 
+Koel keeps the artist and album information it gets from Last.fm in the database for a month before asking again.
+
 ## ListenBrainz
 
 [ListenBrainz](https://listenbrainz.org) is an open-source alternative to Last.fm, run by the MetaBrainz Foundation.
