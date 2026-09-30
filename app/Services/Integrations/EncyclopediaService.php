@@ -50,7 +50,7 @@ class EncyclopediaService
                 report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
             );
         } catch (MusicBrainzBusyException) {
-            $this->fillInLater(new FetchAlbumInformationJob($album));
+            $this->queueInformationFetchIfPossible(new FetchAlbumInformationJob($album));
 
             return AlbumInformation::make();
         }
@@ -77,13 +77,13 @@ class EncyclopediaService
                 report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
             );
         } catch (MusicBrainzBusyException) {
-            $this->fillInLater(new FetchArtistInformationJob($artist));
+            $this->queueInformationFetchIfPossible(new FetchArtistInformationJob($artist));
 
             return ArtistInformation::make();
         }
     }
 
-    private function fillInLater(FetchAlbumInformationJob|FetchArtistInformationJob $job): void
+    private function queueInformationFetchIfPossible(FetchAlbumInformationJob|FetchArtistInformationJob $job): void
     {
         if ($this->rateLimiter->fillsInBackground()) {
             dispatch($job);
