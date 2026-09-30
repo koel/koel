@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Hooks\Filter;
 use App\Models\User;
 use App\Services\Auth\TokenManager;
 use App\Services\SettingService;
@@ -36,7 +37,7 @@ class AuthServiceProvider extends ServiceProvider
                 ->markdown('emails.users.reset-password', [
                     'branding' => $branding,
                     'user' => $user,
-                    'url' => client_url("reset-password/$payload"),
+                    'url' => apply_filters(Filter::PASSWORD_RESET_URL, client_url("reset-password/$payload"), $user),
                     'expiresInMinutes' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire'),
                 ]);
         });
