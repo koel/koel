@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\Concerns\AskForPassword;
+use App\Exceptions\EnvFileIsDirectoryException;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
@@ -121,11 +122,10 @@ class InitCommand extends Command
         $envFilePath = $this->laravel->environmentFilePath();
 
         if (File::isDirectory($envFilePath)) {
-            $this->components->error(
-                '.env is a directory. If you mount it with Docker, create the file on the host first.',
-            );
+            $exception = EnvFileIsDirectoryException::create($envFilePath);
+            $this->components->error($exception->getMessage());
 
-            throw new InstallationFailedException('.env is a directory.');
+            throw $exception;
         }
 
         if (!File::exists($envFilePath)) {

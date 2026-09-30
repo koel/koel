@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Commands;
 
-use App\Services\DotenvEditor;
+use App\Exceptions\EnvFileIsDirectoryException;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -31,8 +33,10 @@ class InitCommandTest extends TestCase
     #[Test]
     public function failWhenEnvFileIsDirectory(): void
     {
-        $this->mock(DotenvEditor::class)->shouldNotReceive('setKey');
+        Log::spy();
 
         $this->artisan('koel:init', ['--no-interaction' => true])->assertFailed();
+
+        Log::shouldHaveReceived('error')->once()->with(Mockery::type(EnvFileIsDirectoryException::class));
     }
 }
