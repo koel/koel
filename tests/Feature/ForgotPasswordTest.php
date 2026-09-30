@@ -53,8 +53,8 @@ class ForgotPasswordTest extends TestCase
             ->assertNoContent();
 
         Notification::assertSentTo($user, static function (ResetPassword $notification) use ($user): bool {
-            return str_starts_with(
-                $notification->toMail($user)->actionUrl,
+            return str_contains(
+                (string) $notification->toMail($user)->render(),
                 'https://music.example.com/#/reset-password/',
             );
         });

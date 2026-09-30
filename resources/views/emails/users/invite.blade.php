@@ -1,7 +1,7 @@
-<x-mail::message>
+<x-mail::message :branding="$branding">
 Hey hey,
 
-{{ $invitee->invitedBy->name }} has invited you to join them on {{ config('app.name') }}.
+{{ $invitee->invitedBy->name }} has invited you to join them on {{ $branding->name }}.
 Click the button below to accept the invitation.
 
 <x-mail::button :url="$url">

@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Services\Auth\TokenManager;
+use App\Services\SettingService;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use SensitiveParameter;
@@ -25,10 +27,18 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->setPasswordDefaultRules();
 
-        ResetPassword::createUrlUsing(static function (User $user, #[SensitiveParameter] string $token): string {
+        ResetPassword::toMailUsing(static function (User $user, #[SensitiveParameter] string $token): MailMessage {
+            $branding = app(SettingService::class)->getBranding($user->organization);
             $payload = base64_encode($user->getEmailForPasswordReset() . "|$token");
 
-            return client_url("reset-password/$payload");
+            return (new MailMessage())
+                ->subject("Reset your {$branding->name} password")
+                ->markdown('emails.users.reset-password', [
+                    'branding' => $branding,
+                    'user' => $user,
+                    'url' => client_url("reset-password/$payload"),
+                    'expiresInMinutes' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire'),
+                ]);
         });
     }
 
