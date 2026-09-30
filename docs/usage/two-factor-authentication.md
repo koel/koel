@@ -34,7 +34,7 @@ If you run out (or just want fresh ones), open the **Security** tab and click **
 3. Enter the 6-digit code from your authenticator app — or a recovery code if you don't have your phone.
 4. Click **Verify**.
 
-You're in.
+You're in. Logging in with single sign-on (Google or OpenID Connect) asks for the code too.
 
 ## Disable Two-Factor Authentication
 

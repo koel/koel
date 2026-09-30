@@ -22,13 +22,6 @@ class LoginWithCredentialsController extends Controller
             abort(Response::HTTP_UNAUTHORIZED, 'Invalid credentials');
         }
 
-        if ($user->hasTwoFactorEnabled()) {
-            return response()->json([
-                'two_factor' => true,
-                'login_token' => $this->auth->generateTwoFactorLoginToken($user),
-            ]);
-        }
-
-        return response()->json($this->auth->logUserIn($user)->toArray());
+        return response()->json($this->auth->logUserInOrStartTwoFactorChallenge($user));
     }
 }

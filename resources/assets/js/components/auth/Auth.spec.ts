@@ -9,7 +9,10 @@ describe('auth.vue', () => {
     authenticated: false,
   })
 
-  afterEach(() => (window.KOEL.sso_providers = []))
+  afterEach(() => {
+    window.KOEL.sso_providers = []
+    delete window.KOEL.two_factor_login_token
+  })
 
   const renderAndSubmitCredentials = async () => {
     const rendered = h.render(Component)
@@ -82,5 +85,13 @@ describe('auth.vue', () => {
     })
 
     await waitFor(() => screen.getByTestId('google-login-button'))
+  })
+
+  it('opens on the two-factor challenge when the page carries a pending one', async () => {
+    window.KOEL.two_factor_login_token = 'login-token-abc'
+    h.render(Component)
+
+    await screen.findByTestId('two-factor-challenge-form')
+    expect(screen.queryByTestId('login-form')).toBeNull()
   })
 })

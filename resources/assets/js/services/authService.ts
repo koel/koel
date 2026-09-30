@@ -20,7 +20,7 @@ const REDIRECT_KEY = 'redirect'
 
 const { get: lsGet, set: lsSet, remove: lsRemove } = useLocalStorage(false) // authentication local storage data aren't namespaced
 
-const isTwoFactorChallengeRequired = (response: LoginResponse): response is TwoFactorChallengeRequired => {
+export const isTwoFactorChallengeRequired = (response: LoginResponse): response is TwoFactorChallengeRequired => {
   return 'two_factor' in response && response.two_factor
 }
 

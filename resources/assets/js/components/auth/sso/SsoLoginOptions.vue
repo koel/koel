@@ -6,14 +6,17 @@
 </template>
 
 <script lang="ts" setup>
-import { authService } from '@/services/authService'
+import { authService, isTwoFactorChallengeRequired } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import GoogleLoginButton from '@/components/auth/sso/GoogleLoginButton.vue'
 import OpenIDLoginButton from '@/components/auth/sso/OpenIDLoginButton.vue'
 
-const emit = defineEmits<{ (e: 'loggedIn'): void }>()
+const emit = defineEmits<{
+  (e: 'loggedIn'): void
+  (e: 'twoFactorRequired', loginToken: string): void
+}>()
 
 const { toastError } = useMessageToaster()
 
@@ -24,8 +27,13 @@ const onError = (error: any) => {
   toastError('Login failed. Please try again.')
 }
 
-const onSuccess = (token: CompositeToken) => {
-  authService.setTokensUsingCompositeToken(token)
+const onSuccess = (loginResponse: LoginResponse) => {
+  if (isTwoFactorChallengeRequired(loginResponse)) {
+    emit('twoFactorRequired', loginResponse.login_token)
+    return
+  }
+
+  authService.setTokensUsingCompositeToken(loginResponse)
   authService.maybeRedirect()
   emit('loggedIn')
 }

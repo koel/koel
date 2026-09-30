@@ -71,6 +71,18 @@ class AuthenticationService
         return $this->logUserIn($user);
     }
 
+    /**
+     * @return array{two_factor: true, login_token: string}|array{token: string, audio-token: string}
+     */
+    public function logUserInOrStartTwoFactorChallenge(User $user): array
+    {
+        if ($user->hasTwoFactorEnabled()) {
+            return ['two_factor' => true, 'login_token' => $this->generateTwoFactorLoginToken($user)];
+        }
+
+        return $this->logUserIn($user)->toArray();
+    }
+
     public function logUserIn(User $user): CompositeToken
     {
         return $this->tokenManager->createCompositeToken($user);
