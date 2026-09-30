@@ -259,4 +259,18 @@ class DirectoryScannerTest extends TestCase
         $this->scanner->scan($this->mediaPath, $config);
         $this->assertDatabaseHas(Album::class, ['name' => 'Hidden Album']);
     }
+
+    #[Test]
+    public function parallelScanLeavesNoTemporaryFilesBehind(): void
+    {
+        $existingTempFiles = glob(sys_get_temp_dir() . '/koel_scan_*');
+
+        rescue(fn () => $this->scanner->scan(
+            $this->mediaPath,
+            ScanConfiguration::make(owner: create_admin()),
+            jobs: 2,
+        ), report: false);
+
+        self::assertSame([], array_values(array_diff(glob(sys_get_temp_dir() . '/koel_scan_*'), $existingTempFiles)));
+    }
 }
