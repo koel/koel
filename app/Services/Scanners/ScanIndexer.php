@@ -2,12 +2,11 @@
 
 namespace App\Services\Scanners;
 
-use App\Models\Album;
-use App\Models\Artist;
-use App\Models\Genre;
-use App\Models\Song;
+use App\Repositories\SongRepository;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
+use Illuminate\Container\Attributes\Config;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -16,9 +15,15 @@ class ScanIndexer
 {
     private const int CHUNK_SIZE = 500;
 
+    public function __construct(
+        private readonly SongRepository $songRepository,
+        #[Config('scout.driver')]
+        private readonly ?string $searchDriver,
+    ) {}
+
     public function reindex(ScanResultCollection $results): void
     {
-        if (config('scout.driver') !== 'tntsearch') {
+        if ($this->searchDriver !== 'tntsearch') {
             return;
         }
 
@@ -26,9 +31,9 @@ class ScanIndexer
             ->reject(static fn (ScanResult $result): bool => $result->isSkipped())
             ->map(static fn (ScanResult $result): string => $result->path)
             ->chunk(self::CHUNK_SIZE)
-            ->each(static function (Collection $paths): void {
+            ->each(function (Collection $paths): void {
                 try {
-                    self::index($paths);
+                    $this->index($paths);
                 } catch (Throwable $e) {
                     Log::warning(sprintf(
                         'Could not index %d scanned song(s) starting at %s: %s',
@@ -40,20 +45,23 @@ class ScanIndexer
             });
     }
 
-    private static function index(Collection $paths): void
+    private function index(Collection $paths): void
     {
-        /** @var \Illuminate\Database\Eloquent\Collection<int, Song> $songs */
-        $songs = Song::query()->whereIn('path', $paths->all())->get();
+        $songs = $this->songRepository->getManyByPaths($paths->all());
 
         if ($songs->isEmpty()) {
             return;
         }
 
-        $songs->searchable(); // @phpstan-ignore-line
-        Album::query()->whereKey($songs->pluck('album_id')->unique()->filter())->get()->searchable(); // @phpstan-ignore-line
+        $albums = EloquentCollection::make($songs->pluck('album')->filter()->unique('id'));
+        $artists = EloquentCollection::make(
+            $songs->pluck('artist')->merge($albums->pluck('artist'))->filter()->unique('id'),
+        );
+        $genres = EloquentCollection::make($songs->pluck('genres')->collapse()->unique('id'));
 
-        $artistIds = $songs->pluck('artist_id')->merge($songs->pluck('album.artist_id'))->unique()->filter();
-        Artist::query()->whereKey($artistIds)->get()->searchable(); // @phpstan-ignore-line
-        Genre::query()->whereKey($songs->pluck('genres.*.id')->flatten()->unique())->get()->searchable(); // @phpstan-ignore-line
+        $songs->searchable(); // @phpstan-ignore-line
+        $albums->searchable(); // @phpstan-ignore-line
+        $artists->searchable(); // @phpstan-ignore-line
+        $genres->searchable(); // @phpstan-ignore-line
     }
 }
