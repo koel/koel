@@ -120,9 +120,7 @@ class AuthenticationServiceTest extends TestCase
     #[Test]
     public function logUserInOrStartTwoFactorChallengeAsksForTheCodeWithTwoFactor(): void
     {
-        $user = create_user();
-        $user->two_factor_confirmed_at = now();
-        $user->save();
+        $user = create_user(['two_factor_confirmed_at' => now()]);
         $this->tokenManager->expects('createCompositeToken')->never();
 
         $loginResponse = $this->service->logUserInOrStartTwoFactorChallenge($user);
