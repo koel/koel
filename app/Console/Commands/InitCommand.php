@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\Concerns\AskForPassword;
+use App\Exceptions\EnvFileIsDirectoryException;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
@@ -118,9 +119,18 @@ class InitCommand extends Command
 
     private function ensureEnvFileExists(): void
     {
-        if (!File::exists(base_path('.env'))) {
-            $this->components->task('Copying .env file', static function (): void {
-                File::copy(base_path('.env.example'), base_path('.env'));
+        $envFilePath = $this->laravel->environmentFilePath();
+
+        if (File::isDirectory($envFilePath)) {
+            $exception = EnvFileIsDirectoryException::create($envFilePath);
+            $this->components->error($exception->getMessage());
+
+            throw $exception;
+        }
+
+        if (!File::exists($envFilePath)) {
+            $this->components->task('Copying .env file', static function () use ($envFilePath): void {
+                File::copy(base_path('.env.example'), $envFilePath);
             });
         } else {
             $this->components->task('.env file exists -- skipping');
