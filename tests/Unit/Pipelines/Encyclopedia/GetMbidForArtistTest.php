@@ -154,7 +154,7 @@ class GetMbidForArtistTest extends TestCase
     public function rememberNothingWhenNoMusicBrainzSlotIsFree(): void
     {
         $rateLimiter = Mockery::mock(MusicBrainzRateLimiter::class);
-        $rateLimiter->expects('takeSlot')->andThrow(MusicBrainzBusyException::create());
+        $rateLimiter->expects('takeRequestSlot')->andThrow(MusicBrainzBusyException::create());
 
         try {
             (new GetMbidForArtist(new MusicBrainzConnector($rateLimiter)))('Skid Row', static fn (): null => null);

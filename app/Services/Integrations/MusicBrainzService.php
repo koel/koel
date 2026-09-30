@@ -42,7 +42,7 @@ class MusicBrainzService implements Encyclopedia
             return null;
         }
 
-        return self::rescueUnlessBusy(static function () use ($artist): ?ArtistInformation {
+        return self::rescueUnlessMusicBrainzIsBusy(static function () use ($artist): ?ArtistInformation {
             /** @var string|null $mbid */
             $mbid = $artist->mbid ?: Pipeline::send($artist->name)->through([GetMbidForArtist::class])->thenReturn();
 
@@ -86,7 +86,7 @@ class MusicBrainzService implements Encyclopedia
             return null;
         }
 
-        return self::rescueUnlessBusy(static function () use ($album): ?AlbumInformation {
+        return self::rescueUnlessMusicBrainzIsBusy(static function () use ($album): ?AlbumInformation {
             // MusicBrainz has the concept of a "release" and a "release group".
             // A release is a specific version of an album, which contains the actual tracks.
             // A release group is a collection of releases (e.g. different formats or editions or markets
@@ -125,7 +125,7 @@ class MusicBrainzService implements Encyclopedia
      *
      * @return TResult|null
      */
-    private static function rescueUnlessBusy(Closure $callback): mixed
+    private static function rescueUnlessMusicBrainzIsBusy(Closure $callback): mixed
     {
         return rescue(
             $callback,

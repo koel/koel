@@ -167,7 +167,7 @@ class FetchMbidsCommandTest extends TestCase
 
         $this
             ->mock(MusicBrainzRateLimiter::class)
-            ->expects('waitUpTo')
+            ->expects('waitForRequestSlotsUpTo')
             ->with(60.0, Mockery::type(Closure::class))
             ->andReturnUsing(static fn (float $seconds, Closure $callback): mixed => $callback());
 

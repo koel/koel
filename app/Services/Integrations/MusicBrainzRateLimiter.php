@@ -47,7 +47,7 @@ class MusicBrainzRateLimiter
      *
      * @return TResult
      */
-    public function waitUpTo(float $seconds, Closure $callback): mixed
+    public function waitForRequestSlotsUpTo(float $seconds, Closure $callback): mixed
     {
         $previousBudget = $this->waitBudgetSeconds;
         $this->waitBudgetSeconds = $seconds;
@@ -59,18 +59,18 @@ class MusicBrainzRateLimiter
         }
     }
 
-    public function takeSlot(): void
+    public function takeRequestSlot(): void
     {
-        $deadline = self::now() + $this->resolveWaitBudgetSeconds();
+        $deadline = self::currentTimeInSeconds() + $this->resolveWaitBudgetSeconds();
 
         while (true) {
-            $waitSeconds = $this->tryTakeSlot();
+            $waitSeconds = $this->tryTakeRequestSlot();
 
             if ($waitSeconds === 0.0) {
                 return;
             }
 
-            throw_if((self::now() + $waitSeconds) > $deadline, MusicBrainzBusyException::create());
+            throw_if((self::currentTimeInSeconds() + $waitSeconds) > $deadline, MusicBrainzBusyException::create());
 
             Sleep::usleep((int) ceil($waitSeconds * 1_000_000));
         }
@@ -79,7 +79,7 @@ class MusicBrainzRateLimiter
     public function backOff(): void
     {
         Cache::lock(self::SLOT_MUTEX_KEY, 5)->block(1, static function (): void {
-            $backOffUntil = self::now() + self::BACK_OFF_SECONDS;
+            $backOffUntil = self::currentTimeInSeconds() + self::BACK_OFF_SECONDS;
 
             Cache::forever(self::NEXT_SLOT_KEY, max($backOffUntil, (float) Cache::get(self::NEXT_SLOT_KEY, 0)));
         });
@@ -93,10 +93,10 @@ class MusicBrainzRateLimiter
     /**
      * @return float 0 when the slot was taken, otherwise how long to wait before asking again
      */
-    private function tryTakeSlot(): float
+    private function tryTakeRequestSlot(): float
     {
         $waitSeconds = Cache::lock(self::SLOT_MUTEX_KEY, 5)->get(function (): float {
-            $now = self::now();
+            $now = self::currentTimeInSeconds();
             $nextSlotAt = (float) Cache::get(self::NEXT_SLOT_KEY, 0);
 
             if ($now < $nextSlotAt) {
@@ -111,7 +111,7 @@ class MusicBrainzRateLimiter
         return $waitSeconds === false ? self::MUTEX_RETRY_SECONDS : $waitSeconds;
     }
 
-    private static function now(): float
+    private static function currentTimeInSeconds(): float
     {
         return (float) now()->format('U.u');
     }

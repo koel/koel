@@ -20,7 +20,7 @@ class MusicBrainzConnectorTest extends TestCase
     {
         Saloon::fake([SearchForArtistRequest::class => MockResponse::make(body: ['artists' => []])]);
         $rateLimiter = Mockery::mock(MusicBrainzRateLimiter::class);
-        $rateLimiter->expects('takeSlot');
+        $rateLimiter->expects('takeRequestSlot');
 
         (new MusicBrainzConnector($rateLimiter))->send(new SearchForArtistRequest('Skid Row'));
     }
@@ -30,7 +30,7 @@ class MusicBrainzConnectorTest extends TestCase
     {
         Saloon::fake([SearchForArtistRequest::class => MockResponse::make(body: ['artists' => []])]);
         $rateLimiter = Mockery::mock(MusicBrainzRateLimiter::class);
-        $rateLimiter->expects('takeSlot')->andThrow(MusicBrainzBusyException::create());
+        $rateLimiter->expects('takeRequestSlot')->andThrow(MusicBrainzBusyException::create());
 
         try {
             (new MusicBrainzConnector($rateLimiter))->send(new SearchForArtistRequest('Skid Row'));
@@ -45,7 +45,7 @@ class MusicBrainzConnectorTest extends TestCase
     {
         Saloon::fake([SearchForArtistRequest::class => MockResponse::make(status: 503)]);
         $rateLimiter = Mockery::mock(MusicBrainzRateLimiter::class);
-        $rateLimiter->allows('takeSlot');
+        $rateLimiter->allows('takeRequestSlot');
         $rateLimiter->expects('backOff');
 
         $this->expectException(RequestException::class);

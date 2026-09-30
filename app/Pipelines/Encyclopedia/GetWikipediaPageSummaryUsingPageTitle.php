@@ -25,7 +25,7 @@ class GetWikipediaPageSummaryUsingPageTitle
             key: cache_key('wikipedia page summary from page title', $pageTitle),
             ttl: now()->addMonth(),
             nothingFoundTtl: now()->addWeek(),
-            callback: fn (): ?array => self::keepUsedFields(
+            callback: fn (): ?array => self::trimSummaryToUsedFields(
                 $this->connector->send(new GetPageSummaryRequest($pageTitle))->json(),
             ),
         );
@@ -38,7 +38,7 @@ class GetWikipediaPageSummaryUsingPageTitle
      *
      * @return array<string, mixed>|null
      */
-    private static function keepUsedFields(?array $summary): ?array
+    private static function trimSummaryToUsedFields(?array $summary): ?array
     {
         if (!$summary) {
             return null;

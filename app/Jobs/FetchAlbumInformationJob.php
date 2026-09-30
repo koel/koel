@@ -22,6 +22,6 @@ class FetchAlbumInformationJob extends QueuedJob implements ShouldBeUnique
 
     public function handle(EncyclopediaService $encyclopediaService, MusicBrainzRateLimiter $rateLimiter): void
     {
-        $rateLimiter->waitUpTo(self::SLOT_WAIT_SECONDS, fn () => $encyclopediaService->getAlbumInformation($this->album));
+        $rateLimiter->waitForRequestSlotsUpTo(self::SLOT_WAIT_SECONDS, fn () => $encyclopediaService->getAlbumInformation($this->album));
     }
 }

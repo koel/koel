@@ -36,7 +36,7 @@ class MusicBrainzConnector extends Connector
 
     public function boot(PendingRequest $pendingRequest): void
     {
-        $this->rateLimiter->takeSlot();
+        $this->rateLimiter->takeRequestSlot();
 
         $pendingRequest
             ->middleware()

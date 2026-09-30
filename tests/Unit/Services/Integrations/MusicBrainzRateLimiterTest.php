@@ -22,7 +22,7 @@ class MusicBrainzRateLimiterTest extends TestCase
     #[Test]
     public function giveTheFirstRequestASlotRightAway(): void
     {
-        (new MusicBrainzRateLimiter())->takeSlot();
+        (new MusicBrainzRateLimiter())->takeRequestSlot();
 
         Sleep::assertNeverSlept();
     }
@@ -31,9 +31,9 @@ class MusicBrainzRateLimiterTest extends TestCase
     public function makeTheNextRequestWaitASecondWhenAllowedToWait(): void
     {
         $limiter = new MusicBrainzRateLimiter();
-        $limiter->takeSlot();
+        $limiter->takeRequestSlot();
 
-        $limiter->waitUpTo(5, $limiter->takeSlot(...));
+        $limiter->waitForRequestSlotsUpTo(5, $limiter->takeRequestSlot(...));
 
         Sleep::assertSlept(static fn (CarbonInterval $waited): bool => $waited->totalSeconds >= 1.0);
     }
@@ -42,30 +42,30 @@ class MusicBrainzRateLimiterTest extends TestCase
     public function refuseTheNextRequestWhenItCannotWait(): void
     {
         $limiter = new MusicBrainzRateLimiter('redis');
-        $limiter->takeSlot();
+        $limiter->takeRequestSlot();
 
         $this->expectException(MusicBrainzBusyException::class);
 
-        $limiter->takeSlot();
+        $limiter->takeRequestSlot();
     }
 
     #[Test]
     public function shareTheSlotBetweenLimiterInstances(): void
     {
-        (new MusicBrainzRateLimiter('redis'))->takeSlot();
+        (new MusicBrainzRateLimiter('redis'))->takeRequestSlot();
 
         $this->expectException(MusicBrainzBusyException::class);
 
-        (new MusicBrainzRateLimiter('redis'))->takeSlot();
+        (new MusicBrainzRateLimiter('redis'))->takeRequestSlot();
     }
 
     #[Test]
     public function waitAFewSecondsInsideTheRequestWithoutAQueue(): void
     {
         $limiter = new MusicBrainzRateLimiter('sync');
-        $limiter->takeSlot();
+        $limiter->takeRequestSlot();
 
-        $limiter->takeSlot();
+        $limiter->takeRequestSlot();
 
         Sleep::assertSleptTimes(1);
     }
@@ -78,7 +78,7 @@ class MusicBrainzRateLimiterTest extends TestCase
 
         $this->expectException(MusicBrainzBusyException::class);
 
-        $limiter->takeSlot();
+        $limiter->takeRequestSlot();
     }
 
     #[Test]
@@ -100,6 +100,6 @@ class MusicBrainzRateLimiterTest extends TestCase
 
         $this->expectException(MusicBrainzBusyException::class);
 
-        $limiter->takeSlot();
+        $limiter->takeRequestSlot();
     }
 }

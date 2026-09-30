@@ -49,7 +49,10 @@ class FetchMbidsCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->rateLimiter->waitUpTo(self::SLOT_WAIT_SECONDS, function () use ($albumCount, $artistCount): void {
+        $this->rateLimiter->waitForRequestSlotsUpTo(self::SLOT_WAIT_SECONDS, function () use (
+            $albumCount,
+            $artistCount,
+        ): void {
             $this->lookUp($this->albumRepository->lazyGetWithIncompleteMbids(), $albumCount, 'album');
             $this->lookUp($this->artistRepository->lazyGetWithoutMbid(), $artistCount, 'artist');
         });
