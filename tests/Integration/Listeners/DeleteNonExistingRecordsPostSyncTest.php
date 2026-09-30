@@ -141,6 +141,39 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     }
 
     #[Test]
+    public function logsHowManySongsWereRemoved(): void
+    {
+        Log::spy();
+
+        /** @var Collection|array<array-key, Song> $songs */
+        $songs = Song::factory()->createMany(3);
+
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($songs[0]->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        Log::shouldHaveReceived('info') // @phpstan-ignore-line
+            ->once()
+            ->withArgs(static fn (string $message) => str_contains($message, 'Removed 2 song(s)'));
+    }
+
+    #[Test]
+    public function logsNothingWhenNoSongWasRemoved(): void
+    {
+        Log::spy();
+
+        $song = Song::factory()->createOne();
+
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($song->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        Log::shouldNotHaveReceived('info'); // @phpstan-ignore-line
+    }
+
+    #[Test]
     public function flushesOrphanedSongsFromSearchIndex(): void
     {
         $engine = Mockery::spy(Engine::class);

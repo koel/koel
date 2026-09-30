@@ -23,47 +23,47 @@ trait SupportsDeleteWhereValueNotIn
         array $values,
         ?string $field = null,
         ?Closure $queryModifier = null,
-    ): void {
+    ): int {
         $field ??= (new static())->getKeyName();
         $queryModifier ??= static fn (Builder $builder) => $builder;
 
         $maxChunkSize = DB::getDriverName() === 'sqlite' ? 999 : 65_535;
 
         if (count($values) <= $maxChunkSize) {
-            self::deleteAndUnsearch($queryModifier(static::query())->whereNotIn($field, $values));
-
-            return;
+            return self::deleteAndUnsearch($queryModifier(static::query())->whereNotIn($field, $values));
         }
 
         $allIds = $queryModifier(static::query())->select($field)->get()->pluck($field)->all();
         $deletableIds = array_diff($allIds, $values);
 
         if (count($deletableIds) < $maxChunkSize) {
-            self::deleteAndUnsearch($queryModifier(static::query())->whereIn($field, $deletableIds));
-
-            return;
+            return self::deleteAndUnsearch($queryModifier(static::query())->whereIn($field, $deletableIds));
         }
 
-        static::deleteByChunk($deletableIds, $maxChunkSize, $field);
+        return static::deleteByChunk($deletableIds, $maxChunkSize, $field);
     }
 
-    public static function deleteByChunk(array $values, int $chunkSize = 65_535, ?string $field = null): void
+    public static function deleteByChunk(array $values, int $chunkSize = 65_535, ?string $field = null): int
     {
         $field ??= (new static())->getKeyName();
 
-        DB::transaction(static function () use ($values, $field, $chunkSize): void {
+        return DB::transaction(static function () use ($values, $field, $chunkSize): int {
+            $deleted = 0;
+
             foreach (array_chunk($values, $chunkSize) as $chunk) {
-                self::deleteAndUnsearch(static::query()->whereIn($field, $chunk));
+                $deleted += self::deleteAndUnsearch(static::query()->whereIn($field, $chunk));
             }
+
+            return $deleted;
         });
     }
 
-    private static function deleteAndUnsearch(Builder $query): void
+    private static function deleteAndUnsearch(Builder $query): int
     {
         if (in_array(Searchable::class, class_uses_recursive(static::class), true)) {
             $query->unsearchable(); // @phpstan-ignore-line
         }
 
-        $query->delete();
+        return $query->delete();
     }
 }

@@ -93,8 +93,7 @@ class SongTest extends TestCase
     {
         Song::factory()->createMany(5);
 
-        Song::deleteByChunk(Song::query()->get()->modelKeys(), 1);
-
+        self::assertSame(5, Song::deleteByChunk(Song::query()->get()->modelKeys(), 1));
         self::assertSame(0, Song::query()->count());
     }
 
