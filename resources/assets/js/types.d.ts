@@ -83,6 +83,7 @@ interface KoelGlobals {
     password: string
   }
   auth_token?: CompositeToken | null
+  two_factor_login_token?: string
 }
 
 interface Window {

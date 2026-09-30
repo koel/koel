@@ -105,6 +105,33 @@ class AuthenticationServiceTest extends TestCase
     }
 
     #[Test]
+    public function logUserInOrStartTwoFactorChallengeLogsInWithoutTwoFactor(): void
+    {
+        $user = create_user();
+        $compositeToken = CompositeToken::fromAccessTokens(
+            new NewAccessToken(new PersonalAccessToken(), 'api-token'),
+            new NewAccessToken(new PersonalAccessToken(), 'audio-token'),
+        );
+        $this->tokenManager->expects('createCompositeToken')->with($user)->andReturn($compositeToken);
+
+        self::assertSame($compositeToken->toArray(), $this->service->logUserInOrStartTwoFactorChallenge($user));
+    }
+
+    #[Test]
+    public function logUserInOrStartTwoFactorChallengeAsksForTheCodeWithTwoFactor(): void
+    {
+        $user = create_user();
+        $user->two_factor_confirmed_at = now();
+        $user->save();
+        $this->tokenManager->expects('createCompositeToken')->never();
+
+        $loginResponse = $this->service->logUserInOrStartTwoFactorChallenge($user);
+
+        self::assertArrayNotHasKey('token', $loginResponse);
+        self::assertNotEmpty($loginResponse['login_token']);
+    }
+
+    #[Test]
     public function loginViaTwoFactorChallengeMintsCompositeToken(): void
     {
         $user = create_user();

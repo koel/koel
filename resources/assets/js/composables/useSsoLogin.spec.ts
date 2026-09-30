@@ -99,4 +99,13 @@ describe('useSsoLogin', () => {
 
     expect(onToken).toHaveBeenCalledOnce()
   })
+
+  it('accepts a two-factor challenge posted by the popup it opened', () => {
+    const { onToken, popup } = start()
+    const challenge = { two_factor: true, login_token: 'login-token' }
+
+    post(challenge, window.location.origin, popup)
+
+    expect(onToken).toHaveBeenCalledWith(challenge)
+  })
 })

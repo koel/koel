@@ -15,7 +15,7 @@
         @logged-in="$emit('loggedIn')"
         @two-factor-required="twoFactorLoginToken = $event"
       />
-      <SsoLoginOptions @logged-in="$emit('loggedIn')" />
+      <SsoLoginOptions @logged-in="$emit('loggedIn')" @two-factor-required="twoFactorLoginToken = $event" />
     </template>
   </div>
 </template>
@@ -38,7 +38,7 @@ defineEmits<{ (e: 'loggedIn'): void }>()
 const { toastWarning } = useMessageToaster()
 
 const showingForgotPasswordForm = ref(false)
-const twoFactorLoginToken = ref('')
+const twoFactorLoginToken = ref(window.KOEL.two_factor_login_token ?? '')
 
 onMounted(() => {
   if (authService.hasRedirect()) {

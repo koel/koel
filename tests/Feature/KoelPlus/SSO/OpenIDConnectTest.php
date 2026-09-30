@@ -25,7 +25,11 @@ class OpenIDConnectTest extends PlusTestCase
 
     private function assertCallbackIssuesToken(): void
     {
-        $this->get('auth/oidc/callback')->assertOk()->assertViewIs('sso-callback')->assertViewHas('token');
+        $this
+            ->get('auth/oidc/callback')
+            ->assertOk()
+            ->assertViewIs('sso-callback')
+            ->assertViewHas('loginResponse', static fn (array $loginResponse): bool => isset($loginResponse['token']));
     }
 
     #[Test]
@@ -61,7 +65,7 @@ class OpenIDConnectTest extends PlusTestCase
     }
 
     #[Test]
-    public function callbackBypassesTwoFactorChallenge(): void
+    public function callbackAsksForTheTwoFactorCode(): void
     {
         create_user([
             'sso_provider' => 'OpenID Connect',
@@ -72,6 +76,13 @@ class OpenIDConnectTest extends PlusTestCase
 
         self::mockOidcCallback('123');
 
-        $this->assertCallbackIssuesToken();
+        $this->get('auth/oidc/callback')->assertOk()->assertViewHas(
+            'loginResponse',
+            static fn (array $loginResponse): bool => (
+                $loginResponse['two_factor'] === true
+                && isset($loginResponse['login_token'])
+                && !isset($loginResponse['token'])
+            ),
+        );
     }
 }

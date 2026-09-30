@@ -7,6 +7,7 @@ import { MessageToasterStub } from '@/__tests__/stubs'
 import Component from './SsoLoginOptions.vue'
 
 const token = { 'audio-token': 'audio-token', token: 'api-token' }
+const challenge = { two_factor: true, login_token: 'login-token' }
 
 const GoogleLoginButtonStub = defineComponent({
   emits: ['success', 'error'],
@@ -14,9 +15,10 @@ const GoogleLoginButtonStub = defineComponent({
     <span>
       <button data-testid="sso-success" @click="$emit('success', token)">ok</button>
       <button data-testid="sso-error" @click="$emit('error', 'boom')">fail</button>
+      <button data-testid="sso-two-factor" @click="$emit('success', challenge)">2fa</button>
     </span>
   `,
-  setup: () => ({ token }),
+  setup: () => ({ token, challenge }),
 })
 
 const renderWithGoogle = () =>
@@ -67,6 +69,18 @@ describe('ssoLoginOptions.vue', () => {
     await h.user.click(screen.getByTestId('sso-error'))
 
     expect(toastMock).toHaveBeenCalledWith('Login failed. Please try again.')
+    expect(emitted().loggedIn).toBeFalsy()
+  })
+
+  it('asks for the two-factor code instead of logging in when a challenge comes back', async () => {
+    window.KOEL.sso_providers = ['Google']
+    const setTokensMock = h.mock(authService, 'setTokensUsingCompositeToken')
+    const { emitted } = renderWithGoogle()
+
+    await h.user.click(screen.getByTestId('sso-two-factor'))
+
+    expect(setTokensMock).not.toHaveBeenCalled()
+    expect(emitted().twoFactorRequired).toEqual([['login-token']])
     expect(emitted().loggedIn).toBeFalsy()
   })
 })
