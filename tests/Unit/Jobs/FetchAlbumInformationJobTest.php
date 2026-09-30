@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Jobs;
 
+use App\Exceptions\MusicBrainzBusyException;
 use App\Jobs\FetchAlbumInformationJob;
 use App\Models\Album;
 use App\Services\Integrations\EncyclopediaService;
@@ -19,7 +20,7 @@ class FetchAlbumInformationJobTest extends TestCase
         $album = Album::factory()->createOne();
 
         $encyclopediaService = Mockery::mock(EncyclopediaService::class);
-        $encyclopediaService->expects('getAlbumInformation')->with($album);
+        $encyclopediaService->expects('getAlbumInformationOrThrowIfMusicBrainzIsBusy')->with($album);
 
         $rateLimiter = Mockery::mock(MusicBrainzRateLimiter::class);
         $rateLimiter
@@ -36,5 +37,19 @@ class FetchAlbumInformationJobTest extends TestCase
         $album = Album::factory()->createOne();
 
         self::assertSame((string) $album->id, (new FetchAlbumInformationJob($album))->uniqueId());
+    }
+
+    #[Test]
+    public function tryAgainLaterWhenNoSlotFreesUp(): void
+    {
+        $album = Album::factory()->createOne();
+
+        $rateLimiter = Mockery::mock(MusicBrainzRateLimiter::class);
+        $rateLimiter->expects('waitForRequestSlotsUpTo')->andThrow(MusicBrainzBusyException::create());
+
+        $job = (new FetchAlbumInformationJob($album))->withFakeQueueInteractions();
+        $job->handle(Mockery::mock(EncyclopediaService::class), $rateLimiter);
+
+        $job->assertReleased(delay: 60);
     }
 }
