@@ -30,7 +30,7 @@ class GetAlbumTracksUsingMbid
                 // There can be multiple media entries (e.g. CDs) in a release, each with its own set of tracks.
                 // To simplify things, we will collect all tracks from all media entries.
                 foreach ($this->connector->send(new GetRecordingsRequest($mbid))->json('media', []) as $media) {
-                    array_push($tracks, ...Arr::get($media, 'tracks', []));
+                    array_push($tracks, ...array_map(self::keepUsedFields(...), Arr::get($media, 'tracks', [])));
                 }
 
                 return $tracks ?: null;
@@ -38,5 +38,19 @@ class GetAlbumTracksUsingMbid
         );
 
         return $next($tracks);
+    }
+
+    /**
+     * @param array<string, mixed> $track
+     *
+     * @return array{title: ?string, length: ?int, recording: array{id: ?string}}
+     */
+    private static function keepUsedFields(array $track): array
+    {
+        return [
+            'title' => Arr::get($track, 'title'),
+            'length' => Arr::get($track, 'length'),
+            'recording' => ['id' => Arr::get($track, 'recording.id')],
+        ];
     }
 }

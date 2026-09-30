@@ -40,7 +40,10 @@ class GetArtistImageUsingWikidataIdTest extends TestCase
             ),
         );
 
-        self::assertSame(self::EXPECTED_URL, Cache::get(cache_key('artist image from wikidata id', 'Q461269')));
+        self::assertSame(
+            self::EXPECTED_URL,
+            Cache::store('encyclopedia')->get(cache_key('artist image from wikidata id', 'Q461269')),
+        );
     }
 
     #[Test]
@@ -62,7 +65,7 @@ class GetArtistImageUsingWikidataIdTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(cache_key('artist image from wikidata id', 'Q461269'), self::EXPECTED_URL);
+        Cache::store('encyclopedia')->put(cache_key('artist image from wikidata id', 'Q461269'), self::EXPECTED_URL);
 
         $mock = self::createNextClosureMock(self::EXPECTED_URL);
 

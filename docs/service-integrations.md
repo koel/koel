@@ -33,9 +33,12 @@ MusicBrainz. A year from your tags is never replaced.
 You don't have anything to do to enable this integration, as it is enabled by default. However, you can disable it by
 explicitly setting `USE_MUSICBRAINZ` to `false` in `.env`.
 
-Do note that MusicBrainz [rate-limits](https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting) its API.
-Koel tries to play nice by caching the data it retrieves and using a conformed user agent, which you can customize
-via the `MUSICBRAINZ_USER_AGENT` variable in `.env`. The default user agent is `Koel/<current-version> (<app-url>)`.
+Do note that MusicBrainz [rate-limits](https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting) its API to one
+request per second. Koel keeps to that across everything it runs at once (web requests, queue workers and commands),
+and keeps what it retrieves in the database, so each artist or album is looked up only once and `cache:clear` does not
+throw the lookups away. When MusicBrainz is busy, the information shows up on a later visit, or in the background if
+you run a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker). Koel also uses a conformed user agent, which you can customize via the
+`MUSICBRAINZ_USER_AGENT` variable in `.env`. The default user agent is `Koel/<current-version> (<app-url>)`.
 
 ## Last.fm
 

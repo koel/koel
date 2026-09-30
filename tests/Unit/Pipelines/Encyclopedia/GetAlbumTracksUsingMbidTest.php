@@ -31,13 +31,19 @@ class GetAlbumTracksUsingMbidTest extends TestCase
         $this->tracks = [];
 
         foreach (Arr::get($this->responseBody, 'media') as $media) {
-            array_push($this->tracks, ...Arr::get($media, 'tracks', []));
+            foreach (Arr::get($media, 'tracks', []) as $track) {
+                $this->tracks[] = [
+                    'title' => Arr::get($track, 'title'),
+                    'length' => Arr::get($track, 'length'),
+                    'recording' => ['id' => Arr::get($track, 'recording.id')],
+                ];
+            }
         }
     }
 
     protected function tearDown(): void
     {
-        Cache::clear();
+        Cache::store('encyclopedia')->clear();
 
         parent::tearDown();
     }
@@ -59,14 +65,14 @@ class GetAlbumTracksUsingMbidTest extends TestCase
             return true;
         });
 
-        self::assertEquals($this->tracks, Cache::get(cache_key('album tracks', 'sample-mbid')));
+        self::assertEquals($this->tracks, Cache::store('encyclopedia')->get(cache_key('album tracks', 'sample-mbid')));
     }
 
     #[Test]
     public function getFromCache(): void
     {
         Saloon::fake([]);
-        Cache::put(cache_key('album tracks', 'sample-mbid'), $this->tracks);
+        Cache::store('encyclopedia')->put(cache_key('album tracks', 'sample-mbid'), $this->tracks);
 
         $mock = self::createNextClosureMock($this->tracks);
 

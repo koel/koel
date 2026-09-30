@@ -52,11 +52,15 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
 
         self::assertSame(
             ['sample-release-mbid', 'sample-release-group-mbid'],
-            Cache::get(cache_key('release and release group mbids', 'Slave to the Grind', 'Skid Row')),
+            Cache::store('encyclopedia')->get(cache_key(
+                'release and release group mbids',
+                'Slave to the Grind',
+                'Skid Row',
+            )),
         );
 
         // The artist mbid should have been cached opportunistically, too.
-        self::assertSame('sample-artist-mbid', Cache::get(cache_key('artist mbid', 'Skid Row')));
+        self::assertSame('sample-artist-mbid', Cache::store('encyclopedia')->get(cache_key('artist mbid', 'Skid Row')));
     }
 
     #[Test]
@@ -64,7 +68,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(
+        Cache::store('encyclopedia')->put(
             cache_key('release and release group mbids', 'Slave to the Grind', 'Skid Row'),
             ['sample-release-mbid', 'sample-release-group-mbid'],
         );

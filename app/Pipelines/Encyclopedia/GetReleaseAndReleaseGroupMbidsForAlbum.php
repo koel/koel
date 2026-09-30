@@ -31,7 +31,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
                 // Opportunistically, cache the artist mbids as well.
                 // Our future requests for artist mbids will be faster this way.
                 foreach ($response->json('releases.0.artist-credit', []) as $credit) {
-                    Cache::forever(
+                    Cache::store('encyclopedia')->forever(
                         cache_key('artist mbid', Arr::get($credit, 'artist.name')),
                         Arr::get($credit, 'artist.id'),
                     );

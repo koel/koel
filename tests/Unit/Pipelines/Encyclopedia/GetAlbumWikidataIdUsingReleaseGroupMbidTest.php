@@ -38,7 +38,10 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
             return true;
         });
 
-        self::assertSame('Q1929918', Cache::get(cache_key('album wikidata id from release group mbid', 'sample-mbid')));
+        self::assertSame(
+            'Q1929918',
+            Cache::store('encyclopedia')->get(cache_key('album wikidata id from release group mbid', 'sample-mbid')),
+        );
     }
 
     #[Test]
@@ -46,7 +49,10 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(cache_key('album wikidata id from release group mbid', 'sample-mbid'), 'Q1929918');
+        Cache::store('encyclopedia')->put(
+            cache_key('album wikidata id from release group mbid', 'sample-mbid'),
+            'Q1929918',
+        );
 
         $mock = self::createNextClosureMock('Q1929918');
 

@@ -57,7 +57,7 @@ class GetAlbumYearUsingReleaseMbidTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(cache_key('album year from release mbid', 'sample-release-mbid'), 1991);
+        Cache::store('encyclopedia')->put(cache_key('album year from release mbid', 'sample-release-mbid'), 1991);
 
         $mock = self::createNextClosureMock(1991);
 

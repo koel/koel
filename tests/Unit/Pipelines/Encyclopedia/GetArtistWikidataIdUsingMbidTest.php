@@ -38,7 +38,10 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
             return true;
         });
 
-        self::assertSame('Q461269', Cache::get(cache_key('artist wikidata id from mbid', 'sample-mbid')));
+        self::assertSame(
+            'Q461269',
+            Cache::store('encyclopedia')->get(cache_key('artist wikidata id from mbid', 'sample-mbid')),
+        );
     }
 
     #[Test]
@@ -46,7 +49,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(cache_key('artist wikidata id from mbid', 'sample-mbid'), 'Q461269');
+        Cache::store('encyclopedia')->put(cache_key('artist wikidata id from mbid', 'sample-mbid'), 'Q461269');
 
         $mock = self::createNextClosureMock('Q461269');
 

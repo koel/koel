@@ -48,14 +48,17 @@ class GetMbidForArtistTest extends TestCase
             return true;
         });
 
-        self::assertSame('6da0515e-a27d-449d-84cc-00713c38a140', Cache::get(cache_key('artist mbid', 'Skid Row')));
+        self::assertSame(
+            '6da0515e-a27d-449d-84cc-00713c38a140',
+            Cache::store('encyclopedia')->get(cache_key('artist mbid', 'Skid Row')),
+        );
     }
 
     #[Test]
     public function getFromCache(): void
     {
         Saloon::fake([]);
-        Cache::put(cache_key('artist mbid', 'Skid Row'), 'sample-mbid');
+        Cache::store('encyclopedia')->put(cache_key('artist mbid', 'Skid Row'), 'sample-mbid');
         $mock = self::createNextClosureMock('sample-mbid');
 
         (new GetMbidForArtist(app(MusicBrainzConnector::class)))('Skid Row', $mock->next(...)); // @phpstan-ignore-line
@@ -130,7 +133,7 @@ class GetMbidForArtistTest extends TestCase
 
         (new GetMbidForArtist(app(MusicBrainzConnector::class)))('Motörhead', $mock->next(...)); // @phpstan-ignore-line
 
-        self::assertFalse(Cache::has(cache_key('artist mbid', 'Motörhead')));
+        self::assertFalse(Cache::store('encyclopedia')->has(cache_key('artist mbid', 'Motörhead')));
     }
 
     #[Test]
@@ -144,7 +147,7 @@ class GetMbidForArtistTest extends TestCase
 
         (new GetMbidForArtist(app(MusicBrainzConnector::class)))('Motörhead', $mock->next(...)); // @phpstan-ignore-line
 
-        self::assertTrue(Cache::has(cache_key('artist mbid', 'Motörhead')));
+        self::assertTrue(Cache::store('encyclopedia')->has(cache_key('artist mbid', 'Motörhead')));
     }
 
     #[Test]
@@ -157,7 +160,24 @@ class GetMbidForArtistTest extends TestCase
             (new GetMbidForArtist(new MusicBrainzConnector($rateLimiter)))('Skid Row', static fn (): null => null);
             self::fail('The busy lookup was swallowed.');
         } catch (MusicBrainzBusyException) {
-            self::assertFalse(Cache::has(cache_key('artist mbid', 'Skid Row')));
+            self::assertFalse(Cache::store('encyclopedia')->has(cache_key('artist mbid', 'Skid Row')));
         }
+    }
+
+    #[Test]
+    public function keepTheLookupWhenTheDefaultCacheIsCleared(): void
+    {
+        Saloon::fake([
+            SearchForArtistRequest::class => MockResponse::make(body: ['artists' => [['id' => 'kept-mbid']]]),
+        ]);
+
+        $pipe = new GetMbidForArtist(app(MusicBrainzConnector::class));
+        $pipe('Skid Row', self::createNextClosureMock('kept-mbid')->next(...)); // @phpstan-ignore-line
+
+        Cache::clear();
+
+        $pipe('Skid Row', self::createNextClosureMock('kept-mbid')->next(...)); // @phpstan-ignore-line
+
+        Saloon::assertSentCount(1);
     }
 }

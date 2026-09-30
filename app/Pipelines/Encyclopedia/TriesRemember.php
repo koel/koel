@@ -5,12 +5,13 @@ namespace App\Pipelines\Encyclopedia;
 use App\Exceptions\MusicBrainzBusyException;
 use Closure;
 use DateTimeInterface;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\Cache;
 use Throwable;
 
 trait TriesRemember
 {
-    /** `Cache::has()` reports a stored null as a miss, so nothing-found is stored as this instead. */
+    /** `self::encyclopediaStore()->has()` reports a stored null as a miss, so nothing-found is stored as this instead. */
     private const string NOTHING_FOUND = '__koel_nothing_found__';
 
     private static function tryRemember(
@@ -36,8 +37,8 @@ trait TriesRemember
         DateTimeInterface|int $nothingFoundTtl,
         Closure $callback,
     ): mixed {
-        if (Cache::has($key)) {
-            $cached = Cache::get($key);
+        if (self::encyclopediaStore()->has($key)) {
+            $cached = self::encyclopediaStore()->get($key);
 
             return $cached === self::NOTHING_FOUND ? null : $cached;
         }
@@ -47,15 +48,15 @@ trait TriesRemember
                 $value = $callback();
 
                 if ($value === null) {
-                    Cache::put($key, self::NOTHING_FOUND, $nothingFoundTtl);
+                    self::encyclopediaStore()->put($key, self::NOTHING_FOUND, $nothingFoundTtl);
 
                     return null;
                 }
 
                 if ($ttl === null) {
-                    Cache::forever($key, $value);
+                    self::encyclopediaStore()->forever($key, $value);
                 } else {
-                    Cache::put($key, $value, $ttl);
+                    self::encyclopediaStore()->put($key, $value, $ttl);
                 }
 
                 return $value;
@@ -63,5 +64,10 @@ trait TriesRemember
             static fn (Throwable $e) => $e instanceof MusicBrainzBusyException ? throw $e : null,
             report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
         );
+    }
+
+    private static function encyclopediaStore(): Repository
+    {
+        return Cache::store('encyclopedia');
     }
 }

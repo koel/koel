@@ -40,6 +40,12 @@ return [
             'connection' => null,
         ],
 
+        'encyclopedia' => [
+            'driver' => 'database',
+            'table' => 'encyclopedia_cache',
+            'connection' => null,
+        ],
+
         'file' => [
             'driver' => 'file',
             'path' => storage_path('framework/cache/data'),
