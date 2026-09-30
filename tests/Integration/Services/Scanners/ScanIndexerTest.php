@@ -6,9 +6,12 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
 use App\Models\Song;
+use App\Repositories\SongRepository;
 use App\Services\Scanners\ScanIndexer;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Laravel\Scout\EngineManager;
 use Laravel\Scout\Engines\Engine;
@@ -33,13 +36,12 @@ class ScanIndexerTest extends TestCase
     #[Test]
     public function indexesTheSavedSongsAndWhatTheyBelongTo(): void
     {
-        /** @var Song $saved */
-        $saved = Song::factory()->create();
+        $saved = Song::factory()->createOne();
         $saved->syncGenres('Rock');
 
         $this->engine->updated = [];
 
-        (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::success($saved->path))->add(ScanResult::error(
+        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($saved->path))->add(ScanResult::error(
             '/media/unreadable.mp3',
             'Unsupported file',
         ))->add(ScanResult::skipped('/media/untouched.mp3')));
@@ -60,11 +62,10 @@ class ScanIndexerTest extends TestCase
     #[Test]
     public function indexesASongThatWasSavedBeforeItsScanFailed(): void
     {
-        /** @var Song $song */
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
         $this->engine->updated = [];
 
-        (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::error(
+        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::error(
             $song->path,
             'Genre sync failed',
         )));
@@ -75,26 +76,46 @@ class ScanIndexerTest extends TestCase
     #[Test]
     public function indexesTheAlbumArtistWhenItIsNotTheTrackArtist(): void
     {
-        /** @var Artist $albumArtist */
-        $albumArtist = Artist::factory()->create();
-        /** @var Album $album */
-        $album = Album::factory()->for($albumArtist)->create();
-        /** @var Song $song */
-        $song = Song::factory()->for($album)->create(['artist_id' => Artist::factory()->create()->id]);
+        $albumArtist = Artist::factory()->createOne();
+        $trackArtist = Artist::factory()->createOne();
+        $album = Album::factory()->for($albumArtist, 'artist')->createOne();
+        $song = Song::factory()->for($album)->for($trackArtist, 'artist')->createOne();
         $this->engine->updated = [];
 
-        (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
 
         self::assertContains((string) $albumArtist->id, $this->engine->updatedKeysOf(Artist::class));
-        self::assertContains((string) $song->artist_id, $this->engine->updatedKeysOf(Artist::class));
+        self::assertContains((string) $trackArtist->id, $this->engine->updatedKeysOf(Artist::class));
+    }
+
+    #[Test]
+    public function indexesAWholeChunkWithoutAQueryPerSong(): void
+    {
+        [$queriesForOne] = $this->indexNewSongs(1);
+        [$queriesForFive, $songs] = $this->indexNewSongs(5);
+
+        self::assertSame($queriesForOne, $queriesForFive);
+        self::assertSame($this->countQueries(static fn () => app(SongRepository::class)->getManyByPaths(
+            $songs->pluck('path')->all(),
+        )), $queriesForFive);
+        self::assertEqualsCanonicalizing(
+            $songs
+                ->pluck('artist_id')
+                ->map(strval(...))
+                ->all(),
+            $this->engine->updatedKeysOf(Artist::class),
+        );
+        self::assertSame(
+            [(string) Genre::query()->where('name', 'Rock')->value('id')],
+            $this->engine->updatedKeysOf(Genre::class),
+        );
     }
 
     #[Test]
     public function aFailingChunkIsReportedAndDoesNotAbort(): void
     {
         Log::spy();
-        /** @var Song $song */
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
         $this->useSearchEngine('tntsearch', new class extends NullEngine {
             public function update(mixed $models): void
             {
@@ -102,7 +123,7 @@ class ScanIndexerTest extends TestCase
             }
         });
 
-        (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
 
         Log::shouldHaveReceived('warning') // @phpstan-ignore-line
             ->once()
@@ -118,7 +139,7 @@ class ScanIndexerTest extends TestCase
     {
         $this->engine->updated = [];
 
-        (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::skipped('/media/foo.mp3')));
+        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::skipped('/media/foo.mp3')));
 
         self::assertSame([], $this->engine->updated);
     }
@@ -128,13 +149,37 @@ class ScanIndexerTest extends TestCase
     {
         $engine = new RecordingSearchEngine();
         $this->useSearchEngine('meilisearch', $engine);
-        /** @var Song $song */
-        $song = Song::factory()->create();
+        $song = Song::factory()->createOne();
         $engine->updated = [];
 
-        (new ScanIndexer())->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
 
         self::assertSame([], $engine->updated);
+    }
+
+    /** @return array{int, Collection<int, Song>} */
+    private function indexNewSongs(int $count): array
+    {
+        $songs = Song::factory()->createMany($count);
+        $songs->each(static fn (Song $song) => $song->syncGenres('Rock'));
+
+        $results = ScanResultCollection::create();
+        $songs->each(static fn (Song $song) => $results->add(ScanResult::success($song->path)));
+
+        $indexer = app(ScanIndexer::class);
+        $this->engine->updated = [];
+
+        return [$this->countQueries(static fn () => $indexer->reindex($results)), $songs];
+    }
+
+    private function countQueries(callable $callback): int
+    {
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $callback();
+        DB::disableQueryLog();
+
+        return count(DB::getQueryLog());
     }
 
     private function useSearchEngine(string $driver, Engine $engine): void

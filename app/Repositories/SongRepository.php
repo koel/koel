@@ -52,6 +52,16 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query()->where('path', $path)->first();
     }
 
+    /**
+     * @param array<string> $paths
+     *
+     * @return Collection<int, Song>
+     */
+    public function getManyByPaths(array $paths): Collection
+    {
+        return Song::query()->whereIn('path', $paths)->get();
+    }
+
     public function findByHash(string $hash, User $owner): ?Song
     {
         return Song::query()->where('hash', $hash)->where('owner_id', $owner->id)->first();
