@@ -82,10 +82,10 @@ class MusicBrainzRateLimiterTest extends TestCase
     }
 
     #[Test]
-    public function fillInTheBackgroundOnlyWithAQueue(): void
+    public function queueLookupsOnlyWithAQueue(): void
     {
-        self::assertTrue((new MusicBrainzRateLimiter('redis'))->fillsInBackground());
-        self::assertFalse((new MusicBrainzRateLimiter('sync'))->fillsInBackground());
+        self::assertTrue((new MusicBrainzRateLimiter('redis'))->canQueueLookups());
+        self::assertFalse((new MusicBrainzRateLimiter('sync'))->canQueueLookups());
     }
 
     #[Test]

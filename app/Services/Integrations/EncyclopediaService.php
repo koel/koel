@@ -85,7 +85,7 @@ class EncyclopediaService
 
     private function queueInformationFetchIfPossible(FetchAlbumInformationJob|FetchArtistInformationJob $job): void
     {
-        if ($this->rateLimiter->fillsInBackground()) {
+        if ($this->rateLimiter->canQueueLookups()) {
             dispatch($job);
         }
     }

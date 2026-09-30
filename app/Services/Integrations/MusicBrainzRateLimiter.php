@@ -35,7 +35,7 @@ class MusicBrainzRateLimiter
     /**
      * Whether a lookup that finds no free slot can be left to a queued job instead of the request.
      */
-    public function fillsInBackground(): bool
+    public function canQueueLookups(): bool
     {
         return $this->queueConnection !== 'sync';
     }
@@ -87,7 +87,7 @@ class MusicBrainzRateLimiter
 
     private function resolveWaitBudgetSeconds(): float
     {
-        return $this->waitBudgetSeconds ?? ($this->fillsInBackground() ? 0.0 : self::INLINE_WAIT_SECONDS);
+        return $this->waitBudgetSeconds ?? ($this->canQueueLookups() ? 0.0 : self::INLINE_WAIT_SECONDS);
     }
 
     /**
