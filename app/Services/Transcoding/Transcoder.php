@@ -4,6 +4,7 @@ namespace App\Services\Transcoding;
 
 use App\Exceptions\TranscodingFailedException;
 use Illuminate\Container\Attributes\Config;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 
@@ -32,11 +33,7 @@ class Transcoder
             '-i',
             $source,
             '-vn', // Strip video
-            '-c:a',
-            'aac',
-            '-b:a',
-            "{$bitRate}k",
-            ...($this->aacFast ? ['-aac_coder', 'fast'] : []),
+            ...$this->resolveAacEncoderArguments($bitRate),
             '-threads',
             '0',
             '-movflags',
@@ -46,5 +43,33 @@ class Transcoder
         ]);
 
         throw_if($result->failed(), new TranscodingFailedException($result->errorOutput()));
+    }
+
+    /**
+     * Fraunhofer's libfdk_aac encodes better AAC than FFmpeg's own encoder at the same bit rate, but FFmpeg
+     * only ships with it when built with --enable-nonfree, so it is used whenever the installed FFmpeg has it.
+     *
+     * @return array<string>
+     */
+    private function resolveAacEncoderArguments(int $bitRate): array
+    {
+        if ($this->ffmpegHasFdkAacEncoder()) {
+            return ['-c:a', 'libfdk_aac', '-b:a', "{$bitRate}k"];
+        }
+
+        return ['-c:a', 'aac', '-b:a', "{$bitRate}k", ...($this->aacFast ? ['-aac_coder', 'fast'] : [])];
+    }
+
+    private function ffmpegHasFdkAacEncoder(): bool
+    {
+        $lastModified = is_file($this->ffmpegPath) ? filemtime($this->ffmpegPath) : 0;
+
+        return Cache::rememberForever(
+            cache_key('ffmpeg has libfdk_aac', $this->ffmpegPath, $lastModified),
+            fn (): bool => str_contains(
+                Process::run([$this->ffmpegPath, '-hide_banner', '-encoders'])->output(),
+                ' libfdk_aac ',
+            ),
+        );
     }
 }

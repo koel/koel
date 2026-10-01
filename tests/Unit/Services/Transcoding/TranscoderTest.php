@@ -130,4 +130,57 @@ class TranscoderTest extends TestCase
             return $process->timeout === null;
         }, 1);
     }
+
+    #[Test]
+    public function useFdkAacWhenFfmpegHasIt(): void
+    {
+        Process::fake([
+            '*-encoders*' => Process::result(output: ' A....D libfdk_aac           Fraunhofer FDK AAC (codec aac)'),
+            '*' => Process::result(),
+        ]);
+        File::expects('ensureDirectoryExists')->with('/path/to');
+
+        $transcoder = new Transcoder(transcodeTimeout: 300, ffmpegPath: '/usr/bin/ffmpeg');
+        $transcoder->transcode('/path/to/song.flac', '/path/to/output.m4a', 256);
+
+        Process::assertRan(
+            static fn (PendingProcess $process): bool => (
+                $process->command === [
+                    '/usr/bin/ffmpeg',
+                    '-nostdin',
+                    '-i',
+                    '/path/to/song.flac',
+                    '-vn',
+                    '-c:a',
+                    'libfdk_aac',
+                    '-b:a',
+                    '256k',
+                    '-threads',
+                    '0',
+                    '-movflags',
+                    '+faststart',
+                    '-y',
+                    '/path/to/output.m4a',
+                ]
+            ),
+        );
+    }
+
+    #[Test]
+    public function askFfmpegForItsEncodersOnlyOnce(): void
+    {
+        Process::fake();
+        File::expects('ensureDirectoryExists')->twice();
+
+        $transcoder = new Transcoder(transcodeTimeout: 300, ffmpegPath: '/usr/bin/ffmpeg');
+        $transcoder->transcode('/path/to/one.flac', '/path/to/one.m4a', 256);
+        $transcoder->transcode('/path/to/two.flac', '/path/to/two.m4a', 256);
+
+        Process::assertRanTimes(
+            static fn (PendingProcess $process): bool => (
+                $process->command === ['/usr/bin/ffmpeg', '-hide_banner', '-encoders']
+            ),
+            1,
+        );
+    }
 }
