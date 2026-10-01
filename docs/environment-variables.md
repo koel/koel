@@ -105,7 +105,7 @@ Required when `STORAGE_DRIVER=webdav`.
 |---|---|---|
 | `STREAMING_METHOD` | The streaming method. Options: `php`, `x-sendfile`, `x-accel-redirect`. See [Streaming Music](usage/streaming). Using `x-sendfile` or `x-accel-redirect` is highly recommended for better performance. | `php` |
 | `TRANSCODE_FLAC` | Whether to transcode FLAC to AAC on the fly. Set to `false` to stream FLAC as-is. | `true` |
-| `TRANSCODE_ON_SCAN` | Whether to transcode songs that need it as soon as they're scanned or uploaded, instead of on their first play. Uses a queue worker if you run one. | `false` |
+| `TRANSCODE_ON_SCAN` | Whether to transcode songs that need it as soon as they're scanned or uploaded, instead of on their first play. Songs uploaded to cloud or remote storage are transcoded while the upload is processed; others use a queue job if a queue is configured. | `false` |
 | `TRANSCODE_BIT_RATE` | The bit rate (in kbps) for transcoded audio. Higher values mean better quality but slower streaming. | `128` |
 | `TRANSCODE_AAC_FAST` | Whether to use FFmpeg's faster AAC coding algorithm. Set to `false` to use its default AAC coder. Has no effect when FFmpeg has the `libfdk_aac` encoder, which Koel then uses instead. | `true` |
 | `FFMPEG_PATH` | The full path to the ffmpeg binary. Automatically detected if left empty. | _(auto-detected)_ |

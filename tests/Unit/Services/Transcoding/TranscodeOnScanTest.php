@@ -106,4 +106,19 @@ class TranscodeOnScanTest extends TestCase
 
         $this->addToAssertionCount(1);
     }
+
+    #[Test]
+    public function keepTheScanGoingWhenAnInlineJobFails(): void
+    {
+        $song = self::createFlacSong(SongStorageType::LOCAL);
+
+        Dispatcher::expects('dispatch')->andThrow(new RuntimeException('ffmpeg failed'));
+
+        (new TranscodeOnScan(app(LocalStorage::class), enabled: true))->transcodeSongIfNeeded(
+            $song,
+            '/music/song.flac',
+        );
+
+        $this->addToAssertionCount(1);
+    }
 }

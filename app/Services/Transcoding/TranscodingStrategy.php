@@ -6,7 +6,6 @@ use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\Transcode;
 use App\Repositories\TranscodeRepository;
-use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 
@@ -68,16 +67,14 @@ abstract class TranscodingStrategy
      */
     public function getTranscodeLocation(Song $song, int $bitRate, ?string $localSourcePath = null): string
     {
-        $findOrCreate = fn (): string => $this->findOrCreateTranscodeLocation($song, $bitRate, $localSourcePath);
-
-        try {
-            return Cache::lock(cache_key('transcode', $song->id, $bitRate), self::TRANSCODE_LOCK_SECONDS)->block(
-                self::TRANSCODE_LOCK_WAIT_SECONDS,
-                $findOrCreate,
-            );
-        } catch (LockTimeoutException) {
-            return $findOrCreate();
-        }
+        return Cache::lock(
+            cache_key('transcode', $song->id, $bitRate),
+            self::TRANSCODE_LOCK_SECONDS,
+        )->block(self::TRANSCODE_LOCK_WAIT_SECONDS, fn (): string => $this->findOrCreateTranscodeLocation(
+            $song,
+            $bitRate,
+            $localSourcePath,
+        ));
     }
 
     abstract protected function findOrCreateTranscodeLocation(

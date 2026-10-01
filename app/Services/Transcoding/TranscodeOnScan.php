@@ -31,7 +31,7 @@ class TranscodeOnScan
         }
 
         if ($this->storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
-            rescue(fn () => TranscodeStrategyFactory::make($song->storage)->getTranscodeLocation(
+            rescue(fn (): string => TranscodeStrategyFactory::make($song->storage)->getTranscodeLocation(
                 $song,
                 $this->bitRate,
                 $localFilePath,
@@ -40,6 +40,6 @@ class TranscodeOnScan
             return;
         }
 
-        Dispatcher::dispatch(new TranscodeSongJob($song, $this->bitRate));
+        rescue(fn (): mixed => Dispatcher::dispatch(new TranscodeSongJob($song, $this->bitRate)));
     }
 }
