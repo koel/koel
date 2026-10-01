@@ -47,8 +47,7 @@ If your FFmpeg was built with Fraunhofer's `libfdk_aac` encoder (which needs `--
 Koel uses it automatically, as it gives better quality than FFmpeg's own AAC encoder at the same bit rate. In our tests
 it was also faster, even than FFmpeg's encoder with `TRANSCODE_AAC_FAST` on.
 
-Hi-res sources above 48 kHz (such as 96 kHz FLAC) are transcoded at 48 kHz, so the bit rate isn't spent on frequencies
-beyond human hearing. Sources at 48 kHz or below keep their sample rate.
+Sources above 48 kHz are transcoded at 48 kHz.
 
 As transcoding can take some time (albeit typically several seconds) and resources, Koel will cache the transcoded
 files for later use. You should also expect a slight delay when you first play a song that requires transcoding, as
