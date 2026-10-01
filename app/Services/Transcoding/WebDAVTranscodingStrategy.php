@@ -26,19 +26,19 @@ class WebDAVTranscodingStrategy extends TranscodingStrategy
 
         /** @var WebDAVStorage $storage */
         $storage = app(WebDAVStorage::class);
-        $source = $localSourcePath ?? $storage->copyToLocal($song->storage_metadata->getPath());
+        $downloadedSource = $localSourcePath ? null : $storage->copyToLocal($song->storage_metadata->getPath());
 
         $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
 
         try {
-            $this->transcodeAndUpsert($song, $source, $destination, $bitRate);
+            $this->transcodeAndUpsert($song, $localSourcePath ?? $downloadedSource, $destination, $bitRate);
         } catch (Throwable $e) {
             File::delete($destination);
 
             throw $e;
         } finally {
-            if (!$localSourcePath) {
-                File::delete($source);
+            if ($downloadedSource) {
+                File::delete($downloadedSource);
             }
         }
 
