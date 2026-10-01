@@ -4,6 +4,7 @@ namespace App\Services\Scanners;
 
 use App\Repositories\SongRepository;
 use App\Services\SongService;
+use App\Services\Transcoding\ScannedSongTranscoder;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanResult;
 use Illuminate\Support\Facades\File;
@@ -15,6 +16,7 @@ class IndividualFileHandler
         private readonly SongService $songService,
         private readonly SongRepository $songRepository,
         private readonly FileScanner $fileScanner,
+        private readonly ScannedSongTranscoder $scannedSongTranscoder,
     ) {}
 
     public function handle(string $path, ScanConfiguration $config): ScanResult
@@ -27,7 +29,11 @@ class IndividualFileHandler
             }
 
             $info = $this->fileScanner->scan($path);
-            $this->songService->createOrUpdateSongFromScan($info, $config, $song);
+            $song = $this->songService->createOrUpdateSongFromScan($info, $config, $song);
+
+            if ($song) {
+                $this->scannedSongTranscoder->transcodeScannedSong($song, $path, localFileIsTemporary: false);
+            }
 
             return ScanResult::success($info->path);
         } catch (Throwable $e) {

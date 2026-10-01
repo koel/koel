@@ -12,7 +12,7 @@ use Webmozart\Assert\Assert;
 
 class SftpTranscodingStrategy extends TranscodingStrategy
 {
-    public function getTranscodeLocation(Song $song, int $bitRate): string
+    protected function findOrCreateTranscodeLocation(Song $song, int $bitRate, ?string $localSourcePath): string
     {
         $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate);
 
@@ -27,18 +27,20 @@ class SftpTranscodingStrategy extends TranscodingStrategy
 
         /** @var SftpStorage $storage */
         $storage = app(SftpStorage::class);
-        $tmpSource = $storage->copyToLocal($song->storage_metadata->getPath());
+        $source = $localSourcePath ?? $storage->copyToLocal($song->storage_metadata->getPath());
 
         $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
 
         try {
-            $this->transcodeAndUpsert($song, $tmpSource, $destination, $bitRate);
+            $this->transcodeAndUpsert($song, $source, $destination, $bitRate);
         } catch (Throwable $e) {
             File::delete($destination);
 
             throw $e;
         } finally {
-            File::delete($tmpSource);
+            if (!$localSourcePath) {
+                File::delete($source);
+            }
         }
 
         return $destination;

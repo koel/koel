@@ -15,6 +15,7 @@ use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
+use App\Services\Transcoding\ScannedSongTranscoder;
 use App\Values\Song\SongFileInfo;
 use App\Values\UploadReference;
 use Illuminate\Support\Collection;
@@ -30,6 +31,7 @@ class DuplicateUploadService
         private readonly SongService $songService,
         private readonly FileScanner $scanner,
         private readonly SongStorage $storage,
+        private readonly ScannedSongTranscoder $scannedSongTranscoder,
     ) {}
 
     /**
@@ -74,6 +76,7 @@ class DuplicateUploadService
                     $this->scanner,
                     $this->songService,
                     $this->storage,
+                    $this->scannedSongTranscoder,
                 ));
             } catch (Throwable $error) {
                 throw SongUploadFailedException::make($error);

@@ -63,7 +63,7 @@ class Streamer
     /**
      * Determine if the given song should be transcoded based on its format and the server's FFmpeg installation.
      */
-    private static function shouldTranscode(Song $song): bool
+    public static function shouldTranscode(Song $song): bool
     {
         if ($song->isEpisode()) {
             return false;

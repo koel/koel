@@ -52,6 +52,10 @@ files for later use. You should also expect a slight delay when you first play a
 Koel will need to do its transcoding magic first (which can involve downloading the file from your cloud storage if
 necessary).
 
+To skip that delay, set `TRANSCODE_ON_SCAN=true` in `.env`: Koel then transcodes songs as soon as they're scanned or
+uploaded. With a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker) running, this happens in the
+background; otherwise, scanning waits for each transcode.
+
 ### FLAC Transcoding
 
 Since FLAC is [well-supported](https://caniuse.com/?search=flac) by modern browsers, Koel streams FLAC files as-is by

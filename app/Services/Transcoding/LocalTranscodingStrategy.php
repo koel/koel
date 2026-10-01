@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 
 class LocalTranscodingStrategy extends TranscodingStrategy
 {
-    public function getTranscodeLocation(Song $song, int $bitRate): string
+    protected function findOrCreateTranscodeLocation(Song $song, int $bitRate, ?string $localSourcePath): string
     {
         $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate);
 

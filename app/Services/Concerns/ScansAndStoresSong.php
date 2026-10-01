@@ -6,7 +6,9 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
+use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
+use App\Services\Transcoding\ScannedSongTranscoder;
 use App\Values\Scanning\ScanConfiguration;
 
 trait ScansAndStoresSong
@@ -18,6 +20,7 @@ trait ScansAndStoresSong
         FileScanner $scanner,
         SongService $songService,
         SongStorage $storage,
+        ScannedSongTranscoder $scannedSongTranscoder,
     ): Song {
         $config = ScanConfiguration::make(
             owner: $owner,
@@ -33,6 +36,12 @@ trait ScansAndStoresSong
                 'storage' => $storage->getStorageType(),
             ]);
         }
+
+        $scannedSongTranscoder->transcodeScannedSong(
+            $song,
+            $localFilePath,
+            localFileIsTemporary: $storage instanceof MustDeleteTemporaryLocalFileAfterUpload,
+        );
 
         return $song;
     }
