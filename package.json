@@ -23,7 +23,7 @@
     "@zip.js/zip.js": "^2.18.2",
     "butterchurn": "^2.6.7",
     "butterchurn-presets": "^2.4.7",
-    "dompurify": "^3.4.13",
+    "dompurify": "^3.4.16",
     "events": "^3.3.0",
     "fuse.js": "^7.1.0",
     "idb": "^8.0.3",
