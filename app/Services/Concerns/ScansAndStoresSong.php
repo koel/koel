@@ -8,7 +8,7 @@ use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
-use App\Services\Transcoding\ScannedSongTranscoder;
+use App\Services\Transcoding\TranscodeOnScan;
 use App\Values\Scanning\ScanConfiguration;
 
 trait ScansAndStoresSong
@@ -20,7 +20,7 @@ trait ScansAndStoresSong
         FileScanner $scanner,
         SongService $songService,
         SongStorage $storage,
-        ScannedSongTranscoder $scannedSongTranscoder,
+        TranscodeOnScan $transcodeOnScan,
     ): Song {
         $config = ScanConfiguration::make(
             owner: $owner,
@@ -37,7 +37,7 @@ trait ScansAndStoresSong
             ]);
         }
 
-        $scannedSongTranscoder->transcodeScannedSong(
+        $transcodeOnScan->transcodeSongIfNeeded(
             $song,
             $localFilePath,
             localFileIsTemporary: $storage instanceof MustDeleteTemporaryLocalFileAfterUpload,

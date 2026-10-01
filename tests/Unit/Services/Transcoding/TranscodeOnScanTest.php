@@ -7,13 +7,13 @@ use App\Facades\Dispatcher;
 use App\Jobs\TranscodeSongJob;
 use App\Models\Song;
 use App\Services\Transcoding\CloudTranscodingStrategy;
-use App\Services\Transcoding\ScannedSongTranscoder;
+use App\Services\Transcoding\TranscodeOnScan;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
 
-class ScannedSongTranscoderTest extends TestCase
+class TranscodeOnScanTest extends TestCase
 {
     public function setUp(): void
     {
@@ -38,7 +38,7 @@ class ScannedSongTranscoderTest extends TestCase
             ->with($song, 256, '/tmp/upload/song.flac')
             ->andReturn('https://transcode');
 
-        (new ScannedSongTranscoder(transcodeOnScan: true, bitRate: 256))->transcodeScannedSong(
+        (new TranscodeOnScan(enabled: true, bitRate: 256))->transcodeSongIfNeeded(
             $song,
             '/tmp/upload/song.flac',
             localFileIsTemporary: true,
@@ -52,7 +52,7 @@ class ScannedSongTranscoderTest extends TestCase
 
         Dispatcher::expects('dispatch')->with(Mockery::type(TranscodeSongJob::class));
 
-        (new ScannedSongTranscoder(transcodeOnScan: true, bitRate: 256))->transcodeScannedSong(
+        (new TranscodeOnScan(enabled: true, bitRate: 256))->transcodeSongIfNeeded(
             $song,
             '/music/song.flac',
             localFileIsTemporary: false,
@@ -66,7 +66,7 @@ class ScannedSongTranscoderTest extends TestCase
 
         Dispatcher::expects('dispatch')->never();
 
-        (new ScannedSongTranscoder(transcodeOnScan: false))->transcodeScannedSong(
+        (new TranscodeOnScan(enabled: false))->transcodeSongIfNeeded(
             $song,
             '/music/song.flac',
             localFileIsTemporary: false,
@@ -80,7 +80,7 @@ class ScannedSongTranscoderTest extends TestCase
 
         Dispatcher::expects('dispatch')->never();
 
-        (new ScannedSongTranscoder(transcodeOnScan: true))->transcodeScannedSong(
+        (new TranscodeOnScan(enabled: true))->transcodeSongIfNeeded(
             $song,
             '/music/song.mp3',
             localFileIsTemporary: false,
@@ -97,7 +97,7 @@ class ScannedSongTranscoderTest extends TestCase
             ->expects('getTranscodeLocation')
             ->andThrow(new \RuntimeException('ffmpeg failed'));
 
-        (new ScannedSongTranscoder(transcodeOnScan: true))->transcodeScannedSong(
+        (new TranscodeOnScan(enabled: true))->transcodeSongIfNeeded(
             $song,
             '/tmp/upload/song.flac',
             localFileIsTemporary: true,

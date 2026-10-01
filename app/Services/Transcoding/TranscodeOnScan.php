@@ -8,11 +8,11 @@ use App\Models\Song;
 use App\Services\Streamer\Streamer;
 use Illuminate\Container\Attributes\Config;
 
-class ScannedSongTranscoder
+class TranscodeOnScan
 {
     public function __construct(
         #[Config('koel.streaming.transcode_on_scan')]
-        private readonly bool $transcodeOnScan = false,
+        private readonly bool $enabled = false,
         #[Config('koel.streaming.bitrate')]
         private readonly int $bitRate = 128,
     ) {}
@@ -21,9 +21,9 @@ class ScannedSongTranscoder
      * A temporary local copy (a song uploaded to remote storage) is gone right after the scan, so it is
      * transcoded on the spot to save fetching the song again; a file that stays on disk is left to a job.
      */
-    public function transcodeScannedSong(Song $song, string $localFilePath, bool $localFileIsTemporary): void
+    public function transcodeSongIfNeeded(Song $song, string $localFilePath, bool $localFileIsTemporary): void
     {
-        if (!$this->transcodeOnScan || !Streamer::shouldTranscode($song)) {
+        if (!$this->enabled || !Streamer::shouldTranscode($song)) {
             return;
         }
 

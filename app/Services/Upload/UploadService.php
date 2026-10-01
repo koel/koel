@@ -11,7 +11,7 @@ use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
-use App\Services\Transcoding\ScannedSongTranscoder;
+use App\Services\Transcoding\TranscodeOnScan;
 use App\Values\UploadReference;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -25,7 +25,7 @@ class UploadService
         private readonly SongStorage $storage,
         private readonly FileScanner $scanner,
         private readonly DuplicateUploadService $duplicateUploadService,
-        private readonly ScannedSongTranscoder $scannedSongTranscoder,
+        private readonly TranscodeOnScan $transcodeOnScan,
     ) {}
 
     public function handleUpload(string $filePath, User $uploader): Song
@@ -45,7 +45,7 @@ class UploadService
                 $this->scanner,
                 $this->songService,
                 $this->storage,
-                $this->scannedSongTranscoder,
+                $this->transcodeOnScan,
             );
         } catch (DuplicateSongUploadException $e) {
             throw $e;
