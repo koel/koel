@@ -10,10 +10,6 @@ use Illuminate\Support\Facades\Process;
 
 class Transcoder
 {
-    /**
-     * AAC sample rates up to 48 kHz. A source above that (hi-res FLAC at 88.2, 96 or 192 kHz) would otherwise keep its
-     * rate, spending the bit rate on frequencies nobody hears; FFmpeg resamples it to the nearest of these instead.
-     */
     private const string SAMPLE_RATES_UP_TO_48_KHZ = '8000|11025|12000|16000|22050|24000|32000|44100|48000';
 
     public function __construct(
