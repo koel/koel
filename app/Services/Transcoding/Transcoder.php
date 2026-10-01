@@ -33,7 +33,7 @@ class Transcoder
             '-i',
             $source,
             '-vn', // Strip video
-            ...$this->resolveAacEncoderArguments($bitRate),
+            ...self::resolveAacEncoderArguments($this->ffmpegPath, $bitRate, $this->aacFast),
             '-threads',
             '0',
             '-movflags',
@@ -51,23 +51,23 @@ class Transcoder
      *
      * @return array<string>
      */
-    private function resolveAacEncoderArguments(int $bitRate): array
+    private static function resolveAacEncoderArguments(string $ffmpegPath, int $bitRate, bool $aacFast): array
     {
-        if ($this->ffmpegHasFdkAacEncoder()) {
+        if (self::ffmpegHasFdkAacEncoder($ffmpegPath)) {
             return ['-c:a', 'libfdk_aac', '-b:a', "{$bitRate}k"];
         }
 
-        return ['-c:a', 'aac', '-b:a', "{$bitRate}k", ...($this->aacFast ? ['-aac_coder', 'fast'] : [])];
+        return ['-c:a', 'aac', '-b:a', "{$bitRate}k", ...($aacFast ? ['-aac_coder', 'fast'] : [])];
     }
 
-    private function ffmpegHasFdkAacEncoder(): bool
+    private static function ffmpegHasFdkAacEncoder(string $ffmpegPath): bool
     {
-        $lastModified = is_file($this->ffmpegPath) ? filemtime($this->ffmpegPath) : 0;
+        $lastModified = is_file($ffmpegPath) ? filemtime($ffmpegPath) : 0;
 
         return Cache::rememberForever(
-            cache_key('ffmpeg has libfdk_aac', $this->ffmpegPath, $lastModified),
-            fn (): bool => str_contains(
-                Process::run([$this->ffmpegPath, '-hide_banner', '-encoders'])->output(),
+            cache_key('ffmpeg has libfdk_aac', $ffmpegPath, $lastModified),
+            static fn (): bool => str_contains(
+                Process::run([$ffmpegPath, '-hide_banner', '-encoders'])->output(),
                 ' libfdk_aac ',
             ),
         );
