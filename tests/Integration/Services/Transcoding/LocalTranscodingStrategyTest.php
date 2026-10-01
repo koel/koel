@@ -7,7 +7,10 @@ use App\Models\Song;
 use App\Models\Transcode;
 use App\Services\Transcoding\LocalTranscodingStrategy;
 use App\Services\Transcoding\Transcoder;
+use Illuminate\Contracts\Cache\LockTimeoutException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Sleep;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -98,5 +101,41 @@ class LocalTranscodingStrategyTest extends TestCase
 
         self::assertSame($destination, $transcodedLocation);
         self::assertSame($transcode->refresh()->location, $transcodedLocation);
+    }
+
+    #[Test]
+    public function holdTheSongsTranscodeLockWhileTranscoding(): void
+    {
+        $song = Song::factory()->createOne(['path' => '/path/to/song.flac']);
+        $lockKey = cache_key('transcode', $song->id, 128);
+
+        File::expects('ensureDirectoryExists');
+        File::expects('hash')->andReturn('mocked-checksum');
+        File::expects('size')->andReturn(1_024);
+
+        $this->transcoder
+            ->expects('transcode')
+            ->andReturnUsing(static function () use ($lockKey): void {
+                self::assertFalse(Cache::lock($lockKey, 10)->get());
+            });
+
+        $this->strategy->getTranscodeLocation($song, 128);
+
+        self::assertTrue(Cache::lock($lockKey, 10)->get());
+    }
+
+    #[Test]
+    public function neverTranscodeWithoutTheLock(): void
+    {
+        $this->freezeTime();
+        Sleep::fake(syncWithCarbon: true);
+
+        $song = Song::factory()->createOne(['path' => '/path/to/song.flac']);
+        Cache::lock(cache_key('transcode', $song->id, 128), 600)->get();
+
+        $this->transcoder->expects('transcode')->never();
+        $this->expectException(LockTimeoutException::class);
+
+        $this->strategy->getTranscodeLocation($song, 128);
     }
 }

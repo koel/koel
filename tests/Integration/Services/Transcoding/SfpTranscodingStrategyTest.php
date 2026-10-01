@@ -113,4 +113,27 @@ class SfpTranscodingStrategyTest extends TestCase
         $this->strategy->getTranscodeLocation($song, 128);
         self::assertSame($destination, $transcode->refresh()->location);
     }
+
+    #[Test]
+    public function transcodeFromALocalCopyAndLeaveItToTheCaller(): void
+    {
+        $song = Song::factory()->createOne([
+            'path' => 'sftp://remote/path/to/song.flac',
+            'storage' => SongStorageType::SFTP,
+        ]);
+
+        $ulid = Ulid::freeze();
+        $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
+
+        $this->mock(SftpStorage::class)->expects('copyToLocal')->never();
+
+        File::expects('ensureDirectoryExists')->with(dirname($destination));
+        File::expects('size')->with($destination)->andReturn(1_024);
+        File::expects('hash')->with($destination)->andReturn('mocked-checksum');
+        File::expects('delete')->never();
+
+        $this->transcoder->expects('transcode')->with('/tmp/upload/song.flac', $destination, 128);
+
+        $this->strategy->getTranscodeLocation($song, 128, '/tmp/upload/song.flac');
+    }
 }

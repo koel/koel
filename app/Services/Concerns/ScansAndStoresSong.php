@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\SongStorage;
+use App\Services\Transcoding\TranscodeOnScan;
 use App\Values\Scanning\ScanConfiguration;
 
 trait ScansAndStoresSong
@@ -18,6 +19,7 @@ trait ScansAndStoresSong
         FileScanner $scanner,
         SongService $songService,
         SongStorage $storage,
+        TranscodeOnScan $transcodeOnScan,
     ): Song {
         $config = ScanConfiguration::make(
             owner: $owner,
@@ -33,6 +35,8 @@ trait ScansAndStoresSong
                 'storage' => $storage->getStorageType(),
             ]);
         }
+
+        $transcodeOnScan->transcodeSongIfNeeded($song, $localFilePath);
 
         return $song;
     }

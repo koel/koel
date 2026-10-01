@@ -10,7 +10,9 @@ use App\Models\Song;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
+use App\Services\SongStorages\LocalStorage;
 use App\Services\SongStorages\SongStorage;
+use App\Services\Transcoding\TranscodeOnScan;
 use App\Services\Upload\DuplicateUploadService;
 use App\Services\Upload\UploadService;
 use App\Values\Scanning\ScanConfiguration;
@@ -42,7 +44,13 @@ class UploadServiceTest extends TestCase
 
     private function makeService(SongStorage $storage): UploadService
     {
-        return new UploadService($this->songService, $storage, $this->scanner, $this->duplicateUploadService);
+        return new UploadService(
+            $this->songService,
+            $storage,
+            $this->scanner,
+            $this->duplicateUploadService,
+            new TranscodeOnScan(app(LocalStorage::class)),
+        );
     }
 
     #[Test]
@@ -98,6 +106,36 @@ class UploadServiceTest extends TestCase
         self::assertTrue($song->is($result));
         self::assertSame('s3://koel/some-file.mp3', $song->path);
         self::assertSame(SongStorageType::S3, $song->storage);
+    }
+
+    #[Test]
+    public function transcodeFromTheTemporaryCopyBeforeDeletingIt(): void
+    {
+        /** @var SongStorage|MustDeleteTemporaryLocalFileAfterUpload|MockInterface $storage */
+        $storage = Mockery::mock(SongStorage::class . ',' . MustDeleteTemporaryLocalFileAfterUpload::class, [
+            'getStorageType' => SongStorageType::S3,
+        ]);
+        $song = Song::factory()->createOne();
+        $reference = UploadReference::make(location: 's3://koel/song.flac', localPath: '/tmp/song.flac');
+
+        $storage->expects('storeUploadedFile')->andReturn($reference);
+        $this->duplicateUploadService->expects('detectDuplicate');
+        $this->scanner->expects('scan')->andReturn(ScanInformation::make(path: '/tmp/song.flac'));
+        $this->songService->expects('createOrUpdateSongFromScan')->andReturn($song);
+
+        $transcodeOnScan = Mockery::mock(TranscodeOnScan::class);
+        $transcodeOnScan->expects('transcodeSongIfNeeded')->with($song, '/tmp/song.flac')->globally()->ordered();
+        File::expects('delete')->with('/tmp/song.flac')->globally()->ordered();
+
+        $service = new UploadService(
+            $this->songService,
+            $storage,
+            $this->scanner,
+            $this->duplicateUploadService,
+            $transcodeOnScan,
+        );
+
+        $service->handleUpload('/tmp/song.flac', create_user());
     }
 
     #[Test]

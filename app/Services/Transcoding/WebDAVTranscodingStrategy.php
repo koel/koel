@@ -12,7 +12,7 @@ use Webmozart\Assert\Assert;
 
 class WebDAVTranscodingStrategy extends TranscodingStrategy
 {
-    public function getTranscodeLocation(Song $song, int $bitRate): string
+    protected function findOrCreateTranscodeLocation(Song $song, int $bitRate, ?string $localSourcePath): string
     {
         $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate);
 
@@ -26,18 +26,20 @@ class WebDAVTranscodingStrategy extends TranscodingStrategy
 
         /** @var WebDAVStorage $storage */
         $storage = app(WebDAVStorage::class);
-        $tmpSource = $storage->copyToLocal($song->storage_metadata->getPath());
+        $downloadedSource = $localSourcePath ? null : $storage->copyToLocal($song->storage_metadata->getPath());
 
         $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
 
         try {
-            $this->transcodeAndUpsert($song, $tmpSource, $destination, $bitRate);
+            $this->transcodeAndUpsert($song, $localSourcePath ?? $downloadedSource, $destination, $bitRate);
         } catch (Throwable $e) {
             File::delete($destination);
 
             throw $e;
         } finally {
-            File::delete($tmpSource);
+            if ($downloadedSource) {
+                File::delete($downloadedSource);
+            }
         }
 
         return $destination;

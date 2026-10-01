@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\File;
 
 class CloudTranscodingStrategy extends TranscodingStrategy
 {
-    public function getTranscodeLocation(Song $song, int $bitRate): string
+    protected function findOrCreateTranscodeLocation(Song $song, int $bitRate, ?string $localSourcePath): string
     {
         $storage = CloudStorageFactory::make($song->storage);
 
@@ -20,6 +20,7 @@ class CloudTranscodingStrategy extends TranscodingStrategy
             $storage,
             $song,
             $bitRate,
+            $localSourcePath,
         );
 
         return $storage->getPresignedUrl($transcode->location);
@@ -32,12 +33,16 @@ class CloudTranscodingStrategy extends TranscodingStrategy
      * 3. Store the transcode record in the database.
      * 4. Delete the temporary file.
      */
-    private function createTranscode(CloudStorage $storage, Song $song, int $bitRate): Transcode
-    {
+    private function createTranscode(
+        CloudStorage $storage,
+        Song $song,
+        int $bitRate,
+        ?string $localSourcePath,
+    ): Transcode {
         $tmpDestination = artifact_path(sprintf('tmp/%s.m4a', Ulid::generate()));
 
         $this->transcoder->transcode(
-            $storage->getPresignedUrl($song->storage_metadata->getPath()),
+            $localSourcePath ?? $storage->getPresignedUrl($song->storage_metadata->getPath()),
             $tmpDestination,
             $bitRate,
         );

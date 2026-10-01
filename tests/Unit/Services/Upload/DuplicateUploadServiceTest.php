@@ -9,7 +9,9 @@ use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
+use App\Services\SongStorages\LocalStorage;
 use App\Services\SongStorages\SongStorage;
+use App\Services\Transcoding\TranscodeOnScan;
 use App\Services\Upload\DuplicateUploadService;
 use App\Values\UploadReference;
 use Illuminate\Support\Facades\File;
@@ -39,7 +41,13 @@ class DuplicateUploadServiceTest extends TestCase
 
     private function makeService(): DuplicateUploadService
     {
-        return new DuplicateUploadService($this->songRepository, $this->songService, $this->scanner, $this->storage);
+        return new DuplicateUploadService(
+            $this->songRepository,
+            $this->songService,
+            $this->scanner,
+            $this->storage,
+            new TranscodeOnScan(app(LocalStorage::class)),
+        );
     }
 
     #[Test]
