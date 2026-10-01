@@ -55,7 +55,13 @@ class LastfmService implements Encyclopedia, Scrobbler
         }
 
         return rescue_if(static::enabled(), function () use ($artist): ?ArtistInformation {
-            return $this->connector->send(new GetArtistInfoRequest($artist))->dto();
+            $stored = Cache::store('encyclopedia')->remember(
+                cache_key('lastfm artist information', $artist->name),
+                now()->addMonth(),
+                fn (): ?array => $this->connector->send(new GetArtistInfoRequest($artist))->dto()?->toArray(),
+            );
+
+            return $stored ? ArtistInformation::make(...$stored) : null;
         });
     }
 
@@ -66,7 +72,13 @@ class LastfmService implements Encyclopedia, Scrobbler
         }
 
         return rescue_if(static::enabled(), function () use ($album): ?AlbumInformation {
-            return $this->connector->send(new GetAlbumInfoRequest($album))->dto();
+            $stored = Cache::store('encyclopedia')->remember(
+                cache_key('lastfm album information', $album->name, $album->artist->name),
+                now()->addMonth(),
+                fn (): ?array => $this->connector->send(new GetAlbumInfoRequest($album))->dto()?->toArray(),
+            );
+
+            return $stored ? AlbumInformation::make(...$stored) : null;
         });
     }
 

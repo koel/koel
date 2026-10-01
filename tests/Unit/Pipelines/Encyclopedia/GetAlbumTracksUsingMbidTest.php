@@ -31,13 +31,19 @@ class GetAlbumTracksUsingMbidTest extends TestCase
         $this->tracks = [];
 
         foreach (Arr::get($this->responseBody, 'media') as $media) {
-            array_push($this->tracks, ...Arr::get($media, 'tracks', []));
+            foreach (Arr::get($media, 'tracks', []) as $track) {
+                $this->tracks[] = [
+                    'title' => Arr::get($track, 'title'),
+                    'length' => Arr::get($track, 'length'),
+                    'recording' => ['id' => Arr::get($track, 'recording.id')],
+                ];
+            }
         }
     }
 
     protected function tearDown(): void
     {
-        Cache::clear();
+        Cache::store('encyclopedia')->clear();
 
         parent::tearDown();
     }
@@ -51,7 +57,7 @@ class GetAlbumTracksUsingMbidTest extends TestCase
 
         $mock = self::createNextClosureMock($this->tracks);
 
-        (new GetAlbumTracksUsingMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetAlbumTracksUsingMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (GetRecordingsRequest $request): bool {
             self::assertSame(['inc' => 'recordings'], $request->query()->all());
@@ -59,18 +65,18 @@ class GetAlbumTracksUsingMbidTest extends TestCase
             return true;
         });
 
-        self::assertEquals($this->tracks, Cache::get(cache_key('album tracks', 'sample-mbid')));
+        self::assertEquals($this->tracks, Cache::store('encyclopedia')->get(cache_key('album tracks', 'sample-mbid')));
     }
 
     #[Test]
     public function getFromCache(): void
     {
         Saloon::fake([]);
-        Cache::put(cache_key('album tracks', 'sample-mbid'), $this->tracks);
+        Cache::store('encyclopedia')->put(cache_key('album tracks', 'sample-mbid'), $this->tracks);
 
         $mock = self::createNextClosureMock($this->tracks);
 
-        (new GetAlbumTracksUsingMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetAlbumTracksUsingMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -82,7 +88,7 @@ class GetAlbumTracksUsingMbidTest extends TestCase
 
         $mock = self::createNextClosureMock(null);
 
-        (new GetAlbumTracksUsingMbid(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetAlbumTracksUsingMbid(app(MusicBrainzConnector::class)))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -94,7 +100,7 @@ class GetAlbumTracksUsingMbidTest extends TestCase
             GetRecordingsRequest::class => MockResponse::make(body: ['media' => []]),
         ]);
 
-        $pipe = new GetAlbumTracksUsingMbid(new MusicBrainzConnector());
+        $pipe = new GetAlbumTracksUsingMbid(app(MusicBrainzConnector::class));
 
         $pipe('sample-mbid', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
         $pipe('sample-mbid', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line

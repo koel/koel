@@ -2,13 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Integrations\MusicBrainz\MusicBrainzConnector;
-use App\Http\Integrations\MusicBrainz\ThrottledMusicBrainzConnector;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Services\Integrations\MbidService;
+use App\Services\Integrations\MusicBrainzRateLimiter;
 use App\Services\Integrations\MusicBrainzService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -26,6 +25,7 @@ class FetchMbidsCommand extends Command
         private readonly MbidService $mbidService,
         private readonly AlbumRepository $albumRepository,
         private readonly ArtistRepository $artistRepository,
+        private readonly MusicBrainzRateLimiter $rateLimiter,
     ) {
         parent::__construct();
     }
@@ -47,20 +47,15 @@ class FetchMbidsCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->throttleMusicBrainzRequests();
-
-        $this->lookUp($this->albumRepository->lazyGetWithIncompleteMbids(), $albumCount, 'album');
-        $this->lookUp($this->artistRepository->lazyGetWithoutMbid(), $artistCount, 'artist');
+        $this->rateLimiter->waitForRequestSlotsUpTo(INF, function () use ($albumCount, $artistCount): void {
+            $this->lookUp($this->albumRepository->lazyGetWithIncompleteMbids(), $albumCount, 'album');
+            $this->lookUp($this->artistRepository->lazyGetWithoutMbid(), $artistCount, 'artist');
+        });
 
         $this->newLine();
         $this->info('Done. Run the command again to continue where an interrupted run left off.');
 
         return self::SUCCESS;
-    }
-
-    private function throttleMusicBrainzRequests(): void
-    {
-        $this->laravel->instance(MusicBrainzConnector::class, new ThrottledMusicBrainzConnector());
     }
 
     /**

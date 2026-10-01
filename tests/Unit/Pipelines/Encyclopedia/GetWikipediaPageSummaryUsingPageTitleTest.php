@@ -5,6 +5,7 @@ namespace Tests\Unit\Pipelines\Encyclopedia;
 use App\Http\Integrations\Wikipedia\Requests\GetPageSummaryRequest;
 use App\Http\Integrations\Wikipedia\WikipediaConnector;
 use App\Pipelines\Encyclopedia\GetWikipediaPageSummaryUsingPageTitle;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
@@ -28,7 +29,14 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
             GetPageSummaryRequest::class => MockResponse::make(body: $json),
         ]);
 
-        $mock = self::createNextClosureMock($json); // we're passing the whole JSON response through the pipeline
+        $summary = [
+            'extract' => Arr::get($json, 'extract'),
+            'extract_html' => Arr::get($json, 'extract_html'),
+            'content_urls' => ['desktop' => ['page' => Arr::get($json, 'content_urls.desktop.page')]],
+            'thumbnail' => ['source' => Arr::get($json, 'thumbnail.source')],
+        ];
+
+        $mock = self::createNextClosureMock($summary);
 
         (new GetWikipediaPageSummaryUsingPageTitle(new WikipediaConnector()))(
             'Skid Row (American band)',
@@ -39,9 +47,12 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
             return $request->resolveEndpoint() === 'page/summary/Skid Row (American band)';
         });
 
-        self::assertSame(
-            $json,
-            Cache::get(cache_key('wikipedia page summary from page title', 'Skid Row (American band)')),
+        self::assertEquals(
+            $summary,
+            Cache::store('encyclopedia')->get(cache_key(
+                'wikipedia page summary from page title',
+                'Skid Row (American band)',
+            )),
         );
     }
 
@@ -50,9 +61,12 @@ class GetWikipediaPageSummaryUsingPageTitleTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(cache_key('wikipedia page summary from page title', 'Skid Row (American band)'), [
-            'Spider Man' => 'How’d that get in there?',
-        ]);
+        Cache::store('encyclopedia')->put(
+            cache_key('wikipedia page summary from page title', 'Skid Row (American band)'),
+            [
+                'Spider Man' => 'How’d that get in there?',
+            ],
+        );
 
         $mock = self::createNextClosureMock(['Spider Man' => 'How’d that get in there?']);
 

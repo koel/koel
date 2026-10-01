@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Exceptions\MusicBrainzBusyException;
+use App\Models\Album;
+use App\Services\Integrations\EncyclopediaService;
+use App\Services\Integrations\MusicBrainzRateLimiter;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+
+class FetchAlbumInformationJob extends QueuedJob implements ShouldBeUnique
+{
+    private const float SLOT_WAIT_SECONDS = 30.0;
+    private const int RETRY_DELAY_SECONDS = 60;
+
+    public int $tries = 10;
+
+    public function __construct(
+        private readonly Album $album,
+    ) {}
+
+    public function uniqueId(): string
+    {
+        return (string) $this->album->id;
+    }
+
+    public function handle(EncyclopediaService $encyclopediaService, MusicBrainzRateLimiter $rateLimiter): void
+    {
+        try {
+            $rateLimiter->waitForRequestSlotsUpTo(self::SLOT_WAIT_SECONDS, fn () => $encyclopediaService->getAlbumInformationOrThrowIfMusicBrainzIsBusy($this->album));
+        } catch (MusicBrainzBusyException) {
+            $this->release(self::RETRY_DELAY_SECONDS);
+        }
+    }
+}

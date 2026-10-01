@@ -30,7 +30,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         $mock = self::createNextClosureMock('Q461269');
 
-        (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetArtistWikidataIdUsingMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (GetArtistUrlRelationshipsRequest $request): bool {
             self::assertSame(['inc' => 'url-rels'], $request->query()->all());
@@ -38,7 +38,10 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
             return true;
         });
 
-        self::assertSame('Q461269', Cache::get(cache_key('artist wikidata id from mbid', 'sample-mbid')));
+        self::assertSame(
+            'Q461269',
+            Cache::store('encyclopedia')->get(cache_key('artist wikidata id from mbid', 'sample-mbid')),
+        );
     }
 
     #[Test]
@@ -46,11 +49,11 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(cache_key('artist wikidata id from mbid', 'sample-mbid'), 'Q461269');
+        Cache::store('encyclopedia')->put(cache_key('artist wikidata id from mbid', 'sample-mbid'), 'Q461269');
 
         $mock = self::createNextClosureMock('Q461269');
 
-        (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetArtistWikidataIdUsingMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -62,7 +65,7 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         $mock = self::createNextClosureMock(null);
 
-        (new GetArtistWikidataIdUsingMbid(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetArtistWikidataIdUsingMbid(app(MusicBrainzConnector::class)))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }

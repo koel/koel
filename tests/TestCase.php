@@ -8,6 +8,7 @@ use App\Helpers\Uuid;
 use App\Models\Album;
 use App\Observers\AlbumObserver;
 use App\Services\Image\ImageStorage;
+use App\Services\Integrations\MusicBrainzRateLimiter;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
 use App\Services\Network\Network;
@@ -40,6 +41,7 @@ abstract class TestCase extends BaseTestCase
 
         License::swap($this->app->make(CommunityLicenseService::class));
         $this->app->instance(Network::class, new FakeNetwork());
+        $this->app->instance(MusicBrainzRateLimiter::class, new MusicBrainzRateLimiter(requestIntervalSeconds: 0));
         $this->fileSystem = File::getFacadeRoot();
 
         // Replace the AlbumObserver with a partial that skips the `saved` event (which dispatches

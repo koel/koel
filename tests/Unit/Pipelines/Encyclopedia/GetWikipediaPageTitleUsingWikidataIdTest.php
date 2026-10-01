@@ -38,7 +38,7 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
 
         self::assertSame(
             'Skid Row (American band)',
-            Cache::get(cache_key('wikipedia page title from wikidata id', 'Q461269')),
+            Cache::store('encyclopedia')->get(cache_key('wikipedia page title from wikidata id', 'Q461269')),
         );
     }
 
@@ -47,7 +47,10 @@ class GetWikipediaPageTitleUsingWikidataIdTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(cache_key('wikipedia page title from wikidata id', 'Q461269'), 'How’d that get in there?');
+        Cache::store('encyclopedia')->put(
+            cache_key('wikipedia page title from wikidata id', 'Q461269'),
+            'How’d that get in there?',
+        );
 
         $mock = self::createNextClosureMock('How’d that get in there?');
 

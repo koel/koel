@@ -2,6 +2,9 @@
 
 namespace App\Services\Integrations;
 
+use App\Exceptions\MusicBrainzBusyException;
+use App\Jobs\FetchAlbumInformationJob;
+use App\Jobs\FetchArtistInformationJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Contracts\Encyclopedia;
@@ -9,6 +12,7 @@ use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 // @mago-ignore lint:cyclomatic-complexity
 class EncyclopediaService
@@ -20,9 +24,24 @@ class EncyclopediaService
         private readonly CoverArtArchiveService $coverArtArchiveService,
         private readonly WikidataService $wikidataService,
         private readonly MbidService $mbidService,
+        private readonly MusicBrainzRateLimiter $rateLimiter,
     ) {}
 
     public function getAlbumInformation(Album $album): ?AlbumInformation
+    {
+        try {
+            return $this->getAlbumInformationOrThrowIfMusicBrainzIsBusy($album);
+        } catch (MusicBrainzBusyException) {
+            $this->queueInformationFetchIfPossible(new FetchAlbumInformationJob($album));
+
+            return AlbumInformation::make();
+        }
+    }
+
+    /**
+     * @throws MusicBrainzBusyException
+     */
+    public function getAlbumInformationOrThrowIfMusicBrainzIsBusy(Album $album): ?AlbumInformation
     {
         if ($album->is_unknown) {
             return null;
@@ -38,11 +57,28 @@ class EncyclopediaService
                 now()->addWeek(),
                 fn () => $this->fetchAlbumInformation($album),
             ),
-            fn () => $this->fetchAlbumInformation($album),
+            fn (Throwable $e) => $e instanceof MusicBrainzBusyException
+                ? throw $e
+                : $this->fetchAlbumInformation($album),
+            report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
         );
     }
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation
+    {
+        try {
+            return $this->getArtistInformationOrThrowIfMusicBrainzIsBusy($artist);
+        } catch (MusicBrainzBusyException) {
+            $this->queueInformationFetchIfPossible(new FetchArtistInformationJob($artist));
+
+            return ArtistInformation::make();
+        }
+    }
+
+    /**
+     * @throws MusicBrainzBusyException
+     */
+    public function getArtistInformationOrThrowIfMusicBrainzIsBusy(Artist $artist): ?ArtistInformation
     {
         if ($artist->is_unknown || $artist->is_various) {
             return null;
@@ -56,8 +92,18 @@ class EncyclopediaService
                 now()->addWeek(),
                 fn () => $this->fetchArtistInformation($artist),
             ),
-            fn () => $this->fetchArtistInformation($artist),
+            fn (Throwable $e) => $e instanceof MusicBrainzBusyException
+                ? throw $e
+                : $this->fetchArtistInformation($artist),
+            report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
         );
+    }
+
+    private function queueInformationFetchIfPossible(FetchAlbumInformationJob|FetchArtistInformationJob $job): void
+    {
+        if ($this->rateLimiter->canQueueLookups()) {
+            dispatch($job);
+        }
     }
 
     private function fetchAlbumInformation(Album $album): AlbumInformation

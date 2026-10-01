@@ -33,9 +33,12 @@ MusicBrainz. A year from your tags is never replaced.
 You don't have anything to do to enable this integration, as it is enabled by default. However, you can disable it by
 explicitly setting `USE_MUSICBRAINZ` to `false` in `.env`.
 
-Do note that MusicBrainz [rate-limits](https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting) its API.
-Koel tries to play nice by caching the data it retrieves and using a conformed user agent, which you can customize
-via the `MUSICBRAINZ_USER_AGENT` variable in `.env`. The default user agent is `Koel/<current-version> (<app-url>)`.
+Do note that MusicBrainz [rate-limits](https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting) its API to one
+request per second. Koel keeps to that across everything it runs at once (web requests, queue workers and commands),
+and keeps what it retrieves in the database, so each artist or album is looked up only once and `cache:clear` does not
+throw the lookups away. When MusicBrainz is busy, the information shows up on a later visit, or in the background if
+you run a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker). Koel also uses a conformed user agent, which you can customize via the
+`MUSICBRAINZ_USER_AGENT` variable in `.env`. The default user agent is `Koel/<current-version> (<app-url>)`.
 
 ## Last.fm
 
@@ -45,6 +48,8 @@ scrobbling. To enable the connection:
 1. [Create a Last.fm API account](https://www.last.fm/api/account/create). In the **Callback URL** field, fill in `https://<your-koel-host>/api/lastfm/callback` (though this is not used).
 2. Populate the two variables `LASTFM_API_KEY` and `LASTFM_API_SECRET` in `.env` with the credentials grabbed from step 1. This enables Koel to retrieve media information from Last.fm.
 3. To enable scrobbling, go to `https://<your-koel-host>/#/profile` and click the **Connect** button under Last.fm Integration. This connection is per-user, i.e. each user can connect their own Last.fm account.
+
+Koel keeps the artist and album information it gets from Last.fm in the database for a month before asking again.
 
 ## ListenBrainz
 

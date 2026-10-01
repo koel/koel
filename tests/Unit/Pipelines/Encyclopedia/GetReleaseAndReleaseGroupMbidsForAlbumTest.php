@@ -30,7 +30,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
 
         $mock = self::createNextClosureMock(['sample-release-mbid', 'sample-release-group-mbid']);
 
-        (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
+        (new GetReleaseAndReleaseGroupMbidsForAlbum(app(MusicBrainzConnector::class)))(
             [
                 'album' => 'Slave to the Grind',
                 'artist' => 'Skid Row',
@@ -52,11 +52,15 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
 
         self::assertSame(
             ['sample-release-mbid', 'sample-release-group-mbid'],
-            Cache::get(cache_key('release and release group mbids', 'Slave to the Grind', 'Skid Row')),
+            Cache::store('encyclopedia')->get(cache_key(
+                'release and release group mbids',
+                'Slave to the Grind',
+                'Skid Row',
+            )),
         );
 
         // The artist mbid should have been cached opportunistically, too.
-        self::assertSame('sample-artist-mbid', Cache::get(cache_key('artist mbid', 'Skid Row')));
+        self::assertSame('sample-artist-mbid', Cache::store('encyclopedia')->get(cache_key('artist mbid', 'Skid Row')));
     }
 
     #[Test]
@@ -64,14 +68,14 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(
+        Cache::store('encyclopedia')->put(
             cache_key('release and release group mbids', 'Slave to the Grind', 'Skid Row'),
             ['sample-release-mbid', 'sample-release-group-mbid'],
         );
 
         $mock = self::createNextClosureMock(['sample-release-mbid', 'sample-release-group-mbid']);
 
-        (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(
+        (new GetReleaseAndReleaseGroupMbidsForAlbum(app(MusicBrainzConnector::class)))(
             [
                 'album' => 'Slave to the Grind',
                 'artist' => 'Skid Row',
@@ -88,7 +92,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
         Saloon::fake([]);
         $mock = self::createNextClosureMock(null);
 
-        (new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetReleaseAndReleaseGroupMbidsForAlbum(app(MusicBrainzConnector::class)))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -100,7 +104,7 @@ class GetReleaseAndReleaseGroupMbidsForAlbumTest extends TestCase
             SearchForReleaseRequest::class => MockResponse::make(body: ['releases' => []]),
         ]);
 
-        $pipe = new GetReleaseAndReleaseGroupMbidsForAlbum(new MusicBrainzConnector());
+        $pipe = new GetReleaseAndReleaseGroupMbidsForAlbum(app(MusicBrainzConnector::class));
         $params = ['album' => 'Nothing At All', 'artist' => 'Nobody'];
 
         $pipe($params, self::createNextClosureMock([null, null])->next(...)); // @phpstan-ignore-line

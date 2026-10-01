@@ -30,7 +30,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         $mock = self::createNextClosureMock('Q1929918');
 
-        (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetAlbumWikidataIdUsingReleaseGroupMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertSent(static function (GetReleaseGroupUrlRelationshipsRequest $request): bool {
             self::assertSame(['inc' => 'url-rels'], $request->query()->all());
@@ -38,7 +38,10 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
             return true;
         });
 
-        self::assertSame('Q1929918', Cache::get(cache_key('album wikidata id from release group mbid', 'sample-mbid')));
+        self::assertSame(
+            'Q1929918',
+            Cache::store('encyclopedia')->get(cache_key('album wikidata id from release group mbid', 'sample-mbid')),
+        );
     }
 
     #[Test]
@@ -46,11 +49,14 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
     {
         Saloon::fake([]);
 
-        Cache::put(cache_key('album wikidata id from release group mbid', 'sample-mbid'), 'Q1929918');
+        Cache::store('encyclopedia')->put(
+            cache_key('album wikidata id from release group mbid', 'sample-mbid'),
+            'Q1929918',
+        );
 
         $mock = self::createNextClosureMock('Q1929918');
 
-        (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        (new GetAlbumWikidataIdUsingReleaseGroupMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
@@ -62,7 +68,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         $mock = self::createNextClosureMock(null);
 
-        (new GetAlbumWikidataIdUsingReleaseGroupMbid(new MusicBrainzConnector()))(null, $mock->next(...)); // @phpstan-ignore-line
+        (new GetAlbumWikidataIdUsingReleaseGroupMbid(app(MusicBrainzConnector::class)))(null, $mock->next(...)); // @phpstan-ignore-line
 
         Saloon::assertNothingSent();
     }
