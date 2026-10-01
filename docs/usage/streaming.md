@@ -55,8 +55,8 @@ necessary).
 To skip that delay, set `TRANSCODE_ON_SCAN=true` in `.env`: Koel then transcodes songs as soon as they're scanned or
 uploaded. Songs uploaded to cloud or remote storage are transcoded while the upload is processed, from the copy Koel
 already has. Other songs are transcoded by a job, in the background if you've
-[configured a queue](https://laravel.com/docs/queues#running-the-queue-worker); otherwise, scanning waits for each
-transcode.
+[configured a queue](https://laravel.com/docs/queues#running-the-queue-worker); otherwise, Koel transcodes an applicable
+song upon scanning or uploading it, which typically takes a couple of seconds.
 
 ### FLAC Transcoding
 
