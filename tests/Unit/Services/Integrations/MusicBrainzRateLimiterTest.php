@@ -102,4 +102,18 @@ class MusicBrainzRateLimiterTest extends TestCase
 
         $limiter->takeRequestSlot();
     }
+
+    #[Test]
+    public function shareOneWaitingBudgetAcrossEveryRequestInside(): void
+    {
+        $limiter = new MusicBrainzRateLimiter('redis');
+
+        $this->expectException(MusicBrainzBusyException::class);
+
+        $limiter->waitForRequestSlotsUpTo(1.5, static function () use ($limiter): void {
+            $limiter->takeRequestSlot();
+            $limiter->takeRequestSlot();
+            $limiter->takeRequestSlot();
+        });
+    }
 }

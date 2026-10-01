@@ -21,8 +21,6 @@ class FetchMbidsCommand extends Command
 
     protected $description = 'Attempt to fetch missing MusicBrainz identifiers for albums, artists and songs.';
 
-    private const float SLOT_WAIT_SECONDS = 60.0;
-
     public function __construct(
         private readonly MbidService $mbidService,
         private readonly AlbumRepository $albumRepository,
@@ -49,10 +47,7 @@ class FetchMbidsCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->rateLimiter->waitForRequestSlotsUpTo(self::SLOT_WAIT_SECONDS, function () use (
-            $albumCount,
-            $artistCount,
-        ): void {
+        $this->rateLimiter->waitForRequestSlotsUpTo(INF, function () use ($albumCount, $artistCount): void {
             $this->lookUp($this->albumRepository->lazyGetWithIncompleteMbids(), $albumCount, 'album');
             $this->lookUp($this->artistRepository->lazyGetWithoutMbid(), $artistCount, 'artist');
         });

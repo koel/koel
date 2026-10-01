@@ -24,7 +24,7 @@ class MusicBrainzRateLimiter
     private const float MUTEX_RETRY_SECONDS = 0.05;
     private const float INLINE_WAIT_SECONDS = 3.0;
 
-    private ?float $waitBudgetSeconds = null;
+    private ?float $slotDeadline = null;
 
     public function __construct(
         #[Config('queue.default')]
@@ -41,6 +41,9 @@ class MusicBrainzRateLimiter
     }
 
     /**
+     * Lets the requests made inside the callback wait for slots, all of them together for at most
+     * the given number of seconds — so a job holding several lookups stays inside a worker's timeout.
+     *
      * @template TResult
      *
      * @param Closure(): TResult $callback
@@ -49,19 +52,19 @@ class MusicBrainzRateLimiter
      */
     public function waitForRequestSlotsUpTo(float $seconds, Closure $callback): mixed
     {
-        $previousBudget = $this->waitBudgetSeconds;
-        $this->waitBudgetSeconds = $seconds;
+        $previousDeadline = $this->slotDeadline;
+        $this->slotDeadline = self::currentTimeInSeconds() + $seconds;
 
         try {
             return $callback();
         } finally {
-            $this->waitBudgetSeconds = $previousBudget;
+            $this->slotDeadline = $previousDeadline;
         }
     }
 
     public function takeRequestSlot(): void
     {
-        $deadline = self::currentTimeInSeconds() + $this->resolveWaitBudgetSeconds();
+        $deadline = $this->slotDeadline ?? (self::currentTimeInSeconds() + $this->resolveDefaultWaitSeconds());
 
         while (true) {
             $waitSeconds = $this->tryTakeRequestSlot();
@@ -85,9 +88,9 @@ class MusicBrainzRateLimiter
         });
     }
 
-    private function resolveWaitBudgetSeconds(): float
+    private function resolveDefaultWaitSeconds(): float
     {
-        return $this->waitBudgetSeconds ?? ($this->canQueueLookups() ? 0.0 : self::INLINE_WAIT_SECONDS);
+        return $this->canQueueLookups() ? 0.0 : self::INLINE_WAIT_SECONDS;
     }
 
     /**

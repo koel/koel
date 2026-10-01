@@ -168,7 +168,7 @@ class FetchMbidsCommandTest extends TestCase
         $this
             ->mock(MusicBrainzRateLimiter::class)
             ->expects('waitForRequestSlotsUpTo')
-            ->with(60.0, Mockery::type(Closure::class))
+            ->with(INF, Mockery::type(Closure::class))
             ->andReturnUsing(static fn (float $seconds, Closure $callback): mixed => $callback());
 
         $this->artisan('koel:fetch-mbids')->assertSuccessful();

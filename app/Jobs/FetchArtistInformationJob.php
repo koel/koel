@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class FetchArtistInformationJob extends QueuedJob implements ShouldBeUnique
 {
-    private const float SLOT_WAIT_SECONDS = 60.0;
+    private const float SLOT_WAIT_SECONDS = 30.0;
     private const int RETRY_DELAY_SECONDS = 60;
 
     public int $tries = 10;

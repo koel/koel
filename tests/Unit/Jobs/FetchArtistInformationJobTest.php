@@ -25,7 +25,7 @@ class FetchArtistInformationJobTest extends TestCase
         $rateLimiter = Mockery::mock(MusicBrainzRateLimiter::class);
         $rateLimiter
             ->expects('waitForRequestSlotsUpTo')
-            ->with(60.0, Mockery::type(Closure::class))
+            ->with(30.0, Mockery::type(Closure::class))
             ->andReturnUsing(static fn (float $seconds, Closure $callback): mixed => $callback());
 
         (new FetchArtistInformationJob($artist))->handle($encyclopediaService, $rateLimiter);
