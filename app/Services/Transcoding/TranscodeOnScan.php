@@ -18,6 +18,8 @@ class TranscodeOnScan
         private readonly bool $enabled = false,
         #[Config('koel.streaming.bitrate')]
         private readonly int $bitRate = 128,
+        #[Config('koel.streaming.transcode_timeout')]
+        private readonly int $transcodeTimeout = 300,
     ) {}
 
     /**
@@ -40,6 +42,8 @@ class TranscodeOnScan
             return;
         }
 
-        rescue(fn (): mixed => Dispatcher::dispatch(new TranscodeSongJob($song, $this->bitRate)));
+        rescue(fn (): mixed => Dispatcher::dispatch(
+            new TranscodeSongJob($song, $this->bitRate, $this->transcodeTimeout),
+        ));
     }
 }

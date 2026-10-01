@@ -22,6 +22,15 @@ class TranscodeSongJobTest extends TestCase
             ->with($song, 256)
             ->andReturn('/transcodes/256/song.m4a');
 
-        (new TranscodeSongJob($song, 256))->handle();
+        (new TranscodeSongJob($song, 256, 300))->handle();
+    }
+
+    #[Test]
+    public function outlastTheLongestAllowedTranscode(): void
+    {
+        $song = Song::factory()->createOne();
+
+        self::assertSame(330, (new TranscodeSongJob($song, 256, 300))->timeout);
+        self::assertSame(0, (new TranscodeSongJob($song, 256, 0))->timeout);
     }
 }
