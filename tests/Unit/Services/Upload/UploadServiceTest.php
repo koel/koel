@@ -10,6 +10,7 @@ use App\Models\Song;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
+use App\Services\SongStorages\LocalStorage;
 use App\Services\SongStorages\SongStorage;
 use App\Services\Transcoding\TranscodeOnScan;
 use App\Services\Upload\DuplicateUploadService;
@@ -48,7 +49,7 @@ class UploadServiceTest extends TestCase
             $storage,
             $this->scanner,
             $this->duplicateUploadService,
-            new TranscodeOnScan(),
+            new TranscodeOnScan(app(LocalStorage::class)),
         );
     }
 
@@ -123,7 +124,7 @@ class UploadServiceTest extends TestCase
         $this->songService->expects('createOrUpdateSongFromScan')->andReturn($song);
 
         $transcodeOnScan = Mockery::mock(TranscodeOnScan::class);
-        $transcodeOnScan->expects('transcodeSongIfNeeded')->with($song, '/tmp/song.flac', true)->globally()->ordered();
+        $transcodeOnScan->expects('transcodeSongIfNeeded')->with($song, '/tmp/song.flac')->globally()->ordered();
         File::expects('delete')->with('/tmp/song.flac')->globally()->ordered();
 
         $service = new UploadService(

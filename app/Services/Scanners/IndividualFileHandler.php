@@ -32,7 +32,7 @@ class IndividualFileHandler
             $song = $this->songService->createOrUpdateSongFromScan($info, $config, $song);
 
             if ($song) {
-                $this->transcodeOnScan->transcodeSongIfNeeded($song, $path, localFileIsTemporary: false);
+                $this->transcodeOnScan->transcodeSongIfNeeded($song, $path);
             }
 
             return ScanResult::success($info->path);

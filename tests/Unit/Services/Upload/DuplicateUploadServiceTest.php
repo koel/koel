@@ -9,6 +9,7 @@ use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
+use App\Services\SongStorages\LocalStorage;
 use App\Services\SongStorages\SongStorage;
 use App\Services\Transcoding\TranscodeOnScan;
 use App\Services\Upload\DuplicateUploadService;
@@ -45,7 +46,7 @@ class DuplicateUploadServiceTest extends TestCase
             $this->songService,
             $this->scanner,
             $this->storage,
-            new TranscodeOnScan(),
+            new TranscodeOnScan(app(LocalStorage::class)),
         );
     }
 

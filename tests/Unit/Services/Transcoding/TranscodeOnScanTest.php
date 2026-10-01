@@ -6,9 +6,13 @@ use App\Enums\SongStorageType;
 use App\Facades\Dispatcher;
 use App\Jobs\TranscodeSongJob;
 use App\Models\Song;
+use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
+use App\Services\SongStorages\LocalStorage;
+use App\Services\SongStorages\SongStorage;
 use App\Services\Transcoding\CloudTranscodingStrategy;
 use App\Services\Transcoding\TranscodeOnScan;
 use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
@@ -20,6 +24,11 @@ class TranscodeOnScanTest extends TestCase
         parent::setUp();
 
         config(['koel.streaming.transcode_flac' => true]);
+    }
+
+    private static function makeRemoteStorage(): SongStorage|MockInterface
+    {
+        return Mockery::mock(SongStorage::class . ',' . MustDeleteTemporaryLocalFileAfterUpload::class);
     }
 
     private static function createFlacSong(SongStorageType $storage): Song
@@ -38,10 +47,9 @@ class TranscodeOnScanTest extends TestCase
             ->with($song, 256, '/tmp/upload/song.flac')
             ->andReturn('https://transcode');
 
-        (new TranscodeOnScan(enabled: true, bitRate: 256))->transcodeSongIfNeeded(
+        (new TranscodeOnScan(self::makeRemoteStorage(), enabled: true, bitRate: 256))->transcodeSongIfNeeded(
             $song,
             '/tmp/upload/song.flac',
-            localFileIsTemporary: true,
         );
     }
 
@@ -52,10 +60,9 @@ class TranscodeOnScanTest extends TestCase
 
         Dispatcher::expects('dispatch')->with(Mockery::type(TranscodeSongJob::class));
 
-        (new TranscodeOnScan(enabled: true, bitRate: 256))->transcodeSongIfNeeded(
+        (new TranscodeOnScan(app(LocalStorage::class), enabled: true, bitRate: 256))->transcodeSongIfNeeded(
             $song,
             '/music/song.flac',
-            localFileIsTemporary: false,
         );
     }
 
@@ -66,10 +73,9 @@ class TranscodeOnScanTest extends TestCase
 
         Dispatcher::expects('dispatch')->never();
 
-        (new TranscodeOnScan(enabled: false))->transcodeSongIfNeeded(
+        (new TranscodeOnScan(app(LocalStorage::class), enabled: false))->transcodeSongIfNeeded(
             $song,
             '/music/song.flac',
-            localFileIsTemporary: false,
         );
     }
 
@@ -80,11 +86,7 @@ class TranscodeOnScanTest extends TestCase
 
         Dispatcher::expects('dispatch')->never();
 
-        (new TranscodeOnScan(enabled: true))->transcodeSongIfNeeded(
-            $song,
-            '/music/song.mp3',
-            localFileIsTemporary: false,
-        );
+        (new TranscodeOnScan(app(LocalStorage::class), enabled: true))->transcodeSongIfNeeded($song, '/music/song.mp3');
     }
 
     #[Test]
@@ -97,10 +99,9 @@ class TranscodeOnScanTest extends TestCase
             ->expects('getTranscodeLocation')
             ->andThrow(new \RuntimeException('ffmpeg failed'));
 
-        (new TranscodeOnScan(enabled: true))->transcodeSongIfNeeded(
+        (new TranscodeOnScan(self::makeRemoteStorage(), enabled: true))->transcodeSongIfNeeded(
             $song,
             '/tmp/upload/song.flac',
-            localFileIsTemporary: true,
         );
 
         $this->addToAssertionCount(1);
