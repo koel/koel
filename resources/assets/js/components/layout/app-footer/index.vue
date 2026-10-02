@@ -5,7 +5,7 @@
     @mousemove="showControls"
     @contextmenu.prevent="requestContextMenu"
   >
-    <AudioPlayer v-show="currentStreamable" :class="isRadio && 'pointer-events-none'" :levels="levels" />
+    <AudioPlayer v-show="currentStreamable" :class="isRadio && 'pointer-events-none'" :levels />
 
     <div class="fullscreen-backdrop hidden" />
 
