@@ -75,6 +75,22 @@ describe('songWaveform.vue', () => {
     })
   })
 
+  it('drops a waveform that finishes loading after being turned off', async () => {
+    await h.withPlusEdition(async () => {
+      let resolveFetch: (waveform: number[]) => void = () => {}
+      h.mock(waveformService, 'fetchWaveform').mockReturnValue(
+        new Promise<number[]>(resolve => (resolveFetch = resolve)),
+      )
+
+      renderComponent(h.factory('song').make({ loudness: -9, true_peak: 1 }))
+      preferenceStore.state.show_waveform = false
+      resolveFetch([0.2, 0.8])
+      await h.tick(2)
+
+      expect(screen.queryByTestId('song-waveform')).toBeNull()
+    })
+  })
+
   it('skips the waveform without Koel Plus', async () => {
     const fetchWaveformMock = h.mock(waveformService, 'fetchWaveform')
 

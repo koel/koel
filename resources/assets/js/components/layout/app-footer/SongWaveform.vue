@@ -52,7 +52,7 @@ watch(
 
     const fetchedWaveform = await waveformService.fetchWaveform(song).catch(() => [])
 
-    if (props.song === song) {
+    if (props.song === song && preferenceStore.show_waveform) {
       waveform.value = fetchedWaveform
     }
   },
