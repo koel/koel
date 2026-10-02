@@ -106,6 +106,7 @@ class User extends Authenticatable implements AuditableContract
     public const string FIRST_ADMIN_PASSWORD = 'KoelIsCool';
     public const string DEMO_PASSWORD = 'demo';
     public const string DEMO_USER_DOMAIN = 'demo.koel.dev';
+    public const int INVITATION_LIFETIME_DAYS = 7;
 
     protected array $auditExclude = ['password', 'remember_token', 'invitation_token'];
     protected $with = ['roles', 'permissions'];
@@ -139,14 +140,32 @@ class User extends Authenticatable implements AuditableContract
         return 'public_id';
     }
 
-    /** Delete all old and inactive demo users */
     public function prunable(): Builder
     {
-        if (!config('koel.misc.demo')) {
-            return static::query()->whereRaw('false');
-        }
-
         return static::query()
+            ->where(static function (Builder $query): void {
+                self::whereInvitationExpired($query);
+
+                if (config('koel.misc.demo')) {
+                    $query->orWhere(static function (Builder $demoQuery): void {
+                        self::whereDemoAccountIsInactive($demoQuery);
+                    });
+                }
+            });
+    }
+
+    private static function whereInvitationExpired(Builder $query): void
+    {
+        $query->whereNotNull('invitation_token')->where(
+            'invited_at',
+            '<',
+            now()->subDays(self::INVITATION_LIFETIME_DAYS),
+        );
+    }
+
+    private static function whereDemoAccountIsInactive(Builder $query): void
+    {
+        $query
             ->where('created_at', '<=', now()->subWeek())
             ->where('email', 'like', '%@' . self::DEMO_USER_DOMAIN)
             ->whereDoesntHave('interactions', static function (Builder $query): void {
