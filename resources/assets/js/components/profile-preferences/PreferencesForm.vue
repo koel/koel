@@ -72,6 +72,12 @@
         <CheckBox v-model="preferences.normalize_volume" name="normalize_volume" />
       </label>
     </FormRow>
+    <FormRow v-if="isPlus">
+      <label class="pref-row">
+        <span>Show waveform during playback</span>
+        <CheckBox v-model="preferences.show_waveform" name="show_waveform" />
+      </label>
+    </FormRow>
     <FormRow>
       <div class="pref-row">
         <span class="flex-1">

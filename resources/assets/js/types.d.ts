@@ -452,6 +452,7 @@ interface UserPreferences extends Record<string, any> {
   include_public_media: boolean
   crossfade_duration: number
   normalize_volume: boolean
+  show_waveform: boolean
   lastfm_session_key?: string
   listenbrainz_token?: string
   home_blocks_order: string[]

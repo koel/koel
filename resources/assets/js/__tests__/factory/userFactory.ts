@@ -12,6 +12,7 @@ const preferences: UserPreferences = {
   equalizer_presets: [],
   crossfade_duration: 0,
   normalize_volume: true,
+  show_waveform: true,
   artists_view_mode: 'grid',
   albums_view_mode: 'grid',
   radio_stations_view_mode: 'grid',

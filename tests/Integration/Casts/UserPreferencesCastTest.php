@@ -50,6 +50,7 @@ class UserPreferencesCastTest extends TestCase
             'repeat_mode',
             'show_album_art_overlay',
             'show_now_playing_notification',
+            'show_waveform',
             'support_bar_no_bugging',
             'theme',
             'transcode_on_mobile',

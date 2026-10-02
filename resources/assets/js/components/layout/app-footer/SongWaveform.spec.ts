@@ -1,6 +1,7 @@
 import { screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { preferenceStore } from '@/stores/preferenceStore'
 import { waveformService } from '@/services/waveformService'
 import Component from './SongWaveform.vue'
 
@@ -14,7 +15,11 @@ vi.mock('@vueuse/core', async importOriginal => {
 })
 
 describe('songWaveform.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => {
+      preferenceStore.state.show_waveform = true
+    },
+  })
 
   const renderComponent = (song: Song, progress = 0) => h.render(Component, { props: { song, progress } })
 
@@ -49,6 +54,20 @@ describe('songWaveform.vue', () => {
       const fetchWaveformMock = h.mock(waveformService, 'fetchWaveform')
 
       renderComponent(h.factory('song').make({ loudness: null }))
+      await h.tick()
+
+      expect(fetchWaveformMock).not.toHaveBeenCalled()
+      expect(screen.queryByTestId('song-waveform')).toBeNull()
+    })
+  })
+
+  it('skips the waveform when turned off', async () => {
+    preferenceStore.state.show_waveform = false
+
+    await h.withPlusEdition(async () => {
+      const fetchWaveformMock = h.mock(waveformService, 'fetchWaveform')
+
+      renderComponent(h.factory('song').make({ loudness: -9, true_peak: 1 }))
       await h.tick()
 
       expect(fetchWaveformMock).not.toHaveBeenCalled()

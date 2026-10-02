@@ -15,6 +15,7 @@
 <script lang="ts" setup>
 import { useElementSize } from '@vueuse/core'
 import { computed, ref, watch } from 'vue'
+import { preferenceStore } from '@/stores/preferenceStore'
 import { waveformService } from '@/services/waveformService'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 
@@ -41,11 +42,11 @@ const maskImage = computed(() => {
 })
 
 watch(
-  () => props.song,
-  async song => {
+  [() => props.song, () => preferenceStore.show_waveform],
+  async ([song, showWaveform]) => {
     waveform.value = []
 
-    if (!isPlus.value || song.loudness == null) {
+    if (!isPlus.value || !showWaveform || song.loudness == null) {
       return
     }
 

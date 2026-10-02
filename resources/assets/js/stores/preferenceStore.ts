@@ -48,6 +48,7 @@ export const defaultPreferences: UserPreferences = {
   continuous_playback: false,
   crossfade_duration: 0,
   normalize_volume: true,
+  show_waveform: true,
   home_blocks_order: [],
 }
 
