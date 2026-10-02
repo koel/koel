@@ -413,4 +413,12 @@ class SongTest extends TestCase
         self::assertSame(0, $song->track);
         self::assertSame(1, $song->disc);
     }
+
+    #[Test]
+    public function hideLoudnessWithoutKoelPlus(): void
+    {
+        $song = Song::factory()->createOne(['loudness' => -10.2, 'true_peak' => 1.5]);
+
+        $this->getAs("api/songs/{$song->id}")->assertJsonMissingPath('loudness')->assertJsonMissingPath('true_peak');
+    }
 }

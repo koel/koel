@@ -47,6 +47,7 @@ export const defaultPreferences: UserPreferences = {
   include_public_media: true,
   continuous_playback: false,
   crossfade_duration: 0,
+  normalize_volume: true,
   home_blocks_order: [],
 }
 

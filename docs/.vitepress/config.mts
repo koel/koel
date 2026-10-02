@@ -99,6 +99,7 @@ export default defineConfig({
           { text: 'Custom Themes', link: '/plus/custom-themes' },
           { text: 'AI Assistant', link: '/plus/ai-assistant' },
           { text: 'Ticketmaster', link: '/plus/ticketmaster' },
+          { text: 'Volume Normalization', link: '/plus/volume-normalization' },
         ],
       },
       {

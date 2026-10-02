@@ -220,6 +220,8 @@ interface Song extends BasePlayable {
   is_public: boolean
   is_external: boolean
   mbid?: string | null
+  loudness?: number | null
+  true_peak?: number | null
   file_size?: number | null
   basename?: string
   deleted?: boolean
@@ -449,6 +451,7 @@ interface UserPreferences extends Record<string, any> {
   detect_duplicate_uploads: boolean
   include_public_media: boolean
   crossfade_duration: number
+  normalize_volume: boolean
   lastfm_session_key?: string
   listenbrainz_token?: string
   home_blocks_order: string[]

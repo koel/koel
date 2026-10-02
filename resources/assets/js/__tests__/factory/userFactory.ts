@@ -11,6 +11,7 @@ const preferences: UserPreferences = {
   current_equalizer_preset: faker.helpers.arrayElement(equalizerPresets),
   equalizer_presets: [],
   crossfade_duration: 0,
+  normalize_volume: true,
   artists_view_mode: 'grid',
   albums_view_mode: 'grid',
   radio_stations_view_mode: 'grid',

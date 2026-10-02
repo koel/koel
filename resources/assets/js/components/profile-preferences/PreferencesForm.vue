@@ -66,6 +66,12 @@
         <CheckBox v-model="preferences.show_album_art_overlay" name="show_album_art_overlay" />
       </label>
     </FormRow>
+    <FormRow v-if="isPlus">
+      <label class="pref-row">
+        <span>Play songs at about the same volume</span>
+        <CheckBox v-model="preferences.normalize_volume" name="normalize_volume" />
+      </label>
+    </FormRow>
     <FormRow>
       <div class="pref-row">
         <span class="flex-1">

@@ -39,6 +39,7 @@ class UserPreferencesCastTest extends TestCase
             'listenbrainz_token',
             'lyrics_zoom_level',
             'make_uploads_public',
+            'normalize_volume',
             'podcasts_favorites_only',
             'podcasts_sort_field',
             'podcasts_sort_order',

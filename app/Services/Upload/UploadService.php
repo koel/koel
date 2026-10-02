@@ -6,6 +6,7 @@ use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\Concerns\ScansAndStoresSong;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
@@ -26,6 +27,7 @@ class UploadService
         private readonly FileScanner $scanner,
         private readonly DuplicateUploadService $duplicateUploadService,
         private readonly TranscodeOnScan $transcodeOnScan,
+        private readonly AnalyzeAudioOnScan $analyzeAudioOnScan,
     ) {}
 
     public function handleUpload(string $filePath, User $uploader): Song
@@ -46,6 +48,7 @@ class UploadService
                 $this->songService,
                 $this->storage,
                 $this->transcodeOnScan,
+                $this->analyzeAudioOnScan,
             );
         } catch (DuplicateSongUploadException $e) {
             throw $e;

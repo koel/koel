@@ -9,10 +9,12 @@ use App\Models\Genre;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Podcast;
+use App\Models\SongWaveform;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 trait HasSongRelationships
 {
@@ -54,5 +56,10 @@ trait HasSongRelationships
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(Genre::class);
+    }
+
+    public function waveform(): HasOne
+    {
+        return $this->hasOne(SongWaveform::class);
     }
 }

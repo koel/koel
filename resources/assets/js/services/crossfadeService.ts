@@ -1,5 +1,7 @@
 import { playableStore } from '@/stores/playableStore'
 import { logger } from '@/utils/logger'
+import { dbToGain } from '@/services/audioService'
+import { volumeNormalizer } from '@/services/volumeNormalizer'
 
 interface CrossfadeState {
   /** The secondary audio element for the incoming track */
@@ -47,7 +49,8 @@ export const crossfadeService = {
         .then(() => {
           const startTime = performance.now()
           const durationMs = duration * 1000
-          const normalizedVolume = currentVolume / 10
+          const normalizedVolume =
+            (currentVolume / 10) * Math.min(1, dbToGain(volumeNormalizer.computeGainDb(nextPlayable)))
 
           const step = () => {
             if (this.state !== state) {

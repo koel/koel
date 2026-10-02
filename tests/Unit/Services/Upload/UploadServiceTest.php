@@ -7,6 +7,8 @@ use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\DuplicateUpload;
 use App\Models\Song;
+use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
+use App\Services\AudioAnalysis\AudioAnalyzer;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
@@ -50,6 +52,7 @@ class UploadServiceTest extends TestCase
             $this->scanner,
             $this->duplicateUploadService,
             new TranscodeOnScan(app(LocalStorage::class)),
+            new AnalyzeAudioOnScan(app(LocalStorage::class), new AudioAnalyzer()),
         );
     }
 
@@ -109,7 +112,7 @@ class UploadServiceTest extends TestCase
     }
 
     #[Test]
-    public function transcodeFromTheTemporaryCopyBeforeDeletingIt(): void
+    public function transcodeAndAnalyzeTheTemporaryCopyBeforeDeletingIt(): void
     {
         /** @var SongStorage|MustDeleteTemporaryLocalFileAfterUpload|MockInterface $storage */
         $storage = Mockery::mock(SongStorage::class . ',' . MustDeleteTemporaryLocalFileAfterUpload::class, [
@@ -125,6 +128,8 @@ class UploadServiceTest extends TestCase
 
         $transcodeOnScan = Mockery::mock(TranscodeOnScan::class);
         $transcodeOnScan->expects('transcodeSongIfNeeded')->with($song, '/tmp/song.flac')->globally()->ordered();
+        $analyzeAudioOnScan = Mockery::mock(AnalyzeAudioOnScan::class);
+        $analyzeAudioOnScan->expects('analyzeSongIfEnabled')->with($song, '/tmp/song.flac')->globally()->ordered();
         File::expects('delete')->with('/tmp/song.flac')->globally()->ordered();
 
         $service = new UploadService(
@@ -133,6 +138,7 @@ class UploadServiceTest extends TestCase
             $this->scanner,
             $this->duplicateUploadService,
             $transcodeOnScan,
+            $analyzeAudioOnScan,
         );
 
         $service->handleUpload('/tmp/song.flac', create_user());

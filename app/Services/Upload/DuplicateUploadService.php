@@ -10,6 +10,7 @@ use App\Models\DuplicateUpload;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
+use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\Concerns\ScansAndStoresSong;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
@@ -32,6 +33,7 @@ class DuplicateUploadService
         private readonly FileScanner $scanner,
         private readonly SongStorage $storage,
         private readonly TranscodeOnScan $transcodeOnScan,
+        private readonly AnalyzeAudioOnScan $analyzeAudioOnScan,
     ) {}
 
     /**
@@ -77,6 +79,7 @@ class DuplicateUploadService
                     $this->songService,
                     $this->storage,
                     $this->transcodeOnScan,
+                    $this->analyzeAudioOnScan,
                 ));
             } catch (Throwable $error) {
                 throw SongUploadFailedException::make($error);

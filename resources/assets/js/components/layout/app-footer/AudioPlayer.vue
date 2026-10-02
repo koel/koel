@@ -1,11 +1,20 @@
 <template>
   <div class="audio-player" :class="{ loading: isLoading, dragging: isDragging }">
     <audio id="audio-player" class="hidden" crossorigin="anonymous" />
+    <div v-if="waveformMaskImage" class="waveform" data-testid="waveform">
+      <div class="waveform-unplayed" :style="{ maskImage: waveformMaskImage }" />
+      <div
+        class="waveform-played"
+        :style="{ maskImage: waveformMaskImage, clipPath: `inset(0 ${100 - progress}% 0 0)` }"
+      />
+      <div class="playhead" :style="{ left: `${progress}%` }" />
+    </div>
     <!--
       The hit area is absolutely positioned over the top of the footer,
       extending above and below the visible 4px track for easy clicking.
     -->
     <div
+      ref="hitArea"
       class="hit-area"
       @pointerdown="onPointerDown"
       @click="onClickSeek"
@@ -22,15 +31,35 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, ref } from 'vue'
+import { useElementSize } from '@vueuse/core'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { playback } from '@/services/playbackManager'
 import { crossfadeService } from '@/services/crossfadeService'
+import { waveformService } from '@/services/waveformService'
+
+const props = withDefaults(defineProps<{ levels?: number[] }>(), { levels: () => [] })
 
 const progress = ref(0)
 const bufferProgress = ref(0)
 const hoverProgress = ref(0)
 const isLoading = ref(false)
 const isDragging = ref(false)
+
+const PIXELS_PER_WAVEFORM_BAR = 5
+
+const hitArea = ref<HTMLElement>()
+const { width: footerWidth } = useElementSize(hitArea)
+const waveformBarCount = computed(() => Math.round(footerWidth.value / PIXELS_PER_WAVEFORM_BAR))
+
+const waveformMaskImage = computed(() => {
+  if (!props.levels.length || !waveformBarCount.value) {
+    return ''
+  }
+
+  const svg = waveformService.renderBarsAsSvg(props.levels, waveformBarCount.value)
+
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
+})
 
 const getActiveMedia = (): HTMLMediaElement | null => {
   if (crossfadeService.active && crossfadeService.state) {
@@ -152,6 +181,38 @@ onBeforeUnmount(() => {
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
+.waveform {
+  @apply absolute inset-x-0 bottom-3 top-[calc(var(--progress-bar-height)+--spacing(3))] pointer-events-none;
+  mask-image:
+    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+    linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+  mask-composite: intersect;
+}
+
+.waveform-unplayed,
+.waveform-played {
+  @apply absolute inset-0;
+  mask-size: 100% 92%;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+.waveform-unplayed {
+  @apply bg-k-fg-10;
+}
+
+.waveform-played {
+  @apply bg-k-highlight opacity-40 transition-[clip-path] duration-200 ease-in-out;
+}
+
+.playhead {
+  @apply absolute inset-y-0 w-0.5 -translate-x-1/2 bg-k-highlight transition-[left] duration-200 ease-in-out;
+}
+
+:fullscreen .waveform {
+  @apply hidden;
+}
+
 .hit-area {
   @apply absolute left-0 right-0 top-0 cursor-pointer;
   z-index: 30;

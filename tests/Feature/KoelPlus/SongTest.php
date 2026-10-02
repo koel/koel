@@ -117,4 +117,16 @@ class SongTest extends PlusTestCase
 
         $this->deleteAs('api/songs', ['songs' => $ownSongs->modelKeys()], $currentUser)->assertSuccessful();
     }
+
+    #[Test]
+    public function exposeLoudness(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->for($user, 'owner')->createOne(['loudness' => -10.2, 'true_peak' => 1.5]);
+
+        $this
+            ->getAs("api/songs/{$song->id}", $user)
+            ->assertJsonPath('loudness', -10.2)
+            ->assertJsonPath('true_peak', 1.5);
+    }
 }

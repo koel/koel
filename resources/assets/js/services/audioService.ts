@@ -15,6 +15,7 @@ export const audioService = {
   context: null! as AudioContext,
   source: null! as MediaElementAudioSourceNode,
   element: null! as HTMLMediaElement,
+  normalizationGainNode: null! as GainNode,
   preampGainNode: null! as GainNode,
   analyzer: null! as AnalyserNode,
 
@@ -25,11 +26,13 @@ export const audioService = {
     this.element = mediaElement
 
     this.context = new AudioContext()
+    this.normalizationGainNode = this.context.createGain()
     this.preampGainNode = this.context.createGain()
     this.source = this.context.createMediaElementSource(this.element)
     this.analyzer = this.context.createAnalyser()
 
-    this.source.connect(this.preampGainNode)
+    this.source.connect(this.normalizationGainNode)
+    this.normalizationGainNode.connect(this.preampGainNode)
 
     const config = equalizerStore.getConfig()
 
@@ -80,12 +83,16 @@ export const audioService = {
 
     this.element = newElement
     this.source = this.context.createMediaElementSource(newElement)
-    this.source.connect(this.preampGainNode)
+    this.source.connect(this.normalizationGainNode)
   },
 
   changePreampGain(db: number) {
     this.preamp = db
     this.preampGainNode.gain.value = dbToGain(db)
+  },
+
+  changeNormalizationGain(db: number) {
+    this.normalizationGainNode.gain.value = dbToGain(db)
   },
 
   changeFilterGain(node: BiquadFilterNode, db: number) {

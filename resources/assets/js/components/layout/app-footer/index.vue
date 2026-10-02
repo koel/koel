@@ -5,7 +5,7 @@
     @mousemove="showControls"
     @contextmenu.prevent="requestContextMenu"
   >
-    <AudioPlayer v-show="currentStreamable" :class="isRadio && 'pointer-events-none'" />
+    <AudioPlayer v-show="currentStreamable" :class="isRadio && 'pointer-events-none'" :levels="levels" />
 
     <div class="fullscreen-backdrop hidden" />
 
@@ -34,8 +34,11 @@ import { CurrentStreamableKey } from '@/config/symbols'
 import { artistStore } from '@/stores/artistStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { audioService } from '@/services/audioService'
+import { volumeNormalizer } from '@/services/volumeNormalizer'
+import { waveformService } from '@/services/waveformService'
 import { playback } from '@/services/playbackManager'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { useKoelPlus } from '@/composables/useKoelPlus'
 
 import AudioPlayer from '@/components/layout/app-footer/AudioPlayer.vue'
 import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vue'
@@ -53,9 +56,11 @@ let hideControlsTimeout: number
 const root = ref<HTMLElement>()
 const artist = ref<Artist>()
 const nextPlayable = ref<Playable | null>(null)
+const levels = ref<number[]>([])
 
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root)
 const { openContextMenu } = useContextMenu()
+const { isPlus } = useKoelPlus()
 
 const showingUpNext = computed(() => nextPlayable.value && isFullscreen.value)
 const isRadio = computed(() => currentStreamable.value && isRadioStation(currentStreamable.value))
@@ -75,6 +80,22 @@ const requestContextMenu = (event: MouseEvent) => {
     })
   }
 }
+
+watch(
+  currentStreamable,
+  async streamable => {
+    levels.value = []
+
+    if (isPlus.value && streamable && isSong(streamable) && streamable.loudness != null) {
+      const fetchedLevels = await waveformService.fetchLevels(streamable).catch(() => [])
+
+      if (currentStreamable.value === streamable) {
+        levels.value = fetchedLevels
+      }
+    }
+  },
+  { immediate: true },
+)
 
 watch(currentStreamable, async streamable => {
   if (!streamable) {
@@ -119,8 +140,13 @@ const initPlaybackRelatedServices = async () => {
   // If audio context is supported, initialize the audio service which handles audio processing (equalizer, etc.)
   if (isAudioContextSupported) {
     audioService.init(playbackService.media)
+    volumeNormalizer.applyToStreamable(currentStreamable.value)
   }
 }
+
+watch([currentStreamable, () => preferenceStore.normalize_volume], ([streamable]) =>
+  volumeNormalizer.applyToStreamable(streamable),
+)
 
 watch(
   preferenceStore.initialized,
