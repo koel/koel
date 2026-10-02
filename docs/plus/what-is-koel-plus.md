@@ -18,7 +18,7 @@ Koel Plus is the premium version of Koel. It offers additional features and enha
 - **[White Labeling](white-labeling.md)**: Customize the app's branding elements (name, logo, cover) to match those of your organization's.
 - **[Custom Themes](custom-themes.md)**: Create and apply your own themes.
 - **[AI Assistant](./ai-assistant)**: Interact with your music library using natural language — play music, manage playlists, and more.
-- **[Volume Normalization & Waveforms](./volume-normalization)**: Play songs at a more even loudness, and see each song's waveform behind the player.
+- **[Volume Normalization & Waveforms](./volume-normalization)**: Play songs at a more even loudness, and see each song's waveform while it plays.
 
 New features are constantly planned or in active development.
 

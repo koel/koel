@@ -1,12 +1,12 @@
 ---
-description: Evening out loudness between songs and showing each song's waveform behind the player.
+description: Evening out loudness between songs and showing each song's waveform while it plays.
 ---
 
 # Volume Normalization & Waveforms
 
 With volume normalization, Koel turns loud songs down and quiet songs up, so a quiet old record and a loud new one
 rarely make you reach for the volume. A quiet song is only turned up as far as it can go without clipping. Koel also
-shows each song's waveform behind the player, so you can see the quiet and loud parts at a glance.
+shows each song's waveform while it plays, so you can see the quiet and loud parts at a glance.
 
 ## Requirements
 
