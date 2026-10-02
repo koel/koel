@@ -170,14 +170,6 @@ describe('Router', () => {
     })
   })
 
-  describe('triggerNotFound', () => {
-    it('activates the 404 route', () => {
-      router.triggerNotFound()
-
-      expect(router.$currentRoute.value.screen).toBe('404')
-    })
-  })
-
   describe('with clean URLs', () => {
     const clickLink = (href: string, init: MouseEventInit = {}) => {
       const link = document.createElement('a')

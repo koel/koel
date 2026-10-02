@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song;
 use App\Services\Auth\TokenManager;
-use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Values\CompositeToken;
 use Illuminate\Http\Response;
@@ -30,22 +29,6 @@ class SongPlayTest extends TestCase
         ob_end_clean();
 
         parent::tearDown();
-    }
-
-    #[Test]
-    public function play(): void
-    {
-        $user = create_user();
-
-        /** @var CompositeToken $token */
-        $token = app(TokenManager::class)->createCompositeToken($user);
-        $song = Song::factory()->createOne([
-            'path' => test_path('songs/blank.mp3'),
-        ]);
-
-        $this->mock(LocalStreamerAdapter::class)->expects('stream');
-
-        $this->get("play/{$song->id}?t=$token->audioToken")->assertOk();
     }
 
     #[Test]

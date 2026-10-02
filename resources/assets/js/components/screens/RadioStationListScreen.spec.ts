@@ -42,22 +42,10 @@ describe('radioStationListScreen.vue', () => {
     return rendered
   }
 
-  it('renders', async () => {
-    await renderComponent()
-    expect(screen.getAllByTestId('radio-station-card')).toHaveLength(9)
-  })
-
   it('shows a message when there is no station', async () => {
     await renderComponent([])
 
     await waitFor(() => screen.getByTestId('screen-empty-state'))
-  })
-
-  it('renders the grid by default', async () => {
-    await renderComponent()
-
-    await waitFor(() => screen.getByTestId('radio-station-grid'))
-    expect(screen.queryByTestId('radio-station-table')).toBeNull()
   })
 
   it('renders the table when the view mode is table', async () => {

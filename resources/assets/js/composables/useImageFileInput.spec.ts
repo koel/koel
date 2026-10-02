@@ -49,15 +49,7 @@ describe('useImageFileInput', () => {
     const { onImageInputChange } = useImageFileInput({ onImageDataUrl })
 
     const file = new File(['data'], 'photo.png', { type: 'image/png' })
-
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.value = '' // jsdom won't let us set a real file path
-
-    Object.defineProperty(input, 'files', {
-      value: [file],
-      writable: false,
-    })
+    const input = { files: [file], value: 'C:\\fakepath\\photo.png' }
 
     onImageInputChange({ target: input } as unknown as InputEvent)
 

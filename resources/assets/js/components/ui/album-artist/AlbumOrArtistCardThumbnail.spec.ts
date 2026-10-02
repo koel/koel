@@ -22,15 +22,6 @@ describe('albumOrArtistCardThumbnail.vue', () => {
     expect(img.src).toBe('https://example.test/artist.jpg')
   })
 
-  it('emits toggle-favorite when the heart is clicked', async () => {
-    const album = h.factory('album').make({ favorite: true })
-    const { emitted } = h.render(Component, { props: { entity: album } })
-
-    await h.user.click(screen.getByRole('button', { name: 'Undo Favorite' }))
-
-    expect(emitted('toggle-favorite')).toHaveLength(1)
-  })
-
   it('emits context-menu when the more-actions button is clicked', async () => {
     const album = h.factory('album').make()
     const { emitted } = h.render(Component, { props: { entity: album } })

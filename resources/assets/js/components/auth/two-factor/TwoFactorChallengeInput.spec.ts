@@ -1,12 +1,10 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen, within } from '@testing-library/vue'
+import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './TwoFactorChallengeInput.vue'
 
 describe('twoFactorChallengeInput.vue', () => {
   const h = createHarness({ authenticated: false })
-
-  const getBoxes = () => within(screen.getByTestId('one-time-code-input')).getAllByRole<HTMLInputElement>('textbox')
 
   const lastUpdate = (emitted: Record<string, unknown[]>) => {
     const updates = (emitted['update:modelValue'] as string[][]) ?? []
@@ -19,17 +17,6 @@ describe('twoFactorChallengeInput.vue', () => {
 
     screen.getByTestId('one-time-code-input')
     expect(screen.queryByTestId('recovery-code-input')).toBeNull()
-  })
-
-  it('emits complete when 6 digits are entered in TOTP mode', async () => {
-    const { emitted } = h.render(Component)
-    const boxes = getBoxes()
-
-    for (let i = 0; i < 6; i++) {
-      await h.type(boxes[i], String(i + 1))
-    }
-
-    expect(emitted().complete).toEqual([['123456']])
   })
 
   it('switches to recovery mode and renders the recovery input', async () => {

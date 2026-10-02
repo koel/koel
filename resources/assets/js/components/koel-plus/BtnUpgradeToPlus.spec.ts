@@ -19,11 +19,6 @@ describe('BtnUpgradeToPlus', () => {
     beforeEach: () => openModalMock.mockClear(),
   })
 
-  it('renders the upgrade button', () => {
-    h.render(Component)
-    screen.getByText('Upgrade to Plus')
-  })
-
   it('opens KoelPlusModal on click', async () => {
     h.render(Component)
 

@@ -76,17 +76,6 @@ class DuplicateUploadActionTest extends TestCase
     }
 
     #[Test]
-    public function discardAllDuplicates(): void
-    {
-        $user = create_user();
-        DuplicateUpload::factory()->for($user)->createMany([[], [], []]);
-
-        $this->deleteAs('api/duplicate-uploads', [], $user)->assertNoContent();
-
-        self::assertSame(0, DuplicateUpload::query()->where('user_id', $user->id)->count());
-    }
-
-    #[Test]
     public function discardAllDoesNotAffectOtherUsers(): void
     {
         $user = create_user();

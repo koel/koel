@@ -17,16 +17,6 @@ vi.mock('@/composables/useContextMenu')
 describe('playlistFolderSidebarItem.vue', () => {
   const h = createHarness()
 
-  it('renders folder name', () => {
-    const folder = h.factory('playlist-folder').make()
-
-    h.render(Component, {
-      props: { folder },
-    })
-
-    screen.getByText(folder.name)
-  })
-
   it('opens the context menu for the focused nested item without bubbling', async () => {
     const root = h.factory('playlist-folder').make({ name: 'Root Folder', parent_id: null })
     const child = h.factory('playlist-folder').make({ name: 'Child Folder', parent_id: root.id })

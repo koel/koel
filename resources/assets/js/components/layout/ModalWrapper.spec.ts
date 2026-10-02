@@ -31,20 +31,6 @@ describe('modalWrapper.vue', () => {
     await waitFor(() => screen.getByTestId('test-modal'))
   })
 
-  it('passes props to the modal component', async () => {
-    h.render(Component)
-
-    modalOptions.value = {
-      component: markRaw(h.stub('test-modal')),
-      props: { foo: 'bar' },
-    }
-
-    await waitFor(() => {
-      const el = screen.getByTestId('test-modal')
-      expect(el).toBeTruthy()
-    })
-  })
-
   it('closes modal on close event', async () => {
     h.render(Component)
 

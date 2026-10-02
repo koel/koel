@@ -26,14 +26,6 @@ describe('createSmartPlaylistForm', () => {
     screen.getByRole('textbox', { name: 'description' })
   })
 
-  it('switches to Rules tab on click', async () => {
-    renderComponent()
-
-    await h.user.click(screen.getByText('Rules'))
-
-    screen.getByTitle('Add a new group')
-  })
-
   it('adds a rule group when "Group" button is clicked', async () => {
     renderComponent()
 

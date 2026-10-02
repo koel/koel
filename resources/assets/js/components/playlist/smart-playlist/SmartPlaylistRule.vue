@@ -29,6 +29,7 @@
         class="absolute right-[-14px] aspect-square top-1 scale-[60%] hover:scale-75 active:scale-[60%]"
         rounded
         title="Remove this rule"
+        data-testid="remove-rule-btn"
         @click.prevent="removeRule"
       >
         <Icon :icon="faMinus" />

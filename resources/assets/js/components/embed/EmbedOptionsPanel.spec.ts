@@ -28,8 +28,8 @@ describe('embedOptionsPanel.vue', () => {
     expect(screen.queryByTestId('theme-select')).toBeNull()
   })
 
-  it('has the theme option in Plus edition', () => {
-    h.withPlusEdition(async () => {
+  it('has the theme option in Plus edition', async () => {
+    await h.withPlusEdition(async () => {
       renderComponent()
       await waitFor(() => screen.getByTestId('theme-select'))
     })

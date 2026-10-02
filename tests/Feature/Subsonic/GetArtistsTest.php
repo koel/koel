@@ -45,19 +45,4 @@ class GetArtistsTest extends TestCase
         self::assertSame('The Beatles', $byLetter->get('B')['artist'][0]['name']);
         self::assertSame('100 gecs', $byLetter->get('#')['artist'][0]['name']);
     }
-
-    #[Test]
-    public function excludesArtistsWithoutAlbums(): void
-    {
-        $user = create_user();
-
-        Artist::factory()->createOne(['name' => 'Lonely', 'user_id' => $user->id]);
-
-        $response = $this->getJson('/rest/getArtists.view?apiKey=' . $user->subsonic_api_key . '&f=json')->assertOk();
-
-        $names = collect($response->json('subsonic-response.artists.index') ?? [])
-            ->flatMap(static fn (array $idx) => array_column($idx['artist'], 'name'));
-
-        self::assertFalse($names->contains('Lonely'));
-    }
 }

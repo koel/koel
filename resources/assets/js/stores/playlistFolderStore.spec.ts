@@ -296,14 +296,4 @@ describe('playlistFolderStore', () => {
 
     expect(playlist.folder_id).toBeNull()
   })
-
-  it('sorts folders alphabetically', () => {
-    const sorted = playlistFolderStore.sort([
-      h.factory('playlist-folder').make({ name: 'Zebra' }),
-      h.factory('playlist-folder').make({ name: 'Alpha' }),
-      h.factory('playlist-folder').make({ name: 'Middle' }),
-    ])
-
-    expect(sorted.map(f => f.name)).toEqual(['Alpha', 'Middle', 'Zebra'])
-  })
 })

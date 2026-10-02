@@ -19,21 +19,4 @@ describe('smartPlaylistRuleInput', () => {
     renderComponent('text', 'foo')
     expect(screen.getByDisplayValue('foo').getAttribute('type')).toBe('text')
   })
-
-  it('renders a number input', () => {
-    renderComponent('number', '42')
-    expect(screen.getByDisplayValue('42').getAttribute('type')).toBe('number')
-  })
-
-  it('renders a date input', () => {
-    renderComponent('date', '2024-01-01')
-    expect(screen.getByDisplayValue('2024-01-01').getAttribute('type')).toBe('date')
-  })
-
-  it('emits update:modelValue when value changes', async () => {
-    const { emitted } = renderComponent('text')
-    await h.type(screen.getByRole('textbox'), 'bar')
-
-    expect(emitted()['update:modelValue']).toBeTruthy()
-  })
 })

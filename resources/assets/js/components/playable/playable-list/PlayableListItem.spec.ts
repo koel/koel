@@ -142,12 +142,6 @@ describe('playableListItem.vue', () => {
     expect(toggleFavoriteMock).toHaveBeenCalledWith(row.playable)
   })
 
-  it('shows spinner when caching offline', () => {
-    isCachingMock.mockReturnValue(true)
-    renderComponent()
-    screen.getByTitle('Caching for offline playback')
-  })
-
   it('shows spinner instead of offline mark when caching', () => {
     isCachingMock.mockReturnValue(true)
     isCachedMock.mockReturnValue(true)

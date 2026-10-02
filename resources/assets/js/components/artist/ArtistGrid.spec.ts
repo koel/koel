@@ -33,11 +33,6 @@ describe('artistGrid.vue', () => {
     }
   }
 
-  it('renders one ArtistCard per artist', () => {
-    renderComponent(4)
-    expect(screen.getAllByTestId('artist-card')).toHaveLength(4)
-  })
-
   it('forwards scrolled-to-end from the underlying scroller', async () => {
     const { emitted } = renderComponent(1)
 

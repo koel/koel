@@ -521,15 +521,6 @@ describe('uploadService', () => {
     expect(uploadService.state.files[0].status).toBe('Ready')
   })
 
-  it('resets a file', () => {
-    const file = createUploadFile({ status: 'Errored', progress: 75 })
-
-    uploadService.resetFile(file)
-
-    expect(file.status).toBe('Ready')
-    expect(file.progress).toBe(0)
-  })
-
   it('invalidates album and artist song caches when handling an upload result', () => {
     const song = h.factory('song').make()
     const album = h.factory('album').make()

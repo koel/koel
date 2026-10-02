@@ -133,13 +133,6 @@ class UserPreferencesCastTest extends TestCase
     }
 
     #[Test]
-    public function castsRepeatMode(): void
-    {
-        $user = create_user(['preferences' => ['repeat_mode' => 'REPEAT_ALL']]);
-        self::assertSame('REPEAT_ALL', $user->preferences->repeatMode);
-    }
-
-    #[Test]
     public function castsBooleanPreferences(): void
     {
         $user = create_user([

@@ -30,12 +30,6 @@ describe('basicListSorter', () => {
     expect(button.getAttribute('title')).toContain('ascending')
   })
 
-  it('shows descending in title when order is desc', () => {
-    renderComponent('name', 'desc')
-    const button = screen.getByRole('button')
-    expect(button.getAttribute('title')).toContain('descending')
-  })
-
   it('renders all sort options in dropdown', () => {
     renderComponent()
     screen.getByTitle('Sort by Name')

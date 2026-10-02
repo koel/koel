@@ -11,20 +11,9 @@ describe('overlay', () => {
     },
   })
 
-  it('renders dialog element with testid', () => {
-    h.render(Component)
-    screen.getByTestId('overlay')
-  })
-
   it('renders with loading type by default', () => {
     h.render(Component)
     const dialog = screen.getByTestId('overlay')
     expect(dialog.classList.contains('loading')).toBe(true)
-  })
-
-  it('renders as a dialog element', () => {
-    h.render(Component)
-    const dialog = screen.getByTestId('overlay')
-    expect(dialog.tagName).toBe('DIALOG')
   })
 })

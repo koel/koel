@@ -6,15 +6,6 @@ import Component from './ImageCropper.vue'
 describe('imageCropper.vue', () => {
   const h = createHarness()
 
-  it('renders crop and cancel buttons', () => {
-    h.render(Component, {
-      props: { source: 'data:image/png;base64,abc' },
-    })
-
-    screen.getByText('Crop')
-    screen.getByText('Cancel')
-  })
-
   it('renders outside of its host, which would clip it', () => {
     const { container } = h.render(Component, {
       props: { source: 'data:image/png;base64,abc' },

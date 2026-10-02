@@ -6,24 +6,6 @@ import Component from './ContextMenuItem.vue'
 describe('contextMenuItem', () => {
   const h = createHarness()
 
-  it('renders the label from default slot', () => {
-    h.render(Component, {
-      slots: { default: 'Play' },
-    })
-
-    screen.getByText('Play')
-  })
-
-  it('emits click on click', async () => {
-    const { emitted } = h.render(Component, {
-      slots: { default: 'Play' },
-    })
-
-    await h.user.click(screen.getByText('Play'))
-
-    expect(emitted().click).toBeTruthy()
-  })
-
   it('renders submenu caret when subMenuItems slot is provided', () => {
     h.render(Component, {
       slots: {

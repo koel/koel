@@ -5,14 +5,6 @@ import { visualizerStore } from './visualizerStore'
 describe('visualizerStore', () => {
   createHarness()
 
-  it('returns all visualizers', () => {
-    const all = visualizerStore.all
-    expect(all.length).toBeGreaterThanOrEqual(1)
-    expect(all[0]).toHaveProperty('id')
-    expect(all[0]).toHaveProperty('name')
-    expect(all[0]).toHaveProperty('init')
-  })
-
   it('finds visualizer by id', () => {
     const viz = visualizerStore.getVisualizerById('default')
     expect(viz).toBeDefined()

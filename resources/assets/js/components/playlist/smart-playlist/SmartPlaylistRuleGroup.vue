@@ -23,7 +23,8 @@
         variant="success"
         class="aspect-square scale-75 hover:scale-90 active:scale-[80%]"
         rounded
-        title="Remove this rule"
+        title="Add a rule"
+        data-testid="add-rule-btn"
         @click.prevent="addRule"
       >
         <Icon :icon="faPlus" />

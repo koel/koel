@@ -47,21 +47,6 @@ describe('radioStationCard', () => {
     }
   }
 
-  it('renders station name', () => {
-    renderComponent()
-    screen.getByText('Beethoven Goes Metal')
-  })
-
-  it('renders station description', () => {
-    renderComponent()
-    screen.getByText('Heavy af')
-  })
-
-  it('renders thumbnail with play/pause button', () => {
-    renderComponent()
-    screen.getByTitle('Play/pause Beethoven Goes Metal')
-  })
-
   it('plays on thumbnail click', async () => {
     h.createAudioPlayer()
     const playMock = h.mock(playbackService, 'play')

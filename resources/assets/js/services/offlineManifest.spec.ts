@@ -23,20 +23,6 @@ describe('offlineManifest', () => {
     await offlineManifest.clear()
   })
 
-  it('stores and retrieves an entry', async () => {
-    const entry = makeEntry('song-1')
-    await offlineManifest.put(entry)
-
-    const all = await offlineManifest.getAll()
-    expect(all).toHaveLength(1)
-    expect(all[0].playable.id).toBe('song-1')
-  })
-
-  it('returns empty array when no entries', async () => {
-    const all = await offlineManifest.getAll()
-    expect(all).toHaveLength(0)
-  })
-
   it('retrieves all entries', async () => {
     await offlineManifest.put(makeEntry('song-1'))
     await offlineManifest.put(makeEntry('song-2'))

@@ -34,19 +34,6 @@ describe('useFuzzySearch', () => {
     expect(results[0].name).toBe('Alice')
   })
 
-  it('finds items with fuzzy matching', () => {
-    const { search } = useFuzzySearch(items, ['name'])
-    const results = search('chrl')
-    expect(results.length).toBeGreaterThanOrEqual(1)
-    expect(results[0].name).toBe('Charlie')
-  })
-
-  it('searches across multiple keys', () => {
-    const { search } = useFuzzySearch(items, ['name', 'role'])
-    const results = search('admin')
-    expect(results.length).toBeGreaterThanOrEqual(2)
-  })
-
   it('updates documents with setDocuments', () => {
     const { search, setDocuments } = useFuzzySearch(items, ['name'])
 

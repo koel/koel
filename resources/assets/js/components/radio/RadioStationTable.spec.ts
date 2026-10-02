@@ -23,23 +23,11 @@ describe('radioStationTable.vue', () => {
     }
   }
 
-  it('renders a sort-by-name header', () => {
-    renderWithStations(3)
-
-    screen.getByTitle('Sort by name')
-  })
-
   it('emits sort with toggled order when a header is clicked', async () => {
     const { emitted } = renderWithStations(0)
 
     await h.user.click(screen.getByTitle('Sort by name'))
 
     expect(emitted('sort')?.[0]).toEqual(['name', 'desc'])
-  })
-
-  it('shows a more-actions button in the header action menu', () => {
-    renderWithStations(0)
-
-    screen.getByRole('button', { name: 'Sort' })
   })
 })

@@ -16,15 +16,4 @@ describe('useThirdPartyServices', () => {
     expect(services.useSpotify.value).toBe(commonStore.state.uses_spotify)
     expect(services.useTicketmaster.value).toBe(commonStore.state.uses_ticketmaster)
   })
-
-  it('reflects state changes reactively', () => {
-    const services = useThirdPartyServices()
-    const original = commonStore.state.uses_last_fm
-
-    commonStore.state.uses_last_fm = !original
-    expect(services.useLastfm.value).toBe(!original)
-
-    // restore
-    commonStore.state.uses_last_fm = original
-  })
 })

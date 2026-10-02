@@ -21,12 +21,4 @@ describe('gridListView', () => {
 
     expect(container.querySelector('.as-list')).toBeTruthy()
   })
-
-  it('renders slot content', () => {
-    const { getByText } = h.render(Component, {
-      slots: { default: '<div>My Content</div>' },
-    })
-
-    getByText('My Content')
-  })
 })

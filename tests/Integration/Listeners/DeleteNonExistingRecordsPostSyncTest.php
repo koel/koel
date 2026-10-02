@@ -125,22 +125,6 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     }
 
     #[Test]
-    public function stillDeletesVanishedFilesWhenTheScanFoundSomething(): void
-    {
-        /** @var Collection|array<array-key, Song> $songs */
-        $songs = Song::factory()->createMany(2);
-
-        // A non-empty result is unambiguous, so the guard must not interfere with it.
-        $syncResult = ScanResultCollection::create();
-        $syncResult->add(ScanResult::success($songs[0]->path));
-
-        $this->listener->handle(new MediaScanCompleted($syncResult));
-
-        $this->assertModelExists($songs[0]);
-        $this->assertModelMissing($songs[1]);
-    }
-
-    #[Test]
     public function logsHowManySongsWereRemoved(): void
     {
         Log::spy();

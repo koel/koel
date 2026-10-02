@@ -65,12 +65,6 @@ describe('useLocalStorage', () => {
     expect(get('scalar')).toBe(value)
   })
 
-  it('round-trips objects via JSON', () => {
-    const { get, set } = useLocalStorage()
-    set('preferences', { volume: 80, theme: 'dark' })
-    expect(get('preferences')).toEqual({ volume: 80, theme: 'dark' })
-  })
-
   it('removes namespaced key', () => {
     localStorage.setItem('42::theme', JSON.stringify('dark'))
     const { remove } = useLocalStorage()

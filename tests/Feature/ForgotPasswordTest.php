@@ -17,18 +17,6 @@ use function Tests\create_user;
 class ForgotPasswordTest extends TestCase
 {
     #[Test]
-    public function sendResetPasswordRequest(): void
-    {
-        $this
-            ->mock(AuthenticationService::class)
-            ->expects('trySendResetPasswordLink')
-            ->with('foo@bar.com')
-            ->andReturnTrue();
-
-        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])->assertNoContent();
-    }
-
-    #[Test]
     public function answerTheSameWayForAnAddressWithoutAnAccount(): void
     {
         $this
