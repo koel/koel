@@ -21,4 +21,12 @@ class AnalyzeSongAudioJobTest extends TestCase
 
         (new AnalyzeSongAudioJob($song))->handle($analyzer);
     }
+
+    #[Test]
+    public function outlastTheLongestAllowedAnalysis(): void
+    {
+        $song = Song::factory()->createOne();
+
+        self::assertGreaterThan(AudioAnalyzer::TIMEOUT_SECONDS, (new AnalyzeSongAudioJob($song))->timeout);
+    }
 }

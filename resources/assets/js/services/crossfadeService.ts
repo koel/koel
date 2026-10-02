@@ -1,6 +1,6 @@
 import { playableStore } from '@/stores/playableStore'
 import { logger } from '@/utils/logger'
-import { dbToGain } from '@/services/audioService'
+import { audioService } from '@/services/audioService'
 import { volumeNormalizer } from '@/services/volumeNormalizer'
 
 interface CrossfadeState {
@@ -23,7 +23,7 @@ export const crossfadeService = {
   },
 
   /**
-   * Start crossfading. The incoming track plays through a standalone audio element
+   * Start crossfading. The incoming track plays through a secondary audio element
    * with volume controlled directly. The outgoing track is faded out by the caller.
    */
   start(nextPlayable: Playable, duration: number, currentVolume: number): boolean {
@@ -34,6 +34,10 @@ export const crossfadeService = {
       incomingAudio.crossOrigin = 'anonymous'
       incomingAudio.src = playableStore.getSourceUrl(nextPlayable)
       incomingAudio.volume = 0
+
+      if (audioService.context) {
+        audioService.connectCrossfadeElement(incomingAudio, volumeNormalizer.computeGainDb(nextPlayable))
+      }
 
       const state: CrossfadeState = {
         incomingAudio,
@@ -49,8 +53,7 @@ export const crossfadeService = {
         .then(() => {
           const startTime = performance.now()
           const durationMs = duration * 1000
-          const normalizedVolume =
-            (currentVolume / 10) * Math.min(1, dbToGain(volumeNormalizer.computeGainDb(nextPlayable)))
+          const normalizedVolume = currentVolume / 10
 
           const step = () => {
             if (this.state !== state) {
@@ -97,6 +100,7 @@ export const crossfadeService = {
     incomingAudio.pause()
     incomingAudio.removeAttribute('src')
     incomingAudio.load()
+    audioService.disconnectCrossfadeElement()
 
     this.state = null
   },

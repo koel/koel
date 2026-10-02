@@ -1,12 +1,12 @@
 ---
-description: Playing every song at about the same loudness and showing its waveform in the progress bar.
+description: Evening out loudness between songs and showing each song's waveform behind the player.
 ---
 
 # Volume Normalization & Waveforms
 
-With volume normalization, Koel plays every song at about the same loudness, so a quiet old record and a loud new one
-never make you reach for the volume. Koel also shows each song's waveform in the progress bar, so you can see the quiet
-and loud parts at a glance.
+With volume normalization, Koel turns loud songs down and quiet songs up, so a quiet old record and a loud new one
+rarely make you reach for the volume. A quiet song is only turned up as far as it can go without clipping. Koel also
+shows each song's waveform behind the player, so you can see the quiet and loud parts at a glance.
 
 ## Requirements
 

@@ -1,31 +1,17 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import { waveformService } from './waveformService'
 
 describe('waveformService', () => {
   const h = createHarness()
 
-  it('fetches and caches the levels of a song', async () => {
+  it('fetches the levels of a song', async () => {
     const song = h.factory('song').make()
-    h.mock(cache, 'has', false)
     const getMock = h.mock(http, 'get').mockResolvedValue({ levels: [0.1, 0.5] })
-    const setCacheMock = h.mock(cache, 'set')
 
     expect(await waveformService.fetchLevels(song)).toEqual([0.1, 0.5])
     expect(getMock).toHaveBeenCalledWith(`songs/${song.id}/waveform`)
-    expect(setCacheMock).toHaveBeenCalledWith(['song.waveform', song.id], [0.1, 0.5])
-  })
-
-  it('gets the levels from cache', async () => {
-    const song = h.factory('song').make()
-    h.mock(cache, 'has', true)
-    h.mock(cache, 'get', [0.3])
-    const getMock = h.mock(http, 'get')
-
-    expect(await waveformService.fetchLevels(song)).toEqual([0.3])
-    expect(getMock).not.toHaveBeenCalled()
   })
 
   it('draws one bar per group of levels above the middle, relative to the loudest bar', () => {

@@ -16,6 +16,8 @@ export const audioService = {
   source: null! as MediaElementAudioSourceNode,
   element: null! as HTMLMediaElement,
   normalizationGainNode: null! as GainNode,
+  crossfadeSource: null as MediaElementAudioSourceNode | null,
+  crossfadeGainNode: null as GainNode | null,
   preampGainNode: null! as GainNode,
   analyzer: null! as AnalyserNode,
 
@@ -82,8 +84,37 @@ export const audioService = {
     }
 
     this.element = newElement
-    this.source = this.context.createMediaElementSource(newElement)
+
+    if (this.crossfadeSource?.mediaElement === newElement) {
+      this.source = this.crossfadeSource
+      this.crossfadeSource = null
+      this.disconnectCrossfadeElement()
+    } else {
+      this.source = this.context.createMediaElementSource(newElement)
+    }
+
     this.source.connect(this.normalizationGainNode)
+  },
+
+  /**
+   * Route a crossfade's incoming element through the equalizer, with its own normalization gain until it takes over.
+   */
+  connectCrossfadeElement(element: HTMLMediaElement, normalizationGainDb: number) {
+    this.disconnectCrossfadeElement()
+
+    this.crossfadeGainNode = this.context.createGain()
+    this.crossfadeGainNode.gain.value = dbToGain(normalizationGainDb)
+    this.crossfadeGainNode.connect(this.preampGainNode)
+
+    this.crossfadeSource = this.context.createMediaElementSource(element)
+    this.crossfadeSource.connect(this.crossfadeGainNode)
+  },
+
+  disconnectCrossfadeElement() {
+    this.crossfadeSource?.disconnect()
+    this.crossfadeGainNode?.disconnect()
+    this.crossfadeSource = null
+    this.crossfadeGainNode = null
   },
 
   changePreampGain(db: number) {

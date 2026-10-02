@@ -9,6 +9,10 @@ use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 #[DeleteWhenMissingModels]
 class AnalyzeSongAudioJob extends QueuedJob
 {
+    private const int TIMEOUT_MARGIN_SECONDS = 30;
+
+    public int $timeout = AudioAnalyzer::TIMEOUT_SECONDS + self::TIMEOUT_MARGIN_SECONDS;
+
     public function __construct(
         private readonly Song $song,
     ) {}

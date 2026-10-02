@@ -1,4 +1,3 @@
-import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 
 const BAR_WIDTH = 3
@@ -8,14 +7,7 @@ const REFLECTION_OPACITY = 0.35
 
 export const waveformService = {
   async fetchLevels(song: Song) {
-    const cacheKey = ['song.waveform', song.id]
-
-    if (cache.has(cacheKey)) {
-      return cache.get<number[]>(cacheKey)
-    }
-
     const { levels } = await http.get<{ levels: number[] }>(`songs/${song.id}/waveform`)
-    cache.set(cacheKey, levels)
 
     return levels
   },

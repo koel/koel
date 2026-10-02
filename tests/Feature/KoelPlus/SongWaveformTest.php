@@ -22,7 +22,8 @@ class SongWaveformTest extends PlusTestCase
             ->getAs("api/songs/{$song->id}/waveform", $user)
             ->assertOk()
             ->assertExactJson(['levels' => [0.1, 0.5, 1.0]])
-            ->assertHeader('ETag');
+            ->assertHeader('ETag')
+            ->assertHeader('Cache-Control', 'no-cache, private');
     }
 
     #[Test]

@@ -12,7 +12,7 @@ class AudioAnalyzer
 {
     private const int LEVEL_COUNT = 800;
     private const int SQUARED_SAMPLE_RATE = 100;
-    private const int TIMEOUT_SECONDS = 300;
+    public const int TIMEOUT_SECONDS = 300;
 
     public function __construct(
         #[Config('koel.streaming.ffmpeg_path')]

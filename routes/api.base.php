@@ -167,7 +167,7 @@ Route::prefix('api')
 
             Route::get('songs/{song}/waveform', FetchSongWaveformController::class)->where([
                 'song' => Uuid::REGEX,
-            ])->middleware('cache.headers:private;max_age=86400;etag');
+            ])->middleware('cache.headers:private;no_cache;etag');
 
             Route::apiResource('songs', SongController::class)
                 ->except('update', 'destroy')
