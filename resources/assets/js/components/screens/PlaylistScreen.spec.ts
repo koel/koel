@@ -1,12 +1,18 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
 import Router from '@/router'
 import type { Events } from '@/config/events'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import PlaylistContextMenu from '@/components/playlist/PlaylistContextMenu.vue'
 import Component from './PlaylistScreen.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('playlistScreen.vue', () => {
   const h = createHarness()
@@ -65,6 +71,16 @@ describe('playlistScreen.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
 
     expect(fetchSongsMock).toHaveBeenCalledWith(playlist, true)
+  })
+
+  it('shows Actions menu', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { playlist } = await renderComponent()
+
+    await waitFor(async () => {
+      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+      await assertOpenContextMenu(openContextMenu as Mock, PlaylistContextMenu, { playlist })
+    })
   })
 
   it('goes back to home if playlist is deleted', async () => {

@@ -4,6 +4,8 @@ import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { useContextMenu } from '@/composables/useContextMenu'
 import Component from './UserCard.vue'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import UserContextMenu from '@/components/user/UserContextMenu.vue'
 
 vi.mock('@/composables/useContextMenu')
 
@@ -41,6 +43,22 @@ describe('userCard.vue', () => {
     renderComponent(h.factory('user').make())
 
     expect(screen.queryByRole('link', { name: 'Your Profile' })).toBeNull()
+  })
+
+  it('requests the context menu on right-click', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { user } = renderComponent()
+
+    await h.trigger(screen.getByTestId('user-card'), 'contextMenu')
+    await assertOpenContextMenu(openContextMenu as Mock, UserContextMenu, { user })
+  })
+
+  it('requests the context menu via the More Actions button', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { user } = renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+    await assertOpenContextMenu(openContextMenu as Mock, UserContextMenu, { user })
   })
 
   it('does not show the More Actions button for the current user', () => {

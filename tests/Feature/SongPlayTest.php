@@ -53,6 +53,23 @@ class SongPlayTest extends TestCase
     }
 
     #[Test]
+    public function answerSafarisTwoByteProbe(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $path = test_path('songs/blank.mp3');
+        $song = Song::factory()->createOne(['path' => $path]);
+
+        $this
+            ->get("play/{$song->id}?t=$token->audioToken", ['Range' => 'bytes=0-1'])
+            ->assertStatus(Response::HTTP_PARTIAL_CONTENT)
+            ->assertHeader('content-length', '2')
+            ->assertHeader('content-range', 'bytes 0-1/' . filesize($path));
+    }
+
+    #[Test]
     public function seekToTheBytesAskedFor(): void
     {
         $user = create_user();

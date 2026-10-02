@@ -1,9 +1,15 @@
-import { describe, expect, it } from 'vite-plus/test'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playbackService } from '@/services/RadioPlaybackService'
 import { radioStationStore } from '@/stores/radioStationStore'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import RadioStationContextMenu from '@/components/radio/RadioStationContextMenu.vue'
 import Component from './RadioStationCard.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('radioStationCard', () => {
   const h = createHarness()
@@ -49,6 +55,14 @@ describe('radioStationCard', () => {
     await h.user.click(screen.getByTitle('Play/pause Beethoven Goes Metal'))
 
     expect(playMock).toHaveBeenCalledWith(station)
+  })
+
+  it('requests context menu', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { station } = renderComponent()
+    await h.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
+
+    await assertOpenContextMenu(openContextMenu as Mock, RadioStationContextMenu, { station })
   })
 
   it('shows favorite button when favorited', async () => {

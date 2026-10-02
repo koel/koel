@@ -24,6 +24,16 @@ class ITunesServiceTest extends TestCase
     }
 
     #[Test]
+    public function configuration(): void
+    {
+        config(['koel.services.itunes.enabled' => true]);
+        self::assertTrue($this->service::used());
+
+        config(['koel.services.itunes.enabled' => false]);
+        self::assertFalse($this->service::used());
+    }
+
+    #[Test]
     public function getTrackUrl(): void
     {
         config(['koel.services.itunes.enabled' => true]);

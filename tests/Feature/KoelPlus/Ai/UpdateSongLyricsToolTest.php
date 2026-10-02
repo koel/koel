@@ -55,6 +55,25 @@ class UpdateSongLyricsToolTest extends PlusTestCase
     }
 
     #[Test]
+    public function overwritesExistingLyrics(): void
+    {
+        $song = Song::factory()->for($this->user, 'owner')->createOne([
+            'title' => 'Hotel California',
+            'lyrics' => 'Old lyrics here',
+        ]);
+
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $song->id));
+        $this->tool = app()->make(UpdateSongLyrics::class);
+
+        $this->tool->handle(new Request([
+            'lyrics' => 'On a dark desert highway',
+        ]));
+
+        $song->refresh();
+        self::assertSame('On a dark desert highway', $song->lyrics);
+    }
+
+    #[Test]
     public function returnsErrorWhenSongNotFound(): void
     {
         $response = $this->tool->handle(new Request([

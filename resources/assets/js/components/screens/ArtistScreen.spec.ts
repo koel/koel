@@ -1,5 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
@@ -7,7 +8,12 @@ import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import ArtistContextMenu from '@/components/artist/ArtistContextMenu.vue'
 import Component from './ArtistScreen.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('artistScreen.vue', () => {
   const h = createHarness()
@@ -109,5 +115,15 @@ describe('artistScreen.vue', () => {
   it('does not have a Favorite button if artist is not favorite', async () => {
     await renderComponent('songs', h.factory('artist').make({ favorite: false }))
     expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
+  })
+
+  it('requests Actions menu', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { artist } = await renderComponent()
+
+    await waitFor(async () => {
+      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
+      await assertOpenContextMenu(openContextMenu as Mock, ArtistContextMenu, { artist })
+    })
   })
 })

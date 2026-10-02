@@ -1,18 +1,31 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { shallowRef } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
 import { ContextMenuKey } from '@/config/symbols'
+import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
+import CreateEmbedForm from '@/components/embed/CreateEmbedForm.vue'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({
+    openModal: openModalMock,
+  }),
+}))
 
 import Component from './ArtistContextMenu.vue'
 
 describe('artistContextMenu.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => openModalMock.mockClear(),
+  })
 
   const renderComponent = async (artist?: Artist) => {
     artist =
@@ -65,6 +78,15 @@ describe('artistContextMenu.vue', () => {
     expect(playMock).toHaveBeenCalledWith(songs, true)
   })
 
+  it('downloads', async () => {
+    const mock = h.mock(downloadService, 'fromArtist')
+
+    const { artist } = await renderComponent()
+    await screen.getByText('Download').click()
+
+    expect(mock).toHaveBeenCalledWith(artist)
+  })
+
   it('does not have an option to download if downloading is disabled', async () => {
     commonStore.state.allows_download = false
     await renderComponent()
@@ -81,6 +103,13 @@ describe('artistContextMenu.vue', () => {
   it('does not have an option to download Various Artist', async () => {
     await renderComponent(factory('artist').state('various').make())
     expect(screen.queryByText('Download')).toBeNull()
+  })
+
+  it('requests the embed form', async () => {
+    const { artist } = await renderComponent()
+    await h.user.click(screen.getByText('Embed…'))
+
+    await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: artist })
   })
 
   it('does not have an option to embed when embedding is disabled', async () => {

@@ -14,4 +14,13 @@ describe('imageCropper.vue', () => {
     expect(container.textContent).toBe('')
     screen.getByText('Crop')
   })
+
+  it('emits cancel on cancel click', async () => {
+    const { emitted } = h.render(Component, {
+      props: { source: 'data:image/png;base64,abc' },
+    })
+
+    await h.user.click(screen.getByText('Cancel'))
+    expect(emitted().cancel).toBeTruthy()
+  })
 })

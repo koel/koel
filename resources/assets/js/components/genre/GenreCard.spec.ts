@@ -1,6 +1,13 @@
-import { describe, expect, it } from 'vite-plus/test'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import GenreContextMenu from '@/components/genre/GenreContextMenu.vue'
 import Component from './GenreCard.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('genreCard.vue', () => {
   const h = createHarness()
@@ -30,4 +37,12 @@ describe('genreCard.vue', () => {
   }
 
   it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
+
+  it('requests context menu', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { genre } = renderComponent()
+
+    await h.trigger(screen.getByRole('listitem'), 'contextMenu')
+    await assertOpenContextMenu(openContextMenu as Mock, GenreContextMenu, { genre })
+  })
 })

@@ -7,6 +7,7 @@ import { ContextMenuKey } from '@/config/symbols'
 import { arrayify } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import { screen, waitFor } from '@testing-library/vue'
+import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playlistStore } from '@/stores/playlistStore'
@@ -15,6 +16,7 @@ import { playableStore } from '@/stores/playableStore'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
 import Router from '@/router'
 import EditSongForm from '@/components/playable/EditSongForm.vue'
+import CreateEmbedForm from '@/components/embed/CreateEmbedForm.vue'
 import CreatePlaylistForm from '@/components/playlist/CreatePlaylistForm.vue'
 
 const openModalMock = vi.fn()
@@ -153,6 +155,15 @@ describe('playableContextMenu.vue', () => {
     await h.user.click(screen.getByText('Episode'))
 
     expect(goMock).toHaveBeenCalledWith(`/#/episodes/${episode.id}`)
+  })
+
+  it('downloads', async () => {
+    const downloadMock = h.mock(downloadService, 'fromPlayables')
+    const { playables } = await renderComponent()
+
+    await h.user.click(screen.getByText('Download'))
+
+    expect(downloadMock).toHaveBeenCalledWith(playables)
   })
 
   it('queues', async () => {
@@ -465,6 +476,13 @@ describe('playableContextMenu.vue', () => {
 
     expect(screen.queryByText('Unmark as Private')).toBeNull()
     expect(screen.queryByText('Mark as Private')).toBeNull()
+  })
+
+  it('requests the embed form', async () => {
+    const { playables } = await renderComponent(h.factory('song').make())
+    await h.user.click(screen.getByText('Embed…'))
+
+    await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: playables[0] })
   })
 
   it('does not have an option to embed when embedding is disabled', async () => {

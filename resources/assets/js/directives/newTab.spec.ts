@@ -14,4 +14,19 @@ describe('newTab directive', () => {
     const anchor = container.querySelector('a')!
     expect(anchor.getAttribute('target')).toBe('_blank')
   })
+
+  it('sets target=_blank on multiple anchors', () => {
+    const { container } = h.render({
+      directives: { newTab },
+      template: `
+        <div v-new-tab>
+          <a href="https://a.com">A</a>
+          <a href="https://b.com">B</a>
+        </div>
+      `,
+    })
+
+    const anchors = container.querySelectorAll('a')
+    anchors.forEach(a => expect(a.getAttribute('target')).toBe('_blank'))
+  })
 })

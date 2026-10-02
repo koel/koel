@@ -1,8 +1,14 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import type { Mock } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { useContextMenu } from '@/composables/useContextMenu'
 import Router from '@/router'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import ArtistContextMenu from './ArtistContextMenu.vue'
 import Component from './ArtistRow.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('artistRow.vue', () => {
   const h = createHarness()
@@ -44,5 +50,14 @@ describe('artistRow.vue', () => {
     await h.user.dblClick(screen.getByTestId('artist-row'))
 
     expect(goMock).toHaveBeenCalledWith(expect.stringContaining('/artists/led-zeppelin'))
+  })
+
+  it('opens the context menu on right-click', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { artist } = renderComponent()
+
+    await h.trigger(screen.getByTestId('artist-row'), 'contextMenu')
+
+    await assertOpenContextMenu(openContextMenu as Mock, ArtistContextMenu, { artist })
   })
 })

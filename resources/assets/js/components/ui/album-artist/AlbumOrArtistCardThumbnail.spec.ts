@@ -22,6 +22,15 @@ describe('albumOrArtistCardThumbnail.vue', () => {
     expect(img.src).toBe('https://example.test/artist.jpg')
   })
 
+  it('emits context-menu when the more-actions button is clicked', async () => {
+    const album = h.factory('album').make()
+    const { emitted } = h.render(Component, { props: { entity: album } })
+
+    await h.user.click(screen.getByRole('button', { name: 'More actions' }))
+
+    expect(emitted('context-menu')).toHaveLength(1)
+  })
+
   it('renders the play button with the correct aria label for albums', () => {
     const album = h.factory('album').make({ name: 'Master of Puppets' })
     h.render(Component, { props: { entity: album } })

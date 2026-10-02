@@ -1,11 +1,18 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import type { Mock } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { albumStore } from '@/stores/albumStore'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import AlbumContextMenu from './AlbumContextMenu.vue'
 import Component from './AlbumCard.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('albumCard', () => {
   const h = createHarness()
@@ -43,6 +50,15 @@ describe('albumCard', () => {
     }
   }
 
+  it('downloads', async () => {
+    const mock = h.mock(downloadService, 'fromAlbum')
+    renderComponent()
+
+    await h.user.click(screen.getByTitle('Download all songs in the album IV'))
+
+    expect(mock).toHaveBeenCalledTimes(1)
+  })
+
   it('does not have an option to download if downloading is disabled', async () => {
     commonStore.state.allows_download = false
     renderComponent()
@@ -79,6 +95,14 @@ describe('albumCard', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(album)
     expect(shuffleMock).toHaveBeenCalledWith(songs, true)
+  })
+
+  it('requests context menu', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { album } = renderComponent()
+    await h.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
+
+    await assertOpenContextMenu(openContextMenu as Mock, AlbumContextMenu, { album })
   })
 
   it('shows release year', () => {

@@ -201,4 +201,13 @@ class S3CompatibleStorageTest extends PlusTestCase
             $this->service->locationFromKey('pending/1__random__full.mp3'),
         );
     }
+
+    #[Test]
+    public function getPresignedUrl(): void
+    {
+        $reference = $this->service->storeUploadedFile($this->uploadedFilePath, create_user());
+        $url = $this->service->getPresignedUrl(Str::after($reference->location, 's3://koel/'));
+
+        self::assertStringContainsString(Str::after($reference->location, 's3://koel/'), $url);
+    }
 }

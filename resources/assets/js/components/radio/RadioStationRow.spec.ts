@@ -1,8 +1,14 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import type { Mock } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { useContextMenu } from '@/composables/useContextMenu'
 import { playbackService } from '@/services/RadioPlaybackService'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import RadioStationContextMenu from './RadioStationContextMenu.vue'
 import Component from './RadioStationRow.vue'
+
+vi.mock('@/composables/useContextMenu')
 
 describe('radioStationRow.vue', () => {
   const h = createHarness()
@@ -36,5 +42,14 @@ describe('radioStationRow.vue', () => {
     await h.user.dblClick(screen.getByTestId('radio-station-row'))
 
     expect(playMock).toHaveBeenCalledWith(station)
+  })
+
+  it('opens the context menu on right-click', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { station } = renderComponent()
+
+    await h.trigger(screen.getByTestId('radio-station-row'), 'contextMenu')
+
+    await assertOpenContextMenu(openContextMenu as Mock, RadioStationContextMenu, { station })
   })
 })

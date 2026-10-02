@@ -33,6 +33,30 @@ describe('http service', () => {
     expect(result).toBe('result')
   })
 
+  it('delegates put requests', async () => {
+    const requestMock = h.mock(http, 'request').mockResolvedValue({ data: 'result' })
+
+    await http.put('endpoint', { key: 'value' })
+
+    expect(requestMock).toHaveBeenCalledWith('put', 'endpoint', { key: 'value' })
+  })
+
+  it('delegates patch requests', async () => {
+    const requestMock = h.mock(http, 'request').mockResolvedValue({ data: 'result' })
+
+    await http.patch('endpoint', { key: 'value' })
+
+    expect(requestMock).toHaveBeenCalledWith('patch', 'endpoint', { key: 'value' })
+  })
+
+  it('delegates delete requests', async () => {
+    const requestMock = h.mock(http, 'request').mockResolvedValue({ data: 'result' })
+
+    await http.delete('endpoint', { key: 'value' })
+
+    expect(requestMock).toHaveBeenCalledWith('delete', 'endpoint', { key: 'value' })
+  })
+
   describe('interceptor behavior', () => {
     const originalFetch = globalThis.fetch
 

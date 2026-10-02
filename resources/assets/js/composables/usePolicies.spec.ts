@@ -54,6 +54,24 @@ describe('usePolicies', () => {
     expect(currentUserCan.editSong(h.factory('song').make())).toBe(false)
   })
 
+  it('reads the edit permission embedded in the album', () => {
+    const { currentUserCan } = usePolicies()
+    const editable = h.factory('album').make({ permissions: { edit: true } })
+    const readonly = h.factory('album').make({ permissions: { edit: false } })
+
+    expect(currentUserCan.editAlbum(editable)).toBe(true)
+    expect(currentUserCan.editAlbum(readonly)).toBe(false)
+  })
+
+  it('reads the edit permission embedded in the artist', () => {
+    const { currentUserCan } = usePolicies()
+    const editable = h.factory('artist').make({ permissions: { edit: true } })
+    const readonly = h.factory('artist').make({ permissions: { edit: false } })
+
+    expect(currentUserCan.editArtist(editable)).toBe(true)
+    expect(currentUserCan.editArtist(readonly)).toBe(false)
+  })
+
   it('checks manageSettings permission', () => {
     h.actingAsUser({
       ...h.factory('user').make(),
@@ -102,5 +120,14 @@ describe('usePolicies', () => {
       const { currentUserCan } = usePolicies()
       expect(currentUserCan.uploadSongs()).toBe(false)
     })
+  })
+
+  it('reads the edit permission embedded in the user', () => {
+    const { currentUserCan } = usePolicies()
+    const editable = h.factory('user').make({ permissions: { edit: true, delete: false } })
+    const readonly = h.factory('user').make({ permissions: { edit: false, delete: false } })
+
+    expect(currentUserCan.editUser(editable)).toBe(true)
+    expect(currentUserCan.editUser(readonly)).toBe(false)
   })
 })

@@ -38,6 +38,15 @@ class ListenBrainzTest extends TestCase
     }
 
     #[Test]
+    public function tokenIsRequired(): void
+    {
+        $this
+            ->postAs('api/listenbrainz/token', [], create_user())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrorFor('token');
+    }
+
+    #[Test]
     public function nonStringTokenIsRejectedWithoutCallingListenBrainz(): void
     {
         Saloon::fake([ValidateTokenRequest::class => MockResponse::make(['valid' => true])]);

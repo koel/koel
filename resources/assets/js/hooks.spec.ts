@@ -83,6 +83,7 @@ describe('hooks', () => {
 
     expect(applyFilters<string[]>('constructor', [])).toEqual(['added'])
     expect(applyFilters<string[]>('toString', ['kept'])).toEqual(['kept'])
+    expect(Object.keys(Object)).toEqual([])
 
     removeFilter(handle)
   })

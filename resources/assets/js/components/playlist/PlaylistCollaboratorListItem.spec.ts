@@ -75,4 +75,19 @@ describe('playlistCollaboratorListItem.vue', () => {
 
     screen.getByText('Contributor')
   })
+
+  it('emits the remove event when the remove button is clicked', async () => {
+    const collaborator = h.factory('playlist-collaborator').make()
+    h.actingAsUser()
+    const { emitted } = renderComponent({
+      collaborator,
+      removable: true,
+      manageable: true,
+      role: 'owner',
+    })
+
+    await h.user.click(screen.getByRole('button', { name: 'Remove' }))
+
+    expect(emitted('remove')).toBeTruthy()
+  })
 })

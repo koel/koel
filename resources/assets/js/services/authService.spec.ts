@@ -95,6 +95,52 @@ describe('authService', () => {
     expect(lsGet('audio-token')).toBe('foo')
   })
 
+  it('enrolls in two-factor authentication', async () => {
+    const postMock = h.mock(http, 'post').mockResolvedValue({ provisioning_uri: 'otpauth://totp/...' })
+
+    const result = await authService.enrollTwoFactor()
+
+    expect(postMock).toHaveBeenCalledWith('me/two-factor')
+    expect(result).toEqual({ provisioning_uri: 'otpauth://totp/...' })
+  })
+
+  it('confirms two-factor enrollment and returns the recovery codes', async () => {
+    const postMock = h.mock(http, 'post').mockResolvedValue({ recovery_codes: ['AAAA BBBB', 'CCCC DDDD'] })
+
+    const result = await authService.confirmTwoFactor('123456')
+
+    expect(postMock).toHaveBeenCalledWith('me/two-factor/confirm', { code: '123456' })
+    expect(result).toEqual({ recovery_codes: ['AAAA BBBB', 'CCCC DDDD'] })
+  })
+
+  it('disables two-factor authentication', async () => {
+    const deleteMock = h.mock(http, 'delete')
+
+    await authService.disableTwoFactor('654321')
+
+    expect(deleteMock).toHaveBeenCalledWith('me/two-factor', { code: '654321' })
+  })
+
+  it('regenerates two-factor recovery codes', async () => {
+    const postMock = h.mock(http, 'post').mockResolvedValue({ recovery_codes: ['NEW1 NEW2', 'NEW3 NEW4'] })
+
+    const result = await authService.regenerateRecoveryCodes('123456')
+
+    expect(postMock).toHaveBeenCalledWith('me/two-factor/recovery-codes', { code: '123456' })
+    expect(result).toEqual({ recovery_codes: ['NEW1 NEW2', 'NEW3 NEW4'] })
+  })
+
+  it('changes the password', async () => {
+    const putMock = h.mock(http, 'put')
+
+    await authService.changePassword('old-secret', 'new-secret-1234')
+
+    expect(putMock).toHaveBeenCalledWith('me/password', {
+      current_password: 'old-secret',
+      new_password: 'new-secret-1234',
+    })
+  })
+
   it('redirects after login', async () => {
     const redirectMock = h.mock(authService, 'maybeRedirect')
     lsSet('redirect', 'http://localhost:3000/foo/bar')
@@ -114,6 +160,13 @@ describe('authService', () => {
     await authService.logout()
 
     expect(deleteMock).toHaveBeenCalledWith('me')
+  })
+
+  it('gets profile', async () => {
+    const getMock = h.mock(http, 'get')
+    await authService.getProfile()
+
+    expect(getMock).toHaveBeenCalledWith('me')
   })
 
   it('updates profile', async () => {

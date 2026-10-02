@@ -18,4 +18,13 @@ describe('settingStore', () => {
     expect(putMock).toHaveBeenCalledWith('settings/media-path', { path: '/dev/null' })
     expect(settingStore.state.media_path).toEqual('/dev/null')
   })
+
+  it('updates branding', async () => {
+    const putMock = h.mock(http, 'put')
+    await settingStore.updateBranding({
+      name: 'Koel',
+    })
+
+    expect(putMock).toHaveBeenCalledWith('settings/branding', { name: 'Koel' })
+  })
 })

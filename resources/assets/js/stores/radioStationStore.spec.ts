@@ -54,6 +54,60 @@ describe('radioStationStore', () => {
     expect(store.current).toBeNull()
   })
 
+  it('stores a new station', async () => {
+    const createdStation = h.factory('radio-station').make()
+    const postMock = h.mock(http, 'post').mockResolvedValue(createdStation)
+    const syncMock = h.mock(store, 'sync').mockReturnValue([createdStation])
+
+    const data = {
+      name: 'Test Station',
+      url: 'https://test.com/stream',
+      homepage_url: 'https://test.com',
+      logo: 'data:image/png;base64,whatever',
+      description: 'A test radio station',
+      is_public: true,
+    }
+
+    await store.store(data)
+
+    expect(postMock).toHaveBeenCalledWith('radio/stations', data)
+    expect(syncMock).toHaveBeenCalledWith(createdStation)
+  })
+
+  it.each([[true], [false]])('fetches all stations with favorites only set to %s', async favoritesOnly => {
+    const fetchedStations = h.factory('radio-station').make(5)
+    const getMock = h.mock(http, 'get').mockResolvedValue(fetchedStations)
+    const syncMock = h.mock(store, 'sync').mockReturnValue(fetchedStations)
+
+    const stations = await store.fetchAll(favoritesOnly)
+
+    expect(getMock).toHaveBeenCalledWith(`radio/stations?favorites_only=${favoritesOnly ? 'true' : 'false'}`)
+    expect(syncMock).toHaveBeenCalledWith(fetchedStations)
+    expect(stations).toEqual(fetchedStations)
+  })
+
+  it('updates a station', async () => {
+    const station = h.factory('radio-station').make()
+
+    const updatedData = {
+      url: 'https://test.com/new-stream',
+      homepage_url: 'https://test.com',
+      logo: 'data:image/png;base64,updatedLogo',
+      description: 'Updated description',
+      is_public: false,
+      name: 'Updated Station',
+    }
+
+    const putMock = h.mock(http, 'put').mockResolvedValue({ ...station, ...updatedData })
+    const syncMock = h.mock(store, 'sync').mockReturnValue([{ ...station, ...updatedData }])
+
+    const updatedStation = await store.update(station, updatedData)
+
+    expect(putMock).toHaveBeenCalledWith(`radio/stations/${station.id}`, updatedData)
+    expect(syncMock).toHaveBeenCalledWith({ ...station, ...updatedData })
+    expect(updatedStation.name).toBe('Updated Station')
+  })
+
   it('deletes a station', async () => {
     const station = h.factory('radio-station').make()
     store.state.stations.push(station)

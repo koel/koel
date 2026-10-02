@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { fireEvent, screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { equalizerStore } from '@/stores/equalizerStore'
 import Component from './Equalizer.vue'
@@ -49,5 +49,13 @@ describe('equalizer.vue', () => {
     screen.getByText('Preamp')
     screen.getByText('Close')
     expect(container.querySelectorAll('.slider').length).toBeGreaterThan(0)
+  })
+
+  it('emits close when the Close button is clicked', async () => {
+    const { emitted } = h.render(Component)
+
+    await fireEvent.click(screen.getByText('Close'))
+
+    expect(emitted().close).toHaveLength(1)
   })
 })
