@@ -14,8 +14,10 @@ class FetchSongWaveformController extends Controller
     {
         $this->authorize('access', $song);
 
-        abort_unless((bool) $song->waveform, Response::HTTP_NOT_FOUND);
+        $song->load('analysis');
 
-        return response()->json(['levels' => $song->waveform->levels]);
+        abort_unless((bool) $song->analysis, Response::HTTP_NOT_FOUND);
+
+        return response()->json(['levels' => $song->analysis->levels]);
     }
 }

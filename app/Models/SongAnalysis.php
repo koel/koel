@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Database\Factories\SongWaveformFactory;
+use Database\Factories\SongAnalysisFactory;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,19 +12,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property string $song_id
  * @property Song $song
+ * @property float $loudness The integrated loudness in LUFS
+ * @property float $true_peak The true peak in dBTP
  * @property array<float> $levels The RMS level of each evenly sized slice of the song, between 0 and 1
  *
- * @method static SongWaveformFactory factory(...$parameters)
+ * @method static SongAnalysisFactory factory(...$parameters)
  */
-#[Table(key: 'song_id', keyType: 'string', incrementing: false)]
+#[Table(name: 'song_analyses', key: 'song_id', keyType: 'string', incrementing: false)]
 #[Unguarded]
-class SongWaveform extends Model
+class SongAnalysis extends Model
 {
     use HasFactory;
 
     protected function casts(): array
     {
         return [
+            'loudness' => 'float',
+            'true_peak' => 'float',
             'levels' => 'array',
         ];
     }

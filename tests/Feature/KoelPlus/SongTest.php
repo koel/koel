@@ -3,6 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
+use App\Models\SongAnalysis;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -122,7 +123,8 @@ class SongTest extends PlusTestCase
     public function exposeLoudness(): void
     {
         $user = create_user();
-        $song = Song::factory()->for($user, 'owner')->createOne(['loudness' => -10.2, 'true_peak' => 1.5]);
+        $song = Song::factory()->for($user, 'owner')->createOne();
+        SongAnalysis::factory()->for($song)->createOne(['loudness' => -10.2, 'true_peak' => 1.5]);
 
         $this
             ->getAs("api/songs/{$song->id}", $user)

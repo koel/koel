@@ -10,6 +10,7 @@ use App\Models\Artist;
 use App\Models\Favorite;
 use App\Models\Rating;
 use App\Models\Song;
+use App\Models\SongAnalysis;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\Test;
@@ -417,7 +418,8 @@ class SongTest extends TestCase
     #[Test]
     public function hideLoudnessWithoutKoelPlus(): void
     {
-        $song = Song::factory()->createOne(['loudness' => -10.2, 'true_peak' => 1.5]);
+        $song = Song::factory()->createOne();
+        SongAnalysis::factory()->for($song)->createOne();
 
         $this->getAs("api/songs/{$song->id}")->assertJsonMissingPath('loudness')->assertJsonMissingPath('true_peak');
     }

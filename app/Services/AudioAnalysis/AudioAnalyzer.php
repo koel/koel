@@ -4,7 +4,7 @@ namespace App\Services\AudioAnalysis;
 
 use App\Exceptions\AudioAnalysisFailedException;
 use App\Models\Song;
-use App\Models\SongWaveform;
+use App\Models\SongAnalysis;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\Process;
 
@@ -55,9 +55,9 @@ class AudioAnalyzer
 
         throw_if($loudness === null || $truePeak === null, AudioAnalysisFailedException::class);
 
-        $song->update(['loudness' => $loudness, 'true_peak' => $truePeak]);
-
-        SongWaveform::query()->updateOrCreate(['song_id' => $song->id], [
+        SongAnalysis::query()->updateOrCreate(['song_id' => $song->id], [
+            'loudness' => $loudness,
+            'true_peak' => $truePeak,
             'levels' => self::computeLevels($result->output()),
         ]);
     }

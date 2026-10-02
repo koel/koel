@@ -4,7 +4,7 @@ namespace Tests\Unit\Services\AudioAnalysis;
 
 use App\Exceptions\AudioAnalysisFailedException;
 use App\Models\Song;
-use App\Models\SongWaveform;
+use App\Models\SongAnalysis;
 use App\Services\AudioAnalysis\AudioAnalyzer;
 use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\Process;
@@ -45,9 +45,9 @@ class AudioAnalyzerTest extends TestCase
 
         $song->refresh();
 
-        self::assertSame(-10.2, $song->loudness);
-        self::assertSame(1.5, $song->true_peak);
-        self::assertSame([...array_fill(0, 400, 0.25), ...array_fill(0, 400, 0.75)], $song->waveform->levels);
+        self::assertSame(-10.2, $song->analysis->loudness);
+        self::assertSame(1.5, $song->analysis->true_peak);
+        self::assertSame([...array_fill(0, 400, 0.25), ...array_fill(0, 400, 0.75)], $song->analysis->levels);
 
         Process::assertRan(static fn (PendingProcess $process): bool => in_array(
             '/music/song.mp3',
@@ -60,7 +60,7 @@ class AudioAnalyzerTest extends TestCase
     public function replaceAnExistingWaveform(): void
     {
         $song = Song::factory()->createOne();
-        SongWaveform::factory()->for($song)->createOne();
+        SongAnalysis::factory()->for($song)->createOne();
 
         Process::fake(['*' => Process::result(
             output: self::makeSquaredSamples(8, 0.25),
@@ -69,7 +69,7 @@ class AudioAnalyzerTest extends TestCase
 
         (new AudioAnalyzer('/usr/bin/ffmpeg'))->analyzeSong($song, '/music/song.mp3');
 
-        self::assertSame(array_fill(0, 8, 0.5), $song->refresh()->waveform->levels);
+        self::assertSame(array_fill(0, 8, 0.5), $song->refresh()->analysis->levels);
     }
 
     #[Test]

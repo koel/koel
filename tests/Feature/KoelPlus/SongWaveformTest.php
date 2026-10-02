@@ -3,7 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
-use App\Models\SongWaveform;
+use App\Models\SongAnalysis;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -16,7 +16,7 @@ class SongWaveformTest extends PlusTestCase
     {
         $user = create_user();
         $song = Song::factory()->for($user, 'owner')->createOne();
-        SongWaveform::factory()->for($song)->createOne(['levels' => [0.1, 0.5, 1.0]]);
+        SongAnalysis::factory()->for($song)->createOne(['levels' => [0.1, 0.5, 1.0]]);
 
         $this
             ->getAs("api/songs/{$song->id}/waveform", $user)
@@ -38,7 +38,7 @@ class SongWaveformTest extends PlusTestCase
     public function forbiddenForAnInaccessibleSong(): void
     {
         $song = Song::factory()->private()->createOne();
-        SongWaveform::factory()->for($song)->createOne();
+        SongAnalysis::factory()->for($song)->createOne();
 
         $this->getAs("api/songs/{$song->id}/waveform")->assertForbidden();
     }

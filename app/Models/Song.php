@@ -64,9 +64,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property int $track
  * @property ?int $year
  * @property ?int $file_size The size in bytes of the song file, if available.
- * @property ?float $loudness The integrated loudness in LUFS, if analyzed
- * @property ?float $true_peak The true peak in dBTP, if analyzed
- * @property ?SongWaveform $waveform
+ * @property ?SongAnalysis $analysis The loudness and levels, if analyzed. Loaded without levels by default.
  * @property string $id
  * @property string $lyrics
  * @property string $path
@@ -115,8 +113,6 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
             'lyrics' => SongLyricsCast::class,
             'length' => 'float',
             'file_size' => 'int',
-            'loudness' => 'float',
-            'true_peak' => 'float',
             'mtime' => 'int',
             'track' => 'int',
             'disc' => 'int',
@@ -129,7 +125,15 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
         ];
     }
 
-    protected $with = ['album', 'artist', 'album.artist', 'podcast', 'genres', 'owner'];
+    protected $with = [
+        'album',
+        'artist',
+        'album.artist',
+        'podcast',
+        'genres',
+        'owner',
+        'analysis:song_id,loudness,true_peak',
+    ];
 
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {
