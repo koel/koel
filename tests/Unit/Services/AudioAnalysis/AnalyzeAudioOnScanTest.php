@@ -23,9 +23,11 @@ class AnalyzeAudioOnScanTest extends TestCase
         $analyzer->expects('analyzeSong')->never();
         Dispatcher::expects('dispatch')->never();
 
-        (new AnalyzeAudioOnScan(app(LocalStorage::class), $analyzer, enabled: true))->analyzeSongIfEnabled(
-            $song,
-            '/music/song.mp3',
-        );
+        (new AnalyzeAudioOnScan(
+            app(LocalStorage::class),
+            $analyzer,
+            enabled: true,
+            ffmpegPath: PHP_BINARY,
+        ))->analyzeSongIfEnabled($song, '/music/song.mp3');
     }
 }

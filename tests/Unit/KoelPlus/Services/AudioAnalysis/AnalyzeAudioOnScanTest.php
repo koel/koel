@@ -41,10 +41,12 @@ class AnalyzeAudioOnScanTest extends PlusTestCase
         $this->analyzer->expects('analyzeSong')->with($song, '/tmp/upload/song.mp3');
         Dispatcher::expects('dispatch')->never();
 
-        (new AnalyzeAudioOnScan(self::makeRemoteStorage(), $this->analyzer, enabled: true))->analyzeSongIfEnabled(
-            $song,
-            '/tmp/upload/song.mp3',
-        );
+        (new AnalyzeAudioOnScan(
+            self::makeRemoteStorage(),
+            $this->analyzer,
+            enabled: true,
+            ffmpegPath: PHP_BINARY,
+        ))->analyzeSongIfEnabled($song, '/tmp/upload/song.mp3');
     }
 
     #[Test]
@@ -55,10 +57,12 @@ class AnalyzeAudioOnScanTest extends PlusTestCase
         $this->analyzer->expects('analyzeSong')->never();
         Dispatcher::expects('dispatch')->with(Mockery::type(AnalyzeSongAudioJob::class));
 
-        (new AnalyzeAudioOnScan(app(LocalStorage::class), $this->analyzer, enabled: true))->analyzeSongIfEnabled(
-            $song,
-            '/music/song.mp3',
-        );
+        (new AnalyzeAudioOnScan(
+            app(LocalStorage::class),
+            $this->analyzer,
+            enabled: true,
+            ffmpegPath: PHP_BINARY,
+        ))->analyzeSongIfEnabled($song, '/music/song.mp3');
     }
 
     #[Test]
@@ -82,10 +86,12 @@ class AnalyzeAudioOnScanTest extends PlusTestCase
 
         $this->analyzer->expects('analyzeSong')->andThrow(new RuntimeException('ffmpeg failed'));
 
-        (new AnalyzeAudioOnScan(self::makeRemoteStorage(), $this->analyzer, enabled: true))->analyzeSongIfEnabled(
-            $song,
-            '/tmp/upload/song.mp3',
-        );
+        (new AnalyzeAudioOnScan(
+            self::makeRemoteStorage(),
+            $this->analyzer,
+            enabled: true,
+            ffmpegPath: PHP_BINARY,
+        ))->analyzeSongIfEnabled($song, '/tmp/upload/song.mp3');
 
         $this->addToAssertionCount(1);
     }
@@ -97,11 +103,29 @@ class AnalyzeAudioOnScanTest extends PlusTestCase
 
         Dispatcher::expects('dispatch')->andThrow(new RuntimeException('ffmpeg failed'));
 
-        (new AnalyzeAudioOnScan(app(LocalStorage::class), $this->analyzer, enabled: true))->analyzeSongIfEnabled(
-            $song,
-            '/music/song.mp3',
-        );
+        (new AnalyzeAudioOnScan(
+            app(LocalStorage::class),
+            $this->analyzer,
+            enabled: true,
+            ffmpegPath: PHP_BINARY,
+        ))->analyzeSongIfEnabled($song, '/music/song.mp3');
 
         $this->addToAssertionCount(1);
+    }
+
+    #[Test]
+    public function doNothingWithoutFfmpeg(): void
+    {
+        $song = Song::factory()->createOne(['storage' => SongStorageType::S3]);
+
+        $this->analyzer->expects('analyzeSong')->never();
+        Dispatcher::expects('dispatch')->never();
+
+        (new AnalyzeAudioOnScan(
+            self::makeRemoteStorage(),
+            $this->analyzer,
+            enabled: true,
+            ffmpegPath: '/nonexistent/ffmpeg',
+        ))->analyzeSongIfEnabled($song, '/tmp/upload/song.mp3');
     }
 }

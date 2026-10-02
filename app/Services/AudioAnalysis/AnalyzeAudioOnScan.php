@@ -17,11 +17,13 @@ class AnalyzeAudioOnScan
         private readonly AudioAnalyzer $analyzer,
         #[Config('koel.scan.analyze_audio')]
         private readonly bool $enabled = false,
+        #[Config('koel.streaming.ffmpeg_path')]
+        private readonly ?string $ffmpegPath = null,
     ) {}
 
     public function analyzeSongIfEnabled(Song $song, string $localFilePath): void
     {
-        if (!$this->enabled || License::isCommunity()) {
+        if (!$this->canAnalyze()) {
             return;
         }
 
@@ -32,5 +34,10 @@ class AnalyzeAudioOnScan
         }
 
         rescue(static fn (): mixed => Dispatcher::dispatch(new AnalyzeSongAudioJob($song)));
+    }
+
+    private function canAnalyze(): bool
+    {
+        return $this->enabled && License::isPlus() && $this->ffmpegPath && is_executable($this->ffmpegPath);
     }
 }
