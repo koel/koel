@@ -9,7 +9,7 @@
     <slot name="header" />
 
     <main class="scroll-mask-y overflow-scroll flex flex-col b-16 md:b-6 p-6 flex-1 place-content-start">
-      <HookSlot :context="{ screen: getCurrentScreen() }" name="screen.top" />
+      <HookSlot :context="{ screen: getCurrentScreen() }" name="screen.header" />
       <slot />
     </main>
   </section>
