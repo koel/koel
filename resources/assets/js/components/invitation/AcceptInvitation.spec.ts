@@ -1,8 +1,10 @@
+import { defineComponent } from 'vue'
 import { screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import factory from '@/__tests__/factory'
 import { invitationService } from '@/services/invitationService'
+import { addToHookSlot, removeFilter } from '@/hooks'
 import Component from './AcceptInvitation.vue'
 
 describe('acceptInvitation.vue', () => {
@@ -28,5 +30,25 @@ describe('acceptInvitation.vue', () => {
     await h.user.click(screen.getByTestId('submit'))
 
     expect(acceptMock).toHaveBeenCalledWith('73a36cfd-4afd-48ae-b031-ae5488858375', 'Bruce Dickinson', 'top-secret')
+  })
+
+  it('renders what hooks add below the form, with the invitee email', async () => {
+    h.mock(invitationService, 'getUserProspect').mockResolvedValue(
+      factory('user').state('prospect').make({ email: 'invitee@koel.test' }),
+    )
+
+    const handle = addToHookSlot(
+      'invitation.bottom',
+      defineComponent({
+        props: { email: { type: String, required: true } },
+        template: '<p data-testid="hooked">{{ email }}</p>',
+      }),
+    )
+
+    h.visit('/invitation/accept/73a36cfd-4afd-48ae-b031-ae5488858375').render(Component)
+
+    expect((await screen.findByTestId('hooked')).textContent).toBe('invitee@koel.test')
+
+    removeFilter(handle)
   })
 })
