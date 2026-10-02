@@ -10,6 +10,7 @@ use App\Models\Artist;
 use App\Models\Favorite;
 use App\Models\Rating;
 use App\Models\Song;
+use App\Models\SongAnalysis;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\Test;
@@ -412,5 +413,14 @@ class SongTest extends TestCase
 
         self::assertSame(0, $song->track);
         self::assertSame(1, $song->disc);
+    }
+
+    #[Test]
+    public function hideLoudnessWithoutKoelPlus(): void
+    {
+        $song = Song::factory()->createOne();
+        SongAnalysis::factory()->for($song)->createOne();
+
+        $this->getAs("api/songs/{$song->id}")->assertJsonMissingPath('loudness')->assertJsonMissingPath('true_peak');
     }
 }

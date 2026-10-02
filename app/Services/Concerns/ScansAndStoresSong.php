@@ -4,6 +4,7 @@ namespace App\Services\Concerns;
 
 use App\Models\Song;
 use App\Models\User;
+use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\SongStorage;
@@ -20,6 +21,7 @@ trait ScansAndStoresSong
         SongService $songService,
         SongStorage $storage,
         TranscodeOnScan $transcodeOnScan,
+        AnalyzeAudioOnScan $analyzeAudioOnScan,
     ): Song {
         $config = ScanConfiguration::make(
             owner: $owner,
@@ -37,6 +39,7 @@ trait ScansAndStoresSong
         }
 
         $transcodeOnScan->transcodeSongIfNeeded($song, $localFilePath);
+        $analyzeAudioOnScan->analyzeSongIfEnabled($song, $localFilePath);
 
         return $song;
     }

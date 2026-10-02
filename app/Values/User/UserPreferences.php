@@ -48,6 +48,8 @@ use Webmozart\Assert\Assert;
  * @property bool $supportBarNoBugging
  * @property bool $continuousPlayback
  * @property int $crossfadeDuration
+ * @property bool $normalizeVolume
+ * @property bool $showWaveform
  * @property int $lyricsZoomLevel
  * @property string $visualizer
  * @property ?string $activeExtraPanelTab

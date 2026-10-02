@@ -5,7 +5,14 @@
     @mousemove="showControls"
     @contextmenu.prevent="requestContextMenu"
   >
-    <AudioPlayer v-show="currentStreamable" :class="isRadio && 'pointer-events-none'" />
+    <AudioPlayer v-show="currentStreamable" v-slot="{ progress }" :class="isRadio && 'pointer-events-none'">
+      <SongWaveform
+        v-if="currentSong"
+        :song="currentSong"
+        :progress
+        class="absolute inset-x-0 bottom-3 top-[calc(var(--progress-bar-height)+--spacing(3))]"
+      />
+    </AudioPlayer>
 
     <div class="fullscreen-backdrop hidden" />
 
@@ -34,12 +41,14 @@ import { CurrentStreamableKey } from '@/config/symbols'
 import { artistStore } from '@/stores/artistStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { audioService } from '@/services/audioService'
+import { volumeNormalizer } from '@/services/volumeNormalizer'
 import { playback } from '@/services/playbackManager'
 import { useContextMenu } from '@/composables/useContextMenu'
 
 import AudioPlayer from '@/components/layout/app-footer/AudioPlayer.vue'
 import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vue'
 import PlaybackControls from '@/components/layout/app-footer/FooterPlaybackControls.vue'
+import SongWaveform from '@/components/layout/app-footer/SongWaveform.vue'
 
 const SongInfo = defineAsyncComponent(() => import('@/components/layout/app-footer/FooterPlayableInfo.vue'))
 const RadioStationInfo = defineAsyncComponent(() => import('@/components/layout/app-footer/FooterRadioStationInfo.vue'))
@@ -59,6 +68,9 @@ const { openContextMenu } = useContextMenu()
 
 const showingUpNext = computed(() => nextPlayable.value && isFullscreen.value)
 const isRadio = computed(() => currentStreamable.value && isRadioStation(currentStreamable.value))
+const currentSong = computed(() =>
+  currentStreamable.value && isSong(currentStreamable.value) ? currentStreamable.value : null,
+)
 
 const requestContextMenu = (event: MouseEvent) => {
   if (document.fullscreenElement || !currentStreamable.value) {
@@ -119,8 +131,13 @@ const initPlaybackRelatedServices = async () => {
   // If audio context is supported, initialize the audio service which handles audio processing (equalizer, etc.)
   if (isAudioContextSupported) {
     audioService.init(playbackService.media)
+    volumeNormalizer.applyToStreamable(currentStreamable.value)
   }
 }
+
+watch([currentStreamable, () => preferenceStore.normalize_volume], ([streamable]) =>
+  volumeNormalizer.applyToStreamable(streamable),
+)
 
 watch(
   preferenceStore.initialized,

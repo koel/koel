@@ -128,6 +128,8 @@ class SongResource extends JsonResource
             'is_public' => $this->unless($embedding, $this->song->is_public),
             'created_at' => $this->unless($embedding, $this->song->created_at),
             'mbid' => $this->when($musicBrainzEnabled && !$embedding, $this->song->mbid),
+            'loudness' => $this->when($isPlus, $this->song->analysis?->loudness),
+            'true_peak' => $this->when($isPlus, $this->song->analysis?->true_peak),
             'embed_stream_url' => $this->when($embedding, fn () => URL::temporarySignedRoute(
                 'embeds.stream',
                 now()->addDay(),

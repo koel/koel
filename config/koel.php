@@ -26,6 +26,7 @@ return [
         'timeout' => env('APP_MAX_SCAN_TIME', 600),
         'memory_limit' => env('MEMORY_LIMIT'),
         'jobs' => env('SCAN_JOBS', 4),
+        'analyze_audio' => env('ANALYZE_AUDIO_ON_SCAN', false),
     ],
 
     /*

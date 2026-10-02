@@ -39,6 +39,7 @@ use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
 use App\Http\Controllers\API\FetchSongsByIdsController;
 use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\FetchSongsToQueueByGenreController;
+use App\Http\Controllers\API\FetchSongWaveformController;
 use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GetLastfmAuthorizationUrlController;
@@ -163,6 +164,10 @@ Route::prefix('api')
             Route::apiResource('artists.songs', ArtistSongController::class);
 
             Route::post('songs/{song}/scrobble', ScrobbleController::class)->where(['song' => Uuid::REGEX]);
+
+            Route::get('songs/{song}/waveform', FetchSongWaveformController::class)->where([
+                'song' => Uuid::REGEX,
+            ])->middleware('cache.headers:private;no_cache;etag');
 
             Route::apiResource('songs', SongController::class)
                 ->except('update', 'destroy')

@@ -5,6 +5,7 @@ namespace Tests\Unit\Models;
 use App\Enums\SongStorageType;
 use App\Models\Genre;
 use App\Models\Song;
+use App\Models\SongAnalysis;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 use App\Values\SongStorageMetadata\S3LambdaMetadata;
 use Illuminate\Database\Eloquent\Builder;
@@ -110,5 +111,18 @@ class SongTest extends TestCase
         );
 
         self::assertSame([$episode->id], Song::query()->pluck('id')->all());
+    }
+
+    #[Test]
+    public function loadTheAnalysisWithoutWaveform(): void
+    {
+        $song = Song::factory()->createOne();
+        SongAnalysis::factory()->for($song)->createOne(['loudness' => -9.5, 'true_peak' => 0.8]);
+
+        $analysis = Song::query()->findOrFail($song->id)->analysis;
+
+        self::assertSame(-9.5, $analysis->loudness);
+        self::assertSame(0.8, $analysis->true_peak);
+        self::assertArrayNotHasKey('waveform', $analysis->getAttributes());
     }
 }

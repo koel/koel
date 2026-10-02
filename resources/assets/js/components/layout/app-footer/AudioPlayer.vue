@@ -1,6 +1,7 @@
 <template>
   <div class="audio-player" :class="{ loading: isLoading, dragging: isDragging }">
     <audio id="audio-player" class="hidden" crossorigin="anonymous" />
+    <slot :progress />
     <!--
       The hit area is absolutely positioned over the top of the footer,
       extending above and below the visible 4px track for easy clicking.

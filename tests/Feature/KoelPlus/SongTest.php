@@ -3,6 +3,7 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
+use App\Models\SongAnalysis;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -116,5 +117,18 @@ class SongTest extends PlusTestCase
         $ownSongs = Song::factory()->for($currentUser, 'owner')->createMany(2);
 
         $this->deleteAs('api/songs', ['songs' => $ownSongs->modelKeys()], $currentUser)->assertSuccessful();
+    }
+
+    #[Test]
+    public function exposeLoudness(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->for($user, 'owner')->createOne();
+        SongAnalysis::factory()->for($song)->createOne(['loudness' => -10.2, 'true_peak' => 1.5]);
+
+        $this
+            ->getAs("api/songs/{$song->id}", $user)
+            ->assertJsonPath('loudness', -10.2)
+            ->assertJsonPath('true_peak', 1.5);
     }
 }
