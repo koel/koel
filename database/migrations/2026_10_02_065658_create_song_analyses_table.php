@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->string('song_id')->primary();
             $table->float('loudness');
             $table->float('true_peak');
-            $table->json('levels');
+            $table->json('waveform');
             $table->timestamps();
 
             $table->foreign('song_id')->references('id')->on('songs')->cascadeOnDelete()->cascadeOnUpdate();

@@ -5,7 +5,7 @@
     @mousemove="showControls"
     @contextmenu.prevent="requestContextMenu"
   >
-    <AudioPlayer v-show="currentStreamable" :class="isRadio && 'pointer-events-none'" :levels />
+    <AudioPlayer v-show="currentStreamable" :class="isRadio && 'pointer-events-none'" :waveform />
 
     <div class="fullscreen-backdrop hidden" />
 
@@ -56,7 +56,7 @@ let hideControlsTimeout: number
 const root = ref<HTMLElement>()
 const artist = ref<Artist>()
 const nextPlayable = ref<Playable | null>(null)
-const levels = ref<number[]>([])
+const waveform = ref<number[]>([])
 
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root)
 const { openContextMenu } = useContextMenu()
@@ -84,13 +84,13 @@ const requestContextMenu = (event: MouseEvent) => {
 watch(
   currentStreamable,
   async streamable => {
-    levels.value = []
+    waveform.value = []
 
     if (isPlus.value && streamable && isSong(streamable) && streamable.loudness != null) {
-      const fetchedLevels = await waveformService.fetchLevels(streamable).catch(() => [])
+      const fetchedWaveform = await waveformService.fetchWaveform(streamable).catch(() => [])
 
       if (currentStreamable.value === streamable) {
-        levels.value = fetchedLevels
+        waveform.value = fetchedWaveform
       }
     }
   },

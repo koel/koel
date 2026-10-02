@@ -30,7 +30,7 @@ class AudioAnalyzerTest extends TestCase
     }
 
     #[Test]
-    public function storeLoudnessTruePeakAndLevels(): void
+    public function storeLoudnessTruePeakAndWaveform(): void
     {
         $song = Song::factory()->createOne();
 
@@ -47,7 +47,7 @@ class AudioAnalyzerTest extends TestCase
 
         self::assertSame(-10.2, $song->analysis->loudness);
         self::assertSame(1.5, $song->analysis->true_peak);
-        self::assertSame([...array_fill(0, 400, 0.25), ...array_fill(0, 400, 0.75)], $song->analysis->levels);
+        self::assertSame([...array_fill(0, 400, 0.25), ...array_fill(0, 400, 0.75)], $song->analysis->waveform);
 
         Process::assertRan(static fn (PendingProcess $process): bool => in_array(
             '/music/song.mp3',
@@ -69,7 +69,7 @@ class AudioAnalyzerTest extends TestCase
 
         (new AudioAnalyzer('/usr/bin/ffmpeg'))->analyzeSong($song, '/music/song.mp3');
 
-        self::assertSame(array_fill(0, 8, 0.5), $song->refresh()->analysis->levels);
+        self::assertSame(array_fill(0, 8, 0.5), $song->refresh()->analysis->waveform);
     }
 
     #[Test]

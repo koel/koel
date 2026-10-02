@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Song $song
  * @property float $loudness The integrated loudness in LUFS
  * @property float $true_peak The true peak in dBTP
- * @property array<float> $levels The RMS level of each evenly sized slice of the song, between 0 and 1
+ * @property array<float> $waveform The RMS level of each evenly sized slice of the song, between 0 and 1
  *
  * @method static SongAnalysisFactory factory(...$parameters)
  */
@@ -29,7 +29,7 @@ class SongAnalysis extends Model
         return [
             'loudness' => 'float',
             'true_peak' => 'float',
-            'levels' => 'array',
+            'waveform' => 'array',
         ];
     }
 

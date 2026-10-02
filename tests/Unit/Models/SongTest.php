@@ -114,7 +114,7 @@ class SongTest extends TestCase
     }
 
     #[Test]
-    public function loadTheAnalysisWithoutLevels(): void
+    public function loadTheAnalysisWithoutWaveform(): void
     {
         $song = Song::factory()->createOne();
         SongAnalysis::factory()->for($song)->createOne(['loudness' => -9.5, 'true_peak' => 0.8]);
@@ -123,6 +123,6 @@ class SongTest extends TestCase
 
         self::assertSame(-9.5, $analysis->loudness);
         self::assertSame(0.8, $analysis->true_peak);
-        self::assertArrayNotHasKey('levels', $analysis->getAttributes());
+        self::assertArrayNotHasKey('waveform', $analysis->getAttributes());
     }
 }

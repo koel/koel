@@ -18,6 +18,6 @@ class FetchSongWaveformController extends Controller
 
         abort_unless((bool) $song->analysis, Response::HTTP_NOT_FOUND);
 
-        return response()->json(['levels' => $song->analysis->levels]);
+        return response()->json(['waveform' => $song->analysis->waveform]);
     }
 }

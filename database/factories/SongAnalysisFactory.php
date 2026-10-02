@@ -16,7 +16,7 @@ class SongAnalysisFactory extends Factory
             'song_id' => Song::factory(),
             'loudness' => fake()->randomFloat(1, -20, -6),
             'true_peak' => fake()->randomFloat(1, -3, 2),
-            'levels' => array_map(static fn (): float => fake()->randomFloat(3, 0, 1), range(1, 800)),
+            'waveform' => array_map(static fn (): float => fake()->randomFloat(3, 0, 1), range(1, 800)),
         ];
     }
 }

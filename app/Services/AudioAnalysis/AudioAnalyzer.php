@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Process;
 
 class AudioAnalyzer
 {
-    private const int LEVEL_COUNT = 800;
+    private const int WAVEFORM_POINT_COUNT = 800;
     private const int SQUARED_SAMPLE_RATE = 100;
     public const int TIMEOUT_SECONDS = 300;
 
@@ -31,9 +31,9 @@ class AudioAnalyzer
             $filePath,
             '-filter_complex',
             sprintf(
-                '[0:a]asplit=2[loudness][levels];'
+                '[0:a]asplit=2[loudness][waveform];'
                 . '[loudness]ebur128=peak=true:framelog=quiet[loudness_out];'
-                . '[levels]aformat=sample_fmts=flt:channel_layouts=mono,aeval=val(0)*val(0),aresample=%d[levels_out]',
+                . '[waveform]aformat=sample_fmts=flt:channel_layouts=mono,aeval=val(0)*val(0),aresample=%d[waveform_out]',
                 self::SQUARED_SAMPLE_RATE,
             ),
             '-map',
@@ -42,7 +42,7 @@ class AudioAnalyzer
             'null',
             '-',
             '-map',
-            '[levels_out]',
+            '[waveform_out]',
             '-f',
             'f32le',
             '-',
@@ -58,7 +58,7 @@ class AudioAnalyzer
         SongAnalysis::query()->updateOrCreate(['song_id' => $song->id], [
             'loudness' => $loudness,
             'true_peak' => $truePeak,
-            'levels' => self::computeLevels($result->output()),
+            'waveform' => self::computeWaveform($result->output()),
         ]);
     }
 
@@ -80,14 +80,14 @@ class AudioAnalyzer
     /**
      * @return array<float>
      */
-    private static function computeLevels(string $squaredSamples): array
+    private static function computeWaveform(string $squaredSamples): array
     {
         $samples = array_values(unpack('g*', $squaredSamples) ?: []);
-        $samplesPerLevel = max(1, (int) ceil(count($samples) / self::LEVEL_COUNT));
+        $samplesPerPoint = max(1, (int) ceil(count($samples) / self::WAVEFORM_POINT_COUNT));
 
         return array_map(
             static fn (array $chunk): float => round(sqrt(max(0, array_sum($chunk) / count($chunk))), 3),
-            array_chunk($samples, $samplesPerLevel),
+            array_chunk($samples, $samplesPerPoint),
         );
     }
 }

@@ -37,7 +37,7 @@ import { playback } from '@/services/playbackManager'
 import { crossfadeService } from '@/services/crossfadeService'
 import { waveformService } from '@/services/waveformService'
 
-const props = withDefaults(defineProps<{ levels?: number[] }>(), { levels: () => [] })
+const props = withDefaults(defineProps<{ waveform?: number[] }>(), { waveform: () => [] })
 
 const progress = ref(0)
 const bufferProgress = ref(0)
@@ -52,11 +52,11 @@ const { width: footerWidth } = useElementSize(hitArea)
 const waveformBarCount = computed(() => Math.round(footerWidth.value / PIXELS_PER_WAVEFORM_BAR))
 
 const waveformMaskImage = computed(() => {
-  if (!props.levels.length || !waveformBarCount.value) {
+  if (!props.waveform.length || !waveformBarCount.value) {
     return ''
   }
 
-  const svg = waveformService.renderBarsAsSvg(props.levels, waveformBarCount.value)
+  const svg = waveformService.renderBarsAsSvg(props.waveform, waveformBarCount.value)
 
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`
 })

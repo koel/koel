@@ -48,44 +48,44 @@ describe('index.vue', () => {
   it('shows the waveform of an analyzed song', async () => {
     await h.withPlusEdition(async () => {
       const song = h.factory('song').make({ loudness: -9, true_peak: 1 })
-      const fetchLevelsMock = h.mock(waveformService, 'fetchLevels').mockResolvedValue([0.2, 0.8])
+      const fetchWaveformMock = h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
 
       renderWithStreamable().value = song
 
       await waitFor(() => screen.getByTestId('waveform'))
-      expect(fetchLevelsMock).toHaveBeenCalledWith(song)
+      expect(fetchWaveformMock).toHaveBeenCalledWith(song)
     })
   })
 
   it('shows the waveform of a song that is already current', async () => {
     await h.withPlusEdition(async () => {
       const song = h.factory('song').make({ loudness: -9, true_peak: 1 })
-      const fetchLevelsMock = h.mock(waveformService, 'fetchLevels').mockResolvedValue([0.2, 0.8])
+      const fetchWaveformMock = h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
 
       renderWithStreamable(song)
 
       await waitFor(() => screen.getByTestId('waveform'))
-      expect(fetchLevelsMock).toHaveBeenCalledWith(song)
+      expect(fetchWaveformMock).toHaveBeenCalledWith(song)
     })
   })
 
   it('skips the waveform of an unanalyzed song', async () => {
     await h.withPlusEdition(async () => {
-      const fetchLevelsMock = h.mock(waveformService, 'fetchLevels')
+      const fetchWaveformMock = h.mock(waveformService, 'fetchWaveform')
 
       renderWithStreamable().value = h.factory('song').make({ loudness: null })
       await h.tick()
 
-      expect(fetchLevelsMock).not.toHaveBeenCalled()
+      expect(fetchWaveformMock).not.toHaveBeenCalled()
     })
   })
 
   it('skips the waveform without Koel Plus', async () => {
-    const fetchLevelsMock = h.mock(waveformService, 'fetchLevels')
+    const fetchWaveformMock = h.mock(waveformService, 'fetchWaveform')
 
     renderWithStreamable().value = h.factory('song').make({ loudness: -9, true_peak: 1 })
     await h.tick()
 
-    expect(fetchLevelsMock).not.toHaveBeenCalled()
+    expect(fetchWaveformMock).not.toHaveBeenCalled()
   })
 })

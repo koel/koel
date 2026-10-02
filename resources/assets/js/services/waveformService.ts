@@ -6,18 +6,18 @@ const MIN_BAR_HEIGHT = 0.1
 const REFLECTION_OPACITY = 0.35
 
 export const waveformService = {
-  async fetchLevels(song: Song) {
-    const { levels } = await http.get<{ levels: number[] }>(`songs/${song.id}/waveform`)
+  async fetchWaveform(song: Song) {
+    const { waveform } = await http.get<{ waveform: number[] }>(`songs/${song.id}/waveform`)
 
-    return levels
+    return waveform
   },
 
-  renderBarsAsSvg(levels: number[], barCount: number) {
-    const levelsPerBar = Math.max(1, Math.ceil(levels.length / barCount))
+  renderBarsAsSvg(waveform: number[], barCount: number) {
+    const pointsPerBar = Math.max(1, Math.ceil(waveform.length / barCount))
     const barLevels: number[] = []
 
-    for (let i = 0; i < levels.length; i += levelsPerBar) {
-      const group = levels.slice(i, i + levelsPerBar)
+    for (let i = 0; i < waveform.length; i += pointsPerBar) {
+      const group = waveform.slice(i, i + pointsPerBar)
       barLevels.push(group.reduce((sum, level) => sum + level, 0) / group.length)
     }
 

@@ -12,16 +12,16 @@ use function Tests\create_user;
 class SongWaveformTest extends PlusTestCase
 {
     #[Test]
-    public function fetchLevels(): void
+    public function fetchWaveform(): void
     {
         $user = create_user();
         $song = Song::factory()->for($user, 'owner')->createOne();
-        SongAnalysis::factory()->for($song)->createOne(['levels' => [0.1, 0.5, 1.0]]);
+        SongAnalysis::factory()->for($song)->createOne(['waveform' => [0.1, 0.5, 1.0]]);
 
         $this
             ->getAs("api/songs/{$song->id}/waveform", $user)
             ->assertOk()
-            ->assertExactJson(['levels' => [0.1, 0.5, 1.0]])
+            ->assertExactJson(['waveform' => [0.1, 0.5, 1.0]])
             ->assertHeader('ETag')
             ->assertHeader('Cache-Control', 'no-cache, private');
     }

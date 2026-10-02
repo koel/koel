@@ -64,7 +64,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property int $track
  * @property ?int $year
  * @property ?int $file_size The size in bytes of the song file, if available.
- * @property ?SongAnalysis $analysis The loudness and levels, if analyzed. Loaded without levels by default.
+ * @property ?SongAnalysis $analysis The loudness and waveform, if analyzed. Loaded without the waveform by default.
  * @property string $id
  * @property string $lyrics
  * @property string $path
