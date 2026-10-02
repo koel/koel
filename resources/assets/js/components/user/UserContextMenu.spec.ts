@@ -76,5 +76,6 @@ describe('userContextMenu.vue', () => {
   it('respects the permissions', async () => {
     await renderComponent(h.factory('user').make({ permissions: { edit: false, delete: false } }))
     expect(screen.getAllByRole('listitem')).toHaveLength(1)
+    screen.getByTestId('no-available-actions')
   })
 })
