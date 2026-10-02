@@ -27,7 +27,7 @@
       </FormRow>
 
       <FormRow>
-        <Btn :disabled="loading" data-testid="submit" type="submit">Accept &amp; Log In</Btn>
+        <Btn :disabled="loading" class="w-full" data-testid="submit" type="submit">Accept &amp; Log In</Btn>
       </FormRow>
 
       <HookSlot :context="{ email: userProspect.email }" name="accept-invitation-form.footer" />
