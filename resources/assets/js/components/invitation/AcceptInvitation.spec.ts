@@ -38,7 +38,7 @@ describe('acceptInvitation.vue', () => {
     )
 
     const handle = addToHookSlot(
-      'invitation.bottom',
+      'accept-invitation-form.footer',
       defineComponent({
         props: { email: { type: String, required: true } },
         template: '<p data-testid="hooked">{{ email }}</p>',

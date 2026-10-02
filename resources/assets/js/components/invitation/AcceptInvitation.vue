@@ -30,7 +30,7 @@
         <Btn :disabled="loading" data-testid="submit" type="submit">Accept &amp; Log In</Btn>
       </FormRow>
 
-      <HookSlot :context="{ email: userProspect.email }" name="invitation.bottom" />
+      <HookSlot :context="{ email: userProspect.email }" name="accept-invitation-form.footer" />
     </form>
   </div>
 </template>

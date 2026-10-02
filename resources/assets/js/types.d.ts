@@ -602,7 +602,7 @@ declare type ScreenName = keyof ScreenNames
 interface HookSlotNames {
   'sidebar.footer': true
   'screen.top': true
-  'invitation.bottom': true
+  'accept-invitation-form.footer': true
 }
 
 declare type HookSlotName = keyof HookSlotNames
