@@ -5,7 +5,14 @@
     @mousemove="showControls"
     @contextmenu.prevent="requestContextMenu"
   >
-    <AudioPlayer v-show="currentStreamable" :class="isRadio && 'pointer-events-none'" :waveform />
+    <AudioPlayer v-show="currentStreamable" v-slot="{ progress }" :class="isRadio && 'pointer-events-none'">
+      <SongWaveform
+        v-if="currentSong"
+        :song="currentSong"
+        :progress
+        class="absolute inset-x-0 bottom-3 top-[calc(var(--progress-bar-height)+--spacing(3))]"
+      />
+    </AudioPlayer>
 
     <div class="fullscreen-backdrop hidden" />
 
@@ -35,14 +42,13 @@ import { artistStore } from '@/stores/artistStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { audioService } from '@/services/audioService'
 import { volumeNormalizer } from '@/services/volumeNormalizer'
-import { waveformService } from '@/services/waveformService'
 import { playback } from '@/services/playbackManager'
 import { useContextMenu } from '@/composables/useContextMenu'
-import { useKoelPlus } from '@/composables/useKoelPlus'
 
 import AudioPlayer from '@/components/layout/app-footer/AudioPlayer.vue'
 import ExtraControls from '@/components/layout/app-footer/FooterExtraControls.vue'
 import PlaybackControls from '@/components/layout/app-footer/FooterPlaybackControls.vue'
+import SongWaveform from '@/components/layout/app-footer/SongWaveform.vue'
 
 const SongInfo = defineAsyncComponent(() => import('@/components/layout/app-footer/FooterPlayableInfo.vue'))
 const RadioStationInfo = defineAsyncComponent(() => import('@/components/layout/app-footer/FooterRadioStationInfo.vue'))
@@ -56,14 +62,15 @@ let hideControlsTimeout: number
 const root = ref<HTMLElement>()
 const artist = ref<Artist>()
 const nextPlayable = ref<Playable | null>(null)
-const waveform = ref<number[]>([])
 
 const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(root)
 const { openContextMenu } = useContextMenu()
-const { isPlus } = useKoelPlus()
 
 const showingUpNext = computed(() => nextPlayable.value && isFullscreen.value)
 const isRadio = computed(() => currentStreamable.value && isRadioStation(currentStreamable.value))
+const currentSong = computed(() =>
+  currentStreamable.value && isSong(currentStreamable.value) ? currentStreamable.value : null,
+)
 
 const requestContextMenu = (event: MouseEvent) => {
   if (document.fullscreenElement || !currentStreamable.value) {
@@ -80,22 +87,6 @@ const requestContextMenu = (event: MouseEvent) => {
     })
   }
 }
-
-watch(
-  currentStreamable,
-  async streamable => {
-    waveform.value = []
-
-    if (isPlus.value && streamable && isSong(streamable) && streamable.loudness != null) {
-      const fetchedWaveform = await waveformService.fetchWaveform(streamable).catch(() => [])
-
-      if (currentStreamable.value === streamable) {
-        waveform.value = fetchedWaveform
-      }
-    }
-  },
-  { immediate: true },
-)
 
 watch(currentStreamable, async streamable => {
   if (!streamable) {
