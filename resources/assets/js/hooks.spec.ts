@@ -112,7 +112,7 @@ describe('hooks', () => {
     const handle = addToHookSlot('sidebar.footer', Extra)
 
     expect(applyFilters<Component[]>(Filter.SLOT, [], 'sidebar.footer')).toEqual([Extra])
-    expect(applyFilters<Component[]>(Filter.SLOT, [], 'screen.top')).toEqual([])
+    expect(applyFilters<Component[]>(Filter.SLOT, [], 'screen.header')).toEqual([])
 
     removeFilter(handle)
   })

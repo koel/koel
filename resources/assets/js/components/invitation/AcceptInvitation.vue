@@ -29,6 +29,8 @@
       <FormRow>
         <Btn :disabled="loading" data-testid="submit" type="submit">Accept &amp; Log In</Btn>
       </FormRow>
+
+      <HookSlot :context="{ email: userProspect.email }" name="accept-invitation-form.footer" />
     </form>
   </div>
 </template>
@@ -43,6 +45,7 @@ import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
+import HookSlot from '@/components/utils/HookSlot.vue'
 
 const { getRouteParam } = useRouter()
 const { handleHttpError } = useErrorHandler('dialog')
