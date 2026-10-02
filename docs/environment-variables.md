@@ -98,7 +98,7 @@ Required when `STORAGE_DRIVER=webdav`.
 | `IGNORE_DOT_FILES` | Whether to ignore dot files and folders when scanning. Greatly improves performance if your media root has folders like `.git` or `.cache`. | `true` |
 | `SYNC_LOG_LEVEL` | The verbosity of sync logs (found under `storage/logs/`). Options: `all`, `error`. | `error` |
 | `SCAN_LOG_MAX_FILES` | How many scan logs to keep under `storage/logs/`. A scan with nothing to report writes none. `0` keeps them all. | `30` |
-| `ANALYZE_AUDIO_ON_SCAN` | (Koel Plus) Whether to analyze each song's loudness and waveform as soon as it's scanned or uploaded. Songs uploaded to cloud or remote storage are analyzed while the upload is processed; others use a queue job if a queue is configured. Requires FFmpeg. See [Volume Normalization & Waveforms](plus/volume-normalization). | `false` |
+| `ANALYZE_AUDIO_ON_SCAN` <PlusBadge /> | Whether to analyze each song's loudness and waveform as soon as it's scanned or uploaded. Songs uploaded to cloud or remote storage are analyzed while the upload is processed; others use a queue job if a queue is configured. Requires FFmpeg. See [Volume Normalization & Waveforms](plus/volume-normalization). | `false` |
 
 ## Streaming & Transcoding
 
