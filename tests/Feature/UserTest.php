@@ -251,6 +251,24 @@ class UserTest extends TestCase
     }
 
     #[Test]
+    public function pruneInvitationsOlderThanAWeek(): void
+    {
+        $expired = User::factory()
+            ->prospect()
+            ->createOne(['invited_at' => now()->subDays(8)]);
+        $pending = User::factory()
+            ->prospect()
+            ->createOne(['invited_at' => now()->subDays(6)]);
+        $member = create_user(['created_at' => now()->subDays(30)]);
+
+        Artisan::call('model:prune');
+
+        $this->assertModelMissing($expired);
+        $this->assertModelExists($pending);
+        $this->assertModelExists($member);
+    }
+
+    #[Test]
     public function noPruneIfNotInDemoMode(): void
     {
         $user = create_user([

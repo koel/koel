@@ -92,6 +92,23 @@ class UserInvitationTest extends TestCase
     }
 
     #[Test]
+    public function refuseAnInvitationOlderThanAWeek(): void
+    {
+        $prospect = self::createProspect();
+        $prospect->update(['invited_at' => now()->subDays(8)]);
+
+        $this->get("api/invitations?token=$prospect->invitation_token")->assertNotFound();
+
+        $this->post('api/invitations/accept', [
+            'token' => $prospect->invitation_token,
+            'name' => 'Bruce Dickinson',
+            'password' => 'SuperSecretPassword',
+        ])->assertNotFound();
+
+        self::assertTrue($prospect->refresh()->is_prospect);
+    }
+
+    #[Test]
     public function revoke(): void
     {
         $prospect = self::createProspect();
