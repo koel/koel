@@ -4,7 +4,9 @@ namespace App\Jobs;
 
 use App\Models\Song;
 use App\Services\AudioAnalysis\AudioAnalyzer;
+use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 
+#[DeleteWhenMissingModels]
 class AnalyzeSongAudioJob extends QueuedJob
 {
     public function __construct(
