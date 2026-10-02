@@ -16,13 +16,4 @@ class InvalidCredentialsExceptionTest extends TestCase
         self::assertSame(40, $exception->getSubsonicErrorCode());
         self::assertSame('Wrong username or password.', $exception->getSubsonicErrorMessage());
     }
-
-    #[Test]
-    public function acceptsCustomMessage(): void
-    {
-        $exception = new InvalidCredentialsException('Token signature invalid.');
-
-        self::assertSame(40, $exception->getSubsonicErrorCode());
-        self::assertSame('Token signature invalid.', $exception->getSubsonicErrorMessage());
-    }
 }

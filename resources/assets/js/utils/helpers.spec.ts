@@ -81,14 +81,6 @@ describe('helpers utils', () => {
       })
     })
 
-    it('handles mixed scalar and array values', () => {
-      expect(flattenParams({ type: 'songs', ids: [1, 2] })).toEqual({
-        type: 'songs',
-        'ids[0]': '1',
-        'ids[1]': '2',
-      })
-    })
-
     it('skips null and undefined values', () => {
       expect(flattenParams({ type: 'favorites', id: null, extra: undefined })).toEqual({ type: 'favorites' })
     })

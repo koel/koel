@@ -32,8 +32,8 @@ describe('settingsScreen.vue', () => {
     screen.getByTestId('media-path-setting-group')
   })
 
-  it('adds the branding and AI tabs in the Plus edition', () => {
-    h.withPlusEdition(() => {
+  it('adds the branding and AI tabs in the Plus edition', async () => {
+    await h.withPlusEdition(() => {
       renderComponent()
 
       expect(tabIds()).toEqual([

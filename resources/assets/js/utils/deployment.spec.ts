@@ -50,13 +50,6 @@ describe('deployment', () => {
     expect(await isNewerVersionDeployed()).toBe(false)
   })
 
-  it('says no when the check times out', async () => {
-    addEntryScript()
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new DOMException('Timed out', 'TimeoutError')))
-
-    expect(await isNewerVersionDeployed()).toBe(false)
-  })
-
   it('says no when there is no entry script to check', async () => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)

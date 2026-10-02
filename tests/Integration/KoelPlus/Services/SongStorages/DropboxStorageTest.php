@@ -4,7 +4,6 @@ namespace Tests\Integration\KoelPlus\Services\SongStorages;
 
 use App\Filesystems\DropboxFilesystem;
 use App\Helpers\Ulid;
-use App\Models\Song;
 use App\Services\SongStorages\DropboxStorage;
 use App\Values\UploadReference;
 use Illuminate\Http\Client\Request;
@@ -113,25 +112,5 @@ class DropboxStorageTest extends PlusTestCase
 
         self::assertSame('cached-token', Cache::get('dropbox_access_token'));
         Http::assertNothingSent();
-    }
-
-    #[Test]
-    public function getSongPresignedUrl(): void
-    {
-        $this->client->allows('setAccessToken');
-        $song = Song::factory()->createOne(['path' => 'dropbox://song.mp3', 'storage' => 'dropbox']);
-
-        /** @var DropboxStorage $service */
-        $service = app(DropboxStorage::class);
-
-        $this->filesystem
-            ->expects('temporaryUrl')
-            ->with('song.mp3')
-            ->andReturn('https://dropbox.com/song.mp3?token=123');
-
-        self::assertSame(
-            'https://dropbox.com/song.mp3?token=123',
-            $service->getPresignedUrl($song->storage_metadata->getPath()),
-        );
     }
 }

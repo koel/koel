@@ -29,11 +29,6 @@ describe('uploadScreen.vue', () => {
     uploadService.state.duplicatedSongs = []
   })
 
-  it('renders the upload header', () => {
-    h.render(Component)
-    screen.getByText('Upload Media')
-  })
-
   it('shows empty state when no files are queued', () => {
     uploadService.state.files = []
     h.render(Component)
@@ -51,20 +46,6 @@ describe('uploadScreen.vue', () => {
 
     await waitFor(() => expect(screen.getAllByTestId('upload-item')).toHaveLength(2))
     expect(screen.queryByText(/Drop files.*to upload/)).toBeNull()
-  })
-
-  it('shows retry and remove buttons when there are failures', async () => {
-    uploadService.state.files = [
-      { id: '1', file: new File([], 'bad.mp3'), status: 'Errored', name: 'bad.mp3', progress: 0 },
-    ]
-
-    h.render(Component)
-    await h.user.click(await screen.findByTestId('upload-filter-errored'))
-
-    await waitFor(() => {
-      screen.getByTestId('upload-retry-all-btn')
-      screen.getByTestId('upload-remove-all-btn')
-    })
   })
 
   it('does not show retry and remove buttons when there are no failures', () => {

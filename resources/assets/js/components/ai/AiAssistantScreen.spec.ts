@@ -14,16 +14,6 @@ describe('aiAssistantScreen.vue', () => {
     useAiChat().clearHistory()
   })
 
-  it('renders the prompt textarea', () => {
-    h.render(Component)
-    screen.getByPlaceholderText('Ask Koel to play songs, create playlists, add radio stations, and more.')
-  })
-
-  it('shows sample prompts when empty', () => {
-    h.render(Component)
-    expect(screen.getAllByRole('button').length).toBeGreaterThan(1)
-  })
-
   it('submits a prompt and transitions to chat mode', async () => {
     const response: AiResponse = {
       message: 'Playing some jazz for you.',

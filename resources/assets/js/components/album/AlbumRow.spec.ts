@@ -1,14 +1,8 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
-import type { Mock } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { useContextMenu } from '@/composables/useContextMenu'
 import Router from '@/router'
-import { assertOpenContextMenu } from '@/__tests__/assertions'
-import AlbumContextMenu from './AlbumContextMenu.vue'
 import Component from './AlbumRow.vue'
-
-vi.mock('@/composables/useContextMenu')
 
 describe('albumRow.vue', () => {
   const h = createHarness()
@@ -55,14 +49,5 @@ describe('albumRow.vue', () => {
     await h.user.dblClick(screen.getByTestId('album-row'))
 
     expect(goMock).toHaveBeenCalledWith(expect.stringContaining('/albums/iv'))
-  })
-
-  it('opens the context menu on right-click', async () => {
-    const { openContextMenu } = useContextMenu()
-    const { album } = renderComponent()
-
-    await h.trigger(screen.getByTestId('album-row'), 'contextMenu')
-
-    await assertOpenContextMenu(openContextMenu as Mock, AlbumContextMenu, { album })
   })
 })

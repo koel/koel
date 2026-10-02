@@ -55,12 +55,6 @@ describe('useNewVersionNotification', () => {
     expect(shouldNotifyNewVersion.value).toBe(false)
   })
 
-  it('exposes version refs', () => {
-    const { currentVersion, latestVersion } = useNewVersionNotification()
-    expect(currentVersion.value).toBe('6.5.0')
-    expect(latestVersion.value).toBe('7.0.0')
-  })
-
   it('builds release URL from latest version', () => {
     const { latestVersionReleaseUrl } = useNewVersionNotification()
     expect(latestVersionReleaseUrl.value).toBe('https://github.com/koel/koel/releases/tag/7.0.0')

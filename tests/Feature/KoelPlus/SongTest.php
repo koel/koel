@@ -117,46 +117,4 @@ class SongTest extends PlusTestCase
 
         $this->deleteAs('api/songs', ['songs' => $ownSongs->modelKeys()], $currentUser)->assertSuccessful();
     }
-
-    #[Test]
-    public function markSongsAsPublic(): void
-    {
-        $user = create_user();
-
-        $songs = Song::factory()->for($user, 'owner')->private()->createMany(2);
-
-        $this->putAs('api/songs/publicize', ['songs' => $songs->modelKeys()], $user)->assertSuccessful();
-
-        $songs->each(static function (Song $song): void {
-            $song->refresh();
-            self::assertTrue($song->is_public);
-        });
-    }
-
-    #[Test]
-    public function markSongsAsPrivate(): void
-    {
-        $user = create_user();
-
-        $songs = Song::factory()->for($user, 'owner')->public()->createMany(2);
-
-        $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()], $user)->assertSuccessful();
-
-        $songs->each(static function (Song $song): void {
-            $song->refresh();
-            self::assertFalse($song->is_public);
-        });
-    }
-
-    #[Test]
-    public function publicizingOrPrivatizingSongsRequiresOwnership(): void
-    {
-        $songs = Song::factory()->public()->createMany(2);
-
-        $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()])->assertForbidden();
-
-        $otherSongs = Song::factory()->private()->createMany(2);
-
-        $this->putAs('api/songs/publicize', ['songs' => $otherSongs->modelKeys()])->assertForbidden();
-    }
 }

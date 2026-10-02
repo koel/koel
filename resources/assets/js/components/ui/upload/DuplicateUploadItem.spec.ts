@@ -40,15 +40,6 @@ describe('duplicateUploadItem', () => {
     screen.getByText('test-song.mp3')
   })
 
-  it('calls keepDuplicate on keep button click', async () => {
-    const mock = h.mock(uploadService, 'keepDuplicate')
-    renderComponent()
-
-    await h.user.click(screen.getByRole('button', { name: 'Keep' }))
-
-    expect(mock).toHaveBeenCalledWith('dup-1')
-  })
-
   it('confirms before discarding', async () => {
     mockShowConfirmDialog.mockResolvedValue(true)
     const mock = h.mock(uploadService, 'discardDuplicate')

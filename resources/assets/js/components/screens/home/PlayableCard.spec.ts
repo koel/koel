@@ -71,11 +71,6 @@ describe('playableCard.vue', () => {
     expect(screen.getByTestId('song-card').classList).not.toContain('playing')
   })
 
-  it('is draggable', () => {
-    renderCard()
-    expect(screen.getByTestId('song-card').getAttribute('draggable')).toBe('true')
-  })
-
   it('shows offline mark for cached songs', () => {
     isCachedMock.mockReturnValue(true)
     renderCard()
@@ -85,12 +80,6 @@ describe('playableCard.vue', () => {
   it('does not show offline mark for non-cached songs', () => {
     renderCard()
     expect(screen.queryByTitle('Available offline')).toBeNull()
-  })
-
-  it('shows spinner when caching offline', () => {
-    isCachingMock.mockReturnValue(true)
-    renderCard()
-    screen.getByTitle('Caching for offline playback')
   })
 
   it('shows spinner instead of offline mark when caching', () => {

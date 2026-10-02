@@ -49,29 +49,22 @@ describe('smartPlaylistRuleGroup', () => {
 
     renderComponent(group)
 
-    // Rules are async components, wait for them to render.
-    // Note: the "add rule" button also has title="Remove this rule" (component bug),
-    // so 2 rules + 1 add button = 3 elements with that title.
     await waitFor(() => {
-      expect(screen.getAllByTitle('Remove this rule')).toHaveLength(3)
+      expect(screen.getAllByTestId('remove-rule-btn')).toHaveLength(2)
     })
   })
 
   it('adds a new rule when add button is clicked', async () => {
     renderComponent()
 
-    // Wait for async components to render (1 rule + 1 add button = 2 buttons with this title)
     await waitFor(() => {
-      expect(screen.getAllByTitle('Remove this rule')).toHaveLength(2)
+      expect(screen.getAllByTestId('remove-rule-btn')).toHaveLength(1)
     })
 
-    // Click the last button (the add rule button)
-    const buttons = screen.getAllByRole('button')
-    await h.user.click(buttons[buttons.length - 1])
+    await h.user.click(screen.getByTestId('add-rule-btn'))
 
-    // After adding, there should be 2 rules + 1 add button = 3 elements
     await waitFor(() => {
-      expect(screen.getAllByTitle('Remove this rule')).toHaveLength(3)
+      expect(screen.getAllByTestId('remove-rule-btn')).toHaveLength(2)
     })
   })
 
@@ -83,9 +76,9 @@ describe('smartPlaylistRuleGroup', () => {
 
     const { emitted } = renderComponent(group)
 
-    await waitFor(() => screen.getAllByTitle('Remove this rule'))
+    await waitFor(() => screen.getAllByTestId('remove-rule-btn'))
 
-    await h.user.click(screen.getAllByTitle('Remove this rule')[0])
+    await h.user.click(screen.getAllByTestId('remove-rule-btn')[0])
 
     const inputEvents = emitted().input as SmartPlaylistRuleGroup[][]
     expect(inputEvents).toBeTruthy()

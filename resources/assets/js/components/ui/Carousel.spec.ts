@@ -15,14 +15,6 @@ const setOverflow = async (scroller: HTMLDivElement, clientWidth: number, scroll
 describe('carousel.vue', () => {
   const h = createHarness()
 
-  it('renders the default slot content', () => {
-    h.render(Component, {
-      slots: { default: '<div data-testid="card">Card</div>' },
-    })
-
-    screen.getByTestId('card')
-  })
-
   it('hides the scroll buttons when the track fits within the scroller', () => {
     h.render(Component, {
       slots: { default: '<div data-testid="card">Card</div>' },
@@ -30,18 +22,6 @@ describe('carousel.vue', () => {
 
     expect(screen.queryByRole('button', { name: 'Scroll left' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Scroll right' })).toBeNull()
-  })
-
-  it('shows the scroll buttons when the track overflows the scroller', async () => {
-    const { container } = h.render(Component, {
-      slots: { default: '<div>Card</div>' },
-    })
-
-    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
-    await setOverflow(scroller, 800, 3200)
-
-    screen.getByRole('button', { name: 'Scroll left' })
-    screen.getByRole('button', { name: 'Scroll right' })
   })
 
   it('renders scroll buttons inside the inline <nav> when no actions host is provided', async () => {

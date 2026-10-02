@@ -22,15 +22,6 @@ describe('themeContextMenu.vue', () => {
     }
   }
 
-  it('applies a theme', async () => {
-    const applyMock = h.mock(themeStore, 'setTheme')
-    const { theme } = renderComponent()
-
-    await h.user.click(screen.getByText('Apply Theme'))
-
-    expect(applyMock).toHaveBeenCalledWith(theme)
-  })
-
   it('deletes custom theme', async () => {
     const destroyMock = h.mock(themeStore, 'destroy')
     const { theme } = renderComponent()

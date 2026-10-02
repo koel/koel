@@ -46,16 +46,6 @@ describe('playableListHeaderActionMenu.vue', () => {
     ;['Album', 'Artist', 'Podcast', 'Author'].forEach(text => expect(screen.queryByText(text)).toBeNull())
   })
 
-  it('contains collaborative items when collaborative', () => {
-    h.render(Component, {
-      props: {
-        collaborative: true,
-      },
-    })
-
-    ;['User', 'Contributed'].forEach(text => screen.getByText(text))
-  })
-
   it('does not contain collaborative items when not collaborative', () => {
     h.render(Component)
 

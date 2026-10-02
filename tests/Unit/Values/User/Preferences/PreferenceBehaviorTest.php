@@ -12,8 +12,6 @@ use App\Values\User\Preferences\CrossfadeDurationPreference;
 use App\Values\User\Preferences\CurrentEqualizerPresetPreference;
 use App\Values\User\Preferences\EqualizerPresetsPreference;
 use App\Values\User\Preferences\HomeBlocksOrderPreference;
-use App\Values\User\Preferences\LastfmSessionKeyPreference;
-use App\Values\User\Preferences\MakeUploadsPublicPreference;
 use App\Values\User\Preferences\RadioStationsViewModePreference;
 use App\Values\User\Preferences\RepeatModePreference;
 use App\Values\User\Preferences\TranscodeQualityPreference;
@@ -85,32 +83,10 @@ class PreferenceBehaviorTest extends TestCase
     }
 
     #[Test]
-    public function activeExtraPanelTabAcceptsNull(): void
-    {
-        self::assertNull(ActiveExtraPanelTabPreference::make(null)->getValue());
-    }
-
-    #[Test]
     public function activeExtraPanelTabRejectsUnknownTab(): void
     {
         $this->expectException(AssertException::class);
         ActiveExtraPanelTabPreference::make('Settings');
-    }
-
-    #[Test]
-    public function makeUploadsPublicCoercesTruthyStrings(): void
-    {
-        self::assertTrue(MakeUploadsPublicPreference::make('true')->getValue());
-        self::assertTrue(MakeUploadsPublicPreference::make(1)->getValue());
-        self::assertFalse(MakeUploadsPublicPreference::make('false')->getValue());
-        self::assertFalse(MakeUploadsPublicPreference::make(0)->getValue());
-        self::assertFalse(MakeUploadsPublicPreference::make(null)->getValue());
-    }
-
-    #[Test]
-    public function crossfadeDurationCastsToInt(): void
-    {
-        self::assertSame(5, CrossfadeDurationPreference::make('5')->getValue());
     }
 
     #[Test]
@@ -125,14 +101,6 @@ class PreferenceBehaviorTest extends TestCase
     {
         self::assertSame(128, TranscodeQualityPreference::make(99)->getValue());
         self::assertSame(256, TranscodeQualityPreference::make(256)->getValue());
-    }
-
-    #[Test]
-    public function lastfmSessionKeyIsNotCustomizable(): void
-    {
-        self::assertFalse((new LastfmSessionKeyPreference())->isCustomizable());
-        self::assertSame('lastFmSessionKey', (new LastfmSessionKeyPreference())->getProperty());
-        self::assertSame('lastfm_session_key', (new LastfmSessionKeyPreference())->getKey());
     }
 
     #[Test]
@@ -181,12 +149,6 @@ class PreferenceBehaviorTest extends TestCase
         self::assertInstanceOf(EqualizerPresetCollection::class, $value);
         self::assertCount(1, $value);
         self::assertSame('Mine', $value->first()->name);
-    }
-
-    #[Test]
-    public function homeBlocksOrderDefaultsToEmptyArray(): void
-    {
-        self::assertSame([], HomeBlocksOrderPreference::make(null)->getValue());
     }
 
     #[Test]

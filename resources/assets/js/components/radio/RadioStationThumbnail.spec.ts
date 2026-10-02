@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './RadioStationThumbnail.vue'
 
@@ -27,11 +26,4 @@ describe('radioStationThumbnail.vue', () => {
   }
 
   it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
-  it('emits the clicked event', async () => {
-    const { emitted } = renderComponent()
-
-    await h.user.click(screen.getByRole('button'))
-    expect(emitted().clicked).not.toBeNull()
-  })
 })

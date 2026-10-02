@@ -41,15 +41,6 @@ describe('duplicateUploadList', () => {
       },
     })
 
-  it('calls keepAllDuplicates on keep all button click', async () => {
-    const mock = h.mock(uploadService, 'keepAllDuplicates')
-    renderComponent()
-
-    await h.user.click(screen.getByRole('button', { name: 'Keep All' }))
-
-    expect(mock).toHaveBeenCalled()
-  })
-
   it('confirms before discarding all', async () => {
     mockShowConfirmDialog.mockResolvedValue(true)
     const mock = h.mock(uploadService, 'discardAllDuplicates')

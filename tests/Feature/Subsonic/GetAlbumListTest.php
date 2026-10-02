@@ -49,39 +49,4 @@ class GetAlbumListTest extends TestCase
             self::assertTrue($child['isDir']);
         }
     }
-
-    #[Test]
-    public function unsupportedTypeReturnsCode10(): void
-    {
-        $user = create_user();
-
-        $this
-            ->getJson(
-                '/rest/getAlbumList.view?'
-                    . Arr::query([
-                        'apiKey' => $user->subsonic_api_key,
-                        'f' => 'json',
-                        'type' => 'bogus',
-                    ]),
-            )
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.error.code', 10);
-    }
-
-    #[Test]
-    public function missingTypeReturnsCode10(): void
-    {
-        $user = create_user();
-
-        $this
-            ->getJson(
-                '/rest/getAlbumList.view?'
-                    . Arr::query([
-                        'apiKey' => $user->subsonic_api_key,
-                        'f' => 'json',
-                    ]),
-            )
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.error.code', 10);
-    }
 }

@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
+import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { defineComponent } from 'vue'
 import Component from './VirtualGridScroller.vue'
@@ -18,6 +19,8 @@ describe('virtualGridScroller', () => {
   })
 
   it('renders items via scoped slot after measuring', async () => {
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(100)
+
     const Wrapper = defineComponent({
       components: { VirtualGridScroller: Component },
       setup() {
@@ -25,7 +28,7 @@ describe('virtualGridScroller', () => {
         return { items }
       },
       template: `
-        <VirtualGridScroller :items="items" :min-item-width="200" style="height: 500px; width: 800px;">
+        <VirtualGridScroller :items="items" :min-item-width="200">
           <template #default="{ item }">
             <div data-testid="grid-item">{{ item.name }}</div>
           </template>
@@ -36,8 +39,6 @@ describe('virtualGridScroller', () => {
     h.render(Wrapper)
     await h.tick(3)
 
-    // In jsdom, offsetHeight is 0 so measuring may not produce a valid height.
-    // But the component should not crash.
-    expect(document.body.innerHTML).toBeTruthy()
+    expect(screen.getAllByTestId('grid-item')).toHaveLength(3)
   })
 })

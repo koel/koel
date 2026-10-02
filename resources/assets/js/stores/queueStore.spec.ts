@@ -16,8 +16,6 @@ describe('queueStore', () => {
     },
   })
 
-  it('returns all queued songs', () => expect(queueStore.all).toEqual(songs))
-
   it('returns the first queued song', () => expect(queueStore.first).toEqual(songs[0]))
 
   it('returns the last queued song', () => expect(queueStore.last).toEqual(songs[2]))

@@ -15,15 +15,6 @@ describe('contextMenu', () => {
     },
   })
 
-  it('renders the popover root', () => {
-    const { container } = h.render(Component, provide(shallowRef({ component: null, position: { top: 0, left: 0 } })))
-
-    const root = container.querySelector<HTMLElement>('.context-menu[popover]')!
-    expect(root).toBeTruthy()
-    expect(root.getAttribute('popover')).toBe('manual')
-    expect(root.getAttribute('role')).toBe('menu')
-  })
-
   it('opens when options.component is set', async () => {
     const showSpy = vi.spyOn(HTMLElement.prototype, 'showPopover')
     const options = shallowRef<any>({
@@ -72,14 +63,5 @@ describe('contextMenu', () => {
     expect(hideSpy).toHaveBeenCalled()
     showSpy.mockRestore()
     hideSpy.mockRestore()
-  })
-
-  it('applies extra class', () => {
-    const { container } = h.render(Component, {
-      props: { extraClass: 'my-custom-class' },
-      ...provide(shallowRef({ component: null, position: { top: 0, left: 0 } })),
-    })
-
-    expect(container.querySelector('.my-custom-class[popover]')).toBeTruthy()
   })
 })

@@ -7,17 +7,6 @@ import Component from './TwoFactorEnrollment.vue'
 describe('twoFactorEnrollment.vue', () => {
   const h = createHarness()
 
-  it('starts enrollment on mount and renders the QR code', async () => {
-    const enrollMock = h.mock(authService, 'enrollTwoFactor').mockResolvedValue({
-      provisioning_uri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel',
-    })
-
-    h.render(Component)
-
-    await waitFor(() => screen.getByAltText('Two-factor authentication QR code'))
-    expect(enrollMock).toHaveBeenCalled()
-  })
-
   it('emits enrolled with the recovery codes on a valid confirmation', async () => {
     h.mock(authService, 'enrollTwoFactor').mockResolvedValue({
       provisioning_uri: 'otpauth://totp/Koel:foo@bar?secret=ABC&issuer=Koel',

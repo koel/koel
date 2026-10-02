@@ -14,7 +14,7 @@ describe('playbackService', () => {
 
   it('only initializes once', () => {
     const media = playbackService.media
-    playbackService.activate(document.querySelector<HTMLMediaElement>('#audio-player')!)
+    playbackService.activate(document.createElement('audio'))
     expect(playbackService.media).toBe(media)
   })
 

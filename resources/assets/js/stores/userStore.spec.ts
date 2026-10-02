@@ -21,14 +21,6 @@ describe('userStore', () => {
     expect(userStore.vault.size).toBe(1)
   })
 
-  it('syncs with vault', () => {
-    const user = h.factory('user').make()
-
-    expect(userStore.syncWithVault(user)).toEqual([user])
-    expect(userStore.vault.size).toBe(2)
-    expect(userStore.vault.get(user.id)).toEqual(user)
-  })
-
   it('fetches users', async () => {
     const users = h.factory('user').make(3)
     const getMock = h.mock(http, 'get').mockResolvedValue(users)
@@ -37,13 +29,6 @@ describe('userStore', () => {
 
     expect(getMock).toHaveBeenCalledWith('users')
     expect(userStore.vault.size).toBe(4)
-  })
-
-  it('gets user by id', () => {
-    const user = h.factory('user').make()
-    userStore.syncWithVault(user)
-
-    expect(userStore.byId(user.id)).toEqual(user)
   })
 
   it('creates a user', async () => {

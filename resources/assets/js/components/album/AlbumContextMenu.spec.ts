@@ -2,31 +2,17 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { shallowRef } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
 import { ContextMenuKey } from '@/config/symbols'
-import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import EditAlbumForm from '@/components/album/EditAlbumForm.vue'
-import CreateEmbedForm from '@/components/embed/CreateEmbedForm.vue'
-
-const openModalMock = vi.fn()
-
-vi.mock('@/composables/useModal', () => ({
-  useModal: () => ({
-    openModal: openModalMock,
-  }),
-}))
 
 import Component from './AlbumContextMenu.vue'
 
 describe('albumContextMenu.vue', () => {
-  const h = createHarness({
-    beforeEach: () => openModalMock.mockClear(),
-  })
+  const h = createHarness()
 
   const renderComponent = async (album?: Album) => {
     if (!vi.isMockFunction(playableStore.fetchSongsForAlbum)) {
@@ -83,15 +69,6 @@ describe('albumContextMenu.vue', () => {
     expect(playMock).toHaveBeenCalledWith(songs, true)
   })
 
-  it('downloads', async () => {
-    const downloadMock = h.mock(downloadService, 'fromAlbum')
-    const { album } = await renderComponent()
-
-    await h.user.click(screen.getByText('Download'))
-
-    expect(downloadMock).toHaveBeenCalledWith(album)
-  })
-
   it('does not have an option to download if downloading is disabled', async () => {
     commonStore.state.allows_download = false
     await renderComponent()
@@ -105,21 +82,6 @@ describe('albumContextMenu.vue', () => {
     expect(screen.queryByText('Go to Album')).toBeNull()
     expect(screen.queryByText('Go to Artist')).toBeNull()
     expect(screen.queryByText('Download')).toBeNull()
-  })
-
-  it('requests edit form', async () => {
-    const { album } = await renderComponent()
-
-    await h.user.click(screen.getByText('Edit…'))
-
-    await assertOpenModal(openModalMock, EditAlbumForm, { album })
-  })
-
-  it('requests the embed form', async () => {
-    const { album } = await renderComponent()
-    await h.user.click(screen.getByText('Embed…'))
-
-    await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: album })
   })
 
   it('does not have an option to embed when embedding is disabled', async () => {

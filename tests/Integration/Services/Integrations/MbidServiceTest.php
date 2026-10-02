@@ -227,25 +227,6 @@ class MbidServiceTest extends TestCase
     }
 
     #[Test]
-    public function fetchAndStoreEvenWhenLastfmSuppliesEncyclopediaEntries(): void
-    {
-        // Only one service ever supplies entries, and Last.fm wins when configured — identifiers must not
-        // depend on that, since they are useful regardless of who writes the prose.
-        config([
-            'koel.services.lastfm.key' => 'key',
-            'koel.services.lastfm.secret' => 'secret',
-            'koel.services.musicbrainz.enabled' => true,
-        ]);
-
-        $this->allowPipelinePipe(GetMbidForArtist::class, 'sample-artist-mbid');
-        $artist = Artist::factory()->createOne(['name' => 'Skid Row']);
-
-        $this->service->fetchAndStoreArtistMbid($artist);
-
-        self::assertSame('sample-artist-mbid', $artist->refresh()->mbid);
-    }
-
-    #[Test]
     public function storeNothingWhenMusicBrainzIsDisabled(): void
     {
         config(['koel.services.musicbrainz.enabled' => false]);

@@ -74,7 +74,7 @@ describe('themeStore', () => {
 
     themeStore.init(theme)
 
-    expect(themeStore.all.filter(({ id }) => id === theme.id)).toBeTruthy()
+    expect(themeStore.getThemeById(theme.id)).toEqual(theme)
     expect(setThemeMock).toHaveBeenCalledWith(theme)
   })
 
@@ -146,6 +146,7 @@ describe('themeStore', () => {
     const deleteMock = h.mock(http, 'delete')
     await themeStore.destroy(customTheme)
 
-    expect(deleteMock)
+    expect(deleteMock).toHaveBeenCalledWith(`themes/${customTheme.id}`)
+    expect(themeStore.getThemeById(customTheme.id)).toBeUndefined()
   })
 })

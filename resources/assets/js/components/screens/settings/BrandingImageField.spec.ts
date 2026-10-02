@@ -47,13 +47,6 @@ describe('brandImageField.vue', () => {
     await waitFor(() => expect(model.value).toBe('data:image/png;base64,Ynl0ZXM='))
   })
 
-  it('resets the image to the default value', async () => {
-    const { model } = renderComponent('custom.jpg')
-    await h.user.click(screen.getByRole('button', { name: 'Reset' }))
-
-    await waitFor(() => expect(model.value).toBe('default-image.jpg'))
-  })
-
   it('picking an image and clicking Reset should reset the image to the custom value', async () => {
     const { model } = renderComponent('custom.jpg')
 

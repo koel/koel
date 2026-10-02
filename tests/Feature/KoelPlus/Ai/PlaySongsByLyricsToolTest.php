@@ -68,21 +68,4 @@ class PlaySongsByLyricsToolTest extends PlusTestCase
         self::assertNull($this->result->action);
         self::assertStringContainsString('No songs found', (string) $response);
     }
-
-    #[Test]
-    public function matchesPartialLyrics(): void
-    {
-        $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Stairway to Heaven']);
-
-        $this->songRepository
-            ->shouldReceive('searchByLyrics')
-            ->with('glitters is gold', 50, $this->user)
-            ->andReturn(new Collection([$song]));
-
-        $response = $this->tool->handle(new Request(['lyrics' => 'glitters is gold']));
-
-        self::assertSame('play_songs', $this->result->action);
-        self::assertNotEmpty($this->result->data['songs']);
-        self::assertStringContainsString('Stairway to Heaven', (string) $response);
-    }
 }

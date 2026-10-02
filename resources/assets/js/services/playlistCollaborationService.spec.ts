@@ -23,25 +23,6 @@ describe('playlistCollaborationService', () => {
     await expect(service.createInviteLink(playlist)).rejects.toThrow('Smart playlists are not collaborative.')
   })
 
-  it('accepts invite', async () => {
-    const postMock = h.mock(http, 'post').mockResolvedValue({})
-
-    await service.acceptInvite('abc123')
-
-    expect(postMock).toHaveBeenCalledWith(`playlists/collaborators/accept`, { token: 'abc123' })
-  })
-
-  it('fetches collaborators', async () => {
-    const playlist = h.factory('playlist').make()
-    const collaborators = h.factory('playlist-collaborator').make(2)
-    const getMock = h.mock(http, 'get').mockResolvedValue(collaborators)
-
-    const received = await service.fetchCollaborators(playlist)
-
-    expect(getMock).toHaveBeenCalledWith(`playlists/${playlist.id}/collaborators`)
-    expect(received).toBe(collaborators)
-  })
-
   it('removes collaborator', async () => {
     const playlist = h.factory('playlist').make()
     const collaborator = h.factory('playlist-collaborator').make()

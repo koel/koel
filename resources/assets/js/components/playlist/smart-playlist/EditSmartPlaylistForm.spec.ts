@@ -54,16 +54,6 @@ describe('editSmartPlaylistForm', () => {
     expect((screen.getByRole('textbox', { name: 'name' }) as HTMLInputElement).value).toBe(playlist.name)
   })
 
-  it('shows existing rule groups on the Rules tab', async () => {
-    renderComponent()
-
-    await h.user.click(screen.getByText('Rules'))
-
-    await waitFor(() => {
-      screen.getByText(/Include songs that match/)
-    })
-  })
-
   it('submits changes with name and rules to playlistStore.update', async () => {
     const updateMock = h.mock(playlistStore, 'update')
     const { playlist } = renderComponent()

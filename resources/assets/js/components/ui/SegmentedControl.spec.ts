@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen, waitFor } from '@testing-library/vue'
-import { nextTick, ref } from 'vue'
+import { nextTick } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './SegmentedControl.vue'
 
@@ -37,23 +37,6 @@ describe('segmentedControl.vue', () => {
     await nextTick()
 
     expect(screen.queryByTestId('segmented-control-indicator')).toBeNull()
-  })
-
-  it('updates the model when an option is picked', async () => {
-    const selected = ref('one')
-
-    h.render(Component, {
-      props: {
-        name: 'segments',
-        options,
-        modelValue: selected.value,
-        'onUpdate:modelValue': (value: string) => (selected.value = value),
-      },
-    })
-
-    await h.user.click(screen.getByTestId('segment-two'))
-
-    expect(selected.value).toBe('two')
   })
 
   it('scrolls the picked option into view', async () => {

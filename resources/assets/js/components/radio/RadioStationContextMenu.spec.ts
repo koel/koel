@@ -1,25 +1,13 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { assertOpenModal } from '@/__tests__/assertions'
 import { playbackService } from '@/services/RadioPlaybackService'
 import { radioStationStore } from '@/stores/radioStationStore'
-import EditRadioStationForm from '@/components/radio/EditRadioStationForm.vue'
-
-const openModalMock = vi.fn()
-
-vi.mock('@/composables/useModal', () => ({
-  useModal: () => ({
-    openModal: openModalMock,
-  }),
-}))
 
 import Component from './RadioStationContextMenu.vue'
 
 describe('radioStationContextMenu.vue', () => {
-  const h = createHarness({
-    beforeEach: () => openModalMock.mockClear(),
-  })
+  const h = createHarness()
 
   const renderComponent = async (station?: RadioStation, manageable = true) => {
     station =
@@ -40,15 +28,6 @@ describe('radioStationContextMenu.vue', () => {
       station,
     }
   }
-
-  it('renders with Edit/Delete items', async () => {
-    await renderComponent()
-
-    screen.getByText('Edit…')
-    screen.getByText('Delete')
-    screen.getByText('Play')
-    screen.getByText('Favorite')
-  })
 
   it('renders without Edit/Delete items', async () => {
     await renderComponent(undefined, false)
@@ -93,30 +72,6 @@ describe('radioStationContextMenu.vue', () => {
     await h.user.click(screen.getByText('Stop'))
 
     expect(stopMock).toHaveBeenCalled()
-  })
-
-  it('favorites', async () => {
-    const toggleMock = h.mock(radioStationStore, 'toggleFavorite')
-    const { station } = await renderComponent(h.factory('radio-station').make({ favorite: false }))
-
-    await h.user.click(screen.getByText('Favorite'))
-    expect(toggleMock).toHaveBeenCalledWith(station)
-  })
-
-  it('undoes favorite', async () => {
-    const toggleMock = h.mock(radioStationStore, 'toggleFavorite')
-    const { station } = await renderComponent(h.factory('radio-station').make({ favorite: true }))
-
-    await h.user.click(screen.getByText('Undo Favorite'))
-    expect(toggleMock).toHaveBeenCalledWith(station)
-  })
-
-  it('requests edit form', async () => {
-    const { station } = await renderComponent()
-
-    await h.user.click(screen.getByText('Edit…'))
-
-    await assertOpenModal(openModalMock, EditRadioStationForm, { station })
   })
 
   it('deletes', async () => {

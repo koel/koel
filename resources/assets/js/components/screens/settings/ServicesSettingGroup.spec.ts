@@ -38,8 +38,8 @@ describe('servicesSettingGroup.vue', () => {
     expect(screen.queryByTestId('service-ticketmaster')).toBeNull()
   })
 
-  it('lists Ticketmaster in the Plus edition', () => {
-    h.withPlusEdition(() => {
+  it('lists Ticketmaster in the Plus edition', async () => {
+    await h.withPlusEdition(() => {
       h.render(Component)
       screen.getByTestId('service-ticketmaster')
     })

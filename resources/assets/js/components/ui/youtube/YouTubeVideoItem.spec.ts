@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { youTubeService } from '@/services/youTubeService'
 import Component from './YouTubeVideoItem.vue'
 
 describe('youTubeVideoItem.vue', () => {
@@ -36,13 +34,4 @@ describe('youTubeVideoItem.vue', () => {
   }
 
   it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
-  it('plays', async () => {
-    const mock = h.mock(youTubeService, 'play')
-    const { video } = renderComponent()
-
-    await h.user.click(screen.getByRole('button'))
-
-    expect(mock).toHaveBeenCalledWith(video)
-  })
 })

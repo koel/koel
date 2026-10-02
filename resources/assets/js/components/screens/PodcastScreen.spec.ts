@@ -1,6 +1,5 @@
 import { screen, waitFor } from '@testing-library/vue'
-import type { Mock } from 'vite-plus/test'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { podcastStore } from '@/stores/podcastStore'
 import { playableStore as episodeStore } from '@/stores/playableStore'
@@ -8,12 +7,7 @@ import { playbackService } from '@/services/QueuePlaybackService'
 import { queueStore } from '@/stores/queueStore'
 import Router from '@/router'
 import { eventBus } from '@/utils/eventBus'
-import { useContextMenu } from '@/composables/useContextMenu'
-import { assertOpenContextMenu } from '@/__tests__/assertions'
-import PodcastContextMenu from '@/components/podcast/PodcastContextMenu.vue'
 import Component from './PodcastScreen.vue'
-
-vi.mock('@/composables/useContextMenu')
 
 describe('podcastScreen.vue', () => {
   const h = createHarness()
@@ -134,16 +128,6 @@ describe('podcastScreen.vue', () => {
   it('does not have a Favorite button if podcast is not favorite', async () => {
     await renderComponent(h.factory('podcast').make({ favorite: false }))
     expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
-  })
-
-  it('requests Actions menu', async () => {
-    const { openContextMenu } = useContextMenu()
-    const { podcast } = await renderComponent()
-
-    await waitFor(async () => {
-      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
-      await assertOpenContextMenu(openContextMenu as Mock, PodcastContextMenu, { podcast })
-    })
   })
 
   it('goes back to podcast list if current one is unsubscribed', async () => {

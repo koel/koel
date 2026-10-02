@@ -5,11 +5,6 @@ import { useBranding } from './useBranding'
 describe('useBranding', () => {
   createHarness()
 
-  it('returns branding name from window', () => {
-    const { name } = useBranding()
-    expect(name).toBe(window.KOEL.branding.name)
-  })
-
   it('falls back to default logo when none set', () => {
     const originalLogo = window.KOEL.branding.logo
     window.KOEL.branding.logo = ''

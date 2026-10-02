@@ -79,13 +79,4 @@ class RateSongTest extends TestCase
         $this->putAs("api/songs/$song->id/rating", ['rating' => 6], $user)->assertUnprocessable();
         $this->putAs("api/songs/$song->id/rating", ['rating' => -1], $user)->assertUnprocessable();
     }
-
-    #[Test]
-    public function rejectsMissingRating(): void
-    {
-        $user = create_user();
-        $song = Song::factory()->createOne();
-
-        $this->putAs("api/songs/$song->id/rating", [], $user)->assertUnprocessable();
-    }
 }

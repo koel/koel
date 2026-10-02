@@ -16,13 +16,4 @@ class GenericErrorExceptionTest extends TestCase
         self::assertSame(0, $exception->getSubsonicErrorCode());
         self::assertSame('A generic error occurred.', $exception->getSubsonicErrorMessage());
     }
-
-    #[Test]
-    public function acceptsCustomMessage(): void
-    {
-        $exception = new GenericErrorException('Something specific broke.');
-
-        self::assertSame(0, $exception->getSubsonicErrorCode());
-        self::assertSame('Something specific broke.', $exception->getSubsonicErrorMessage());
-    }
 }

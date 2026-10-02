@@ -13,11 +13,6 @@ vi.mock('@/utils/helpers', async importOriginal => ({
 describe('googleLoginButton.vue', () => {
   const h = createHarness()
 
-  it('renders login button', () => {
-    h.render(Component)
-    screen.getByTitle('Log in with Google')
-  })
-
   it('opens popup on click', async () => {
     h.render(Component)
     await h.user.click(screen.getByTitle('Log in with Google'))

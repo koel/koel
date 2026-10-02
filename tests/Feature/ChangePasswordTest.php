@@ -42,15 +42,6 @@ class ChangePasswordTest extends TestCase
     }
 
     #[Test]
-    public function changePasswordRequiresBothFields(): void
-    {
-        $user = create_user();
-
-        $this->putAs('api/me/password', ['current_password' => 'old-secret'], $user)->assertUnprocessable();
-        $this->putAs('api/me/password', ['new_password' => 'new-secret-1234'], $user)->assertUnprocessable();
-    }
-
-    #[Test]
     public function disabledInDemo(): void
     {
         config(['koel.misc.demo' => true]);

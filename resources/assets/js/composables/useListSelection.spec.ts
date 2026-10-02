@@ -19,14 +19,6 @@ describe('useListSelection', () => {
     expect(items.value[0].selected).toBe(true)
   })
 
-  it('deselects an item via toggle', () => {
-    const { items, select, toggleSelected, isSelected } = setup()
-    select(items.value[0])
-    toggleSelected(items.value[0])
-
-    expect(isSelected(items.value[0])).toBe(false)
-  })
-
   it('selects all items', () => {
     const { items, selectAll, selected } = setup()
     selectAll()

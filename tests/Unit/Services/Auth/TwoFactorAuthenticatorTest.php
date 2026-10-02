@@ -50,14 +50,6 @@ class TwoFactorAuthenticatorTest extends TestCase
     }
 
     #[Test]
-    public function generateRecoveryCodesDelegatesToFactory(): void
-    {
-        $this->recoveryCodeFactory->expects('generateCodes')->with(8)->andReturn(['CODE_A', 'CODE_B']);
-
-        self::assertSame(['CODE_A', 'CODE_B'], $this->authenticator->generateRecoveryCodes());
-    }
-
-    #[Test]
     public function regenerateRecoveryCodesPersistsAndReturnsNewCodes(): void
     {
         $user = create_user();

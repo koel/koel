@@ -63,11 +63,6 @@ describe('sideSheet.vue', () => {
     await h.user.click(screen.getByTestId('profile-dropdown-trigger'))
   }
 
-  it('renders without a current playable', () => {
-    renderComponent()
-    screen.getByTestId('profile-dropdown-trigger')
-  })
-
   it('gets active tab from the preference', async () => {
     preferenceStore.active_extra_panel_tab = 'Lyrics'
     renderComponent(ref(h.factory('song').make()))

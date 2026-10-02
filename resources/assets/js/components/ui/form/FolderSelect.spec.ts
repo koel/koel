@@ -20,15 +20,6 @@ describe('folderSelect', () => {
     })
   }
 
-  it('renders existing folders in the dropdown', () => {
-    renderComponent()
-
-    const options = screen.getAllByRole('option')
-    // empty option + 3 folders + "+ New Folder"
-    expect(options).toHaveLength(5)
-    expect(options[options.length - 1].textContent).toContain('+ New Folder')
-  })
-
   it('renders existing folders with their full paths', () => {
     const root = h.factory('playlist-folder').make({ name: 'Music', parent_id: null })
     const child = h.factory('playlist-folder').make({ name: 'Live', parent_id: root.id })
@@ -53,18 +44,6 @@ describe('folderSelect', () => {
       'Music / Live / 2026',
       '+ New Folder',
     ])
-  })
-
-  it('switches to input mode when "+ New Folder" is selected', async () => {
-    renderComponent()
-
-    await h.user.selectOptions(screen.getByRole('combobox'), '__new__')
-
-    await waitFor(() => {
-      screen.getByPlaceholderText('Folder name')
-      screen.getByTitle('Create')
-      screen.getByTitle('Cancel')
-    })
   })
 
   it('emits folder name on confirm', async () => {

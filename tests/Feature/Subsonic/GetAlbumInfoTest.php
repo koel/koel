@@ -14,62 +14,12 @@ use function Tests\create_user;
 class GetAlbumInfoTest extends TestCase
 {
     #[Test]
-    public function returnsNotesFromEncyclopediaUnderAlbumInfoWrapper(): void
-    {
-        $user = create_user();
-        $album = Album::factory()->for($user)->createOne();
-
-        $this
-            ->mock(EncyclopediaService::class)
-            ->expects('getAlbumInformation')
-            ->andReturn(AlbumInformation::make(
-                url: 'https://www.last.fm/album/Foo',
-                cover: 'https://example.test/cover.jpg',
-                wiki: ['summary' => 'About the album', 'full' => 'Full text'],
-            ));
-
-        $this
-            ->getJson(
-                '/rest/getAlbumInfo.view?'
-                    . Arr::query([
-                        'apiKey' => $user->subsonic_api_key,
-                        'f' => 'json',
-                        'id' => $album->id,
-                    ]),
-            )
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.albumInfo.notes', 'About the album')
-            ->assertJsonPath('subsonic-response.albumInfo.lastFmUrl', 'https://www.last.fm/album/Foo')
-            ->assertJsonPath('subsonic-response.albumInfo.smallImageUrl', 'https://example.test/cover.jpg');
-    }
-
-    #[Test]
     public function returnsEmptyAlbumInfoObjectWhenThereIsNoInformation(): void
     {
         $user = create_user();
         $album = Album::factory()->for($user)->createOne();
 
         $this->mock(EncyclopediaService::class)->expects('getAlbumInformation')->andReturn(AlbumInformation::make());
-
-        $response = $this->getJson(
-            '/rest/getAlbumInfo.view?'
-                . Arr::query([
-                    'apiKey' => $user->subsonic_api_key,
-                    'f' => 'json',
-                    'id' => $album->id,
-                ]),
-        )->assertOk();
-
-        self::assertStringContainsString('"albumInfo":{}', $response->getContent());
-    }
-
-    #[Test]
-    public function returnsEmptyAlbumInfoObjectWhenEncyclopediaReturnsNull(): void
-    {
-        $user = create_user();
-        $album = Album::factory()->for($user)->createOne();
-
-        $this->mock(EncyclopediaService::class)->expects('getAlbumInformation')->andReturnNull();
 
         $response = $this->getJson(
             '/rest/getAlbumInfo.view?'

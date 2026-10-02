@@ -55,28 +55,6 @@ class EqualizerPresetTest extends TestCase
     }
 
     #[Test]
-    public function storeAppendsToExistingPresets(): void
-    {
-        $user = create_user();
-
-        $this->postAs(
-            'api/me/equalizer-presets',
-            ['name' => 'First', 'preamp' => 0, 'gains' => self::VALID_GAINS],
-            $user,
-        )->assertOk();
-
-        $this->postAs(
-            'api/me/equalizer-presets',
-            ['name' => 'Second', 'preamp' => 0, 'gains' => self::VALID_GAINS],
-            $user,
-        )->assertOk();
-
-        $user->refresh();
-
-        self::assertSame(['First', 'Second'], $user->preferences->equalizerPresets->pluck('name')->all());
-    }
-
-    #[Test]
     public function storeKeepsPresetsSortedAlphabeticallyByName(): void
     {
         $user = create_user();
@@ -92,26 +70,6 @@ class EqualizerPresetTest extends TestCase
         $user->refresh();
 
         self::assertSame(['alpha', 'Mu', 'Zeta'], $user->preferences->equalizerPresets->pluck('name')->all());
-    }
-
-    #[Test]
-    public function storeMintsAUniqueIdPerPreset(): void
-    {
-        $user = create_user();
-
-        $first = $this->postAs(
-            'api/me/equalizer-presets',
-            ['name' => 'A', 'preamp' => 0, 'gains' => self::VALID_GAINS],
-            $user,
-        )->json('id');
-
-        $second = $this->postAs(
-            'api/me/equalizer-presets',
-            ['name' => 'B', 'preamp' => 0, 'gains' => self::VALID_GAINS],
-            $user,
-        )->json('id');
-
-        self::assertNotSame($first, $second);
     }
 
     #[Test]

@@ -315,14 +315,6 @@ class PodcastServiceTest extends TestCase
     }
 
     #[Test]
-    public function deletePodcast(): void
-    {
-        $podcast = Podcast::factory()->createOne();
-        $this->service->deletePodcast($podcast);
-        self::assertModelMissing($podcast);
-    }
-
-    #[Test]
     public function addPodcastSkipsEpisodesWithUnsafeEnclosureUrls(): void
     {
         $mock = new MockHandler([

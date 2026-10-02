@@ -1,14 +1,8 @@
 import { screen, waitFor } from '@testing-library/vue'
-import type { Mock } from 'vite-plus/test'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playableStore as episodeStore } from '@/stores/playableStore'
-import { useContextMenu } from '@/composables/useContextMenu'
-import { assertOpenContextMenu } from '@/__tests__/assertions'
-import PlayableContextMenu from '@/components/playable/PlayableContextMenu.vue'
 import Component from './EpisodeScreen.vue'
-
-vi.mock('@/composables/useContextMenu')
 
 describe('episodeScreen.vue', () => {
   const h = createHarness()
@@ -44,15 +38,5 @@ describe('episodeScreen.vue', () => {
   it('does not have a Favorite button if episode is not favorite', async () => {
     await renderComponent(h.factory('episode').make({ favorite: false }))
     expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
-  })
-
-  it('requests Actions menu', async () => {
-    const { openContextMenu } = useContextMenu()
-    const { episode } = await renderComponent()
-
-    await waitFor(async () => {
-      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
-      await assertOpenContextMenu(openContextMenu as Mock, PlayableContextMenu, { playables: [episode] })
-    })
   })
 })

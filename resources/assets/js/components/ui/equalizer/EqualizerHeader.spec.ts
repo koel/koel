@@ -5,7 +5,6 @@ import { equalizerPresets as builtInPresets } from '@/config/audio'
 import { equalizerStore } from '@/stores/equalizerStore'
 import Component from './EqualizerHeader.vue'
 
-const rock = builtInPresets.find(preset => preset.name === 'Rock')!
 const customPreset: EqualizerPreset = { id: '01HFCUSTOM01', name: 'My Bass', preamp: 3, gains: [4, 4, 0] }
 
 describe('equalizerHeader.vue', () => {
@@ -65,14 +64,6 @@ describe('equalizerHeader.vue', () => {
     screen.getByText('Delete')
   })
 
-  it('emits delete when Delete is clicked', async () => {
-    const { emitted } = renderHeader({ customSelected: true, selectedId: '01HFCUSTOM01' })
-
-    await fireEvent.click(screen.getByText('Delete'))
-
-    expect(emitted().delete).toHaveLength(1)
-  })
-
   it('opens the save form when Save as… is clicked, then closes it on cancel', async () => {
     renderHeader({ isModified: true, selectedId: null })
 
@@ -94,13 +85,5 @@ describe('equalizerHeader.vue', () => {
 
     expect(emitted().save).toEqual([['Bass Boost']])
     expect(screen.queryByPlaceholderText('Preset name')).toBeNull()
-  })
-
-  it('emits select with the new id when a preset is chosen', async () => {
-    const { emitted } = renderHeader()
-
-    await h.user.selectOptions(screen.getByRole('combobox'), rock.id ?? '')
-
-    expect(emitted().select).toEqual([[rock.id]])
   })
 })

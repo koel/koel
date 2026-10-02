@@ -1,18 +1,12 @@
 import { screen, waitFor } from '@testing-library/vue'
-import type { Mock } from 'vite-plus/test'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
-import { useContextMenu } from '@/composables/useContextMenu'
-import { assertOpenContextMenu } from '@/__tests__/assertions'
-import AlbumContextMenu from '@/components/album/AlbumContextMenu.vue'
 import Component from './AlbumScreen.vue'
-
-vi.mock('@/composables/useContextMenu')
 
 describe('albumScreen.vue', () => {
   const h = createHarness()
@@ -118,15 +112,5 @@ describe('albumScreen.vue', () => {
   it('does not have a Favorite button if album is not favorite', async () => {
     await renderComponent('songs', h.factory('album').make({ favorite: false }))
     expect(screen.queryByRole('button', { name: 'Favorite' })).toBeNull()
-  })
-
-  it('requests Actions menu', async () => {
-    const { openContextMenu } = useContextMenu()
-    const { album } = await renderComponent()
-
-    await waitFor(async () => {
-      await h.user.click(screen.getByRole('button', { name: 'More Actions' }))
-      await assertOpenContextMenu(openContextMenu as Mock, AlbumContextMenu, { album })
-    })
   })
 })

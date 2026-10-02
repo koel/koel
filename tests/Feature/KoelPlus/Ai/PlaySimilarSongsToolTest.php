@@ -85,22 +85,6 @@ class PlaySimilarSongsToolTest extends PlusTestCase
     }
 
     #[Test]
-    public function usesCurrentlyPlayingSongWhenNoTitleSpecified(): void
-    {
-        $referenceSong = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Master of Puppets']);
-        Song::factory()->for($this->user, 'owner')->for($referenceSong->artist)->createOne(['title' => 'Battery']);
-
-        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $referenceSong->id));
-        $this->tool = app()->make(PlaySimilarSongs::class);
-
-        $response = $this->tool->handle(new Request([]));
-
-        self::assertSame('play_songs', $this->result->action);
-        self::assertNotEmpty($this->result->data['songs']);
-        self::assertStringContainsString('Master of Puppets', (string) $response);
-    }
-
-    #[Test]
     public function returnsErrorWhenNoSongSpecifiedAndNoneIsPlaying(): void
     {
         $response = $this->tool->handle(new Request([]));

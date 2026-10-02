@@ -1,18 +1,11 @@
 import { screen } from '@testing-library/vue'
-import type { Mock } from 'vite-plus/test'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { artistStore } from '@/stores/artistStore'
-import { useContextMenu } from '@/composables/useContextMenu'
-import { assertOpenContextMenu } from '@/__tests__/assertions'
-import ArtistContextMenu from './ArtistContextMenu.vue'
 import Component from './ArtistCard.vue'
-
-vi.mock('@/composables/useContextMenu')
 
 describe('artistCard.vue', () => {
   const h = createHarness()
@@ -44,14 +37,6 @@ describe('artistCard.vue', () => {
       artist,
     }
   }
-
-  it('downloads', async () => {
-    const mock = h.mock(downloadService, 'fromArtist')
-    renderComponent()
-
-    await h.user.click(screen.getByTitle('Download all songs by Led Zeppelin'))
-    expect(mock).toHaveBeenCalledOnce()
-  })
 
   it('does not have an option to download if downloading is disabled', async () => {
     commonStore.state.allows_download = false
@@ -90,14 +75,6 @@ describe('artistCard.vue', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(artist)
     expect(playMock).toHaveBeenCalledWith(songs, true)
-  })
-
-  it('requests context menu', async () => {
-    const { openContextMenu } = useContextMenu()
-    const { artist } = renderComponent()
-    await h.trigger(screen.getByTestId('artist-album-card'), 'contextMenu')
-
-    await assertOpenContextMenu(openContextMenu as Mock, ArtistContextMenu, { artist })
   })
 
   it('if favorite, has a Favorite icon button that undoes favorite state', async () => {

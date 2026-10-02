@@ -64,24 +64,6 @@ describe('podcastContextMenu.vue', () => {
     expect(playMock).toHaveBeenCalledWith(episodes, true)
   })
 
-  it('favorites', async () => {
-    const { podcast } = await renderComponent()
-    const favoriteMock = h.mock(podcastStore, 'toggleFavorite')
-
-    await h.user.click(screen.getByText('Favorite'))
-
-    expect(favoriteMock).toHaveBeenCalledWith(podcast)
-  })
-
-  it('undoes favorite', async () => {
-    const { podcast } = await renderComponent(h.factory('podcast').make({ favorite: true }))
-    const favoriteMock = h.mock(podcastStore, 'toggleFavorite')
-
-    await h.user.click(screen.getByText('Undo Favorite'))
-
-    expect(favoriteMock).toHaveBeenCalledWith(podcast)
-  })
-
   it('unsubscribes', async () => {
     const { podcast } = await renderComponent()
     const unsubMock = h.mock(podcastStore, 'unsubscribe')

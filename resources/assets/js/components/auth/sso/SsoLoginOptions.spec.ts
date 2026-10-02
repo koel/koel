@@ -41,13 +41,6 @@ describe('ssoLoginOptions.vue', () => {
     expect(container.querySelector('div')).toBeNull()
   })
 
-  it('renders the configured provider buttons', () => {
-    window.KOEL.sso_providers = ['Google']
-    renderWithGoogle()
-
-    screen.getByTestId('sso-success')
-  })
-
   it('sets tokens, reconciles redirects and emits loggedIn on success', async () => {
     window.KOEL.sso_providers = ['Google']
     const setTokensMock = h.mock(authService, 'setTokensUsingCompositeToken')

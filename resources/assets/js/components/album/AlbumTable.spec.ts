@@ -23,23 +23,11 @@ describe('albumTable.vue', () => {
     }
   }
 
-  it('renders a sort-by-name header', () => {
-    renderWithAlbums(3)
-
-    screen.getByTitle('Sort by name')
-  })
-
   it('emits sort with toggled order when a header is clicked', async () => {
     const { emitted } = renderWithAlbums(0)
 
     await h.user.click(screen.getByTitle('Sort by name'))
 
     expect(emitted('sort')?.[0]).toEqual(['name', 'desc'])
-  })
-
-  it('shows a more-actions button in the header action menu', () => {
-    renderWithAlbums(0)
-
-    screen.getByRole('button', { name: 'Sort' })
   })
 })

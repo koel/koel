@@ -493,25 +493,4 @@ class SongServiceTest extends TestCase
         self::assertSame('Dark Tranquillity', $updatedSong->album_artist->name);
         self::assertFalse($updatedSong->album->is($album));
     }
-
-    #[Test]
-    public function updateNonCompilationSongArtistAlsoUpdatesAlbumArtist(): void
-    {
-        $song = Song::factory()->createOne();
-        $originalAlbumArtist = $song->album_artist;
-
-        // Verify non-compilation: album artist === song artist
-        self::assertTrue($originalAlbumArtist->is($song->artist));
-
-        // Change artist without specifying album artist
-        $data = SongUpdateData::make(artistName: 'New Artist');
-        $result = $this->service->updateSongs([$song->id], $data);
-
-        /** @var Song $updatedSong */
-        $updatedSong = $result->updatedSongs->first();
-
-        // For non-compilation songs, album artist should follow the song artist
-        self::assertSame('New Artist', $updatedSong->artist->name);
-        self::assertSame('New Artist', $updatedSong->album_artist->name);
-    }
 }

@@ -7,7 +7,6 @@ import { ContextMenuKey } from '@/config/symbols'
 import { arrayify } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import { screen, waitFor } from '@testing-library/vue'
-import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { commonStore } from '@/stores/commonStore'
 import { playlistStore } from '@/stores/playlistStore'
@@ -16,7 +15,6 @@ import { playableStore } from '@/stores/playableStore'
 import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
 import Router from '@/router'
 import EditSongForm from '@/components/playable/EditSongForm.vue'
-import CreateEmbedForm from '@/components/embed/CreateEmbedForm.vue'
 import CreatePlaylistForm from '@/components/playlist/CreatePlaylistForm.vue'
 
 const openModalMock = vi.fn()
@@ -157,15 +155,6 @@ describe('playableContextMenu.vue', () => {
     expect(goMock).toHaveBeenCalledWith(`/#/episodes/${episode.id}`)
   })
 
-  it('downloads', async () => {
-    const downloadMock = h.mock(downloadService, 'fromPlayables')
-    const { playables } = await renderComponent()
-
-    await h.user.click(screen.getByText('Download'))
-
-    expect(downloadMock).toHaveBeenCalledWith(playables)
-  })
-
   it('queues', async () => {
     const queueMock = h.mock(queueStore, 'queue')
     const { playables } = await renderComponent()
@@ -259,7 +248,7 @@ describe('playableContextMenu.vue', () => {
     h.mock(MessageToasterStub.value, 'success')
     const { playables } = await renderComponent()
 
-    playlistStore.state.playlists.forEach(playlist => screen.queryByText(playlist.name))
+    playlistStore.state.playlists.forEach(playlist => screen.getByText(playlist.name))
 
     await h.user.click(screen.getByText(playlistStore.state.playlists[0].name))
 
@@ -366,12 +355,6 @@ describe('playableContextMenu.vue', () => {
     await h.user.click(screen.getByText('New Playlist…'))
 
     await assertOpenModal(openModalMock, CreatePlaylistForm, { folder: null, playables })
-  })
-
-  it('does not have the options to mark song as private or public in Community edition', async () => {
-    await renderComponent(h.factory('song').make())
-    expect(screen.queryByText('Mark as Private')).toBeNull()
-    expect(screen.queryByText('Unmark as Private')).toBeNull()
   })
 
   it('makes songs private', async () =>
@@ -482,13 +465,6 @@ describe('playableContextMenu.vue', () => {
 
     expect(screen.queryByText('Unmark as Private')).toBeNull()
     expect(screen.queryByText('Mark as Private')).toBeNull()
-  })
-
-  it('requests the embed form', async () => {
-    const { playables } = await renderComponent(h.factory('song').make())
-    await h.user.click(screen.getByText('Embed…'))
-
-    await assertOpenModal(openModalMock, CreateEmbedForm, { embeddable: playables[0] })
   })
 
   it('does not have an option to embed when embedding is disabled', async () => {

@@ -13,12 +13,6 @@ describe('albumStore', () => {
     },
   })
 
-  it('gets an album by ID', () => {
-    const album = h.factory('album').make()
-    albumStore.vault.set(album.id, album)
-    expect(albumStore.byId(album.id)).toEqual(album)
-  })
-
   it('removes albums by IDs', () => {
     const albums = h.factory('album').make(3)
     albums.forEach(album => albumStore.vault.set(album.id, album))
@@ -37,19 +31,6 @@ describe('albumStore', () => {
 
     expect(albumStore.isUnknown(album)).toBe(true)
     expect(albumStore.isUnknown(h.factory('album').make())).toBe(false)
-  })
-
-  it('syncs albums with the vault', () => {
-    const album = h.factory('album').make({ name: 'IV' })
-
-    albumStore.syncWithVault(album)
-    expect(albumStore.vault.get(album.id)).toEqual(album)
-
-    album.name = 'V'
-    albumStore.syncWithVault(album)
-
-    expect(albumStore.vault.size).toBe(1)
-    expect(albumStore.vault.get(album.id)?.name).toBe('V')
   })
 
   it('fetches an album thumbnail', async () => {

@@ -98,13 +98,6 @@ describe('starRating.vue', () => {
     expect(screen.getByRole('radio', { name: 'Rate 3 of 5' }).closest('label')!.title).toBe('Remove rating')
   })
 
-  it('shows "Remove rating" on the singular star when current rating is 1', () => {
-    h.render(Component, { props: { rating: 1 } })
-
-    expect(screen.getByRole('radio', { name: 'Rate 1 of 5' }).closest('label')!.title).toBe('Remove rating')
-    expect(screen.getByRole('radio', { name: 'Rate 2 of 5' }).closest('label')!.title).toBe('2 stars')
-  })
-
   it('falls back to numeric labels for every star when no rating is set', () => {
     h.render(Component, { props: { rating: 0 } })
 

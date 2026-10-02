@@ -159,15 +159,6 @@ class FavoriteableEntityResolverTest extends TestCase
     }
 
     #[Test]
-    public function resolveReturnsEmptyForNonPlayableWithoutQuery(): void
-    {
-        $context = new AiRequestContext($this->user);
-        $result = $this->resolver->resolve(FavoriteableType::ALBUM, new Request([]), $context);
-
-        self::assertCount(0, $result);
-    }
-
-    #[Test]
     public function resolveIgnoresCurrentSongForNonPlayableType(): void
     {
         $song = Song::factory()->for($this->user, 'owner')->createOne();

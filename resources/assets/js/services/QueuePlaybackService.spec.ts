@@ -38,8 +38,7 @@ describe('playbackService', () => {
 
   it('only initializes once', () => {
     const media = playbackService.media
-    playbackService.activate(document.querySelector<HTMLMediaElement>('#audio-player')!)
-    // media reference should remain the same (not re-initialized)
+    playbackService.activate(document.createElement('audio'))
     expect(playbackService.media).toBe(media)
   })
 

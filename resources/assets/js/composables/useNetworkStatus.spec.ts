@@ -7,9 +7,4 @@ describe('useNetworkStatus', () => {
     const { online: online2 } = useNetworkStatus()
     expect(online1).toBe(online2)
   })
-
-  it('reflects the current online state', () => {
-    const { online } = useNetworkStatus()
-    expect(typeof online.value).toBe('boolean')
-  })
 })

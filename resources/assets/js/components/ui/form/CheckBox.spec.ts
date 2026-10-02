@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './CheckBox.vue'
 
@@ -18,12 +17,4 @@ describe('checkBox.vue', () => {
         })
         .html(),
     ).toMatchSnapshot())
-
-  it('emits the input event', async () => {
-    const { emitted } = h.render(Component)
-
-    await h.trigger(screen.getByRole('checkbox'), 'click')
-
-    expect(emitted()['update:modelValue']).toBeTruthy()
-  })
 })
