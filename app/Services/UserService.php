@@ -5,9 +5,14 @@ namespace App\Services;
 use App\Enums\Acl\Role;
 use App\Exceptions\UserProspectUpdateDeniedException;
 use App\Models\Organization;
+use App\Models\Playlist;
+use App\Models\Podcast;
+use App\Models\RadioStation;
 use App\Models\User;
+use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
 use App\Services\Image\ImageStorage;
+use App\Services\Podcast\PodcastService;
 use App\Values\ImageWritingConfig;
 use App\Values\User\SsoUser;
 use App\Values\User\UserCreateData;
@@ -24,6 +29,9 @@ class UserService
         private readonly ImageStorage $imageStorage,
         private readonly OrganizationService $organizationService,
         private readonly EmailChangeService $emailChangeService,
+        private readonly SongRepository $songRepository,
+        private readonly SongService $songService,
+        private readonly PodcastService $podcastService,
         #[Config('koel.sso.default_role')]
         private readonly Role $defaultSsoRole = Role::USER,
     ) {}
@@ -138,6 +146,13 @@ class UserService
 
     public function deleteUser(User $user): void
     {
+        $this->songService->deleteSongs($this->songRepository->getIdsByOwner($user));
+        $user->ownedPlaylists->each(static fn (Playlist $playlist) => $playlist->delete());
+        $user->radioStations->each(static fn (RadioStation $station) => $station->delete());
+        $user->podcasts->each(
+            fn (Podcast $podcast) => $this->podcastService->unsubscribeUserFromPodcast($user, $podcast),
+        );
+
         $user->delete();
     }
 
