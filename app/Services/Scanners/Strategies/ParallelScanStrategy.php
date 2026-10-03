@@ -50,7 +50,7 @@ class ParallelScanStrategy
 
         try {
             foreach ($chunks as $chunk) {
-                $manifest = tempnam(sys_get_temp_dir(), 'koel_scan_') . '.json';
+                $manifest = tempnam(sys_get_temp_dir(), 'koel_scan_');
                 File::put($manifest, json_encode($chunk));
                 $manifests[] = $manifest;
 
