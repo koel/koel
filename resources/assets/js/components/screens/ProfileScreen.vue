@@ -59,6 +59,7 @@
       <TabPanelContainer class="scroll-mask-y">
         <TabPanel v-show="currentTab === 'profile'" id="profilePaneProfile" aria-labelledby="profilePaneProfile">
           <ProfileForm />
+          <HookSlot name="profile-tab.footer" />
         </TabPanel>
 
         <TabPanel
@@ -110,6 +111,7 @@ import { ref, watch } from 'vue'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { defineAsyncComponent } from '@/utils/helpers'
 
+import HookSlot from '@/components/utils/HookSlot.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import TabButton from '@/components/ui/tabs/TabButton.vue'
