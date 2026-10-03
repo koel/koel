@@ -196,4 +196,11 @@ class PlaylistService
             static fn () => !$playlist->is_smart && LicenseFacade::isPlus() && $playlist->collaborators->isNotEmpty(),
         );
     }
+
+    public function deletePlaylistsByUser(User $user): void
+    {
+        $user
+            ->loadMissing('ownedPlaylists')
+            ->ownedPlaylists->each(static fn (Playlist $playlist) => $playlist->delete());
+    }
 }
