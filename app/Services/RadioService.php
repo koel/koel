@@ -54,4 +54,11 @@ class RadioService
 
         return $this->repository->findOneWithUserContext($radioStation->id, $radioStation->user);
     }
+
+    public function deleteRadioStationsByUser(User $user): void
+    {
+        $user
+            ->loadMissing('radioStations')
+            ->radioStations->each(static fn (RadioStation $station) => $station->delete());
+    }
 }

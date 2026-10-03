@@ -211,6 +211,13 @@ class PodcastService
         event(new UserUnsubscribedFromPodcast($user, $podcast));
     }
 
+    public function unsubscribeUserFromAllPodcasts(User $user): void
+    {
+        $user
+            ->loadMissing('podcasts')
+            ->podcasts->each(fn (Podcast $podcast) => $this->unsubscribeUserFromPodcast($user, $podcast));
+    }
+
     public function isPodcastObsolete(Podcast $podcast): bool
     {
         if (abs($podcast->last_synced_at->diffInHours(now())) < 12) {

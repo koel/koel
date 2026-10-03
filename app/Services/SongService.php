@@ -26,10 +26,13 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 
 // @mago-ignore lint:cyclomatic-complexity
 class SongService
 {
+    private const int DELETION_BATCH_SIZE = 500;
+
     public function __construct(
         private readonly SongRepository $songRepository,
         private readonly TranscodeRepository $transcodeRepository,
@@ -185,6 +188,14 @@ class SongService
         Song::query()->whereKey($applicableSongIds)->update(['is_public' => false]);
 
         return $applicableSongIds;
+    }
+
+    public function deleteSongsByUser(User $user): void
+    {
+        $this->songRepository
+            ->lazyGetIdsByOwner($user)
+            ->chunk(self::DELETION_BATCH_SIZE)
+            ->each(fn (LazyCollection $ids) => $this->deleteSongs($ids->all()));
     }
 
     /**
