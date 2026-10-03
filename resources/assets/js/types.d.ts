@@ -607,6 +607,7 @@ interface HookSlotNames {
   'sidebar.footer': true
   'screen.header': true
   'accept-invitation-form.footer': true
+  'profile-tab.footer': true
 }
 
 declare type HookSlotName = keyof HookSlotNames
