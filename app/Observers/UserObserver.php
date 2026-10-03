@@ -7,7 +7,6 @@ use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\RadioStation;
 use App\Models\User;
-use App\Repositories\SongRepository;
 use App\Services\Image\ModelImageObserver;
 use App\Services\Podcast\PodcastService;
 use App\Services\SongService;
@@ -19,7 +18,6 @@ class UserObserver
 
     public function __construct(
         private readonly SubsonicAuthenticationService $subsonicAuth,
-        private readonly SongRepository $songRepository,
         private readonly SongService $songService,
         private readonly PodcastService $podcastService,
     ) {
@@ -42,7 +40,7 @@ class UserObserver
 
     public function deleting(User $user): void
     {
-        $this->songService->deleteSongs($this->songRepository->getIdsByOwner($user));
+        $this->songService->deleteSongsByUser($user);
         $user->loadMissing(['ownedPlaylists', 'radioStations', 'podcasts']);
         $user->ownedPlaylists->each(static fn (Playlist $playlist) => $playlist->delete());
         $user->radioStations->each(static fn (RadioStation $station) => $station->delete());

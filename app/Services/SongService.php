@@ -187,6 +187,11 @@ class SongService
         return $applicableSongIds;
     }
 
+    public function deleteSongsByUser(User $user): void
+    {
+        $this->deleteSongs($this->songRepository->getIdsByOwner($user));
+    }
+
     /**
      * @param array<string>|string $ids
      */
