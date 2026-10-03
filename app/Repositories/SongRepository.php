@@ -27,6 +27,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 use LogicException;
 
 /**
@@ -52,10 +53,15 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query()->where('path', $path)->first();
     }
 
-    /** @return array<string> */
-    public function getIdsByOwner(User $owner): array
+    /** @return LazyCollection<int, string> */
+    public function lazyGetIdsByOwner(User $owner): LazyCollection
     {
-        return Song::query()->whereBelongsTo($owner, 'owner')->pluck('id')->all();
+        return Song::query()
+            ->withoutEagerLoads()
+            ->whereBelongsTo($owner, 'owner')
+            ->select('songs.id')
+            ->lazyById(column: 'songs.id', alias: 'id')
+            ->map(static fn (Song $song): string => $song->id);
     }
 
     public function findByHash(string $hash, User $owner): ?Song
