@@ -32,7 +32,7 @@ class SecurityNoticesTest extends TestCase
     }
 
     #[Test]
-    public function stayQuietWhenUsersChangeTheirOwnPassword(): void
+    public function noticeOwnPasswordChange(): void
     {
         $user = create_user(['password' => Hash::make('old-secret')]);
 
@@ -42,7 +42,7 @@ class SecurityNoticesTest extends TestCase
             $user,
         )->assertNoContent();
 
-        Mail::assertNotQueued(PasswordChanged::class);
+        self::assertPasswordNoticeQueued($user);
     }
 
     #[Test]

@@ -66,6 +66,8 @@ class UserService
     {
         $user->password = $newPassword;
         $user->save();
+
+        $this->securityNoticeService->notifyPasswordChanged($user);
     }
 
     public function updateUser(User $user, UserUpdateData $dto): User

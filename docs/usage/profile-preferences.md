@@ -15,7 +15,7 @@ Leaving the New Password field blank will keep your current password intact.
 
 If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, a new email address only takes effect once you confirm it: Koel sends a confirmation link to the new address, valid for 24 hours, and lets your old address know about the change. If you change your mind and enter another address, only the newest link works. Until then, you keep logging in with your old address.
 
-With a mailer, Koel also emails you when your password changes some other way than here: when you reset it, or an admin changes it for you. If you didn't expect that email, reset your password right away.
+With a mailer, Koel also emails you whenever your password changes: here, through a reset link, or by an admin. If you didn't expect that email, reset your password right away.
 
 :::tip Pick a strong password
 Koel enforces a strong password policy.
