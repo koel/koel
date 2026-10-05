@@ -321,6 +321,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - When asserting two Eloquent models are the same, use `assertTrue($modelA->is($modelB))` instead of comparing IDs.
 - Never resort to `ReflectionClass` / `ReflectionProperty` / `ReflectionMethod` in tests to peek at private state, instantiate classes with private constructors, or invoke private methods. If a test "needs" reflection, the smell is the test or the code: the production class should expose what's necessary via a public factory, the dependency should be injectable, or the test should construct the dependency itself (TOTP and similar deterministic primitives need no shared instance). Refactor instead of reaching for reflection.
 
+## Test Scope
+- Write only the tests a change needs. Each test must be able to catch a regression no other test catches: one per branch or call site of ours, not one per way of reaching it.
+- Never test the framework. Declarative config (attributes, casts, `$with`, route and middleware registration, validation rule names) gets no test of its own unless our code computes it.
+- Never repeat coverage. If a unit test already asserts a call or a branch, don't add a feature test that proves the same thing through HTTP, and vice versa. Before adding a test, check what existing tests already cover.
+
 ## Model Factories
 - Use `createOne()` to create a single model and `createMany()` to create a collection. Never use `create()` directly, as its return type is ambiguous (single model or collection depending on arguments).
 - Wire parent relationships with `->for($parent)` instead of passing foreign keys in the attributes array. For polymorphic relations, pass the relation name as the second argument: `->for($song, 'rateable')` (sets both `*_id` and `*_type`). Prefer `Rating::factory()->for($user)->for($song, 'rateable')->createOne(['rating' => 5])` over the equivalent `createOne(['user_id' => $user->id, 'rateable_id' => $song->id, 'rateable_type' => $song->getMorphClass(), 'rating' => 5])`.

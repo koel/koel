@@ -4,6 +4,7 @@ namespace App\Services\Auth;
 
 use App\Models\User;
 use App\Services\Auth\Support\NullQrCodeProvider;
+use App\Services\SecurityNoticeService;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Str;
 use RobThree\Auth\TwoFactorAuth as Totp;
@@ -17,6 +18,7 @@ class TwoFactorAuthenticator
 
     public function __construct(
         private readonly RecoveryCodeFactory $recoveryCodeFactory,
+        private readonly SecurityNoticeService $securityNoticeService,
         #[Config('app.name')]
         string $issuer,
         ?Totp $totp = null,
@@ -57,6 +59,8 @@ class TwoFactorAuthenticator
         $user->two_factor_recovery_codes = $recoveryCodes;
         $user->two_factor_confirmed_at = now();
         $user->save();
+
+        $this->securityNoticeService->notifyTwoFactorEnabled($user);
     }
 
     public function verify(User $user, #[SensitiveParameter] string $code): bool
@@ -99,5 +103,7 @@ class TwoFactorAuthenticator
         $user->two_factor_confirmed_at = null;
 
         $user->save();
+
+        $this->securityNoticeService->notifyTwoFactorDisabled($user);
     }
 }
