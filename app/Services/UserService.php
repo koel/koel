@@ -24,6 +24,7 @@ class UserService
         private readonly ImageStorage $imageStorage,
         private readonly OrganizationService $organizationService,
         private readonly EmailChangeService $emailChangeService,
+        private readonly SecurityNoticeService $securityNoticeService,
         #[Config('koel.sso.default_role')]
         private readonly Role $defaultSsoRole = Role::USER,
     ) {}
@@ -118,6 +119,10 @@ class UserService
         }
 
         $user->update($data);
+
+        if ($user->wasChanged('password')) {
+            $this->securityNoticeService->notifyPasswordChanged($user);
+        }
 
         if ($dto->role && $user->role !== $dto->role) {
             $user->syncRoles($dto->role);

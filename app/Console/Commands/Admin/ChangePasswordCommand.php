@@ -4,8 +4,9 @@ namespace App\Console\Commands\Admin;
 
 use App\Console\Commands\Concerns\AskForPassword;
 use App\Repositories\UserRepository;
+use App\Services\SecurityNoticeService;
+use App\Services\UserService;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Hashing\Hasher as Hash;
 
 class ChangePasswordCommand extends Command
 {
@@ -16,8 +17,9 @@ class ChangePasswordCommand extends Command
     protected $description = "Change a user's password";
 
     public function __construct(
-        private readonly Hash $hash,
         private readonly UserRepository $userRepository,
+        private readonly UserService $userService,
+        private readonly SecurityNoticeService $securityNoticeService,
     ) {
         parent::__construct();
     }
@@ -36,8 +38,8 @@ class ChangePasswordCommand extends Command
 
         $this->comment("Changing the user's password (ID: {$user->id}, email: $user->email)");
 
-        $user->password = $this->hash->make($this->askForPassword());
-        $user->save();
+        $this->userService->changePassword($user, $this->askForPassword());
+        $this->securityNoticeService->notifyPasswordChanged($user);
 
         $this->comment('Alrighty, the new password has been saved. Enjoy! 👌');
 

@@ -43,3 +43,7 @@ You're in. Logging in with single sign-on (Google or OpenID Connect) asks for th
 3. Confirm, then enter a code from your authenticator app or a recovery code.
 
 Your account is back to email-and-password only. The 2FA secret and recovery codes are cleared — re-enabling later starts the setup from scratch.
+
+## Email Notices
+
+If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, it emails you whenever two-factor authentication is turned on or off for your account, so you notice if it wasn't you.

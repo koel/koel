@@ -9,6 +9,7 @@ use App\Repositories\UserRepository;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\TokenManager;
 use App\Services\Auth\TwoFactorAuthenticator;
+use App\Services\SecurityNoticeService;
 use App\Values\CompositeToken;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Cache;
@@ -43,6 +44,7 @@ class AuthenticationServiceTest extends TestCase
             $this->tokenManager,
             $this->passwordBroker,
             $this->twoFactorAuth,
+            $this->mock(SecurityNoticeService::class),
         );
     }
 
