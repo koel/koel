@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
- * @property-read Collection<User>|array<array-key, User> $users
+ * @property-read Collection<int, User>|array<array-key, User> $users
  *
  * @method static OrganizationFactory factory(...$parameters)
  */
