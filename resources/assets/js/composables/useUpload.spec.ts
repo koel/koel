@@ -1,7 +1,11 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { commonStore } from '@/stores/commonStore'
 import { uploadService } from '@/services/uploadService'
 import type { UploadFile, UploadStatus } from '@/services/uploadService'
+
+const device = vi.hoisted(() => ({ any: false }))
+
+vi.mock('ismobilejs', () => ({ default: device }))
 
 vi.mock('@/utils/mediaHelper', () => ({
   acceptedExtensions: ['mp3', 'flac', 'ogg'],
@@ -34,6 +38,20 @@ vi.mock('@/composables/usePolicies', () => ({
 import { useUpload } from './useUpload'
 
 describe('useUpload', () => {
+  afterEach(() => {
+    device.any = false
+  })
+
+  it('allows uploading on a desktop device', () => {
+    expect(useUpload().allowsUpload.value).toBe(true)
+  })
+
+  it('disallows uploading on a mobile device', () => {
+    device.any = true
+
+    expect(useUpload().allowsUpload.value).toBe(false)
+  })
+
   it('computes mediaPathSetUp when storage is not local', () => {
     commonStore.state.storage_driver = 's3'
 

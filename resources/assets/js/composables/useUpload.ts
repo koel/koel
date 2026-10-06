@@ -1,3 +1,4 @@
+import isMobile from 'ismobilejs'
 import { computed } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { acceptsFile } from '@/utils/mediaHelper'
@@ -21,7 +22,7 @@ export const useUpload = () => {
     return commonStore.state.storage_driver !== 'local' || commonStore.state.media_path_set
   })
 
-  const allowsUpload = computed(() => currentUserCan.uploadSongs())
+  const allowsUpload = computed(() => !isMobile.any && currentUserCan.uploadSongs())
 
   const unfinishedUploadCount = computed(
     () => uploadService.state.files.filter(({ status }) => UNFINISHED_UPLOAD_STATUSES.includes(status)).length,

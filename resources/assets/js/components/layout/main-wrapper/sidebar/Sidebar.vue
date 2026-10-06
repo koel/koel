@@ -45,6 +45,7 @@ import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useRouter } from '@/composables/useRouter'
 import { usePolicies } from '@/composables/usePolicies'
+import { useUpload } from '@/composables/useUpload'
 import { useHookSlot } from '@/composables/useHookSlot'
 
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
@@ -58,6 +59,7 @@ import SidebarYourMusicSection from './SidebarYourLibrarySection.vue'
 
 const { onRouteChanged } = useRouter()
 const { currentUserCan } = usePolicies()
+const { allowsUpload } = useUpload()
 const { isPlus } = useKoelPlus()
 const { get: lsGet, set: lsSet } = useLocalStorage()
 
@@ -138,7 +140,7 @@ onBeforeUnmount(() => {
 })
 
 const showManageOptions = computed(
-  () => currentUserCan.manageSettings() || currentUserCan.manageUsers() || currentUserCan.uploadSongs(),
+  () => currentUserCan.manageSettings() || currentUserCan.manageUsers() || allowsUpload.value,
 )
 
 const canUpgradeToPlus = computed(() => !isPlus.value && currentUserCan.manageSettings())
