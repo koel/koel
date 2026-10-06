@@ -6,12 +6,7 @@
     @contextmenu.prevent="requestContextMenu"
   >
     <AudioPlayer v-show="currentStreamable" v-slot="{ progress }" :class="isRadio && 'pointer-events-none'">
-      <SongWaveform
-        v-if="currentSong"
-        :song="currentSong"
-        :progress
-        class="absolute inset-x-0 bottom-3 top-[calc(var(--progress-bar-height)+--spacing(3))]"
-      />
+      <SongWaveform v-if="currentSong" :song="currentSong" :progress />
     </AudioPlayer>
 
     <div class="fullscreen-backdrop hidden" />
