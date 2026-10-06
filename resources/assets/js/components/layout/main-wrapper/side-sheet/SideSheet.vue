@@ -13,7 +13,7 @@
         <SideSheetTabHeader v-if="songPlaying" v-model="activeTab" />
       </div>
 
-      <div class="btn-group">
+      <div class="btn-group max-md:ml-auto">
         <ZipDownloadButton />
         <AiButton v-if="usesAi" />
         <ProfileDropdown />
