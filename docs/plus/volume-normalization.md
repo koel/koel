@@ -8,6 +8,9 @@ With volume normalization, Koel turns loud songs down and quiet songs up, so a q
 rarely make you reach for the volume. A quiet song is only turned up as far as it can go without clipping. Koel also
 shows each song's waveform while it plays, so you can see the quiet and loud parts at a glance.
 
+The waveform runs along the bottom of the player bar, tinted with the colors of the album cover, with a glowing dot
+that marks where you are in the song.
+
 ## Requirements
 
 Both features need [FFmpeg](https://ffmpeg.org/) installed on your server. Koel finds it automatically; if it doesn't,

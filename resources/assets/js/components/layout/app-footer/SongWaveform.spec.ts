@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { waveformService } from '@/services/waveformService'
+import { drawWaveform } from '@/utils/waveformCanvas'
 import Component from './SongWaveform.vue'
 
 vi.mock('@vueuse/core', async importOriginal => {
@@ -10,9 +11,17 @@ vi.mock('@vueuse/core', async importOriginal => {
 
   return {
     ...(await importOriginal<typeof import('@vueuse/core')>()),
-    useElementSize: () => ({ width: ref(1280), height: ref(84) }),
+    usePreferredReducedMotion: () => ref('no-preference'),
   }
 })
+
+vi.mock('@/utils/waveformCanvas', async importOriginal => ({
+  ...(await importOriginal<typeof import('@/utils/waveformCanvas')>()),
+  drawWaveform: vi.fn(),
+}))
+
+const drawnWith = (frame: Record<string, unknown>) =>
+  expect(drawWaveform).toHaveBeenCalledWith(expect.any(HTMLCanvasElement), expect.objectContaining(frame))
 
 describe('songWaveform.vue', () => {
   const h = createHarness({
@@ -30,9 +39,28 @@ describe('songWaveform.vue', () => {
 
       renderComponent(song, 25)
 
-      await waitFor(() => screen.getByTestId('song-waveform-played'))
+      await waitFor(() => drawnWith({ progress: 0.25 }))
       expect(fetchWaveformMock).toHaveBeenCalledWith(song)
-      expect(screen.getByTestId('song-waveform-played').style.clipPath).toBe('inset(0 75% 0 0)')
+    })
+  })
+
+  it('keeps the line filling smoothly between progress updates while playing', async () => {
+    await h.withPlusEdition(async () => {
+      h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
+
+      renderComponent(h.factory('song').make({ loudness: -9, true_peak: 1, length: 1, playback_state: 'Playing' }), 25)
+
+      await waitFor(() => drawnWith({ progress: expect.toSatisfy((progress: number) => progress > 0.25) }))
+    })
+  })
+
+  it('dims the dot and its tail while paused', async () => {
+    await h.withPlusEdition(async () => {
+      h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
+
+      renderComponent(h.factory('song').make({ loudness: -9, true_peak: 1, playback_state: 'Paused' }), 25)
+
+      await waitFor(() => drawnWith({ playedOpacity: expect.toSatisfy((opacity: number) => opacity < 0.5) }))
     })
   })
 
