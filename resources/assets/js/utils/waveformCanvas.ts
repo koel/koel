@@ -27,6 +27,10 @@ export const lineYAt = (points: Point[], x: number) => {
   }
 
   const step = points[1].x - points[0].x
+
+  if (step <= 0) {
+    return points[0].y
+  }
   const index = Math.min(points.length - 2, Math.max(1, Math.round(x / step)))
   const control = points[index]
   const previous = points[index - 1]
@@ -73,6 +77,10 @@ export const drawWaveform = (canvas: HTMLCanvasElement, frame: WaveformFrame) =>
   const pixelRatio = window.devicePixelRatio || 1
   const width = canvas.clientWidth
   const height = canvas.clientHeight
+
+  if (width <= 0 || height <= 0) {
+    return
+  }
 
   if (canvas.width !== Math.round(width * pixelRatio) || canvas.height !== Math.round(height * pixelRatio)) {
     canvas.width = Math.round(width * pixelRatio)

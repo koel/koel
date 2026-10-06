@@ -77,6 +77,22 @@ describe('songWaveform.vue', () => {
     })
   })
 
+  it('draws the shape of the new song even when it starts like the previous one', async () => {
+    await h.withPlusEdition(async () => {
+      const firstSong = h.factory('song').make({ loudness: -9, true_peak: 1 })
+      const secondSong = h.factory('song').make({ loudness: -9, true_peak: 1 })
+      h.mock(waveformService, 'fetchWaveform').mockImplementation(async (song: Song) =>
+        song.id === firstSong.id ? [0, 0.2, 0.8, 0.8] : [0, 0.8, 0.2, 0.2],
+      )
+
+      const { rerender } = renderComponent(firstSong)
+      await waitFor(() => drawnWith({ levels: [expect.closeTo(0.125), expect.closeTo(1)] }))
+
+      await rerender({ song: secondSong, progress: 0 })
+      await waitFor(() => drawnWith({ levels: [expect.closeTo(1), expect.closeTo(0.5)] }))
+    })
+  })
+
   it('skips an unanalyzed song', async () => {
     await h.withPlusEdition(async () => {
       const fetchWaveformMock = h.mock(waveformService, 'fetchWaveform')

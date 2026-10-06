@@ -27,6 +27,18 @@ describe('waveformCanvas', () => {
     expect(lineYAt(peak, 0)).toBe(10)
   })
 
+  it('falls back to the first point when the points have no spacing', () => {
+    expect(
+      lineYAt(
+        [
+          { x: 0, y: 7 },
+          { x: 0, y: 3 },
+        ],
+        0,
+      ),
+    ).toBe(7)
+  })
+
   it('scales each point by its growth during a song change', () => {
     const levels = shape({ growth: bar => (bar < 50 ? 0 : 1) })
 

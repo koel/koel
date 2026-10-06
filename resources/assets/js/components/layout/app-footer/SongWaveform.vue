@@ -27,8 +27,9 @@ const reducedMotion = usePreferredReducedMotion()
 const canvas = ref<HTMLCanvasElement>()
 const waveform = ref<number[]>([])
 
-let barLevels: number[] = []
-let barLevelsKey = ''
+let cachedLevels: number[] = []
+let levelsSource: number[] | null = null
+let levelsCount = 0
 let shownProgress = 0
 let pausedness = 0
 let sinkStartedAt: number | null = null
@@ -67,14 +68,14 @@ const advanceProgress = (target: number, seconds: number) => {
 
 const levelsForWidth = (width: number) => {
   const count = countWaveformPoints(width)
-  const key = `${count}:${waveform.value.length}:${waveform.value[0]}`
 
-  if (key !== barLevelsKey) {
-    barLevels = waveformService.toBarLevels(waveform.value, count)
-    barLevelsKey = key
+  if (waveform.value !== levelsSource || count !== levelsCount) {
+    cachedLevels = waveformService.toBarLevels(waveform.value, count)
+    levelsSource = waveform.value
+    levelsCount = count
   }
 
-  return barLevels
+  return cachedLevels
 }
 
 const growthAt = (now: number, count: number) => (bar: number) => {
