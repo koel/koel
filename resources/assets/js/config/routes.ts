@@ -1,5 +1,6 @@
 import type { Route } from '@/router'
 import { cache } from '@/services/cache'
+import { canUploadFromThisDevice } from '@/utils/uploadAccess'
 import { usePolicies } from '@/composables/usePolicies'
 
 const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -69,7 +70,7 @@ export const routes = [
     path: '/upload',
     screen: 'Upload',
     meta: {
-      guard: () => usePolicies().currentUserCan.uploadSongs(),
+      guard: canUploadFromThisDevice,
     },
   },
   {
