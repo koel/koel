@@ -1,7 +1,7 @@
 <template>
   <div ref="containerEl" class="relative flex items-center">
     <button
-      class="rounded-full cursor-pointer active:scale-95 h-[42px] aspect-square"
+      class="rounded-full cursor-pointer active:scale-95 size-[42px]"
       data-testid="profile-dropdown-trigger"
       type="button"
       @click="open = !open"
