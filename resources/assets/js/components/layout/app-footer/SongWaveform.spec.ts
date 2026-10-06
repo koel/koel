@@ -6,12 +6,14 @@ import { waveformService } from '@/services/waveformService'
 import { drawWaveform } from '@/utils/waveformCanvas'
 import Component from './SongWaveform.vue'
 
+const motion = vi.hoisted(() => ({ preference: 'no-preference' as 'no-preference' | 'reduce' }))
+
 vi.mock('@vueuse/core', async importOriginal => {
   const { ref } = await import('vue')
 
   return {
     ...(await importOriginal<typeof import('@vueuse/core')>()),
-    usePreferredReducedMotion: () => ref('no-preference'),
+    usePreferredReducedMotion: () => ref(motion.preference),
   }
 })
 
@@ -27,6 +29,7 @@ describe('songWaveform.vue', () => {
   const h = createHarness({
     beforeEach: () => {
       preferenceStore.state.show_waveform = true
+      motion.preference = 'no-preference'
     },
   })
 
@@ -78,6 +81,8 @@ describe('songWaveform.vue', () => {
   })
 
   it('draws the shape of the new song even when it starts like the previous one', async () => {
+    motion.preference = 'reduce'
+
     await h.withPlusEdition(async () => {
       const firstSong = h.factory('song').make({ loudness: -9, true_peak: 1 })
       const secondSong = h.factory('song').make({ loudness: -9, true_peak: 1 })
