@@ -29,6 +29,7 @@ import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import type { RouteName } from '@/config/routes'
 import { useRouter } from '@/composables/useRouter'
 import { usePolicies } from '@/composables/usePolicies'
+import { useUpload } from '@/composables/useUpload'
 import { uploadService } from '@/services/uploadService'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
@@ -49,6 +50,7 @@ export interface ManageSidebarItem {
 
 const { url, isCurrentScreen } = useRouter()
 const { currentUserCan } = usePolicies()
+const { allowsUpload } = useUpload()
 
 const items = computed(() =>
   applyFilters<ManageSidebarItem[]>(Filter.MANAGE_SIDEBAR_ITEMS, [
@@ -64,7 +66,7 @@ const items = computed(() =>
       icon: faUpload,
       route: 'upload',
       screens: ['Upload'],
-      visible: () => currentUserCan.uploadSongs(),
+      visible: () => allowsUpload.value,
       isBusy: () => uploadService.getUnfinishedFiles().length > 0,
     },
     {
