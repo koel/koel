@@ -53,6 +53,7 @@
         </TabButton>
         <TabButton
           v-for="tab in addedTabs"
+          :id="`profileTab-${tab.id}`"
           :key="tab.id"
           :aria-controls="`profilePane-${tab.id}`"
           :data-testid="`profile-tab-${tab.id}`"
@@ -111,7 +112,7 @@
           <TabPanel
             v-if="currentTab === tab.id"
             :id="`profilePane-${tab.id}`"
-            :aria-labelledby="`profilePane-${tab.id}`"
+            :aria-labelledby="`profileTab-${tab.id}`"
           >
             <component :is="tab.component" />
           </TabPanel>
