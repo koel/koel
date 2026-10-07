@@ -1,3 +1,6 @@
+import { rgbToHsl } from '@/utils/color'
+import type { Rgb } from '@/utils/color'
+
 const SAMPLE_SIZE = 32
 const HUE_BUCKETS = 24
 const MIN_LIGHTNESS = 0.55
@@ -12,33 +15,6 @@ const loadImage = (url: string) =>
     image.onerror = reject
     image.src = url
   })
-
-const toHsl = (red: number, green: number, blue: number) => {
-  const r = red / 255
-  const g = green / 255
-  const b = blue / 255
-  const max = Math.max(r, g, b)
-  const min = Math.min(r, g, b)
-  const lightness = (max + min) / 2
-  const delta = max - min
-
-  if (delta === 0) {
-    return { hue: 0, saturation: 0, lightness }
-  }
-
-  const saturation = delta / (1 - Math.abs(2 * lightness - 1))
-  let hue: number
-
-  if (max === r) {
-    hue = ((g - b) / delta) % 6
-  } else if (max === g) {
-    hue = (b - r) / delta + 2
-  } else {
-    hue = (r - g) / delta + 4
-  }
-
-  return { hue: (hue * 60 + 360) % 360, saturation, lightness }
-}
 
 /**
  * Picks the cover's most prominent vivid color: pixels are grouped by hue, weighted by how saturated
@@ -55,7 +31,7 @@ export const pickVividColor = (pixels: Uint8ClampedArray) => {
       continue
     }
 
-    const { hue, saturation, lightness } = toHsl(red, green, blue)
+    const { hue, saturation, lightness } = rgbToHsl([red, green, blue])
 
     if (saturation < 0.25 || lightness < 0.15 || lightness > 0.92) {
       continue
@@ -76,11 +52,14 @@ export const pickVividColor = (pixels: Uint8ClampedArray) => {
     return null
   }
 
-  return [heaviest.red, heaviest.green, heaviest.blue].map(channel => channel / heaviest.weight)
+  const { red, green, blue, weight } = heaviest
+  const color: Rgb = [red / weight, green / weight, blue / weight]
+
+  return color
 }
 
-export const brightenToVisible = ([red, green, blue]: number[]) => {
-  const { hue, saturation, lightness } = toHsl(red, green, blue)
+export const brightenToVisible = (rgb: Rgb) => {
+  const { hue, saturation, lightness } = rgbToHsl(rgb)
 
   return `hsl(${Math.round(hue)} ${Math.round(saturation * 100)}% ${Math.round(Math.max(lightness, MIN_LIGHTNESS) * 100)}%)`
 }

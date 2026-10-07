@@ -5,11 +5,13 @@
 </template>
 
 <script lang="ts" setup>
-import { usePreferredReducedMotion } from '@vueuse/core'
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { usePreferredReducedMotion, useRafFn, useResizeObserver } from '@vueuse/core'
+import { ref, watch } from 'vue'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { waveformService } from '@/services/waveformService'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { cssColorToRgb } from '@/utils/color'
+import type { Rgb } from '@/utils/color'
 import { getCoverColor } from '@/utils/coverColor'
 import { countWaveformPoints, drawWaveform, GLOW_ROOM, shapeLevels } from '@/utils/waveformCanvas'
 
@@ -34,11 +36,11 @@ let shownProgress = 0
 let pausedness = 0
 let sinkStartedAt: number | null = null
 let riseStartedAt: number | null = null
-let colors = { accent: '', line: '' }
+const BLACK: Rgb = [0, 0, 0]
+
+let colors: { accent: Rgb; line: Rgb } | null = null
 let coverColor: string | null = null
 let colorsReadAt = 0
-let lastFrameAt = 0
-let frameId = 0
 
 const isPlaying = () => props.song.playback_state === 'Playing'
 const easeTowards = (current: number, target: number, rate: number, seconds: number) =>
@@ -93,27 +95,37 @@ const growthAt = (now: number, count: number) => (bar: number) => {
   return 1 - Math.pow(1 - t, 3)
 }
 
-const refreshColors = (now: number) => {
-  if (!canvas.value || (now - colorsReadAt < 1000 && colors.accent)) {
-    return
+const refreshColors = (element: HTMLCanvasElement, now: number) => {
+  if (colors && now - colorsReadAt < 1000) {
+    return colors
   }
 
-  const style = getComputedStyle(canvas.value)
-  colors = {
-    accent: coverColor ?? style.getPropertyValue('--color-highlight').trim(),
-    line: coverColor ?? style.getPropertyValue('--color-fg').trim(),
-  }
+  const style = getComputedStyle(element)
+  const accent = coverColor ?? style.getPropertyValue('--color-highlight').trim()
+  const line = coverColor ?? style.getPropertyValue('--color-fg').trim()
+
+  colors = { accent: cssColorToRgb(accent) ?? BLACK, line: cssColorToRgb(line) ?? BLACK }
   colorsReadAt = now
+
+  return colors
 }
 
-const render = (now: number) => {
+const forgetColors = () => {
+  colors = null
+}
+
+const isAnimatingLevels = (now: number) =>
+  sinkStartedAt !== null || (riseStartedAt !== null && now - riseStartedAt < RISE_STAGGER + RISE_DURATION)
+
+const isSettled = (now: number, target: number) =>
+  !isPlaying() && pausedness > 0.999 && Math.abs(shownProgress - target) < 0.0001 && !isAnimatingLevels(now)
+
+const render = (now: number, seconds: number) => {
   if (!canvas.value) {
     return
   }
 
   const animated = reducedMotion.value !== 'reduce'
-  const seconds = lastFrameAt ? Math.min(0.1, (now - lastFrameAt) / 1000) : 0
-  lastFrameAt = now
 
   const target = props.progress / 100
 
@@ -125,8 +137,6 @@ const render = (now: number) => {
     pausedness = isPlaying() ? 0 : 1
   }
 
-  refreshColors(now)
-
   const levels = levelsForWidth(canvas.value.clientWidth)
 
   drawWaveform(canvas.value, {
@@ -136,27 +146,31 @@ const render = (now: number) => {
     }),
     progress: shownProgress,
     playedOpacity: 0.8 * (1 - pausedness * 0.55),
-    colors,
+    colors: refreshColors(canvas.value, now),
   })
-}
 
-const loop = (now: number) => {
-  render(now)
-  frameId = requestAnimationFrame(loop)
-}
-
-const stopLoop = () => {
-  cancelAnimationFrame(frameId)
-  frameId = 0
-}
-
-watch(canvas, element => {
-  stopLoop()
-
-  if (element) {
-    frameId = requestAnimationFrame(loop)
+  if (!animated || isSettled(now, target)) {
+    pause()
   }
+}
+
+const { pause, resume } = useRafFn(({ delta, timestamp }) => render(timestamp, Math.min(0.1, delta / 1000)), {
+  immediate: false,
 })
+
+watch(canvas, element => (element ? resume() : pause()))
+
+useResizeObserver(canvas, resume)
+
+watch([() => props.progress, () => props.song.playback_state, waveform], resume)
+
+watch(
+  () => preferenceStore.theme,
+  () => {
+    forgetColors()
+    resume()
+  },
+)
 
 watch(
   [() => props.song, () => preferenceStore.show_waveform],
@@ -168,6 +182,7 @@ watch(
 
     sinkStartedAt = waveform.value.length ? performance.now() : null
     riseStartedAt = null
+    resume()
 
     const fetchedWaveform = await waveformService.fetchWaveform(song).catch(() => [])
 
@@ -187,7 +202,7 @@ watch(
   () => props.song.album_cover,
   async cover => {
     coverColor = null
-    colorsReadAt = 0
+    forgetColors()
 
     if (!cover) {
       return
@@ -197,13 +212,12 @@ watch(
 
     if (props.song.album_cover === cover) {
       coverColor = color
-      colorsReadAt = 0
+      forgetColors()
+      resume()
     }
   },
   { immediate: true },
 )
-
-onBeforeUnmount(stopLoop)
 </script>
 
 <style lang="postcss" scoped>
