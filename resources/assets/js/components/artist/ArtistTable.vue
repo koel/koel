@@ -1,44 +1,28 @@
 <template>
   <div class="artist-table-wrap relative flex flex-col flex-1 overflow-auto" data-testid="artist-table">
     <div class="artist-table-header sortable flex z-2 bg-k-fg-3 pl-5 sticky top-0">
-      <span
-        class="name"
-        role="button"
-        tabindex="0"
-        title="Sort by name"
-        @click="onSort('name')"
-        @keydown.enter.space.prevent="onSort('name')"
-      >
+      <SortableColumnHeader :active="field === 'name'" :order class="name" title="Sort by name" @sort="onSort('name')">
         Name
-        <Icon v-if="field === 'name' && order === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon v-if="field === 'name' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
-      </span>
-      <span
+      </SortableColumnHeader>
+      <SortableColumnHeader
         v-if="shouldShowColumn('rating')"
+        :active="field === 'rating'"
+        :order
         class="rating"
-        role="button"
-        tabindex="0"
         title="Sort by rating"
-        @click="onSort('rating')"
-        @keydown.enter.space.prevent="onSort('rating')"
-      >
-        Rating
-        <Icon v-if="field === 'rating' && order === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon v-if="field === 'rating' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
-      </span>
-      <span
+        label="Rating"
+        @sort="onSort('rating')"
+      />
+      <SortableColumnHeader
         v-if="shouldShowColumn('favorite')"
+        :active="field === 'favorite'"
+        :order
         class="favorite"
-        role="button"
-        tabindex="0"
         title="Sort by favorite"
-        @click="onSort('favorite')"
-        @keydown.enter.space.prevent="onSort('favorite')"
+        @sort="onSort('favorite')"
       >
-        <Icon :icon="faHeart" />
-        <Icon v-if="field === 'favorite' && order === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon v-if="field === 'favorite' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
-      </span>
+        <Icon :icon="faHeart"
+      /></SortableColumnHeader>
       <span class="extra">
         <ArtistTableHeaderActionMenu :field :order @sort="onSort" />
       </span>
@@ -53,11 +37,12 @@
 </template>
 
 <script lang="ts" setup>
-import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { artistTableColumnConfig } from '@/config/tables'
 
+import SortableColumnHeader from '@/components/ui/SortableColumnHeader.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import ArtistRow from '@/components/artist/ArtistRow.vue'
 import ArtistTableHeaderActionMenu from '@/components/artist/ArtistTableHeaderActionMenu.vue'
