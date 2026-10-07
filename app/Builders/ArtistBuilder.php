@@ -63,7 +63,7 @@ class ArtistBuilder extends FavoriteableBuilder
                         ->select(DB::raw(1))
                         ->from('songs')
                         ->join('users', 'songs.owner_id', 'users.id')
-                        ->join('albums', 'songs.album_id', 'albums.id')
+                        ->leftJoin('albums', 'songs.album_id', 'albums.id')
                         ->where(static function (QueryBuilder $performedOrReleased): void {
                             $performedOrReleased->whereColumn('songs.artist_id', 'artists.id')->orWhereColumn(
                                 'albums.artist_id',
