@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Storage;
 
 use App\Services\SongStorages\DropboxStorage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 use function Laravel\Prompts\text;
@@ -68,6 +69,8 @@ class SetupDropboxStorageCommand extends SetupStorageCommand
                     'app_secret' => $config['DROPBOX_APP_SECRET'],
                     'refresh_token' => $config['DROPBOX_REFRESH_TOKEN'],
                 ]);
+
+                Cache::forget('dropbox_access_token');
 
                 app()->build(DropboxStorage::class)->testSetup(); // build instead of make to avoid singleton issues
             },

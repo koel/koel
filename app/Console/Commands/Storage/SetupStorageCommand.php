@@ -55,6 +55,7 @@ abstract class SetupStorageCommand extends Command
      */
     protected function saveAndVerifyConfig(array $config, Closure $uploadTestFile, string $failureHint): bool
     {
+        $previousConfig = config()->all();
         $this->dotenvEditor->backup()->setKeys($config);
 
         $this->comment('Uploading a test file to make sure everything is working...');
@@ -66,6 +67,7 @@ abstract class SetupStorageCommand extends Command
             $this->comment($failureHint);
 
             $this->dotenvEditor->restore();
+            config()->set($previousConfig);
 
             return false;
         } finally {

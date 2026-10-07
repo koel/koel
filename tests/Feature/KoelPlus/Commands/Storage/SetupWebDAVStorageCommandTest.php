@@ -47,6 +47,7 @@ class SetupWebDAVStorageCommandTest extends PlusTestCase
         $disk = Mockery::mock(Filesystem::class);
         $disk->allows('put')->andThrow(new RuntimeException('Unauthorized'));
         Storage::set('webdav', $disk);
+        config(['filesystems.disks.webdav.password' => 'current-password']);
 
         /** @var DotenvEditor&MockInterface $dotenv */
         $dotenv = $this->mock(DotenvEditor::class);
@@ -61,5 +62,7 @@ class SetupWebDAVStorageCommandTest extends PlusTestCase
             ->expectsQuestion('Enter your WebDAV password', 'wrong')
             ->expectsQuestion('Optional path prefix beneath the base URL', '')
             ->assertFailed();
+
+        self::assertSame('current-password', config('filesystems.disks.webdav.password'));
     }
 }
