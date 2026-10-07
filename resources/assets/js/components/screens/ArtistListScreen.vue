@@ -85,11 +85,11 @@
 <script lang="ts" setup>
 import { faMicrophoneSlash, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
-import { computed, nextTick, onMounted, ref, toRef } from 'vue'
+import { computed, onMounted, ref, toRef } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useCursorPaginatedList } from '@/composables/useCursorPaginatedList'
 
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import ArtistGrid from '@/components/artist/ArtistGrid.vue'
@@ -106,71 +106,26 @@ import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 const grid = ref<InstanceType<typeof ArtistGrid>>()
 const artists = toRef(artistStore.state, 'artists')
 
-const loading = ref(false)
-const cursor = ref<string | null>('')
+const {
+  loading,
+  displayedItems: displayedArtists,
+  noFavorites: noFavoriteArtists,
+  showSkeletons,
+  fetchMore: fetchArtists,
+  sort,
+  toggleFavoritesOnly,
+} = useCursorPaginatedList({
+  store: artistStore,
+  items: artists,
+  favoritesOnly: toRef(preferences, 'artists_favorites_only'),
+  sortField: toRef(preferences, 'artists_sort_field'),
+  sortOrder: toRef(preferences, 'artists_sort_order'),
+  onReset: () => grid.value?.scrollToTop(),
+})
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
-const displayedArtists = computed(() =>
-  preferences.artists_favorites_only ? artists.value.filter((a: Artist) => a.favorite) : artists.value,
-)
-
-const noFavoriteArtists = computed(
-  () =>
-    !loading.value &&
-    preferences.artists_favorites_only &&
-    displayedArtists.value.length === 0 &&
-    !moreArtistsAvailable.value,
-)
-const moreArtistsAvailable = computed(() => cursor.value !== null)
-const showSkeletons = computed(() => loading.value && artists.value.length === 0)
-
-const fetchArtists = async () => {
-  if (loading.value || !moreArtistsAvailable.value) {
-    return
-  }
-
-  loading.value = true
-
-  try {
-    cursor.value = await artistStore.paginate({
-      favorites_only: preferences.artists_favorites_only,
-      cursor: cursor.value,
-      sort: preferences.artists_sort_field,
-      order: preferences.artists_sort_order,
-    })
-  } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const resetState = async () => {
-  cursor.value = ''
-
-  artistStore.reset()
-  grid.value?.scrollToTop()
-}
-
-const sort = async (field: ArtistListSortField, order: SortOrder) => {
-  preferences.artists_sort_field = field
-  preferences.artists_sort_order = order
-
-  await resetState()
-  await nextTick()
-  await fetchArtists()
-}
-
 const toggleFavorite = (artist: Artist) => artistStore.toggleFavorite(artist)
-
-const toggleFavoritesOnly = async () => {
-  preferences.artists_favorites_only = !preferences.artists_favorites_only
-
-  await resetState()
-  await nextTick()
-  await fetchArtists()
-}
 
 onMounted(() => {
   if (!libraryEmpty.value) {
