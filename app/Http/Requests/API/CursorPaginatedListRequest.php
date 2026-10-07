@@ -7,7 +7,7 @@ namespace App\Http\Requests\API;
  * @property-read string $sort
  * @property-read ?string $cursor
  */
-class SongListRequest extends Request
+class CursorPaginatedListRequest extends Request
 {
     /** @inheritDoc */
     public function rules(): array

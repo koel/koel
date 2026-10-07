@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 /**
  * @property-read array<int>|int $playlists
  */
-class PlaylistFolderPlaylistStoreRequest extends Request
+class PlaylistFolderPlaylistRequest extends Request
 {
     /** @inheritdoc */
     public function rules(): array

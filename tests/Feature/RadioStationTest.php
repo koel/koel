@@ -299,4 +299,41 @@ class RadioStationTest extends TestCase
             ->assertJsonPath('0.permissions.edit', false)
             ->assertJsonPath('0.permissions.delete', false);
     }
+
+    #[Test]
+    public function createRejectsAUrlTheUserAlreadyHas(): void
+    {
+        $station = RadioStation::factory()->createOne(['url' => 'https://example.com/stream']);
+
+        $this->postAs(
+            '/api/radio/stations',
+            ['url' => 'https://example.com/stream', 'name' => 'Copy'],
+            $station->user,
+        )->assertJsonValidationErrors('url');
+    }
+
+    #[Test]
+    public function updateRejectsAnotherStationsUrl(): void
+    {
+        $station = RadioStation::factory()->createOne(['url' => 'https://example.com/one']);
+        RadioStation::factory()->for($station->user)->createOne(['url' => 'https://example.com/two']);
+
+        $this->putAs(
+            "/api/radio/stations/{$station->id}",
+            ['url' => 'https://example.com/two', 'name' => 'One'],
+            $station->user,
+        )->assertJsonValidationErrors('url');
+    }
+
+    #[Test]
+    public function updateAllowsKeepingTheStationsOwnUrl(): void
+    {
+        $station = RadioStation::factory()->createOne(['url' => 'https://example.com/one']);
+
+        $this->putAs(
+            "/api/radio/stations/{$station->id}",
+            ['url' => 'https://example.com/one', 'name' => 'Renamed'],
+            $station->user,
+        )->assertOk();
+    }
 }

@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests\API\Playlist;
 
+use App\Http\Requests\API\Playlist\Concerns\ValidatesPlaylistFolder;
 use App\Http\Requests\API\Request;
-use App\Models\PlaylistFolder;
 use App\Rules\ValidImageData;
 use App\Rules\ValidSmartPlaylistRulePayload;
 use App\Values\Playlist\PlaylistUpdateData;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $name
@@ -21,6 +20,8 @@ use Illuminate\Validation\Rule;
  */
 class PlaylistUpdateRequest extends Request
 {
+    use ValidatesPlaylistFolder;
+
     /** @inheritdoc */
     public function rules(): array
     {
@@ -28,13 +29,7 @@ class PlaylistUpdateRequest extends Request
             'name' => 'required',
             'description' => ['string', 'sometimes', 'nullable'],
             'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
-            'folder_id' => [
-                'nullable',
-                'sometimes',
-                'prohibits:folder_name',
-                Rule::exists(PlaylistFolder::class, 'id')->where('user_id', $this->user()->id),
-            ],
-            'folder_name' => ['nullable', 'sometimes', 'prohibits:folder_id', 'string', 'max:191'],
+            ...$this->playlistFolderRules(),
             'cover' => ['string', 'sometimes', 'nullable', new ValidImageData()],
         ];
     }
