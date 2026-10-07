@@ -51,6 +51,17 @@
         >
           Security
         </TabButton>
+        <TabButton
+          v-for="tab in addedTabs"
+          :id="`profileTab-${tab.id}`"
+          :key="tab.id"
+          :aria-controls="`profilePane-${tab.id}`"
+          :data-testid="`profile-tab-${tab.id}`"
+          :selected="currentTab === tab.id"
+          @click="currentTab = tab.id"
+        >
+          {{ tab.label }}
+        </TabButton>
         <TabButton :selected="currentTab === 'qr'" aria-controls="profilePaneQr" @click="currentTab = 'qr'">
           <QrCodeIcon :size="16" />
         </TabButton>
@@ -97,6 +108,16 @@
           </main>
         </TabPanel>
 
+        <template v-for="tab in addedTabs" :key="tab.id">
+          <TabPanel
+            v-if="currentTab === tab.id"
+            :id="`profilePane-${tab.id}`"
+            :aria-labelledby="`profileTab-${tab.id}`"
+          >
+            <component :is="tab.component" />
+          </TabPanel>
+        </template>
+
         <TabPanel v-if="currentTab === 'qr'" id="profilePaneQr" aria-labelledby="profilePaneQr">
           <QRLogin />
         </TabPanel>
@@ -106,9 +127,12 @@
 </template>
 
 <script lang="ts" setup>
+import type { Component } from 'vue'
 import { QrCodeIcon } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import { useLocalStorage } from '@/composables/useLocalStorage'
+import { Filter } from '@/config/hooks'
+import { applyFilters } from '@/hooks'
 import { defineAsyncComponent } from '@/utils/helpers'
 
 import HookSlot from '@/components/utils/HookSlot.vue'
@@ -134,14 +158,23 @@ const TwoFactorAuthSettings = defineAsyncComponent(
 )
 const QRLogin = defineAsyncComponent(() => import('@/components/profile-preferences/QRLogin.vue'))
 
+export interface ProfileTab {
+  id: string
+  label: string
+  component: Component
+}
+
+const BUILT_IN_TAB_IDS = ['profile', 'preferences', 'themes', 'integrations', 'offline', 'subsonic', 'security', 'qr']
+
+const addedTabs = applyFilters<ProfileTab[]>(Filter.PROFILE_TABS, [])
+
 const { get, set } = useLocalStorage()
 
-const currentTab = ref(
-  get<'profile' | 'preferences' | 'themes' | 'integrations' | 'offline' | 'subsonic' | 'security' | 'qr'>(
-    'profileScreenTab',
-    'profile',
-  ),
-)
+const isKnownTab = (id: string | null): id is string =>
+  id !== null && (BUILT_IN_TAB_IDS.includes(id) || addedTabs.some(tab => tab.id === id))
+
+const rememberedTab = get<string>('profileScreenTab')
+const currentTab = ref(isKnownTab(rememberedTab) ? rememberedTab : 'profile')
 
 watch(currentTab, tab => set('profileScreenTab', tab))
 </script>
