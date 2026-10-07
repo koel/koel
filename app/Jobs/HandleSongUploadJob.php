@@ -4,9 +4,6 @@ namespace App\Jobs;
 
 use App\Models\Song;
 use App\Models\User;
-use App\Repositories\AlbumRepository;
-use App\Repositories\SongRepository;
-use App\Responses\SongUploadResponse;
 use App\Services\Upload\UploadService;
 
 class HandleSongUploadJob extends QueuedJob
@@ -16,18 +13,12 @@ class HandleSongUploadJob extends QueuedJob
         public readonly User $uploader,
     ) {}
 
-    public function handle(
-        UploadService $uploadService,
-        SongRepository $songRepository,
-        AlbumRepository $albumRepository,
-    ): Song {
+    public function handle(UploadService $uploadService): Song
+    {
         $song = $uploadService->handleUpload($this->filePath, $this->uploader);
 
-        $populatedSong = $songRepository->getOne($song->id, $this->uploader);
-        $album = $albumRepository->getOne($populatedSong->album_id, $this->uploader);
-
         if ($this->wasQueued()) {
-            broadcast(SongUploadResponse::make(song: $populatedSong, album: $album));
+            broadcast($uploadService->makeUploadResponse($song, $this->uploader));
         }
 
         return $song;

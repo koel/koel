@@ -6,6 +6,9 @@ use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\AlbumRepository;
+use App\Repositories\SongRepository;
+use App\Responses\SongUploadResponse;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\Concerns\ScansAndStoresSong;
 use App\Services\Scanners\FileScanner;
@@ -28,7 +31,20 @@ class UploadService
         private readonly DuplicateUploadService $duplicateUploadService,
         private readonly TranscodeOnScan $transcodeOnScan,
         private readonly AnalyzeAudioOnScan $analyzeAudioOnScan,
+        private readonly SongRepository $songRepository,
+        private readonly AlbumRepository $albumRepository,
     ) {}
+
+    /**
+     * Build the response for an uploaded song, with the song and its album loaded as the uploader sees them.
+     */
+    public function makeUploadResponse(Song $song, User $uploader, ?string $uploadKey = null): SongUploadResponse
+    {
+        $populatedSong = $this->songRepository->getOne($song->id, $uploader);
+        $album = $this->albumRepository->getOne($populatedSong->album_id, $uploader);
+
+        return SongUploadResponse::make(song: $populatedSong, album: $album, uploadKey: $uploadKey);
+    }
 
     public function handleUpload(string $filePath, User $uploader): Song
     {

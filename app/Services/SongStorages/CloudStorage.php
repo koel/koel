@@ -3,14 +3,11 @@
 namespace App\Services\SongStorages;
 
 use App\Helpers\Ulid;
-use App\Services\SongStorages\Concerns\MovesUploadedFile;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use Illuminate\Support\Facades\File;
 
 abstract class CloudStorage extends SongStorage implements MustDeleteTemporaryLocalFileAfterUpload
 {
-    use MovesUploadedFile;
-
     public function copyToLocal(string $key): string
     {
         $publicUrl = $this->getPresignedUrl($key);

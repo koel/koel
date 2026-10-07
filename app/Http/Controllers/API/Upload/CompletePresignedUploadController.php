@@ -3,20 +3,16 @@
 namespace App\Http\Controllers\API\Upload;
 
 use App\Attributes\DisabledInDemo;
-use App\Exceptions\DuplicateSongUploadException;
-use App\Exceptions\SongUploadFailedException;
 use App\Facades\Dispatcher;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Upload\CompletePresignedUploadRequest;
-use App\Http\Resources\DuplicateUploadResource;
 use App\Jobs\HandlePresignedSongUploadJob;
 use App\Models\Song;
 use App\Models\User;
-use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
-use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
 use App\Services\SongStorages\SongStorage;
+use App\Services\Upload\UploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
@@ -28,8 +24,8 @@ class CompletePresignedUploadController extends Controller
     /** @param User $user */
     public function __invoke(
         SongStorage $storage,
-        AlbumRepository $albumRepository,
         SongRepository $songRepository,
+        UploadService $uploadService,
         CompletePresignedUploadRequest $request,
         Authenticatable $user,
     ) {
@@ -62,26 +58,15 @@ class CompletePresignedUploadController extends Controller
 
         abort_unless($processingLock->get(), Response::HTTP_CONFLICT, 'This upload is already being processed.');
 
-        try {
-            $storage->moveUploadOutOfPending($request->key);
+        $storage->moveUploadOutOfPending($request->key);
 
-            /** @var Song|PendingDispatch $dispatchedResult */
-            $dispatchedResult = Dispatcher::dispatch(
-                new HandlePresignedSongUploadJob($location, $request->key, $user, $processingLock->owner()),
-            );
+        /** @var Song|PendingDispatch $dispatchedResult */
+        $dispatchedResult = Dispatcher::dispatch(
+            new HandlePresignedSongUploadJob($location, $request->key, $user, $processingLock->owner()),
+        );
 
-            if ($dispatchedResult instanceof Song) {
-                $song = $songRepository->getOne($dispatchedResult->id);
-                $album = $albumRepository->getOne($song->album_id);
-
-                return SongUploadResponse::make(song: $song, album: $album)->toResponse();
-            }
-
-            return response()->noContent(Response::HTTP_ACCEPTED);
-        } catch (DuplicateSongUploadException $e) {
-            return response()->json(new DuplicateUploadResource($e->duplicateUpload), Response::HTTP_CONFLICT);
-        } catch (SongUploadFailedException $e) {
-            abort(Response::HTTP_BAD_REQUEST, $e->getMessage());
-        }
+        return $dispatchedResult instanceof Song
+            ? $uploadService->makeUploadResponse($dispatchedResult, $user)->toResponse()
+            : response()->noContent(Response::HTTP_ACCEPTED);
     }
 }
