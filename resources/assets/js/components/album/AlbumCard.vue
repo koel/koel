@@ -87,7 +87,7 @@ const { album, showReleaseYear } = toRefs(props)
 // We're not checking for supports_batch_downloading here, as the number of songs on the album is not yet known.
 const allowDownload = toRef(commonStore.state, 'allows_download')
 
-const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_id))
+const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_name))
 const showing = computed(() => !albumStore.isUnknown(album.value))
 
 const shuffle = async () => {

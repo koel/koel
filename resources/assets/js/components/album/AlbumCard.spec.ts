@@ -50,6 +50,22 @@ describe('albumCard', () => {
     }
   }
 
+  it('links the album artist to their page', () => {
+    renderComponent()
+
+    expect(screen.getByRole('link', { name: 'Led Zeppelin' })).toHaveProperty(
+      'href',
+      expect.stringContaining('/artists/led-zeppelin'),
+    )
+  })
+
+  it('shows a compilation album artist without a link', () => {
+    renderComponent(createAlbum({ artist_id: 'various', artist_name: 'Various Artists' }))
+
+    screen.getByText('Various Artists')
+    expect(screen.queryByRole('link', { name: 'Various Artists' })).toBeNull()
+  })
+
   it('downloads', async () => {
     const mock = h.mock(downloadService, 'fromAlbum')
     renderComponent()

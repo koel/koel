@@ -14,7 +14,7 @@
       <a :href="url('albums.show', { id: album.id })" class="truncate">{{ album.name }}</a>
     </span>
     <span v-if="shouldShowColumn('artist')" class="artist truncate">
-      <a v-if="artistStore.isStandard(album.artist_id)" :href="url('artists.show', { id: album.artist_id })">
+      <a v-if="artistStore.isStandard(album.artist_name)" :href="url('artists.show', { id: album.artist_id })">
         {{ album.artist_name }}
       </a>
       <template v-else>{{ album.artist_name }}</template>

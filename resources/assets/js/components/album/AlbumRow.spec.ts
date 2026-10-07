@@ -30,6 +30,13 @@ describe('albumRow.vue', () => {
     return { album, ...h.render(Component, { props: { album } }) }
   }
 
+  it('shows a compilation album artist without a link', () => {
+    renderComponent({ artist_id: 'various', artist_name: 'Various Artists' })
+
+    screen.getByText('Various Artists')
+    expect(screen.queryByRole('link', { name: 'Various Artists' })).toBeNull()
+  })
+
   it('renders the album name and artist link', () => {
     renderComponent()
 
