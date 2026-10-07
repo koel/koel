@@ -33,6 +33,7 @@ final class AlbumResource
      *     starred: ?string,
      *     played: ?string,
      *     musicBrainzId: ?string,
+     *     isCompilation: bool,
      * }
      */
     public static function toArray(Album $album, User $user): array
@@ -51,6 +52,7 @@ final class AlbumResource
             'starred' => $album->favorited_at?->toIso8601String(),
             'played' => $album->last_played_at?->toIso8601String(),
             'musicBrainzId' => $album->mbid,
+            'isCompilation' => $album->artist->is_various,
         ];
     }
 }

@@ -256,6 +256,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Koel loads data progressively — there is no method to fetch all songs at once. Songs are loaded lazily per screen/context. This is by design for large libraries. Never assume the playable store vault contains all songs.
 
 ## Code Organization
+- **Read an existing method or attribute before reusing it.** Open its definition first. Never call anything marked `@deprecated` from new code — use what it wraps instead (e.g. `$album->artist->is_various`, not the deprecated `$album->is_compilation`).
 - Traits must be placed in a `Concerns` subfolder (namespace) relative to their consumers (e.g. `App\Ai\Tools\Concerns\PlaysMusic`).
 - Interfaces must be placed in a `Contracts` subfolder (namespace) relative to their consumers (e.g. `App\Ai\Tools\Contracts\SomeInterface`).
 
@@ -353,6 +354,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Linting & Static Analysis
 - When running lint or static analysis (backend or frontend), fix ALL warnings and errors to ensure 100% clean output — even pre-existing issues unrelated to current changes.
+- **Fix the cause a warning points at, never the warning.** When static analysis reports something undefined, unknown, or mistyped, find out why before changing anything. Never add a docblock, `@property`, type, cast, or ignore comment just to make it pass. A missing `@property` on a model attribute is often deliberate — the attribute may be deprecated or internal.
 - **Before creating or updating any PR that touches PHP files**, run all backend gates locally and confirm green: `composer cs` (format check), `composer lint` (mago lint), `composer analyze` (phpstan). Do NOT rely on the pre-commit hook alone — it only catches formatting. Lint and static-analysis failures must be caught locally, not by CI, so the PR isn't created/updated red.
 
 ## Vite+ Toolchain
