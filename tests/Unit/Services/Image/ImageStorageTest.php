@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services\Image;
 
+use App\Enums\ImageChangeType;
 use App\Helpers\Ulid;
 use App\Services\Image\ImageStorage;
 use App\Services\Image\ImageWriter;
@@ -76,5 +77,50 @@ class ImageStorageTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->service->delete('cover.webp');
+    }
+
+    #[Test]
+    public function keepTheCurrentImageWhenNoneIsGiven(): void
+    {
+        $change = $this->service->storeOptionalImage(null);
+
+        self::assertSame(ImageChangeType::KEEP, $change->type);
+        self::assertNull($change->fileName);
+    }
+
+    #[Test]
+    public function removeTheCurrentImageWhenAnEmptyOneIsGiven(): void
+    {
+        $change = $this->service->storeOptionalImage('');
+
+        self::assertSame(ImageChangeType::REMOVE, $change->type);
+        self::assertNull($change->fileName);
+    }
+
+    #[Test]
+    public function replaceTheCurrentImageWithAStoredOne(): void
+    {
+        $ulid = Ulid::freeze();
+        Storage::fake(ImageStorage::DISK);
+
+        $this->imageWriter->allows('format')->andReturn('avif');
+        $this->imageWriter->expects('encode')->with('dummy-src', null)->andReturn('encoded-bytes');
+
+        $change = $this->service->storeOptionalImage('dummy-src');
+
+        self::assertSame(ImageChangeType::REPLACE, $change->type);
+        self::assertSame("$ulid.avif", $change->fileName);
+    }
+
+    #[Test]
+    public function keepTheCurrentImageWhenTheNewOneCannotBeStored(): void
+    {
+        $this->imageWriter->allows('format')->andReturn('avif');
+        $this->imageWriter->expects('encode')->andThrow(new RuntimeException('Unreadable image'));
+
+        $change = $this->service->storeOptionalImage('broken-src');
+
+        self::assertSame(ImageChangeType::KEEP, $change->type);
+        self::assertNull($change->fileName);
     }
 }

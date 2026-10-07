@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\ImageChangeType;
 use App\Models\RadioStation;
 use App\Models\User;
 use App\Repositories\RadioStationRepository;
@@ -18,10 +19,7 @@ class RadioService
 
     public function createRadioStation(RadioStationCreateData $dto, User $user): RadioStation
     {
-        // logo is optional and not critical, so no transaction is needed
-        $logoFileName = rescue_if($dto->logo, function () use ($dto) {
-            return $this->imageStorage->storeImage($dto->logo);
-        });
+        $logoFileName = $this->imageStorage->storeOptionalImage($dto->logo)->fileName;
 
         /** @var RadioStation $station */
         $station = $user->radioStations()->create([
@@ -46,8 +44,10 @@ class RadioService
             'homepage_url' => $dto->homepageUrl,
         ];
 
-        if (is_string($dto->logo)) {
-            $data['logo'] = rescue_if($dto->logo, fn () => $this->imageStorage->storeImage($dto->logo), '');
+        $logoChange = $this->imageStorage->storeOptionalImage($dto->logo);
+
+        if ($logoChange->type !== ImageChangeType::KEEP) {
+            $data['logo'] = $logoChange->fileName ?? '';
         }
 
         $radioStation->update($data);

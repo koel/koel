@@ -2,7 +2,9 @@
 
 namespace App\Services\Image;
 
+use App\Enums\ImageChangeType;
 use App\Helpers\Ulid;
+use App\Values\ImageChange;
 use App\Values\ImageWritingConfig;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
@@ -36,6 +38,28 @@ class ImageStorage
         $this->put($fileName, $this->imageWriter->encode($source, $config));
 
         return $fileName;
+    }
+
+    /**
+     * Turn an optional image from a request into a change: null keeps the current image,
+     * an empty string removes it, and anything else is stored as the replacement.
+     * If the image can't be stored, the current one is kept.
+     */
+    public function storeOptionalImage(?string $source): ImageChange
+    {
+        if ($source === null) {
+            return ImageChange::make(ImageChangeType::KEEP);
+        }
+
+        if ($source === '') {
+            return ImageChange::make(ImageChangeType::REMOVE);
+        }
+
+        $fileName = rescue(fn () => $this->storeImage($source));
+
+        return $fileName
+            ? ImageChange::make(ImageChangeType::REPLACE, $fileName)
+            : ImageChange::make(ImageChangeType::KEEP);
     }
 
     public function exists(?string $fileName): bool
