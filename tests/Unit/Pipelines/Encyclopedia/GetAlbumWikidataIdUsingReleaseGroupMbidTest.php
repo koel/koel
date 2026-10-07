@@ -72,4 +72,23 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
 
         Saloon::assertNothingSent();
     }
+
+    #[Test]
+    public function rememberAReleaseGroupMusicBrainzDoesNotKnow(): void
+    {
+        Saloon::fake([
+            GetReleaseGroupUrlRelationshipsRequest::class => MockResponse::make(body: [
+                'error' => 'Not Found',
+            ], status: 404),
+        ]);
+
+        $mock = self::createNextClosureMock(null);
+
+        (new GetAlbumWikidataIdUsingReleaseGroupMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+
+        self::assertTrue(Cache::store('encyclopedia')->has(cache_key(
+            'album wikidata id from release group mbid',
+            'sample-mbid',
+        )));
+    }
 }
