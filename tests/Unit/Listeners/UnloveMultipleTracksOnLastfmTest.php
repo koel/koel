@@ -27,6 +27,7 @@ class UnloveMultipleTracksOnLastfmTest extends TestCase
         $songByUnknownArtist = Song::factory()->for($unknownArtist)->createOne();
 
         $lastfm = Mockery::mock(LastfmService::class);
+        $lastfm->allows('isConnected')->with($user)->andReturn(true);
         $lastfm
             ->expects('batchToggleLoveTracks')
             ->withArgs(

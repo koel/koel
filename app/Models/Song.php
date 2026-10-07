@@ -209,6 +209,11 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
         return $this->type === PlayableType::PODCAST_EPISODE;
     }
 
+    public function isScrobbleable(): bool
+    {
+        return !$this->isEpisode() && !$this->artist?->is_unknown;
+    }
+
     public function genreEqualsTo(string|array $genres): bool
     {
         $genreNames = collect(is_string($genres) ? explode(',', $genres) : $genres)

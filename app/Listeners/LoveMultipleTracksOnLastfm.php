@@ -15,9 +15,9 @@ readonly class LoveMultipleTracksOnLastfm implements ShouldQueue
 
     public function handle(MultipleSongsLiked $event): void
     {
-        $songs = $event->songs->filter(static fn (Song $song) => !$song->isEpisode() && !$song->artist->is_unknown);
+        $songs = $event->songs->filter(static fn (Song $song) => $song->isScrobbleable());
 
-        if ($songs->isEmpty() || !LastfmService::enabled() || !$event->user->preferences->lastFmSessionKey) {
+        if ($songs->isEmpty() || !$this->lastfm->isConnected($event->user)) {
             return;
         }
 
