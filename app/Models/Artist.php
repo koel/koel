@@ -138,6 +138,11 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
             });
     }
 
+    public function shouldBeSearchable(): bool
+    {
+        return !$this->is_various && !$this->is_unknown;
+    }
+
     /** @return array<mixed> */
     public function toSearchableArray(): array
     {

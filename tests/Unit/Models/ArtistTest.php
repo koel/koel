@@ -85,4 +85,21 @@ class ArtistTest extends TestCase
         self::assertSame(Artist::VARIOUS_NAME, $artist->name);
         self::assertTrue($artist->is_various);
     }
+
+    /** @return array<string, array{string, bool}> */
+    public static function provideSearchabilityData(): array
+    {
+        return [
+            'standard artist' => ['Metallica', true],
+            'Various Artists' => [Artist::VARIOUS_NAME, false],
+            'Unknown Artist' => [Artist::UNKNOWN_NAME, false],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideSearchabilityData')]
+    public function onlyStandardArtistsAreSearchable(string $name, bool $searchable): void
+    {
+        self::assertSame($searchable, Artist::factory()->createOne(['name' => $name])->shouldBeSearchable());
+    }
 }
