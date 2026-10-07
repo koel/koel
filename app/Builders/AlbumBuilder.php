@@ -52,22 +52,39 @@ class AlbumBuilder extends FavoriteableBuilder
 
         throw_unless($this->user, new LogicException('User must be set to query accessible albums.'));
 
-        if (!$this->user->preferences->includePublicMedia) {
-            return $this->whereBelongsTo($this->user);
+        self::limitToAlbumsAccessibleByUser($this, $this->user);
+
+        return $this;
+    }
+
+    /**
+     * Limit a query on the `albums` table to the albums the user can open: their own, plus albums with a public
+     * song shared by someone else in their organization when they include public media.
+     */
+    public static function limitToAlbumsAccessibleByUser(Builder|QueryBuilder $query, User $user): void
+    {
+        if (License::isCommunity()) {
+            return;
         }
 
-        return $this->where(function (Builder $query): void {
-            $query
-                ->whereBelongsTo($this->user)
-                ->orWhereExists(function (QueryBuilder $sub): void {
+        if (!$user->preferences->includePublicMedia) {
+            $query->where('albums.user_id', $user->id);
+
+            return;
+        }
+
+        $query->where(static function (Builder|QueryBuilder $ownedOrShared) use ($user): void {
+            $ownedOrShared
+                ->where('albums.user_id', $user->id)
+                ->orWhereExists(static function (QueryBuilder $sub) use ($user): void {
                     $sub
                         ->select(DB::raw(1))
                         ->from('songs')
                         ->join('users', 'songs.owner_id', 'users.id')
                         ->whereColumn('songs.album_id', 'albums.id')
                         ->where('songs.is_public', true)
-                        ->where('users.organization_id', $this->user->organization_id)
-                        ->where('songs.owner_id', '<>', $this->user->id);
+                        ->where('users.organization_id', $user->organization_id)
+                        ->where('songs.owner_id', '<>', $user->id);
                 });
         });
     }

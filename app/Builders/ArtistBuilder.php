@@ -48,10 +48,16 @@ class ArtistBuilder extends FavoriteableBuilder
      */
     public function withAlbumCountIncludingAppearances(): self
     {
-        return $this->addSelect(['albums_count' => static function (QueryBuilder $count): void {
+        $user = $this->user;
+
+        return $this->addSelect(['albums_count' => static function (QueryBuilder $count) use ($user): void {
             $count
                 ->selectRaw('COUNT(*)')
                 ->from('albums')
+                ->when($user, static fn (QueryBuilder $query) => AlbumBuilder::limitToAlbumsAccessibleByUser(
+                    $query,
+                    $user,
+                ))
                 ->where(static function (QueryBuilder $ownedOrAppearedOn): void {
                     $ownedOrAppearedOn
                         ->whereColumn('albums.artist_id', 'artists.id')
