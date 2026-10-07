@@ -11,6 +11,7 @@ use App\Values\Ticketmaster\TicketmasterEvent;
 use App\Values\Ticketmaster\TicketmasterVenue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Http\PendingRequest;
@@ -114,12 +115,22 @@ class TicketmasterServiceTest extends TestCase
         Saloon::assertNothingSent();
     }
 
+    /** @return array<string, array{string}> */
+    public static function provideNonStandardArtistNames(): array
+    {
+        return [
+            'Various Artists' => [Artist::VARIOUS_NAME],
+            'Unknown Artist' => [Artist::UNKNOWN_NAME],
+        ];
+    }
+
     #[Test]
-    public function skipVariousArtists(): void
+    #[DataProvider('provideNonStandardArtistNames')]
+    public function skipNonStandardArtists(string $name): void
     {
         Saloon::fake([]);
 
-        $artist = Artist::factory()->createOne(['name' => Artist::VARIOUS_NAME]);
+        $artist = Artist::factory()->createOne(['name' => $name]);
 
         self::assertEmpty($this->service->searchEventForArtist($artist, '84.124.22.13'));
         Saloon::assertNothingSent();
