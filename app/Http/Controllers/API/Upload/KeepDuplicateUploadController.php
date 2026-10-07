@@ -5,25 +5,26 @@ namespace App\Http\Controllers\API\Upload;
 use App\Attributes\DisabledInDemo;
 use App\Http\Controllers\Controller;
 use App\Models\DuplicateUpload;
-use App\Models\User;
+use App\Repositories\AlbumRepository;
+use App\Repositories\SongRepository;
+use App\Responses\SongUploadResponse;
 use App\Services\Upload\DuplicateUploadService;
-use App\Services\Upload\UploadService;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 #[DisabledInDemo]
 class KeepDuplicateUploadController extends Controller
 {
-    /** @param User $user */
     public function __invoke(
         DuplicateUpload $duplicateUpload,
         DuplicateUploadService $service,
-        UploadService $uploadService,
-        Authenticatable $user,
+        SongRepository $songRepository,
+        AlbumRepository $albumRepository,
     ) {
         $this->authorize('own', $duplicateUpload);
 
         $songs = $service->keep(collect([$duplicateUpload]));
+        $song = $songRepository->getOne($songs[0]->id);
+        $album = $albumRepository->getOne($song->album_id);
 
-        return $uploadService->makeUploadResponse($songs[0], $user)->toResponse();
+        return SongUploadResponse::make(song: $song, album: $album)->toResponse();
     }
 }

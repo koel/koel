@@ -11,8 +11,10 @@ use App\Http\Requests\API\Upload\UploadSongRequest;
 use App\Jobs\HandleSongUploadJob;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\AlbumRepository;
+use App\Repositories\SongRepository;
+use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\SongStorage;
-use App\Services\Upload\UploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
@@ -23,7 +25,8 @@ class UploadSongController extends Controller
     /** @param User $user */
     public function __invoke(
         SongStorage $storage,
-        UploadService $uploadService,
+        AlbumRepository $albumRepository,
+        SongRepository $songRepository,
         UploadSongRequest $request,
         Authenticatable $user,
     ) {
@@ -42,8 +45,13 @@ class UploadSongController extends Controller
             abort(Response::HTTP_FORBIDDEN, $e->getMessage());
         }
 
-        return $dispatchedResult instanceof Song
-            ? $uploadService->makeUploadResponse($dispatchedResult, $user)->toResponse()
-            : response()->noContent(Response::HTTP_ACCEPTED);
+        if (!$dispatchedResult instanceof Song) {
+            return response()->noContent(Response::HTTP_ACCEPTED);
+        }
+
+        $song = $songRepository->getOne($dispatchedResult->id);
+        $album = $albumRepository->getOne($song->album_id);
+
+        return SongUploadResponse::make(song: $song, album: $album)->toResponse();
     }
 }

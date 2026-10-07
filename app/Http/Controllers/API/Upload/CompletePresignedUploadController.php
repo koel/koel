@@ -9,10 +9,11 @@ use App\Http\Requests\API\Upload\CompletePresignedUploadRequest;
 use App\Jobs\HandlePresignedSongUploadJob;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
+use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
 use App\Services\SongStorages\SongStorage;
-use App\Services\Upload\UploadService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
@@ -24,8 +25,8 @@ class CompletePresignedUploadController extends Controller
     /** @param User $user */
     public function __invoke(
         SongStorage $storage,
+        AlbumRepository $albumRepository,
         SongRepository $songRepository,
-        UploadService $uploadService,
         CompletePresignedUploadRequest $request,
         Authenticatable $user,
     ) {
@@ -65,8 +66,13 @@ class CompletePresignedUploadController extends Controller
             new HandlePresignedSongUploadJob($location, $request->key, $user, $processingLock->owner()),
         );
 
-        return $dispatchedResult instanceof Song
-            ? $uploadService->makeUploadResponse($dispatchedResult, $user)->toResponse()
-            : response()->noContent(Response::HTTP_ACCEPTED);
+        if (!$dispatchedResult instanceof Song) {
+            return response()->noContent(Response::HTTP_ACCEPTED);
+        }
+
+        $song = $songRepository->getOne($dispatchedResult->id);
+        $album = $albumRepository->getOne($song->album_id);
+
+        return SongUploadResponse::make(song: $song, album: $album)->toResponse();
     }
 }
