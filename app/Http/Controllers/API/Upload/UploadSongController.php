@@ -3,14 +3,11 @@
 namespace App\Http\Controllers\API\Upload;
 
 use App\Attributes\DisabledInDemo;
-use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\MediaPathNotSetException;
-use App\Exceptions\SongUploadFailedException;
 use App\Facades\Dispatcher;
 use App\Helpers\Ulid;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Upload\UploadSongRequest;
-use App\Http\Resources\DuplicateUploadResource;
 use App\Jobs\HandleSongUploadJob;
 use App\Models\Song;
 use App\Models\User;
@@ -44,21 +41,17 @@ class UploadSongController extends Controller
 
             /** @var Song|PendingDispatch $dispatchedResult */
             $dispatchedResult = Dispatcher::dispatch(new HandleSongUploadJob($file->getRealPath(), $user));
-
-            if ($dispatchedResult instanceof Song) {
-                $song = $songRepository->getOne($dispatchedResult->id);
-                $album = $albumRepository->getOne($song->album_id);
-
-                return SongUploadResponse::make(song: $song, album: $album)->toResponse();
-            }
-
-            return response()->noContent(Response::HTTP_ACCEPTED);
-        } catch (DuplicateSongUploadException $e) {
-            return response()->json(new DuplicateUploadResource($e->duplicateUpload), Response::HTTP_CONFLICT);
         } catch (MediaPathNotSetException $e) {
             abort(Response::HTTP_FORBIDDEN, $e->getMessage());
-        } catch (SongUploadFailedException $e) {
-            abort(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
+
+        if (!$dispatchedResult instanceof Song) {
+            return response()->noContent(Response::HTTP_ACCEPTED);
+        }
+
+        $song = $songRepository->getOne($dispatchedResult->id);
+        $album = $albumRepository->getOne($song->album_id);
+
+        return SongUploadResponse::make(song: $song, album: $album)->toResponse();
     }
 }

@@ -5,7 +5,6 @@ namespace App\Services\SongStorages;
 use App\Helpers\Ulid;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
-use App\Services\SongStorages\Concerns\MovesUploadedFile;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Values\UploadReference;
 use Closure;
@@ -18,7 +17,6 @@ use RuntimeException;
 abstract class RemoteDiskStorage extends SongStorage implements MustDeleteTemporaryLocalFileAfterUpload
 {
     use DeletesUsingFilesystem;
-    use MovesUploadedFile;
 
     protected Filesystem $disk;
 

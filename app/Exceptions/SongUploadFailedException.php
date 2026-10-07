@@ -2,10 +2,13 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Contracts\Debug\ShouldntReport;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use RuntimeException;
 use Throwable;
 
-class SongUploadFailedException extends RuntimeException
+class SongUploadFailedException extends RuntimeException implements ShouldntReport
 {
     private static function fromThrowable(Throwable $e): self
     {
@@ -24,5 +27,10 @@ class SongUploadFailedException extends RuntimeException
         }
 
         return self::fromErrorMessage($error);
+    }
+
+    public function render(): JsonResponse
+    {
+        return response()->json(['message' => $this->getMessage()], Response::HTTP_BAD_REQUEST);
     }
 }
