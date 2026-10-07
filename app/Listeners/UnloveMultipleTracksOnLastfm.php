@@ -20,6 +20,6 @@ readonly class UnloveMultipleTracksOnLastfm implements ShouldQueue
             return;
         }
 
-        $this->lastfm->batchToggleLoveTracks($event->songs, $event->user, false);
+        $this->lastfm->batchToggleLoveTracks($songs, $event->user, false);
     }
 }
