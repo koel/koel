@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\ImageChangeType;
 use App\Exceptions\AlbumNameConflictException;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
@@ -32,13 +33,12 @@ class AlbumService
 
         $data = $dto->toArray();
 
-        if (is_string($dto->cover)) {
-            // A non-empty string means the user is uploading another cover,
-            // when an empty string means the user is removing the cover.
-            $data['cover'] = rescue_if($dto->cover, fn () => $this->imageStorage->storeImage($dto->cover), '');
-        } else {
-            // If the cover is null, the user's not changing or removing the cover at all.
+        $coverChange = $this->imageStorage->storeOptionalImage($dto->cover);
+
+        if ($coverChange->type === ImageChangeType::KEEP) {
             Arr::forget($data, 'cover');
+        } else {
+            $data['cover'] = $coverChange->fileName ?? '';
         }
 
         $album->update($data);

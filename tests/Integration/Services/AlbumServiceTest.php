@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services;
 
+use App\Enums\ImageChangeType;
 use App\Exceptions\AlbumNameConflictException;
 use App\Helpers\Ulid;
 use App\Models\Album;
@@ -9,6 +10,7 @@ use App\Models\Song;
 use App\Services\AlbumService;
 use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
+use App\Values\ImageChange;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -40,6 +42,11 @@ class AlbumServiceTest extends TestCase
 
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023);
 
+        $this->imageStorage
+            ->expects('storeOptionalImage')
+            ->with(null)
+            ->andReturn(ImageChange::make(ImageChangeType::KEEP));
+
         $updatedAlbum = $this->service->updateAlbum($album, $data);
 
         self::assertEquals('New Album Name', $updatedAlbum->name);
@@ -63,7 +70,10 @@ class AlbumServiceTest extends TestCase
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023, cover: minimal_base64_encoded_image());
 
         $ulid = Ulid::freeze();
-        $this->imageStorage->expects('storeImage')->with(minimal_base64_encoded_image())->andReturn("$ulid.webp");
+        $this->imageStorage
+            ->expects('storeOptionalImage')
+            ->with(minimal_base64_encoded_image())
+            ->andReturn(ImageChange::make(ImageChangeType::REPLACE, "$ulid.webp"));
 
         $updatedAlbum = $this->service->updateAlbum($album, $data);
 
@@ -82,6 +92,11 @@ class AlbumServiceTest extends TestCase
         $album = Album::factory()->createOne();
 
         $data = AlbumUpdateData::make(name: 'New Album Name', year: 2023, cover: '');
+
+        $this->imageStorage
+            ->expects('storeOptionalImage')
+            ->with('')
+            ->andReturn(ImageChange::make(ImageChangeType::REMOVE));
 
         $updatedAlbum = $this->service->updateAlbum($album, $data);
 

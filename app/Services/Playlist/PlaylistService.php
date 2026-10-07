@@ -2,6 +2,7 @@
 
 namespace App\Services\Playlist;
 
+use App\Enums\ImageChangeType;
 use App\Enums\Placement;
 use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Facades\License as LicenseFacade;
@@ -29,10 +30,7 @@ class PlaylistService
 
     public function createPlaylist(PlaylistCreateData $data, User $user): Playlist
     {
-        // cover is optional and not critical, so no transaction is needed
-        $cover = rescue_if($data->cover, function () use ($data) {
-            return $this->imageStorage->storeImage($data->cover);
-        });
+        $cover = $this->imageStorage->storeOptionalImage($data->cover)->fileName;
 
         return DB::transaction(function () use ($data, $cover, $user): Playlist {
             /** @var Playlist $playlist */
@@ -79,8 +77,10 @@ class PlaylistService
             'rules' => $dto->ruleGroups,
         ];
 
-        if (is_string($dto->cover)) {
-            $data['cover'] = rescue_if($dto->cover, fn () => $this->imageStorage->storeImage($dto->cover), '');
+        $coverChange = $this->imageStorage->storeOptionalImage($dto->cover);
+
+        if ($coverChange->type !== ImageChangeType::KEEP) {
+            $data['cover'] = $coverChange->fileName ?? '';
         }
 
         $playlist->update($data);
