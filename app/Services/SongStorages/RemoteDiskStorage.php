@@ -39,7 +39,13 @@ abstract class RemoteDiskStorage extends SongStorage implements MustDeleteTempor
 
     protected function putFile(string $remotePath, string $localPath): void
     {
-        $this->disk->put($remotePath, fopen($localPath, 'r'));
+        $stream = fopen($localPath, 'r');
+
+        try {
+            $this->disk->put($remotePath, $stream);
+        } finally {
+            fclose($stream);
+        }
     }
 
     public function undoUpload(UploadReference $reference): void

@@ -22,6 +22,7 @@ class TranscodingStrategyFactoryTest extends TestCase
             'S3 Lambda' => [SongStorageType::S3_LAMBDA, CloudTranscodingStrategy::class],
             'Dropbox' => [SongStorageType::DROPBOX, CloudTranscodingStrategy::class],
             'SFTP' => [SongStorageType::SFTP, RemoteDiskTranscodingStrategy::class],
+            'WebDAV' => [SongStorageType::WEBDAV, RemoteDiskTranscodingStrategy::class],
         ];
     }
 
