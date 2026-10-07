@@ -91,11 +91,11 @@
 <script lang="ts" setup>
 import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 import { faCompactDisc, faHeart } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, onMounted, ref, toRef } from 'vue'
+import { computed, onMounted, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useCursorPaginatedList } from '@/composables/useCursorPaginatedList'
 
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import AlbumGrid from '@/components/album/AlbumGrid.vue'
@@ -112,71 +112,26 @@ import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 const grid = ref<InstanceType<typeof AlbumGrid>>()
 const albums = toRef(albumStore.state, 'albums')
 
-const loading = ref(false)
-const cursor = ref<string | null>('')
+const {
+  loading,
+  displayedItems: displayedAlbums,
+  noFavorites: noFavoriteAlbums,
+  showSkeletons,
+  fetchMore: fetchAlbums,
+  sort,
+  toggleFavoritesOnly,
+} = useCursorPaginatedList({
+  store: albumStore,
+  items: albums,
+  favoritesOnly: toRef(preferences, 'albums_favorites_only'),
+  sortField: toRef(preferences, 'albums_sort_field'),
+  sortOrder: toRef(preferences, 'albums_sort_order'),
+  onReset: () => grid.value?.scrollToTop(),
+})
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
-const displayedAlbums = computed(() =>
-  preferences.albums_favorites_only ? albums.value.filter((a: Album) => a.favorite) : albums.value,
-)
-
-const noFavoriteAlbums = computed(
-  () =>
-    !loading.value &&
-    preferences.albums_favorites_only &&
-    displayedAlbums.value.length === 0 &&
-    !moreAlbumsAvailable.value,
-)
-const moreAlbumsAvailable = computed(() => cursor.value !== null)
-const showSkeletons = computed(() => loading.value && albums.value.length === 0)
-
-const fetchAlbums = async () => {
-  if (loading.value || !moreAlbumsAvailable.value) {
-    return
-  }
-
-  loading.value = true
-
-  try {
-    cursor.value = await albumStore.paginate({
-      favorites_only: preferences.albums_favorites_only,
-      cursor: cursor.value,
-      sort: preferences.albums_sort_field,
-      order: preferences.albums_sort_order,
-    })
-  } catch (error: unknown) {
-    useErrorHandler().handleHttpError(error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const resetState = async () => {
-  cursor.value = ''
-
-  albumStore.reset()
-  grid.value?.scrollToTop()
-}
-
-const sort = async (field: AlbumListSortField, order: SortOrder) => {
-  preferences.albums_sort_field = field
-  preferences.albums_sort_order = order
-
-  await resetState()
-  await nextTick()
-  await fetchAlbums()
-}
-
 const toggleFavorite = (album: Album) => albumStore.toggleFavorite(album)
-
-const toggleFavoritesOnly = async () => {
-  preferences.albums_favorites_only = !preferences.albums_favorites_only
-
-  await resetState()
-  await nextTick()
-  await fetchAlbums()
-}
 
 onMounted(() => {
   if (!libraryEmpty.value) {
