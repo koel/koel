@@ -270,6 +270,13 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Don't use single-letter variable names. The only allowed ones are `i` / `j` for loop counters, `h` for the test harness, and `$e` for the exception variable in `catch (Throwable|Exception|Error $e)` blocks (PHP's universal idiom — analogous to `e` for events in JS/TS event handlers). For everything else (callback params, destructured fields, lambda args, etc.) pick a name that says what it is.
 - Never combine assignment with return. Always `$x = expr;` then `return $x;` on a separate line — `return $x = expr;` cramming two effects into one statement is forbidden in PHP, TS, and JS.
 
+## Code Formatting — Breathing Room
+- Put a blank line between distinct logical phases. Don't cram declarations, conditionals, and returns into one wall of code. Applies in three places:
+    1. **Inside a function**, between phases: declarations → guard clauses → setup → main work → return. Each phase is its own paragraph.
+    2. **After early-return guard clauses**, before the next phase resumes. `if (!el) return;` is a phase boundary, not a line of setup.
+    3. **At the top level of a module/`<script setup>` block**, between adjacent composable / lifecycle-hook / standalone-watcher calls. `onMounted(...)`, `onBeforeUnmount(...)`, `watch(...)` are independent registrations — separate them.
+- Don't manufacture blank lines mid-block — only at real phase boundaries. The test: removing the blank would jam two different *intents* together, not two related lines of the same intent.
+
 ## PHP Conventions
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
 - For guard clauses that throw on a condition, always reach for `throw_if($condition, ExceptionClass::class, ...$args)` / `throw_unless($condition, ExceptionClass::class, ...$args)` before writing `if (…) { throw new …; }`. The Laravel helpers read as a single declarative line, and the extra args are forwarded to the exception constructor. Plain `if`/`throw` is only correct when the throw branch has to do additional work (logging, side effects) before throwing.

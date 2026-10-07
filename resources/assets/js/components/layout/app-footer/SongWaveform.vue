@@ -159,7 +159,9 @@ const { pause, resume } = useRafFn(({ delta, timestamp }) => render(timestamp, M
 })
 
 watch(canvas, element => (element ? resume() : pause()))
+
 useResizeObserver(canvas, resume)
+
 watch([() => props.progress, () => props.song.playback_state, waveform], resume)
 
 watch(

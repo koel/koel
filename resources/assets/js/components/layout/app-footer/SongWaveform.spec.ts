@@ -30,6 +30,7 @@ describe('songWaveform.vue', () => {
     beforeEach: () => {
       preferenceStore.state.show_waveform = true
       motion.preference = 'no-preference'
+      vi.mocked(drawWaveform).mockClear()
     },
   })
 
@@ -73,13 +74,12 @@ describe('songWaveform.vue', () => {
     await h.withPlusEdition(async () => {
       h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
 
-      const song = h.factory('song').make({ loudness: -9, true_peak: 1, playback_state: 'Paused' })
+      const song = h.factory('song').make({ loudness: -9, true_peak: 1, playback_state: 'Paused', album_cover: '' })
       const { rerender } = renderComponent(song, 25)
       await waitFor(() => drawnWith({ progress: 0.25 }))
 
-      await new Promise(resolve => setTimeout(resolve, 100))
       vi.mocked(drawWaveform).mockClear()
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
       expect(drawWaveform).not.toHaveBeenCalled()
 
       await rerender({ song, progress: 50 })
