@@ -18,6 +18,8 @@ class SftpStreamerAdapter implements StreamerAdapter
 
     public function stream(Song $song, ?RequestedStreamingConfig $config = null): StreamedFileResponse
     {
+        $this->storage->assertSupported();
+
         return self::streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
     }
 }
