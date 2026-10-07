@@ -110,7 +110,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->withUserContext(user: $user ?? $this->auth->user())
             ->onlyStandard()
             ->onlyAlbumArtists()
-            ->withCount('albums')
+            ->withAlbumCountIncludingAppearances()
             ->orderBy('name')
             ->get();
     }

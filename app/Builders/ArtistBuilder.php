@@ -43,6 +43,29 @@ class ArtistBuilder extends FavoriteableBuilder
         return $this->whereHas('albums');
     }
 
+    /**
+     * Count the artist's own albums plus the albums (e.g., compilations) they appear on, as `albums_count`.
+     */
+    public function withAlbumCountIncludingAppearances(): self
+    {
+        return $this->addSelect(['albums_count' => static function (QueryBuilder $count): void {
+            $count
+                ->selectRaw('COUNT(*)')
+                ->from('albums')
+                ->where(static function (QueryBuilder $ownedOrAppearedOn): void {
+                    $ownedOrAppearedOn
+                        ->whereColumn('albums.artist_id', 'artists.id')
+                        ->orWhereExists(static function (QueryBuilder $appearance): void {
+                            $appearance
+                                ->select(DB::raw(1))
+                                ->from('songs')
+                                ->whereColumn('songs.album_id', 'albums.id')
+                                ->whereColumn('songs.artist_id', 'artists.id');
+                        });
+                });
+        }]);
+    }
+
     private function accessible(): self
     {
         if (License::isCommunity()) {

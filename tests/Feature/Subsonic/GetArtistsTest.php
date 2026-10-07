@@ -4,6 +4,7 @@ namespace Tests\Feature\Subsonic;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -44,5 +45,33 @@ class GetArtistsTest extends TestCase
         self::assertSame('Abba', $byLetter->get('A')['artist'][0]['name']);
         self::assertSame('The Beatles', $byLetter->get('B')['artist'][0]['name']);
         self::assertSame('100 gecs', $byLetter->get('#')['artist'][0]['name']);
+    }
+
+    #[Test]
+    public function albumCountIncludesCompilationsTheArtistAppearsOn(): void
+    {
+        $artist = self::createArtistWithOwnAlbumAndACompilationAppearance();
+
+        $response = $this->getJson("/rest/getArtists.view?apiKey={$artist->user->subsonic_api_key}&f=json")->assertOk();
+
+        $listedArtist = collect($response->json('subsonic-response.artists.index'))
+            ->flatMap(static fn (array $index) => $index['artist'])
+            ->firstWhere('id', $artist->id);
+
+        self::assertSame(2, $listedArtist['albumCount']);
+    }
+
+    private static function createArtistWithOwnAlbumAndACompilationAppearance(): Artist
+    {
+        $artist = Artist::factory()->createOne(['name' => 'Tool']);
+        Album::factory()->for($artist)->createOne();
+
+        $compilation = Album::factory()->for(Artist::factory()->createOne([
+            'name' => Artist::VARIOUS_NAME,
+        ]))->createOne();
+
+        Song::factory()->for($compilation)->for($artist)->createOne();
+
+        return $artist;
     }
 }
