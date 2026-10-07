@@ -129,6 +129,38 @@ describe('editSongForm.vue', () => {
     expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED', result)
   })
 
+  it('leaves an untouched album artist out of the update', async () => {
+    const updateMock = h.mock(songStore, 'updateSongs').mockResolvedValue({
+      songs: [],
+      albums: [],
+      artists: [],
+      removed: { album_ids: [], artist_ids: [] },
+    })
+
+    await renderComponent(h.factory('song').state('partOfCompilation').make())
+
+    await h.type(screen.getByTestId('track-input'), '5')
+    await h.user.click(screen.getByRole('button', { name: 'Update' }))
+
+    expect(updateMock.mock.calls[0][1]).not.toHaveProperty('album_artist_name')
+  })
+
+  it('sends a cleared album artist as empty', async () => {
+    const updateMock = h.mock(songStore, 'updateSongs').mockResolvedValue({
+      songs: [],
+      albums: [],
+      artists: [],
+      removed: { album_ids: [], artist_ids: [] },
+    })
+
+    await renderComponent(h.factory('song').state('partOfCompilation').make())
+
+    await h.user.clear(screen.getByTestId('albumArtist-input'))
+    await h.user.click(screen.getByRole('button', { name: 'Update' }))
+
+    expect(updateMock.mock.calls[0][1]).toHaveProperty('album_artist_name', '')
+  })
+
   it('displays artist name if all songs have the same artist', async () => {
     await renderComponent(
       h.factory('song').make(

@@ -27,7 +27,9 @@ class SongUpdateRequest extends Request
             title: $this->input('data.title'),
             artistName: $this->input('data.artist_name'),
             albumName: $this->input('data.album_name'),
-            albumArtistName: $this->input('data.album_artist_name'),
+            albumArtistName: $this->has('data.album_artist_name')
+                ? (string) $this->input('data.album_artist_name')
+                : null,
             track: (int) $this->input('data.track'),
             disc: (int) $this->input('data.disc'),
             genre: $this->input('data.genre'),
