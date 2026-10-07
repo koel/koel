@@ -4,6 +4,7 @@ namespace App\Console\Commands\Storage;
 
 use App\Models\Setting;
 use App\Services\DotenvEditor;
+use App\Services\SettingService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -18,6 +19,7 @@ class SetupLocalStorageCommand extends Command
 
     public function __construct(
         private readonly DotenvEditor $dotenvEditor,
+        private readonly SettingService $settingService,
     ) {
         parent::__construct();
     }
@@ -28,7 +30,7 @@ class SetupLocalStorageCommand extends Command
         $this->components->warn('Changing the storage configuration can cause irreversible data loss.');
         $this->components->warn('Consider backing up your data before proceeding.');
 
-        Setting::set('media_path', $this->askForMediaPath());
+        $this->settingService->updateMediaPath($this->askForMediaPath());
 
         $this->dotenvEditor->setKey('STORAGE_DRIVER', 'local');
         Artisan::call('config:clear', ['--quiet' => true]);

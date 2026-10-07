@@ -12,6 +12,7 @@ use App\Services\DotenvEditor;
 use App\Services\Image\LegacyArtworkMigrator;
 use App\Services\PublicStorageLinker;
 use App\Services\PwaManifestService;
+use App\Services\SettingService;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
@@ -40,6 +41,7 @@ class InitCommand extends Command
         private readonly DotenvEditor $dotenvEditor,
         private readonly PublicStorageLinker $publicStorageLinker,
         private readonly PwaManifestService $pwaManifestService,
+        private readonly SettingService $settingService,
         private readonly LegacyArtworkMigrator $legacyArtworkMigrator,
     ) {
         parent::__construct();
@@ -348,7 +350,7 @@ class InitCommand extends Command
             }
 
             if (self::isValidMediaPath($path)) {
-                Setting::set('media_path', $path);
+                $this->settingService->updateMediaPath($path);
 
                 return;
             }
@@ -388,7 +390,7 @@ class InitCommand extends Command
         }
 
         if (self::isValidMediaPath($path)) {
-            Setting::set('media_path', $path);
+            $this->settingService->updateMediaPath($path);
         } else {
             $this->components->warn(sprintf('The path %s does not exist or not readable. Skipping.', $path));
         }
