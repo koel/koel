@@ -51,7 +51,13 @@
         <Icon :icon="faHeart"
       /></SortableColumnHeader>
       <span class="extra">
-        <AlbumTableHeaderActionMenu :field :order @sort="onSort" />
+        <TableHeaderActionMenu
+          :field
+          :order
+          :items="albumTableMenuItems"
+          :column-config="albumTableColumnConfig"
+          @sort="onSort"
+        />
       </span>
     </div>
 
@@ -67,12 +73,12 @@
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
-import { albumTableColumnConfig } from '@/config/tables'
+import { albumTableColumnConfig, albumTableMenuItems } from '@/config/tables'
 
 import SortableColumnHeader from '@/components/ui/SortableColumnHeader.vue'
+import TableHeaderActionMenu from '@/components/ui/TableHeaderActionMenu.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import AlbumRow from '@/components/album/AlbumRow.vue'
-import AlbumTableHeaderActionMenu from '@/components/album/AlbumTableHeaderActionMenu.vue'
 
 const props = defineProps<{
   albums: Album[]

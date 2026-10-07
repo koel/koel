@@ -4,7 +4,7 @@ import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { logger } from '@/utils/logger'
 
-interface Options<T extends string> {
+export interface TableColumnConfig<T extends string> {
   storageKey: string
   validColumns: readonly T[]
   defaultColumns: readonly T[]
@@ -25,7 +25,7 @@ export const useTableColumnVisibility = <T extends string>({
   defaultColumns,
   alwaysVisible,
   responsive = false,
-}: Options<T>) => {
+}: TableColumnConfig<T>) => {
   if (!stores[storageKey]) {
     stores[storageKey] = ref([])
   }
