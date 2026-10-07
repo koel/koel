@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
@@ -107,9 +108,16 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
      * Get an Artist object from their name (and if Koel Plus, belonging to a specific user).
      * If such is not found, a new artist will be created.
      */
-    public static function getOrCreate(User $user, ?string $name = null): self
+    private static function normalizeName(?string $name): string
     {
         $name = trim(Bom::strip($name) ?? '') ?: self::UNKNOWN_NAME;
+
+        return in_array(Str::lower($name), ['various artists', 'va'], true) ? self::VARIOUS_NAME : $name;
+    }
+
+    public static function getOrCreate(User $user, ?string $name = null): self
+    {
+        $name = self::normalizeName($name);
 
         // In the Community license, all artists are shared, so we determine the first artist by the name only.
         // In the Plus license, artists are user-specific, so we create or return the artist for the given user.

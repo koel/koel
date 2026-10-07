@@ -247,6 +247,7 @@ class SongService
         // Otherwise, we only take the metadata not in the "ignores" config.
         if (!$isFileNew) {
             Arr::forget($data, $config->ignores);
+            $data += self::getCurrentArtistAndAlbumNames($song);
         }
 
         $artist = $this->resolveArtist($config->owner, Arr::get($data, 'artist'));
@@ -311,6 +312,18 @@ class SongService
         }
 
         return $song;
+    }
+
+    /**
+     * @return array{artist: string, albumartist: string, album: string}
+     */
+    private static function getCurrentArtistAndAlbumNames(Song $song): array
+    {
+        return [
+            'artist' => $song->artist->name,
+            'albumartist' => $song->album_artist->name,
+            'album' => $song->album->name,
+        ];
     }
 
     private function resolveArtist(User $user, ?string $name): Artist

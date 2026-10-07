@@ -53,7 +53,7 @@ class ScanInformation implements Arrayable
 
         // If the song is explicitly marked as a compilation but there's no album artist name, use the umbrella
         // "Various Artists" artist.
-        if (!$albumArtistName && self::getTag($tags, 'part_of_a_compilation')) {
+        if (!$albumArtistName && self::getTag($tags, ['part_of_a_compilation', 'compilation'])) {
             $albumArtistName = Artist::VARIOUS_NAME;
         }
 

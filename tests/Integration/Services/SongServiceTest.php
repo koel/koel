@@ -493,4 +493,62 @@ class SongServiceTest extends TestCase
         self::assertSame('Dark Tranquillity', $updatedSong->album_artist->name);
         self::assertFalse($updatedSong->album->is($album));
     }
+
+    #[Test]
+    public function rescanIgnoringArtistKeepsTheCurrentArtist(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+
+        $editedArtist = Artist::getOrCreate($owner, 'Edited Artist');
+        $song->update(['artist_id' => $editedArtist->id, 'artist_name' => $editedArtist->name]);
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['artist'],
+            force: true,
+        ));
+
+        self::assertTrue($song->refresh()->artist->is($editedArtist));
+    }
+
+    #[Test]
+    public function rescanIgnoringAlbumKeepsTheCurrentAlbum(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+
+        $editedAlbum = Album::getOrCreate($song->album->artist, 'Edited Album');
+        $song->update(['album_id' => $editedAlbum->id, 'album_name' => $editedAlbum->name]);
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['album'],
+            force: true,
+        ));
+
+        self::assertTrue($song->refresh()->album->is($editedAlbum));
+    }
+
+    #[Test]
+    public function rescanIgnoringAlbumArtistKeepsTheCurrentAlbumArtist(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+
+        $variousArtists = Artist::getOrCreate($owner, Artist::VARIOUS_NAME);
+        $compilation = Album::getOrCreate($variousArtists, $song->album->name);
+        $song->update(['album_id' => $compilation->id]);
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['albumartist'],
+            force: true,
+        ));
+
+        self::assertTrue($song->refresh()->album->is($compilation));
+    }
 }

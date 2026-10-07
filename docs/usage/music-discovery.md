@@ -33,6 +33,13 @@ Do note that, to play audio formats that are not
 [natively supported by modern browsers](https://caniuse.com/?search=audio%20format), you'll need proper
 [setup and configuration](streaming.md#transcoding).
 
+## Compilation Albums
+
+Koel groups a compilation's songs under the "Various Artists" album artist when either:
+
+- the songs' album artist tag is "Various Artists" (in any letter case) or "VA", or
+- the songs have no album artist but are marked as part of a compilation (the "compilation" flag in MP3, FLAC, Ogg, and M4A files).
+
 ## Scan via the Web interface
 
 :::warning Not for large libraries
