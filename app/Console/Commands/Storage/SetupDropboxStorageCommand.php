@@ -5,6 +5,7 @@ namespace App\Console\Commands\Storage;
 use App\Services\SongStorages\DropboxStorage;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Throwable;
 
 use function Laravel\Prompts\text;
 
@@ -72,7 +73,13 @@ class SetupDropboxStorageCommand extends SetupStorageCommand
 
                 Cache::forget('dropbox_access_token');
 
-                app()->build(DropboxStorage::class)->testSetup(); // build instead of make to avoid singleton issues
+                try {
+                    app()->build(DropboxStorage::class)->testSetup(); // build instead of make to avoid singleton issues
+                } catch (Throwable $e) {
+                    Cache::forget('dropbox_access_token');
+
+                    throw $e;
+                }
             },
             'Please make sure the app has the correct permissions and try again.',
         );
