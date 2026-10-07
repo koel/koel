@@ -7,24 +7,26 @@ use App\Helpers\Ulid;
 use App\Models\Song;
 use App\Models\Transcode;
 use App\Services\SongStorages\SftpStorage;
-use App\Services\Transcoding\SftpTranscodingStrategy;
+use App\Services\Transcoding\RemoteDiskTranscodingStrategy;
 use App\Services\Transcoding\Transcoder;
 use Illuminate\Support\Facades\File;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class SfpTranscodingStrategyTest extends TestCase
+class RemoteDiskTranscodingStrategyTest extends TestCase
 {
     private MockInterface|Transcoder $transcoder;
-    private SftpTranscodingStrategy $strategy;
+    private MockInterface|SftpStorage $storage;
+    private RemoteDiskTranscodingStrategy $strategy;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->transcoder = $this->mock(Transcoder::class);
-        $this->strategy = app(SftpTranscodingStrategy::class);
+        $this->storage = $this->mock(SftpStorage::class);
+        $this->strategy = app(RemoteDiskTranscodingStrategy::class, ['storage' => $this->storage]);
     }
 
     #[Test]
@@ -38,8 +40,7 @@ class SfpTranscodingStrategyTest extends TestCase
         $ulid = Ulid::freeze();
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
-        $storage = $this->mock(SftpStorage::class);
-        $storage->expects('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
+        $this->storage->expects('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
 
         File::expects('ensureDirectoryExists')->with(dirname($destination));
         File::expects('size')->with($destination)->andReturn(1_024);
@@ -97,8 +98,7 @@ class SfpTranscodingStrategyTest extends TestCase
         File::expects('isReadable')->with('/path/to/transcode.m4a')->andReturn(false);
         File::expects('delete')->with('/path/to/transcode.m4a');
 
-        $storage = $this->mock(SftpStorage::class);
-        $storage->expects('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
+        $this->storage->expects('copyToLocal')->with('remote/path/to/song.flac')->andReturn('/tmp/song.flac');
 
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
@@ -125,7 +125,7 @@ class SfpTranscodingStrategyTest extends TestCase
         $ulid = Ulid::freeze();
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
-        $this->mock(SftpStorage::class)->expects('copyToLocal')->never();
+        $this->storage->expects('copyToLocal')->never();
 
         File::expects('ensureDirectoryExists')->with(dirname($destination));
         File::expects('size')->with($destination)->andReturn(1_024);
