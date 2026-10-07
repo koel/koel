@@ -4,6 +4,7 @@ namespace App\Services\SongStorages;
 
 use App\Enums\SongStorageType;
 use App\Exceptions\KoelPlusRequiredException;
+use App\Helpers\Ulid;
 use App\Models\User;
 use App\Values\UploadReference;
 
@@ -27,5 +28,12 @@ abstract class SongStorage
             $this->getStorageType()->supported(),
             new KoelPlusRequiredException('The storage driver is only supported in Koel Plus.'),
         );
+    }
+
+    protected function generateStorageKey(string $filename, User $uploader): string
+    {
+        $name = basename(str_replace('\\', '/', $filename));
+
+        return sprintf('%s__%s__%s', $uploader->public_id, Ulid::generate(), $name);
     }
 }

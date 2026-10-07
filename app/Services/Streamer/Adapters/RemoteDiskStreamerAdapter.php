@@ -4,16 +4,16 @@ namespace App\Services\Streamer\Adapters;
 
 use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song;
-use App\Services\SongStorages\SftpStorage;
+use App\Services\SongStorages\RemoteDiskStorage;
 use App\Services\Streamer\Adapters\Concerns\StreamsLocalPath;
 use App\Values\RequestedStreamingConfig;
 
-class SftpStreamerAdapter implements StreamerAdapter
+class RemoteDiskStreamerAdapter implements StreamerAdapter
 {
     use StreamsLocalPath;
 
     public function __construct(
-        private readonly SftpStorage $storage,
+        private readonly RemoteDiskStorage $storage,
     ) {}
 
     public function stream(Song $song, ?RequestedStreamingConfig $config = null): StreamedFileResponse

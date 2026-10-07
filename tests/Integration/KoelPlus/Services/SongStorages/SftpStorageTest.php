@@ -38,7 +38,7 @@ class SftpStorageTest extends PlusTestCase
 
         Storage::disk('sftp')->assertExists(Str::after($reference->location, 'sftp://'));
 
-        self::assertSame("sftp://{$user->id}__random__song.mp3", $reference->location);
+        self::assertSame("sftp://{$user->public_id}__random__song.mp3", $reference->location);
         self::assertSame(artifact_path('tmp/random/song.mp3'), $reference->localPath);
     }
 

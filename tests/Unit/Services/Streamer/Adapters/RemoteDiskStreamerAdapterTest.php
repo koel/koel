@@ -6,12 +6,12 @@ use App\Enums\SongStorageType;
 use App\Exceptions\KoelPlusRequiredException;
 use App\Models\Song;
 use App\Services\SongStorages\SftpStorage;
-use App\Services\Streamer\Adapters\SftpStreamerAdapter;
+use App\Services\Streamer\Adapters\RemoteDiskStreamerAdapter;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class SftpStreamerAdapterTest extends TestCase
+class RemoteDiskStreamerAdapterTest extends TestCase
 {
     #[Test]
     public function refusesToStreamWithoutKoelPlus(): void
@@ -23,6 +23,6 @@ class SftpStreamerAdapterTest extends TestCase
 
         $this->expectException(KoelPlusRequiredException::class);
 
-        (new SftpStreamerAdapter($storage))->stream($song);
+        (new RemoteDiskStreamerAdapter($storage))->stream($song);
     }
 }

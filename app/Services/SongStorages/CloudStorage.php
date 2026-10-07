@@ -3,7 +3,6 @@
 namespace App\Services\SongStorages;
 
 use App\Helpers\Ulid;
-use App\Models\User;
 use App\Services\SongStorages\Concerns\MovesUploadedFile;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use Illuminate\Support\Facades\File;
@@ -20,13 +19,6 @@ abstract class CloudStorage extends SongStorage implements MustDeleteTemporaryLo
         File::copy($publicUrl, $localPath);
 
         return $localPath;
-    }
-
-    protected function generateStorageKey(string $filename, User $uploader): string
-    {
-        $name = basename(str_replace('\\', '/', $filename));
-
-        return sprintf('%s__%s__%s', $uploader->public_id, Ulid::generate(), $name);
     }
 
     abstract public function uploadToStorage(string $key, string $path): void;

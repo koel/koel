@@ -5,13 +5,22 @@ namespace App\Services\Transcoding;
 use App\Enums\SongStorageType;
 use App\Helpers\Ulid;
 use App\Models\Song;
-use App\Services\SongStorages\SftpStorage;
+use App\Repositories\TranscodeRepository;
+use App\Services\SongStorages\RemoteDiskStorage;
 use Illuminate\Support\Facades\File;
 use Throwable;
 use Webmozart\Assert\Assert;
 
-class SftpTranscodingStrategy extends TranscodingStrategy
+class RemoteDiskTranscodingStrategy extends TranscodingStrategy
 {
+    public function __construct(
+        TranscodeRepository $transcodeRepository,
+        Transcoder $transcoder,
+        private readonly RemoteDiskStorage $storage,
+    ) {
+        parent::__construct($transcodeRepository, $transcoder);
+    }
+
     protected function findOrCreateTranscodeLocation(Song $song, int $bitRate, ?string $localSourcePath): string
     {
         $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate);
@@ -25,9 +34,7 @@ class SftpTranscodingStrategy extends TranscodingStrategy
             File::delete($transcode->location);
         }
 
-        /** @var SftpStorage $storage */
-        $storage = app(SftpStorage::class);
-        $downloadedSource = $localSourcePath ? null : $storage->copyToLocal($song->storage_metadata->getPath());
+        $downloadedSource = $localSourcePath ? null : $this->storage->copyToLocal($song->storage_metadata->getPath());
 
         $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
 
@@ -48,7 +55,7 @@ class SftpTranscodingStrategy extends TranscodingStrategy
 
     public function deleteTranscodeFile(string $location, SongStorageType $storageType): void
     {
-        Assert::eq($storageType, SongStorageType::SFTP);
+        Assert::eq($storageType, $this->storage->getStorageType());
 
         File::delete($location);
     }

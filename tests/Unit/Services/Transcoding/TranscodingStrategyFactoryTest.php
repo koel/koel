@@ -5,7 +5,7 @@ namespace Tests\Unit\Services\Transcoding;
 use App\Enums\SongStorageType;
 use App\Services\Transcoding\CloudTranscodingStrategy;
 use App\Services\Transcoding\LocalTranscodingStrategy;
-use App\Services\Transcoding\SftpTranscodingStrategy;
+use App\Services\Transcoding\RemoteDiskTranscodingStrategy;
 use App\Services\Transcoding\TranscodeStrategyFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -21,7 +21,7 @@ class TranscodingStrategyFactoryTest extends TestCase
             'S3' => [SongStorageType::S3, CloudTranscodingStrategy::class],
             'S3 Lambda' => [SongStorageType::S3_LAMBDA, CloudTranscodingStrategy::class],
             'Dropbox' => [SongStorageType::DROPBOX, CloudTranscodingStrategy::class],
-            'SFTP' => [SongStorageType::SFTP, SftpTranscodingStrategy::class],
+            'SFTP' => [SongStorageType::SFTP, RemoteDiskTranscodingStrategy::class],
         ];
     }
 
