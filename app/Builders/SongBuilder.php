@@ -149,6 +149,10 @@ class SongBuilder extends FavoriteableBuilder
                 ->orderBy('songs.title');
         }
 
+        if ($column === 'songs.track') {
+            return $this->orderBy('songs.disc', $direction)->orderBy('songs.track', $direction)->orderBy('songs.title');
+        }
+
         return $this
             ->orderBy($column, $direction)
             // Depending on the column, we might need to order by other columns as well.
@@ -158,13 +162,10 @@ class SongBuilder extends FavoriteableBuilder
                 ->orderBy('songs.track')
                 ->orderBy('songs.title'))
             ->when($column === 'songs.album_name', static fn (self $query) => $query
-                ->orderBy('songs.artist_name')
+                ->orderBy('songs.album_id')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
-                ->orderBy('songs.title'))
-            ->when($column === 'track', static fn (self $query) => $query
-                ->orderBy('songs.disc')
-                ->orderBy('songs.track'));
+                ->orderBy('songs.title'));
     }
 
     public function sort(array $columns, string $direction): self
