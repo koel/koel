@@ -5,30 +5,27 @@ namespace App\Console\Commands\Storage;
 use App\Models\Setting;
 use App\Services\DotenvEditor;
 use App\Services\SettingService;
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\text;
 
-class SetupLocalStorageCommand extends Command
+class SetupLocalStorageCommand extends SetupStorageCommand
 {
     protected $signature = 'koel:storage:local';
     protected $description = 'Set up the local storage for Koel';
 
     public function __construct(
-        private readonly DotenvEditor $dotenvEditor,
+        DotenvEditor $dotenvEditor,
         private readonly SettingService $settingService,
     ) {
-        parent::__construct();
+        parent::__construct($dotenvEditor);
     }
 
     public function handle(): int
     {
-        $this->components->info('Setting up local storage for Koel.');
-        $this->components->warn('Changing the storage configuration can cause irreversible data loss.');
-        $this->components->warn('Consider backing up your data before proceeding.');
+        $this->introduceSetup('Setting up local storage for Koel.');
 
         $this->settingService->updateMediaPath($this->askForMediaPath());
 

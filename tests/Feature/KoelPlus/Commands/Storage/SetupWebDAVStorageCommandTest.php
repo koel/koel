@@ -3,9 +3,12 @@
 namespace Tests\Feature\KoelPlus\Commands\Storage;
 
 use App\Services\DotenvEditor;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\PlusTestCase;
 
 class SetupWebDAVStorageCommandTest extends PlusTestCase
@@ -36,5 +39,27 @@ class SetupWebDAVStorageCommandTest extends PlusTestCase
             ->expectsQuestion('Enter your WebDAV password', 'app-password')
             ->expectsQuestion('Optional path prefix beneath the base URL', '/Music/')
             ->assertSuccessful();
+    }
+
+    #[Test]
+    public function restoresTheEnvironmentWhenTheTestUploadFails(): void
+    {
+        $disk = Mockery::mock(Filesystem::class);
+        $disk->allows('put')->andThrow(new RuntimeException('Unauthorized'));
+        Storage::set('webdav', $disk);
+
+        /** @var DotenvEditor&MockInterface $dotenv */
+        $dotenv = $this->mock(DotenvEditor::class);
+        $dotenv->shouldReceive('backup')->once()->andReturnSelf();
+        $dotenv->shouldReceive('setKeys')->once();
+        $dotenv->shouldReceive('restore')->once();
+
+        $this
+            ->artisan('koel:storage:webdav')
+            ->expectsQuestion('Enter your WebDAV base URL', 'https://nc.example.com/remote.php/dav/files/me')
+            ->expectsQuestion('Enter your WebDAV username', 'me')
+            ->expectsQuestion('Enter your WebDAV password', 'wrong')
+            ->expectsQuestion('Optional path prefix beneath the base URL', '')
+            ->assertFailed();
     }
 }
