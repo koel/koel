@@ -6,9 +6,11 @@ use App\Enums\FavoriteableType;
 use App\Http\Responses\Subsonic\Resources\AlbumResource;
 use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Favorite;
 use App\Models\Interaction;
 use App\Models\Song;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -132,5 +134,28 @@ class GetAlbumTest extends TestCase
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'failed')
             ->assertJsonPath('subsonic-response.error.code', 70);
+    }
+
+    /** @return array<string, array{string, bool}> */
+    public static function provideAlbumArtistNames(): array
+    {
+        return [
+            'compilation' => [Artist::VARIOUS_NAME, true],
+            'regular album' => ['Radiohead', false],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideAlbumArtistNames')]
+    public function flagsCompilations(string $albumArtistName, bool $isCompilation): void
+    {
+        $user = create_user();
+        $albumArtist = Artist::factory()->for($user)->createOne(['name' => $albumArtistName]);
+        $album = Album::factory()->for($albumArtist)->for($user)->createOne();
+
+        $this
+            ->getJson("/rest/getAlbum.view?apiKey={$user->subsonic_api_key}&f=json&id={$album->id}")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.album.isCompilation', $isCompilation);
     }
 }
