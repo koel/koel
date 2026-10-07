@@ -1,33 +1,26 @@
-import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
+import isMobile from 'ismobilejs'
+import { describe, expect, it } from 'vite-plus/test'
+import { createHarness } from '@/__tests__/TestHarness'
 import { canUploadFromThisDevice } from './uploadAccess'
 
-const device = vi.hoisted(() => ({ any: false }))
-const permission = vi.hoisted(() => ({ uploadSongs: true }))
-
-vi.mock('ismobilejs', () => ({ default: device }))
-
-vi.mock('@/composables/usePolicies', () => ({
-  usePolicies: () => ({ currentUserCan: { uploadSongs: () => permission.uploadSongs } }),
-}))
-
 describe('canUploadFromThisDevice', () => {
-  afterEach(() => {
-    device.any = false
-    permission.uploadSongs = true
-  })
+  const h = createHarness()
 
   it('allows a user with upload permission on a computer', () => {
+    h.actingAsAdmin()
+
     expect(canUploadFromThisDevice()).toBe(true)
   })
 
   it('refuses on a phone or tablet', () => {
-    device.any = true
+    h.actingAsAdmin()
+    isMobile.any = true
 
     expect(canUploadFromThisDevice()).toBe(false)
   })
 
   it('refuses a user without upload permission', () => {
-    permission.uploadSongs = false
+    h.actingAsUser()
 
     expect(canUploadFromThisDevice()).toBe(false)
   })

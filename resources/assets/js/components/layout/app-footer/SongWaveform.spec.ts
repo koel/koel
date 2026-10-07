@@ -67,6 +67,26 @@ describe('songWaveform.vue', () => {
     })
   })
 
+  it('stops drawing a paused song once nothing moves, and draws again on a seek', async () => {
+    motion.preference = 'reduce'
+
+    await h.withPlusEdition(async () => {
+      h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
+
+      const song = h.factory('song').make({ loudness: -9, true_peak: 1, playback_state: 'Paused' })
+      const { rerender } = renderComponent(song, 25)
+      await waitFor(() => drawnWith({ progress: 0.25 }))
+
+      await new Promise(resolve => setTimeout(resolve, 100))
+      vi.mocked(drawWaveform).mockClear()
+      await new Promise(resolve => setTimeout(resolve, 100))
+      expect(drawWaveform).not.toHaveBeenCalled()
+
+      await rerender({ song, progress: 50 })
+      await waitFor(() => drawnWith({ progress: 0.5 }))
+    })
+  })
+
   it('draws the waveform of a new song', async () => {
     await h.withPlusEdition(async () => {
       const firstSong = h.factory('song').make({ loudness: -9, true_peak: 1 })

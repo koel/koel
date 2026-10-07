@@ -14,6 +14,16 @@ describe('waveformService', () => {
     expect(getMock).toHaveBeenCalledWith(`songs/${song.id}/waveform`)
   })
 
+  it('fetches the waveform of a song only once', async () => {
+    const song = h.factory('song').make()
+    const getMock = h.mock(http, 'get').mockResolvedValue({ waveform: [0.1, 0.5] })
+
+    await waveformService.fetchWaveform(song)
+
+    expect(await waveformService.fetchWaveform(song)).toEqual([0.1, 0.5])
+    expect(getMock).toHaveBeenCalledOnce()
+  })
+
   it('averages the waveform into the requested number of bars, relative to the loudest', () => {
     const waveform = [...Array(200).fill(0.25), ...Array(200).fill(0.5), ...Array(400).fill(0.02)]
 

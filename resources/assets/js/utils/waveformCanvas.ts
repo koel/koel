@@ -1,3 +1,5 @@
+import type { Rgb } from '@/utils/color'
+
 export const WAVEFORM_POINT_SPACING = 6
 
 export const countWaveformPoints = (width: number) => Math.max(2, Math.floor(width / WAVEFORM_POINT_SPACING) + 1)
@@ -45,22 +47,13 @@ export const lineYAt = (points: Point[], x: number) => {
 const TAIL_LENGTH = 160
 export const GLOW_ROOM = 16
 
-/**
- * Canvas normalizes any CSS color it accepts to `#rrggbb` when it's opaque, which lets us build
- * see-through stops of the same color for the tail gradient.
- */
-const toRgb = (context: CanvasRenderingContext2D, color: string) => {
-  context.fillStyle = color
-  const hex = context.fillStyle.replace('#', '')
-
-  return [0, 2, 4].map(offset => Number.parseInt(hex.slice(offset, offset + 2), 16) || 0)
-}
+const toRgba = ([red, green, blue]: Rgb, alpha: number) => `rgba(${red}, ${green}, ${blue}, ${alpha})`
 
 interface WaveformFrame {
   levels: number[]
   progress: number
   playedOpacity: number
-  colors: { accent: string; line: string }
+  colors: { accent: Rgb; line: Rgb }
 }
 
 /**
@@ -131,23 +124,21 @@ export const drawWaveform = (canvas: HTMLCanvasElement, frame: WaveformFrame) =>
   context.lineTo(width, height)
   context.lineTo(0, height)
   context.closePath()
-  const [fillRed, fillGreen, fillBlue] = toRgb(context, colors.line)
   const fill = context.createLinearGradient(0, GLOW_ROOM, 0, GLOW_ROOM + (height - GLOW_ROOM) * 0.6)
-  fill.addColorStop(0, `rgba(${fillRed}, ${fillGreen}, ${fillBlue}, 0.1)`)
-  fill.addColorStop(1, `rgba(${fillRed}, ${fillGreen}, ${fillBlue}, 0)`)
+  fill.addColorStop(0, toRgba(colors.line, 0.1))
+  fill.addColorStop(1, toRgba(colors.line, 0))
   context.fillStyle = fill
   context.globalAlpha = 1
   context.fill()
 
-  strokeLine(colors.line, 0.12)
+  strokeLine(toRgba(colors.line, 1), 0.12)
 
   if (progress > 0) {
     const x = progress * width
     const tailStart = Math.max(0, x - TAIL_LENGTH)
-    const [red, green, blue] = toRgb(context, colors.accent)
     const tail = context.createLinearGradient(tailStart, 0, x, 0)
-    tail.addColorStop(0, `rgba(${red}, ${green}, ${blue}, 0)`)
-    tail.addColorStop(1, `rgba(${red}, ${green}, ${blue}, 1)`)
+    tail.addColorStop(0, toRgba(colors.accent, 0))
+    tail.addColorStop(1, toRgba(colors.accent, 1))
 
     context.save()
     context.beginPath()
@@ -160,16 +151,16 @@ export const drawWaveform = (canvas: HTMLCanvasElement, frame: WaveformFrame) =>
     const dotOpacity = Math.min(1, playedOpacity / 0.8)
 
     const halo = context.createRadialGradient(x, y, 0, x, y, 14)
-    halo.addColorStop(0, `rgba(${red}, ${green}, ${blue}, 0.45)`)
-    halo.addColorStop(1, `rgba(${red}, ${green}, ${blue}, 0)`)
+    halo.addColorStop(0, toRgba(colors.accent, 0.45))
+    halo.addColorStop(1, toRgba(colors.accent, 0))
     context.globalAlpha = dotOpacity
     context.fillStyle = halo
     context.beginPath()
     context.arc(x, y, 14, 0, Math.PI * 2)
     context.fill()
 
-    context.fillStyle = colors.accent
-    context.shadowColor = colors.accent
+    context.fillStyle = toRgba(colors.accent, 1)
+    context.shadowColor = toRgba(colors.accent, 1)
     context.shadowBlur = 22
     context.beginPath()
     context.arc(x, y, 4, 0, Math.PI * 2)

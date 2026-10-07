@@ -1,12 +1,15 @@
+import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 
 const MIN_BAR_LEVEL = 0.1
 
 export const waveformService = {
   async fetchWaveform(song: Song) {
-    const { waveform } = await http.get<{ waveform: number[] }>(`songs/${song.id}/waveform`)
+    return await cache.remember(['song.waveform', song.id], async () => {
+      const { waveform } = await http.get<{ waveform: number[] }>(`songs/${song.id}/waveform`)
 
-    return waveform
+      return waveform
+    })
   },
 
   /**
