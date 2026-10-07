@@ -1,33 +1,32 @@
 <template>
   <div :class="config.sortable ? 'sortable' : 'unsortable'" class="song-list-header flex z-2 bg-k-fg-3 pl-5">
-    <span
+    <SortableColumnHeader
       v-if="shouldShowColumn('track')"
+      :active="isSortedBy('track')"
+      :order="sortOrder"
       class="track-number"
       data-testid="header-track-number"
-      role="button"
       title="Sort by track number"
-      @click="sort('track')"
-    >
-      #
-      <template v-if="config.sortable">
-        <Icon v-if="sortField === 'track' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-        <Icon v-if="sortField === 'track' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-      </template>
-    </span>
-    <span class="title-artist" data-testid="header-title" role="button" title="Sort by title" @click="sort('title')">
-      Title
-      <template v-if="config.sortable">
-        <Icon v-if="sortField === 'title' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-        <Icon v-if="sortField === 'title' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-      </template>
-    </span>
-    <span
+      label="#"
+      @sort="sort('track')"
+    />
+    <SortableColumnHeader
+      :active="isSortedBy('title')"
+      :order="sortOrder"
+      class="title-artist"
+      data-testid="header-title"
+      title="Sort by title"
+      label="Title"
+      @sort="sort('title')"
+    />
+    <SortableColumnHeader
       v-if="shouldShowColumn('album')"
+      :active="config.sortable && sortingByAlbumOrPodcast"
+      :order="sortOrder"
       :title="`Sort by ${contentType === 'episodes' ? 'podcast' : contentType === 'songs' ? 'album' : 'album/podcast'}`"
       class="album"
       data-testid="header-album"
-      role="button"
-      @click="
+      @sort="
         sort(
           contentType === 'episodes'
             ? 'podcast_title'
@@ -40,132 +39,80 @@
       <template v-if="contentType === 'episodes'">Podcast</template>
       <template v-else-if="contentType === 'songs'">Album</template>
       <template v-else>Album <span class="opacity-50">/</span> Podcast</template>
-
-      <span v-if="config.sortable" class="ml-2">
-        <Icon v-if="sortingByAlbumOrPodcast && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-        <Icon v-if="sortingByAlbumOrPodcast && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-      </span>
-    </span>
+    </SortableColumnHeader>
     <template v-if="config.collaborative">
-      <span
+      <SortableColumnHeader
         v-if="shouldShowColumn('playlist_collaborator')"
+        :active="isSortedBy('collaboration.user.name')"
+        :order="sortOrder"
         class="collaborator"
         data-testid="header-collaborator"
-        role="button"
         title="Sort by user"
-        @click="sort('collaboration.user.name')"
-      >
-        User
-        <template v-if="config.sortable">
-          <Icon
-            v-if="sortField === 'collaboration.user.name' && sortOrder === 'asc'"
-            :icon="faCaretUp"
-            class="text-k-highlight"
-          />
-          <Icon
-            v-if="sortField === 'collaboration.user.name' && sortOrder === 'desc'"
-            :icon="faCaretDown"
-            class="text-k-highlight"
-          />
-        </template>
-      </span>
-      <span
+        label="User"
+        @sort="sort('collaboration.user.name')"
+      />
+      <SortableColumnHeader
         v-if="shouldShowColumn('playlist_added_at')"
+        :active="isSortedBy('collaboration.added_at')"
+        :order="sortOrder"
         class="added-at"
         data-testid="header-contributed-at"
-        role="button"
         title="Sort by contributed at"
-        @click="sort('collaboration.added_at')"
-      >
-        Contributed
-        <template v-if="config.sortable">
-          <Icon
-            v-if="sortField === 'collaboration.added_at' && sortOrder === 'asc'"
-            :icon="faCaretUp"
-            class="text-k-highlight"
-          />
-          <Icon
-            v-if="sortField === 'collaboration.added_at' && sortOrder === 'desc'"
-            :icon="faCaretDown"
-            class="text-k-highlight"
-          />
-        </template>
-      </span>
+        label="Contributed"
+        @sort="sort('collaboration.added_at')"
+      />
     </template>
-    <span
+    <SortableColumnHeader
       v-if="shouldShowColumn('genre')"
+      :active="isSortedBy('genre')"
+      :order="sortOrder"
       class="genre"
       data-testid="header-genre"
-      role="button"
       title="Sort by genre"
-      @click="sort('genre')"
-    >
-      Genre
-      <template v-if="config.sortable">
-        <Icon v-if="sortField === 'genre' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-        <Icon v-if="sortField === 'genre' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-      </template>
-    </span>
-    <span
+      label="Genre"
+      @sort="sort('genre')"
+    />
+    <SortableColumnHeader
       v-if="shouldShowColumn('year')"
+      :active="isSortedBy('year')"
+      :order="sortOrder"
       class="year"
       data-testid="header-year"
-      role="button"
       title="Sort by year"
-      @click="sort('year')"
-    >
-      Year
-      <template v-if="config.sortable">
-        <Icon v-if="sortField === 'year' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-        <Icon v-if="sortField === 'year' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-      </template>
-    </span>
-    <span
+      label="Year"
+      @sort="sort('year')"
+    />
+    <SortableColumnHeader
       v-if="shouldShowColumn('rating')"
+      :active="isSortedBy('rating')"
+      :order="sortOrder"
       class="rating"
       data-testid="header-rating"
-      role="button"
       title="Sort by rating"
-      @click="sort('rating')"
-    >
-      Rating
-      <template v-if="config.sortable">
-        <Icon v-if="sortField === 'rating' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-        <Icon v-if="sortField === 'rating' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-      </template>
-    </span>
-    <span
+      label="Rating"
+      @sort="sort('rating')"
+    />
+    <SortableColumnHeader
       v-if="shouldShowColumn('duration')"
+      :active="isSortedBy('length')"
+      :order="sortOrder"
       class="time"
       data-testid="header-length"
-      role="button"
       title="Sort by duration"
-      @click="sort('length')"
-    >
-      Time
-      <template v-if="config.sortable">
-        <Icon v-if="sortField === 'length' && sortOrder === 'asc'" :icon="faCaretUp" class="text-k-highlight" />
-        <Icon v-if="sortField === 'length' && sortOrder === 'desc'" :icon="faCaretDown" class="text-k-highlight" />
-      </template>
-    </span>
-    <span
+      label="Time"
+      @sort="sort('length')"
+    />
+    <SortableColumnHeader
       v-if="shouldShowColumn('favorite')"
+      :active="isSortedBy('favorite')"
+      :order="sortOrder"
       class="favorite"
       data-testid="header-favorite"
-      role="button"
       title="Sort by favorite"
-      @click="sort('favorite')"
+      @sort="sort('favorite')"
     >
-      <Icon :icon="faHeart" />
-      <template v-if="config.sortable">
-        <Icon v-if="sortField === 'favorite' && sortOrder === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon
-          v-if="sortField === 'favorite' && sortOrder === 'desc'"
-          :icon="faCaretDown"
-          class="ml-2 text-k-highlight"
-        />
-      </template>
-    </span>
+      <Icon :icon="faHeart"
+    /></SortableColumnHeader>
     <span v-if="shouldShowActionMenu" class="extra" data-testid="header-extra">
       <PlayableListHeaderActionMenu
         :sortable="config.sortable"
@@ -184,7 +131,7 @@
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed } from 'vue'
-import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { arrayify, requireInjection } from '@/utils/helpers'
 import { PlayableListConfigKey, PlayableListSortFieldKey, PlayableListSortOrderKey } from '@/config/symbols'
 import type { getPlayableCollectionContentType } from '@/utils/typeGuards'
@@ -192,6 +139,7 @@ import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility
 import { playableListColumnConfig } from '@/config/tables'
 
 import PlayableListHeaderActionMenu from '@/components/playable/playable-list/PlayableListHeaderActionMenu.vue'
+import SortableColumnHeader from '@/components/ui/SortableColumnHeader.vue'
 
 withDefaults(
   defineProps<{
@@ -224,6 +172,8 @@ const sort = (field: MaybeArray<PlayableListSortField>) => {
 
   emit('sort', field, sortOrder.value)
 }
+
+const isSortedBy = (field: PlayableListSortField) => Boolean(config.sortable) && sortField.value === field
 
 const sortingByAlbumOrPodcast = computed(() => {
   const sortFields = arrayify(sortField.value)
