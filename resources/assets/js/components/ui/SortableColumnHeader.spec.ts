@@ -7,9 +7,9 @@ import Component from './SortableColumnHeader.vue'
 describe('sortableColumnHeader.vue', () => {
   const h = createHarness()
 
-  const renderComponent = (active: boolean, order: SortOrder = 'asc') =>
+  const renderComponent = (active: boolean, order: SortOrder = 'asc', sortable = true) =>
     h.render(Component, {
-      props: { active, order },
+      props: { active, order, sortable },
       slots: { default: 'Name' },
       global: { stubs: { Icon: FontAwesomeIcon } },
     })
@@ -44,6 +44,17 @@ describe('sortableColumnHeader.vue', () => {
   it('shows no arrow when not sorted by this column', () => {
     const { container } = renderComponent(false)
 
+    expect(container.querySelector('[data-icon^="caret"]')).toBeNull()
+  })
+
+  it('is plain text when the list cannot be sorted', async () => {
+    const { emitted, container } = renderComponent(true, 'asc', false)
+
+    expect(screen.queryByRole('button')).toBeNull()
+
+    await h.user.click(screen.getByText('Name'))
+
+    expect(emitted().sort).toBeUndefined()
     expect(container.querySelector('[data-icon^="caret"]')).toBeNull()
   })
 })

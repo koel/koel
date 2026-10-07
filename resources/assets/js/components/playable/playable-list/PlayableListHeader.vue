@@ -4,6 +4,7 @@
       v-if="shouldShowColumn('track')"
       :active="isSortedBy('track')"
       :order="sortOrder"
+      :sortable="isSortable"
       class="track-number"
       data-testid="header-track-number"
       title="Sort by track number"
@@ -13,6 +14,7 @@
     <SortableColumnHeader
       :active="isSortedBy('title')"
       :order="sortOrder"
+      :sortable="isSortable"
       class="title-artist"
       data-testid="header-title"
       title="Sort by title"
@@ -23,6 +25,7 @@
       v-if="shouldShowColumn('album')"
       :active="isSortedByAlbumOrPodcast"
       :order="sortOrder"
+      :sortable="isSortable"
       :title="`Sort by ${contentType === 'episodes' ? 'podcast' : contentType === 'songs' ? 'album' : 'album/podcast'}`"
       class="album"
       data-testid="header-album"
@@ -45,6 +48,7 @@
         v-if="shouldShowColumn('playlist_collaborator')"
         :active="isSortedBy('collaboration.user.name')"
         :order="sortOrder"
+        :sortable="isSortable"
         class="collaborator"
         data-testid="header-collaborator"
         title="Sort by user"
@@ -55,6 +59,7 @@
         v-if="shouldShowColumn('playlist_added_at')"
         :active="isSortedBy('collaboration.added_at')"
         :order="sortOrder"
+        :sortable="isSortable"
         class="added-at"
         data-testid="header-contributed-at"
         title="Sort by contributed at"
@@ -66,6 +71,7 @@
       v-if="shouldShowColumn('genre')"
       :active="isSortedBy('genre')"
       :order="sortOrder"
+      :sortable="isSortable"
       class="genre"
       data-testid="header-genre"
       title="Sort by genre"
@@ -76,6 +82,7 @@
       v-if="shouldShowColumn('year')"
       :active="isSortedBy('year')"
       :order="sortOrder"
+      :sortable="isSortable"
       class="year"
       data-testid="header-year"
       title="Sort by year"
@@ -86,6 +93,7 @@
       v-if="shouldShowColumn('rating')"
       :active="isSortedBy('rating')"
       :order="sortOrder"
+      :sortable="isSortable"
       class="rating"
       data-testid="header-rating"
       title="Sort by rating"
@@ -96,6 +104,7 @@
       v-if="shouldShowColumn('duration')"
       :active="isSortedBy('length')"
       :order="sortOrder"
+      :sortable="isSortable"
       class="time"
       data-testid="header-length"
       title="Sort by duration"
@@ -106,6 +115,7 @@
       v-if="shouldShowColumn('favorite')"
       :active="isSortedBy('favorite')"
       :order="sortOrder"
+      :sortable="isSortable"
       class="favorite"
       data-testid="header-favorite"
       title="Sort by favorite"
@@ -173,11 +183,13 @@ const sort = (field: MaybeArray<PlayableListSortField>) => {
   emit('sort', field, sortOrder.value)
 }
 
-const isSortedBy = (field: PlayableListSortField) => Boolean(config.sortable) && sortField.value === field
+const isSortable = computed(() => Boolean(config.sortable))
+
+const isSortedBy = (field: PlayableListSortField) => sortField.value === field
 
 const isSortedByAlbumOrPodcast = computed(() => {
   const sortFields = arrayify(sortField.value)
-  return Boolean(config.sortable) && (sortFields[0] === 'album_name' || sortFields[0] === 'podcast_title')
+  return sortFields[0] === 'album_name' || sortFields[0] === 'podcast_title'
 })
 
 // On mobile, the table columns collapse — sorting is the only thing the action
