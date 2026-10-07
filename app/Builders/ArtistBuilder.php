@@ -63,7 +63,13 @@ class ArtistBuilder extends FavoriteableBuilder
                         ->select(DB::raw(1))
                         ->from('songs')
                         ->join('users', 'songs.owner_id', 'users.id')
-                        ->whereColumn('songs.artist_id', 'artists.id')
+                        ->join('albums', 'songs.album_id', 'albums.id')
+                        ->where(static function (QueryBuilder $performedOrReleased): void {
+                            $performedOrReleased->whereColumn('songs.artist_id', 'artists.id')->orWhereColumn(
+                                'albums.artist_id',
+                                'artists.id',
+                            );
+                        })
                         ->where('songs.is_public', true)
                         ->where('users.organization_id', $this->user->organization_id)
                         ->where('songs.owner_id', '<>', $this->user->id);

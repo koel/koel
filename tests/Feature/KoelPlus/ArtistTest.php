@@ -3,7 +3,9 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Http\Resources\ArtistResource;
+use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -70,5 +72,26 @@ class ArtistTest extends PlusTestCase
         $artist = Artist::factory()->createOne();
 
         $this->getAs("api/artists/{$artist->id}", $artist->user)->assertJsonPath('permissions.edit', true);
+    }
+
+    #[Test]
+    public function albumArtistOfAnotherUsersPublicAlbumIsAccessible(): void
+    {
+        $owner = create_user();
+        $curator = Artist::factory()->for($owner)->createOne();
+        $album = Album::factory()->for($curator)->for($owner)->createOne();
+
+        Song::factory()
+            ->for($album)
+            ->for(Artist::factory()->for($owner)->createOne())
+            ->for($owner, 'owner')
+            ->public()
+            ->createOne();
+
+        $viewer = create_user();
+        $viewer->preferences->includePublicMedia = true;
+        $viewer->save();
+
+        $this->getAs("api/artists/{$curator->id}", $viewer)->assertOk();
     }
 }
