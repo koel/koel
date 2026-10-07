@@ -24,7 +24,13 @@
         <Icon :icon="faHeart"
       /></SortableColumnHeader>
       <span class="extra">
-        <ArtistTableHeaderActionMenu :field :order @sort="onSort" />
+        <TableHeaderActionMenu
+          :field
+          :order
+          :items="artistTableMenuItems"
+          :column-config="artistTableColumnConfig"
+          @sort="onSort"
+        />
       </span>
     </div>
 
@@ -40,12 +46,12 @@
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
-import { artistTableColumnConfig } from '@/config/tables'
+import { artistTableColumnConfig, artistTableMenuItems } from '@/config/tables'
 
 import SortableColumnHeader from '@/components/ui/SortableColumnHeader.vue'
+import TableHeaderActionMenu from '@/components/ui/TableHeaderActionMenu.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import ArtistRow from '@/components/artist/ArtistRow.vue'
-import ArtistTableHeaderActionMenu from '@/components/artist/ArtistTableHeaderActionMenu.vue'
 
 const props = defineProps<{
   artists: Artist[]

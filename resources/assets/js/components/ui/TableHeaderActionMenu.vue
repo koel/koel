@@ -6,9 +6,9 @@
     <Popover ref="popover" :anchor="button" placement="bottom-end" class="context-menu normal-case tracking-normal">
       <menu>
         <li
-          v-for="item in menuItems"
+          v-for="item in items"
           :key="item.label"
-          :class="field === item.field && 'active'"
+          :class="item.field && field === item.field && 'active'"
           class="cursor-pointer group flex justify-between pl-3! hover:bg-k-highlight! hover:text-k-highlight-fg!"
           @click="sort(item.field)"
         >
@@ -32,47 +32,39 @@
   </article>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup generic="Column extends string, Field extends string">
 import { faArrowDown, faArrowUp, faSort } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
+import type { TableColumnConfig } from '@/composables/useTableColumnVisibility'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
-import { albumTableColumnConfig } from '@/config/tables'
+import type { TableHeaderMenuItem } from '@/config/tables'
 
 import Popover from '@/components/ui/Popover.vue'
 
-defineProps<{
-  field: AlbumListSortField
+const props = defineProps<{
+  field: Field
   order: SortOrder
+  items: readonly TableHeaderMenuItem<Column, Field>[]
+  columnConfig: TableColumnConfig<Column>
 }>()
 
-const emit = defineEmits<{ (e: 'sort', field: AlbumListSortField): void }>()
+const emit = defineEmits<{ (e: 'sort', field: Field): void }>()
 
-interface MenuItem {
-  column: AlbumTableColumnName
-  label: string
-  field: AlbumListSortField
-}
-
-const { shouldShowColumn, toggleColumn, isToggleable } = useTableColumnVisibility(albumTableColumnConfig)
+const { shouldShowColumn, toggleColumn, isToggleable } = useTableColumnVisibility(props.columnConfig)
 
 const button = ref<HTMLButtonElement>()
 const popover = ref<InstanceType<typeof Popover>>()
 
-const menuItems = computed<MenuItem[]>(() => [
-  { column: 'name', label: 'Name', field: 'name' },
-  { column: 'artist', label: 'Artist', field: 'artist_name' },
-  { column: 'time', label: 'Time', field: 'length' },
-  { column: 'year', label: 'Year', field: 'year' },
-  { column: 'rating', label: 'Rating', field: 'rating' },
-  { column: 'favorite', label: 'Favorite', field: 'favorite' },
-])
+const sort = (field?: Field) => {
+  if (!field) {
+    return
+  }
 
-const sort = (field: AlbumListSortField) => {
   emit('sort', field)
   popover.value?.hide()
 }
 
-const toggle = (column: AlbumTableColumnName) => {
+const toggle = (column: Column) => {
   if (!isToggleable(column)) {
     return
   }
