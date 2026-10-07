@@ -49,6 +49,7 @@ abstract class SetupStorageCommand extends Command
 
     /**
      * Save the new configuration to .env and upload a test file. If the upload fails, the previous .env is restored.
+     * Either way, the config cache is cleared so the .env in effect is the one used.
      *
      * @param array<string, mixed> $config
      */
@@ -65,9 +66,10 @@ abstract class SetupStorageCommand extends Command
             $this->comment($failureHint);
 
             $this->dotenvEditor->restore();
-            Artisan::call('config:clear', ['--quiet' => true]);
 
             return false;
+        } finally {
+            Artisan::call('config:clear', ['--quiet' => true]);
         }
 
         return true;
