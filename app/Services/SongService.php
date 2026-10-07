@@ -123,13 +123,14 @@ class SongService
         // (i.e., when multiple songs are being updated and the user did not provide a value).
         // This allows us to clear those fields (when the user provides an empty string).
         // Album artist handling:
-        // If the user provided an explicit album artist, use it.
-        // If not (null/empty), check if this is a compilation (album artist ≠ song artist).
-        // For compilations, preserve the existing album artist (e.g. "Various Artists").
-        // For non-compilations, let the album artist follow the (potentially updated) song artist.
-        if (!$data->albumArtistName) {
+        // An explicit album artist is used as-is, and an empty one (the user cleared it) means
+        // "same as the song artist". When none is given, a compilation (album artist ≠ song artist)
+        // keeps its album artist (e.g. "Various Artists"), and any other song follows its artist.
+        if ($data->albumArtistName === null) {
             $isCompilation = !$song->album_artist->is($song->artist);
             $data->albumArtistName = $isCompilation ? $song->album_artist->name : $data->artistName;
+        } elseif ($data->albumArtistName === '') {
+            $data->albumArtistName = $data->artistName;
         }
         $data->lyrics ??= $song->lyrics;
         $data->track ??= $song->track;

@@ -390,6 +390,42 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function clearingTheAlbumArtistTurnsACompilationSongIntoANormalOne(): void
+    {
+        $song = $this->createCompilationSong();
+
+        $this->putAs(
+            '/api/songs',
+            ['songs' => [$song->id], 'data' => ['album_artist_name' => '']],
+            create_admin(),
+        )->assertOk();
+
+        $song->refresh();
+
+        self::assertFalse($song->album_artist->is_various);
+        self::assertTrue($song->album_artist->is($song->artist));
+    }
+
+    #[Test]
+    public function leavingOutTheAlbumArtistKeepsACompilationSongAsIs(): void
+    {
+        $song = $this->createCompilationSong();
+
+        $this->putAs('/api/songs', ['songs' => [$song->id], 'data' => ['track' => 5]], create_admin())->assertOk();
+
+        self::assertTrue($song->refresh()->album_artist->is_various);
+    }
+
+    private function createCompilationSong(): Song
+    {
+        $compilation = Album::factory()->for(Artist::factory()->createOne([
+            'name' => Artist::VARIOUS_NAME,
+        ]))->createOne();
+
+        return Song::factory()->for($compilation)->for(Artist::factory()->createOne())->createOne();
+    }
+
+    #[Test]
     public function updateSingleSongWithEmptyTrackAndDisc(): void
     {
         $song = Song::factory()->createOne([

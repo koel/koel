@@ -221,9 +221,14 @@ if (allSongsAreInSameAlbum && allSongsAreFromSameArtist && songs[0].album_artist
   initialValues.album_artist_name = allSongsShareSameValue('album_artist_name') ? songs[0].album_artist_name : ''
 }
 
+const initialAlbumArtistName = initialValues.album_artist_name
+
+const withoutUntouchedAlbumArtist = ({ album_artist_name, ...otherData }: SongUpdateData): SongUpdateData =>
+  album_artist_name === initialAlbumArtistName ? otherData : { ...otherData, album_artist_name }
+
 const { data, isPristine, handleSubmit } = useForm<SongUpdateData>({
   initialValues,
-  onSubmit: async data => await songStore.updateSongs(songs, data),
+  onSubmit: async data => await songStore.updateSongs(songs, withoutUntouchedAlbumArtist(data)),
   onSuccess: (result: SongUpdateResult) => {
     toastSuccess(`Updated ${pluralize(songs, 'song')}.`)
     eventBus.emit('SONGS_UPDATED', result)
