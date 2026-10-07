@@ -2,6 +2,7 @@
 
 namespace App\Services\Scanners;
 
+use App\Events\LibraryChanged;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Values\Scanning\ScanConfiguration;
@@ -30,6 +31,8 @@ class WatchRecordScanner extends Scanner
         } else {
             $this->scanDirectoryRecord($record, $config);
         }
+
+        event(new LibraryChanged());
     }
 
     private function scanFileRecord(WatchRecordInterface $record, ScanConfiguration $config): void
@@ -60,7 +63,7 @@ class WatchRecordScanner extends Scanner
     {
         $result = $this->songRepository->findOneByPath($path)?->delete();
 
-        Log::info($result === null ? "$path deleted." : "$path doesn't exist in our database--skipping.");
+        Log::info($result === null ? "$path doesn't exist in our database--skipping." : "$path deleted.");
     }
 
     private function handleNewOrModifiedFileRecord(string $path, ScanConfiguration $config): void
