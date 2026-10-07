@@ -6,6 +6,7 @@ use App\Http\Integrations\iTunes\ITunesConnector;
 use App\Http\Integrations\iTunes\Requests\GetTrackRequest;
 use App\Models\Album;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Uri;
 
 class ITunesService
 {
@@ -33,10 +34,9 @@ class ITunesService
                         return null;
                     }
 
-                    $trackUrl = $response->results[0]->trackViewUrl;
-                    $connector = parse_url($trackUrl, PHP_URL_QUERY) ? '&' : '?';
-
-                    return $trackUrl . "{$connector}at=" . config('koel.services.itunes.affiliate_id');
+                    return Uri::of($response->results[0]->trackViewUrl)->withQuery([
+                        'at' => config('koel.services.itunes.affiliate_id'),
+                    ])->value();
                 },
             );
         });

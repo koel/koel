@@ -262,7 +262,7 @@ class PodcastService
         try {
             $response = $client->request($method, $url, [
                 RequestOptions::HEADERS => [
-                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15',
+                    'User-Agent' => http_user_agent(),
                     'Origin' => '*',
                 ],
                 RequestOptions::HTTP_ERRORS => false,
