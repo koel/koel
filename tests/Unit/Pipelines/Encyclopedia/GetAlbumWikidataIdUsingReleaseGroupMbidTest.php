@@ -82,10 +82,12 @@ class GetAlbumWikidataIdUsingReleaseGroupMbidTest extends TestCase
             ], status: 404),
         ]);
 
-        $mock = self::createNextClosureMock(null);
+        $pipeline = new GetAlbumWikidataIdUsingReleaseGroupMbid(app(MusicBrainzConnector::class));
 
-        (new GetAlbumWikidataIdUsingReleaseGroupMbid(app(MusicBrainzConnector::class)))('sample-mbid', $mock->next(...)); // @phpstan-ignore-line
+        $pipeline('sample-mbid', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+        $pipeline('sample-mbid', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
 
+        Saloon::assertSentCount(1);
         self::assertTrue(Cache::store('encyclopedia')->has(cache_key(
             'album wikidata id from release group mbid',
             'sample-mbid',
