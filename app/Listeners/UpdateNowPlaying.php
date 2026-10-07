@@ -14,7 +14,7 @@ readonly class UpdateNowPlaying implements ShouldQueue
 
     public function handle(PlaybackStarted $event): void
     {
-        if ($event->song->isEpisode() || $event->song->artist?->is_unknown) {
+        if (!$event->song->isScrobbleable()) {
             return;
         }
 

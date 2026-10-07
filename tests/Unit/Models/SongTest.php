@@ -3,6 +3,7 @@
 namespace Tests\Unit\Models;
 
 use App\Enums\SongStorageType;
+use App\Models\Artist;
 use App\Models\Genre;
 use App\Models\Song;
 use App\Models\SongAnalysis;
@@ -124,5 +125,25 @@ class SongTest extends TestCase
         self::assertSame(-9.5, $analysis->loudness);
         self::assertSame(0.8, $analysis->true_peak);
         self::assertArrayNotHasKey('waveform', $analysis->getAttributes());
+    }
+
+    #[Test]
+    public function songIsScrobbleable(): void
+    {
+        self::assertTrue(Song::factory()->createOne()->isScrobbleable());
+    }
+
+    #[Test]
+    public function episodeIsNotScrobbleable(): void
+    {
+        self::assertFalse(Song::factory()->asEpisode()->createOne()->isScrobbleable());
+    }
+
+    #[Test]
+    public function songByUnknownArtistIsNotScrobbleable(): void
+    {
+        $artist = Artist::factory()->createOne(['name' => Artist::UNKNOWN_NAME]);
+
+        self::assertFalse(Song::factory()->for($artist)->createOne()->isScrobbleable());
     }
 }

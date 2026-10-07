@@ -20,7 +20,7 @@ class ScrobbleController extends Controller
         Song $song,
         Authenticatable $user,
     ) {
-        if (!$song->artist->is_unknown && $scrobbleService->hasConnectedScrobbler($user)) {
+        if ($song->isScrobbleable() && $scrobbleService->hasConnectedScrobbler($user)) {
             Dispatcher::dispatch(new ScrobbleJob($user, $song, $request->timestamp));
         }
 

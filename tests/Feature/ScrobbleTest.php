@@ -65,4 +65,15 @@ class ScrobbleTest extends TestCase
 
         $this->postAs("/api/songs/{$song->id}/scrobble", ['timestamp' => 100], $user)->assertNoContent();
     }
+
+    #[Test]
+    public function noScrobbleForPodcastEpisode(): void
+    {
+        $user = create_user(['preferences' => ['listenbrainz_token' => 'my_token']]);
+        $episode = Song::factory()->asEpisode()->createOne();
+
+        Dispatcher::expects('dispatch')->never();
+
+        $this->postAs("/api/songs/{$episode->id}/scrobble", ['timestamp' => 100], $user)->assertNoContent();
+    }
 }

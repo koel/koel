@@ -14,12 +14,7 @@ readonly class LoveTrackOnLastfm implements ShouldQueue
 
     public function handle(SongFavoriteToggled $event): void
     {
-        if (
-            $event->song->isEpisode()
-            || !LastfmService::enabled()
-            || !$event->user->preferences->lastFmSessionKey
-            || $event->song->artist->is_unknown
-        ) {
+        if (!$event->song->isScrobbleable() || !$this->lastfm->isConnected($event->user)) {
             return;
         }
 
