@@ -15,6 +15,7 @@ use App\Services\AlbumService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
+use App\Values\Scanning\ScanInformation;
 use App\Values\Song\SongUpdateData;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -550,5 +551,40 @@ class SongServiceTest extends TestCase
         ));
 
         self::assertTrue($song->refresh()->album->is($compilation));
+    }
+
+    #[Test]
+    public function rescanIgnoringArtistLeavesTheFilesArtistMbidOut(): void
+    {
+        $owner = create_admin();
+        $path = test_path('songs/full.mp3');
+        $info = ScanInformation::make(
+            title: 'Song',
+            albumName: 'Album',
+            artistName: 'Original Artist',
+            artistMbid: 'original-artist-mbid',
+            track: 1,
+            disc: 1,
+            genre: '',
+            lyrics: '',
+            length: 10,
+            path: $path,
+            hash: 'hash',
+            mTime: get_mtime($path),
+            mimeType: 'audio/mpeg',
+            fileSize: 1_024,
+        );
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+
+        $editedArtist = Artist::getOrCreate($owner, 'Edited Artist');
+        $song->update(['artist_id' => $editedArtist->id, 'artist_name' => $editedArtist->name]);
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['artist'],
+            force: true,
+        ));
+
+        self::assertNull($editedArtist->refresh()->mbid);
     }
 }

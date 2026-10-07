@@ -246,7 +246,7 @@ class SongService
         // If the file is new, we take all necessary metadata, totally discarding the "ignores" config.
         // Otherwise, we only take the metadata not in the "ignores" config.
         if (!$isFileNew) {
-            Arr::forget($data, $config->ignores);
+            Arr::forget($data, [...$config->ignores, ...self::getMbidKeysOfIgnoredNames($config->ignores)]);
             $data += self::getCurrentArtistAndAlbumNames($song);
         }
 
@@ -312,6 +312,20 @@ class SongService
         }
 
         return $song;
+    }
+
+    /**
+     * @param array<string> $ignores
+     *
+     * @return array<string>
+     */
+    private static function getMbidKeysOfIgnoredNames(array $ignores): array
+    {
+        return array_values(Arr::only([
+            'artist' => 'artist_mbid',
+            'albumartist' => 'albumartist_mbid',
+            'album' => 'album_mbid',
+        ], $ignores));
     }
 
     /**

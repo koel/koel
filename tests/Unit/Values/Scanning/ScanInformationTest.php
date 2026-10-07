@@ -36,4 +36,19 @@ class ScanInformationTest extends TestCase
 
         self::assertSame(Artist::VARIOUS_NAME, $info->albumArtistName);
     }
+
+    #[Test]
+    public function compilationFlagSetToFalseIsNotACompilation(): void
+    {
+        $info = ScanInformation::fromGetId3Info([
+            'comments' => [
+                'title' => ['Track'],
+                'artist' => ['Track Artist'],
+                'album' => ['Album'],
+                'compilation' => ['false'],
+            ],
+        ], test_path('songs/full-vorbis-comments.flac'));
+
+        self::assertSame('', $info->albumArtistName);
+    }
 }
