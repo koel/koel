@@ -63,4 +63,26 @@ class ArtistTest extends TestCase
         // with a null value.
         self::assertSame(Artist::UNKNOWN_NAME, (new Artist())->name);
     }
+
+    /** @return array<string, array{string}> */
+    public static function provideVariousArtistsSpellings(): array
+    {
+        return [
+            'lower case' => ['various artists'],
+            'upper case' => ['VARIOUS ARTISTS'],
+            'padded' => ['  Various Artists '],
+            'VA' => ['VA'],
+            'va' => ['va'],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideVariousArtistsSpellings')]
+    public function variousArtistsSpellingsResolveToTheVariousArtist(string $name): void
+    {
+        $artist = Artist::getOrCreate(create_user(), $name);
+
+        self::assertSame(Artist::VARIOUS_NAME, $artist->name);
+        self::assertTrue($artist->is_various);
+    }
 }
