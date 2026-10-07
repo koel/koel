@@ -21,7 +21,7 @@
     />
     <SortableColumnHeader
       v-if="shouldShowColumn('album')"
-      :active="config.sortable && sortingByAlbumOrPodcast"
+      :active="isSortedByAlbumOrPodcast"
       :order="sortOrder"
       :title="`Sort by ${contentType === 'episodes' ? 'podcast' : contentType === 'songs' ? 'album' : 'album/podcast'}`"
       class="album"
@@ -175,9 +175,9 @@ const sort = (field: MaybeArray<PlayableListSortField>) => {
 
 const isSortedBy = (field: PlayableListSortField) => Boolean(config.sortable) && sortField.value === field
 
-const sortingByAlbumOrPodcast = computed(() => {
+const isSortedByAlbumOrPodcast = computed(() => {
   const sortFields = arrayify(sortField.value)
-  return sortFields[0] === 'album_name' || sortFields[0] === 'podcast_title'
+  return Boolean(config.sortable) && (sortFields[0] === 'album_name' || sortFields[0] === 'podcast_title')
 })
 
 // On mobile, the table columns collapse — sorting is the only thing the action
