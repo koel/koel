@@ -13,6 +13,7 @@ use App\Services\Scanners\DirectoryScanner;
 use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -263,7 +264,18 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function parallelScanLeavesNoTemporaryFilesBehind(): void
     {
-        $existingTempFiles = glob(sys_get_temp_dir() . '/koel_scan_*');
+        $manifests = [];
+
+        File::partialMock()
+            ->shouldReceive('put')
+            ->withArgs(static function (string $path) use (&$manifests): bool {
+                if (str_starts_with(basename($path), 'koel_scan_')) {
+                    $manifests[] = $path;
+                }
+
+                return true;
+            })
+            ->passthru();
 
         rescue(fn () => $this->scanner->scan(
             $this->mediaPath,
@@ -271,6 +283,11 @@ class DirectoryScannerTest extends TestCase
             jobs: 2,
         ), report: false);
 
-        self::assertSame([], array_values(array_diff(glob(sys_get_temp_dir() . '/koel_scan_*'), $existingTempFiles)));
+        self::assertCount(2, $manifests);
+
+        foreach ($manifests as $manifest) {
+            $name = pathinfo($manifest, PATHINFO_DIRNAME) . '/' . pathinfo($manifest, PATHINFO_FILENAME);
+            self::assertSame([], glob($name . '*'));
+        }
     }
 }
