@@ -1,4 +1,6 @@
+import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
+import { defineComponent } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playlistCollaborationService } from '@/services/playlistCollaborationService'
 import Component from './PlaylistCollaboratorList.vue'
@@ -6,35 +8,39 @@ import Component from './PlaylistCollaboratorList.vue'
 describe('playlistCollaboratorList.vue', () => {
   const h = createHarness()
 
-  const renderComponent = async (playlist: Playlist) => {
-    const rendered = h.render(Component, {
-      props: {
-        playlist,
-      },
+  const ListItemStub = defineComponent({
+    props: ['collaborator', 'role'],
+    template: '<li data-testid="collaborator" :data-id="collaborator.id" :data-role="role" />',
+  })
+
+  it('lists the current user first, then the owner, then the others', async () => {
+    const owner = h.factory('playlist-collaborator').make()
+    const currentUser = h.factory('playlist-collaborator').make()
+    const other = h.factory('playlist-collaborator').make()
+    const playlist = h.factory('playlist').make({ owner_id: owner.id, is_collaborative: true })
+
+    const fetchMock = h
+      .mock(playlistCollaborationService, 'fetchCollaborators')
+      .mockResolvedValue([other, owner, currentUser])
+
+    h.actingAsUser(h.factory('user').state('current').make({ id: currentUser.id }) as CurrentUser)
+
+    h.render(Component, {
+      props: { playlist },
       global: {
         stubs: {
-          ListItem: h.stub('ListItem'),
+          ListItem: ListItemStub,
         },
       },
     })
 
     await h.tick(2)
 
-    return rendered
-  }
-
-  it('renders', async () => {
-    const playlist = h.factory('playlist').make({
-      is_collaborative: true,
-    })
-
-    const fetchMock = h
-      .mock(playlistCollaborationService, 'fetchCollaborators')
-      .mockResolvedValue(h.factory('playlist-collaborator').make(5))
-
-    h.actingAsUser()
-    const { html } = await renderComponent(playlist)
     expect(fetchMock).toHaveBeenCalledWith(playlist)
-    expect(html()).toMatchSnapshot()
+    expect(screen.getAllByTestId('collaborator').map(item => [item.dataset.id, item.dataset.role])).toEqual([
+      [currentUser.id, 'contributor'],
+      [owner.id, 'owner'],
+      [other.id, 'contributor'],
+    ])
   })
 })

@@ -18,9 +18,11 @@ describe('footerExtraControls.vue', () => {
     })
   }
 
-  it('renders', () => {
+  it('hides the fullscreen button when fullscreen is not supported', () => {
     h.setReadOnlyProperty(document, 'fullscreenEnabled', undefined)
-    expect(renderComponent().html()).toMatchSnapshot()
+    renderComponent()
+
+    expect(screen.queryByTitle('Enter fullscreen mode')).toBeNull()
   })
 
   it('toggles fullscreen mode', async () => {

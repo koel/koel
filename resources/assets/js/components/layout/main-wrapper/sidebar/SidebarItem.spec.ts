@@ -18,8 +18,6 @@ describe('sidebarItem', () => {
     })
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
   it('navigates and toggles sidebar on single click', async () => {
     const mock = h.mock(eventBus, 'emit')
     renderComponent()

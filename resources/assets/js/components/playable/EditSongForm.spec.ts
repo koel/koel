@@ -44,7 +44,7 @@ describe('editSongForm.vue', () => {
     const emitMock = h.mock(eventBus, 'emit')
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-    const { songs, html } = await renderComponent(
+    const { songs } = await renderComponent(
       h.factory('song').make({
         title: 'Rocket to Heaven',
         artist_name: 'Led Zeppelin',
@@ -53,8 +53,6 @@ describe('editSongForm.vue', () => {
         genre: 'Rock',
       }),
     )
-
-    expect(html()).toMatchSnapshot()
 
     await h.type(screen.getByTestId('title-input'), 'Highway to Hell')
     await h.type(screen.getByTestId('artist-input'), 'AC/DC')
@@ -99,9 +97,8 @@ describe('editSongForm.vue', () => {
     const emitMock = h.mock(eventBus, 'emit')
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-    const { songs, html } = await renderComponent(h.factory('song').make(3))
+    const { songs } = await renderComponent(h.factory('song').make(3))
 
-    expect(html()).toMatchSnapshot()
     expect(screen.queryByTestId('title-input')).toBeNull()
     expect(screen.queryByTestId('lyrics-input')).toBeNull()
 

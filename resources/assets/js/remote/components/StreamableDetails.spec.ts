@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
+import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import StreamableDetails from './StreamableDetails.vue'
 
@@ -21,29 +22,21 @@ describe('streamableDetails.vue', () => {
     })
   }
 
-  it('renders a song', () => {
-    const { html } = renderComponent(
-      h.factory('song').make({
-        title: 'Afraid to Shoot Strangers',
-        album_name: 'Fear of the Dark',
-        artist_name: 'Iron Maiden',
-        album_cover: 'https://cover.site/fotd.jpg',
-      }),
-    )
+  it('shows the details of a song', () => {
+    const song = h.factory('song').make()
+    renderComponent(song)
 
-    expect(html()).toMatchSnapshot()
+    expect(screen.getByRole('img').getAttribute('src')).toBe(song.album_cover)
+    screen.getByText(song.artist_name)
+    screen.getByText(song.album_name)
   })
 
-  it('renders an episode', () => {
-    const { html } = renderComponent(
-      h.factory('episode').make({
-        title: 'Brahms Piano Concerto No. 1',
-        podcast_title: 'The Sticky Notes podcast',
-        podcast_author: 'Some random dudes',
-        episode_image: 'https://cover.site/pod.jpg',
-      }),
-    )
+  it('shows the details of an episode', () => {
+    const episode = h.factory('episode').make()
+    renderComponent(episode)
 
-    expect(html()).toMatchSnapshot()
+    expect(screen.getByRole('img').getAttribute('src')).toBe(episode.episode_image)
+    screen.getByText(episode.podcast_author)
+    screen.getByText(episode.podcast_title)
   })
 })

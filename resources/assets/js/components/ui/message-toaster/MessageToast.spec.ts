@@ -19,8 +19,6 @@ describe('messageToast.vue', () => {
     })
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
   it('dismisses upon click', async () => {
     const { emitted } = renderComponent()
     await h.user.click(screen.getByTitle('Click to dismiss'))

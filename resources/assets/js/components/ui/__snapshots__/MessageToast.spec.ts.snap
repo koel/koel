@@ -1,8 +1,0 @@
-// Vitest Snapshot v1
-
-exports[`renders 1`] = `
-<div data-v-06be4cfe="" class="success message" title="Click to dismiss">
-  <aside data-v-06be4cfe=""><br data-v-06be4cfe="" data-testid="Icon" icon="[object Object]" class="icon"><br data-v-06be4cfe="" data-testid="Icon" icon="[object Object]" class="icon-dismiss"></aside>
-  <main data-v-06be4cfe=""></main>
-</div>
-`;

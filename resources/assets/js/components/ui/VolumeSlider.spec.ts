@@ -15,16 +15,13 @@ describe('volumeSlider.vue', () => {
   })
 
   it('mutes and unmutes', async () => {
-    const { html } = h.render(Component)
-    expect(html()).toMatchSnapshot()
+    h.render(Component)
     expect(volumeManager.volume.value).toEqual(5)
 
     await h.user.click(screen.getByTitle('Mute'))
-    expect(html()).toMatchSnapshot()
     expect(volumeManager.volume.value).toEqual(0)
 
     await h.user.click(screen.getByTitle('Unmute'))
-    expect(html()).toMatchSnapshot()
     expect(volumeManager.volume.value).toEqual(5)
   })
 

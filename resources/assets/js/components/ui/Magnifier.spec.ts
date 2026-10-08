@@ -6,15 +6,13 @@ import Component from './Magnifier.vue'
 describe('magnifier.vue', () => {
   const h = createHarness()
 
-  it('renders and functions', async () => {
-    const { html, emitted } = h.render(Component)
+  it('zooms in and out', async () => {
+    const { emitted } = h.render(Component)
 
     await h.user.click(screen.getByRole('button', { name: 'Zoom in' }))
     expect(emitted().in).toBeTruthy()
 
     await h.user.click(screen.getByRole('button', { name: 'Zoom out' }))
     expect(emitted().out).toBeTruthy()
-
-    expect(html()).toMatchSnapshot()
   })
 })

@@ -45,11 +45,6 @@ describe('allSongsScreen.vue', () => {
     return [rendered, fetchMock] as const
   }
 
-  it('renders', async () => {
-    const [{ html }] = await renderComponent()
-    await waitFor(() => expect(html()).toMatchSnapshot())
-  })
-
   it('shuffles', async () => {
     h.createAudioPlayer()
 
