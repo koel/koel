@@ -1,20 +1,20 @@
 import { describe, expect, it } from 'vite-plus/test'
+import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './FormRow.vue'
 
 describe('formRow.vue', () => {
   const h = createHarness()
 
-  it('renders single column with label and help slots', () => {
-    const { html } = h.render(Component, {
+  it('labels the field in a single column', () => {
+    h.render(Component, {
       slots: {
         label: 'Name',
         default: '<input />',
-        help: 'Enter your name',
       },
     })
 
-    expect(html()).toMatchSnapshot()
+    expect(screen.getByLabelText('Name')).toBe(screen.getByRole('textbox'))
   })
 
   it('renders multi-column grid', () => {

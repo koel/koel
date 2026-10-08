@@ -1,7 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`genreCard.vue > renders 1`] = `
-<li class="min-h-auto md:min-h-40" draggable="true" tabindex="0">
-  <div data-v-07fc2ee9="" class="gradient-border relative overflow-hidden rounded-lg overflow-hidden relative h-full transition-transform active:transition-none active:scale-100"><a href="/#/genres/foo" title="Classical" class="flex flex-col justify-end h-full p-4 bg-k-fg-3"><span class="text-2xl truncate font-normal text-k-fg-90 Classical">Classical</span><span class="text-k-fg-70 text-lg">99 songs</span></a></div>
-</li>
-`;

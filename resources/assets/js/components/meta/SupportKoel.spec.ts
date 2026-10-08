@@ -24,7 +24,11 @@ describe('supportKoel.vue', () => {
     return rendered
   }
 
-  it('shows after a delay', async () => expect((await renderComponent()).html()).toMatchSnapshot())
+  it('shows after a delay', async () => {
+    await renderComponent()
+
+    screen.getByTestId('support-bar')
+  })
 
   it('does not show if user so demands', async () => {
     preferenceStore.state.support_bar_no_bugging = true

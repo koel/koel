@@ -46,12 +46,16 @@ describe('albumOrArtistThumbnail.vue', () => {
     }
   }
 
-  it('renders for album', () => {
-    expect(renderForAlbum().html()).toMatchSnapshot()
+  it('shows the album cover', () => {
+    const { album } = renderForAlbum()
+
+    expect(screen.getByRole('img').getAttribute('src')).toBe(album.cover)
   })
 
-  it('renders for artist', () => {
-    expect(renderForArtist().html()).toMatchSnapshot()
+  it('shows the artist image', () => {
+    const { artist } = renderForArtist()
+
+    expect(screen.getByRole('img').getAttribute('src')).toBe(artist.image)
   })
 
   it('plays album', async () => {

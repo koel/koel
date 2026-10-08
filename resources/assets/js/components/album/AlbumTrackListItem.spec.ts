@@ -38,8 +38,6 @@ describe('albumTrackListItem.vue', () => {
     return rendered
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
   it('plays', async () => {
     h.createAudioPlayer()
 

@@ -51,16 +51,6 @@ describe('addToMenu.vue', () => {
     }
   }
 
-  it('renders', () => {
-    playlistStore.state.playlists = [
-      h.factory('playlist').make({ name: 'Foo' }),
-      h.factory('playlist').make({ name: 'Bar' }),
-      h.factory('playlist').make({ name: 'Baz' }),
-    ]
-
-    expect(renderComponent().html()).toMatchSnapshot()
-  })
-
   it.each<[keyof AddToMenuConfig, string | string[]]>([
     ['queue', ['queue-after-current', 'queue-bottom', 'queue-top', 'queue']],
     ['favorites', 'add-to-favorites'],

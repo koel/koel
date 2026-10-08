@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { albumStore } from '@/stores/albumStore'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -28,11 +28,11 @@ describe('albumArtOverlay.vue', () => {
   it('fetches and displays the album thumbnail', async () => {
     const fetchMock = h.mock(albumStore, 'fetchThumbnail').mockResolvedValue('http://test/thumb.jpg')
 
-    const { albumId, html } = await renderComponent()
+    const { albumId } = await renderComponent()
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(albumId)
-      expect(html()).toMatchSnapshot()
+      expect(screen.getByTestId('album-art-overlay').style.backgroundImage).toBe('url("http://test/thumb.jpg")')
     })
   })
 
@@ -40,11 +40,11 @@ describe('albumArtOverlay.vue', () => {
     h.mock(logger, 'error')
     const fetchMock = h.mock(albumStore, 'fetchThumbnail').mockRejectedValue(new Error('Failed to fetch'))
 
-    const { albumId, html } = await renderComponent()
+    const { albumId } = await renderComponent()
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(albumId)
-      expect(html()).toMatchSnapshot()
+      expect(screen.getByTestId('album-art-overlay').style.backgroundImage).toBe('none')
     })
   })
 })

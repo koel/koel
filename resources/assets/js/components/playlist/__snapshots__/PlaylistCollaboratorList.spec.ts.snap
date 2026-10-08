@@ -1,3 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`playlistCollaboratorList.vue > renders 1`] = `<ul class="w-full space-y-3"><br data-testid="ListItem" collaborator="[object Object]" manageable="false" removable="false" role="contributor"><br data-testid="ListItem" collaborator="[object Object]" manageable="false" removable="false" role="contributor"><br data-testid="ListItem" collaborator="[object Object]" manageable="false" removable="false" role="contributor"><br data-testid="ListItem" collaborator="[object Object]" manageable="false" removable="false" role="contributor"><br data-testid="ListItem" collaborator="[object Object]" manageable="false" removable="false" role="contributor"></ul>`;

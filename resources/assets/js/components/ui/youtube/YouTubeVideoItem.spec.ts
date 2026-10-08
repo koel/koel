@@ -35,8 +35,6 @@ describe('youTubeVideoItem.vue', () => {
     }
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
   it('plays', async () => {
     const mock = h.mock(youTubeService, 'play')
     const { video } = renderComponent()

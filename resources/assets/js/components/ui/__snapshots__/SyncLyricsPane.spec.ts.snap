@@ -1,9 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`syncLyricsPane.vue > renders 1`] = `
-<div data-v-e40800e2="" class="lyrics-synced overflow-y-auto max-h-[70vh]">
-  <div data-v-51def7d9="" data-v-e40800e2="" class="lyrics-line leading-relaxed transition-all duration-300">First line</div>
-  <div data-v-51def7d9="" data-v-e40800e2="" class="lyrics-line leading-relaxed transition-all duration-300">Second line</div>
-  <div data-v-51def7d9="" data-v-e40800e2="" class="lyrics-line leading-relaxed transition-all duration-300">Third line</div>
-</div>
-`;

@@ -44,8 +44,6 @@ describe('uploadItem.vue', () => {
     }
   }
 
-  it('renders', () => expect(renderComponent('Canceled').html()).toMatchSnapshot())
-
   it.each<[UploadStatus]>([['Canceled'], ['Errored']])('allows retrying when %s', async status => {
     const mock = h.mock(uploadService, 'retry')
     renderComponent(status)

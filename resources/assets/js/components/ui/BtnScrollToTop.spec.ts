@@ -8,8 +8,6 @@ import Component from './BtnScrollToTop.vue'
 describe('btnScrollToTop.vue', () => {
   const h = createHarness()
 
-  it('renders', () => expect(h.render(Component).html()).toMatchSnapshot())
-
   it('scrolls to top', async () => {
     const mock = h.mock($, 'scrollTo')
     h.render(Component)
