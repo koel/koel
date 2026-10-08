@@ -13,14 +13,21 @@
 
 <script lang="ts" setup>
 import { FingerprintIcon } from 'lucide-vue-next'
-import { isPasskeyPromptDismissed, isPasskeySupported, passkeyService } from '@/services/passkeyService'
+import {
+  isPasskeyAddressRejected,
+  isPasskeyPromptDismissed,
+  isPasskeySupported,
+  PASSKEY_ADDRESS_REJECTED_MESSAGE,
+  passkeyService,
+} from '@/services/passkeyService'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { logger } from '@/utils/logger'
 
 const emit = defineEmits<{ (e: 'loggedIn'): void }>()
 
 const supported = isPasskeySupported()
 const { toastError } = useMessageToaster()
+const { handleHttpError } = useErrorHandler('toast')
 
 const logIn = async () => {
   try {
@@ -31,8 +38,12 @@ const logIn = async () => {
       return
     }
 
-    logger.error('Passkey login error: ', error)
-    toastError('Passkey login failed.')
+    if (isPasskeyAddressRejected(error)) {
+      toastError(PASSKEY_ADDRESS_REJECTED_MESSAGE)
+      return
+    }
+
+    handleHttpError(error)
   }
 }
 </script>

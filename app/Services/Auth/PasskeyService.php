@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Illuminate\Support\Uri;
 use Laravel\Passkeys\Actions\DeletePasskey;
 use Laravel\Passkeys\Actions\GenerateRegistrationOptions;
 use Laravel\Passkeys\Actions\GenerateVerificationOptions;
@@ -15,8 +16,10 @@ use Laravel\Passkeys\Actions\StorePasskey;
 use Laravel\Passkeys\Actions\VerifyPasskey;
 use Laravel\Passkeys\Exceptions\InvalidPasskeyException;
 use Laravel\Passkeys\Passkey as BasePasskey;
+use Laravel\Passkeys\Passkeys;
 use Laravel\Passkeys\Support\WebAuthn;
 use SensitiveParameter;
+use Webauthn\Exception\WebauthnException;
 use Webauthn\PublicKeyCredential;
 use Webauthn\PublicKeyCredentialCreationOptions;
 use Webauthn\PublicKeyCredentialRequestOptions;
@@ -59,10 +62,16 @@ class PasskeyService
         $serializedOptions = Cache::pull(cache_key('passkey login options', $loginToken));
         throw_unless($serializedOptions, InvalidLoginTokenException::create());
 
-        $passkey = ($this->verifyPasskey)($credential, WebAuthn::fromJson(
-            $serializedOptions,
-            PublicKeyCredentialRequestOptions::class,
-        ));
+        self::ensureOriginIsAllowed($credential);
+
+        try {
+            $passkey = ($this->verifyPasskey)($credential, WebAuthn::fromJson(
+                $serializedOptions,
+                PublicKeyCredentialRequestOptions::class,
+            ));
+        } catch (WebauthnException) {
+            throw InvalidPasskeyException::make('Unable to verify this passkey.');
+        }
 
         return $this->userRepository->getOne($passkey->user_id);
     }
@@ -88,16 +97,42 @@ class PasskeyService
         $serializedOptions = Cache::pull(cache_key('passkey registration options', $user->id));
         throw_unless($serializedOptions, InvalidPasskeyException::make('Passkey setup timed out. Please try again.'));
 
-        return ($this->storePasskey)(
-            $user,
-            $name,
-            $credential,
-            WebAuthn::fromJson($serializedOptions, PublicKeyCredentialCreationOptions::class),
-        );
+        self::ensureOriginIsAllowed($credential);
+
+        try {
+            return ($this->storePasskey)(
+                $user,
+                $name,
+                $credential,
+                WebAuthn::fromJson($serializedOptions, PublicKeyCredentialCreationOptions::class),
+            );
+        } catch (WebauthnException) {
+            throw InvalidPasskeyException::make('Unable to register this passkey.');
+        }
     }
 
     public function deletePasskey(User $user, Passkey $passkey): void
     {
         ($this->deletePasskey)($user, $passkey);
+    }
+
+    private static function ensureOriginIsAllowed(PublicKeyCredential $credential): void
+    {
+        $allowedOrigins = array_map(self::originOf(...), Passkeys::allowedOrigins());
+
+        throw_unless(
+            in_array(self::originOf($credential->response->clientDataJSON->origin), $allowedOrigins, true),
+            InvalidPasskeyException::make(sprintf('Passkeys only work at %s.', $allowedOrigins[0])),
+        );
+    }
+
+    private static function originOf(string $url): string
+    {
+        $uri = Uri::of($url);
+        $port = $uri->port();
+
+        return $port
+            ? sprintf('%s://%s:%d', $uri->scheme(), $uri->host(), $port)
+            : sprintf('%s://%s', $uri->scheme(), $uri->host());
     }
 }

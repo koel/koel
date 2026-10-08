@@ -19,6 +19,11 @@ const ensurePublicKeyCredential = (credential: Credential | null) => {
 export const isPasskeyPromptDismissed = (error: unknown) =>
   error instanceof DOMException && error.name === 'NotAllowedError'
 
+export const isPasskeyAddressRejected = (error: unknown) =>
+  error instanceof DOMException && error.name === 'SecurityError'
+
+export const PASSKEY_ADDRESS_REJECTED_MESSAGE = "Passkeys don't work at this address."
+
 export const passkeyService = {
   async logIn() {
     const { options, login_token } = await http.get<PasskeyLoginOptions>('me/passkey-login-options')

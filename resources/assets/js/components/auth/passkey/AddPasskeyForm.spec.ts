@@ -2,7 +2,7 @@ import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { DialogBoxStub } from '@/__tests__/stubs'
-import { passkeyService } from '@/services/passkeyService'
+import { PASSKEY_ADDRESS_REJECTED_MESSAGE, passkeyService } from '@/services/passkeyService'
 import Component from './AddPasskeyForm.vue'
 
 describe('addPasskeyForm.vue', () => {
@@ -30,5 +30,16 @@ describe('addPasskeyForm.vue', () => {
 
     expect(errorMock).not.toHaveBeenCalled()
     expect(emitted().added).toBeUndefined()
+  })
+
+  it('explains when the browser rejects the address', async () => {
+    h.mock(passkeyService, 'add').mockRejectedValue(new DOMException('Invalid domain', 'SecurityError'))
+    const errorMock = h.mock(DialogBoxStub.value, 'error')
+    h.render(Component)
+
+    await h.user.type(screen.getByRole('textbox'), 'MacBook')
+    await h.user.click(screen.getByRole('button', { name: 'Add' }))
+
+    expect(errorMock).toHaveBeenCalledWith(PASSKEY_ADDRESS_REJECTED_MESSAGE)
   })
 })

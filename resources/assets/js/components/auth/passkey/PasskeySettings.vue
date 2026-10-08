@@ -43,6 +43,7 @@ const adding = ref(false)
 
 const { showConfirmDialog } = useDialogBox()
 const { toastSuccess } = useMessageToaster()
+const { handleHttpError } = useErrorHandler('dialog')
 
 const describe = (passkey: Passkey) => {
   const lastUsed = passkey.last_used_at ? `Last used ${formatTimeAgo(new Date(passkey.last_used_at))}` : 'Not used yet'
@@ -66,7 +67,7 @@ const remove = async (passkey: Passkey) => {
     passkeys.value = passkeys.value.filter(({ id }) => id !== passkey.id)
     toastSuccess('Passkey removed.')
   } catch (error: unknown) {
-    useErrorHandler('dialog').handleHttpError(error)
+    handleHttpError(error)
   }
 }
 

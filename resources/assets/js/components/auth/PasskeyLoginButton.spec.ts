@@ -2,7 +2,7 @@ import { screen } from '@testing-library/vue'
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { MessageToasterStub } from '@/__tests__/stubs'
-import { passkeyService } from '@/services/passkeyService'
+import { PASSKEY_ADDRESS_REJECTED_MESSAGE, passkeyService } from '@/services/passkeyService'
 import Component from './PasskeyLoginButton.vue'
 
 describe('passkeyLoginButton.vue', () => {
@@ -47,5 +47,15 @@ describe('passkeyLoginButton.vue', () => {
     h.render(Component)
 
     expect(screen.queryByRole('button')).toBeNull()
+  })
+
+  it('explains when the browser rejects the address', async () => {
+    h.mock(passkeyService, 'logIn').mockRejectedValue(new DOMException('Invalid domain', 'SecurityError'))
+    const errorMock = h.mock(MessageToasterStub.value, 'error')
+    h.render(Component)
+
+    await h.user.click(screen.getByRole('button'))
+
+    expect(errorMock).toHaveBeenCalledWith(PASSKEY_ADDRESS_REJECTED_MESSAGE)
   })
 })

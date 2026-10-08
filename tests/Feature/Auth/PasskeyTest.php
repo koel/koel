@@ -10,6 +10,7 @@ use Laravel\Passkeys\Actions\StorePasskey;
 use Laravel\Passkeys\Actions\VerifyPasskey;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Webauthn\Exception\AuthenticatorResponseVerificationException;
 
 use function Tests\create_user;
 
@@ -65,6 +66,20 @@ class PasskeyTest extends TestCase
     }
 
     #[Test]
+    public function logInWithPasskeyTheLibraryRejects(): void
+    {
+        $this
+            ->mock(VerifyPasskey::class)
+            ->expects('__invoke')
+            ->andThrow(AuthenticatorResponseVerificationException::create('Invalid signature.'));
+
+        $this->postJson('api/me/passkey-login', [
+            'login_token' => $this->getJson('api/me/passkey-login-options')->json('login_token'),
+            'credential' => self::assertionCredential(),
+        ])->assertUnprocessable();
+    }
+
+    #[Test]
     public function listOwnPasskeys(): void
     {
         $user = create_user();
@@ -106,6 +121,24 @@ class PasskeyTest extends TestCase
     }
 
     #[Test]
+    public function registerPasskeyFromAnotherAddress(): void
+    {
+        $user = create_user();
+        $this->mock(StorePasskey::class)->shouldNotReceive('__invoke');
+
+        $this->getAs('api/me/passkeys/registration-options', $user)->assertOk();
+
+        $this
+            ->postAs(
+                'api/me/passkeys',
+                ['name' => 'MacBook', 'credential' => self::attestationCredential('http://localhost:8001')],
+                $user,
+            )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('credential');
+    }
+
+    #[Test]
     public function deleteOwnPasskey(): void
     {
         $user = create_user();
@@ -143,7 +176,7 @@ class PasskeyTest extends TestCase
     }
 
     /** @return array<string, mixed> */
-    private static function attestationCredential(): array
+    private static function attestationCredential(string $origin = 'http://localhost'): array
     {
         $authenticatorData = self::authenticatorData();
 
@@ -160,19 +193,19 @@ class PasskeyTest extends TestCase
             'rawId' => self::base64Url('credential'),
             'type' => 'public-key',
             'response' => [
-                'clientDataJSON' => self::clientDataJson('webauthn.create'),
+                'clientDataJSON' => self::clientDataJson('webauthn.create', $origin),
                 'attestationObject' => self::base64Url($attestationObject),
                 'transports' => [],
             ],
         ];
     }
 
-    private static function clientDataJson(string $type): string
+    private static function clientDataJson(string $type, string $origin = 'http://localhost'): string
     {
         return self::base64Url(json_encode([
             'type' => $type,
             'challenge' => self::base64Url('challenge'),
-            'origin' => 'http://localhost',
+            'origin' => $origin,
         ]));
     }
 

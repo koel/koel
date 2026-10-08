@@ -13,7 +13,12 @@
 </template>
 
 <script lang="ts" setup>
-import { isPasskeyPromptDismissed, passkeyService } from '@/services/passkeyService'
+import {
+  isPasskeyAddressRejected,
+  isPasskeyPromptDismissed,
+  PASSKEY_ADDRESS_REJECTED_MESSAGE,
+  passkeyService,
+} from '@/services/passkeyService'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useForm } from '@/composables/useForm'
@@ -27,7 +32,8 @@ const emit = defineEmits<{
   (e: 'cancel'): void
 }>()
 
-const { showConfirmDialog } = useDialogBox()
+const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { handleHttpError } = useErrorHandler('dialog')
 
 const { data, isPristine, handleSubmit } = useForm<{ name: string }>({
   initialValues: { name: '' },
@@ -36,9 +42,16 @@ const { data, isPristine, handleSubmit } = useForm<{ name: string }>({
   onSubmit: async ({ name }) => await passkeyService.add(name.trim()),
   onSuccess: (passkey: Passkey) => emit('added', passkey),
   onError: (error: unknown) => {
-    if (!isPasskeyPromptDismissed(error)) {
-      useErrorHandler('dialog').handleHttpError(error)
+    if (isPasskeyPromptDismissed(error)) {
+      return
     }
+
+    if (isPasskeyAddressRejected(error)) {
+      showErrorDialog(PASSKEY_ADDRESS_REJECTED_MESSAGE)
+      return
+    }
+
+    handleHttpError(error)
   },
 })
 

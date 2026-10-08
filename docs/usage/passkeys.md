@@ -28,4 +28,4 @@ Open the **Security** section, find the passkey under **Passkeys**, and click **
 
 ## For Admins
 
-Passkeys are tied to the domain in your `APP_URL`. If you move Koel to a different domain, passkeys added before the move stop working, and users need to add new ones.
+Passkeys are tied to the domain in your `APP_URL`. If you move Koel to a different domain, passkeys added before the move stop working, and users need to add new ones. If passkeys don't work at all, see [Troubleshooting](../troubleshooting).
