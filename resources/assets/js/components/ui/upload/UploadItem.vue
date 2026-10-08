@@ -124,4 +124,8 @@ article > div::before {
 .uploaded:hover {
   @apply bg-k-fg-10;
 }
+
+.processing {
+  @apply text-k-highlight-fg;
+}
 </style>
