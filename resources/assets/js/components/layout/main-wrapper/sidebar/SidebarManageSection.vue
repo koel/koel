@@ -10,6 +10,7 @@
         :key="item.route"
         :href="url(item.route)"
         :active="isCurrentScreen(...item.screens)"
+        :disabled-reason="item.disabledReason"
       >
         <template #icon>
           <Icon :icon="item.busy ? faSpinner : item.icon" :spin="item.busy" fixed-width />
@@ -46,6 +47,7 @@ export interface ManageSidebarItem {
   visible: () => boolean
   badge?: () => string | null
   isBusy?: () => boolean
+  disabledReason?: () => string | null
 }
 
 const { url, isCurrentScreen } = useRouter()
@@ -82,6 +84,11 @@ const items = computed(() =>
 const visibleItems = computed(() =>
   items.value
     .filter(item => item.visible())
-    .map(item => ({ ...item, badgeLabel: item.badge?.() ?? null, busy: item.isBusy?.() ?? false })),
+    .map(item => ({
+      ...item,
+      badgeLabel: item.badge?.() ?? null,
+      busy: item.isBusy?.() ?? false,
+      disabledReason: item.disabledReason?.() ?? null,
+    })),
 )
 </script>

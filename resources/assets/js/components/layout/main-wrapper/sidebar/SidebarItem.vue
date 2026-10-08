@@ -5,8 +5,11 @@
     data-testid="sidebar-item"
   >
     <a
-      :href="props.href"
-      class="flex items-center overflow-x-hidden gap-3 h-11 relative active:pt-0.5 active:pr-0 active:pb-0 active:pl-0.5 text-k-fg-70 hover:text-k-fg"
+      :aria-disabled="disabledReason ? true : undefined"
+      :class="disabledReason ? 'opacity-50 cursor-not-allowed' : 'hover:text-k-fg'"
+      :href="disabledReason ? undefined : props.href"
+      :title="disabledReason ?? undefined"
+      class="flex items-center overflow-x-hidden gap-3 h-11 relative active:pt-0.5 active:pr-0 active:pb-0 active:pl-0.5 text-k-fg-70"
       @click.prevent="onClick"
       @dblclick.prevent="onDblClick"
     >
@@ -40,9 +43,11 @@ const props = withDefaults(
   defineProps<{
     href?: string | undefined
     active?: boolean
+    disabledReason?: string | null
   }>(),
   {
     active: false,
+    disabledReason: null,
   },
 )
 
@@ -53,7 +58,7 @@ const { go } = useRouter()
 let clickTimer = 0
 
 const navigate = () => {
-  if (props.href) {
+  if (props.href && !props.disabledReason) {
     go(props.href)
     eventBus.emit('TOGGLE_SIDEBAR')
   }

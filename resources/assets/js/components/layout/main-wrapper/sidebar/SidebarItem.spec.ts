@@ -7,10 +7,11 @@ import Component from './SidebarItem.vue'
 describe('sidebarItem', () => {
   const h = createHarness()
 
-  const renderComponent = () => {
+  const renderComponent = (disabledReason: string | null = null) => {
     return h.render(Component, {
       props: {
         href: '#',
+        disabledReason,
       },
       slots: {
         default: 'Home',
@@ -30,6 +31,19 @@ describe('sidebarItem', () => {
       },
       { timeout: 500 },
     )
+  })
+
+  it('stays in place and explains why when disabled', async () => {
+    const mock = h.mock(eventBus, 'emit')
+    renderComponent('Not now')
+
+    const link = screen.getByText('Home').closest('a')!
+    await h.user.click(link)
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    expect(link.getAttribute('aria-disabled')).toBe('true')
+    expect(link.title).toBe('Not now')
+    expect(mock).not.toHaveBeenCalledWith('TOGGLE_SIDEBAR')
   })
 
   it('emits dblclick on double click', async () => {
