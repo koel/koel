@@ -74,6 +74,7 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { playback } from '@/services/playbackManager'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useContextMenu } from '@/composables/useContextMenu'
 
@@ -92,6 +93,8 @@ const { openContextMenu } = useContextMenu()
 const loading = ref(false)
 const episodeId = ref<Episode['id']>()
 const episode = ref<Episode>()
+
+usePageTitle().useScreenTitle('Episode', () => episode.value?.title)
 
 const playing = computed(() => {
   return queueStore.current?.playback_state === 'Playing' && queueStore.current?.id === episodeId.value

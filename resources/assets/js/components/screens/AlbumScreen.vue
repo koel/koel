@@ -100,6 +100,7 @@ import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { useContextMenu } from '@/composables/useContextMenu'
 
@@ -134,6 +135,8 @@ const songs = ref<Song[]>([])
 const loading = ref(false)
 const otherAlbums = ref<Album[] | undefined>()
 const info = ref<ArtistInfo | undefined>()
+
+usePageTitle().useScreenTitle('Album', () => album.value?.name)
 
 const {
   PlayableList: SongList,

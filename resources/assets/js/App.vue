@@ -50,6 +50,7 @@ import {
   OverlayKey,
 } from '@/config/symbols'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { commonStore } from '@/stores/commonStore'
 import type { Route } from '@/router'
 
@@ -87,6 +88,8 @@ const showDropZone = ref(false)
 
 const { isCurrentScreen, resolveRoute, triggerNotFound, onRouteChanged } = useRouter()
 const { online } = useNetworkStatus()
+
+usePageTitle().syncDocumentTitle()
 
 const authenticated = ref(false)
 const initialized = ref(false)

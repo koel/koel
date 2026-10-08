@@ -108,6 +108,7 @@ import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -141,6 +142,8 @@ const artist = ref<Artist>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
 const albums = ref<Album[] | undefined>()
+
+usePageTitle().useScreenTitle('Artist', () => artist.value?.name)
 
 const {
   PlayableList: SongList,

@@ -18,6 +18,7 @@ import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import { logger } from '@/utils/logger'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { useBranding } from '@/composables/useBranding'
+import { usePageTitle } from '@/composables/usePageTitle'
 
 describe('playbackService', () => {
   const h = createHarness({
@@ -333,7 +334,7 @@ describe('playbackService', () => {
     expect(currentSong.playback_state).toEqual('Stopped')
     expect(pauseMock).toHaveBeenCalled()
     expect(broadcastMock).toHaveBeenCalledWith('SOCKET_PLAYBACK_STOPPED')
-    expect(document.title).toEqual('Koel')
+    expect(usePageTitle().nowPlayingTitle.value).toBeNull()
   })
 
   it('pauses playback', () => {
@@ -363,6 +364,16 @@ describe('playbackService', () => {
     expect(queueStore.current?.playback_state).toEqual('Playing')
     expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', song)
     expect(playMock).toHaveBeenCalled()
+  })
+
+  it('shows the playing song in the page title', async () => {
+    const song = h.factory('song').make()
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.mock(playbackService, 'showNotification')
+
+    await playbackService.play(song)
+
+    expect(usePageTitle().nowPlayingTitle.value).toBe(song.title)
   })
 
   it('plays first in queue if toggled when there is no current playable', async () => {
