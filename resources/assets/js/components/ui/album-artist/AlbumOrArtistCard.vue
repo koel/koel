@@ -3,7 +3,7 @@
     border-width="1px"
     :color="gradientColor"
     border-color="color-mix(in srgb, var(--color-fg), transparent 97%)"
-    class="rounded-lg max-w-full md:max-w-[256px]"
+    class="rounded-lg"
     :class="{ compact: layout === 'compact' }"
   >
     <article
