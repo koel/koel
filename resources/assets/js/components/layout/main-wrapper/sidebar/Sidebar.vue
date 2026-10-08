@@ -21,7 +21,7 @@
     <section class="scroll-mask-y pt-2 pb-10 overflow-y-auto space-y-8">
       <SidebarYourMusicSection />
       <SidebarPlaylistsSection />
-      <SidebarManageSection v-if="showManageOptions" />
+      <SidebarManageSection />
     </section>
 
     <section v-if="canUpgradeToPlus || footerItems.length" class="p-6 flex-1 flex flex-col justify-end gap-3">
@@ -45,7 +45,6 @@ import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useRouter } from '@/composables/useRouter'
 import { usePolicies } from '@/composables/usePolicies'
-import { useUpload } from '@/composables/useUpload'
 import { useHookSlot } from '@/composables/useHookSlot'
 
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
@@ -59,7 +58,6 @@ import SidebarYourMusicSection from './SidebarYourLibrarySection.vue'
 
 const { onRouteChanged } = useRouter()
 const { currentUserCan } = usePolicies()
-const { allowsUpload } = useUpload()
 const { isPlus } = useKoelPlus()
 const { get: lsGet, set: lsSet } = useLocalStorage()
 
@@ -138,10 +136,6 @@ onBeforeUnmount(() => {
   clearExpandTimer()
   clearCollapseTimer()
 })
-
-const showManageOptions = computed(
-  () => currentUserCan.manageSettings() || currentUserCan.manageUsers() || allowsUpload.value,
-)
 
 const canUpgradeToPlus = computed(() => !isPlus.value && currentUserCan.manageSettings())
 

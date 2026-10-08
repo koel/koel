@@ -19,6 +19,7 @@ describe('sidebarManageSection.vue', () => {
 
   it('shows nothing if current user is not an admin', () => {
     h.actingAsUser().render(Component)
+    expect(screen.queryByText('Manage')).toBeNull()
     expect(screen.queryByText('Settings')).toBeNull()
     expect(screen.queryByText('Upload')).toBeNull()
     expect(screen.queryByText('Users')).toBeNull()
