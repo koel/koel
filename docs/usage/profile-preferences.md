@@ -2,10 +2,10 @@
 description: Managing your profile, avatar, theme selection, playback preferences, and service integration settings.
 ---
 
-# Profile and Preferences
+# Account Settings
 
-To manage your profile and preferences, click on your avatar in the bottom-right corner of the screen.
-From here, you can manage a couple aspects of your account:
+To manage your account, click your avatar in the bottom-right corner of the screen and choose **Settings**.
+Your own settings are listed under **Account**. Admins also see a **Server** group with settings for the whole Koel installation.
 
 ## Profile
 

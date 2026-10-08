@@ -27,5 +27,5 @@ again, and play as before.
 
 ## Turning It Off
 
-Both features are on by default. Each user can turn them off under _Profile & Preferences → Preferences_, with the
+Both features are on by default. Each user can turn them off under _Settings → Preferences_, with the
 _Play songs at about the same volume_ and _Show waveform during playback_ switches.

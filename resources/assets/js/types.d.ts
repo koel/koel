@@ -587,7 +587,6 @@ interface ScreenNames {
   'Playlist.Collaborate': true
   Podcast: true
   Podcasts: true
-  Profile: true
   Queue: true
   'Radio.Stations': true
   RecentlyPlayed: true

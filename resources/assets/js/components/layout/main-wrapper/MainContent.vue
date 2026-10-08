@@ -29,7 +29,6 @@
     <AlbumScreen v-if="screen === 'Album'" />
     <ArtistScreen v-if="screen === 'Artist'" />
     <SettingsScreen v-if="screen === 'Settings'" />
-    <ProfileScreen v-if="screen === 'Profile'" />
     <PodcastScreen v-if="screen === 'Podcast'" />
     <EpisodeScreen v-if="screen === 'Episode'" />
     <UserListScreen v-if="screen === 'Users'" />
@@ -76,7 +75,6 @@ const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/N
 const PlaylistScreen = defineAsyncComponent(() => import('@/components/screens/PlaylistScreen.vue'))
 const PodcastListScreen = defineAsyncComponent(() => import('@/components/screens/PodcastListScreen.vue'))
 const PodcastScreen = defineAsyncComponent(() => import('@/components/screens/PodcastScreen.vue'))
-const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/ProfileScreen.vue'))
 // QueueScreen and OfflineSongsScreen must NOT be lazy-loaded, so they work offline.
 import QueueScreen from '@/components/screens/QueueScreen.vue'
 import OfflineSongsScreen from '@/components/screens/OfflineSongsScreen.vue'
