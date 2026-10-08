@@ -11,7 +11,7 @@
     @contextmenu.prevent
     @keydown="onKeyDown"
   >
-    <component :is="options.component" v-if="options.component" v-bind="options.props" />
+    <component :is="options.component" v-if="options.component" v-bind="options.props" role="none" />
   </div>
 </template>
 
@@ -85,6 +85,7 @@ const HIDE_DELAY = 150
 const hideSubmenu = (item: MenuItem, submenu: HTMLElement) => {
   submenu.removeAttribute('data-open')
   submenu.removeAttribute('style')
+  item.setAttribute('aria-expanded', 'false')
 }
 
 const scheduleHide = (item: MenuItem, submenu: HTMLElement) => {
@@ -124,6 +125,7 @@ const showSubmenu = async (item: MenuItem, submenu: HTMLElement) => {
 
   submenu.removeAttribute('style')
   submenu.setAttribute('data-open', '')
+  item.setAttribute('aria-expanded', 'true')
 
   await nextTick()
   await positionSubmenu(item, submenu)
