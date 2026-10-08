@@ -99,7 +99,7 @@ describe('settingsScreen.vue', () => {
     expect(screen.getByTestId('settings-section-profile').getAttribute('aria-selected')).toBe('true')
   })
 
-  it('shows the picked section and labels the panel with it', async () => {
+  it('shows the picked section under its own heading and labels the panel with it', async () => {
     h.actingAsAdmin()
     renderComponent()
 
@@ -107,6 +107,9 @@ describe('settingsScreen.vue', () => {
 
     const panel = screen.getByTestId('media-path-setting-group').closest('[role=tabpanel]')
     expect(panel?.getAttribute('aria-labelledby')).toBe(screen.getByTestId('settings-section-media-path').id)
+    expect(screen.getByTestId('settings-section-heading').textContent).toBe(
+      screen.getByTestId('settings-section-media-path').textContent?.trim(),
+    )
   })
 
   it('puts sections added through the profile tabs filter in the account group', () => {

@@ -14,6 +14,8 @@
         role="tabpanel"
         tabindex="0"
       >
+        <h2 class="text-xl text-k-fg mb-6" data-testid="settings-section-heading">{{ currentSection.label }}</h2>
+
         <KeepAlive>
           <component :is="currentSection.component" :key="currentSection.id" v-bind="currentSection.props" />
         </KeepAlive>
