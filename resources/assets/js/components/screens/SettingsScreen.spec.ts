@@ -112,9 +112,9 @@ describe('settingsScreen.vue', () => {
     )
   })
 
-  it('puts sections added through the profile tabs filter in the account group', () => {
+  it('puts tabs added through the account settings filter in the account group', () => {
     const ExportTab = defineComponent({ template: '<p data-testid="export-tab-content" />' })
-    handle = addFilter<ProfileTab[]>(Filter.PROFILE_TABS, tabs => [
+    handle = addFilter<ProfileTab[]>(Filter.ACCOUNT_SETTINGS_TABS, tabs => [
       ...tabs,
       { id: 'export', label: 'Export', component: ExportTab },
     ])
@@ -126,9 +126,9 @@ describe('settingsScreen.vue', () => {
     screen.getByTestId('export-tab-content')
   })
 
-  it('puts sections added through the settings tabs filter in the server group', () => {
+  it('puts tabs added through the server settings filter in the server group', () => {
     const BillingTab = defineComponent({ template: '<p data-testid="billing-tab-content" />' })
-    handle = addFilter<SettingsTab[]>(Filter.SETTINGS_TABS, tabs => [
+    handle = addFilter<SettingsTab[]>(Filter.SERVER_SETTINGS_TABS, tabs => [
       ...tabs,
       { id: 'billing', label: 'Billing', component: BillingTab },
     ])

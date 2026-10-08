@@ -9,8 +9,8 @@ export const Filter = {
   SLOT: 'slot',
   PROFILE_MENU_ITEMS: 'profile-menu-items',
   PROFILE_INTEGRATIONS: 'profile-integrations',
-  PROFILE_TABS: 'profile-tabs',
-  SETTINGS_TABS: 'settings-tabs',
+  ACCOUNT_SETTINGS_TABS: 'account-settings-tabs',
+  SERVER_SETTINGS_TABS: 'server-settings-tabs',
   POLICIES: 'policies',
 } as const
 

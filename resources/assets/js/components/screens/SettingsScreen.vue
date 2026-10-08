@@ -86,7 +86,7 @@ const accountSections: ProfileTab[] = [
   { id: 'subsonic', label: 'Subsonic', component: SubsonicCredentials },
   { id: 'security', label: 'Security', component: SecuritySection },
   { id: 'qr', label: 'QR Login', component: QRLogin },
-  ...applyFilters<ProfileTab[]>(Filter.PROFILE_TABS, []),
+  ...applyFilters<ProfileTab[]>(Filter.ACCOUNT_SETTINGS_TABS, []),
 ]
 
 const getServerSections = (): SettingsTab[] => {
@@ -96,7 +96,7 @@ const getServerSections = (): SettingsTab[] => {
 
   const usesLocalStorage = commonStore.state.storage_driver === 'local'
 
-  return applyFilters<SettingsTab[]>(Filter.SETTINGS_TABS, [
+  return applyFilters<SettingsTab[]>(Filter.SERVER_SETTINGS_TABS, [
     ...(usesLocalStorage ? [{ id: 'media-path', label: 'Media Path', component: MediaPathSettingGroup }] : []),
     ...(isPlus.value
       ? [
