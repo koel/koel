@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vite-plus/test'
+import { defineComponent } from 'vue'
 import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { genreStore } from '@/stores/genreStore'
 import { playableStore } from '@/stores/playableStore'
+import { usePageTitle } from '@/composables/usePageTitle'
 import Component from './GenreScreen.vue'
 
 describe('genreScreen', () => {
@@ -45,5 +47,14 @@ describe('genreScreen', () => {
   it('renders the song list', async () => {
     await renderComponent()
     screen.getByTestId('song-list')
+  })
+
+  it('names a genre without a name "No Genre" in the page title', async () => {
+    const DocumentTitle = defineComponent({ setup: () => usePageTitle().syncDocumentTitle(), template: '<div />' })
+    h.render(DocumentTitle)
+
+    await renderComponent(h.factory('genre').make({ name: '' }))
+
+    expect(document.title).toBe('No Genre – Koel')
   })
 })

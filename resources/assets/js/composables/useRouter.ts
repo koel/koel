@@ -8,6 +8,7 @@ export const useRouter = () => {
   router = router || requireInjection(RouterKey)
 
   const getRouteParam = <T = string>(name: string) => router.$currentRoute.value?.params?.[name] as T
+  const getCurrentRoute = () => router.$currentRoute.value
   const getCurrentScreen = () => router.$currentRoute.value?.screen
   const isCurrentScreen = (...screens: ScreenName[]) => screens.includes(router.$currentRoute.value?.screen)
 
@@ -18,6 +19,7 @@ export const useRouter = () => {
 
   return {
     getRouteParam,
+    getCurrentRoute,
     getCurrentScreen,
     isCurrentScreen,
     onScreenActivated,

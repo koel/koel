@@ -80,6 +80,7 @@ import { orderBy } from 'lodash-es'
 import { faEllipsis, faPause, faPlay, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, onMounted, provide, reactive, ref } from 'vue'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import { podcastStore } from '@/stores/podcastStore'
@@ -122,6 +123,8 @@ const loading = ref(false)
 const podcast = ref<Podcast>()
 const episodes = ref<Episode[]>([])
 const keywords = ref('')
+
+usePageTitle().useScreenTitle('Podcast', () => podcast.value?.title)
 
 provide(FilterKeywordsKey, keywords)
 

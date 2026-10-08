@@ -21,6 +21,7 @@ import { crossfadeService } from '@/services/crossfadeService'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import { volumeManager } from '@/services/volumeManager'
 import { useBranding } from '@/composables/useBranding'
+import { usePageTitle } from '@/composables/usePageTitle'
 
 /**
  * The number of seconds before the current playable ends to start preloading the next one.
@@ -278,7 +279,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       this.seekTo(0)
     }
 
-    document.title = useBranding().name
+    usePageTitle().setNowPlayingTitle(null)
 
     queueStore.current && (queueStore.current.playback_state = 'Stopped')
 
@@ -356,7 +357,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   private async setNowPlayingMeta(playable: Playable) {
-    document.title = `${playable.title} ♫ ${useBranding().name}`
+    usePageTitle().setNowPlayingTitle(playable.title)
     this.media.setAttribute('title', isSong(playable) ? `${playable.artist_name} - ${playable.title}` : playable.title)
 
     if (isAudioContextSupported) {

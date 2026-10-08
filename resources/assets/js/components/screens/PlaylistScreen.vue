@@ -83,6 +83,7 @@ import { playableStore } from '@/stores/playableStore'
 import { playlistCollaborationService } from '@/services/playlistCollaborationService'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { usePlayableList } from '@/composables/usePlayableList'
@@ -145,6 +146,8 @@ const collaborators = ref<PlaylistCollaborator[]>([])
 const playlistId = ref<Playlist['id']>()
 const playlist = ref<Playlist>()
 const loading = ref(false)
+
+usePageTitle().useScreenTitle('Playlist', () => playlist.value?.name)
 
 const {
   PlayableList,

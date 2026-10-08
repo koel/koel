@@ -16,6 +16,7 @@ export interface Route {
   name?: string
   path: string
   screen: ScreenName
+  title?: string
   constraints?: Record<string, string>
   params?: RouteParams
   meta?: {
