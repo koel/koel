@@ -15,6 +15,7 @@
     @drop="onDrop"
   >
     <HotkeyListener />
+    <HookSlot name="app.top" />
     <MainWrapper />
     <AppFooter />
     <SupportKoel />
@@ -66,6 +67,7 @@ import AppFooter from '@/components/layout/app-footer/index.vue'
 
 // GlobalEventListener must NOT be lazy-loaded, so that it can handle LOG_OUT event properly.
 import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
+import HookSlot from '@/components/utils/HookSlot.vue'
 import AppInitializer from '@/components/utils/AppInitializer.vue'
 import ContextMenu from '@/components/ui/context-menu/ContextMenu.vue'
 
