@@ -1,4 +1,5 @@
 import type { KeyFilter } from '@vueuse/core'
+import { onKeyStroke } from '@vueuse/core'
 import type { RouteName } from '@/config/routes'
 import { eventBus } from '@/utils/eventBus'
 import { defineAsyncComponent } from '@/utils/helpers'
@@ -31,6 +32,25 @@ const isDigit = (event: KeyboardEvent) => /^\d$/.test(event.key)
 const isShiftF = (event: KeyboardEvent) => event.shiftKey && event.key === 'F'
 
 export const isShortcutAvailable = (shortcut: KeyboardShortcut) => shortcut.isAvailable?.() ?? true
+
+const isTypingOrInDialog = (target: HTMLElement) =>
+  target.isContentEditable ||
+  target.matches('input, select, textarea, button, [role="button"], [role="checkbox"]') ||
+  Boolean(target.closest('dialog'))
+
+const listenForShortcut = (shortcut: KeyboardShortcut) =>
+  onKeyStroke(shortcut.key, event => {
+    if (event.altKey || event.ctrlKey || event.metaKey) {
+      return
+    }
+
+    if (isTypingOrInDialog(event.target as HTMLElement) || !isShortcutAvailable(shortcut)) {
+      return
+    }
+
+    event.preventDefault()
+    shortcut.run(event)
+  })
 
 export const useKeyboardShortcuts = () => {
   const { go, isCurrentScreen, url } = useRouter()
@@ -143,5 +163,7 @@ export const useKeyboardShortcuts = () => {
     },
   ]
 
-  return { shortcuts }
+  const listenForShortcuts = () => shortcuts.forEach(listenForShortcut)
+
+  return { shortcuts, listenForShortcuts }
 }
