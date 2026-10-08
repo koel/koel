@@ -1,5 +1,5 @@
 <template>
-  <form class="md:w-2/3" @submit.prevent="confirmThenSave">
+  <form @submit.prevent="confirmThenSave">
     <SettingGroup>
       <FormRow>
         <template #help>
@@ -13,6 +13,7 @@
         <TextInput
           v-model="mediaPath"
           aria-describedby="mediaPathHelp"
+          class="md:w-2/3"
           name="media_path"
           placeholder="/path/to/your/music"
         />
