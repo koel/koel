@@ -4,7 +4,7 @@
       <ScreenHeader>Settings</ScreenHeader>
     </template>
 
-    <div class="-m-6 flex flex-col md:flex-row flex-1 min-h-full border-t border-k-fg-5">
+    <div class="-m-6 flex flex-col md:flex-row flex-1 min-h-full">
       <SettingsSectionNav v-model="currentSectionId" :panel-id="panelId" :sections class="md:sticky md:top-0" />
 
       <section

@@ -13,7 +13,7 @@
       </SelectBox>
     </div>
 
-    <div aria-orientation="vertical" class="hidden md:flex flex-col w-52 h-full pt-3" role="tablist">
+    <div aria-orientation="vertical" class="hidden md:flex flex-col w-52 h-full" role="tablist">
       <template v-for="group in groups" :key="group.name">
         <h3 v-if="showsGroupNames" class="rail-cell group-name">{{ group.name }}</h3>
         <button
@@ -72,11 +72,11 @@ const tabIdOf = (sectionId: string) => `settingsSection-${sectionId}`
 }
 
 .group-name {
-  @apply px-6 pt-4 pb-1.5 text-[0.7rem] uppercase tracking-widest text-k-fg-50 first:pt-1.5;
+  @apply px-6 pt-4 pb-1.5 text-[0.7rem] uppercase tracking-widest text-k-fg-50 first:pt-5;
 }
 
 .section {
-  @apply px-6 py-2.5 text-left text-k-fg-70 cursor-pointer;
+  @apply px-6 py-2.5 text-left text-k-fg-70 cursor-pointer border-y border-y-transparent;
 
   &:hover {
     @apply text-k-fg bg-k-fg-5;
@@ -87,7 +87,7 @@ const tabIdOf = (sectionId: string) => `settingsSection-${sectionId}`
   }
 
   &[aria-selected='true'] {
-    @apply bg-transparent border-r-transparent text-k-fg;
+    @apply bg-transparent border-r-transparent border-y-k-fg-10 text-k-fg first:border-t-transparent;
   }
 }
 </style>
