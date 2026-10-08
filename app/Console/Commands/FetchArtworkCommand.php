@@ -60,7 +60,7 @@ class FetchArtworkCommand extends Command
             ->orderBy('name')
             ->lazy()
             ->each(function (Album $album) use ($delay): void {
-                Cache::forget(cache_key('album information', $album->name));
+                Cache::forget(cache_key('album information', $album->name, $album->artist->name));
 
                 $this->encyclopedia->getAlbumInformation($album);
 
