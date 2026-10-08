@@ -104,7 +104,7 @@ const genre = ref<Genre | null>(null)
 const loading = ref(false)
 const cursor = ref<string | null>('')
 
-usePageTitle().useScreenTitle('Genre', () => genre.value?.name)
+usePageTitle().useScreenTitle('Genre', () => (genre.value ? genre.value.name || 'No Genre' : null))
 
 const moreSongsAvailable = computed(() => cursor.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
