@@ -56,6 +56,15 @@ interface TwoFactorChallengeRequired {
   login_token: string
 }
 
+interface Passkey {
+  type: 'passkeys'
+  id: number
+  name: string
+  authenticator: string | null
+  last_used_at: string | null
+  created_at: string
+}
+
 type LoginResponse = CompositeToken | TwoFactorChallengeRequired
 
 type SSOProvider = 'Google' | 'OpenID Connect' | 'Reverse Proxy'
