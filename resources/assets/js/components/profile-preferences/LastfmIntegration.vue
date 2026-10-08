@@ -27,7 +27,7 @@
         >.
       </p>
       <div class="buttons mt-4 space-x-2">
-        <Btn @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
+        <Btn variant="ghost" bordered @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
         <Btn variant="ghost" bordered v-if="connected" class="disconnect" @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>

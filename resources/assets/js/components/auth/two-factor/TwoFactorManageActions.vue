@@ -25,7 +25,7 @@
     </form>
 
     <div v-else class="flex gap-2">
-      <Btn type="button" @click.prevent="action = 'regenerate'">Regenerate Recovery Codes</Btn>
+      <Btn type="button" variant="ghost" bordered @click.prevent="action = 'regenerate'">Regenerate Recovery Codes</Btn>
       <Btn type="button" variant="destructive" @click.prevent="action = 'disable'">Disable</Btn>
     </div>
   </div>
