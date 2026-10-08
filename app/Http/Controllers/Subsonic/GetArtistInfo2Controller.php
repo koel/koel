@@ -13,6 +13,8 @@ use stdClass;
 
 class GetArtistInfo2Controller extends Controller
 {
+    protected const string RESPONSE_KEY = 'artistInfo2';
+
     public function __construct(
         private readonly ArtistRepository $artistRepository,
         private readonly EncyclopediaService $encyclopedia,
@@ -24,7 +26,9 @@ class GetArtistInfo2Controller extends Controller
         $info = $this->encyclopedia->getArtistInformation($artist);
 
         return SubsonicResponse::ok([
-            'artistInfo2' => Arr::whereNotNull($info ? ArtistInfoResource::toArray($info) : []) ?: new stdClass(),
+            static::RESPONSE_KEY => Arr::whereNotNull(
+                $info ? ArtistInfoResource::toArray($info) : [],
+            ) ?: new stdClass(),
         ]);
     }
 }

@@ -13,6 +13,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetStarred2Controller extends Controller
 {
+    protected const string RESPONSE_KEY = 'starred2';
+
     public function __construct(
         private readonly ArtistRepository $artistRepository,
         private readonly AlbumRepository $albumRepository,
@@ -27,7 +29,7 @@ class GetStarred2Controller extends Controller
         $songs = $this->songRepository->getFavorites(scopedUser: $user);
 
         return SubsonicResponse::ok([
-            'starred2' => StarredResource::toArray($artists, $albums, $songs, $user),
+            static::RESPONSE_KEY => StarredResource::toArray($artists, $albums, $songs, $user),
         ]);
     }
 }
