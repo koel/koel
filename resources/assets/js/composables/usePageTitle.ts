@@ -1,4 +1,5 @@
-import { computed, onScopeDispose, reactive, readonly, ref, watchEffect } from 'vue'
+import { useTitle } from '@vueuse/core'
+import { computed, onScopeDispose, reactive, readonly, ref } from 'vue'
 import { useBranding } from '@/composables/useBranding'
 import { useRouter } from '@/composables/useRouter'
 
@@ -33,9 +34,7 @@ export const usePageTitle = () => {
       return screenTitle ? `${screenTitle} – ${brandName}` : brandName
     })
 
-    watchEffect(() => {
-      document.title = pageTitle.value
-    })
+    useTitle(pageTitle)
   }
 
   return {
