@@ -29,37 +29,36 @@ const props = withDefaults(defineProps<{ type?: 'default' | 'info' | 'danger' | 
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
-.alert-box {
-  &-info {
-    @apply border-k-primary;
 
-    > svg {
-      @apply text-k-primary;
-    }
+.alert-box-info {
+  @apply border-k-primary;
+
+  > svg {
+    @apply text-k-primary;
   }
+}
 
-  &-success {
-    @apply border-k-success;
+.alert-box-success {
+  @apply border-k-success;
 
-    > svg {
-      @apply text-k-success;
-    }
+  > svg {
+    @apply text-k-success;
   }
+}
 
-  &-warning {
-    @apply border-k-warning;
+.alert-box-warning {
+  @apply border-k-warning;
 
-    > svg {
-      @apply text-k-warning;
-    }
+  > svg {
+    @apply text-k-warning;
   }
+}
 
-  &-danger {
-    @apply border-k-danger;
+.alert-box-danger {
+  @apply border-k-danger;
 
-    > svg {
-      @apply text-k-danger;
-    }
+  > svg {
+    @apply text-k-danger;
   }
 }
 </style>
