@@ -12,6 +12,7 @@ export const Filter = {
   ACCOUNT_SETTINGS_TABS: 'account-settings-tabs',
   SERVER_SETTINGS_TABS: 'server-settings-tabs',
   POLICIES: 'policies',
+  SELECTED_UPLOADS: 'selected-uploads',
 } as const
 
 export type ActionName = (typeof Action)[keyof typeof Action]

@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { commonStore } from '@/stores/commonStore'
 import { uploadService } from '@/services/uploadService'
+import { addFilter, removeFilter } from '@/hooks'
+import { Filter } from '@/config/hooks'
 import type { UploadFile, UploadStatus } from '@/services/uploadService'
 
 const device = vi.hoisted(() => ({ any: false }))
@@ -84,6 +86,22 @@ describe('useUpload', () => {
 
     expect(result).toEqual([])
     expect(uploadService.state.files.map(({ name, status }) => [name, status])).toContainEqual(['notes.txt', 'Skipped'])
+  })
+
+  it('never sends the selected uploads a filter skips', () => {
+    const handle = addFilter<UploadFile[]>(Filter.SELECTED_UPLOADS, uploads =>
+      uploads.map(upload => ({ ...upload, status: 'Skipped', message: 'Not today' })),
+    )
+
+    const result = useUpload().queueFilesForUpload([new File(['content'], 'blocked.mp3', { type: 'audio/mpeg' })])
+
+    expect(result).toEqual([])
+    expect(uploadService.state.files.map(({ name, status }) => [name, status])).toContainEqual([
+      'blocked.mp3',
+      'Skipped',
+    ])
+
+    removeFilter(handle)
   })
 
   it('counts only the uploads that are queued or still uploading', () => {

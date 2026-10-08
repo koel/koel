@@ -1,4 +1,6 @@
 import { computed } from 'vue'
+import { Filter } from '@/config/hooks'
+import { applyFilters } from '@/hooks'
 import { commonStore } from '@/stores/commonStore'
 import { acceptsFile } from '@/utils/mediaHelper'
 import type { UploadFile, UploadStatus } from '@/services/uploadService'
@@ -28,15 +30,18 @@ export const useUpload = () => {
   const fileEntryToFile = async (entry: FileSystemFileEntry) => new Promise<File>(resolve => entry.file(resolve))
 
   const queueFilesForUpload = (files: Array<File>) => {
-    const entries = files.map(
-      (file): UploadFile => ({
-        file,
-        id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
-        status: acceptsFile(file) ? 'Ready' : 'Skipped',
-        message: acceptsFile(file) ? undefined : 'Unsupported format',
-        name: file.name,
-        progress: 0,
-      }),
+    const entries = applyFilters<UploadFile[]>(
+      Filter.SELECTED_UPLOADS,
+      files.map(
+        (file): UploadFile => ({
+          file,
+          id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
+          status: acceptsFile(file) ? 'Ready' : 'Skipped',
+          message: acceptsFile(file) ? undefined : 'Unsupported format',
+          name: file.name,
+          progress: 0,
+        }),
+      ),
     )
 
     const acceptedEntries = entries.filter(({ status }) => status === 'Ready')
