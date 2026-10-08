@@ -1,5 +1,5 @@
 <template>
-  <SidebarSection>
+  <SidebarSection v-if="visibleItems.length">
     <template #header>
       <SidebarSectionHeader>Manage</SidebarSectionHeader>
     </template>
