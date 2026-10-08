@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/vue'
 import { afterEach, describe, expect, it } from 'vite-plus/test'
 import { defineComponent } from 'vue'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { createHarness } from '@/__tests__/TestHarness'
 import { Filter } from '@/config/hooks'
 import { addFilter, type HookHandle, removeFilter } from '@/hooks'
@@ -144,5 +145,16 @@ describe('settingsScreen.vue', () => {
     renderComponent()
 
     expect(sectionIds()).toEqual([...accountSectionIds, 'media-path', 'services', 'billing'])
+  })
+
+  it('puts the section name in the page title', async () => {
+    const DocumentTitle = defineComponent({ setup: () => usePageTitle().syncDocumentTitle(), template: '<div />' })
+    h.actingAsUser()
+    h.visit('/settings/themes')
+    h.render(DocumentTitle)
+    renderComponent()
+    await h.tick()
+
+    expect(document.title).toBe(`${screen.getByTestId('settings-section-heading').textContent?.trim()} – Koel`)
   })
 })

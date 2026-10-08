@@ -36,6 +36,7 @@ import { searchStore } from '@/stores/searchStore'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { pluralize } from '@/utils/formatters'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -62,6 +63,8 @@ const {
 
 const { PlayableListControls, config } = usePlayableListControls('Search.Playables')
 const decodedQ = computed(() => decodeURIComponent(q.value))
+
+usePageTitle().useScreenTitle('Search.Playables', () => decodedQ.value)
 const loading = ref(false)
 
 searchStore.resetPlayableResultState()

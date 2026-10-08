@@ -41,6 +41,7 @@ import { useBranding } from '@/composables/useBranding'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { usePolicies } from '@/composables/usePolicies'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { defineAsyncComponent } from '@/utils/helpers'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -126,6 +127,8 @@ const isAvailableSection = (id: string | undefined): id is string => sections.so
 const currentSectionId = ref(sections[0].id)
 
 const currentSection = computed(() => sections.find(section => section.id === currentSectionId.value) ?? sections[0])
+
+usePageTitle().useScreenTitle('Settings', () => currentSection.value.label)
 
 const openSection = (id: string) => go(url('settings', { section: id }))
 

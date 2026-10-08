@@ -42,6 +42,7 @@ import { intersectionBy } from 'lodash-es'
 import { ref, toRef } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { searchStore } from '@/stores/searchStore'
+import { usePageTitle } from '@/composables/usePageTitle'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -55,6 +56,8 @@ import RadioStationExcerptResultsBlock from '@/components/screens/search/RadioSt
 const excerpt = toRef(searchStore.state, 'excerpt')
 const q = ref('')
 const searching = ref(false)
+
+usePageTitle().useScreenTitle('Search.Excerpt', () => q.value)
 
 const doSearch = async () => {
   searching.value = true
