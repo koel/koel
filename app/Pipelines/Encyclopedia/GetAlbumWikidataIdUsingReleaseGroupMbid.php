@@ -27,7 +27,7 @@ class GetAlbumWikidataIdUsingReleaseGroupMbid
             nothingFoundTtl: now()->addWeek(),
             callback: function () use ($mbid): ?string {
                 $wikidata = collect(Arr::where(
-                    $this->connector->send(new GetReleaseGroupUrlRelationshipsRequest($mbid))->json('relations'),
+                    $this->connector->send(new GetReleaseGroupUrlRelationshipsRequest($mbid))->json('relations', []),
                     static fn ($relation) => $relation['type'] === 'wikidata',
                 ))->first();
 

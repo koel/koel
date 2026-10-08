@@ -69,4 +69,20 @@ class GetArtistWikidataIdUsingMbidTest extends TestCase
 
         Saloon::assertNothingSent();
     }
+
+    #[Test]
+    public function rememberAnArtistMusicBrainzDoesNotKnow(): void
+    {
+        Saloon::fake([
+            GetArtistUrlRelationshipsRequest::class => MockResponse::make(body: ['error' => 'Not Found'], status: 404),
+        ]);
+
+        $pipeline = new GetArtistWikidataIdUsingMbid(app(MusicBrainzConnector::class));
+
+        $pipeline('sample-mbid', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+        $pipeline('sample-mbid', self::createNextClosureMock(null)->next(...)); // @phpstan-ignore-line
+
+        Saloon::assertSentCount(1);
+        self::assertTrue(Cache::store('encyclopedia')->has(cache_key('artist wikidata id from mbid', 'sample-mbid')));
+    }
 }
