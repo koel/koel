@@ -5,13 +5,17 @@
     @scroll.passive="onScroll"
   >
     <!-- Measuring phase: render one item to measure height, gap, and padding -->
-    <div v-if="measuring && items.length" ref="measureContainer" v-bind="$attrs" class="grid">
+    <div v-if="measuring && items.length" ref="measureContainer" v-bind="$attrs" class="grid-columns grid">
       <slot :item="items[0]" />
     </div>
 
     <template v-else>
-      <div class="height-container will-change-transform overflow-hidden">
-        <div v-bind="$attrs" class="grid-container will-change-transform grid">
+      <div
+        :style="{ height: cssHeight }"
+        class="will-change-transform overflow-hidden"
+        data-testid="virtual-grid-height"
+      >
+        <div ref="gridContainer" v-bind="$attrs" class="grid-container grid-columns will-change-transform grid">
           <slot v-for="item in renderedItems" :item />
         </div>
       </div>
@@ -34,6 +38,7 @@ const { items, minItemWidth } = toRefs(props)
 
 const scroller = ref<HTMLElement>()
 const measureContainer = ref<HTMLElement>()
+const gridContainer = ref<HTMLElement>()
 const scrollerWidth = ref(0)
 const scrollerHeight = ref(0)
 const scrollTop = ref(0)
@@ -132,6 +137,32 @@ const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
   }
 })
 
+const itemResizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+  for (const entry of entries) {
+    const itemHeight = (entry.target as HTMLElement).offsetHeight
+
+    if (itemHeight) {
+      measuredItemHeight.value = itemHeight
+    }
+  }
+})
+
+let observedItem: Element | null = null
+
+const followFirstRenderedItemHeight = () => {
+  const firstItem = gridContainer.value?.firstElementChild ?? null
+
+  if (firstItem === observedItem) {
+    return
+  }
+
+  observedItem && itemResizeObserver.unobserve(observedItem)
+  firstItem && itemResizeObserver.observe(firstItem)
+  observedItem = firstItem
+}
+
+watch(renderedItems, followFirstRenderedItemHeight, { flush: 'post' })
+
 onMounted(async () => {
   if (scroller.value) {
     resizeObserver.observe(scroller.value)
@@ -148,6 +179,8 @@ onBeforeUnmount(() => {
   if (scroller.value) {
     resizeObserver.unobserve(scroller.value)
   }
+
+  itemResizeObserver.disconnect()
 })
 
 const scrollToTop = () => scroller.value?.scrollTo({ top: 0, behavior: 'smooth' })
@@ -197,12 +230,11 @@ defineExpose({ scrollToTop })
   }
 }
 
-.height-container {
-  height: v-bind(cssHeight);
+.grid-columns {
+  grid-template-columns: v-bind(cssColumns);
 }
 
 .grid-container {
   transform: v-bind(cssTransform);
-  grid-template-columns: v-bind(cssColumns);
 }
 </style>
