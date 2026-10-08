@@ -1,15 +1,19 @@
 <template>
   <article
     :class="message.type"
-    class="rounded-l-md cursor-pointer flex items-stretch opacity-90 transition-transform duration-300 origin-right hover:opacity-100 hover:scale-110"
-    title="Click to dismiss"
-    @click="dismiss"
+    class="rounded-l-md flex items-stretch opacity-90 transition-transform duration-300 origin-right hover:opacity-100 hover:scale-110"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
-    <aside class="flex items-center px-3 py-0 bg-black/10">
+    <button
+      aria-label="Dismiss"
+      class="flex items-center px-3 py-0 bg-black/10 cursor-pointer"
+      title="Dismiss"
+      type="button"
+      @click="dismiss"
+    >
       <Icon :icon="hovering ? faTimesCircle : typeIcon" />
-    </aside>
+    </button>
     <main class="flex-1 py-2 pl-3 pr-4">{{ message.content }}</main>
   </article>
 </template>

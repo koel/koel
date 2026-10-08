@@ -19,11 +19,18 @@ describe('messageToast.vue', () => {
     })
   }
 
-  it('dismisses upon click', async () => {
+  it('dismisses with the dismiss button', async () => {
     const { emitted } = renderComponent()
-    await h.user.click(screen.getByTitle('Click to dismiss'))
+    await h.user.click(screen.getByRole('button', { name: 'Dismiss' }))
 
     expect(emitted().dismiss).toBeTruthy()
+  })
+
+  it('stays open when its text is clicked, so the text can be copied', async () => {
+    const { emitted } = renderComponent()
+    await h.user.click(screen.getByRole('main'))
+
+    expect(emitted().dismiss).toBeUndefined()
   })
 
   it('dismisses upon timeout', async () => {
