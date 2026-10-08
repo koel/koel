@@ -3,8 +3,8 @@
     <section v-if="!supported" class="text-k-fg-70">Offline playback is not supported in this browser.</section>
 
     <template v-else>
-      <section class="space-y-3">
-        <h4 class="font-semibold text-k-fg uppercase tracking-wider text-sm">Storage Usage</h4>
+      <SettingGroup>
+        <template #title>Storage Usage</template>
         <div class="space-y-2">
           <div class="flex items-center gap-4">
             <UsageMeter :limit="storageQuota" :used="storageUsage" aria-label="Offline storage used" class="flex-1" />
@@ -14,7 +14,7 @@
             {{ cachedSongCount }} {{ cachedSongCount === 1 ? 'song' : 'songs' }} available offline
           </p>
         </div>
-      </section>
+      </SettingGroup>
 
       <section v-if="cachedSongCount" class="space-y-3">
         <Btn variant="destructive" @click.prevent="clearAll">Clear All</Btn>
@@ -32,6 +32,7 @@ import { formatBytes } from '@/utils/formatters'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import UsageMeter from '@/components/ui/UsageMeter.vue'
+import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
 
 const { swReady, storageUsage, storageQuota, cachedSongCount, clearAllOfflineCache } = useOfflinePlayback()
 

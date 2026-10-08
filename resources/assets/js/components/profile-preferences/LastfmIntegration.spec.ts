@@ -8,25 +8,29 @@ import Component from './LastfmIntegration.vue'
 describe('lastfmIntegration.vue', () => {
   const h = createHarness()
 
-  it.each<[boolean, boolean]>([
-    [false, false],
-    [false, true],
-    [true, false],
-    [true, true],
-  ])(
-    'renders proper content with Last.fm integration status %s, current user admin status %s',
-    (useLastfm, isAdmin) => {
-      commonStore.state.uses_last_fm = useLastfm
+  it('offers to connect when Last.fm is enabled', () => {
+    commonStore.state.uses_last_fm = true
+    h.actingAsUser()
+    h.render(Component)
 
-      if (isAdmin) {
-        h.actingAsAdmin()
-      } else {
-        h.actingAsUser()
-      }
+    screen.getByTestId('lastfm-integrated')
+  })
 
-      expect(h.render(Component).html()).toMatchSnapshot()
-    },
-  )
+  it('points an admin to the setup docs when Last.fm is not enabled', () => {
+    commonStore.state.uses_last_fm = false
+    h.actingAsAdmin()
+    h.render(Component)
+
+    screen.getByTestId('lastfm-admin-instruction')
+  })
+
+  it('tells a regular user to ask an admin when Last.fm is not enabled', () => {
+    commonStore.state.uses_last_fm = false
+    h.actingAsUser()
+    h.render(Component)
+
+    screen.getByTestId('lastfm-user-instruction')
+  })
 
   it('opens the Last.fm authorization URL fetched from the API', async () => {
     commonStore.state.uses_last_fm = true

@@ -2,44 +2,49 @@
   <div class="space-y-4">
     <FormRow v-if="isPlus">
       <label class="pref-row">
-        <span>Make uploaded songs public by default</span>
         <CheckBox v-model="preferences.make_uploads_public" name="make_uploads_public" />
+        <span>Make uploaded songs public by default</span>
       </label>
     </FormRow>
     <FormRow v-if="canUpload">
       <label class="pref-row">
-        <span>Detect and flag duplicate file uploads</span>
         <CheckBox v-model="preferences.detect_duplicate_uploads" name="detect_duplicate_uploads" />
+        <span>Detect and flag duplicate file uploads</span>
       </label>
     </FormRow>
     <FormRow v-if="isPlus">
       <label class="pref-row">
+        <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
         <span
           >Show other users' public songs, albums, artists, and radio stations in your library (reload required)</span
         >
-        <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
       </label>
     </FormRow>
     <FormRow>
       <label class="pref-row">
-        <span>{{ continuousPlaybackLabel }}</span>
         <CheckBox v-model="preferences.continuous_playback" name="continuous_playback" />
+        <span>{{ continuousPlaybackLabel }}</span>
       </label>
     </FormRow>
     <FormRow v-if="onMobile">
       <label class="pref-row">
-        <span>Show "Now Playing" notification</span>
         <CheckBox v-model="preferences.show_now_playing_notification" name="notify" />
+        <span>Show "Now Playing" notification</span>
       </label>
     </FormRow>
     <FormRow v-if="!onMobile">
       <label class="pref-row">
-        <span>Confirm before closing Koel</span>
         <CheckBox v-model="preferences.confirm_before_closing" name="confirm_closing" />
+        <span>Confirm before closing Koel</span>
       </label>
     </FormRow>
     <FormRow v-if="showTranscodingOption">
       <div class="pref-row">
+        <CheckBox
+          v-model="preferences.transcode_on_mobile"
+          data-testid="transcode_on_mobile"
+          name="transcode_on_mobile"
+        />
         <span>
           Convert and play media at
           <select
@@ -53,33 +58,34 @@
           </select>
           kbps on mobile
         </span>
-        <CheckBox
-          v-model="preferences.transcode_on_mobile"
-          data-testid="transcode_on_mobile"
-          name="transcode_on_mobile"
-        />
       </div>
     </FormRow>
     <FormRow>
       <label class="pref-row">
-        <span>Show a translucent, blurred overlay of the current album's art</span>
         <CheckBox v-model="preferences.show_album_art_overlay" name="show_album_art_overlay" />
+        <span>Show a translucent, blurred overlay of the current album's art</span>
       </label>
     </FormRow>
     <FormRow v-if="isPlus">
       <label class="pref-row">
-        <span>Play songs at about the same volume</span>
         <CheckBox v-model="preferences.normalize_volume" name="normalize_volume" />
+        <span>Play songs at about the same volume</span>
       </label>
     </FormRow>
     <FormRow v-if="isPlus">
       <label class="pref-row">
-        <span>Show waveform during playback</span>
         <CheckBox v-model="preferences.show_waveform" name="show_waveform" />
+        <span>Show waveform during playback</span>
       </label>
     </FormRow>
     <FormRow>
       <div class="pref-row">
+        <CheckBox
+          :model-value="crossfadeEnabled"
+          name="crossfade"
+          data-testid="crossfade-toggle"
+          @update:model-value="toggleCrossfade"
+        />
         <span class="flex-1">
           <span class="flex items-center gap-3">
             <label id="crossfade-label" for="crossfade-slider" class="shrink-0">Crossfade songs</label>
@@ -98,12 +104,6 @@
             </span>
           </span>
         </span>
-        <CheckBox
-          :model-value="crossfadeEnabled"
-          name="crossfade"
-          data-testid="crossfade-toggle"
-          @update:model-value="toggleCrossfade"
-        />
       </div>
     </FormRow>
   </div>
@@ -148,10 +148,10 @@ const continuousPlaybackLabel = computed(() => {
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 .pref-row {
-  @apply flex items-center gap-4 cursor-pointer;
+  @apply flex items-center gap-2 cursor-pointer;
 
-  > :first-child {
-    @apply flex-1;
+  > input {
+    @apply shrink-0;
   }
 }
 

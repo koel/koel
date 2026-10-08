@@ -1,7 +1,5 @@
 <template>
   <section>
-    <h3 class="text-2xl mb-2">Subsonic API Key</h3>
-
     <p>
       Use this key to connect Subsonic-compatible clients (Symfonium, Feishin, substreamer, etc.) to your
       {{ appName }} library. <br />

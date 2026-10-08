@@ -2,9 +2,9 @@ import { screen } from '@testing-library/vue'
 import { afterEach, describe, expect, it } from 'vite-plus/test'
 import { defineComponent } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { useLocalStorage } from '@/composables/useLocalStorage'
 import { Filter } from '@/config/hooks'
 import { addFilter, type HookHandle, removeFilter } from '@/hooks'
+import Router from '@/router'
 import { commonStore } from '@/stores/commonStore'
 import Component, { type ProfileTab, type SettingsTab } from './SettingsScreen.vue'
 
@@ -12,7 +12,6 @@ describe('settingsScreen.vue', () => {
   const h = createHarness({
     beforeEach: () => {
       commonStore.state.storage_driver = 'local'
-      localStorage.clear()
     },
   })
 
@@ -83,27 +82,36 @@ describe('settingsScreen.vue', () => {
     expect(sectionIds()).not.toContain('media-path')
   })
 
-  it('opens the remembered section', () => {
+  it('opens the section in the URL', () => {
     h.actingAsAdmin()
-    useLocalStorage().set('settingsSection', 'services')
+    h.visit('/settings/services')
     renderComponent()
 
     screen.getByTestId('services-setting-group')
   })
 
-  it('opens Profile when the remembered section is not available', () => {
+  it('opens Profile when the section in the URL is not available', () => {
     h.actingAsUser()
-    useLocalStorage().set('settingsSection', 'services')
+    h.visit('/settings/services')
     renderComponent()
 
     expect(screen.getByTestId('settings-section-profile').getAttribute('aria-selected')).toBe('true')
   })
 
-  it('shows the picked section under its own heading and labels the panel with it', async () => {
+  it('goes to the URL of the picked section', async () => {
+    const goMock = h.mock(Router, 'go')
     h.actingAsAdmin()
     renderComponent()
 
     await h.user.click(screen.getByTestId('settings-section-media-path'))
+
+    expect(goMock).toHaveBeenCalledWith(Router.url('settings', { section: 'media-path' }))
+  })
+
+  it('shows the section under its own heading and labels the panel with it', () => {
+    h.actingAsAdmin()
+    h.visit('/settings/media-path')
+    renderComponent()
 
     const panel = screen.getByTestId('media-path-setting-group').closest('[role=tabpanel]')
     expect(panel?.getAttribute('aria-labelledby')).toBe(screen.getByTestId('settings-section-media-path').id)
@@ -119,7 +127,7 @@ describe('settingsScreen.vue', () => {
       { id: 'export', label: 'Export', component: ExportTab },
     ])
     h.actingAsUser()
-    useLocalStorage().set('settingsSection', 'export')
+    h.visit('/settings/export')
     renderComponent()
 
     expect(sectionIds()).toEqual([...accountSectionIds, 'export'])
