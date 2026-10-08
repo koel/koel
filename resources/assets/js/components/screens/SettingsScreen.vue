@@ -14,7 +14,12 @@
         role="tabpanel"
         tabindex="0"
       >
-        <h2 class="text-xl text-k-fg mb-6" data-testid="settings-section-heading">{{ currentSection.label }}</h2>
+        <h2
+          class="-mx-6 px-6 pb-4 mb-6 border-b border-k-fg-10 text-xl text-k-fg"
+          data-testid="settings-section-heading"
+        >
+          {{ currentSection.label }}
+        </h2>
 
         <KeepAlive>
           <component :is="currentSection.component" :key="currentSection.id" v-bind="currentSection.props" />
