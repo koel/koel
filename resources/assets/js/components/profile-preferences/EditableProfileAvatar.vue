@@ -1,5 +1,5 @@
 <template>
-  <div class="avatar-width ring-4 ring-white mt-8 rounded-full relative overflow-hidden aspect-square">
+  <div class="avatar-width ring-4 ring-white rounded-full relative overflow-hidden aspect-square">
     <UserAvatar v-if="previewedUser.avatar" :user="previewedUser" class="avatar-width" />
 
     <div

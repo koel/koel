@@ -1,14 +1,16 @@
 <template>
-  <section>
-    <h4 v-if="isPlus" class="text-xl mb-5 text-k-fg">Built-in Themes</h4>
-    <ThemeList :themes="builtInThemes" data-testid="built-in-themes" />
+  <div class="space-y-8">
+    <SettingGroup>
+      <template v-if="isPlus" #title>Built-in Themes</template>
+      <ThemeList :themes="builtInThemes" data-testid="built-in-themes" />
+    </SettingGroup>
 
-    <template v-if="isPlus">
-      <h4 class="text-xl mt-8 mb-5 text-k-fg">Custom Themes</h4>
+    <SettingGroup v-if="isPlus">
+      <template #title>Custom Themes</template>
       <ThemeList v-if="customThemes.length" :themes="customThemes" class="mb-4" data-testid="custom-themes" />
       <Btn variant="ghost" bordered @click="requestCreateThemeForm">New Theme</Btn>
-    </template>
-  </section>
+    </SettingGroup>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -20,6 +22,7 @@ import { useModal } from '@/composables/useModal'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import ThemeList from '@/components/profile-preferences/theme/ThemeList.vue'
+import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
 
 const CreateThemeForm = defineAsyncComponent(() => import('@/components/profile-preferences/theme/CreateThemeForm.vue'))
 const { openModal } = useModal()

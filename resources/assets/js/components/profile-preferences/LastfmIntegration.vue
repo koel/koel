@@ -1,11 +1,13 @@
 <template>
-  <section>
-    <h3 class="text-2xl mb-2">
-      <span class="mr-2 text-(--lastfm-color)">
-        <Icon :icon="faLastfm" />
+  <SettingGroup>
+    <template #title>
+      <span class="inline-flex items-center gap-2">
+        <span class="text-(--lastfm-color)">
+          <Icon :icon="faLastfm" />
+        </span>
+        Last.fm
       </span>
-      Last.fm
-    </h3>
+    </template>
 
     <div v-if="useLastfm" data-testid="lastfm-integrated">
       <p>
@@ -46,7 +48,7 @@
         <span v-else data-testid="lastfm-user-instruction"> Try politely asking an administrator to enable it. </span>
       </p>
     </div>
-  </section>
+  </SettingGroup>
 </template>
 
 <script lang="ts" setup>
@@ -58,6 +60,8 @@ import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { forceReloadWindow } from '@/utils/helpers'
 import { usePolicies } from '@/composables/usePolicies'
 import { useBranding } from '@/composables/useBranding'
+
+import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 

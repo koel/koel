@@ -1,9 +1,11 @@
 <template>
-  <section>
-    <h3 class="text-2xl mb-2 flex items-center gap-2">
-      <img :src="listenBrainzLogo" alt="" height="20" width="20" />
-      ListenBrainz
-    </h3>
+  <SettingGroup>
+    <template #title>
+      <span class="inline-flex items-center gap-2">
+        <img :src="listenBrainzLogo" alt="" height="20" width="20" />
+        ListenBrainz
+      </span>
+    </template>
 
     <div v-if="connected" data-testid="listenbrainz-connected">
       <p>Your ListenBrainz account is connected. {{ appName }} will submit your listens as you play.</p>
@@ -38,7 +40,7 @@
         <Btn type="submit">Connect</Btn>
       </div>
     </form>
-  </section>
+  </SettingGroup>
 </template>
 
 <script lang="ts" setup>
@@ -53,6 +55,7 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import PasswordField from '@/components/ui/form/PasswordField.vue'
+import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
 
 const { currentUser } = useAuthorization()
 const { name: appName } = useBranding()
