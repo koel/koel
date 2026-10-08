@@ -265,7 +265,7 @@ class DoctorCommand extends Command
     private function checkApiHealth(): void
     {
         try {
-            Http::get(config('app.url') . '/api/ping');
+            Http::get(app_url('api/ping'));
             $this->reportSuccess('API is healthy');
         } catch (Throwable $e) {
             $this->collectError($e);

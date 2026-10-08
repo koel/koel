@@ -70,4 +70,23 @@ class ITunesServiceTest extends TestCase
             return true;
         });
     }
+
+    #[Test]
+    public function getTrackUrlKeepsTheTracksOwnQuery(): void
+    {
+        config(['koel.services.itunes.enabled' => true]);
+        config(['koel.services.itunes.affiliate_id' => 'foo']);
+
+        Saloon::fake([
+            GetTrackRequest::class => MockResponse::make(body: [
+                'resultCount' => 1,
+                'results' => [['trackViewUrl' => 'https://itunes.apple.com/bar?uo=4']],
+            ]),
+        ]);
+
+        self::assertSame('https://itunes.apple.com/bar?uo=4&at=foo', $this->service->getTrackUrl(
+            'Bohemian Rhapsody',
+            Album::factory()->createOne(),
+        ));
+    }
 }
