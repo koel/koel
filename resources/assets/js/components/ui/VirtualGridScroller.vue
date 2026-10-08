@@ -188,7 +188,7 @@ const scrollToTop = () => scroller.value?.scrollTo({ top: 0, behavior: 'smooth' 
 watch(minItemWidth, () => measure())
 
 watch(
-  [() => items.value.length, scrollerHeight, measuring],
+  [() => items.value.length, scrollerHeight, measuring, totalHeight],
   () => {
     if (
       !measuring.value &&
