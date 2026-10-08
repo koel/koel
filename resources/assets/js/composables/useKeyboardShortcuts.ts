@@ -29,7 +29,10 @@ const Equalizer = defineAsyncComponent(() => import('@/components/ui/equalizer/E
 const KeyboardShortcutsModal = defineAsyncComponent(() => import('@/components/meta/KeyboardShortcutsModal.vue'))
 
 const isDigit = (event: KeyboardEvent) => /^\d$/.test(event.key)
-const isShiftF = (event: KeyboardEvent) => event.shiftKey && event.key === 'F'
+const letterKey =
+  (letter: string, { shift = false } = {}) =>
+  (event: KeyboardEvent) =>
+    event.key.toLowerCase() === letter && event.shiftKey === shift
 
 export const isShortcutAvailable = (shortcut: KeyboardShortcut) => shortcut.isAvailable?.() ?? true
 
@@ -79,8 +82,20 @@ export const useKeyboardShortcuts = () => {
 
   const shortcuts: KeyboardShortcut[] = [
     { group: 'Playback', label: 'Play or pause', keys: ['Space'], key: ' ', run: () => playback('current')?.toggle() },
-    { group: 'Playback', label: 'Next song', keys: ['J'], key: 'j', run: () => playback('current')?.playNext() },
-    { group: 'Playback', label: 'Previous song', keys: ['K'], key: 'k', run: () => playback('current')?.playPrev() },
+    {
+      group: 'Playback',
+      label: 'Next song',
+      keys: ['J'],
+      key: letterKey('j'),
+      run: () => playback('current')?.playNext(),
+    },
+    {
+      group: 'Playback',
+      label: 'Previous song',
+      keys: ['K'],
+      key: letterKey('k'),
+      run: () => playback('current')?.playPrev(),
+    },
     {
       group: 'Playback',
       label: 'Forward 10 seconds',
@@ -107,45 +122,63 @@ export const useKeyboardShortcuts = () => {
       group: 'Playback',
       label: 'Change repeat mode',
       keys: ['R'],
-      key: 'r',
+      key: letterKey('r'),
       run: () => playback('current')?.rotateRepeatMode(),
     },
     {
       group: 'Playback',
       label: 'Favorite the current song',
       keys: ['L'],
-      key: 'l',
+      key: letterKey('l'),
       run: toggleFavoriteOfCurrentSong,
     },
     {
       group: 'View',
       label: 'Toggle visualizer',
       keys: ['V'],
-      key: 'v',
+      key: letterKey('v'),
       run: () => toggleScreen('Visualizer', 'visualizer'),
     },
     {
       group: 'View',
       label: 'Toggle fullscreen',
       keys: ['Shift', 'F'],
-      key: isShiftF,
+      key: letterKey('f', { shift: true }),
       run: () => eventBus.emit('FULLSCREEN_TOGGLE'),
       isAvailable: isFullscreenSupported,
     },
     { group: 'Sound', label: 'Volume up', keys: ['↑'], key: 'ArrowUp', run: () => volumeManager.increase() },
     { group: 'Sound', label: 'Volume down', keys: ['↓'], key: 'ArrowDown', run: () => volumeManager.decrease() },
-    { group: 'Sound', label: 'Mute or unmute', keys: ['M'], key: 'm', run: () => volumeManager.toggleMute() },
+    {
+      group: 'Sound',
+      label: 'Mute or unmute',
+      keys: ['M'],
+      key: letterKey('m'),
+      run: () => volumeManager.toggleMute(),
+    },
     {
       group: 'Sound',
       label: 'Open equalizer',
       keys: ['E'],
-      key: 'e',
+      key: letterKey('e'),
       run: () => openModal<'EQUALIZER'>(Equalizer),
       isAvailable: () => isAudioContextSupported,
     },
-    { group: 'Go to', label: 'Search', keys: ['F'], key: 'f', run: () => eventBus.emit('FOCUS_SEARCH_FIELD') },
-    { group: 'Go to', label: 'Toggle Queue', keys: ['Q'], key: 'q', run: () => toggleScreen('Queue', 'queue') },
-    { group: 'Go to', label: 'Home', keys: ['H'], key: 'h', run: () => go(url('home')) },
+    {
+      group: 'Go to',
+      label: 'Search',
+      keys: ['F'],
+      key: letterKey('f'),
+      run: () => eventBus.emit('FOCUS_SEARCH_FIELD'),
+    },
+    {
+      group: 'Go to',
+      label: 'Toggle Queue',
+      keys: ['Q'],
+      key: letterKey('q'),
+      run: () => toggleScreen('Queue', 'queue'),
+    },
+    { group: 'Go to', label: 'Home', keys: ['H'], key: letterKey('h'), run: () => go(url('home')) },
     {
       group: 'Go to',
       label: 'Toggle AI Assistant',

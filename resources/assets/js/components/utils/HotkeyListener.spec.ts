@@ -34,7 +34,12 @@ const pressKey = (key: string, options: KeyboardEventInit = {}) => {
 }
 
 describe('hotkeyListener.vue', () => {
-  const h = createHarness({ beforeEach: () => vi.clearAllMocks() })
+  const h = createHarness({
+    beforeEach: () => {
+      vi.clearAllMocks()
+      commonStore.state.uses_ai = true
+    },
+  })
 
   it('emits FOCUS_SEARCH_FIELD on "f" key', () => {
     const emitMock = h.mock(eventBus, 'emit')
@@ -97,5 +102,23 @@ describe('hotkeyListener.vue', () => {
     pressKey('?', { shiftKey: true })
 
     expect(openModalMock).toHaveBeenCalledOnce()
+  })
+
+  it('still runs letter shortcuts with Caps Lock on', () => {
+    const emitMock = h.mock(eventBus, 'emit')
+    h.render(Component)
+    pressKey('F')
+
+    expect(emitMock).toHaveBeenCalledWith('FOCUS_SEARCH_FIELD')
+  })
+
+  it('toggles fullscreen, not search, on Shift+F with Caps Lock on', () => {
+    const emitMock = h.mock(eventBus, 'emit')
+    h.setReadOnlyProperty(document, 'fullscreenEnabled', true)
+    h.render(Component)
+    pressKey('f', { shiftKey: true })
+
+    expect(emitMock).toHaveBeenCalledWith('FULLSCREEN_TOGGLE')
+    expect(emitMock).not.toHaveBeenCalledWith('FOCUS_SEARCH_FIELD')
   })
 })
