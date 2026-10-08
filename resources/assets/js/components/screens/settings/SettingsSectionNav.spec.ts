@@ -53,4 +53,26 @@ describe('settingsSectionNav.vue', () => {
 
     expect(emitted('update:modelValue')?.[0]).toEqual(['themes'])
   })
+
+  it('keeps only the selected tab in the Tab sequence', () => {
+    renderComponent(withServer, 'themes')
+
+    expect(screen.getByTestId('settings-section-themes').getAttribute('tabindex')).toBe('0')
+    expect(screen.getByTestId('settings-section-profile').getAttribute('tabindex')).toBe('-1')
+  })
+
+  it.each([
+    ['{ArrowDown}', 'profile', 'themes'],
+    ['{ArrowDown}', 'services', 'profile'],
+    ['{ArrowUp}', 'profile', 'services'],
+    ['{Home}', 'services', 'profile'],
+    ['{End}', 'profile', 'services'],
+  ])('selects the right tab on %s from %s', async (key, from, expected) => {
+    const { emitted } = renderComponent(withServer, from)
+
+    screen.getByTestId(`settings-section-${from}`).focus()
+    await h.user.keyboard(key)
+
+    expect(emitted('update:modelValue')?.[0]).toEqual([expected])
+  })
 })

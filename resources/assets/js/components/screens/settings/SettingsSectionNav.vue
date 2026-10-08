@@ -13,7 +13,13 @@
       </SelectBox>
     </div>
 
-    <div aria-orientation="vertical" class="hidden md:flex flex-col w-52 h-full" role="tablist">
+    <div
+      ref="tablist"
+      aria-orientation="vertical"
+      class="hidden md:flex flex-col w-52 h-full overflow-y-auto"
+      role="tablist"
+      @keydown="moveSelectionWithKeys"
+    >
       <template v-for="group in groups" :key="group.name">
         <h3 v-if="showsGroupNames" class="rail-cell group-name">{{ group.name }}</h3>
         <button
@@ -23,6 +29,7 @@
           :aria-controls="panelId"
           :aria-selected="section.id === selectedId"
           :data-testid="`settings-section-${section.id}`"
+          :tabindex="section.id === selectedId ? 0 : -1"
           class="rail-cell section"
           role="tab"
           type="button"
@@ -37,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, nextTick, useTemplateRef } from 'vue'
 import type { SettingsSection } from '@/components/screens/SettingsScreen.vue'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
@@ -58,17 +65,42 @@ const groups = computed(() =>
 const showsGroupNames = computed(() => groups.value.length > 1)
 
 const tabIdOf = (sectionId: string) => `settingsSection-${sectionId}`
+
+const orderedSections = computed(() => groups.value.flatMap(group => group.sections))
+const tablist = useTemplateRef<HTMLElement>('tablist')
+
+const selectAndFocus = async (section: SettingsSection) => {
+  selectedId.value = section.id
+  await nextTick()
+  tablist.value?.querySelector<HTMLElement>(`#${tabIdOf(section.id)}`)?.focus()
+}
+
+const moveSelectionWithKeys = (event: KeyboardEvent) => {
+  const sections = orderedSections.value
+  const currentIndex = sections.findIndex(section => section.id === selectedId.value)
+
+  const targetIndexByKey: Record<string, number> = {
+    ArrowDown: (currentIndex + 1) % sections.length,
+    ArrowUp: (currentIndex - 1 + sections.length) % sections.length,
+    Home: 0,
+    End: sections.length - 1,
+  }
+
+  if (!(event.key in targetIndexByKey)) {
+    return
+  }
+
+  event.preventDefault()
+  selectAndFocus(sections[targetIndexByKey[event.key]])
+}
 </script>
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 
-/*
- * The rail is darker than the panel, but the selected section must show the panel's own background, which can be a
- * theme image. So the darkening goes on each cell instead of on the rail, and the selected cell simply leaves it out.
- */
+/* Each cell draws its part of the rail's right border, so the selected tab can leave it out and join the panel. */
 .rail-cell {
-  @apply bg-k-bg-30 border-r border-k-fg-10;
+  @apply border-r border-k-fg-10;
 }
 
 .group-name {

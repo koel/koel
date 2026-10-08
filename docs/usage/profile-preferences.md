@@ -5,7 +5,7 @@ description: Managing your profile, avatar, theme selection, playback preference
 # Account Settings
 
 To manage your account, click your avatar in the bottom-right corner of the screen and choose **Settings**.
-Your own settings are listed under **Account**. Admins also see a **Server** group with settings for the whole Koel installation.
+Your own settings are listed under **Account**. If you're allowed to manage Koel's settings, you also see a **Server** group with settings for the whole Koel installation.
 
 ## Profile
 
