@@ -59,6 +59,10 @@ class ScanChunkCommand extends Command
 
         $files = array_map(static fn (string $path) => new SplFileInfo($path), $paths);
 
+        if (config('scout.driver') === 'tntsearch') {
+            config(['scout.driver' => 'null']);
+        }
+
         $this->scanner->scan($files, $config, function (ScanResult $result): void {
             $this->output->writeln(json_encode([
                 'path' => $result->path,
