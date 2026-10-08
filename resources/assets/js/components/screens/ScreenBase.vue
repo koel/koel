@@ -8,7 +8,7 @@
     />
     <slot name="header" />
 
-    <main class="scroll-mask-y overflow-scroll flex flex-col b-16 md:b-6 p-6 flex-1 place-content-start">
+    <main :class="{ 'scrolls-itself': scrollsItself }" class="flex flex-col b-16 md:b-6 flex-1 place-content-start">
       <HookSlot :context="{ screen: getCurrentScreen() }" name="screen.header" />
       <slot />
     </main>
@@ -23,9 +23,12 @@ import HookSlot from '@/components/utils/HookSlot.vue'
 withDefaults(
   defineProps<{
     backgroundImage?: string
+    /** The screen lays out and scrolls its own content, edge to edge. */
+    scrollsItself?: boolean
   }>(),
   {
     backgroundImage: undefined,
+    scrollsItself: false,
   },
 )
 
@@ -36,6 +39,14 @@ const { getCurrentScreen } = useRouter()
 @reference '@css/app.pcss';
 main {
   -ms-overflow-style: -ms-autohiding-scrollbar;
+
+  &:not(.scrolls-itself) {
+    @apply scroll-mask-y overflow-scroll p-6;
+  }
+
+  &.scrolls-itself {
+    @apply overflow-hidden min-h-0;
+  }
 }
 
 .cover-bg {

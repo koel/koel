@@ -1,16 +1,17 @@
 <template>
-  <ScreenBase>
+  <ScreenBase scrolls-itself>
     <template #header>
       <ScreenHeader>Settings</ScreenHeader>
     </template>
 
-    <div class="-m-6 flex flex-col md:flex-row flex-1 min-h-full">
-      <SettingsSectionNav v-model="currentSectionId" :panel-id="panelId" :sections class="md:sticky md:top-0" />
+    <div class="flex flex-col md:flex-row flex-1 min-h-0">
+      <SettingsSectionNav v-model="currentSectionId" :panel-id="panelId" :sections class="flex-none" />
 
       <section
         :id="panelId"
+        :key="currentSection.id"
         :aria-labelledby="`settingsSection-${currentSection.id}`"
-        class="flex-1 min-w-0 p-6"
+        class="flex-1 min-w-0 min-h-0 overflow-auto scroll-mask-y p-6"
         role="tabpanel"
         tabindex="0"
       >
@@ -18,9 +19,7 @@
           {{ currentSection.label }}
         </h2>
 
-        <KeepAlive>
-          <component :is="currentSection.component" :key="currentSection.id" v-bind="currentSection.props" />
-        </KeepAlive>
+        <component :is="currentSection.component" v-bind="currentSection.props" />
       </section>
     </div>
   </ScreenBase>
