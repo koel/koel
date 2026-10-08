@@ -5,7 +5,13 @@
     </template>
 
     <div class="flex flex-col md:flex-row flex-1 min-h-0">
-      <SettingsSectionNav v-model="currentSectionId" :panel-id="panelId" :sections class="flex-none" />
+      <SettingsSectionNav
+        :model-value="currentSectionId"
+        :panel-id="panelId"
+        :sections
+        class="flex-none"
+        @update:model-value="openSection"
+      />
 
       <section
         :id="panelId"
@@ -27,14 +33,14 @@
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
 import { commonStore } from '@/stores/commonStore'
 import { useBranding } from '@/composables/useBranding'
 import { useKoelPlus } from '@/composables/useKoelPlus'
-import { useLocalStorage } from '@/composables/useLocalStorage'
 import { usePolicies } from '@/composables/usePolicies'
+import { useRouter } from '@/composables/useRouter'
 import { defineAsyncComponent } from '@/utils/helpers'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -113,14 +119,18 @@ const sections: SettingsSection[] = [
   ...getServerSections().map(section => ({ ...section, group: 'Server' as const })),
 ]
 
-const { get, set } = useLocalStorage()
+const { getRouteParam, go, onScreenActivated, url } = useRouter()
 
-const isAvailableSection = (id: string | null): id is string => sections.some(section => section.id === id)
+const isAvailableSection = (id: string | undefined): id is string => sections.some(section => section.id === id)
 
-const rememberedSectionId = get<string>('settingsSection')
-const currentSectionId = ref(isAvailableSection(rememberedSectionId) ? rememberedSectionId : sections[0].id)
+const currentSectionId = ref(sections[0].id)
 
 const currentSection = computed(() => sections.find(section => section.id === currentSectionId.value) ?? sections[0])
 
-watch(currentSectionId, id => set('settingsSection', id))
+const openSection = (id: string) => go(url('settings', { section: id }))
+
+onScreenActivated('Settings', () => {
+  const requestedSectionId = getRouteParam('section')
+  currentSectionId.value = isAvailableSection(requestedSectionId) ? requestedSectionId : sections[0].id
+})
 </script>

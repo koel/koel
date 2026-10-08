@@ -75,7 +75,7 @@ export const routes = [
   },
   {
     name: 'settings',
-    path: '/settings',
+    path: '/settings/:section?',
     screen: 'Settings',
   },
   {
@@ -96,7 +96,7 @@ export const routes = [
     path: '/profile',
     screen: 'Settings',
     meta: {
-      redirect: () => 'settings',
+      redirect: () => 'settings/profile',
     },
   },
   {
