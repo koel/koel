@@ -1,12 +1,13 @@
 <template>
   <button
     v-if="supported"
-    class="opacity-70 hover:opacity-100 flex items-center gap-2 px-3 py-2 border border-k-fg-20 rounded-sm"
+    aria-label="Log in with a passkey"
+    class="opacity-70 hover:opacity-100 flex items-center p-2 border border-k-fg-20 rounded-sm"
+    title="Log in with a passkey"
     type="button"
     @click.prevent="logIn"
   >
     <FingerprintIcon :size="16" />
-    <span class="text-sm">Log in with a passkey</span>
   </button>
 </template>
 

@@ -18,7 +18,7 @@ You can add as many passkeys as you like, for example one per device.
 
 ## Log In With a Passkey
 
-On the login screen, click **Log in with a passkey** and follow your browser's prompt. You don't need to enter your email or password, and Koel doesn't ask for a two-factor code either: the passkey already proves it's you.
+On the login screen, click the fingerprint button (**Log in with a passkey**) and follow your browser's prompt. You don't need to enter your email or password, and Koel doesn't ask for a two-factor code either: the passkey already proves it's you.
 
 Your password keeps working, so you can still log in with it.
 
