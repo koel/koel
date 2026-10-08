@@ -3,6 +3,10 @@
     <MenuItem @click="play">Play All</MenuItem>
     <MenuItem @click="shuffle">Shuffle All</MenuItem>
     <Separator />
+    <template v-if="!isOnPodcastScreen">
+      <MenuItem @click="viewDetails">View Details</MenuItem>
+      <Separator />
+    </template>
     <MenuItem @click="toggleFavorite">{{ podcast.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
     <Separator />
     <li
@@ -20,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { playableStore } from '@/stores/playableStore'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useRouter } from '@/composables/useRouter'
@@ -35,10 +39,13 @@ import StarRating from '@/components/ui/StarRating.vue'
 const props = defineProps<{ podcast: Podcast }>()
 const { podcast } = toRefs(props)
 
-const { go, url } = useRouter()
+const { getRouteParam, go, isCurrentScreen, url } = useRouter()
 const { MenuItem, Separator, closeContextMenu, trigger } = useContextMenu()
 const { showConfirmDialog } = useDialogBox()
 const { toastSuccess } = useMessageToaster()
+
+const isOnPodcastScreen = computed(() => isCurrentScreen('Podcast') && getRouteParam('id') === podcast.value.id)
+const viewDetails = () => trigger(() => go(url('podcasts.show', { id: podcast.value.id })))
 
 const play = () =>
   trigger(async () => {
