@@ -5,7 +5,7 @@ description: Creating custom themes with colors, background images, and fonts in
 # Custom Themes
 
 Apart from the built-in themes, you can create your own themes as a Koel Plus user.
-To do so, go to the Profile & Preferences page and click on the "Themes" tab.
+To do so, open Settings and choose the "Themes" section.
 Here you'll find a list of custom themes you've created in addition to the built-in ones.
 Clicking on the "New Theme" button will open the "New Theme" form:
 

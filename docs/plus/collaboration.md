@@ -17,7 +17,7 @@ With Koel Plus, there are two different visibility settings for songs: public an
 The default visibility for uploaded songs is Private. For other users to be able to see and listen to your music, you need to explicitly mark them as public. This can be done in two ways:
 
 - **On an individual basis**: To mark individual songs as public or private, right-click on the songs to bring up the context menu. From there, you can choose "Mark as Public" or "Mark as Private" depending on the current visibility.
-- **Set default upload visibility**: For all future uploads to be public or private by default, you can toggle the "Make uploaded songs public by default" option in your [Profile & Preferences](../usage/profile-preferences#preferences) page. Note that this only affects future uploads.
+- **Set default upload visibility**: For all future uploads to be public or private by default, you can toggle the "Make uploaded songs public by default" option under [Settings → Preferences](../usage/profile-preferences#preferences). Note that this only affects future uploads.
 
 ### Scanning Music
 

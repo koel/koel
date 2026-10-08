@@ -1,55 +1,45 @@
 <template>
-  <ScreenBase>
+  <ScreenBase scrolls-itself>
     <template #header>
       <ScreenHeader>Settings</ScreenHeader>
     </template>
 
-    <Tabs v-if="tabs.length" class="-mx-6">
-      <TabList>
-        <TabButton
-          v-for="tab in tabs"
-          :id="`settingsTab-${tab.id}`"
-          :key="tab.id"
-          :aria-controls="`settingsPane-${tab.id}`"
-          :data-testid="`settings-tab-${tab.id}`"
-          :selected="currentTabId === tab.id"
-          @click="currentTabId = tab.id"
-        >
-          {{ tab.label }}
-        </TabButton>
-      </TabList>
+    <div class="flex flex-col md:flex-row flex-1 min-h-0">
+      <SettingsSectionNav v-model="currentSectionId" :panel-id="panelId" :sections class="flex-none" />
 
-      <TabPanelContainer class="scroll-mask-y">
-        <TabPanel
-          v-for="tab in tabs"
-          v-show="currentTabId === tab.id"
-          :id="`settingsPane-${tab.id}`"
-          :key="tab.id"
-          :aria-labelledby="`settingsTab-${tab.id}`"
-        >
-          <component :is="tab.component" v-bind="tab.props" />
-        </TabPanel>
-      </TabPanelContainer>
-    </Tabs>
+      <section
+        :id="panelId"
+        :key="currentSection.id"
+        :aria-labelledby="`settingsSection-${currentSection.id}`"
+        class="flex-1 min-w-0 min-h-0 overflow-auto scroll-mask-y p-6"
+        role="tabpanel"
+        tabindex="0"
+      >
+        <h2 class="mb-6 text-2xl text-k-fg" data-testid="settings-section-heading">
+          {{ currentSection.label }}
+        </h2>
+
+        <component :is="currentSection.component" v-bind="currentSection.props" />
+      </section>
+    </div>
   </ScreenBase>
 </template>
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
 import { commonStore } from '@/stores/commonStore'
 import { useBranding } from '@/composables/useBranding'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { useLocalStorage } from '@/composables/useLocalStorage'
+import { usePolicies } from '@/composables/usePolicies'
+import { defineAsyncComponent } from '@/utils/helpers'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import Tabs from '@/components/ui/tabs/Tabs.vue'
-import TabList from '@/components/ui/tabs/TabList.vue'
-import TabButton from '@/components/ui/tabs/TabButton.vue'
-import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
-import TabPanel from '@/components/ui/tabs/TabPanel.vue'
+import SettingsSectionNav from '@/components/screens/settings/SettingsSectionNav.vue'
 import MediaPathSettingGroup from '@/components/screens/settings/MediaPathSettingGroup.vue'
 import BrandingSettingGroup from '@/components/screens/settings/BrandingSettingGroup.vue'
 import AiSettingGroup from '@/components/screens/settings/AiSettingGroup.vue'
@@ -62,21 +52,75 @@ export interface SettingsTab {
   props?: Record<string, unknown>
 }
 
+export type ProfileTab = Omit<SettingsTab, 'props'>
+
+export interface SettingsSection extends SettingsTab {
+  group: 'Account' | 'Server'
+}
+
+const ProfileSection = defineAsyncComponent(() => import('@/components/profile-preferences/ProfileSection.vue'))
+const PreferencesForm = defineAsyncComponent(() => import('@/components/profile-preferences/PreferencesForm.vue'))
+const ThemePreferences = defineAsyncComponent(
+  () => import('@/components/profile-preferences/theme/ThemePreferences.vue'),
+)
+const Integrations = defineAsyncComponent(() => import('@/components/profile-preferences/Integrations.vue'))
+const OfflineStorage = defineAsyncComponent(() => import('@/components/profile-preferences/OfflineStorage.vue'))
+const SubsonicCredentials = defineAsyncComponent(
+  () => import('@/components/profile-preferences/SubsonicCredentials.vue'),
+)
+const SecuritySection = defineAsyncComponent(() => import('@/components/profile-preferences/SecuritySection.vue'))
+const QRLogin = defineAsyncComponent(() => import('@/components/profile-preferences/QRLogin.vue'))
+
 const { currentBranding } = useBranding()
 const { isPlus } = useKoelPlus()
+const { currentUserCan } = usePolicies()
 
-const usesLocalStorage = commonStore.state.storage_driver === 'local'
+const panelId = 'settingsPanel'
 
-const tabs = applyFilters<SettingsTab[]>(Filter.SETTINGS_TABS, [
-  ...(usesLocalStorage ? [{ id: 'media-path', label: 'Media Path', component: MediaPathSettingGroup }] : []),
-  ...(isPlus.value
-    ? [
-        { id: 'branding', label: 'Branding', component: BrandingSettingGroup, props: { currentBranding } },
-        { id: 'ai', label: 'AI', component: AiSettingGroup },
-      ]
-    : []),
-  { id: 'services', label: 'Services', component: ServicesSettingGroup },
-])
+const accountSections: ProfileTab[] = [
+  { id: 'profile', label: 'Profile', component: ProfileSection },
+  { id: 'preferences', label: 'Preferences', component: PreferencesForm },
+  { id: 'themes', label: 'Themes', component: ThemePreferences },
+  { id: 'integrations', label: 'Integrations', component: Integrations },
+  { id: 'offline', label: 'Offline', component: OfflineStorage },
+  { id: 'subsonic', label: 'Subsonic', component: SubsonicCredentials },
+  { id: 'security', label: 'Security', component: SecuritySection },
+  { id: 'qr', label: 'QR Login', component: QRLogin },
+  ...applyFilters<ProfileTab[]>(Filter.ACCOUNT_SETTINGS_TABS, []),
+]
 
-const currentTabId = ref(tabs[0]?.id)
+const getServerSections = (): SettingsTab[] => {
+  if (!currentUserCan.manageSettings()) {
+    return []
+  }
+
+  const usesLocalStorage = commonStore.state.storage_driver === 'local'
+
+  return applyFilters<SettingsTab[]>(Filter.SERVER_SETTINGS_TABS, [
+    ...(usesLocalStorage ? [{ id: 'media-path', label: 'Media Path', component: MediaPathSettingGroup }] : []),
+    ...(isPlus.value
+      ? [
+          { id: 'branding', label: 'Branding', component: BrandingSettingGroup, props: { currentBranding } },
+          { id: 'ai', label: 'AI', component: AiSettingGroup },
+        ]
+      : []),
+    { id: 'services', label: 'Services', component: ServicesSettingGroup },
+  ])
+}
+
+const sections: SettingsSection[] = [
+  ...accountSections.map(section => ({ ...section, group: 'Account' as const })),
+  ...getServerSections().map(section => ({ ...section, group: 'Server' as const })),
+]
+
+const { get, set } = useLocalStorage()
+
+const isAvailableSection = (id: string | null): id is string => sections.some(section => section.id === id)
+
+const rememberedSectionId = get<string>('settingsSection')
+const currentSectionId = ref(isAvailableSection(rememberedSectionId) ? rememberedSectionId : sections[0].id)
+
+const currentSection = computed(() => sections.find(section => section.id === currentSectionId.value) ?? sections[0])
+
+watch(currentSectionId, id => set('settingsSection', id))
 </script>

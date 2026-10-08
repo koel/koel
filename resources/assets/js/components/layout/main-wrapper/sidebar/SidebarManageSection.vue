@@ -73,7 +73,7 @@ const items = computed(() =>
       label: 'Users',
       icon: faUsers,
       route: 'users.index',
-      screens: ['Users', 'Profile'],
+      screens: ['Users'],
       visible: () => currentUserCan.manageUsers(),
     },
   ]),

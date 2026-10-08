@@ -77,9 +77,6 @@ export const routes = [
     name: 'settings',
     path: '/settings',
     screen: 'Settings',
-    meta: {
-      guard: () => usePolicies().currentUserCan.manageSettings(),
-    },
   },
   {
     name: 'users.index',
@@ -97,7 +94,10 @@ export const routes = [
   {
     name: 'profile',
     path: '/profile',
-    screen: 'Profile',
+    screen: 'Settings',
+    meta: {
+      redirect: () => 'settings',
+    },
   },
   {
     name: 'visualizer',
