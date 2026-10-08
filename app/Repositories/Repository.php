@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 abstract class Repository implements RepositoryContract
 {
+    protected const int SEARCH_CANDIDATE_LIMIT = 1000;
+
     /** @var class-string<T> $modelClass */
     public string $modelClass;
 

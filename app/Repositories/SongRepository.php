@@ -560,10 +560,10 @@ class SongRepository extends Repository implements ScoutableRepository
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: Song::search($keywords)->take($limit)->get()->modelKeys(),
+            ids: Song::search($keywords)->take(self::SEARCH_CANDIDATE_LIMIT)->keys()->all(),
             preserveOrder: true,
             scopedUser: $user,
-        );
+        )->take($limit);
     }
 
     public function getForEmbed(Embed $embed): Collection
