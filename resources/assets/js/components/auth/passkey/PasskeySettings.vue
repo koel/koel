@@ -19,7 +19,7 @@
 
     <AddPasskeyForm v-if="adding" @added="onAdded" @cancel="adding = false" />
     <div v-else-if="supported">
-      <Btn type="button" @click.prevent="adding = true">Add a Passkey</Btn>
+      <Btn type="button" variant="ghost" bordered @click.prevent="adding = true">Add a Passkey</Btn>
     </div>
     <p v-else class="text-k-fg-70" data-testid="passkeys-unsupported">This browser doesn't support passkeys.</p>
   </SettingGroup>
