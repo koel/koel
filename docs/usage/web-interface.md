@@ -116,6 +116,7 @@ See [Embedding](./embedding) for more details.
 ## Keyboard Shortcuts
 
 Koel has a number of keyboard shortcuts to make it easier to navigate and control playback.
+Press <kbd>?</kbd> anywhere to see them all.
 Note that these shortcuts are only triggered when the focus is not on an input field (including the volume control and
 the music track)
 or a textarea.
@@ -133,9 +134,15 @@ or a textarea.
 * <kbd>r</kbd> circles through repeat modes (no repeat, repeat all, repeat one)
 * <kbd>→</kbd> seeks forward 10 seconds
 * <kbd>←</kbd> seeks backward 10 seconds
+* <kbd>0</kbd>–<kbd>9</kbd> jumps to 0%–90% of the current song
 * <kbd>↑</kbd> increases volume by 10%
 * <kbd>↓</kbd> decreases volume by 10%
 * <kbd>m</kbd> mutes/unmutes
+* <kbd>e</kbd> opens the equalizer
+* <kbd>v</kbd> toggles the visualizer
+* <kbd>Shift</kbd>+<kbd>f</kbd> toggles fullscreen
+* <kbd>/</kbd> toggles the AI Assistant, if it's enabled
+* <kbd>?</kbd> shows the list of keyboard shortcuts
 * <kbd>Cmd/Ctrl</kbd>+<kbd>a</kbd> selects all songs in the current song-list screen when the list is focused
 * <kbd>Delete</kbd> removes selected song(s) from the current queue/playlist
 

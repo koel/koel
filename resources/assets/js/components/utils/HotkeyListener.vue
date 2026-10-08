@@ -3,61 +3,28 @@
 </template>
 
 <script lang="ts" setup>
-import type { KeyFilter } from '@vueuse/core'
-import { onKeyStroke as baseOnKeyStroke } from '@vueuse/core'
-import { eventBus } from '@/utils/eventBus'
-import { socketService } from '@/services/socketService'
-import { volumeManager } from '@/services/volumeManager'
-import { commonStore } from '@/stores/commonStore'
-import { queueStore } from '@/stores/queueStore'
-import { useRouter } from '@/composables/useRouter'
-import { playableStore } from '@/stores/playableStore'
-import { playback } from '@/services/playbackManager'
+import { onKeyStroke } from '@vueuse/core'
+import type { KeyboardShortcut } from '@/composables/useKeyboardShortcuts'
+import { isShortcutAvailable, useKeyboardShortcuts } from '@/composables/useKeyboardShortcuts'
 
-const { isCurrentScreen, go, url } = useRouter()
+const isTypingOrInDialog = (target: HTMLElement) =>
+  target.isContentEditable ||
+  target.matches('input, select, textarea, button, [role="button"], [role="checkbox"]') ||
+  Boolean(target.closest('dialog'))
 
-const onKeyStroke = (key: KeyFilter, callback: (e: KeyboardEvent) => void) => {
-  baseOnKeyStroke(key, e => {
-    if (e.altKey || e.ctrlKey || e.metaKey) {
+const listenForShortcut = (shortcut: KeyboardShortcut) =>
+  onKeyStroke(shortcut.key, event => {
+    if (event.altKey || event.ctrlKey || event.metaKey) {
       return
     }
 
-    const el = e.target as HTMLElement
-
-    if (
-      el.isContentEditable ||
-      el.matches('input, select, textarea, button, [role="button"], [role="checkbox"]') ||
-      el.closest('dialog')
-    ) {
+    if (isTypingOrInDialog(event.target as HTMLElement) || !isShortcutAvailable(shortcut)) {
       return
     }
 
-    e.preventDefault()
-    callback(e)
+    event.preventDefault()
+    shortcut.run(event)
   })
-}
 
-onKeyStroke('f', () => eventBus.emit('FOCUS_SEARCH_FIELD'))
-onKeyStroke('j', () => playback('current')?.playNext())
-onKeyStroke('k', () => playback('current')?.playPrev())
-onKeyStroke(' ', () => playback('current')?.toggle())
-onKeyStroke('r', () => playback('current')?.rotateRepeatMode())
-onKeyStroke('q', () => go(isCurrentScreen('Queue') ? -1 : url('queue')))
-onKeyStroke('h', () => go(url('home')))
-
-onKeyStroke('ArrowRight', () => playback('current')?.forward(10))
-onKeyStroke('ArrowLeft', () => playback('current')?.rewind(10))
-onKeyStroke('ArrowUp', () => volumeManager.increase())
-onKeyStroke('ArrowDown', () => volumeManager.decrease())
-onKeyStroke('m', () => volumeManager.toggleMute())
-
-onKeyStroke('/', () => commonStore.state.uses_ai && go(isCurrentScreen('AI') ? -1 : url('ai')))
-
-onKeyStroke('l', () => {
-  if (!queueStore.current) {
-    return
-  }
-  playableStore.toggleFavorite(queueStore.current)
-  socketService.broadcast('SOCKET_STREAMABLE', queueStore.current)
-})
+useKeyboardShortcuts().shortcuts.forEach(listenForShortcut)
 </script>
