@@ -3,6 +3,7 @@ import { screen } from '@testing-library/vue'
 import { shallowRef } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { ContextMenuKey } from '@/config/symbols'
+import Router from '@/router'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { playableStore as episodeStore } from '@/stores/playableStore'
 import Component from './PodcastContextMenu.vue'
@@ -95,5 +96,22 @@ describe('podcastContextMenu.vue', () => {
     await h.user.click(screen.getByRole('radio', { name: 'Rate 4 of 5' }))
 
     expect(menu.value.component).toBeNull()
+  })
+
+  it('goes to the podcast details', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { podcast } = await renderComponent()
+
+    await h.user.click(screen.getByText('View Details'))
+
+    expect(goMock).toHaveBeenCalledWith(Router.url('podcasts.show', { id: podcast.id }))
+  })
+
+  it('does not offer the podcast details on the podcast screen', async () => {
+    const podcast = h.factory('podcast').make()
+    h.visit(`/podcasts/${podcast.id}`)
+    await renderComponent(podcast)
+
+    expect(screen.queryByText('View Details')).toBeNull()
   })
 })

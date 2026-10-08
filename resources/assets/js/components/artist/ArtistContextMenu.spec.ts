@@ -5,6 +5,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
 import { ContextMenuKey } from '@/config/symbols'
+import Router from '@/router'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { artistStore } from '@/stores/artistStore'
@@ -156,5 +157,22 @@ describe('artistContextMenu.vue', () => {
     await h.user.click(screen.getByRole('radio', { name: 'Rate 4 of 5' }))
 
     expect(menu.value.component).toBeNull()
+  })
+
+  it('goes to the artist details', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { artist } = await renderComponent()
+
+    await h.user.click(screen.getByText('View Details'))
+
+    expect(goMock).toHaveBeenCalledWith(Router.url('artists.show', { id: artist.id }))
+  })
+
+  it('does not offer the artist details on the artist screen', async () => {
+    const artist = h.factory('artist').make()
+    h.visit(`/artists/${artist.id}`)
+    await renderComponent(artist)
+
+    expect(screen.queryByText('View Details')).toBeNull()
   })
 })

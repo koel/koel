@@ -3,6 +3,10 @@
     <MenuItem @click="play">Play All</MenuItem>
     <MenuItem @click="shuffle">Shuffle All</MenuItem>
     <Separator />
+    <template v-if="!isOnArtistScreen">
+      <MenuItem @click="viewDetails">View Details</MenuItem>
+      <Separator />
+    </template>
     <MenuItem @click="toggleFavorite">{{ artist.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
     <Separator />
     <li
@@ -51,10 +55,13 @@ const { artist } = toRefs(props)
 const EditArtistForm = defineAsyncComponent(() => import('@/components/artist/EditArtistForm.vue'))
 const CreateEmbedForm = defineAsyncComponent(() => import('@/components/embed/CreateEmbedForm.vue'))
 
-const { go, url } = useRouter()
+const { getRouteParam, go, isCurrentScreen, url } = useRouter()
 const { MenuItem, Separator, closeContextMenu, trigger } = useContextMenu()
 const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
+
+const isOnArtistScreen = computed(() => isCurrentScreen('Artist') && getRouteParam('id') === artist.value.id)
+const viewDetails = () => trigger(() => go(url('artists.show', { id: artist.value.id })))
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
 const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
