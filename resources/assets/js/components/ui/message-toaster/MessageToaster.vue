@@ -6,11 +6,13 @@
       </li>
     </TransitionGroup>
   </div>
-  <p class="sr-only" data-testid="toast-announcement" role="status">{{ announcement }}</p>
+  <div aria-live="polite" class="sr-only" data-testid="toast-announcements">
+    <p v-for="message in messages" :key="message.id">{{ message.content }}</p>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { uuid } from '@/utils/crypto'
 
 import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
@@ -23,16 +25,9 @@ const root = ref<
 >()
 
 const messages = ref<ToastMessage[]>([])
-const announcement = ref('')
-
-const announce = async (content: string) => {
-  announcement.value = ''
-  await nextTick()
-  announcement.value = content
-}
 
 const addMessage = (type: 'info' | 'success' | 'warning' | 'danger', content: string, timeout = 5) => {
-  root.value?.showPopover?.()
+  messages.value.length || root.value?.showPopover?.()
 
   messages.value.push({
     type,
@@ -40,8 +35,6 @@ const addMessage = (type: 'info' | 'success' | 'warning' | 'danger', content: st
     timeout,
     id: uuid(),
   })
-
-  announce(content)
 }
 
 const removeMessage = (message: ToastMessage) => {

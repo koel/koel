@@ -42,4 +42,19 @@ describe('messageToast.vue', () => {
 
     vi.useRealTimers()
   })
+
+  it('stays open while its dismiss button has keyboard focus', async () => {
+    vi.useFakeTimers()
+
+    const { emitted } = renderComponent()
+    screen.getByRole('button', { name: 'Dismiss' }).focus()
+    vi.advanceTimersByTime(5000)
+    expect(emitted().dismiss).toBeUndefined()
+
+    screen.getByRole('button', { name: 'Dismiss' }).blur()
+    vi.advanceTimersByTime(5000)
+    expect(emitted().dismiss).toBeTruthy()
+
+    vi.useRealTimers()
+  })
 })

@@ -22,13 +22,22 @@ describe('messageToaster', () => {
     expect(toasterEl.querySelectorAll('li')).toHaveLength(0)
   })
 
-  it('announces a new message to screen readers', async () => {
+  it('announces every new message to screen readers, even when two arrive at once', async () => {
     const Announcer = defineComponent({
       components: { MessageToaster },
-      setup: () => ({ toaster: ref() }),
+      setup: () => {
+        const toaster = ref()
+
+        const toastTwice = () => {
+          toaster.value.success('Saved')
+          toaster.value.info('Syncing')
+        }
+
+        return { toaster, toastTwice }
+      },
       template: `
         <MessageToaster ref="toaster" />
-        <button type="button" @click="toaster.success('Added to Favorites')">Toast</button>
+        <button type="button" @click="toastTwice">Toast</button>
       `,
     })
 
@@ -36,6 +45,7 @@ describe('messageToaster', () => {
     await h.user.click(screen.getByRole('button'))
     await h.tick()
 
-    expect(screen.getByRole('status').textContent).toBe('Added to Favorites')
+    const announcements = Array.from(screen.getByTestId('toast-announcements').children).map(line => line.textContent)
+    expect(announcements).toEqual(['Saved', 'Syncing'])
   })
 })

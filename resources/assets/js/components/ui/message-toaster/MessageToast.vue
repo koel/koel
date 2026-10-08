@@ -2,6 +2,8 @@
   <article
     :class="message.type"
     class="rounded-l-md flex items-stretch opacity-90 transition-transform duration-300 origin-right hover:opacity-100 hover:scale-110"
+    @focusin="onFocusIn"
+    @focusout="onFocusOut"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
@@ -48,6 +50,7 @@ const typeIcon = computed(() => {
 
 let timeoutHandler: number
 const hovering = ref(false)
+let focused = false
 
 const dismiss = () => {
   emit('dismiss', message.value)
@@ -64,7 +67,17 @@ const onMouseEnter = () => {
 
 const onMouseLeave = () => {
   hovering.value = false
-  setAutoDismiss()
+  focused || setAutoDismiss()
+}
+
+const onFocusIn = () => {
+  focused = true
+  cancelAutoDismiss()
+}
+
+const onFocusOut = () => {
+  focused = false
+  hovering.value || setAutoDismiss()
 }
 
 onMounted(() => setAutoDismiss())
