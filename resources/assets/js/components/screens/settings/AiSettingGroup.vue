@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-4">
       <FormRow>
         <label class="cursor-pointer">
-          <CheckBox :model-value="enabled" name="enabled" @update:model-value="toggle" />
+          <CheckBox :disabled="savingSwitch" :model-value="enabled" name="enabled" @update:model-value="toggle" />
           <span class="ml-2">Use AI assistant</span>
         </label>
       </FormRow>
@@ -64,6 +64,7 @@ const { handleHttpError } = useErrorHandler('dialog')
 
 const current = computed(() => settingStore.state.ai)
 const enabled = ref(Boolean(current.value?.enabled))
+const savingSwitch = ref(false)
 
 const { data, loading, handleSubmit } = useForm<{ provider: AiProvider | ''; api_key: string }>({
   initialValues: {
@@ -80,12 +81,16 @@ const { data, loading, handleSubmit } = useForm<{ provider: AiProvider | ''; api
 
 const canKeepApiKey = computed(() => Boolean(current.value?.has_api_key) && data.provider === current.value?.provider)
 const saveEnabled = async (on: boolean, provider: AiProvider) => {
+  savingSwitch.value = true
+
   try {
     await settingStore.updateAi({ enabled: on, provider })
     toastSuccess(on ? 'AI assistant turned on.' : 'AI assistant turned off.')
   } catch (error: unknown) {
     enabled.value = !on
     handleHttpError(error)
+  } finally {
+    savingSwitch.value = false
   }
 }
 

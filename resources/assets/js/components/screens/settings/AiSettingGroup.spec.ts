@@ -66,4 +66,15 @@ describe('aiSettingGroup.vue', () => {
 
     expect((screen.getByTestId('input') as HTMLInputElement).required).toBe(true)
   })
+
+  it('ignores the switch while a change is still saving', async () => {
+    settingStore.state.ai = { enabled: true, provider: 'openai', has_api_key: true }
+    const updateMock = h.mock(settingStore, 'updateAi').mockReturnValue(new Promise(() => {}))
+    h.render(Component)
+
+    await h.user.click(screen.getByRole('checkbox'))
+    await h.user.click(screen.getByRole('checkbox'))
+
+    expect(updateMock).toHaveBeenCalledOnce()
+  })
 })
