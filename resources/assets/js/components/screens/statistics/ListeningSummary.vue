@@ -21,11 +21,7 @@ const describeChange = (current: number, previous?: number) => {
 
   const change = Math.round(((current - previous) / previous) * 100)
 
-  if (change === 0) {
-    return 'Same'
-  }
-
-  return `${change > 0 ? '+' : '−'}${Math.abs(change)}%`
+  return `${change >= 0 ? '+' : '−'}${Math.abs(change)}%`
 }
 
 const figures = computed(() => {

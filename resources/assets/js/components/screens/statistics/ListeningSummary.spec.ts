@@ -36,7 +36,7 @@ describe('listeningSummary.vue', () => {
   it.each<[ListeningSummary | null, string | null]>([
     [previousSummary(10), '+20%'],
     [previousSummary(15), '−20%'],
-    [previousSummary(12), 'Same'],
+    [previousSummary(12), '+0%'],
     [previousSummary(0), null],
     [null, null],
   ])('compares the 12 plays with the previous period %#', (previous, expectedStart) => {
