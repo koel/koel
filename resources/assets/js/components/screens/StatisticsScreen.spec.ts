@@ -25,7 +25,14 @@ describe('statisticsScreen.vue', () => {
 
   const renderComponent = () => {
     h.visit('/statistics')
-    return h.render(Component)
+
+    return h.render(Component, {
+      global: {
+        stubs: {
+          PlaysBarChart: h.stub('plays-bar-chart'),
+        },
+      },
+    })
   }
 
   it('shows the last 30 days when opened', async () => {

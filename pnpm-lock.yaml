@@ -41,6 +41,9 @@ importers:
       butterchurn-presets:
         specifier: ^2.4.7
         version: 2.4.7
+      chart.js:
+        specifier: ^4.5.1
+        version: 4.5.1
       dompurify:
         specifier: ^3.4.16
         version: 3.4.16
@@ -679,6 +682,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@kurkle/color@0.3.4':
+    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
   '@laravel/echo-vue@2.1.6':
     resolution: {integrity: sha512-82GMXcjeReGiD6Z1j0trRHhdh8RsDwcCaTHJgpc0n4vdojnuYYSkJEsUhVHwJqtsUveaErNx9xEP381XSQfB4g==}
@@ -1960,6 +1966,10 @@ packages:
 
   character-entities@2.0.2:
     resolution: {integrity: sha512-shx7oQ0Awen/BRIdkjkvz54PnEEI/EjwXDSIZp86/KKdbafHh1Df/RYGBhn4hbe2+uKC9FnT5UCEdyPz3ai9hQ==}
+
+  chart.js@4.5.1:
+    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
+    engines: {pnpm: '>=8'}
 
   classnames@2.5.1:
     resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
@@ -4259,6 +4269,8 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@kurkle/color@0.3.4': {}
+
   '@laravel/echo-vue@2.1.6(pusher-js@8.6.0)(socket.io-client@4.8.1)(vue@3.5.29(typescript@5.8.3))':
     dependencies:
       pusher-js: 8.6.0
@@ -5218,6 +5230,10 @@ snapshots:
   character-entities-legacy@3.0.0: {}
 
   character-entities@2.0.2: {}
+
+  chart.js@4.5.1:
+    dependencies:
+      '@kurkle/color': 0.3.4
 
   classnames@2.5.1: {}
 
