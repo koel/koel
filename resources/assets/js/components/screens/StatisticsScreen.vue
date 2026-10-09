@@ -143,15 +143,28 @@ const topGenres = computed(() =>
   })),
 )
 
+let latestRequestId = 0
+
 const fetchStatistics = async () => {
+  const requestId = ++latestRequestId
+  const isLatestRequest = () => requestId === latestRequestId
+
   loading.value = true
 
   try {
-    statistics.value = await listeningStatisticsService.fetch(period.value)
+    const result = await listeningStatisticsService.fetch(period.value)
+
+    if (isLatestRequest()) {
+      statistics.value = result
+    }
   } catch (error: unknown) {
-    handleHttpError(error)
+    if (isLatestRequest()) {
+      handleHttpError(error)
+    }
   } finally {
-    loading.value = false
+    if (isLatestRequest()) {
+      loading.value = false
+    }
   }
 }
 

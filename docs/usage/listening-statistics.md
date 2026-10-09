@@ -11,7 +11,7 @@ For that period, you'll see:
 - how many plays, how much listening time, and how many different songs and artists;
 - your plays over time;
 - which days of the week and which hours of the day you listen most, in your own time zone;
-- your top 10 songs, artists, albums, and genres.
+- your top 12 songs and genres, and your top 10 artists and albums.
 
 A song counts as played once you've listened to a quarter of it, the same way Koel counts plays everywhere else. Plays from [Subsonic clients](./subsonic) count too. Podcast episodes don't.
 

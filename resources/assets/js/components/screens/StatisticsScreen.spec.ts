@@ -58,4 +58,30 @@ describe('statisticsScreen.vue', () => {
 
     await waitFor(() => screen.getByTestId('statistics-empty'))
   })
+
+  it('keeps the latest period when an earlier answer arrives last', async () => {
+    let finishAllTime: (statistics: ListeningStatistics) => void = () => {}
+
+    h.mock(listeningStatisticsService, 'fetch').mockImplementation(async (period: string) => {
+      if (period === 'all') {
+        return await new Promise<ListeningStatistics>(resolve => {
+          finishAllTime = resolve
+        })
+      }
+
+      return makeStatistics(period === 'week' ? 0 : 3)
+    })
+
+    renderComponent()
+    await screen.findByTestId('statistics')
+
+    await h.user.click(screen.getByLabelText('All time'))
+    await h.user.click(screen.getByLabelText('7 days'))
+    await waitFor(() => screen.getByTestId('statistics-empty'))
+
+    finishAllTime(makeStatistics(9))
+    await h.tick(2)
+
+    screen.getByTestId('statistics-empty')
+  })
 })
