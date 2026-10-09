@@ -5,14 +5,16 @@
       Log in with your fingerprint, face, screen lock, or a security key instead of a password.
     </template>
 
-    <ul v-if="passkeys.length" class="max-w-xl divide-y divide-k-fg-5" data-testid="passkey-list">
-      <PasskeyListItem v-for="passkey in passkeys" :key="passkey.id" :passkey @removed="onRemoved" />
-    </ul>
+    <div class="flex flex-col gap-4">
+      <ul v-if="passkeys.length" class="max-w-xl divide-y divide-k-fg-5" data-testid="passkey-list">
+        <PasskeyListItem v-for="passkey in passkeys" :key="passkey.id" :passkey @removed="onRemoved" />
+      </ul>
 
-    <div v-if="supported">
-      <Btn type="button" variant="ghost" bordered @click.prevent="openAddPasskeyForm">Add a Passkey</Btn>
+      <div v-if="supported">
+        <Btn type="button" variant="ghost" bordered @click.prevent="openAddPasskeyForm">Add a Passkey</Btn>
+      </div>
+      <p v-else class="text-k-fg-70" data-testid="passkeys-unsupported">This browser doesn't support passkeys.</p>
     </div>
-    <p v-else class="text-k-fg-70" data-testid="passkeys-unsupported">This browser doesn't support passkeys.</p>
   </SettingGroup>
 </template>
 
