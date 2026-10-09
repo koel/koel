@@ -2,6 +2,14 @@ import { screen, waitFor } from '@testing-library/vue'
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { passkeyService } from '@/services/passkeyService'
+import { eventBus } from '@/utils/eventBus'
+
+const openModalMock = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({ openModal: openModalMock }),
+}))
+
 import Component from './PasskeySettings.vue'
 
 describe('passkeySettings.vue', () => {
@@ -45,16 +53,21 @@ describe('passkeySettings.vue', () => {
     await waitFor(() => expect(listedNames()).toEqual([]))
   })
 
-  it('adds a passkey to the list once it is created', async () => {
-    h.mock(passkeyService, 'fetchAll').mockResolvedValue([])
-    h.mock(passkeyService, 'add').mockResolvedValue(makePasskey({ id: 3, name: 'Pixel' }))
+  it('opens the add form', async () => {
+    h.mock(passkeyService, 'fetchAll').mockResolvedValue([makePasskey()])
     h.render(Component)
 
-    h.actingAsUser()
     await h.user.click(screen.getByRole('button', { name: 'Add a Passkey' }))
-    await h.user.type(screen.getByPlaceholderText('MacBook, YubiKey…'), 'Pixel')
-    await h.user.type(screen.getByLabelText('Your password'), 'secret')
-    await h.user.click(screen.getByRole('button', { name: 'Add' }))
+
+    await waitFor(() => expect(openModalMock).toHaveBeenCalledWith(expect.anything(), { hasPasskeys: true }))
+  })
+
+  it('shows a passkey once it is added', async () => {
+    h.mock(passkeyService, 'fetchAll').mockResolvedValue([])
+    h.render(Component)
+    await h.tick()
+
+    eventBus.emit('PASSKEY_ADDED', makePasskey({ id: 3, name: 'Pixel' }))
 
     await waitFor(() => expect(listedNames()).toEqual(['Pixel']))
   })

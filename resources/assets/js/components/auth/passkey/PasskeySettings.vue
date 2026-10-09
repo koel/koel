@@ -9,39 +9,43 @@
       <PasskeyListItem v-for="passkey in passkeys" :key="passkey.id" :passkey @removed="onRemoved" />
     </ul>
 
-    <AddPasskeyForm v-if="adding" :has-passkeys="passkeys.length > 0" @added="onAdded" @cancel="adding = false" />
-    <div v-else-if="supported">
-      <Btn type="button" variant="ghost" bordered @click.prevent="adding = true">Add a Passkey</Btn>
+    <div v-if="supported">
+      <Btn type="button" variant="ghost" bordered @click.prevent="openAddPasskeyForm">Add a Passkey</Btn>
     </div>
     <p v-else class="text-k-fg-70" data-testid="passkeys-unsupported">This browser doesn't support passkeys.</p>
   </SettingGroup>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { isPasskeySupported, passkeyService } from '@/services/passkeyService'
-import { useMessageToaster } from '@/composables/useMessageToaster'
+import { eventBus } from '@/utils/eventBus'
+import { defineAsyncComponent } from '@/utils/helpers'
+import { useModal } from '@/composables/useModal'
 
-import AddPasskeyForm from '@/components/auth/passkey/AddPasskeyForm.vue'
 import PasskeyListItem from '@/components/auth/passkey/PasskeyListItem.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
 
 const supported = isPasskeySupported()
 const passkeys = ref<Passkey[]>([])
-const adding = ref(false)
 
-const { toastSuccess } = useMessageToaster()
+const AddPasskeyForm = defineAsyncComponent(() => import('@/components/auth/passkey/AddPasskeyForm.vue'))
 
-const onAdded = (passkey: Passkey) => {
-  passkeys.value.push(passkey)
-  adding.value = false
-  toastSuccess('Passkey added.')
-}
+const { openModal } = useModal()
+
+const openAddPasskeyForm = () =>
+  openModal<'ADD_PASSKEY_FORM'>(AddPasskeyForm, { hasPasskeys: passkeys.value.length > 0 })
 
 const onRemoved = (removed: Passkey) => {
   passkeys.value = passkeys.value.filter(({ id }) => id !== removed.id)
 }
+
+const showAddedPasskey = (passkey: Passkey) => passkeys.value.push(passkey)
+
+eventBus.on('PASSKEY_ADDED', showAddedPasskey)
+
+onBeforeUnmount(() => eventBus.off('PASSKEY_ADDED', showAddedPasskey))
 
 onMounted(async () => {
   passkeys.value = await passkeyService.fetchAll()

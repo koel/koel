@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { DialogBoxStub } from '@/__tests__/stubs'
 import { PASSKEY_ADDRESS_REJECTED_MESSAGE, passkeyService } from '@/services/passkeyService'
+import { eventBus } from '@/utils/eventBus'
 import Component from './AddPasskeyForm.vue'
 
 describe('addPasskeyForm.vue', () => {
@@ -25,12 +26,14 @@ describe('addPasskeyForm.vue', () => {
   it('adds a passkey under the trimmed name after confirming the password', async () => {
     h.actingAsUser()
     const addMock = h.mock(passkeyService, 'add').mockResolvedValue(passkey)
+    const emitMock = h.mock(eventBus, 'emit')
     const { emitted } = renderComponent()
 
     await fillIn('  MacBook  ', 'secret')
 
     expect(addMock).toHaveBeenCalledWith('MacBook', { password: 'secret', code: '' })
-    expect(emitted().added?.[0]).toEqual([passkey])
+    expect(emitMock).toHaveBeenCalledWith('PASSKEY_ADDED', passkey)
+    expect(emitted().close).toBeTruthy()
   })
 
   it('confirms with an existing passkey when there is one', async () => {
@@ -64,7 +67,7 @@ describe('addPasskeyForm.vue', () => {
     await fillIn('MacBook', 'secret')
 
     expect(errorMock).not.toHaveBeenCalled()
-    expect(emitted().added).toBeUndefined()
+    expect(emitted().close).toBeUndefined()
   })
 
   it('explains when the browser rejects the address', async () => {

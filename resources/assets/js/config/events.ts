@@ -19,6 +19,8 @@ export interface Events {
 
   PODCAST_UNSUBSCRIBED: (podcast: Podcast) => void
 
+  PASSKEY_ADDED: (passkey: Passkey) => void
+
   SONGS_UPDATED: (result: SongUpdateResult) => void
   SONGS_DELETED: (songs: Song[]) => void
   SONG_UPLOADED: (song: Song) => void

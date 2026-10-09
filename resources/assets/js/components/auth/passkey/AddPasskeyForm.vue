@@ -1,38 +1,44 @@
 <template>
-  <form class="flex flex-col gap-4 max-w-md" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
-    <FormRow>
-      <template #label>Passkey name</template>
-      <TextInput v-model="data.name" v-koel-focus name="name" placeholder="MacBook, YubiKey…" required />
-    </FormRow>
+  <form class="md:w-[480px] min-w-full" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+    <header>
+      <h1>Add a Passkey</h1>
+    </header>
 
-    <template v-if="confirmsWithPassword">
+    <main class="space-y-5">
       <FormRow>
-        <template #label>Your password</template>
-        <PasswordField v-model="data.password" name="password" required />
+        <template #label>Passkey name</template>
+        <TextInput v-model="data.name" v-koel-focus name="name" placeholder="MacBook, YubiKey…" required />
       </FormRow>
 
-      <TwoFactorChallengeInput v-if="currentUser.two_factor" v-model="data.code">
-        <template #totp-label>Code from your authenticator app</template>
-        <template #recovery-label>Recovery code</template>
-      </TwoFactorChallengeInput>
-    </template>
+      <template v-if="confirmsWithPassword">
+        <FormRow>
+          <template #label>Your password</template>
+          <PasswordField v-model="data.password" name="password" required />
+        </FormRow>
 
-    <p v-if="confirmsWithPasskey" class="text-sm text-k-fg-70" data-testid="confirm-with-passkey-note">
-      You'll confirm it's you with one of your passkeys first.
-      <button
-        v-if="canUsePassword"
-        class="text-k-highlight hover:text-k-fg"
-        type="button"
-        @click.prevent="confirmsWithPasskey = false"
-      >
-        Use your password instead
-      </button>
-    </p>
+        <TwoFactorChallengeInput v-if="currentUser.two_factor" v-model="data.code">
+          <template #totp-label>Code from your authenticator app</template>
+          <template #recovery-label>Recovery code</template>
+        </TwoFactorChallengeInput>
+      </template>
 
-    <div class="flex gap-2">
+      <p v-if="confirmsWithPasskey" class="text-sm text-k-fg-70" data-testid="confirm-with-passkey-note">
+        You'll confirm it's you with one of your passkeys first.
+        <button
+          v-if="canUsePassword"
+          class="text-k-highlight hover:text-k-fg"
+          type="button"
+          @click.prevent="confirmsWithPasskey = false"
+        >
+          Use your password instead
+        </button>
+      </p>
+    </main>
+
+    <footer>
       <Btn type="submit">Add</Btn>
       <Btn type="button" variant="ghost" @click.prevent="maybeClose">Cancel</Btn>
-    </div>
+    </footer>
   </form>
 </template>
 
@@ -45,9 +51,11 @@ import {
   passkeyService,
 } from '@/services/passkeyService'
 import { userStore } from '@/stores/userStore'
+import { eventBus } from '@/utils/eventBus'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useForm } from '@/composables/useForm'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
@@ -57,10 +65,7 @@ import TwoFactorChallengeInput from '@/components/auth/two-factor/TwoFactorChall
 
 const props = defineProps<{ hasPasskeys: boolean }>()
 
-const emit = defineEmits<{
-  (e: 'added', passkey: Passkey): void
-  (e: 'cancel'): void
-}>()
+const emit = defineEmits<{ (e: 'close'): void }>()
 
 const currentUser = userStore.current
 const canUsePassword = !currentUser.sso_provider
@@ -70,6 +75,9 @@ const confirmsWithPassword = computed(() => !confirmsWithPasskey.value && canUse
 
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const { handleHttpError } = useErrorHandler('dialog')
+const { toastSuccess } = useMessageToaster()
+
+const close = () => emit('close')
 
 const proveIdentity = async ({ password, code }: { password: string; code: string }) => {
   if (confirmsWithPasskey.value) {
@@ -84,7 +92,11 @@ const { data, isPristine, handleSubmit } = useForm<{ name: string; password: str
   useOverlay: false,
   validator: ({ name }) => name.trim().length > 0,
   onSubmit: async formData => await passkeyService.add(formData.name.trim(), await proveIdentity(formData)),
-  onSuccess: (passkey: Passkey) => emit('added', passkey),
+  onSuccess: (passkey: Passkey) => {
+    eventBus.emit('PASSKEY_ADDED', passkey)
+    close()
+    toastSuccess('Passkey added.')
+  },
   onError: (error: unknown) => {
     if (isPasskeyPromptDismissed(error)) {
       return
@@ -101,7 +113,7 @@ const { data, isPristine, handleSubmit } = useForm<{ name: string; password: str
 
 const maybeClose = async () => {
   if (isPristine() || (await showConfirmDialog('Discard this passkey?'))) {
-    emit('cancel')
+    close()
   }
 }
 </script>
