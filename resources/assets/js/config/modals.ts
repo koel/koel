@@ -17,6 +17,7 @@ export interface Modals {
   EDIT_USER_FORM: { user: User }
   EQUALIZER: never
   INVITE_USER_FORM: never
+  KEYBOARD_SHORTCUTS: never
   KOEL_PLUS: never
   PLAYLIST_COLLABORATION: { playlist: Playlist }
   CREATE_THEME_FORM: never
