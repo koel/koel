@@ -80,6 +80,7 @@ export default defineConfig({
           { text: 'User Management', link: '/usage/user-management' },
           { text: 'Account Settings', link: '/usage/profile-preferences' },
           { text: 'Two-Factor Authentication', link: '/usage/two-factor-authentication' },
+          { text: 'Passkeys', link: '/usage/passkeys' },
           { text: 'Remote Controller', link: '/usage/remote-controller' },
           { text: 'Subsonic Clients', link: '/usage/subsonic' },
           { text: 'Embedding', link: '/usage/embedding' },

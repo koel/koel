@@ -1,5 +1,6 @@
 export interface Modals {
   ABOUT_KOEL: never
+  ADD_PASSKEY_FORM: { hasPasskeys: boolean }
   ADD_PODCAST_FORM: never
   ADD_RADIO_STATION_FORM: never
   ADD_USER_FORM: never

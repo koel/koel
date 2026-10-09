@@ -15,7 +15,10 @@
         @logged-in="$emit('loggedIn')"
         @two-factor-required="twoFactorLoginToken = $event"
       />
-      <SsoLoginOptions @logged-in="$emit('loggedIn')" @two-factor-required="twoFactorLoginToken = $event" />
+      <div class="flex flex-wrap gap-3 items-center justify-center">
+        <PasskeyLoginButton @logged-in="$emit('loggedIn')" />
+        <SsoLoginOptions @logged-in="$emit('loggedIn')" @two-factor-required="twoFactorLoginToken = $event" />
+      </div>
     </template>
   </div>
 </template>
@@ -28,6 +31,7 @@ import { defineAsyncComponent } from '@/utils/helpers'
 
 const CredentialsLoginForm = defineAsyncComponent(() => import('@/components/auth/CredentialsLoginForm.vue'))
 const ForgotPasswordForm = defineAsyncComponent(() => import('@/components/auth/ForgotPasswordForm.vue'))
+const PasskeyLoginButton = defineAsyncComponent(() => import('@/components/auth/PasskeyLoginButton.vue'))
 const SsoLoginOptions = defineAsyncComponent(() => import('@/components/auth/sso/SsoLoginOptions.vue'))
 const TwoFactorChallengeForm = defineAsyncComponent(
   () => import('@/components/auth/two-factor/TwoFactorChallengeForm.vue'),

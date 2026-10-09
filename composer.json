@@ -55,7 +55,8 @@
     "mlocati/ip-lib": "^1.22",
     "robthree/twofactorauth": "^3.0",
     "intervention/image": "^4.0",
-    "sentry/sentry-laravel": "^4.27"
+    "sentry/sentry-laravel": "^4.27",
+    "laravel/passkeys": "^0.2.1"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

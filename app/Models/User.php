@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection as BaseCollection;
+use Laravel\Passkeys\Contracts\PasskeyUser;
+use Laravel\Passkeys\PasskeyAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 use OwenIt\Auditing\Auditable;
@@ -88,7 +90,7 @@ use Spatie\Permission\Traits\HasRoles;
     'invitation_accepted_at',
 ])]
 #[Appends(['avatar'])]
-class User extends Authenticatable implements AuditableContract
+class User extends Authenticatable implements AuditableContract, PasskeyUser
 {
     use Auditable;
     use HasApiTokens;
@@ -99,6 +101,7 @@ class User extends Authenticatable implements AuditableContract
     use HasUserAttributes;
     use HasUserRelationships;
     use Notifiable;
+    use PasskeyAuthenticatable;
     use Prunable;
 
     public const string FIRST_ADMIN_NAME = 'Koel';
