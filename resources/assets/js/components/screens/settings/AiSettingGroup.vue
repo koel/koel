@@ -1,34 +1,36 @@
 <template>
   <SettingGroup class="md:w-2/3">
-    <FormRow>
-      <label class="cursor-pointer">
-        <CheckBox :model-value="enabled" name="enabled" @update:model-value="toggle" />
-        <span class="ml-2">Use AI assistant</span>
-      </label>
-    </FormRow>
+    <div class="flex flex-col gap-4">
+      <FormRow>
+        <label class="cursor-pointer">
+          <CheckBox :model-value="enabled" name="enabled" @update:model-value="toggle" />
+          <span class="ml-2">Use AI assistant</span>
+        </label>
+      </FormRow>
 
-    <form v-if="enabled" class="space-y-4" data-testid="ai-configuration" @submit.prevent="handleSubmit">
-      <FormRow>
-        <template #label>Provider</template>
-        <SelectBox v-model="data.provider" name="provider" required>
-          <option disabled value="">Choose a provider</option>
-          <option v-for="(label, provider) in PROVIDERS" :key="provider" :value="provider">{{ label }}</option>
-        </SelectBox>
-      </FormRow>
-      <FormRow>
-        <template #label>API key</template>
-        <div>
-          <PasswordField
-            v-model="data.api_key"
-            :required="!canKeepApiKey"
-            :placeholder="canKeepApiKey ? 'Enter a new API key' : ''"
-            autocomplete="off"
-            name="api_key"
-          />
-        </div>
-      </FormRow>
-      <Btn :disabled="loading" type="submit">Save</Btn>
-    </form>
+      <form v-if="enabled" class="space-y-4" data-testid="ai-configuration" @submit.prevent="handleSubmit">
+        <FormRow>
+          <template #label>Provider</template>
+          <SelectBox v-model="data.provider" name="provider" required>
+            <option disabled value="">Choose a provider</option>
+            <option v-for="(label, provider) in PROVIDERS" :key="provider" :value="provider">{{ label }}</option>
+          </SelectBox>
+        </FormRow>
+        <FormRow>
+          <template #label>API key</template>
+          <div>
+            <PasswordField
+              v-model="data.api_key"
+              :required="!canKeepApiKey"
+              :placeholder="canKeepApiKey ? 'Enter a new API key' : ''"
+              autocomplete="off"
+              name="api_key"
+            />
+          </div>
+        </FormRow>
+        <Btn :disabled="loading" type="submit">Save</Btn>
+      </form>
+    </div>
   </SettingGroup>
 </template>
 
