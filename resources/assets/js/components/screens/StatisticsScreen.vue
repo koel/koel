@@ -43,6 +43,7 @@
 import { ChartColumnIcon } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import { listeningStatisticsService } from '@/services/listeningStatisticsService'
+import { useBranding } from '@/composables/useBranding'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useRouter } from '@/composables/useRouter'
 import type { ListeningPeriod } from '@/utils/listeningStatistics'
@@ -70,6 +71,7 @@ const periodOptions = (Object.keys(PERIOD_LABELS) as ListeningPeriod[]).map(valu
 
 const { url, onScreenActivated } = useRouter()
 const { handleHttpError } = useErrorHandler()
+const { cover: defaultCover } = useBranding()
 
 const period = ref<ListeningPeriod>('month')
 const statistics = ref<ListeningStatistics | null>(null)
@@ -87,7 +89,7 @@ const topSongs = computed(() =>
     key: song.id,
     title: song.title,
     subtitle: song.artist_name,
-    image: song.album_cover,
+    image: song.album_cover || defaultCover,
     href: url('albums.show', { id: song.album_id }),
     plays,
   })),
@@ -97,7 +99,7 @@ const topArtists = computed(() =>
   (statistics.value?.top_artists ?? []).map(({ artist, plays }) => ({
     key: artist.id,
     title: artist.name,
-    image: artist.image,
+    image: artist.image || defaultCover,
     href: url('artists.show', { id: artist.id }),
     plays,
   })),
@@ -108,7 +110,7 @@ const topAlbums = computed(() =>
     key: album.id,
     title: album.name,
     subtitle: album.artist_name,
-    image: album.cover,
+    image: album.cover || defaultCover,
     href: url('albums.show', { id: album.id }),
     plays,
   })),
