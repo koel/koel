@@ -32,7 +32,7 @@
         </div>
       </section>
 
-      <StatisticsBlock v-if="statistics.top_artists.length">
+      <HomeScreenBlock v-if="statistics.top_artists.length">
         <template #header>Your Top Artists</template>
         <Carousel showcase>
           <TopArtistCard
@@ -44,22 +44,22 @@
             :rank="i + 1"
           />
         </Carousel>
-      </StatisticsBlock>
+      </HomeScreenBlock>
 
-      <StatisticsBlock v-if="statistics.top_songs.length">
+      <HomeScreenBlock v-if="statistics.top_songs.length">
         <template #header>Your Top Songs</template>
         <RankedColumns :items="topSongs" />
-      </StatisticsBlock>
+      </HomeScreenBlock>
 
-      <StatisticsBlock v-if="statistics.top_albums.length">
+      <HomeScreenBlock v-if="statistics.top_albums.length">
         <template #header>Your Top Albums</template>
         <TopAlbums :entries="statistics.top_albums" />
-      </StatisticsBlock>
+      </HomeScreenBlock>
 
-      <StatisticsBlock v-if="topGenres.length">
+      <HomeScreenBlock v-if="topGenres.length">
         <template #header>Your Top Genres</template>
         <RankedColumns :items="topGenres" />
-      </StatisticsBlock>
+      </HomeScreenBlock>
     </div>
   </ScreenBase>
 </template>
@@ -85,10 +85,10 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 import Carousel from '@/components/ui/Carousel.vue'
+import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
 import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
 import RankedColumns from '@/components/screens/statistics/RankedColumns.vue'
-import StatisticsBlock from '@/components/screens/statistics/StatisticsBlock.vue'
 import TopAlbums from '@/components/screens/statistics/TopAlbums.vue'
 import TopArtistCard from '@/components/screens/statistics/TopArtistCard.vue'
 
