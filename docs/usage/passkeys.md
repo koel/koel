@@ -11,8 +11,9 @@ A passkey lets you log in with your fingerprint, face, screen lock, or a securit
 1. Go to **Settings**.
 2. Open the **Security** section.
 3. Under **Passkeys**, click **Add a Passkey**.
-4. Give it a name you'll recognize later, like "MacBook" or "YubiKey", and click **Add**.
-5. Follow your browser's prompt.
+4. Give it a name you'll recognize later, like "MacBook" or "YubiKey".
+5. Confirm it's you: with a passkey you already have, or with your password (and your two-factor code, if you use 2FA).
+6. Click **Add** and follow your browser's prompt.
 
 You can add as many passkeys as you like, for example one per device.
 

@@ -43,7 +43,7 @@ class PasskeyTest extends TestCase
     #[Test]
     public function logInWithPasskeySkipsTwoFactorChallenge(): void
     {
-        $user = self::createUserWithTwoFactorEnabled();
+        [$user] = self::createUserWithTwoFactorEnabled();
         $passkey = Passkey::factory()->for($user)->createOne();
         $this->mock(VerifyPasskey::class)->expects('__invoke')->andReturn($passkey);
 
@@ -101,7 +101,7 @@ class PasskeyTest extends TestCase
         $this->mock(StorePasskey::class)->expects('__invoke')->andReturn($passkey);
 
         $this
-            ->getAs('api/me/passkeys/registration-options', $user)
+            ->postAs('api/me/passkeys/registration-options', ['password' => 'secret'], $user)
             ->assertOk()
             ->assertJsonStructure(['challenge', 'rp', 'user']);
 
@@ -109,6 +109,70 @@ class PasskeyTest extends TestCase
             ->postAs('api/me/passkeys', ['name' => 'MacBook', 'credential' => self::attestationCredential()], $user)
             ->assertCreated()
             ->assertJsonStructure(PasskeyResource::JSON_STRUCTURE);
+    }
+
+    #[Test]
+    public function getRegistrationOptionsWithWrongPassword(): void
+    {
+        $this
+            ->postAs('api/me/passkeys/registration-options', ['password' => 'wrong'], create_user())
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('password');
+    }
+
+    #[Test]
+    public function getRegistrationOptionsWithTwoFactorEnabled(): void
+    {
+        [$user, $recoveryCodes] = self::createUserWithTwoFactorEnabled();
+
+        $this
+            ->postAs('api/me/passkeys/registration-options', ['password' => 'secret'], $user)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('code');
+
+        $this->postAs(
+            'api/me/passkeys/registration-options',
+            ['password' => 'secret', 'code' => $recoveryCodes[0]],
+            $user,
+        )->assertOk();
+    }
+
+    #[Test]
+    public function getRegistrationOptionsConfirmingWithPasskey(): void
+    {
+        $user = create_user();
+        $passkey = Passkey::factory()->for($user)->createOne();
+
+        $this
+            ->mock(VerifyPasskey::class)
+            ->expects('__invoke')
+            ->withArgs(static fn ($credential, $options, $owner): bool => $owner->is($user))
+            ->andReturn($passkey);
+
+        $this->getAs('api/me/passkeys/confirmation-options', $user)->assertOk()->assertJsonStructure(['challenge']);
+
+        $this->postAs(
+            'api/me/passkeys/registration-options',
+            ['credential' => self::assertionCredential()],
+            $user,
+        )->assertOk();
+    }
+
+    #[Test]
+    public function getRegistrationOptionsAsSsoUserWithoutPasskeys(): void
+    {
+        $this->postAs('api/me/passkeys/registration-options', [], create_user([
+            'sso_provider' => 'Google',
+        ]))->assertOk();
+    }
+
+    #[Test]
+    public function getRegistrationOptionsAsSsoUserWithPasskeysRequiresConfirmation(): void
+    {
+        $user = create_user(['sso_provider' => 'Google']);
+        Passkey::factory()->for($user)->createOne();
+
+        $this->postAs('api/me/passkeys/registration-options', [], $user)->assertUnprocessable();
     }
 
     #[Test]
@@ -126,7 +190,7 @@ class PasskeyTest extends TestCase
         $user = create_user();
         $this->mock(StorePasskey::class)->shouldNotReceive('__invoke');
 
-        $this->getAs('api/me/passkeys/registration-options', $user)->assertOk();
+        $this->postAs('api/me/passkeys/registration-options', ['password' => 'secret'], $user)->assertOk();
 
         $this
             ->postAs(
@@ -219,14 +283,16 @@ class PasskeyTest extends TestCase
         return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
 
-    private static function createUserWithTwoFactorEnabled(): User
+    /** @return array{User, array<string>} */
+    private static function createUserWithTwoFactorEnabled(): array
     {
         $user = create_user();
 
         $twoFactorAuth = app(TwoFactorAuthenticator::class);
         $twoFactorAuth->enroll($user);
-        $twoFactorAuth->confirm($user, $twoFactorAuth->generateRecoveryCodes());
+        $recoveryCodes = $twoFactorAuth->generateRecoveryCodes();
+        $twoFactorAuth->confirm($user, $recoveryCodes);
 
-        return $user->refresh();
+        return [$user->refresh(), $recoveryCodes];
     }
 }

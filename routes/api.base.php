@@ -14,6 +14,7 @@ use App\Http\Controllers\API\Artist\FetchArtistInformationController;
 use App\Http\Controllers\API\Auth\LoginWithCredentialsController;
 use App\Http\Controllers\API\Auth\LoginWithOneTimeTokenController;
 use App\Http\Controllers\API\Auth\LogoutController;
+use App\Http\Controllers\API\Auth\Passkey\ConfirmationOptionsController as PasskeyConfirmationOptionsController;
 use App\Http\Controllers\API\Auth\Passkey\LoginController as PasskeyLoginController;
 use App\Http\Controllers\API\Auth\Passkey\LoginOptionsController as PasskeyLoginOptionsController;
 use App\Http\Controllers\API\Auth\Passkey\PasskeyController;
@@ -261,7 +262,8 @@ Route::prefix('api')
             Route::post('me/two-factor/recovery-codes', RegenerateRecoveryCodesController::class);
             Route::delete('me/two-factor', DisableTwoFactorController::class);
 
-            Route::get('me/passkeys/registration-options', PasskeyRegistrationOptionsController::class);
+            Route::get('me/passkeys/confirmation-options', PasskeyConfirmationOptionsController::class);
+            Route::post('me/passkeys/registration-options', PasskeyRegistrationOptionsController::class);
             Route::apiResource('me/passkeys', PasskeyController::class)->only(['index', 'store', 'destroy']);
 
             // Last.fm-related routes

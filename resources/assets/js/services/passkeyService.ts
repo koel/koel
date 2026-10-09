@@ -1,6 +1,8 @@
 import { http } from '@/services/http'
 import { authService } from '@/services/authService'
 
+export type PasskeyIdentityProof = { password?: string; code?: string } | { credential: PublicKeyCredentialJSON }
+
 interface PasskeyLoginOptions {
   options: PublicKeyCredentialRequestOptionsJSON
   login_token: string
@@ -44,8 +46,18 @@ export const passkeyService = {
 
   fetchAll: async () => await http.get<Passkey[]>('me/passkeys'),
 
-  async add(name: string) {
-    const options = await http.get<PublicKeyCredentialCreationOptionsJSON>('me/passkeys/registration-options')
+  async confirmIdentity() {
+    const options = await http.get<PublicKeyCredentialRequestOptionsJSON>('me/passkeys/confirmation-options')
+
+    const credential = await navigator.credentials.get({
+      publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(options),
+    })
+
+    return { credential: ensurePublicKeyCredential(credential).toJSON() }
+  },
+
+  async add(name: string, proof: PasskeyIdentityProof) {
+    const options = await http.post<PublicKeyCredentialCreationOptionsJSON>('me/passkeys/registration-options', proof)
 
     const credential = await navigator.credentials.create({
       publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(options),

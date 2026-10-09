@@ -50,8 +50,10 @@ describe('passkeySettings.vue', () => {
     h.mock(passkeyService, 'add').mockResolvedValue(makePasskey({ id: 3, name: 'Pixel' }))
     h.render(Component)
 
+    h.actingAsUser()
     await h.user.click(screen.getByRole('button', { name: 'Add a Passkey' }))
-    await h.user.type(screen.getByRole('textbox'), 'Pixel')
+    await h.user.type(screen.getByPlaceholderText('MacBook, YubiKey…'), 'Pixel')
+    await h.user.type(screen.getByLabelText('Your password'), 'secret')
     await h.user.click(screen.getByRole('button', { name: 'Add' }))
 
     await waitFor(() => expect(listedNames()).toEqual(['Pixel']))

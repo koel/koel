@@ -6,9 +6,11 @@ use App\Exceptions\InvalidLoginTokenException;
 use App\Models\Passkey;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Uri;
+use Illuminate\Validation\ValidationException;
 use Laravel\Passkeys\Actions\DeletePasskey;
 use Laravel\Passkeys\Actions\GenerateRegistrationOptions;
 use Laravel\Passkeys\Actions\GenerateVerificationOptions;
@@ -35,6 +37,8 @@ class PasskeyService
         private readonly StorePasskey $storePasskey,
         private readonly DeletePasskey $deletePasskey,
         private readonly UserRepository $userRepository,
+        private readonly TwoFactorAuthenticator $twoFactorAuth,
+        private readonly Hasher $hasher,
     ) {}
 
     /**
@@ -79,6 +83,61 @@ class PasskeyService
     /**
      * @return array<string, mixed>
      */
+    public function generateConfirmationOptions(User $user): array
+    {
+        $options = ($this->generateVerificationOptions)($user);
+
+        Cache::set(
+            cache_key('passkey confirmation options', $user->id),
+            WebAuthn::toJson($options),
+            self::CEREMONY_TTL_SECONDS,
+        );
+
+        return WebAuthn::toBrowserArray($options);
+    }
+
+    public function confirmIdentityWithPasskey(User $user, PublicKeyCredential $credential): void
+    {
+        $serializedOptions = Cache::pull(cache_key('passkey confirmation options', $user->id));
+        throw_unless($serializedOptions, InvalidPasskeyException::make('Passkey check timed out. Please try again.'));
+
+        self::ensureOriginIsAllowed($credential);
+
+        try {
+            ($this->verifyPasskey)(
+                $credential,
+                WebAuthn::fromJson($serializedOptions, PublicKeyCredentialRequestOptions::class),
+                $user,
+            );
+        } catch (WebauthnException) {
+            throw InvalidPasskeyException::make('Unable to verify this passkey.');
+        }
+    }
+
+    public function confirmIdentityWithPassword(
+        User $user,
+        #[SensitiveParameter]
+        ?string $password,
+        #[SensitiveParameter]
+        ?string $twoFactorCode,
+    ): void {
+        if (self::hasNothingToConfirmWith($user)) {
+            return;
+        }
+
+        throw_unless($password && $this->hasher->check($password, $user->password), ValidationException::withMessages([
+            'password' => 'Wrong password.',
+        ]));
+
+        throw_if(
+            $user->hasTwoFactorEnabled() && !($twoFactorCode && $this->twoFactorAuth->verify($user, $twoFactorCode)),
+            ValidationException::withMessages(['code' => 'Wrong two-factor code.']),
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function generateRegistrationOptions(User $user): array
     {
         $options = ($this->generateRegistrationOptions)($user);
@@ -114,6 +173,11 @@ class PasskeyService
     public function deletePasskey(User $user, Passkey $passkey): void
     {
         ($this->deletePasskey)($user, $passkey);
+    }
+
+    private static function hasNothingToConfirmWith(User $user): bool
+    {
+        return $user->sso_provider && !$user->hasPasskeysEnabled();
     }
 
     private static function ensureOriginIsAllowed(PublicKeyCredential $credential): void

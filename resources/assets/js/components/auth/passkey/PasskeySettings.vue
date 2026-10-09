@@ -9,7 +9,7 @@
       <PasskeyListItem v-for="passkey in passkeys" :key="passkey.id" :passkey @removed="onRemoved" />
     </ul>
 
-    <AddPasskeyForm v-if="adding" @added="onAdded" @cancel="adding = false" />
+    <AddPasskeyForm v-if="adding" :has-passkeys="passkeys.length > 0" @added="onAdded" @cancel="adding = false" />
     <div v-else-if="supported">
       <Btn type="button" variant="ghost" bordered @click.prevent="adding = true">Add a Passkey</Btn>
     </div>

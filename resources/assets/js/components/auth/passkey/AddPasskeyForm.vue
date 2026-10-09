@@ -1,45 +1,85 @@
 <template>
-  <form class="flex flex-wrap items-end gap-3" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
-    <FormRow class="flex-1 min-w-48 max-w-md">
+  <form class="flex flex-col gap-4 max-w-md" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+    <FormRow>
       <template #label>Passkey name</template>
       <TextInput v-model="data.name" v-koel-focus name="name" placeholder="MacBook, YubiKey…" required />
     </FormRow>
 
-    <div class="flex gap-2">
+    <template v-if="confirmsWithPassword">
+      <FormRow>
+        <template #label>Your password</template>
+        <PasswordField v-model="data.password" name="password" required />
+      </FormRow>
+
+      <TwoFactorChallengeInput v-if="currentUser.two_factor" v-model="data.code">
+        <template #totp-label>Code from your authenticator app</template>
+        <template #recovery-label>Recovery code</template>
+      </TwoFactorChallengeInput>
+    </template>
+
+    <div class="flex items-center gap-2">
       <Btn type="submit">Add</Btn>
       <Btn type="button" variant="ghost" @click.prevent="maybeClose">Cancel</Btn>
+      <button
+        v-if="confirmsWithPasskey && canUsePassword"
+        class="ml-auto text-sm text-k-fg-70 hover:text-k-fg"
+        type="button"
+        @click.prevent="confirmsWithPasskey = false"
+      >
+        Use your password instead
+      </button>
     </div>
   </form>
 </template>
 
 <script lang="ts" setup>
+import { computed, ref } from 'vue'
 import {
   isPasskeyAddressRejected,
   isPasskeyPromptDismissed,
   PASSKEY_ADDRESS_REJECTED_MESSAGE,
   passkeyService,
 } from '@/services/passkeyService'
+import { userStore } from '@/stores/userStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
+import PasswordField from '@/components/ui/form/PasswordField.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
+import TwoFactorChallengeInput from '@/components/auth/two-factor/TwoFactorChallengeInput.vue'
+
+const props = defineProps<{ hasPasskeys: boolean }>()
 
 const emit = defineEmits<{
   (e: 'added', passkey: Passkey): void
   (e: 'cancel'): void
 }>()
 
+const currentUser = userStore.current
+const canUsePassword = !currentUser.sso_provider
+
+const confirmsWithPasskey = ref(props.hasPasskeys)
+const confirmsWithPassword = computed(() => !confirmsWithPasskey.value && canUsePassword)
+
 const { showConfirmDialog, showErrorDialog } = useDialogBox()
 const { handleHttpError } = useErrorHandler('dialog')
 
-const { data, isPristine, handleSubmit } = useForm<{ name: string }>({
-  initialValues: { name: '' },
+const proveIdentity = async ({ password, code }: { password: string; code: string }) => {
+  if (confirmsWithPasskey.value) {
+    return await passkeyService.confirmIdentity()
+  }
+
+  return confirmsWithPassword.value ? { password, code } : {}
+}
+
+const { data, isPristine, handleSubmit } = useForm<{ name: string; password: string; code: string }>({
+  initialValues: { name: '', password: '', code: '' },
   useOverlay: false,
   validator: ({ name }) => name.trim().length > 0,
-  onSubmit: async ({ name }) => await passkeyService.add(name.trim()),
+  onSubmit: async formData => await passkeyService.add(formData.name.trim(), await proveIdentity(formData)),
   onSuccess: (passkey: Passkey) => emit('added', passkey),
   onError: (error: unknown) => {
     if (isPasskeyPromptDismissed(error)) {

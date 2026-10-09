@@ -58,15 +58,26 @@ describe('passkeyService', () => {
     expect(postMock).not.toHaveBeenCalled()
   })
 
-  it('adds a passkey', async () => {
+  it('adds a passkey with proof of identity', async () => {
+    const credentials = stubCredentials()
+    const postMock = h
+      .mock(http, 'post')
+      .mockResolvedValueOnce({ challenge: 'abc' })
+      .mockResolvedValueOnce({ id: 1, name: 'MacBook' })
+
+    await passkeyService.add('MacBook', { password: 'secret' })
+
+    expect(postMock).toHaveBeenNthCalledWith(1, 'me/passkeys/registration-options', { password: 'secret' })
+    expect(credentials.create).toHaveBeenCalledWith({ publicKey: { parsed: { challenge: 'abc' } } })
+    expect(postMock).toHaveBeenNthCalledWith(2, 'me/passkeys', { name: 'MacBook', credential: { id: 'credential-id' } })
+  })
+
+  it('confirms identity with an existing passkey', async () => {
     const credentials = stubCredentials()
     h.mock(http, 'get').mockResolvedValue({ challenge: 'abc' })
-    const postMock = h.mock(http, 'post').mockResolvedValue({ id: 1, name: 'MacBook' })
 
-    await passkeyService.add('MacBook')
-
-    expect(credentials.create).toHaveBeenCalledWith({ publicKey: { parsed: { challenge: 'abc' } } })
-    expect(postMock).toHaveBeenCalledWith('me/passkeys', { name: 'MacBook', credential: { id: 'credential-id' } })
+    expect(await passkeyService.confirmIdentity()).toEqual({ credential: { id: 'credential-id' } })
+    expect(credentials.get).toHaveBeenCalledWith({ publicKey: { parsed: { challenge: 'abc' } } })
   })
 
   it('reports no passkey support without the browser API', () => {
