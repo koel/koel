@@ -59,6 +59,12 @@ export const routes = [
     title: 'Recently Played',
   },
   {
+    name: 'statistics',
+    path: '/statistics',
+    screen: 'Statistics',
+    title: 'Listening Statistics',
+  },
+  {
     name: 'offline-songs',
     path: '/offline-songs',
     screen: 'OfflineSongs',

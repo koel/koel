@@ -56,6 +56,21 @@ interface TwoFactorChallengeRequired {
   login_token: string
 }
 
+interface ListeningStatistics {
+  summary: {
+    plays: number
+    listening_time: number
+    song_count: number
+    artist_count: number
+  }
+  top_songs: { plays: number; song: Song }[]
+  top_artists: { plays: number; artist: Artist }[]
+  top_albums: { plays: number; album: Album }[]
+  top_genres: { plays: number; id: Genre['id']; name: string }[]
+  hourly_plays: { hour: string; plays: number }[]
+  first_played_at: string | null
+}
+
 interface Passkey {
   type: 'passkeys'
   id: number
@@ -599,6 +614,7 @@ interface ScreenNames {
   Queue: true
   'Radio.Stations': true
   RecentlyPlayed: true
+  Statistics: true
   'Search.Excerpt': true
   'Search.Playables': true
   Settings: true
