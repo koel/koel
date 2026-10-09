@@ -17,13 +17,17 @@
         </FormRow>
 
         <TwoFactorChallengeInput v-if="currentUser.two_factor" v-model="data.code">
-          <template #totp-label>Code from your authenticator app</template>
-          <template #recovery-label>Recovery code</template>
+          <template #totp-label>
+            <span class="text-k-fg">Code from your authenticator app</span>
+          </template>
+          <template #recovery-label>
+            <span class="text-k-fg">Recovery code</span>
+          </template>
         </TwoFactorChallengeInput>
 
         <button
           v-if="hasPasskeys"
-          class="text-sm text-k-highlight hover:text-k-fg"
+          class="text-[.95rem] text-k-highlight hover:text-k-fg"
           type="button"
           @click.prevent="confirmsWithPasskey = true"
         >
@@ -31,7 +35,7 @@
         </button>
       </template>
 
-      <p v-if="confirmsWithPasskey" class="text-sm text-k-fg-70" data-testid="confirm-with-passkey-note">
+      <p v-if="confirmsWithPasskey" class="text-[.95rem] text-k-fg-70" data-testid="confirm-with-passkey-note">
         You'll confirm it's you with one of your passkeys first.
         <button
           v-if="canUsePassword"
