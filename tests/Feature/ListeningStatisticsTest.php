@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Resources\ListeningStatisticsResource;
+use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Play;
 use App\Models\Song;
@@ -167,6 +168,61 @@ class ListeningStatisticsTest extends TestCase
         $this->getAs('api/me/listening-statistics?period=week&timezone=Asia/Tokyo', $user)->assertJsonPath(
             'streak.longest_days',
             1,
+        );
+    }
+
+    #[Test]
+    public function rankArtistsByListeningTime(): void
+    {
+        $user = create_user();
+        $longSong = Song::factory()->for(Artist::factory()->createOne())->createOne(['length' => 600]);
+        $shortSong = Song::factory()->for(Artist::factory()->createOne())->createOne(['length' => 60]);
+
+        Play::factory()->for($user)->for($shortSong)->state(['played_at' => now()->subDay()])->createMany(3);
+        Play::factory()->for($user)->for($longSong)->createOne(['played_at' => now()->subDay()]);
+
+        $this
+            ->getAs('api/me/listening-statistics?period=week', $user)
+            ->assertJsonPath('top_artists.0.artist.id', $longSong->artist_id)
+            ->assertJsonPath('top_artists.0.listening_time', 600)
+            ->assertJsonPath('top_artists.1.artist.id', $shortSong->artist_id);
+    }
+
+    #[Test]
+    public function rankGenresByListeningTime(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->createOne(['length' => 300]);
+        $song->syncGenres('Power Metal');
+
+        Play::factory()->for($user)->for($song)->state(['played_at' => now()->subDay()])->createMany(2);
+
+        $this
+            ->getAs('api/me/listening-statistics?period=week', $user)
+            ->assertJsonPath('top_genres.0.name', 'Power Metal')
+            ->assertJsonPath('top_genres.0.listening_time', 600);
+    }
+
+    #[Test]
+    public function giveArtistsWithoutAPhotoTheirMostListenedAlbumCover(): void
+    {
+        $user = create_user();
+        $artist = Artist::factory()->createOne(['image' => '']);
+        $favoriteAlbum = Album::factory()->for($artist)->createOne(['cover' => 'favorite.webp']);
+        $otherAlbum = Album::factory()->for($artist)->createOne(['cover' => 'other.webp']);
+
+        Play::factory()
+            ->for($user)
+            ->for(Song::factory()->for($artist)->for($favoriteAlbum)->createOne(['length' => 300]))
+            ->createOne(['played_at' => now()->subDay()]);
+        Play::factory()
+            ->for($user)
+            ->for(Song::factory()->for($artist)->for($otherAlbum)->createOne(['length' => 100]))
+            ->createOne(['played_at' => now()->subDay()]);
+
+        $this->getAs('api/me/listening-statistics?period=week', $user)->assertJsonPath(
+            'top_artists.0.album_cover',
+            image_storage_url('favorite.webp'),
         );
     }
 }
