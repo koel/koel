@@ -48,7 +48,7 @@
 
       <section v-if="statistics.top_songs.length" class="flex flex-col gap-4">
         <h3 class="text-xl font-semibold text-k-fg">Your Top Songs</h3>
-        <TopSongs :entries="statistics.top_songs" />
+        <RankedColumns :items="topSongs" />
       </section>
 
       <section v-if="statistics.top_albums.length" class="flex flex-col gap-4">
@@ -58,7 +58,7 @@
 
       <section v-if="topGenres.length" class="flex flex-col gap-4">
         <h3 class="text-xl font-semibold text-k-fg">Your Top Genres</h3>
-        <RankedList :items="topGenres" class="max-w-xl" />
+        <RankedColumns :items="topGenres" />
       </section>
     </div>
   </ScreenBase>
@@ -68,6 +68,8 @@
 import { ChartColumnIcon } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import { listeningStatisticsService } from '@/services/listeningStatisticsService'
+import { pluralize } from '@/utils/formatters'
+import { useBranding } from '@/composables/useBranding'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useRouter } from '@/composables/useRouter'
 import type { ListeningMeasure, ListeningPeriod } from '@/utils/listeningStatistics'
@@ -80,10 +82,9 @@ import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 import Carousel from '@/components/ui/Carousel.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
 import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
-import RankedList from '@/components/screens/statistics/RankedList.vue'
+import RankedColumns from '@/components/screens/statistics/RankedColumns.vue'
 import TopAlbums from '@/components/screens/statistics/TopAlbums.vue'
 import TopArtistCard from '@/components/screens/statistics/TopArtistCard.vue'
-import TopSongs from '@/components/screens/statistics/TopSongs.vue'
 
 const PERIOD_LABELS: Record<ListeningPeriod, string> = {
   week: '7 days',
@@ -99,6 +100,7 @@ const periodOptions = (Object.keys(PERIOD_LABELS) as ListeningPeriod[]).map(valu
 
 const { url, onScreenActivated } = useRouter()
 const { handleHttpError } = useErrorHandler()
+const { cover: defaultCover } = useBranding()
 
 const period = ref<ListeningPeriod>('month')
 const statistics = ref<ListeningStatistics | null>(null)
@@ -118,12 +120,22 @@ const listeningOverTime = computed(() => getListeningOverTime(hourlyListening.va
 const listeningByWeekday = computed(() => getListeningByWeekday(hourlyListening.value, measure.value))
 const listeningByHour = computed(() => getListeningByHour(hourlyListening.value, measure.value))
 
+const topSongs = computed(() =>
+  (statistics.value?.top_songs ?? []).map(({ song, plays }) => ({
+    key: song.id,
+    title: song.title,
+    subtitle: `${song.artist_name} · ${pluralize(plays, 'play')}`,
+    href: url('albums.show', { id: song.album_id }),
+    image: song.album_cover || defaultCover,
+  })),
+)
+
 const topGenres = computed(() =>
   (statistics.value?.top_genres ?? []).map(({ id, name, plays }) => ({
     key: id,
     title: name,
+    subtitle: pluralize(plays, 'play'),
     href: url('genres.show', { id }),
-    plays,
   })),
 )
 

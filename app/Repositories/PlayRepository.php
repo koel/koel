@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class PlayRepository extends Repository
 {
     private const int TOP_LIMIT = 10;
-    private const int TOP_SONG_LIMIT = 12;
+    private const int TOP_LIST_LIMIT = 12;
 
     public function getSummary(User $user, ?Carbon $since, ?Carbon $until = null): ListeningSummary
     {
@@ -44,7 +44,7 @@ class PlayRepository extends Repository
             ->select('plays.song_id AS ranked_id')
             ->selectRaw('COUNT(*) AS play_count')
             ->orderByDesc('play_count')
-            ->limit(self::TOP_SONG_LIMIT)
+            ->limit(self::TOP_LIST_LIMIT)
             ->toBase()
             ->pluck('play_count', 'ranked_id')
             ->map(static fn (int|string $count): int => (int) $count)
@@ -98,7 +98,7 @@ class PlayRepository extends Repository
             ->select('genres.public_id', 'genres.name')
             ->selectRaw('COUNT(*) AS play_count')
             ->orderByDesc('play_count')
-            ->limit(self::TOP_LIMIT)
+            ->limit(self::TOP_LIST_LIMIT)
             ->toBase()
             ->get()
             ->map(static fn (object $genre): array => [
