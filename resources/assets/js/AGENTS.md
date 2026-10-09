@@ -24,6 +24,7 @@
 ## Vue Component Decomposition
 
 - Always try to break Vue components into smaller, self-managed-state subcomponents. A component that hosts multiple stages, multiple modes, or multiple distinct UI shapes should split each into its own focused child. The parent becomes a thin orchestrator (state machine + API calls + composition); each child owns one shape with clear props in and events out, no service dependencies of its own, and is testable in isolation with minimal mocks. Reference shape: `TwoFactorAuthSettings.vue` (orchestrator) → `TwoFactorEnrollment.vue` / `TwoFactorRecoveryCodes.vue` / `TwoFactorManageActions.vue` (focused children).
+- **A `v-for` whose rows act on their own item gets a row component.** When each row in a loop can do something to its own item (remove, rename, toggle), extract the row into a child that takes the item as a prop and handles the action itself — confirm dialog, service call, toast — then emits the outcome (e.g. `removed`) so the parent only updates its list. This is the one case where a child calls a service: the action belongs to the item, not to the list. Reference shape: `PasskeySettings.vue` → `PasskeyListItem.vue`.
 
 ## Vue Component Styling
 
