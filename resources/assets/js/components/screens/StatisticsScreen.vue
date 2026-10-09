@@ -32,7 +32,7 @@
         </div>
       </section>
 
-      <HomeScreenBlock v-if="statistics.top_artists.length">
+      <ShelfSection v-if="statistics.top_artists.length">
         <template #header>Your Top Artists</template>
         <Carousel showcase>
           <TopArtistCard
@@ -44,22 +44,22 @@
             :rank="i + 1"
           />
         </Carousel>
-      </HomeScreenBlock>
+      </ShelfSection>
 
-      <HomeScreenBlock v-if="statistics.top_songs.length">
+      <ShelfSection v-if="statistics.top_songs.length">
         <template #header>Your Top Songs</template>
         <RankedColumns :items="topSongs" />
-      </HomeScreenBlock>
+      </ShelfSection>
 
-      <HomeScreenBlock v-if="statistics.top_albums.length">
+      <ShelfSection v-if="statistics.top_albums.length">
         <template #header>Your Top Albums</template>
         <TopAlbums :entries="statistics.top_albums" />
-      </HomeScreenBlock>
+      </ShelfSection>
 
-      <HomeScreenBlock v-if="topGenres.length">
+      <ShelfSection v-if="topGenres.length">
         <template #header>Your Top Genres</template>
         <RankedColumns :items="topGenres" />
-      </HomeScreenBlock>
+      </ShelfSection>
     </div>
   </ScreenBase>
 </template>
@@ -85,7 +85,7 @@ import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 import Carousel from '@/components/ui/Carousel.vue'
-import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
+import ShelfSection from '@/components/ui/ShelfSection.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
 import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
 import RankedColumns from '@/components/screens/statistics/RankedColumns.vue'
