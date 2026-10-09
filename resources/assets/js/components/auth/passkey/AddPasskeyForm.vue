@@ -17,17 +17,21 @@
       </TwoFactorChallengeInput>
     </template>
 
-    <div class="flex items-center gap-2">
-      <Btn type="submit">Add</Btn>
-      <Btn type="button" variant="ghost" @click.prevent="maybeClose">Cancel</Btn>
+    <p v-if="confirmsWithPasskey" class="text-sm text-k-fg-70" data-testid="confirm-with-passkey-note">
+      You'll confirm it's you with one of your passkeys first.
       <button
-        v-if="confirmsWithPasskey && canUsePassword"
-        class="ml-auto text-sm text-k-fg-70 hover:text-k-fg"
+        v-if="canUsePassword"
+        class="text-k-highlight hover:text-k-fg"
         type="button"
         @click.prevent="confirmsWithPasskey = false"
       >
         Use your password instead
       </button>
+    </p>
+
+    <div class="flex gap-2">
+      <Btn type="submit">Add</Btn>
+      <Btn type="button" variant="ghost" @click.prevent="maybeClose">Cancel</Btn>
     </div>
   </form>
 </template>
