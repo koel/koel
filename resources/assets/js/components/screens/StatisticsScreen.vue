@@ -20,7 +20,7 @@
     </ScreenEmptyState>
 
     <div v-else class="flex flex-col gap-10" data-testid="statistics">
-      <ListeningSummary :period-label="periodLabel" :statistics />
+      <ListeningSummary :statistics />
 
       <section class="flex flex-col gap-6">
         <SegmentedControl v-model="measure" :options="measureOptions" class="self-start" name="listening-measure" />
@@ -111,8 +111,6 @@ const { cover: defaultCover } = useBranding()
 const period = ref<ListeningPeriod>('month')
 const statistics = ref<ListeningStatistics | null>(null)
 const loading = ref(false)
-
-const periodLabel = computed(() => PERIOD_LABELS[period.value])
 
 const measureOptions: { value: ListeningMeasure; label: string }[] = [
   { value: 'plays', label: 'Plays' },

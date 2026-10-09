@@ -9,7 +9,6 @@ describe('listeningSummary.vue', () => {
   const renderComponent = (overrides: Partial<ListeningStatistics> = {}) =>
     h.render(Component, {
       props: {
-        periodLabel: '7 days',
         statistics: {
           summary: { plays: 12, listening_time: 2400, song_count: 8, artist_count: 5 },
           top_songs: [],

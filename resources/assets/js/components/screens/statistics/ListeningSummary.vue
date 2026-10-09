@@ -12,7 +12,7 @@
 import { computed } from 'vue'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 
-const props = defineProps<{ statistics: ListeningStatistics; periodLabel: string }>()
+const props = defineProps<{ statistics: ListeningStatistics }>()
 
 const describeChange = (current: number, previous?: number) => {
   if (!previous) {
@@ -22,10 +22,10 @@ const describeChange = (current: number, previous?: number) => {
   const change = Math.round(((current - previous) / previous) * 100)
 
   if (change === 0) {
-    return `Same as the previous ${props.periodLabel}`
+    return 'Same'
   }
 
-  return `${change > 0 ? '+' : '−'}${Math.abs(change)}% vs. the previous ${props.periodLabel}`
+  return `${change > 0 ? '+' : '−'}${Math.abs(change)}%`
 }
 
 const figures = computed(() => {
