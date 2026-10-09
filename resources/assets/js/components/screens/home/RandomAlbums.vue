@@ -1,5 +1,5 @@
 <template>
-  <HomeScreenBlock>
+  <ShelfSection>
     <template #header>Random Albums</template>
     <template #actions>
       <Btn v-if="albums.length" size="small" variant="ghost" rounded :disabled="refreshing" @click.prevent="refresh">
@@ -16,7 +16,7 @@
       </template>
       <p v-else class="text-k-fg-50">No albums yet.</p>
     </Carousel>
-  </HomeScreenBlock>
+  </ShelfSection>
 </template>
 
 <script lang="ts" setup>
@@ -29,7 +29,7 @@ import AlbumCard from '@/components/album/AlbumCard.vue'
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import Carousel from '@/components/ui/Carousel.vue'
-import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
+import ShelfSection from '@/components/ui/ShelfSection.vue'
 
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)

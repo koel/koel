@@ -8,7 +8,10 @@
     />
     <slot name="header" />
 
-    <main :class="{ 'scrolls-itself': scrollsItself }" class="flex flex-col b-16 md:b-6 flex-1 place-content-start">
+    <main
+      :class="scrollsItself ? 'scrolls-itself' : 'scroll-mask-y'"
+      class="flex flex-col b-16 md:b-6 flex-1 place-content-start"
+    >
       <HookSlot :context="{ screen: getCurrentScreen() }" name="screen.header" />
       <slot />
     </main>
@@ -41,7 +44,7 @@ main {
   -ms-overflow-style: -ms-autohiding-scrollbar;
 
   &:not(.scrolls-itself) {
-    @apply scroll-mask-y overflow-scroll p-6;
+    @apply overflow-scroll p-6;
   }
 
   &.scrolls-itself {

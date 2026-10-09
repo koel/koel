@@ -77,6 +77,7 @@ export default defineConfig({
           { text: 'Podcasts', link: '/usage/podcasts' },
           { text: 'Radio', link: '/usage/radio' },
           { text: 'Offline Playback', link: '/usage/offline-playback' },
+          { text: 'Listening Statistics', link: '/usage/listening-statistics' },
           { text: 'User Management', link: '/usage/user-management' },
           { text: 'Account Settings', link: '/usage/profile-preferences' },
           { text: 'Two-Factor Authentication', link: '/usage/two-factor-authentication' },

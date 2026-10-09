@@ -23,6 +23,7 @@
     "@zip.js/zip.js": "^2.18.2",
     "butterchurn": "^2.6.7",
     "butterchurn-presets": "^2.4.7",
+    "chart.js": "^4.5.1",
     "dompurify": "^3.4.16",
     "events": "^3.3.0",
     "fuse.js": "^7.1.0",
@@ -41,6 +42,7 @@
     "tiny-typed-emitter": "^2.1.0",
     "vue": "^3.5.29",
     "vue-advanced-cropper": "^2.8.9",
+    "vue-chartjs": "^5.3.4",
     "youtube-player": "^5.6.0"
   },
   "devDependencies": {

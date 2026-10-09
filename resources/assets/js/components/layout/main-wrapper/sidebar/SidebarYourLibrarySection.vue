@@ -48,6 +48,12 @@
         </template>
         Radio
       </SidebarItem>
+      <SidebarItem :href="url('statistics')" :active="isCurrentScreen('Statistics')">
+        <template #icon>
+          <ChartColumnIcon :size="16" />
+        </template>
+        Statistics
+      </SidebarItem>
       <SidebarItem v-if="supportsOffline" :href="url('offline-songs')" :active="isCurrentScreen('OfflineSongs')">
         <template #icon>
           <Icon :icon="faCloudArrowDown" fixed-width />
@@ -61,7 +67,7 @@
 
 <script lang="ts" setup>
 import { faCloudArrowDown, faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
-import { GuitarIcon, MicVocalIcon, RadioIcon } from 'lucide-vue-next'
+import { ChartColumnIcon, GuitarIcon, MicVocalIcon, RadioIcon } from 'lucide-vue-next'
 import { unescape } from 'lodash-es'
 import { computed, ref, toRef } from 'vue'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'

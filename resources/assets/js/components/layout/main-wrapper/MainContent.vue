@@ -29,6 +29,7 @@
     <AlbumScreen v-if="screen === 'Album'" />
     <ArtistScreen v-if="screen === 'Artist'" />
     <SettingsScreen v-if="screen === 'Settings'" />
+    <StatisticsScreen v-if="screen === 'Statistics'" />
     <PodcastScreen v-if="screen === 'Podcast'" />
     <EpisodeScreen v-if="screen === 'Episode'" />
     <UserListScreen v-if="screen === 'Users'" />
@@ -88,6 +89,7 @@ const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/S
 const UploadScreen = defineAsyncComponent(() => import('@/components/screens/UploadScreen.vue'))
 const UserListScreen = defineAsyncComponent(() => import('@/components/screens/UserListScreen.vue'))
 const VisualizerScreen = defineAsyncComponent(() => import('@/components/screens/VisualizerScreen.vue'))
+const StatisticsScreen = defineAsyncComponent(() => import('@/components/screens/StatisticsScreen.vue'))
 const YouTubeScreen = defineAsyncComponent(() => import('@/components/screens/YouTubeScreen.vue'))
 
 const addedScreens = applyFilters<Partial<Record<ScreenName, Component>>>(Filter.SCREENS, {})

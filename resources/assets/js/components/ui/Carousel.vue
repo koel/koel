@@ -30,6 +30,7 @@
 
     <div
       ref="scroller"
+      :class="{ showcase }"
       class="home-carousel scroll-mask-x-from-[calc(100%-2rem)] md:scroll-mask-x overflow-x-auto overflow-y-hidden w-full"
     >
       <div class="home-carousel-track flex gap-4">
@@ -43,6 +44,8 @@
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { inject, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
 import { BlockActionsHostKey } from '@/config/symbols'
+
+withDefaults(defineProps<{ showcase?: boolean }>(), { showcase: false })
 
 const actionsHost = inject(BlockActionsHostKey, ref(null))
 
@@ -118,5 +121,9 @@ const slide = (direction: 1 | -1) => {
 .home-carousel-track > * {
   flex: none;
   width: 240px;
+}
+
+.showcase .home-carousel-track {
+  gap: 2rem;
 }
 </style>

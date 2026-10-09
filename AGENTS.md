@@ -279,6 +279,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Don't manufacture blank lines mid-block — only at real phase boundaries. The test: removing the blank would jam two different *intents* together, not two related lines of the same intent.
 
 ## PHP Conventions
+- **Enum cases are UPPER_SNAKE_CASE** (`PlayableType::SONG`, `ListeningPeriod::ALL_TIME`), like every enum in `app/Enums`. This overrides the generic Laravel guideline above that suggests TitleCase keys.
 - Always prefer Laravel's built-in helpers over custom implementations (e.g. `str()->plural()`, `Str::slug()`, `Arr::flatten()`, etc.). Do not reimplement what Laravel already provides.
 - For guard clauses that throw on a condition, always reach for `throw_if($condition, ExceptionClass::class, ...$args)` / `throw_unless($condition, ExceptionClass::class, ...$args)` before writing `if (…) { throw new …; }`. The Laravel helpers read as a single declarative line, and the extra args are forwarded to the exception constructor. Plain `if`/`throw` is only correct when the throw branch has to do additional work (logging, side effects) before throwing.
 - All methods must have explicit visibility (`public`, `protected`, or `private`). Never omit the visibility keyword, even on interface methods or static methods.
