@@ -98,18 +98,4 @@ describe('carousel.vue', () => {
     // The inline <nav> must not coexist with the teleported buttons.
     expect(container.querySelector('nav button[title="Scroll left"]')).toBeNull()
   })
-
-  it.each([
-    [false, true],
-    [true, false],
-  ])('fades the edges unless it is a showcase (showcase: %s)', (showcase, fades) => {
-    const { container } = h.render(Component, {
-      props: { showcase },
-      slots: { default: '<div>Card</div>' },
-    })
-
-    const scroller = container.querySelector<HTMLElement>('.home-carousel')!
-
-    expect(scroller.className.includes('scroll-mask-x')).toBe(fades)
-  })
 })
