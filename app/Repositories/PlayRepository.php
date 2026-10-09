@@ -74,21 +74,29 @@ class PlayRepository extends Repository
             ->all();
     }
 
-    /** @return array<string, int> play counts keyed by the UTC hour they fall in, as ISO 8601 strings */
-    public function getHourlyPlayCounts(User $user, ?Carbon $since): array
+    /**
+     * @return array<string, array{plays: int, listening_time: float}> keyed by the UTC hour the plays fall in,
+     *         as ISO 8601 strings
+     */
+    public function getHourlyListening(User $user, ?Carbon $since): array
     {
         $hour = self::utcHourExpression('plays.played_at');
 
         return $this
             ->queryForUser($user, $since)
+            ->join('songs', 'songs.id', '=', 'plays.song_id')
             ->selectRaw("$hour AS played_hour")
             ->selectRaw('COUNT(*) AS play_count')
+            ->selectRaw('COALESCE(SUM(songs.length), 0) AS listening_time')
             ->groupBy('played_hour')
             ->orderBy('played_hour')
             ->toBase()
-            ->pluck('play_count', 'played_hour')
-            ->mapWithKeys(static fn (int|string $count, string $playedHour): array => [
-                Carbon::parse($playedHour, 'UTC')->toIso8601ZuluString() => (int) $count,
+            ->get()
+            ->mapWithKeys(static fn (object $row): array => [
+                Carbon::parse($row->played_hour, 'UTC')->toIso8601ZuluString() => [
+                    'plays' => (int) $row->play_count,
+                    'listening_time' => (float) $row->listening_time,
+                ],
             ])
             ->all();
     }

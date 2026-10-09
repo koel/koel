@@ -8,11 +8,11 @@ use Illuminate\Support\Carbon;
 class ListeningStreakCalculator
 {
     /**
-     * @param array<string, int> $hourlyPlays play counts keyed by UTC hour (ISO 8601)
+     * @param list<string> $playedHours UTC hours with at least one play (ISO 8601)
      */
-    public function calculateStreak(array $hourlyPlays, string $timezone): ListeningStreak
+    public function calculateStreak(array $playedHours, string $timezone): ListeningStreak
     {
-        $activeDays = collect(array_keys($hourlyPlays))
+        $activeDays = collect($playedHours)
             ->map(static fn (string $hour): string => Carbon::parse($hour)->setTimezone($timezone)->toDateString())
             ->unique()
             ->sort()

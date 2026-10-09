@@ -10,18 +10,19 @@ vi.mock('vue-chartjs', () => ({
   }),
 }))
 
-import Component from './PlaysBarChart.vue'
+import Component from './ListeningBarChart.vue'
 
-describe('playsBarChart.vue', () => {
+describe('listeningBarChart.vue', () => {
   const h = createHarness()
 
-  it('charts a bar per period with its plays', () => {
+  it('charts a bar per period with its rounded value', () => {
     h.render(Component, {
       props: {
         title: 'By day of the week',
+        measure: 'minutes',
         bars: [
-          { key: 'a', label: 'Mon', plays: 4 },
-          { key: 'b', label: 'Tue', plays: 1 },
+          { key: 'a', label: 'Mon', value: 4.4 },
+          { key: 'b', label: 'Tue', value: 0.6 },
         ],
       },
     })

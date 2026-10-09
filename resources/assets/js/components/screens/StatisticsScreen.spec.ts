@@ -17,7 +17,7 @@ describe('statisticsScreen.vue', () => {
     top_artists: [],
     top_albums: [],
     top_genres: [],
-    hourly_plays: plays ? [{ hour: '2026-10-09T14:00:00Z', plays }] : [],
+    hourly_listening: plays ? [{ hour: '2026-10-09T14:00:00Z', plays, listening_time: plays * 200 }] : [],
     previous_summary: null,
     discoveries: null,
     streak: { current_days: 0, longest_days: 0 },
@@ -29,7 +29,7 @@ describe('statisticsScreen.vue', () => {
     return h.render(Component, {
       global: {
         stubs: {
-          PlaysBarChart: h.stub('plays-bar-chart'),
+          ListeningBarChart: h.stub('listening-bar-chart'),
         },
       },
     })

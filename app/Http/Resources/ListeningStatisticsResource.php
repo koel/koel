@@ -15,7 +15,7 @@ class ListeningStatisticsResource extends JsonResource
         'top_artists',
         'top_albums',
         'top_genres',
-        'hourly_plays',
+        'hourly_listening',
         'previous_summary',
         'discoveries',
         'streak' => ['current_days', 'longest_days'],
@@ -45,8 +45,8 @@ class ListeningStatisticsResource extends JsonResource
                 'album' => AlbumResource::make($entry['album']),
             ], $this->statistics->topAlbums),
             'top_genres' => $this->statistics->topGenres,
-            'hourly_plays' => collect($this->statistics->hourlyPlays)
-                ->map(static fn (int $plays, string $hour): array => ['hour' => $hour, 'plays' => $plays])
+            'hourly_listening' => collect($this->statistics->hourlyListening)
+                ->map(static fn (array $listening, string $hour): array => ['hour' => $hour, ...$listening])
                 ->values()
                 ->all(),
             'previous_summary' => $this->statistics->previousSummary

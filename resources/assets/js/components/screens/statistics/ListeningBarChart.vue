@@ -12,12 +12,12 @@ import type { ChartData, ChartOptions } from 'chart.js'
 import { BarElement, CategoryScale, Chart, LinearScale, Tooltip } from 'chart.js'
 import { computed } from 'vue'
 import { Bar } from 'vue-chartjs'
-import type { PlaysBar } from '@/utils/listeningStatistics'
+import type { ListeningBar, ListeningMeasure } from '@/utils/listeningStatistics'
 import { pluralize } from '@/utils/formatters'
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip)
 
-const props = defineProps<{ title: string; bars: PlaysBar[] }>()
+const props = defineProps<{ title: string; bars: ListeningBar[]; measure: ListeningMeasure }>()
 
 const readCssVariable = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 
@@ -41,7 +41,7 @@ const chartData = computed<ChartData<'bar'>>(() => ({
   labels: props.bars.map(bar => bar.label),
   datasets: [
     {
-      data: props.bars.map(bar => bar.plays),
+      data: props.bars.map(bar => Math.round(bar.value)),
       backgroundColor: withOpacity(highlightColor, 0.75),
       hoverBackgroundColor: highlightColor,
       borderRadius: 2,
@@ -49,7 +49,7 @@ const chartData = computed<ChartData<'bar'>>(() => ({
   ],
 }))
 
-const chartOptions: ChartOptions<'bar'> = {
+const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   responsive: true,
   maintainAspectRatio: false,
   animation: false,
@@ -70,9 +70,9 @@ const chartOptions: ChartOptions<'bar'> = {
     tooltip: {
       displayColors: false,
       callbacks: {
-        label: context => pluralize(Number(context.raw), 'play'),
+        label: context => pluralize(Number(context.raw), props.measure === 'plays' ? 'play' : 'minute'),
       },
     },
   },
-}
+}))
 </script>

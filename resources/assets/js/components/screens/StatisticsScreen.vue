@@ -22,12 +22,15 @@
     <div v-else class="flex flex-col gap-10" data-testid="statistics">
       <ListeningSummary :period-label="periodLabel" :statistics />
 
-      <PlaysBarChart :bars="playsOverTime" title="Plays over time" />
+      <section class="flex flex-col gap-6">
+        <SegmentedControl v-model="measure" :options="measureOptions" class="self-start" name="listening-measure" />
+        <ListeningBarChart :bars="listeningOverTime" :measure title="Over time" />
 
-      <div class="grid md:grid-cols-2 gap-10">
-        <PlaysBarChart :bars="playsByWeekday" title="By day of the week" />
-        <PlaysBarChart :bars="playsByHour" title="By hour of the day" />
-      </div>
+        <div class="grid md:grid-cols-2 gap-10">
+          <ListeningBarChart :bars="listeningByWeekday" :measure title="By day of the week" />
+          <ListeningBarChart :bars="listeningByHour" :measure title="By hour of the day" />
+        </div>
+      </section>
 
       <div class="grid md:grid-cols-2 gap-10">
         <RankedList :items="topSongs" title="Top songs" />
@@ -46,15 +49,15 @@ import { listeningStatisticsService } from '@/services/listeningStatisticsServic
 import { useBranding } from '@/composables/useBranding'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useRouter } from '@/composables/useRouter'
-import type { ListeningPeriod } from '@/utils/listeningStatistics'
-import { getPlaysByHour, getPlaysByWeekday, getPlaysOverTime } from '@/utils/listeningStatistics'
+import type { ListeningMeasure, ListeningPeriod } from '@/utils/listeningStatistics'
+import { getListeningByHour, getListeningByWeekday, getListeningOverTime } from '@/utils/listeningStatistics'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
-import PlaysBarChart from '@/components/screens/statistics/PlaysBarChart.vue'
+import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
 import RankedList from '@/components/screens/statistics/RankedList.vue'
 
 const PERIOD_LABELS: Record<ListeningPeriod, string> = {
@@ -79,10 +82,17 @@ const loading = ref(false)
 
 const periodLabel = computed(() => PERIOD_LABELS[period.value])
 
-const hourlyPlays = computed(() => statistics.value?.hourly_plays ?? [])
-const playsOverTime = computed(() => getPlaysOverTime(hourlyPlays.value, period.value))
-const playsByWeekday = computed(() => getPlaysByWeekday(hourlyPlays.value))
-const playsByHour = computed(() => getPlaysByHour(hourlyPlays.value))
+const measureOptions: { value: ListeningMeasure; label: string }[] = [
+  { value: 'plays', label: 'Plays' },
+  { value: 'minutes', label: 'Minutes' },
+]
+
+const measure = ref<ListeningMeasure>('plays')
+
+const hourlyListening = computed(() => statistics.value?.hourly_listening ?? [])
+const listeningOverTime = computed(() => getListeningOverTime(hourlyListening.value, period.value, measure.value))
+const listeningByWeekday = computed(() => getListeningByWeekday(hourlyListening.value, measure.value))
+const listeningByHour = computed(() => getListeningByHour(hourlyListening.value, measure.value))
 
 const topSongs = computed(() =>
   (statistics.value?.top_songs ?? []).map(({ song, plays }) => ({

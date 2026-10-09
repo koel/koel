@@ -51,7 +51,7 @@ class ListeningStatisticsService
                 ->values()
                 ->all(),
             topGenres: $this->playRepository->getTopGenres($user, $since),
-            hourlyPlays: $this->playRepository->getHourlyPlayCounts($user, $since),
+            hourlyListening: $this->playRepository->getHourlyListening($user, $since),
             previousSummary: $since && $previousSince
                 ? $this->playRepository->getSummary($user, $previousSince, $since)
                 : null,
@@ -62,7 +62,7 @@ class ListeningStatisticsService
                 )
                 : null,
             streak: $this->streakCalculator->calculateStreak(
-                $this->playRepository->getHourlyPlayCounts($user, null),
+                array_keys($this->playRepository->getHourlyListening($user, null)),
                 $timezone,
             ),
         );

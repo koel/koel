@@ -13,7 +13,7 @@ final readonly class ListeningStatistics
      * @param list<array{artist: Artist, plays: int}> $topArtists
      * @param list<array{album: Album, plays: int}> $topAlbums
      * @param list<array{id: string, name: string, plays: int}> $topGenres
-     * @param array<string, int> $hourlyPlays play counts keyed by UTC hour (ISO 8601)
+     * @param array<string, array{plays: int, listening_time: float}> $hourlyListening keyed by UTC hour (ISO 8601)
      */
     private function __construct(
         public ListeningSummary $summary,
@@ -21,7 +21,7 @@ final readonly class ListeningStatistics
         public array $topArtists,
         public array $topAlbums,
         public array $topGenres,
-        public array $hourlyPlays,
+        public array $hourlyListening,
         public ?ListeningSummary $previousSummary,
         public ?Discoveries $discoveries,
         public ListeningStreak $streak,
@@ -32,7 +32,7 @@ final readonly class ListeningStatistics
      * @param list<array{artist: Artist, plays: int}> $topArtists
      * @param list<array{album: Album, plays: int}> $topAlbums
      * @param list<array{id: string, name: string, plays: int}> $topGenres
-     * @param array<string, int> $hourlyPlays
+     * @param array<string, array{plays: int, listening_time: float}> $hourlyListening
      */
     public static function make(
         ListeningSummary $summary,
@@ -40,7 +40,7 @@ final readonly class ListeningStatistics
         array $topArtists,
         array $topAlbums,
         array $topGenres,
-        array $hourlyPlays,
+        array $hourlyListening,
         ?ListeningSummary $previousSummary,
         ?Discoveries $discoveries,
         ListeningStreak $streak,
@@ -51,7 +51,7 @@ final readonly class ListeningStatistics
             topArtists: $topArtists,
             topAlbums: $topAlbums,
             topGenres: $topGenres,
-            hourlyPlays: $hourlyPlays,
+            hourlyListening: $hourlyListening,
             previousSummary: $previousSummary,
             discoveries: $discoveries,
             streak: $streak,

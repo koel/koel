@@ -76,17 +76,18 @@ class ListeningStatisticsTest extends TestCase
     }
 
     #[Test]
-    public function countPlaysPerUtcHour(): void
+    public function countPlaysAndListeningTimePerUtcHour(): void
     {
         $user = create_user();
+        $song = Song::factory()->createOne(['length' => 100]);
 
-        Play::factory()->for($user)->createOne(['played_at' => '2026-10-09 14:05:00']);
-        Play::factory()->for($user)->createOne(['played_at' => '2026-10-09 14:55:00']);
-        Play::factory()->for($user)->createOne(['played_at' => '2026-10-09 15:10:00']);
+        Play::factory()->for($user)->for($song)->createOne(['played_at' => '2026-10-09 14:05:00']);
+        Play::factory()->for($user)->for($song)->createOne(['played_at' => '2026-10-09 14:55:00']);
+        Play::factory()->for($user)->for($song)->createOne(['played_at' => '2026-10-09 15:10:00']);
 
-        $this->getAs('api/me/listening-statistics?period=week', $user)->assertJsonPath('hourly_plays', [
-            ['hour' => '2026-10-09T14:00:00Z', 'plays' => 2],
-            ['hour' => '2026-10-09T15:00:00Z', 'plays' => 1],
+        $this->getAs('api/me/listening-statistics?period=week', $user)->assertJsonPath('hourly_listening', [
+            ['hour' => '2026-10-09T14:00:00Z', 'plays' => 2, 'listening_time' => 200],
+            ['hour' => '2026-10-09T15:00:00Z', 'plays' => 1, 'listening_time' => 100],
         ]);
     }
 

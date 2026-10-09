@@ -16,7 +16,7 @@ describe('listeningSummary.vue', () => {
           top_artists: [],
           top_albums: [],
           top_genres: [],
-          hourly_plays: [],
+          hourly_listening: [],
           previous_summary: null,
           discoveries: null,
           streak: { current_days: 2, longest_days: 4 },
