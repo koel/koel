@@ -24,6 +24,11 @@ export const isPasskeyPromptDismissed = (error: unknown) =>
 export const isPasskeyAddressRejected = (error: unknown) =>
   error instanceof DOMException && error.name === 'SecurityError'
 
+export const isPasskeyAlreadyOnDevice = (error: unknown) =>
+  error instanceof DOMException && error.name === 'InvalidStateError'
+
+export const PASSKEY_ALREADY_ON_DEVICE_MESSAGE = 'This device already has a passkey for your account.'
+
 export const PASSKEY_ADDRESS_REJECTED_MESSAGE = "Passkeys don't work at this address."
 
 export const passkeyService = {

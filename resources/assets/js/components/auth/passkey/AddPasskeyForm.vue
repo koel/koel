@@ -59,8 +59,10 @@
 import { computed, ref } from 'vue'
 import {
   isPasskeyAddressRejected,
+  isPasskeyAlreadyOnDevice,
   isPasskeyPromptDismissed,
   PASSKEY_ADDRESS_REJECTED_MESSAGE,
+  PASSKEY_ALREADY_ON_DEVICE_MESSAGE,
   passkeyService,
 } from '@/services/passkeyService'
 import { userStore } from '@/stores/userStore'
@@ -112,6 +114,11 @@ const { data, isPristine, handleSubmit } = useForm<{ name: string; password: str
   },
   onError: (error: unknown) => {
     if (isPasskeyPromptDismissed(error)) {
+      return
+    }
+
+    if (isPasskeyAlreadyOnDevice(error)) {
+      showErrorDialog(PASSKEY_ALREADY_ON_DEVICE_MESSAGE)
       return
     }
 

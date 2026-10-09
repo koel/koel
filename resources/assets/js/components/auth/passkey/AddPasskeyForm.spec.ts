@@ -2,7 +2,11 @@ import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { DialogBoxStub } from '@/__tests__/stubs'
-import { PASSKEY_ADDRESS_REJECTED_MESSAGE, passkeyService } from '@/services/passkeyService'
+import {
+  PASSKEY_ADDRESS_REJECTED_MESSAGE,
+  PASSKEY_ALREADY_ON_DEVICE_MESSAGE,
+  passkeyService,
+} from '@/services/passkeyService'
 import { eventBus } from '@/utils/eventBus'
 import Component from './AddPasskeyForm.vue'
 
@@ -96,5 +100,16 @@ describe('addPasskeyForm.vue', () => {
 
     expect(confirmMock).toHaveBeenCalled()
     expect(addMock).toHaveBeenCalledWith('MacBook', proof)
+  })
+
+  it('explains when this device already has a passkey', async () => {
+    h.actingAsUser()
+    h.mock(passkeyService, 'add').mockRejectedValue(new DOMException('Already registered', 'InvalidStateError'))
+    const errorMock = h.mock(DialogBoxStub.value, 'error')
+    renderComponent()
+
+    await fillIn('MacBook', 'secret')
+
+    expect(errorMock).toHaveBeenCalledWith(PASSKEY_ALREADY_ON_DEVICE_MESSAGE)
   })
 })
