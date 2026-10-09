@@ -6,6 +6,7 @@
     <template v-if="artist.image">
       <img :src="artist.image" alt="" class="absolute inset-0 w-full h-full object-cover" />
       <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-transparent" />
+      <div class="absolute inset-x-0 top-0 h-1/3 bg-linear-to-b from-black/60 to-transparent" />
     </template>
     <img
       v-else
@@ -14,7 +15,10 @@
       class="absolute left-1/2 top-[45%] w-[70%] aspect-square -translate-x-1/2 -translate-y-1/2 rounded-xl shadow-2xl object-cover"
     />
 
-    <span :class="{ 'text-white': artist.image }" class="absolute top-4 left-5 text-5xl font-bold text-k-fg">
+    <span
+      :class="{ 'text-white drop-shadow-md': artist.image }"
+      class="absolute top-4 left-5 text-5xl font-bold text-k-fg"
+    >
       {{ rank }}
     </span>
 
