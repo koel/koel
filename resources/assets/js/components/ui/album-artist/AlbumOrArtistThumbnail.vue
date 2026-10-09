@@ -1,13 +1,12 @@
 <template>
   <button
     :class="size"
-    :style="{ backgroundImage: `url(${defaultCover})` }"
-    class="thumbnail group relative w-full aspect-square bg-no-repeat bg-cover bg-center overflow-hidden active:scale-95"
+    class="thumbnail group relative w-full aspect-square overflow-hidden active:scale-95"
     data-testid="album-artist-thumbnail"
     type="button"
     @click.prevent="playOrQueue"
   >
-    <img alt="Thumbnail" :src="image" class="w-full aspect-square object-cover" loading="lazy" />
+    <img alt="Thumbnail" :src="image" class="cover-art w-full h-full object-cover" loading="lazy" />
     <span class="hidden">{{ buttonLabel }}</span>
     <span class="absolute top-0 left-0 w-full h-full group-hover:bg-black/40 no-hover:bg-black/40 z-10" />
     <PlayIcon :size />

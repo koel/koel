@@ -17,7 +17,7 @@
     </template>
 
     <template #thumbnail>
-      <img :src="podcast.image" class="aspect-square w-[80px] object-cover rounded-lg" alt="Podcast image" />
+      <img :src="podcast.image" alt="Podcast image" class="cover-art w-full h-full object-cover" />
     </template>
   </BaseCard>
 </template>

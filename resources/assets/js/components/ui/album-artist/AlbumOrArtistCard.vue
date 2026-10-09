@@ -8,7 +8,7 @@
   >
     <article
       :class="layout"
-      class="relative group flex h-full p-5 rounded-[inherit] flex-col gap-5"
+      class="relative group flex h-full overflow-hidden rounded-[inherit] flex-col"
       data-testid="artist-album-card"
       :draggable="!isMobile.any"
       tabindex="0"
@@ -16,11 +16,13 @@
       @dragstart="onDragStart"
       @contextmenu.prevent="onContextMenu"
     >
-      <slot name="thumbnail">
-        <Thumbnail v-if="hasThumbnail(entity)" :entity />
-      </slot>
+      <div class="cover">
+        <slot name="thumbnail">
+          <Thumbnail v-if="hasThumbnail(entity)" :entity />
+        </slot>
+      </div>
 
-      <footer class="flex flex-1 flex-col gap-1.5 overflow-hidden">
+      <footer class="relative z-10 flex flex-1 flex-col gap-1.5 overflow-hidden">
         <div class="name flex flex-col gap-2 whitespace-nowrap">
           <slot name="name" />
         </div>
@@ -89,11 +91,37 @@ article {
     @apply ring-1 ring-k-highlight;
   }
 
-  &.compact {
-    @apply flex-row gap-4 p-3 rounded-md items-center;
+  :deep(:is(.thumbnail, .card-thumbnail)) {
+    @apply rounded-none;
+  }
 
-    :deep(.thumbnail) {
-      @apply w-[80px] rounded-md;
+  &.full {
+    footer {
+      @apply -mt-12 px-5 pb-5;
+    }
+
+    :deep(.cover-art) {
+      mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+    }
+  }
+
+  &.compact {
+    @apply flex-row items-center min-h-24 rounded-md;
+
+    .cover {
+      @apply absolute inset-y-0 left-0 w-28;
+
+      :deep(:is(.thumbnail, .card-thumbnail)) {
+        @apply h-full aspect-auto;
+      }
+    }
+
+    :deep(.cover-art) {
+      mask-image: linear-gradient(to right, black 45%, transparent 100%);
+    }
+
+    footer {
+      @apply ml-26 py-3 pr-3;
     }
   }
 }
