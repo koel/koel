@@ -1,6 +1,7 @@
 import { screen, waitFor } from '@testing-library/vue'
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { MessageToasterStub } from '@/__tests__/stubs'
 import { passkeyService } from '@/services/passkeyService'
 import { eventBus } from '@/utils/eventBus'
 
@@ -78,5 +79,13 @@ describe('passkeySettings.vue', () => {
     h.render(Component)
 
     screen.getByTestId('passkeys-unsupported')
+  })
+
+  it('reports a failure to load the passkeys', async () => {
+    h.mock(passkeyService, 'fetchAll').mockRejectedValue(new Error('Network error'))
+    const errorMock = h.mock(MessageToasterStub.value, 'error')
+    h.render(Component)
+
+    await waitFor(() => expect(errorMock).toHaveBeenCalled())
   })
 })

@@ -23,6 +23,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { isPasskeySupported, passkeyService } from '@/services/passkeyService'
 import { eventBus } from '@/utils/eventBus'
 import { defineAsyncComponent } from '@/utils/helpers'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useModal } from '@/composables/useModal'
 
 import PasskeyListItem from '@/components/auth/passkey/PasskeyListItem.vue'
@@ -35,6 +36,7 @@ const passkeys = ref<Passkey[]>([])
 const AddPasskeyForm = defineAsyncComponent(() => import('@/components/auth/passkey/AddPasskeyForm.vue'))
 
 const { openModal } = useModal()
+const { handleHttpError } = useErrorHandler()
 
 const openAddPasskeyForm = () =>
   openModal<'ADD_PASSKEY_FORM'>(AddPasskeyForm, { hasPasskeys: passkeys.value.length > 0 })
@@ -50,6 +52,10 @@ eventBus.on('PASSKEY_ADDED', showAddedPasskey)
 onBeforeUnmount(() => eventBus.off('PASSKEY_ADDED', showAddedPasskey))
 
 onMounted(async () => {
-  passkeys.value = await passkeyService.fetchAll()
+  try {
+    passkeys.value = await passkeyService.fetchAll()
+  } catch (error: unknown) {
+    handleHttpError(error)
+  }
 })
 </script>
