@@ -98,6 +98,9 @@ importers:
       vue-advanced-cropper:
         specifier: ^2.8.9
         version: 2.8.9(vue@3.5.29(typescript@5.8.3))
+      vue-chartjs:
+        specifier: ^5.3.4
+        version: 5.3.4(chart.js@4.5.1)(vue@3.5.29(typescript@5.8.3))
       youtube-player:
         specifier: ^5.6.0
         version: 5.6.0
@@ -3647,6 +3650,12 @@ packages:
     peerDependencies:
       vue: ^3.0.0
 
+  vue-chartjs@5.3.4:
+    resolution: {integrity: sha512-x3Fqob8RQvrTdssfi9ecsCzEkFOd8JPmNwSkSQzdfKj/uBsRJs/Y88cZcZIEcPsTVfMGwMo4MOoihoDG2DoE/g==}
+    peerDependencies:
+      chart.js: ^4.1.1
+      vue: ^3.0.0-0 || ^2.7.0
+
   vue-component-type-helpers@2.2.10:
     resolution: {integrity: sha512-iDUO7uQK+Sab2tYuiP9D1oLujCWlhHELHMgV/cB13cuGbG4qwkLHvtfWb6FzvxrIOPDnU0oHsz2MlQjhYDeaHA==}
 
@@ -7170,6 +7179,11 @@ snapshots:
       classnames: 2.5.1
       debounce: 1.2.1
       easy-bem: 1.1.1
+      vue: 3.5.29(typescript@5.8.3)
+
+  vue-chartjs@5.3.4(chart.js@4.5.1)(vue@3.5.29(typescript@5.8.3)):
+    dependencies:
+      chart.js: 4.5.1
       vue: 3.5.29(typescript@5.8.3)
 
   vue-component-type-helpers@2.2.10: {}

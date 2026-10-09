@@ -42,6 +42,7 @@
     "tiny-typed-emitter": "^2.1.0",
     "vue": "^3.5.29",
     "vue-advanced-cropper": "^2.8.9",
+    "vue-chartjs": "^5.3.4",
     "youtube-player": "^5.6.0"
   },
   "devDependencies": {
