@@ -18,7 +18,7 @@ describe('statisticsScreen.vue', () => {
     top_albums: [],
     top_genres: [],
     hourly_plays: plays ? [{ hour: '2026-10-09T14:00:00Z', plays }] : [],
-    previous_plays: null,
+    previous_summary: null,
     discoveries: null,
     streak: { current_days: 0, longest_days: 0 },
   })

@@ -14,7 +14,7 @@ import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 
 const props = defineProps<{ statistics: ListeningStatistics; periodLabel: string }>()
 
-const describeChange = (current: number, previous: number | null) => {
+const describeChange = (current: number, previous?: number) => {
   if (!previous) {
     return undefined
   }
@@ -29,17 +29,29 @@ const describeChange = (current: number, previous: number | null) => {
 }
 
 const figures = computed(() => {
-  const { summary, previous_plays, discoveries, streak } = props.statistics
+  const { summary, previous_summary, discoveries, streak } = props.statistics
 
   return [
     {
       label: 'Plays',
       value: summary.plays.toLocaleString(),
-      note: describeChange(summary.plays, previous_plays),
+      note: describeChange(summary.plays, previous_summary?.plays),
     },
-    { label: 'Listening time', value: secondsToHumanReadable(summary.listening_time) },
-    { label: 'Songs', value: summary.song_count.toLocaleString() },
-    { label: 'Artists', value: summary.artist_count.toLocaleString() },
+    {
+      label: 'Listening time',
+      value: secondsToHumanReadable(summary.listening_time),
+      note: describeChange(summary.listening_time, previous_summary?.listening_time),
+    },
+    {
+      label: 'Songs',
+      value: summary.song_count.toLocaleString(),
+      note: describeChange(summary.song_count, previous_summary?.song_count),
+    },
+    {
+      label: 'Artists',
+      value: summary.artist_count.toLocaleString(),
+      note: describeChange(summary.artist_count, previous_summary?.artist_count),
+    },
     { label: 'Current streak', value: pluralize(streak.current_days, 'day') },
     { label: 'Longest streak', value: pluralize(streak.longest_days, 'day') },
     ...(discoveries

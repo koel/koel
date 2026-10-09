@@ -52,8 +52,8 @@ class ListeningStatisticsService
                 ->all(),
             topGenres: $this->playRepository->getTopGenres($user, $since),
             hourlyPlays: $this->playRepository->getHourlyPlayCounts($user, $since),
-            previousPlays: $since && $previousSince
-                ? $this->playRepository->countPlaysBetween($user, $previousSince, $since)
+            previousSummary: $since && $previousSince
+                ? $this->playRepository->getSummary($user, $previousSince, $since)
                 : null,
             discoveries: $since
                 ? Discoveries::make(

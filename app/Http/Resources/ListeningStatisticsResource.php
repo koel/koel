@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Values\Statistics\ListeningStatistics;
+use App\Values\Statistics\ListeningSummary;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +16,7 @@ class ListeningStatisticsResource extends JsonResource
         'top_albums',
         'top_genres',
         'hourly_plays',
-        'previous_plays',
+        'previous_summary',
         'discoveries',
         'streak' => ['current_days', 'longest_days'],
     ];
@@ -29,15 +30,8 @@ class ListeningStatisticsResource extends JsonResource
     /** @inheritdoc */
     public function toArray(Request $request): array
     {
-        $summary = $this->statistics->summary;
-
         return [
-            'summary' => [
-                'plays' => $summary->plays,
-                'listening_time' => $summary->listeningTime,
-                'song_count' => $summary->songCount,
-                'artist_count' => $summary->artistCount,
-            ],
+            'summary' => self::summaryToArray($this->statistics->summary),
             'top_songs' => array_map(static fn (array $entry): array => [
                 'plays' => $entry['plays'],
                 'song' => SongResource::make($entry['song']),
@@ -55,7 +49,9 @@ class ListeningStatisticsResource extends JsonResource
                 ->map(static fn (int $plays, string $hour): array => ['hour' => $hour, 'plays' => $plays])
                 ->values()
                 ->all(),
-            'previous_plays' => $this->statistics->previousPlays,
+            'previous_summary' => $this->statistics->previousSummary
+                ? self::summaryToArray($this->statistics->previousSummary)
+                : null,
             'discoveries' => $this->statistics->discoveries
                 ? [
                     'song_count' => $this->statistics->discoveries->songCount,
@@ -65,6 +61,17 @@ class ListeningStatisticsResource extends JsonResource
                 'current_days' => $this->statistics->streak->currentDays,
                 'longest_days' => $this->statistics->streak->longestDays,
             ],
+        ];
+    }
+
+    /** @return array{plays: int, listening_time: float, song_count: int, artist_count: int} */
+    private static function summaryToArray(ListeningSummary $summary): array
+    {
+        return [
+            'plays' => $summary->plays,
+            'listening_time' => $summary->listeningTime,
+            'song_count' => $summary->songCount,
+            'artist_count' => $summary->artistCount,
         ];
     }
 }

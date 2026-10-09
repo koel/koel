@@ -22,7 +22,7 @@ final readonly class ListeningStatistics
         public array $topAlbums,
         public array $topGenres,
         public array $hourlyPlays,
-        public ?int $previousPlays,
+        public ?ListeningSummary $previousSummary,
         public ?Discoveries $discoveries,
         public ListeningStreak $streak,
     ) {}
@@ -41,7 +41,7 @@ final readonly class ListeningStatistics
         array $topAlbums,
         array $topGenres,
         array $hourlyPlays,
-        ?int $previousPlays,
+        ?ListeningSummary $previousSummary,
         ?Discoveries $discoveries,
         ListeningStreak $streak,
     ): self {
@@ -52,7 +52,7 @@ final readonly class ListeningStatistics
             topAlbums: $topAlbums,
             topGenres: $topGenres,
             hourlyPlays: $hourlyPlays,
-            previousPlays: $previousPlays,
+            previousSummary: $previousSummary,
             discoveries: $discoveries,
             streak: $streak,
         );

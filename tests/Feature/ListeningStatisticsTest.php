@@ -101,11 +101,20 @@ class ListeningStatisticsTest extends TestCase
     {
         $user = create_user();
 
+        $song = Song::factory()->createOne(['length' => 180]);
+
         Play::factory()->for($user)->createOne(['played_at' => now()->subDays(2)]);
-        Play::factory()->for($user)->createOne(['played_at' => now()->subDays(10)]);
+        Play::factory()
+            ->for($user)
+            ->for($song)
+            ->createOne(['played_at' => now()->subDays(10)]);
         Play::factory()->for($user)->createOne(['played_at' => now()->subDays(20)]);
 
-        $this->getAs('api/me/listening-statistics?period=week', $user)->assertJsonPath('previous_plays', 1);
+        $this
+            ->getAs('api/me/listening-statistics?period=week', $user)
+            ->assertJsonPath('previous_summary.plays', 1)
+            ->assertJsonPath('previous_summary.listening_time', 180)
+            ->assertJsonPath('previous_summary.song_count', 1);
     }
 
     #[Test]
@@ -142,7 +151,7 @@ class ListeningStatisticsTest extends TestCase
 
         $this
             ->getAs('api/me/listening-statistics?period=all', $user)
-            ->assertJsonPath('previous_plays', null)
+            ->assertJsonPath('previous_summary', null)
             ->assertJsonPath('discoveries', null);
     }
 

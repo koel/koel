@@ -14,10 +14,10 @@ class PlayRepository extends Repository
 {
     private const int TOP_LIMIT = 10;
 
-    public function getSummary(User $user, ?Carbon $since): ListeningSummary
+    public function getSummary(User $user, ?Carbon $since, ?Carbon $until = null): ListeningSummary
     {
         $totals = $this
-            ->queryForUser($user, $since)
+            ->queryForUser($user, $since, $until)
             ->join('songs', 'songs.id', '=', 'plays.song_id')
             ->selectRaw('COUNT(*) AS play_count')
             ->selectRaw('COALESCE(SUM(songs.length), 0) AS listening_time')
@@ -93,15 +93,6 @@ class PlayRepository extends Repository
             ->all();
     }
 
-    public function countPlaysBetween(User $user, Carbon $from, Carbon $until): int
-    {
-        return Play::query()
-            ->whereBelongsTo($user)
-            ->where('played_at', '>=', $from)
-            ->where('played_at', '<', $until)
-            ->count();
-    }
-
     public function countSongsFirstPlayedSince(User $user, Carbon $since): int
     {
         return $this->countFirstPlayedSince($user, $since, 'songs.id');
@@ -142,11 +133,12 @@ class PlayRepository extends Repository
     }
 
     /** @return Builder<Play> */
-    private function queryForUser(User $user, ?Carbon $since): Builder
+    private function queryForUser(User $user, ?Carbon $since, ?Carbon $until = null): Builder
     {
         return Play::query()
             ->where('plays.user_id', $user->id)
-            ->when($since, static fn (Builder $query) => $query->where('plays.played_at', '>=', $since));
+            ->when($since, static fn (Builder $query) => $query->where('plays.played_at', '>=', $since))
+            ->when($until, static fn (Builder $query) => $query->where('plays.played_at', '<', $until));
     }
 
     private static function utcHourExpression(string $column): string
