@@ -73,7 +73,12 @@ import { useBranding } from '@/composables/useBranding'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useRouter } from '@/composables/useRouter'
 import type { ListeningMeasure, ListeningPeriod } from '@/utils/listeningStatistics'
-import { getListeningByHour, getListeningByWeekday, getListeningOverTime } from '@/utils/listeningStatistics'
+import {
+  formatListeningMinutes,
+  getListeningByHour,
+  getListeningByWeekday,
+  getListeningOverTime,
+} from '@/utils/listeningStatistics'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -132,10 +137,10 @@ const topSongs = computed(() =>
 )
 
 const topGenres = computed(() =>
-  (statistics.value?.top_genres ?? []).map(({ id, name, plays }) => ({
+  (statistics.value?.top_genres ?? []).map(({ id, name, listening_time }) => ({
     key: id,
     title: name,
-    subtitle: pluralize(plays, 'play'),
+    subtitle: formatListeningMinutes(listening_time),
     href: url('genres.show', { id }),
   })),
 )

@@ -87,24 +87,25 @@ class PlayRepository extends Repository
         return $this->getIdsByListeningTime($user, $since, 'songs.album_id');
     }
 
-    /** @return list<array{id: string, name: string, plays: int}> most played first */
+    /** @return list<array{id: string, name: string, listening_time: float}> longest listened first */
     public function getTopGenres(User $user, ?Carbon $since): array
     {
         return $this
             ->queryForUser($user, $since)
+            ->join('songs', 'songs.id', '=', 'plays.song_id')
             ->join('genre_song', 'genre_song.song_id', '=', 'plays.song_id')
             ->join('genres', 'genres.id', '=', 'genre_song.genre_id')
             ->groupBy('genres.public_id', 'genres.name')
             ->select('genres.public_id', 'genres.name')
-            ->selectRaw('COUNT(*) AS play_count')
-            ->orderByDesc('play_count')
+            ->selectRaw('SUM(songs.length) AS listening_time')
+            ->orderByDesc('listening_time')
             ->limit(self::TOP_LIST_LIMIT)
             ->toBase()
             ->get()
             ->map(static fn (object $genre): array => [
                 'id' => $genre->public_id,
                 'name' => $genre->name,
-                'plays' => (int) $genre->play_count,
+                'listening_time' => (float) $genre->listening_time,
             ])
             ->all();
     }
