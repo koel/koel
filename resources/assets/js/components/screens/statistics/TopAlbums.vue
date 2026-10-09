@@ -1,5 +1,5 @@
 <template>
-  <ol class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-6">
+  <ol class="grid grid-cols-2 md:grid-cols-[repeat(auto-fill,180px)] gap-x-8 gap-y-6">
     <li v-for="(entry, i) in entries" :key="entry.album.id" class="flex flex-col gap-0.5 min-w-0">
       <a :href="url('albums.show', { id: entry.album.id })" class="mb-2.5">
         <img
@@ -8,10 +8,10 @@
           class="w-full aspect-square rounded-lg border border-k-fg-10 object-cover"
         />
       </a>
-      <span class="text-xl font-bold text-k-fg tabular-nums">{{ i + 1 }}</span>
+      <span class="text-2xl font-bold text-k-fg tabular-nums">{{ i + 1 }}</span>
       <a
         :href="url('albums.show', { id: entry.album.id })"
-        class="truncate font-medium text-k-fg hover:text-k-highlight"
+        class="truncate font-semibold text-k-fg hover:text-k-highlight"
       >
         {{ entry.album.name }}
       </a>
