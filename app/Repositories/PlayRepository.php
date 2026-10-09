@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 class PlayRepository extends Repository
 {
     private const int TOP_LIMIT = 10;
+    private const int TOP_SONG_LIMIT = 12;
 
     public function getSummary(User $user, ?Carbon $since, ?Carbon $until = null): ListeningSummary
     {
@@ -37,19 +38,29 @@ class PlayRepository extends Repository
     /** @return array<string, int> play counts keyed by song ID, most played first */
     public function getTopSongIds(User $user, ?Carbon $since): array
     {
-        return $this->getTopIds($user, $since, 'plays.song_id');
+        return $this
+            ->queryForUser($user, $since)
+            ->groupBy('plays.song_id')
+            ->select('plays.song_id AS ranked_id')
+            ->selectRaw('COUNT(*) AS play_count')
+            ->orderByDesc('play_count')
+            ->limit(self::TOP_SONG_LIMIT)
+            ->toBase()
+            ->pluck('play_count', 'ranked_id')
+            ->map(static fn (int|string $count): int => (int) $count)
+            ->all();
     }
 
-    /** @return array<string, int> play counts keyed by artist ID, most played first */
+    /** @return array<string, float> listening time in seconds keyed by artist ID, longest first */
     public function getTopArtistIds(User $user, ?Carbon $since): array
     {
-        return $this->getTopIds($user, $since, 'songs.artist_id');
+        return $this->getIdsByListeningTime($user, $since, 'songs.artist_id');
     }
 
-    /** @return array<string, int> play counts keyed by album ID, most played first */
+    /** @return array<string, float> listening time in seconds keyed by album ID, longest first */
     public function getTopAlbumIds(User $user, ?Carbon $since): array
     {
-        return $this->getTopIds($user, $since, 'songs.album_id');
+        return $this->getIdsByListeningTime($user, $since, 'songs.album_id');
     }
 
     /** @return list<array{id: string, name: string, plays: int}> most played first */
@@ -123,20 +134,20 @@ class PlayRepository extends Repository
         return Play::query()->fromSub($firstPlays, 'first_plays')->count();
     }
 
-    /** @return array<string, int> */
-    private function getTopIds(User $user, ?Carbon $since, string $column): array
+    /** @return array<string, float> */
+    private function getIdsByListeningTime(User $user, ?Carbon $since, string $column): array
     {
         return $this
             ->queryForUser($user, $since)
             ->join('songs', 'songs.id', '=', 'plays.song_id')
             ->groupBy($column)
             ->select("$column AS ranked_id")
-            ->selectRaw('COUNT(*) AS play_count')
-            ->orderByDesc('play_count')
+            ->selectRaw('SUM(songs.length) AS listening_time')
+            ->orderByDesc('listening_time')
             ->limit(self::TOP_LIMIT)
             ->toBase()
-            ->pluck('play_count', 'ranked_id')
-            ->map(static fn (int|string $count): int => (int) $count)
+            ->pluck('listening_time', 'ranked_id')
+            ->map(static fn (int|float|string $seconds): float => (float) $seconds)
             ->all();
     }
 

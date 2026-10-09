@@ -1,5 +1,9 @@
+import { pluralize } from '@/utils/formatters'
+
 export type ListeningPeriod = 'week' | 'month' | 'year' | 'all'
 export type ListeningMeasure = 'plays' | 'minutes'
+
+export const formatListeningMinutes = (seconds: number) => pluralize(Math.round(seconds / 60), 'minute')
 
 export interface HourlyListening {
   hour: string

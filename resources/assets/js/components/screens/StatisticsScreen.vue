@@ -32,12 +32,33 @@
         </div>
       </section>
 
-      <div class="grid md:grid-cols-2 gap-10">
-        <RankedList :items="topSongs" title="Top songs" />
-        <RankedList :items="topArtists" title="Top artists" />
-        <RankedList :items="topAlbums" title="Top albums" />
-        <RankedList :items="topGenres" title="Top genres" />
-      </div>
+      <section v-if="statistics.top_artists.length" class="flex flex-col gap-4">
+        <h3 class="text-xl font-semibold text-k-fg">Your Top Artists</h3>
+        <Carousel>
+          <TopArtistCard
+            v-for="(entry, i) in statistics.top_artists"
+            :key="entry.artist.id"
+            :artist="entry.artist"
+            :listening-time="entry.listening_time"
+            :rank="i + 1"
+          />
+        </Carousel>
+      </section>
+
+      <section v-if="statistics.top_songs.length" class="flex flex-col gap-4">
+        <h3 class="text-xl font-semibold text-k-fg">Your Top Songs</h3>
+        <TopSongs :entries="statistics.top_songs" />
+      </section>
+
+      <section v-if="statistics.top_albums.length" class="flex flex-col gap-4">
+        <h3 class="text-xl font-semibold text-k-fg">Your Top Albums</h3>
+        <TopAlbums :entries="statistics.top_albums" />
+      </section>
+
+      <section v-if="topGenres.length" class="flex flex-col gap-4">
+        <h3 class="text-xl font-semibold text-k-fg">Your Top Genres</h3>
+        <RankedList :items="topGenres" class="max-w-xl" />
+      </section>
     </div>
   </ScreenBase>
 </template>
@@ -46,7 +67,6 @@
 import { ChartColumnIcon } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import { listeningStatisticsService } from '@/services/listeningStatisticsService'
-import { useBranding } from '@/composables/useBranding'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useRouter } from '@/composables/useRouter'
 import type { ListeningMeasure, ListeningPeriod } from '@/utils/listeningStatistics'
@@ -56,9 +76,13 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SegmentedControl from '@/components/ui/SegmentedControl.vue'
+import Carousel from '@/components/ui/Carousel.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
 import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
 import RankedList from '@/components/screens/statistics/RankedList.vue'
+import TopAlbums from '@/components/screens/statistics/TopAlbums.vue'
+import TopArtistCard from '@/components/screens/statistics/TopArtistCard.vue'
+import TopSongs from '@/components/screens/statistics/TopSongs.vue'
 
 const PERIOD_LABELS: Record<ListeningPeriod, string> = {
   week: '7 days',
@@ -74,7 +98,6 @@ const periodOptions = (Object.keys(PERIOD_LABELS) as ListeningPeriod[]).map(valu
 
 const { url, onScreenActivated } = useRouter()
 const { handleHttpError } = useErrorHandler()
-const { cover: defaultCover } = useBranding()
 
 const period = ref<ListeningPeriod>('month')
 const statistics = ref<ListeningStatistics | null>(null)
@@ -93,38 +116,6 @@ const hourlyListening = computed(() => statistics.value?.hourly_listening ?? [])
 const listeningOverTime = computed(() => getListeningOverTime(hourlyListening.value, period.value, measure.value))
 const listeningByWeekday = computed(() => getListeningByWeekday(hourlyListening.value, measure.value))
 const listeningByHour = computed(() => getListeningByHour(hourlyListening.value, measure.value))
-
-const topSongs = computed(() =>
-  (statistics.value?.top_songs ?? []).map(({ song, plays }) => ({
-    key: song.id,
-    title: song.title,
-    subtitle: song.artist_name,
-    image: song.album_cover || defaultCover,
-    href: url('albums.show', { id: song.album_id }),
-    plays,
-  })),
-)
-
-const topArtists = computed(() =>
-  (statistics.value?.top_artists ?? []).map(({ artist, plays }) => ({
-    key: artist.id,
-    title: artist.name,
-    image: artist.image || defaultCover,
-    href: url('artists.show', { id: artist.id }),
-    plays,
-  })),
-)
-
-const topAlbums = computed(() =>
-  (statistics.value?.top_albums ?? []).map(({ album, plays }) => ({
-    key: album.id,
-    title: album.name,
-    subtitle: album.artist_name,
-    image: album.cover || defaultCover,
-    href: url('albums.show', { id: album.id }),
-    plays,
-  })),
-)
 
 const topGenres = computed(() =>
   (statistics.value?.top_genres ?? []).map(({ id, name, plays }) => ({

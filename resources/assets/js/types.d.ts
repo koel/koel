@@ -66,8 +66,8 @@ interface ListeningSummary {
 interface ListeningStatistics {
   summary: ListeningSummary
   top_songs: { plays: number; song: Song }[]
-  top_artists: { plays: number; artist: Artist }[]
-  top_albums: { plays: number; album: Album }[]
+  top_artists: { listening_time: number; artist: Artist }[]
+  top_albums: { listening_time: number; album: Album }[]
   top_genres: { plays: number; id: Genre['id']; name: string }[]
   hourly_listening: { hour: string; plays: number; listening_time: number }[]
   previous_summary: ListeningSummary | null

@@ -10,8 +10,8 @@ final readonly class ListeningStatistics
 {
     /**
      * @param list<array{song: Song, plays: int}> $topSongs
-     * @param list<array{artist: Artist, plays: int}> $topArtists
-     * @param list<array{album: Album, plays: int}> $topAlbums
+     * @param list<array{artist: Artist, listening_time: float}> $topArtists
+     * @param list<array{album: Album, listening_time: float}> $topAlbums
      * @param list<array{id: string, name: string, plays: int}> $topGenres
      * @param array<string, array{plays: int, listening_time: float}> $hourlyListening keyed by UTC hour (ISO 8601)
      */
@@ -29,8 +29,8 @@ final readonly class ListeningStatistics
 
     /**
      * @param list<array{song: Song, plays: int}> $topSongs
-     * @param list<array{artist: Artist, plays: int}> $topArtists
-     * @param list<array{album: Album, plays: int}> $topAlbums
+     * @param list<array{artist: Artist, listening_time: float}> $topArtists
+     * @param list<array{album: Album, listening_time: float}> $topAlbums
      * @param list<array{id: string, name: string, plays: int}> $topGenres
      * @param array<string, array{plays: int, listening_time: float}> $hourlyListening
      */

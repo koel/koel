@@ -37,11 +37,11 @@ class ListeningStatisticsResource extends JsonResource
                 'song' => SongResource::make($entry['song']),
             ], $this->statistics->topSongs),
             'top_artists' => array_map(static fn (array $entry): array => [
-                'plays' => $entry['plays'],
+                'listening_time' => $entry['listening_time'],
                 'artist' => ArtistResource::make($entry['artist']),
             ], $this->statistics->topArtists),
             'top_albums' => array_map(static fn (array $entry): array => [
-                'plays' => $entry['plays'],
+                'listening_time' => $entry['listening_time'],
                 'album' => AlbumResource::make($entry['album']),
             ], $this->statistics->topAlbums),
             'top_genres' => $this->statistics->topGenres,

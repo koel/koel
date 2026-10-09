@@ -30,8 +30,8 @@ class ListeningStatisticsService
         $previousSince = $period->previousStartsAt();
 
         $songPlays = $this->playRepository->getTopSongIds($user, $since);
-        $artistPlays = $this->playRepository->getTopArtistIds($user, $since);
-        $albumPlays = $this->playRepository->getTopAlbumIds($user, $since);
+        $artistListeningTimes = $this->playRepository->getTopArtistIds($user, $since);
+        $albumListeningTimes = $this->playRepository->getTopAlbumIds($user, $since);
 
         return ListeningStatistics::make(
             summary: $this->playRepository->getSummary($user, $since),
@@ -41,13 +41,19 @@ class ListeningStatisticsService
                 ->values()
                 ->all(),
             topArtists: $this->artistRepository
-                ->getMany(array_keys($artistPlays), preserveOrder: true, user: $user)
-                ->map(static fn (Artist $artist): array => ['artist' => $artist, 'plays' => $artistPlays[$artist->id]])
+                ->getMany(array_keys($artistListeningTimes), preserveOrder: true, user: $user)
+                ->map(static fn (Artist $artist): array => [
+                    'artist' => $artist,
+                    'listening_time' => $artistListeningTimes[$artist->id],
+                ])
                 ->values()
                 ->all(),
             topAlbums: $this->albumRepository
-                ->getMany(array_keys($albumPlays), preserveOrder: true, user: $user)
-                ->map(static fn (Album $album): array => ['album' => $album, 'plays' => $albumPlays[$album->id]])
+                ->getMany(array_keys($albumListeningTimes), preserveOrder: true, user: $user)
+                ->map(static fn (Album $album): array => [
+                    'album' => $album,
+                    'listening_time' => $albumListeningTimes[$album->id],
+                ])
                 ->values()
                 ->all(),
             topGenres: $this->playRepository->getTopGenres($user, $since),
