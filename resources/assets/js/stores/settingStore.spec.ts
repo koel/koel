@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
+import { commonStore } from '@/stores/commonStore'
 import { settingStore } from '@/stores/settingStore'
 
 describe('settingStore', () => {
@@ -26,5 +27,18 @@ describe('settingStore', () => {
     })
 
     expect(putMock).toHaveBeenCalledWith('settings/branding', { name: 'Koel' })
+  })
+
+  it.each<[AiSettings, boolean]>([
+    [{ enabled: true, provider: 'openai', has_api_key: true }, true],
+    [{ enabled: false, provider: 'openai', has_api_key: true }, false],
+    [{ enabled: true, provider: 'openai', has_api_key: false }, false],
+  ])('shows or hides the AI assistant after saving %o', async (saved, usesAi) => {
+    commonStore.state.uses_ai = !usesAi
+    h.mock(http, 'put').mockResolvedValue(saved)
+
+    await settingStore.updateAi({ enabled: saved.enabled, provider: 'openai' })
+
+    expect(commonStore.state.uses_ai).toBe(usesAi)
   })
 })

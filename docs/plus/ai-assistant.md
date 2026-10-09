@@ -30,6 +30,8 @@ An admin turns the assistant on under **Settings → AI**:
 
 Koel stores the key encrypted and never shows it again; to change it, paste a new one. Switching providers needs a new key.
 
+To turn the assistant off, untick **Use AI assistant**. It's off right away, and your provider and key are kept, so ticking it again turns it back on.
+
 :::tip Upgrading from an earlier version
 If you had set up the assistant with `AI_ENABLED`, `AI_PROVIDER` and a provider key in `.env`, upgrading moves that setup into Settings, as long as Settings offers that provider. Afterwards those `.env` variables are no longer read and can be removed.
 :::

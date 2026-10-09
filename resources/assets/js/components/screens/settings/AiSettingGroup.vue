@@ -1,13 +1,14 @@
 <template>
-  <form class="md:w-2/3" @submit.prevent="handleSubmit">
-    <SettingGroup>
-      <div class="space-y-4">
-        <FormRow>
-          <span>
-            <CheckBox v-model="data.enabled" name="enabled" />
-            <span class="ml-2">Use AI assistant</span>
-          </span>
-        </FormRow>
+  <SettingGroup class="md:w-2/3">
+    <div class="flex flex-col gap-4">
+      <FormRow>
+        <label class="cursor-pointer">
+          <CheckBox :disabled="savingSwitch" :model-value="enabled" name="enabled" @update:model-value="toggle" />
+          <span class="ml-2">Use AI assistant</span>
+        </label>
+      </FormRow>
+
+      <form v-if="enabled" class="space-y-4" data-testid="ai-configuration" @submit.prevent="handleSubmit">
         <FormRow>
           <template #label>Provider</template>
           <SelectBox v-model="data.provider" name="provider" required>
@@ -20,28 +21,25 @@
           <div>
             <PasswordField
               v-model="data.api_key"
-              :required="data.enabled && !canKeepApiKey"
+              :required="!canKeepApiKey"
               :placeholder="canKeepApiKey ? 'Enter a new API key' : ''"
               autocomplete="off"
               name="api_key"
             />
           </div>
         </FormRow>
-      </div>
-
-      <template #footer>
         <Btn :disabled="loading" type="submit">Save</Btn>
-      </template>
-    </SettingGroup>
-  </form>
+      </form>
+    </div>
+  </SettingGroup>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useForm } from '@/composables/useForm'
-import { useDialogBox } from '@/composables/useDialogBox'
+import { useErrorHandler } from '@/composables/useErrorHandler'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 import { settingStore } from '@/stores/settingStore'
-import { forceReloadWindow } from '@/utils/helpers'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import CheckBox from '@/components/ui/form/CheckBox.vue'
@@ -61,26 +59,50 @@ const PROVIDERS: Record<AiProvider, string> = {
   xai: 'xAI',
 }
 
-const { showConfirmDialog } = useDialogBox()
+const { toastSuccess } = useMessageToaster()
+const { handleHttpError } = useErrorHandler('dialog')
 
 const current = computed(() => settingStore.state.ai)
+const enabled = ref(Boolean(current.value?.enabled))
+const savingSwitch = ref(false)
 
-const { data, loading, handleSubmit } = useForm<{ enabled: boolean; provider: AiProvider | ''; api_key: string }>({
+const { data, loading, handleSubmit } = useForm<{ provider: AiProvider | ''; api_key: string }>({
   initialValues: {
-    enabled: Boolean(current.value?.enabled),
     provider: current.value?.provider ?? '',
     api_key: '',
   },
-  onSubmit: async ({ enabled, provider, api_key }) =>
-    await settingStore.updateAi({ enabled, provider: provider as AiProvider, ...(api_key ? { api_key } : {}) }),
-  onSuccess: async () => {
+  onSubmit: async ({ provider, api_key }) =>
+    await settingStore.updateAi({ enabled: true, provider: provider as AiProvider, ...(api_key ? { api_key } : {}) }),
+  onSuccess: () => {
     data.api_key = ''
-
-    if (await showConfirmDialog('Settings saved. Reload to apply the changes?')) {
-      forceReloadWindow()
-    }
+    toastSuccess('AI assistant saved.')
   },
 })
 
 const canKeepApiKey = computed(() => Boolean(current.value?.has_api_key) && data.provider === current.value?.provider)
+const saveEnabled = async (on: boolean, provider: AiProvider) => {
+  savingSwitch.value = true
+
+  try {
+    await settingStore.updateAi({ enabled: on, provider })
+    toastSuccess(on ? 'AI assistant turned on.' : 'AI assistant turned off.')
+  } catch (error: unknown) {
+    enabled.value = !on
+    handleHttpError(error)
+  } finally {
+    savingSwitch.value = false
+  }
+}
+
+const toggle = async (value: boolean | undefined) => {
+  const on = Boolean(value)
+  enabled.value = on
+
+  const storedProvider = current.value?.provider
+  const savesRightAway = on ? current.value?.has_api_key : current.value?.enabled
+
+  if (storedProvider && savesRightAway) {
+    await saveEnabled(on, storedProvider)
+  }
+}
 </script>
