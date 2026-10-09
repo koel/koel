@@ -81,7 +81,7 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, toRef, watch } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { preferenceStore } from '@/stores/preferenceStore'
@@ -106,7 +106,7 @@ const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInf
 const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoList.vue'))
 
 const { useYouTube } = useThirdPartyServices()
-const usesAi = commonStore.state.uses_ai
+const usesAi = toRef(commonStore.state, 'uses_ai')
 
 const streamable = requireInjection(CurrentStreamableKey, ref(undefined))
 const activeTab = ref<SideSheetTab | null>(null)

@@ -30,10 +30,30 @@ describe('aiSettingGroup.vue', () => {
     const updateMock = h.mock(settingStore, 'updateAi').mockResolvedValue(undefined)
     h.render(Component)
 
-    await h.user.click(screen.getByRole('checkbox'))
     await submit()
 
+    expect(updateMock).toHaveBeenCalledWith({ enabled: true, provider: 'openai' })
+  })
+
+  it('turns the assistant off right away and hides its settings', async () => {
+    settingStore.state.ai = { enabled: true, provider: 'openai', has_api_key: true }
+    const updateMock = h.mock(settingStore, 'updateAi').mockResolvedValue(undefined)
+    h.render(Component)
+
+    await h.user.click(screen.getByRole('checkbox'))
+
     expect(updateMock).toHaveBeenCalledWith({ enabled: false, provider: 'openai' })
+    expect(screen.queryByTestId('ai-configuration')).toBeNull()
+  })
+
+  it('turns the assistant back on right away when it is already set up', async () => {
+    settingStore.state.ai = { enabled: false, provider: 'openai', has_api_key: true }
+    const updateMock = h.mock(settingStore, 'updateAi').mockResolvedValue(undefined)
+    h.render(Component)
+
+    await h.user.click(screen.getByRole('checkbox'))
+
+    expect(updateMock).toHaveBeenCalledWith({ enabled: true, provider: 'openai' })
   })
 
   it('asks for a new key when the provider changes', async () => {
