@@ -93,13 +93,6 @@ class PlayRepository extends Repository
             ->all();
     }
 
-    public function getFirstPlayedAt(User $user): ?Carbon
-    {
-        $firstPlayedAt = Play::query()->whereBelongsTo($user)->min('played_at');
-
-        return $firstPlayedAt ? Carbon::parse($firstPlayedAt, 'UTC') : null;
-    }
-
     /** @return array<string, int> */
     private function getTopIds(User $user, ?Carbon $since, string $column): array
     {

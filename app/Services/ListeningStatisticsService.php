@@ -49,7 +49,6 @@ class ListeningStatisticsService
                 ->all(),
             topGenres: $this->playRepository->getTopGenres($user, $since),
             hourlyPlays: $this->playRepository->getHourlyPlayCounts($user, $since),
-            firstPlayedAt: $this->playRepository->getFirstPlayedAt($user),
         );
     }
 }

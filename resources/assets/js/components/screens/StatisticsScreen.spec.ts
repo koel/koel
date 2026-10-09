@@ -18,7 +18,6 @@ describe('statisticsScreen.vue', () => {
     top_albums: [],
     top_genres: [],
     hourly_plays: plays ? [{ hour: '2026-10-09T14:00:00Z', plays }] : [],
-    first_played_at: plays ? '2026-10-01T10:00:00Z' : null,
   })
 
   const renderComponent = () => {

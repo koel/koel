@@ -83,13 +83,10 @@ class ListeningStatisticsTest extends TestCase
         Play::factory()->for($user)->createOne(['played_at' => '2026-10-09 14:55:00']);
         Play::factory()->for($user)->createOne(['played_at' => '2026-10-09 15:10:00']);
 
-        $this
-            ->getAs('api/me/listening-statistics?period=week', $user)
-            ->assertJsonPath('hourly_plays', [
-                ['hour' => '2026-10-09T14:00:00Z', 'plays' => 2],
-                ['hour' => '2026-10-09T15:00:00Z', 'plays' => 1],
-            ])
-            ->assertJsonPath('first_played_at', '2026-10-09T14:05:00Z');
+        $this->getAs('api/me/listening-statistics?period=week', $user)->assertJsonPath('hourly_plays', [
+            ['hour' => '2026-10-09T14:00:00Z', 'plays' => 2],
+            ['hour' => '2026-10-09T15:00:00Z', 'plays' => 1],
+        ]);
     }
 
     #[Test]

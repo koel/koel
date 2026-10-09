@@ -5,7 +5,6 @@ namespace App\Values\Statistics;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
-use Illuminate\Support\Carbon;
 
 final readonly class ListeningStatistics
 {
@@ -23,7 +22,6 @@ final readonly class ListeningStatistics
         public array $topAlbums,
         public array $topGenres,
         public array $hourlyPlays,
-        public ?Carbon $firstPlayedAt,
     ) {}
 
     /**
@@ -40,7 +38,6 @@ final readonly class ListeningStatistics
         array $topAlbums,
         array $topGenres,
         array $hourlyPlays,
-        ?Carbon $firstPlayedAt,
     ): self {
         return new self(
             summary: $summary,
@@ -49,7 +46,6 @@ final readonly class ListeningStatistics
             topAlbums: $topAlbums,
             topGenres: $topGenres,
             hourlyPlays: $hourlyPlays,
-            firstPlayedAt: $firstPlayedAt,
         );
     }
 }

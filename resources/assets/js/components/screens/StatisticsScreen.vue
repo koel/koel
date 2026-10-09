@@ -17,7 +17,6 @@
         <ChartColumnIcon :size="96" />
       </template>
       No plays in this period.
-      <span class="secondary block">{{ countingSince }}</span>
     </ScreenEmptyState>
 
     <div v-else class="flex flex-col gap-10" data-testid="statistics">
@@ -36,8 +35,6 @@
         <RankedList :items="topAlbums" title="Top albums" />
         <RankedList :items="topGenres" title="Top genres" />
       </div>
-
-      <p class="text-sm text-k-fg-50">{{ countingSince }}</p>
     </div>
   </ScreenBase>
 </template>
@@ -118,14 +115,6 @@ const topGenres = computed(() =>
     plays,
   })),
 )
-
-const countingSince = computed(() => {
-  const firstPlayedAt = statistics.value?.first_played_at
-
-  return firstPlayedAt
-    ? `Koel has counted your plays since ${new Date(firstPlayedAt).toLocaleDateString()}.`
-    : 'Koel counts your plays from now on.'
-})
 
 const fetchStatistics = async () => {
   loading.value = true

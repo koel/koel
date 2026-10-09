@@ -15,7 +15,6 @@ class ListeningStatisticsResource extends JsonResource
         'top_albums',
         'top_genres',
         'hourly_plays',
-        'first_played_at',
     ];
 
     public function __construct(
@@ -53,7 +52,6 @@ class ListeningStatisticsResource extends JsonResource
                 ->map(static fn (int $plays, string $hour): array => ['hour' => $hour, 'plays' => $plays])
                 ->values()
                 ->all(),
-            'first_played_at' => $this->statistics->firstPlayedAt?->toIso8601ZuluString(),
         ];
     }
 }
