@@ -11,6 +11,7 @@ use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\PlayRepository;
 use App\Repositories\SongRepository;
+use App\Values\Statistics\Discoveries;
 use App\Values\Statistics\ListeningStatistics;
 
 class ListeningStatisticsService
@@ -20,11 +21,13 @@ class ListeningStatisticsService
         private readonly SongRepository $songRepository,
         private readonly ArtistRepository $artistRepository,
         private readonly AlbumRepository $albumRepository,
+        private readonly ListeningStreakCalculator $streakCalculator,
     ) {}
 
-    public function getStatistics(User $user, ListeningPeriod $period): ListeningStatistics
+    public function getStatistics(User $user, ListeningPeriod $period, string $timezone): ListeningStatistics
     {
         $since = $period->startsAt();
+        $previousSince = $period->previousStartsAt();
 
         $songPlays = $this->playRepository->getTopSongIds($user, $since);
         $artistPlays = $this->playRepository->getTopArtistIds($user, $since);
@@ -49,6 +52,19 @@ class ListeningStatisticsService
                 ->all(),
             topGenres: $this->playRepository->getTopGenres($user, $since),
             hourlyPlays: $this->playRepository->getHourlyPlayCounts($user, $since),
+            previousPlays: $since && $previousSince
+                ? $this->playRepository->countPlaysBetween($user, $previousSince, $since)
+                : null,
+            discoveries: $since
+                ? Discoveries::make(
+                    songCount: $this->playRepository->countSongsFirstPlayedSince($user, $since),
+                    artistCount: $this->playRepository->countArtistsFirstPlayedSince($user, $since),
+                )
+                : null,
+            streak: $this->streakCalculator->calculateStreak(
+                $this->playRepository->getHourlyPlayCounts($user, null),
+                $timezone,
+            ),
         );
     }
 }

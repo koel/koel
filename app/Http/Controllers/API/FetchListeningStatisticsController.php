@@ -18,6 +18,10 @@ class FetchListeningStatisticsController extends Controller
     /** @param User $user */
     public function __invoke(ListeningStatisticsRequest $request, Authenticatable $user)
     {
-        return ListeningStatisticsResource::make($this->statisticsService->getStatistics($user, $request->period()));
+        return ListeningStatisticsResource::make($this->statisticsService->getStatistics(
+            $user,
+            $request->period(),
+            $request->timezone(),
+        ));
     }
 }

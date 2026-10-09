@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Resources\ListeningStatisticsResource;
+use App\Models\Artist;
 use App\Models\Play;
 use App\Models\Song;
 use Illuminate\Support\Carbon;
@@ -93,5 +94,69 @@ class ListeningStatisticsTest extends TestCase
     public function rejectAnUnknownPeriod(): void
     {
         $this->getAs('api/me/listening-statistics?period=decade')->assertUnprocessable();
+    }
+
+    #[Test]
+    public function compareWithThePreviousPeriod(): void
+    {
+        $user = create_user();
+
+        Play::factory()->for($user)->createOne(['played_at' => now()->subDays(2)]);
+        Play::factory()->for($user)->createOne(['played_at' => now()->subDays(10)]);
+        Play::factory()->for($user)->createOne(['played_at' => now()->subDays(20)]);
+
+        $this->getAs('api/me/listening-statistics?period=week', $user)->assertJsonPath('previous_plays', 1);
+    }
+
+    #[Test]
+    public function countSongsAndArtistsHeardForTheFirstTime(): void
+    {
+        $user = create_user();
+        $familiar = Song::factory()->createOne();
+        $newSong = Song::factory()->for(Artist::factory()->createOne())->createOne();
+
+        Play::factory()
+            ->for($user)
+            ->for($familiar)
+            ->createOne(['played_at' => now()->subDays(20)]);
+        Play::factory()
+            ->for($user)
+            ->for($familiar)
+            ->createOne(['played_at' => now()->subDays(2)]);
+        Play::factory()
+            ->for($user)
+            ->for($newSong)
+            ->createOne(['played_at' => now()->subDays(1)]);
+
+        $this
+            ->getAs('api/me/listening-statistics?period=week', $user)
+            ->assertJsonPath('discoveries.song_count', 1)
+            ->assertJsonPath('discoveries.artist_count', 1);
+    }
+
+    #[Test]
+    public function leaveOutComparisonsForAllTime(): void
+    {
+        $user = create_user();
+        Play::factory()->for($user)->createOne();
+
+        $this
+            ->getAs('api/me/listening-statistics?period=all', $user)
+            ->assertJsonPath('previous_plays', null)
+            ->assertJsonPath('discoveries', null);
+    }
+
+    #[Test]
+    public function countTheStreakInTheGivenTimezone(): void
+    {
+        $user = create_user();
+
+        Play::factory()->for($user)->createOne(['played_at' => '2026-10-08 23:30:00']);
+        Play::factory()->for($user)->createOne(['played_at' => '2026-10-09 10:00:00']);
+
+        $this->getAs('api/me/listening-statistics?period=week&timezone=Asia/Tokyo', $user)->assertJsonPath(
+            'streak.longest_days',
+            1,
+        );
     }
 }

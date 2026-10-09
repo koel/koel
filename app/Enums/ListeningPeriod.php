@@ -20,4 +20,14 @@ enum ListeningPeriod: string
             self::AllTime => null,
         };
     }
+
+    public function previousStartsAt(): ?Carbon
+    {
+        return match ($this) {
+            self::Week => now()->subDays(14),
+            self::Month => now()->subDays(60),
+            self::Year => now()->subYears(2),
+            self::AllTime => null,
+        };
+    }
 }

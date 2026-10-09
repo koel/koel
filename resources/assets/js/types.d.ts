@@ -68,6 +68,9 @@ interface ListeningStatistics {
   top_albums: { plays: number; album: Album }[]
   top_genres: { plays: number; id: Genre['id']; name: string }[]
   hourly_plays: { hour: string; plays: number }[]
+  previous_plays: number | null
+  discoveries: { song_count: number; artist_count: number } | null
+  streak: { current_days: number; longest_days: number }
 }
 
 interface Passkey {

@@ -93,6 +93,37 @@ class PlayRepository extends Repository
             ->all();
     }
 
+    public function countPlaysBetween(User $user, Carbon $from, Carbon $until): int
+    {
+        return Play::query()
+            ->whereBelongsTo($user)
+            ->where('played_at', '>=', $from)
+            ->where('played_at', '<', $until)
+            ->count();
+    }
+
+    public function countSongsFirstPlayedSince(User $user, Carbon $since): int
+    {
+        return $this->countFirstPlayedSince($user, $since, 'songs.id');
+    }
+
+    public function countArtistsFirstPlayedSince(User $user, Carbon $since): int
+    {
+        return $this->countFirstPlayedSince($user, $since, 'songs.artist_id');
+    }
+
+    private function countFirstPlayedSince(User $user, Carbon $since, string $column): int
+    {
+        $firstPlays = Play::query()
+            ->join('songs', 'songs.id', '=', 'plays.song_id')
+            ->where('plays.user_id', $user->id)
+            ->groupBy($column)
+            ->select($column)
+            ->havingRaw('MIN(plays.played_at) >= ?', [$since->toDateTimeString()]);
+
+        return Play::query()->fromSub($firstPlays, 'first_plays')->count();
+    }
+
     /** @return array<string, int> */
     private function getTopIds(User $user, ?Carbon $since, string $column): array
     {

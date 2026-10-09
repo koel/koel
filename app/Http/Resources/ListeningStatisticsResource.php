@@ -15,6 +15,9 @@ class ListeningStatisticsResource extends JsonResource
         'top_albums',
         'top_genres',
         'hourly_plays',
+        'previous_plays',
+        'discoveries',
+        'streak' => ['current_days', 'longest_days'],
     ];
 
     public function __construct(
@@ -52,6 +55,16 @@ class ListeningStatisticsResource extends JsonResource
                 ->map(static fn (int $plays, string $hour): array => ['hour' => $hour, 'plays' => $plays])
                 ->values()
                 ->all(),
+            'previous_plays' => $this->statistics->previousPlays,
+            'discoveries' => $this->statistics->discoveries
+                ? [
+                    'song_count' => $this->statistics->discoveries->songCount,
+                    'artist_count' => $this->statistics->discoveries->artistCount,
+                ] : null,
+            'streak' => [
+                'current_days' => $this->statistics->streak->currentDays,
+                'longest_days' => $this->statistics->streak->longestDays,
+            ],
         ];
     }
 }

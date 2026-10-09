@@ -20,7 +20,7 @@
     </ScreenEmptyState>
 
     <div v-else class="flex flex-col gap-10" data-testid="statistics">
-      <ListeningSummary :summary="statistics.summary" />
+      <ListeningSummary :period-label="periodLabel" :statistics />
 
       <PlaysBarChart :bars="playsOverTime" title="Plays over time" />
 
@@ -56,12 +56,17 @@ import ListeningSummary from '@/components/screens/statistics/ListeningSummary.v
 import PlaysBarChart from '@/components/screens/statistics/PlaysBarChart.vue'
 import RankedList from '@/components/screens/statistics/RankedList.vue'
 
-const periodOptions: { value: ListeningPeriod; label: string }[] = [
-  { value: 'week', label: '7 days' },
-  { value: 'month', label: '30 days' },
-  { value: 'year', label: '12 months' },
-  { value: 'all', label: 'All time' },
-]
+const PERIOD_LABELS: Record<ListeningPeriod, string> = {
+  week: '7 days',
+  month: '30 days',
+  year: '12 months',
+  all: 'All time',
+}
+
+const periodOptions = (Object.keys(PERIOD_LABELS) as ListeningPeriod[]).map(value => ({
+  value,
+  label: PERIOD_LABELS[value],
+}))
 
 const { url, onScreenActivated } = useRouter()
 const { handleHttpError } = useErrorHandler()
@@ -69,6 +74,8 @@ const { handleHttpError } = useErrorHandler()
 const period = ref<ListeningPeriod>('month')
 const statistics = ref<ListeningStatistics | null>(null)
 const loading = ref(false)
+
+const periodLabel = computed(() => PERIOD_LABELS[period.value])
 
 const hourlyPlays = computed(() => statistics.value?.hourly_plays ?? [])
 const playsOverTime = computed(() => getPlaysOverTime(hourlyPlays.value, period.value))

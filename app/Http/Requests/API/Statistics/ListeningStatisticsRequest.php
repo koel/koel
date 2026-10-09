@@ -13,11 +13,17 @@ class ListeningStatisticsRequest extends Request
     {
         return [
             'period' => ['required', Rule::enum(ListeningPeriod::class)],
+            'timezone' => ['nullable', 'timezone:all'],
         ];
     }
 
     public function period(): ListeningPeriod
     {
         return $this->enum('period', ListeningPeriod::class);
+    }
+
+    public function timezone(): string
+    {
+        return $this->string('timezone', 'UTC')->toString();
     }
 }
