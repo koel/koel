@@ -57,6 +57,30 @@ class PlayRepository extends Repository
         return $this->getIdsByListeningTime($user, $since, 'songs.artist_id');
     }
 
+    /**
+     * @param list<string> $artistIds
+     *
+     * @return array<string, string> the cover of each artist's most listened album, keyed by artist ID
+     */
+    public function getMostListenedAlbumCovers(User $user, ?Carbon $since, array $artistIds): array
+    {
+        return $this
+            ->queryForUser($user, $since)
+            ->join('songs', 'songs.id', '=', 'plays.song_id')
+            ->join('albums', 'albums.id', '=', 'songs.album_id')
+            ->whereIn('songs.artist_id', $artistIds)
+            ->where('albums.cover', '<>', '')
+            ->groupBy('songs.artist_id', 'albums.id', 'albums.cover')
+            ->select('songs.artist_id', 'albums.cover')
+            ->selectRaw('SUM(songs.length) AS listening_time')
+            ->orderByDesc('listening_time')
+            ->toBase()
+            ->get()
+            ->unique('artist_id')
+            ->pluck('cover', 'artist_id')
+            ->all();
+    }
+
     /** @return array<string, float> listening time in seconds keyed by album ID, longest first */
     public function getTopAlbumIds(User $user, ?Carbon $since): array
     {

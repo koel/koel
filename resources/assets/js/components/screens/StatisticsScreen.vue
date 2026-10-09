@@ -34,10 +34,11 @@
 
       <section v-if="statistics.top_artists.length" class="flex flex-col gap-4">
         <h3 class="text-xl font-semibold text-k-fg">Your Top Artists</h3>
-        <Carousel>
+        <Carousel showcase>
           <TopArtistCard
             v-for="(entry, i) in statistics.top_artists"
             :key="entry.artist.id"
+            :album-cover="entry.album_cover"
             :artist="entry.artist"
             :listening-time="entry.listening_time"
             :rank="i + 1"

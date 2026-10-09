@@ -1,7 +1,7 @@
 <template>
   <a
     :href="url('artists.show', { id: artist.id })"
-    class="relative flex flex-col justify-end aspect-[3/4] p-4 overflow-hidden rounded-xl border border-k-fg-10 bg-k-fg-5 text-center"
+    class="relative flex flex-col justify-end aspect-[3/4] p-5 overflow-hidden rounded-xl border border-k-fg-10 bg-linear-to-b from-k-fg-3 to-k-fg-10 text-center"
   >
     <template v-if="artist.image">
       <img :src="artist.image" alt="" class="absolute inset-0 w-full h-full object-cover" />
@@ -9,18 +9,18 @@
     </template>
     <img
       v-else
-      :src="defaultCover"
+      :src="albumCover || defaultCover"
       alt=""
-      class="absolute left-1/2 top-1/2 w-3/5 aspect-square -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-lg object-cover"
+      class="absolute left-1/2 top-[45%] w-[70%] aspect-square -translate-x-1/2 -translate-y-1/2 rounded-xl shadow-2xl object-cover"
     />
 
-    <span :class="{ 'text-white': artist.image }" class="absolute top-3 left-4 text-5xl font-bold text-k-fg">
+    <span :class="{ 'text-white': artist.image }" class="absolute top-4 left-5 text-5xl font-bold text-k-fg">
       {{ rank }}
     </span>
 
     <div :class="{ 'text-white': artist.image }" class="relative flex flex-col gap-0.5 text-k-fg">
-      <span class="font-semibold truncate">{{ artist.name }}</span>
-      <span class="text-sm opacity-80">{{ formatListeningMinutes(listeningTime) }}</span>
+      <span class="text-lg font-semibold truncate">{{ artist.name }}</span>
+      <span class="opacity-80">{{ formatListeningMinutes(listeningTime) }}</span>
     </div>
   </a>
 </template>
@@ -30,7 +30,7 @@ import { useBranding } from '@/composables/useBranding'
 import { useRouter } from '@/composables/useRouter'
 import { formatListeningMinutes } from '@/utils/listeningStatistics'
 
-defineProps<{ artist: Artist; rank: number; listeningTime: number }>()
+defineProps<{ artist: Artist; rank: number; listeningTime: number; albumCover: string | null }>()
 
 const { url } = useRouter()
 const { cover: defaultCover } = useBranding()

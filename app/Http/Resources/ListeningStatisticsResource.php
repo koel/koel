@@ -39,6 +39,7 @@ class ListeningStatisticsResource extends JsonResource
             'top_artists' => array_map(static fn (array $entry): array => [
                 'listening_time' => $entry['listening_time'],
                 'artist' => ArtistResource::make($entry['artist']),
+                'album_cover' => $entry['album_cover'],
             ], $this->statistics->topArtists),
             'top_albums' => array_map(static fn (array $entry): array => [
                 'listening_time' => $entry['listening_time'],

@@ -31,6 +31,11 @@ class ListeningStatisticsService
 
         $songPlays = $this->playRepository->getTopSongIds($user, $since);
         $artistListeningTimes = $this->playRepository->getTopArtistIds($user, $since);
+        $albumCovers = $this->playRepository->getMostListenedAlbumCovers(
+            $user,
+            $since,
+            array_map(strval(...), array_keys($artistListeningTimes)),
+        );
         $albumListeningTimes = $this->playRepository->getTopAlbumIds($user, $since);
 
         return ListeningStatistics::make(
@@ -45,6 +50,7 @@ class ListeningStatisticsService
                 ->map(static fn (Artist $artist): array => [
                     'artist' => $artist,
                     'listening_time' => $artistListeningTimes[$artist->id],
+                    'album_cover' => image_storage_url($albumCovers[$artist->id] ?? null),
                 ])
                 ->values()
                 ->all(),
