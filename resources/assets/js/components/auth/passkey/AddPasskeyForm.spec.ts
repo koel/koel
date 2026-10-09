@@ -80,4 +80,21 @@ describe('addPasskeyForm.vue', () => {
 
     expect(errorMock).toHaveBeenCalledWith(PASSKEY_ADDRESS_REJECTED_MESSAGE)
   })
+
+  it('switches to the password and back to a passkey', async () => {
+    h.actingAsUser()
+    const proof = { credential: { id: 'credential-id' } }
+    const confirmMock = h.mock(passkeyService, 'confirmIdentity').mockResolvedValue(proof)
+    const addMock = h.mock(passkeyService, 'add').mockResolvedValue(passkey)
+    renderComponent(true)
+
+    await h.user.click(screen.getByRole('button', { name: 'Use your password instead' }))
+    screen.getByLabelText('Your password')
+
+    await h.user.click(screen.getByRole('button', { name: 'Use a passkey instead' }))
+    await fillIn('MacBook')
+
+    expect(confirmMock).toHaveBeenCalled()
+    expect(addMock).toHaveBeenCalledWith('MacBook', proof)
+  })
 })

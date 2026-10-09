@@ -20,6 +20,15 @@
           <template #totp-label>Code from your authenticator app</template>
           <template #recovery-label>Recovery code</template>
         </TwoFactorChallengeInput>
+
+        <button
+          v-if="hasPasskeys"
+          class="text-sm text-k-highlight hover:text-k-fg"
+          type="button"
+          @click.prevent="confirmsWithPasskey = true"
+        >
+          Use a passkey instead
+        </button>
       </template>
 
       <p v-if="confirmsWithPasskey" class="text-sm text-k-fg-70" data-testid="confirm-with-passkey-note">
