@@ -8,16 +8,31 @@ export const useScreenHeaderScroller = (getScroller: () => HTMLElement | null | 
     return { carriesScreenHeader: false }
   }
 
+  const visibilityObserver = new IntersectionObserver(entries =>
+    entries
+      .filter(({ isIntersecting }) => isIntersecting)
+      .forEach(({ target }) => screenHeader.activateScroller(target as HTMLElement)),
+  )
+
   watch(
     getScroller,
     (scroller, previous) => {
-      previous && screenHeader.detachScroller(previous)
-      scroller && screenHeader.attachScroller(scroller)
+      if (previous) {
+        visibilityObserver.unobserve(previous)
+        screenHeader.detachScroller(previous)
+      }
+
+      if (scroller) {
+        screenHeader.attachScroller(scroller)
+        visibilityObserver.observe(scroller)
+      }
     },
     { flush: 'post', immediate: true },
   )
 
   onBeforeUnmount(() => {
+    visibilityObserver.disconnect()
+
     const scroller = getScroller()
     scroller && screenHeader.detachScroller(scroller)
   })

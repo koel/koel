@@ -79,6 +79,7 @@ const observer = new ResizeObserver(entries => entries.forEach(el => (scrollerHe
 onMounted(() => {
   observer.observe(scroller.value!)
   scrollerHeight.value = scroller.value!.offsetHeight
+  itemsTop.value = itemsBox.value?.offsetTop ?? 0
 })
 
 onBeforeUnmount(() => observer.unobserve(scroller.value!))
@@ -87,6 +88,8 @@ const scrollToIndex = (index: number) => {
   if (!scroller.value) {
     return
   }
+
+  itemsTop.value = itemsBox.value?.offsetTop ?? 0
 
   const top = itemsTop.value + index * itemHeight.value - scrollerHeight.value / 2 + itemHeight.value / 2
   scroller.value.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })

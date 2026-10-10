@@ -46,6 +46,7 @@ describe('useScrollAwayHeader', () => {
     reportHeaderHeight(200)
 
     const scroller = document.createElement('div')
+    Object.defineProperty(scroller, 'scrollHeight', { value: 10_000, configurable: true })
     header.api.attachScroller(scroller)
 
     const scrollTo = (top: number) => {
@@ -53,7 +54,7 @@ describe('useScrollAwayHeader', () => {
       scroller.dispatchEvent(new Event('scroll'))
     }
 
-    return { header, scrollTo }
+    return { header, scroller, scrollTo }
   }
 
   it('moves the header up with the content until it is out of sight', async () => {
@@ -88,6 +89,31 @@ describe('useScrollAwayHeader', () => {
     scrollTo(500)
     scrollTo(480)
     scrollTo(490)
+
+    expect(header.api.revealed.value).toBe(false)
+  })
+
+  it('follows the scroll box that was scrolled last', async () => {
+    const { header, scrollTo } = await setUp()
+    const otherPane = document.createElement('div')
+    header.api.attachScroller(otherPane)
+
+    scrollTo(500)
+    Object.defineProperty(otherPane, 'scrollTop', { value: 30, configurable: true })
+    Object.defineProperty(otherPane, 'scrollHeight', { value: 2000, configurable: true })
+    header.api.activateScroller(otherPane)
+
+    expect(header.hiddenHeight.value).toBe(30)
+  })
+
+  it('ignores the bounce past the end of the content', async () => {
+    const { header, scroller, scrollTo } = await setUp()
+    Object.defineProperty(scroller, 'scrollHeight', { value: 1000, configurable: true })
+    Object.defineProperty(scroller, 'clientHeight', { value: 500, configurable: true })
+
+    scrollTo(500)
+    scrollTo(540)
+    scrollTo(500)
 
     expect(header.api.revealed.value).toBe(false)
   })

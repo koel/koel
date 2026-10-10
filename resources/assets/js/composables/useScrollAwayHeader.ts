@@ -13,6 +13,7 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
   const expandedHeight = ref(0)
   const currentHeight = ref(0)
 
+  let activeScroller: HTMLElement | null = null
   let upwardDistance = 0
   let slideTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -27,9 +28,26 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
     slideTimer = setTimeout(() => (sliding.value = false), SLIDE_DURATION)
   }
 
+  const getClampedScrollTop = (scroller: HTMLElement) =>
+    Math.min(Math.max(scroller.scrollTop, 0), Math.max(scroller.scrollHeight - scroller.clientHeight, 0))
+
+  const activateScroller = (scroller: HTMLElement) => {
+    if (activeScroller === scroller) {
+      return
+    }
+
+    activeScroller = scroller
+    upwardDistance = 0
+    revealed.value = false
+    scrollTop.value = getClampedScrollTop(scroller)
+    lastScrollTops.set(scroller, scrollTop.value)
+  }
+
   const onScroll = (event: Event) => {
     const scroller = event.currentTarget as HTMLElement
-    const top = scroller.scrollTop
+    activateScroller(scroller)
+
+    const top = getClampedScrollTop(scroller)
     const delta = top - (lastScrollTops.get(scroller) ?? 0)
 
     lastScrollTops.set(scroller, top)
@@ -52,7 +70,7 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
     const height = entry.borderBoxSize[0].blockSize
     currentHeight.value = height
 
-    if (!revealed.value && (scrollTop.value <= 0 || !expandedHeight.value)) {
+    if (!revealed.value) {
       expandedHeight.value = height
     }
   })
@@ -71,6 +89,10 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
   const detachScroller = (scroller: HTMLElement) => {
     scroller.removeEventListener('scroll', onScroll)
     scrollers.delete(scroller)
+
+    if (activeScroller === scroller) {
+      activeScroller = null
+    }
 
     if (!scrollers.size) {
       scrollTop.value = 0
@@ -97,6 +119,7 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
     api: {
       attachScroller,
       detachScroller,
+      activateScroller,
       expandedHeight: readonly(expandedHeight),
       columnHeaderTop,
       revealed: readonly(revealed),

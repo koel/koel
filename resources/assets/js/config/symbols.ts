@@ -49,6 +49,7 @@ export const DraggedPlaylistFolderKey: InjectionKey<Ref<PlaylistFolder | null>> 
 export interface ScrollAwayHeader {
   attachScroller: (scroller: HTMLElement) => void
   detachScroller: (scroller: HTMLElement) => void
+  activateScroller: (scroller: HTMLElement) => void
   expandedHeight: Readonly<Ref<number>>
   columnHeaderTop: Readonly<Ref<number>>
   revealed: Readonly<Ref<boolean>>

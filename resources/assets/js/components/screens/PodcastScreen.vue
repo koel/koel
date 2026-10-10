@@ -57,11 +57,17 @@
       </ScreenHeader>
     </template>
 
-    <div class="-m-6 min-h-full flex flex-col flex-1 overflow-auto divide-y divide-k-fg-10">
+    <div class="-m-6 flex flex-col flex-1 min-h-0 overflow-hidden divide-y divide-k-fg-10">
       <template v-if="loading && !episodes && !podcast">
         <EpisodeItemSkeleton v-for="i in 5" :key="i" />
       </template>
-      <VirtualScroller carries-screen-header v-if="episodes && podcast" :item-height="161.5" :items="displayedEpisodes">
+      <VirtualScroller
+        v-if="episodes && podcast"
+        carries-screen-header
+        class="flex-1 min-h-0"
+        :item-height="161.5"
+        :items="displayedEpisodes"
+      >
         <template #default="{ item }: { item: Episode }">
           <EpisodeItem :key="item.id" :podcast :episode="item" />
         </template>

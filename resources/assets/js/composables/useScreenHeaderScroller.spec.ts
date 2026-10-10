@@ -17,7 +17,7 @@ describe('useScreenHeaderScroller', () => {
   })
 
   it('hands the scroll box to the screen header and takes it back on unmount', async () => {
-    const screenHeader = { attachScroller: vi.fn(), detachScroller: vi.fn() }
+    const screenHeader = { attachScroller: vi.fn(), detachScroller: vi.fn(), activateScroller: vi.fn() }
 
     const { unmount } = h.render(ScrollBox, {
       global: { provide: { [ScrollAwayHeaderKey as symbol]: screenHeader } },
