@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :disabled="loading" :layout="playables.length ? headerLayout : 'collapsed'">
+      <ScreenHeader :disabled="loading" :layout="playables.length ? 'expanded' : 'collapsed'">
         Results for <span class="font-thin">{{ decodedQ }}</span>
 
         <template #thumbnail>
@@ -26,7 +26,7 @@
     </template>
 
     <PlayableListSkeleton v-if="loading" class="-m-6" role="status" aria-busy="true" aria-label="Loading" />
-    <PlayableList v-else ref="playableList" class="-m-6" @press:enter="onPressEnter" @swipe="onSwipe" />
+    <PlayableList v-else ref="playableList" class="-m-6" @press:enter="onPressEnter" />
   </ScreenBase>
 </template>
 
@@ -49,7 +49,6 @@ const q = ref('')
 const {
   PlayableList,
   ThumbnailStack,
-  headerLayout,
   playables,
   playableList,
   thumbnails,
@@ -58,7 +57,6 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onSwipe,
 } = usePlayableList(toRef(searchStore.state, 'playables'), { type: 'Search.Playables' })
 
 const { PlayableListControls, config } = usePlayableListControls('Search.Playables')

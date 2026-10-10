@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader v-if="genre" :layout="headerLayout">
+      <ScreenHeader v-if="genre">
         <template v-if="genre.name">
           <span class="font-thin">Genre:</span>
           {{ genre.name }}
@@ -36,7 +36,6 @@
       class="-m-6"
       @sort="fetchWithSort"
       @press:enter="onPressEnter"
-      @swipe="onSwipe"
       @scrolled-to-end="fetch"
     />
 
@@ -82,12 +81,10 @@ const songs = ref<Song[]>([])
 const {
   PlayableList: SongList,
   ThumbnailStack,
-  headerLayout,
   playableList: songList,
   thumbnails,
   onPressEnter,
   playSelected,
-  onSwipe,
   sort: composableSort,
 } = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
 

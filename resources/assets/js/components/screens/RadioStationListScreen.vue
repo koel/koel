@@ -72,7 +72,7 @@
         @toggle-favorite="toggleFavorite"
       />
     </div>
-    <div v-else ref="gridContainer" class="scroll-mask-y -m-6 flex-1 overflow-auto">
+    <ScreenHeaderScrollBox v-else class="-m-6 flex-1">
       <GridListView ref="grid" :view-mode="preferences.radio_stations_view_mode" data-testid="radio-station-grid">
         <div v-if="showSkeletons" role="status" aria-busy="true" aria-label="Loading" class="contents">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
@@ -82,7 +82,7 @@
           <BtnScrollToTop />
         </template>
       </GridListView>
-    </div>
+    </ScreenHeaderScrollBox>
   </ScreenBase>
 </template>
 
@@ -112,6 +112,7 @@ import RadioStationTableRowSkeleton from '@/components/radio/RadioStationTableRo
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import RadioStationCard from '@/components/radio/RadioStationCard.vue'
 import GridListView from '@/components/ui/GridListView.vue'
+import ScreenHeaderScrollBox from '@/components/ui/ScreenHeaderScrollBox.vue'
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
@@ -123,7 +124,6 @@ const fuzzy = useFuzzySearch<RadioStation>(radioStationStore.state.stations, ['n
 
 const loading = ref(false)
 const keywords = ref('')
-const gridContainer = ref<HTMLDivElement>()
 const grid = ref<InstanceType<typeof GridListView>>()
 
 provide(FilterKeywordsKey, keywords)

@@ -1,6 +1,6 @@
 <template>
   <VirtualScroller
-    v-slot="{ item: row }: { item: MediaRow }"
+    carries-screen-header
     tabindex="0"
     class="focus-visible:outline-hidden"
     :item-height="40"
@@ -9,18 +9,20 @@
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="selectAllWithKeyboard"
   >
-    <MediaListItem
-      :key="row.item.id"
-      :class="{ selected: row.selected }"
-      :item="row.item"
-      draggable="true"
-      @click="onClick(row, $event)"
-      @dragstart="onDragStart(row, $event)"
-      @dblclick.prevent.stop="onDblclick(row)"
-      @contextmenu.prevent="onContextMenu(row, $event)"
-      @play-song="playSong(row.item as Song)"
-      @open-folder="openFolder(row.item as Folder)"
-    />
+    <template #default="{ item: row }: { item: MediaRow }">
+      <MediaListItem
+        :key="row.item.id"
+        :class="{ selected: row.selected }"
+        :item="row.item"
+        draggable="true"
+        @click="onClick(row, $event)"
+        @dragstart="onDragStart(row, $event)"
+        @dblclick.prevent.stop="onDblclick(row)"
+        @contextmenu.prevent="onContextMenu(row, $event)"
+        @play-song="playSong(row.item as Song)"
+        @open-folder="openFolder(row.item as Folder)"
+      />
+    </template>
   </VirtualScroller>
 </template>
 

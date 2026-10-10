@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : 'expanded'">
         Recently Played
 
         <template #thumbnail>
@@ -27,13 +27,7 @@
 
     <PlayableListSkeleton v-if="loading" class="-m-6" role="status" aria-busy="true" aria-label="Loading" />
 
-    <PlayableList
-      v-if="playables.length"
-      ref="playableList"
-      class="-m-6"
-      @press:enter="onPressEnter"
-      @swipe="onSwipe"
-    />
+    <PlayableList v-if="playables.length" ref="playableList" class="-m-6" @press:enter="onPressEnter" />
 
     <ScreenEmptyState v-else>
       <template #icon>
@@ -64,7 +58,6 @@ const recentlyPlayedSongs = toRef(recentlyPlayedStore.state, 'playables')
 const {
   PlayableList,
   ThumbnailStack,
-  headerLayout,
   playables,
   playableList,
   thumbnails,
@@ -73,7 +66,6 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onSwipe,
 } = usePlayableList(recentlyPlayedSongs, { type: 'RecentlyPlayed' }, { sortable: false })
 
 const { PlayableListControls, config } = usePlayableListControls('RecentlyPlayed')

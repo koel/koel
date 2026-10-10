@@ -1,41 +1,50 @@
 <template>
   <div class="radio-station-table-wrap relative flex flex-col flex-1 overflow-auto" data-testid="radio-station-table">
-    <div class="radio-station-table-header sortable flex z-2 bg-k-fg-3 pl-5 sticky top-0">
-      <SortableColumnHeader :active="field === 'name'" :order class="name" title="Sort by name" @sort="onSort('name')">
-        Name
-      </SortableColumnHeader>
-      <span v-if="shouldShowColumn('description')" class="description">Description</span>
-      <SortableColumnHeader
-        v-if="shouldShowColumn('created_at')"
-        :active="field === 'created_at'"
-        :order
-        class="created-at"
-        title="Sort by date added"
-        label="Date Added"
-        @sort="onSort('created_at')"
-      />
-      <SortableColumnHeader
-        v-if="shouldShowColumn('favorite')"
-        :active="field === 'favorite'"
-        :order
-        class="favorite"
-        title="Sort by favorite"
-        @sort="onSort('favorite')"
-      >
-        <Icon :icon="faHeart"
-      /></SortableColumnHeader>
-      <span class="extra">
-        <TableHeaderActionMenu
-          :field
-          :order
-          :items="radioStationTableMenuItems"
-          :column-config="radioStationTableColumnConfig"
-          @sort="onSort"
-        />
-      </span>
-    </div>
-
-    <VirtualScroller :items="stations" :item-height="64">
+    <VirtualScroller carries-screen-header :items="stations" :item-height="64">
+      <template #before>
+        <ScreenHeaderPinned>
+          <div class="radio-station-table-header sortable flex bg-k-fg-3 pl-5">
+            <SortableColumnHeader
+              :active="field === 'name'"
+              :order
+              class="name"
+              title="Sort by name"
+              @sort="onSort('name')"
+            >
+              Name
+            </SortableColumnHeader>
+            <span v-if="shouldShowColumn('description')" class="description">Description</span>
+            <SortableColumnHeader
+              v-if="shouldShowColumn('created_at')"
+              :active="field === 'created_at'"
+              :order
+              class="created-at"
+              title="Sort by date added"
+              label="Date Added"
+              @sort="onSort('created_at')"
+            />
+            <SortableColumnHeader
+              v-if="shouldShowColumn('favorite')"
+              :active="field === 'favorite'"
+              :order
+              class="favorite"
+              title="Sort by favorite"
+              @sort="onSort('favorite')"
+            >
+              <Icon :icon="faHeart"
+            /></SortableColumnHeader>
+            <span class="extra">
+              <TableHeaderActionMenu
+                :field
+                :order
+                :items="radioStationTableMenuItems"
+                :column-config="radioStationTableColumnConfig"
+                @sort="onSort"
+              />
+            </span>
+          </div>
+        </ScreenHeaderPinned>
+      </template>
       <template #default="{ item }: { item: RadioStation }">
         <RadioStationRow :station="item" @toggle-favorite="emit('toggle-favorite', $event)" />
       </template>
@@ -52,6 +61,7 @@ import { radioStationTableColumnConfig, radioStationTableMenuItems } from '@/con
 import SortableColumnHeader from '@/components/ui/SortableColumnHeader.vue'
 import TableHeaderActionMenu from '@/components/ui/TableHeaderActionMenu.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
+import ScreenHeaderPinned from '@/components/ui/ScreenHeaderPinned.vue'
 import RadioStationRow from '@/components/radio/RadioStationRow.vue'
 
 const props = defineProps<{

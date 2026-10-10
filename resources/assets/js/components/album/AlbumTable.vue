@@ -1,67 +1,81 @@
 <template>
   <div class="album-table-wrap relative flex flex-col flex-1 overflow-auto" data-testid="album-table">
-    <div class="album-table-header sortable flex z-2 bg-k-fg-3 pl-5 sticky top-0">
-      <SortableColumnHeader :active="field === 'name'" :order class="name" title="Sort by name" @sort="onSort('name')">
-        Name
-      </SortableColumnHeader>
-      <SortableColumnHeader
-        v-if="shouldShowColumn('artist')"
-        :active="field === 'artist_name'"
-        :order
-        class="artist"
-        title="Sort by artist"
-        label="Artist"
-        @sort="onSort('artist_name')"
-      />
-      <SortableColumnHeader
-        v-if="shouldShowColumn('time')"
-        :active="field === 'length'"
-        :order
-        class="time"
-        title="Sort by duration"
-        label="Time"
-        @sort="onSort('length')"
-      />
-      <SortableColumnHeader
-        v-if="shouldShowColumn('year')"
-        :active="field === 'year'"
-        :order
-        class="year"
-        title="Sort by year"
-        label="Year"
-        @sort="onSort('year')"
-      />
-      <SortableColumnHeader
-        v-if="shouldShowColumn('rating')"
-        :active="field === 'rating'"
-        :order
-        class="rating"
-        title="Sort by rating"
-        label="Rating"
-        @sort="onSort('rating')"
-      />
-      <SortableColumnHeader
-        v-if="shouldShowColumn('favorite')"
-        :active="field === 'favorite'"
-        :order
-        class="favorite"
-        title="Sort by favorite"
-        @sort="onSort('favorite')"
-      >
-        <Icon :icon="faHeart"
-      /></SortableColumnHeader>
-      <span class="extra">
-        <TableHeaderActionMenu
-          :field
-          :order
-          :items="albumTableMenuItems"
-          :column-config="albumTableColumnConfig"
-          @sort="onSort"
-        />
-      </span>
-    </div>
-
-    <VirtualScroller :items="albums" :item-height="64" @scrolled-to-end="$emit('scrolled-to-end')">
+    <VirtualScroller
+      carries-screen-header
+      :items="albums"
+      :item-height="64"
+      @scrolled-to-end="$emit('scrolled-to-end')"
+    >
+      <template #before>
+        <ScreenHeaderPinned>
+          <div class="album-table-header sortable flex bg-k-fg-3 pl-5">
+            <SortableColumnHeader
+              :active="field === 'name'"
+              :order
+              class="name"
+              title="Sort by name"
+              @sort="onSort('name')"
+            >
+              Name
+            </SortableColumnHeader>
+            <SortableColumnHeader
+              v-if="shouldShowColumn('artist')"
+              :active="field === 'artist_name'"
+              :order
+              class="artist"
+              title="Sort by artist"
+              label="Artist"
+              @sort="onSort('artist_name')"
+            />
+            <SortableColumnHeader
+              v-if="shouldShowColumn('time')"
+              :active="field === 'length'"
+              :order
+              class="time"
+              title="Sort by duration"
+              label="Time"
+              @sort="onSort('length')"
+            />
+            <SortableColumnHeader
+              v-if="shouldShowColumn('year')"
+              :active="field === 'year'"
+              :order
+              class="year"
+              title="Sort by year"
+              label="Year"
+              @sort="onSort('year')"
+            />
+            <SortableColumnHeader
+              v-if="shouldShowColumn('rating')"
+              :active="field === 'rating'"
+              :order
+              class="rating"
+              title="Sort by rating"
+              label="Rating"
+              @sort="onSort('rating')"
+            />
+            <SortableColumnHeader
+              v-if="shouldShowColumn('favorite')"
+              :active="field === 'favorite'"
+              :order
+              class="favorite"
+              title="Sort by favorite"
+              @sort="onSort('favorite')"
+            >
+              <Icon :icon="faHeart"
+            /></SortableColumnHeader>
+            <span class="extra">
+              <TableHeaderActionMenu
+                :field
+                :order
+                :items="albumTableMenuItems"
+                :column-config="albumTableColumnConfig"
+                @sort="onSort"
+              />
+            </span>
+          </div>
+        </ScreenHeaderPinned>
+      </template>
       <template #default="{ item }: { item: Album }">
         <AlbumRow :album="item" @toggle-favorite="emit('toggle-favorite', $event)" />
       </template>
@@ -78,6 +92,7 @@ import { albumTableColumnConfig, albumTableMenuItems } from '@/config/tables'
 import SortableColumnHeader from '@/components/ui/SortableColumnHeader.vue'
 import TableHeaderActionMenu from '@/components/ui/TableHeaderActionMenu.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
+import ScreenHeaderPinned from '@/components/ui/ScreenHeaderPinned.vue'
 import AlbumRow from '@/components/album/AlbumRow.vue'
 
 const props = defineProps<{

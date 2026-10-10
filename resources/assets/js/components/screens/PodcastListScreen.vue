@@ -48,14 +48,16 @@
       </template>
     </ScreenEmptyState>
 
-    <div v-else class="scroll-mask-y -m-6 p-6 flex-1 overflow-auto space-y-3">
-      <div v-if="loading" role="status" aria-busy="true" aria-label="Loading" class="contents">
-        <PodcastItemSkeleton v-for="i in 5" :key="i" />
+    <ScreenHeaderScrollBox v-else class="-m-6 flex-1">
+      <div class="p-6 space-y-3">
+        <div v-if="loading" role="status" aria-busy="true" aria-label="Loading" class="contents">
+          <PodcastItemSkeleton v-for="i in 5" :key="i" />
+        </div>
+        <template v-else>
+          <PodcastItem v-for="podcast in podcasts" :key="podcast.id" :podcast />
+        </template>
       </div>
-      <template v-else>
-        <PodcastItem v-for="podcast in podcasts" :key="podcast.id" :podcast />
-      </template>
-    </div>
+    </ScreenHeaderScrollBox>
   </ScreenBase>
 </template>
 
@@ -79,6 +81,7 @@ import PodcastItem from '@/components/podcast/PodcastItem.vue'
 import PodcastItemSkeleton from '@/components/podcast/PodcastItemSkeleton.vue'
 import PodcastListSorter from '@/components/podcast/PodcastListSorter.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import ScreenHeaderScrollBox from '@/components/ui/ScreenHeaderScrollBox.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 

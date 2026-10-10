@@ -60,7 +60,6 @@ export const usePlayableList = (
   const playableList = ref<InstanceType<typeof PlayableList>>()
 
   const selectedPlayables = ref<Playable[]>([])
-  const headerLayout = ref<ScreenHeaderLayout>('expanded')
 
   const sortField = ref<MaybeArray<PlayableListSortField> | null>(
     (() => {
@@ -104,10 +103,6 @@ export const usePlayableList = (
   })
 
   const sortOrder = ref<SortOrder>('asc')
-
-  const onSwipe = (direction: 'up' | 'down') => {
-    headerLayout.value = direction === 'down' ? 'collapsed' : 'expanded'
-  }
 
   const duration = computed(() => playableStore.getFormattedLength(playables.value))
 
@@ -219,7 +214,6 @@ export const usePlayableList = (
     config,
     context,
     downloadable,
-    headerLayout,
     sortField,
     sortOrder,
     duration,
@@ -231,7 +225,6 @@ export const usePlayableList = (
     playAll,
     playSelected,
     applyFilter,
-    onSwipe,
     sort,
   }
 }

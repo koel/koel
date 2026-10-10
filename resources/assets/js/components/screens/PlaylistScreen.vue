@@ -1,7 +1,7 @@
 <template>
   <ScreenBase v-if="playlistId" :background-image="playlist?.cover || thumbnails[0]">
     <template #header>
-      <ScreenHeader v-if="playlist" :disabled="loading" :layout="allPlayables.length ? headerLayout : 'collapsed'">
+      <ScreenHeader v-if="playlist" :disabled="loading" :layout="allPlayables.length ? 'expanded' : 'collapsed'">
         {{ playlist.name }}
         <p v-if="playlist.description" class="text-base text-k-fg-70 font-light">
           {{ playlist.description }}
@@ -46,7 +46,6 @@
         @sort="sort"
         @press:delete="removeSelected"
         @press:enter="onPressEnter"
-        @swipe="onSwipe"
       />
 
       <ScreenEmptyState v-else>
@@ -152,7 +151,6 @@ usePageTitle().useScreenTitle('Playlist', () => playlist.value?.name)
 const {
   PlayableList,
   ThumbnailStack,
-  headerLayout,
   playables: filteredPlayables,
   playableList,
   duration,
@@ -163,7 +161,6 @@ const {
   onPressEnter,
   playAll,
   playSelected,
-  onSwipe,
   sort: baseSort,
   config: listConfig,
 } = usePlayableList(allPlayables, { type: 'Playlist' })

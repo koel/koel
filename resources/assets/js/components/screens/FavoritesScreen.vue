@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : 'expanded'">
         Your Favorites
 
         <template #thumbnail>
@@ -47,7 +47,6 @@
       @sort="sort"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
-      @swipe="onSwipe"
     />
 
     <ScreenEmptyState v-else>
@@ -87,7 +86,6 @@ const allPlayables = ref<Playable[]>([])
 const {
   PlayableList,
   ThumbnailStack,
-  headerLayout,
   playables,
   playableList,
   duration,
@@ -98,7 +96,6 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onSwipe,
   sort: baseSort,
   config: listConfig,
 } = usePlayableList(allPlayables, { type: 'Favorites' })

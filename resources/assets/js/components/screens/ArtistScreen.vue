@@ -3,7 +3,7 @@
     <template #header>
       <ScreenHeaderSkeleton v-if="loading && !artist" role="status" aria-busy="true" aria-label="Loading" />
 
-      <ScreenHeader v-if="artist" :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
+      <ScreenHeader v-if="artist" :disabled="loading" :layout="songs.length ? 'expanded' : 'collapsed'">
         {{ artist.name }}
 
         <template #thumbnail>
@@ -38,40 +38,30 @@
           </SongListControls>
         </template>
       </ScreenHeader>
+      <ArtistAlbumScreenTabNav v-if="artist">
+        <li :class="activeTab === 'songs' && 'active'">
+          <a :href="url('artists.show', { id: artist.id, tab: 'songs' })">Songs</a>
+        </li>
+        <li :class="activeTab === 'albums' && 'active'">
+          <a :href="url('artists.show', { id: artist.id, tab: 'albums' })">Albums</a>
+        </li>
+        <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
+          <a :href="url('artists.show', { id: artist.id, tab: 'information' })">Information</a>
+        </li>
+        <li v-if="useTicketmaster" :class="activeTab === 'events' && 'active'">
+          <a :href="url('artists.show', { id: artist.id, tab: 'events' })">Events</a>
+        </li>
+      </ArtistAlbumScreenTabNav>
     </template>
 
     <ScreenTabs v-if="artist" class="-m-6" :class="loading && 'pointer-events-none'">
-      <template #header>
-        <nav>
-          <ul>
-            <li :class="activeTab === 'songs' && 'active'">
-              <a :href="url('artists.show', { id: artist.id, tab: 'songs' })">Songs</a>
-            </li>
-            <li :class="activeTab === 'albums' && 'active'">
-              <a :href="url('artists.show', { id: artist.id, tab: 'albums' })">Albums</a>
-            </li>
-            <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
-              <a :href="url('artists.show', { id: artist.id, tab: 'information' })">Information</a>
-            </li>
-            <li v-if="useTicketmaster" :class="activeTab === 'events' && 'active'">
-              <a :href="url('artists.show', { id: artist.id, tab: 'events' })">Events</a>
-            </li>
-          </ul>
-        </nav>
-      </template>
-
       <div v-show="activeTab === 'songs'" class="songs-pane">
+        <ScreenHeaderSpace v-if="loading" />
         <SongListSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
-        <SongList
-          v-if="!loading && artist"
-          ref="songList"
-          @sort="onSort"
-          @press:enter="onPressEnter"
-          @swipe="onSwipe"
-        />
+        <SongList v-if="!loading && artist" ref="songList" @sort="onSort" @press:enter="onPressEnter" />
       </div>
 
-      <div v-show="activeTab === 'albums'" class="albums-pane">
+      <ScreenHeaderScrollBox v-show="activeTab === 'albums'" class="albums-pane">
         <GridListView class="scroll-mask-y">
           <template v-if="albums">
             <AlbumCard v-for="album in albums" :key="album.id" :album :show-release-year="true" />
@@ -80,15 +70,23 @@
             <AlbumCardSkeleton v-for="i in 6" :key="i" />
           </template>
         </GridListView>
-      </div>
+      </ScreenHeaderScrollBox>
 
-      <div v-if="useEncyclopedia && artist" v-show="activeTab === 'information'" class="info-pane">
+      <ScreenHeaderScrollBox
+        v-if="useEncyclopedia && artist"
+        v-show="activeTab === 'information'"
+        class="info-pane flex-1"
+      >
         <ArtistInfo :artist mode="full" />
-      </div>
+      </ScreenHeaderScrollBox>
 
-      <div v-if="useTicketmaster && artist" v-show="activeTab === 'events'" class="events-pane">
+      <ScreenHeaderScrollBox
+        v-if="useTicketmaster && artist"
+        v-show="activeTab === 'events'"
+        class="events-pane flex-1"
+      >
         <ArtistEventList :artist />
-      </div>
+      </ScreenHeaderScrollBox>
     </ScreenTabs>
   </ScreenBase>
 </template>
@@ -116,6 +114,9 @@ import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail
 import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import SongListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
+import ArtistAlbumScreenTabNav from '@/components/ui/ArtistAlbumScreenTabNav.vue'
+import ScreenHeaderScrollBox from '@/components/ui/ScreenHeaderScrollBox.vue'
+import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import GridListView from '@/components/ui/GridListView.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -147,7 +148,6 @@ usePageTitle().useScreenTitle('Artist', () => artist.value?.name)
 
 const {
   PlayableList: SongList,
-  headerLayout,
   playableList: songList,
   context,
   duration,
@@ -156,7 +156,6 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onSwipe,
 } = usePlayableList(songs, { type: 'Artist' })
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
