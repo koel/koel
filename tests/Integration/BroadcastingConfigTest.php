@@ -7,13 +7,33 @@ use Tests\TestCase;
 
 class BroadcastingConfigTest extends TestCase
 {
-    /** @var array<string, string|false> */
+    /**
+     * The original value of each changed variable in each place PHP keeps it, or null where it was missing.
+     *
+     * @var array<string, array{getenv: string|false, env: ?array{0: mixed}, server: ?array{0: mixed}}>
+     */
     private array $originalEnv = [];
 
     protected function tearDown(): void
     {
-        foreach ($this->originalEnv as $name => $value) {
-            self::setEnv($name, $value);
+        foreach ($this->originalEnv as $name => $original) {
+            if ($original['getenv'] === false) {
+                putenv($name);
+            } else {
+                putenv("$name={$original['getenv']}");
+            }
+
+            if ($original['env'] === null) {
+                unset($_ENV[$name]);
+            } else {
+                $_ENV[$name] = $original['env'][0];
+            }
+
+            if ($original['server'] === null) {
+                unset($_SERVER[$name]);
+            } else {
+                $_SERVER[$name] = $original['server'][0];
+            }
         }
 
         parent::tearDown();
@@ -21,12 +41,12 @@ class BroadcastingConfigTest extends TestCase
 
     private function useEnv(string $name, string|false $value): void
     {
-        $this->originalEnv[$name] ??= getenv($name);
-        self::setEnv($name, $value);
-    }
+        $this->originalEnv[$name] ??= [
+            'getenv' => getenv($name),
+            'env' => array_key_exists($name, $_ENV) ? [$_ENV[$name]] : null,
+            'server' => array_key_exists($name, $_SERVER) ? [$_SERVER[$name]] : null,
+        ];
 
-    private static function setEnv(string $name, string|false $value): void
-    {
         if ($value === false) {
             putenv($name);
             unset($_ENV[$name], $_SERVER[$name]);
