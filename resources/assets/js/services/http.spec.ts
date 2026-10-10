@@ -57,6 +57,70 @@ describe('http service', () => {
     expect(requestMock).toHaveBeenCalledWith('delete', 'endpoint', { key: 'value' })
   })
 
+  describe('retries', () => {
+    const mockClient = () => {
+      h.restoreAllMocks()
+
+      return h
+        .mock(http as any, 'client')
+        .mockImplementation(async () => new Response('{}', { headers: { 'content-type': 'application/json' } }))
+    }
+
+    it('does not retry by default', async () => {
+      const clientMock = mockClient()
+
+      await http.put('queue/state', {})
+
+      expect(clientMock.mock.calls[0][1]).not.toHaveProperty('retry')
+    })
+
+    it('retries repeatable requests on temporary server errors', async () => {
+      const clientMock = mockClient()
+
+      await http.withRetries.put('queue/state', {})
+
+      expect(clientMock.mock.calls[0][1]).toMatchObject({
+        retry: { limit: 3, methods: ['put'], statusCodes: [408, 429, 500, 502, 503, 504] },
+      })
+    })
+
+    it('retries requests that add something only when the server did not handle them', async () => {
+      const clientMock = mockClient()
+
+      await http.withRetriesWhenUnprocessed.post('interaction/play', {})
+
+      expect(clientMock.mock.calls[0][1]).toMatchObject({
+        retry: { limit: 3, methods: ['post'], statusCodes: [429, 502, 503] },
+      })
+    })
+
+    it('sends a repeatable request again after a temporary server error', async () => {
+      h.restoreAllMocks()
+      const originalFetch = globalThis.fetch
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(new Response('{}', { status: 503 }))
+        .mockResolvedValueOnce(new Response('{"saved":true}', { headers: { 'content-type': 'application/json' } }))
+      globalThis.fetch = fetchMock
+
+      try {
+        await expect(http.withRetries.put('queue/state', {})).resolves.toEqual({ saved: true })
+        expect(fetchMock).toHaveBeenCalledTimes(2)
+      } finally {
+        globalThis.fetch = originalFetch
+      }
+    })
+
+    it('applies a retry option to the next request only', async () => {
+      const clientMock = mockClient()
+
+      await http.withRetries.put('queue/state', {})
+      await http.put('queue/state', {})
+
+      expect(clientMock.mock.calls[1][1]).not.toHaveProperty('retry')
+    })
+  })
+
   describe('interceptor behavior', () => {
     const originalFetch = globalThis.fetch
 

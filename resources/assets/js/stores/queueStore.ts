@@ -161,9 +161,9 @@ export const queueStore = {
     return this.all
   },
 
-  saveState() {
+  async saveState() {
     try {
-      http.silently.put('queue/state', { songs: this.state.playables.map(({ id }) => id) })
+      await http.silently.withRetries.put('queue/state', { songs: this.state.playables.map(({ id }) => id) })
     } catch (error: unknown) {
       logger.error(error)
     }

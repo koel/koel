@@ -155,7 +155,9 @@ export const playableStore = {
    * Increase the play count for a playable.
    */
   registerPlay: async (playable: Playable) => {
-    const interaction = await http.silently.post<Interaction>('interaction/play', { song: playable.id })
+    const interaction = await http.silently.withRetriesWhenUnprocessed.post<Interaction>('interaction/play', {
+      song: playable.id,
+    })
 
     // Use the data from the server to make sure we don't miss a play from another device.
     playable.play_count = interaction.play_count
@@ -166,7 +168,7 @@ export const playableStore = {
       throw new Error('Scrobble is only supported for songs.')
     }
 
-    return await http.silently.post(`songs/${song.id}/scrobble`, {
+    return await http.silently.withRetriesWhenUnprocessed.post(`songs/${song.id}/scrobble`, {
       timestamp: song.play_start_time,
     })
   },

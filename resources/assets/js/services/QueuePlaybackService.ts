@@ -209,7 +209,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     socketService.broadcast('SOCKET_STREAMABLE', playable)
 
     try {
-      http.silently.put('queue/playback-status', {
+      http.silently.withRetries.put('queue/playback-status', {
         song: playable.id,
         position: 0,
       })
@@ -438,7 +438,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     if (Math.ceil(media.currentTime) % 5 === 0) {
       // every 5 seconds, we save the current playback position to the server
       try {
-        http.silently.put('queue/playback-status', {
+        http.silently.withRetries.put('queue/playback-status', {
           song: currentPlayable.id,
           position: Math.ceil(media.currentTime),
         })

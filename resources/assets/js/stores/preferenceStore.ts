@@ -110,7 +110,7 @@ const preferenceStore = {
   },
 
   async update(key: keyof UserPreferences, value: any) {
-    await http.silently.patch('me/preferences', { key, value })
+    await http.silently.withRetries.patch('me/preferences', { key, value })
 
     if (key === 'include_public_media') {
       window.location.reload()
