@@ -23,12 +23,12 @@ const getStreamableCover = (streamable: Streamable | undefined) => {
 
 export const useCoverThemeColors = (currentStreamable: Ref<Streamable | undefined>) => {
   const cover = computed(() => getStreamableCover(currentStreamable.value))
-  const usesChameleonTheme = computed(() => preferences.state.theme === 'chameleon')
+  const usesKameleonTheme = computed(() => preferences.state.theme === 'kameleon')
 
   watch(
-    [cover, usesChameleonTheme],
-    async ([url, onChameleonTheme]) => {
-      if (!onChameleonTheme) {
+    [cover, usesKameleonTheme],
+    async ([url, onKameleonTheme]) => {
+      if (!onKameleonTheme) {
         return
       }
 
@@ -39,7 +39,7 @@ export const useCoverThemeColors = (currentStreamable: Ref<Streamable | undefine
 
       const colors = await getCoverThemeColors(url)
 
-      if (url === cover.value && usesChameleonTheme.value) {
+      if (url === cover.value && usesKameleonTheme.value) {
         themeStore.setCoverColors(colors)
       }
     },

@@ -22,8 +22,8 @@ describe('useCoverThemeColors', () => {
 
   afterEach(() => scope.stop())
 
-  it('tints the app with the playing cover on the Chameleon theme', async () => {
-    preferenceStore.state.theme = 'chameleon'
+  it('tints the app with the playing cover on the Kameleon theme', async () => {
+    preferenceStore.state.theme = 'kameleon'
     const setCoverColors = vi.spyOn(themeStore, 'setCoverColors')
 
     useWithStreamable(h.factory('song').make({ album_cover: 'https://example.test/cover.jpg' }))
@@ -34,7 +34,7 @@ describe('useCoverThemeColors', () => {
   })
 
   it('goes back to the plain colors when nothing with a cover is playing', async () => {
-    preferenceStore.state.theme = 'chameleon'
+    preferenceStore.state.theme = 'kameleon'
     const setCoverColors = vi.spyOn(themeStore, 'setCoverColors')
 
     useWithStreamable()
