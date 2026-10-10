@@ -14,7 +14,8 @@ return [
      |
      */
 
-    'default' => env('BROADCAST_CONNECTION', 'null'),
+    // Installs that set up Pusher before BROADCAST_CONNECTION existed keep broadcasting through it.
+    'default' => env('BROADCAST_CONNECTION', env('PUSHER_APP_KEY') ? 'pusher' : 'null'),
 
     /*
      |--------------------------------------------------------------------------

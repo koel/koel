@@ -135,6 +135,10 @@ Also see [Service Integrations](service-integrations) for detailed setup instruc
 | `TICKETMASTER_API_KEY` | Your Ticketmaster API key. See [Ticketmaster](plus/ticketmaster). | _(empty)_ |
 | `TICKETMASTER_DEFAULT_COUNTRY_CODE` | Fallback country code for Ticketmaster when IP-based lookup fails. See [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). | `US` |
 | `IPINFO_TOKEN` | Your IPinfo token, used to look up the user's country for Ticketmaster. | _(empty)_ |
+| `PUSHER_APP_ID` | Your Pusher app ID. Pusher powers the remote controller and live updates while uploads are processed in the background. | _(empty)_ |
+| `PUSHER_APP_KEY` | Your Pusher app key. Once it's set, Koel broadcasts through Pusher. | _(empty)_ |
+| `PUSHER_APP_SECRET` | Your Pusher app secret. | _(empty)_ |
+| `PUSHER_APP_CLUSTER` | Your Pusher app cluster, e.g. `eu` or `ap1`. | _(empty)_ |
 
 ## SSO (Single Sign-On)
 
