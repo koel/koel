@@ -160,7 +160,7 @@ class QueryCountTest extends TestCase
             $this->createPlayedSongs(...),
             fn () => $this->get(
                 "rest/getAlbumList2.view?apiKey={$this->user->subsonic_api_key}&f=json&type=newest&size=50",
-            ),
+            )->assertJsonPath('subsonic-response.status', 'ok'),
         );
     }
 
@@ -169,7 +169,10 @@ class QueryCountTest extends TestCase
     {
         $this->assertQueryCountStaysFlat(
             $this->createPlayedSongs(...),
-            fn () => $this->get("rest/getArtists.view?apiKey={$this->user->subsonic_api_key}&f=json"),
+            fn () => $this->get("rest/getArtists.view?apiKey={$this->user->subsonic_api_key}&f=json")->assertJsonPath(
+                'subsonic-response.status',
+                'ok',
+            ),
         );
     }
 }
