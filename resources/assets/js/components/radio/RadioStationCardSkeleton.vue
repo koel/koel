@@ -1,8 +1,8 @@
 <template>
-  <article :class="layout" class="skeleton flex flex-col gap-3 p-5 rounded-lg border border-k-fg-10">
-    <aside class="aspect-square rounded-lg pulse" />
+  <article :class="layout" class="skeleton flex flex-col overflow-hidden rounded-xl border border-k-fg-10">
+    <aside class="aspect-square pulse" />
 
-    <footer class="flex flex-col flex-1 gap-3">
+    <footer class="flex flex-col flex-1 gap-3 p-5">
       <p class="h-[1.2rem] w-3/4 pulse" />
       <p class="h-[1.2rem] w-2/3 pulse" />
       <p class="h-[1.2rem] w-1/3 pulse" />
@@ -16,11 +16,19 @@ withDefaults(defineProps<{ layout?: CardLayout }>(), { layout: 'full' })
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
+.full {
+  @apply aspect-[3/4];
+}
+
 .compact {
-  @apply flex-row items-center max-w-full p-4 rounded-md;
+  @apply flex-row items-stretch max-w-full min-h-24 rounded-md;
 
   aside {
-    @apply w-[80px];
+    @apply w-28 aspect-auto;
+  }
+
+  footer {
+    @apply justify-center p-3;
   }
 }
 </style>

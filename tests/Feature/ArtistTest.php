@@ -7,6 +7,7 @@ use App\Http\Resources\ArtistResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Embed;
+use App\Models\Interaction;
 use App\Models\Song;
 use App\Values\EmbedOptions;
 use PHPUnit\Framework\Attributes\Test;
@@ -152,6 +153,46 @@ class ArtistTest extends TestCase
     {
         $this->getAs('api/artists/'
         . Artist::factory()->createOne()->id)->assertJsonStructure(ArtistResource::JSON_STRUCTURE);
+    }
+
+    #[Test]
+    public function showUsesTheCoverOfTheUsersMostPlayedAlbumForAnArtistWithoutAnImage(): void
+    {
+        $user = create_user();
+        $artist = Artist::factory()->createOne(['image' => '']);
+        $favoriteAlbum = Album::factory()->for($artist)->createOne(['cover' => 'favorite.webp']);
+        $otherAlbum = Album::factory()->for($artist)->createOne(['cover' => 'other.webp']);
+
+        Interaction::factory()
+            ->for($user)
+            ->for(Song::factory()->for($favoriteAlbum)->createOne())
+            ->createOne(['play_count' => 5]);
+        Interaction::factory()->for(Song::factory()->for($otherAlbum)->createOne())->createOne(['play_count' => 50]);
+
+        $this->getAs("api/artists/{$artist->id}", $user)->assertJsonPath(
+            'album_cover',
+            image_storage_url('favorite.webp'),
+        );
+    }
+
+    #[Test]
+    public function showUsesTheNewestAlbumCoverForAnArtistWithoutAnImageOrPlays(): void
+    {
+        $artist = Artist::factory()->createOne(['image' => '']);
+        Album::factory()->for($artist)->createOne(['cover' => 'old.webp', 'created_at' => now()->subYear()]);
+        Album::factory()->for($artist)->createOne(['cover' => 'new.webp', 'created_at' => now()]);
+        Album::factory()->for($artist)->createOne(['cover' => '', 'created_at' => now()->addDay()]);
+
+        $this->getAs("api/artists/{$artist->id}")->assertJsonPath('album_cover', image_storage_url('new.webp'));
+    }
+
+    #[Test]
+    public function showLeavesOutTheAlbumCoverForAnArtistWithAnImage(): void
+    {
+        $artist = Artist::factory()->createOne();
+        Album::factory()->for($artist)->createOne(['cover' => 'cover.webp']);
+
+        $this->getAs("api/artists/{$artist->id}")->assertJsonPath('album_cover', null);
     }
 
     #[Test]

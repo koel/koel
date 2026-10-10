@@ -161,6 +161,40 @@ class ArtistBuilder extends FavoriteableBuilder
         return $this;
     }
 
+    /**
+     * For artists without an image, select the cover of the scoped user's most played album as `album_cover`,
+     * falling back to the most recently added album with a cover.
+     */
+    private function withAlbumCover(): self
+    {
+        $user = $this->user;
+
+        return $this->addSelect(['album_cover' => static function (QueryBuilder $query) use ($user): void {
+            $query
+                ->select('albums.cover')
+                ->from('albums')
+                ->tap(static fn (QueryBuilder $albums) => AlbumBuilder::limitToAlbumsAccessibleByUser($albums, $user))
+                ->leftJoin('songs as album_cover_songs', 'album_cover_songs.album_id', 'albums.id')
+                ->leftJoin('interactions as album_cover_interactions', static function (JoinClause $join) use (
+                    $user,
+                ): void {
+                    $join->on('album_cover_interactions.song_id', 'album_cover_songs.id')->where(
+                        'album_cover_interactions.user_id',
+                        $user->id,
+                    );
+                })
+                ->whereColumn('albums.artist_id', 'artists.id')
+                ->where('albums.cover', '<>', '')
+                ->where(static function (QueryBuilder $withoutImage): void {
+                    $withoutImage->whereNull('artists.image')->orWhere('artists.image', '');
+                })
+                ->groupBy('albums.id', 'albums.cover', 'albums.created_at')
+                ->orderByRaw('COALESCE(SUM(album_cover_interactions.play_count), 0) DESC')
+                ->orderByDesc('albums.created_at')
+                ->limit(1);
+        }]);
+    }
+
     public function withUserContext(
         User $user,
         bool $includeFavoriteStatus = true,
@@ -173,6 +207,7 @@ class ArtistBuilder extends FavoriteableBuilder
             ->accessible()
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
             ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus))
-            ->withRatingSubquery();
+            ->withRatingSubquery()
+            ->withAlbumCover();
     }
 }

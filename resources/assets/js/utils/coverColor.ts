@@ -1,11 +1,11 @@
 import { rgbToHsl } from '@/utils/color'
 import type { Rgb } from '@/utils/color'
+import { cache } from '@/services/cache'
 
 const SAMPLE_SIZE = 32
 const HUE_BUCKETS = 24
 const MIN_LIGHTNESS = 0.55
-
-const cache = new Map<string, Promise<string | null>>()
+const MAX_BACKGROUND_LIGHTNESS = 0.25
 
 const loadImage = (url: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
@@ -64,6 +64,12 @@ export const brightenToVisible = (rgb: Rgb) => {
   return `hsl(${Math.round(hue)} ${Math.round(saturation * 100)}% ${Math.round(Math.max(lightness, MIN_LIGHTNESS) * 100)}%)`
 }
 
+export const darkenToBackground = (rgb: Rgb) => {
+  const { hue, saturation, lightness } = rgbToHsl(rgb)
+
+  return `hsl(${Math.round(hue)} ${Math.round(saturation * 100)}% ${Math.round(Math.min(lightness, MAX_BACKGROUND_LIGHTNESS) * 100)}%)`
+}
+
 const extract = async (url: string) => {
   try {
     const image = await loadImage(url)
@@ -77,22 +83,34 @@ const extract = async (url: string) => {
     }
 
     context.drawImage(image, 0, 0, SAMPLE_SIZE, SAMPLE_SIZE)
-    const color = pickVividColor(context.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE).data)
-
-    return color ? brightenToVisible(color) : null
+    return pickVividColor(context.getImageData(0, 0, SAMPLE_SIZE, SAMPLE_SIZE).data)
   } catch {
     return null
   }
 }
 
 /**
- * The cover's main vivid color as a CSS color, or null when the cover has none or can't be read
+ * The cover's main vivid color, or null when the cover has none or can't be read
  * (e.g. hosted elsewhere without CORS, which keeps its pixels unreadable).
  */
-export const getCoverColor = (url: string) => {
-  if (!cache.has(url)) {
-    cache.set(url, extract(url))
+const getCoverRgb = (url: string) => {
+  const key = ['cover.color', url]
+
+  if (cache.miss(key)) {
+    cache.set(key, extract(url))
   }
 
-  return cache.get(url)!
+  return cache.get<Promise<Rgb | null>>(key)
+}
+
+export const getCoverColor = async (url: string) => {
+  const rgb = await getCoverRgb(url)
+
+  return rgb ? brightenToVisible(rgb) : null
+}
+
+export const getCoverBackgroundColor = async (url: string) => {
+  const rgb = await getCoverRgb(url)
+
+  return rgb ? darkenToBackground(rgb) : null
 }

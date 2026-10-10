@@ -1,16 +1,9 @@
 <template>
   <div
-    class="card-thumbnail group/thumb relative w-full aspect-square rounded-xl overflow-hidden bg-cover bg-center bg-no-repeat text-k-fg"
-    :style="{ backgroundImage: `url(${defaultCover})` }"
+    class="card-thumbnail group/thumb relative w-full aspect-square overflow-hidden text-k-fg"
     data-testid="album-artist-card-thumbnail"
   >
-    <img
-      v-if="image"
-      :src="image"
-      :alt="entity.name"
-      class="absolute inset-0 w-full h-full object-cover"
-      loading="lazy"
-    />
+    <img :src="image" :alt="entity.name" class="cover-art absolute inset-0 w-full h-full object-cover" loading="lazy" />
 
     <div
       class="overlay absolute inset-0 z-10 bg-black/60 opacity-0 group-hover/thumb:opacity-100 no-hover:opacity-100 transition-opacity duration-200"
@@ -95,7 +88,9 @@ const { cover: defaultCover } = useBranding()
 const forAlbum = computed(() => entity.value.type === 'albums')
 
 const image = computed(() =>
-  forAlbum.value ? (entity.value as Album).cover || defaultCover : (entity.value as Artist).image || defaultCover,
+  forAlbum.value
+    ? (entity.value as Album).cover || defaultCover
+    : (entity.value as Artist).image || (entity.value as Artist).album_cover || defaultCover,
 )
 
 const playLabel = computed(() =>

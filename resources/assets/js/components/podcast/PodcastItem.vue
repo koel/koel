@@ -7,14 +7,14 @@
   >
     <a
       :href="url('podcasts.show', { id: podcast.id })"
-      class="flex gap-5 p-5 rounded-[inherit] bg-k-fg-5 hover:bg-k-fg-10 text-k-fg! hover:text-k-fg!"
+      class="relative flex overflow-hidden rounded-[inherit] bg-k-fg-5 hover:bg-k-fg-10 text-k-fg! hover:text-k-fg!"
       data-testid="podcast-item"
       @contextmenu.prevent="onContextMenu"
     >
-      <aside class="hidden md:block md:flex-[0_0_128px]">
-        <img :src="podcast.image" alt="Podcast image" class="w-[128px] aspect-square object-cover rounded-lg" />
+      <aside class="hidden md:block md:flex-[0_0_11rem] relative self-stretch">
+        <img :src="podcast.image" alt="Podcast image" class="cover-art absolute inset-0 w-full h-full object-cover" />
       </aside>
-      <main class="flex-1">
+      <main class="relative flex-1 p-5 md:pl-0 md:-ml-10">
         <header>
           <h3 class="text-3xl font-bold">
             {{ podcast.title }}
@@ -76,6 +76,10 @@ const onContextMenu = (event: MouseEvent) =>
 
 <style scoped lang="postcss">
 @reference '@css/app.pcss';
+.cover-art {
+  mask-image: linear-gradient(to right, black 45%, transparent 100%);
+}
+
 .description {
   :deep(p) {
     @apply mb-3;
