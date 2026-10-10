@@ -73,7 +73,6 @@ onMounted(() => {
   }
 
   .noUi-base {
-    height: calc(100% - 16px);
     border-radius: 4px;
   }
 
