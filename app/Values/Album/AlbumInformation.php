@@ -2,7 +2,7 @@
 
 namespace App\Values\Album;
 
-use HTMLPurifier;
+use App\Services\RichTextSanitizer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 
@@ -30,10 +30,10 @@ final class AlbumInformation implements Arrayable
         public array $wiki,
         public array $tracks,
     ) {
-        $purifier = new HTMLPurifier();
+        $sanitizer = new RichTextSanitizer();
 
-        $this->wiki['summary'] = $purifier->purify($this->wiki['summary']);
-        $this->wiki['full'] = $purifier->purify($this->wiki['full']);
+        $this->wiki['summary'] = $sanitizer->sanitize($this->wiki['summary']) ?? '';
+        $this->wiki['full'] = $sanitizer->sanitize($this->wiki['full']) ?? '';
     }
 
     public static function make(

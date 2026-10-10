@@ -60,4 +60,16 @@ class AlbumInformationTest extends TestCase
 
         self::assertNull($information->tracks[0]['url']);
     }
+
+    #[Test]
+    public function keepOnlySimpleFormattingInTheFetchedText(): void
+    {
+        $information = AlbumInformation::make(wiki: [
+            'summary' => '<p><span style="color:red">Recorded</span> in <b>1986</b><sup>[1]</sup></p>',
+            'full' => '<table><tr><td>Side A</td></tr></table>',
+        ]);
+
+        self::assertSame('<p>Recorded in <b>1986</b>[1]</p>', $information->wiki['summary']);
+        self::assertSame('Side A', $information->wiki['full']);
+    }
 }
