@@ -14,7 +14,7 @@
     </section>
 
     <section class="home-search-block p-6 flex gap-2">
-      <HomeButton v-show="!searchFocused" />
+      <SidebarBrand v-show="!searchFocused" />
       <SearchForm class="flex-1" @focus-change="onSearchFocusChange" />
     </section>
 
@@ -48,7 +48,7 @@ import { usePolicies } from '@/composables/usePolicies'
 import { useHookSlot } from '@/composables/useHookSlot'
 
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
-import HomeButton from '@/components/layout/main-wrapper/sidebar/HomeButton.vue'
+import SidebarBrand from '@/components/layout/main-wrapper/sidebar/SidebarBrand.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 import SidebarManageSection from './SidebarManageSection.vue'

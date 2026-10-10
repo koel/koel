@@ -1,18 +1,21 @@
 <template>
   <a
-    class="bg-k-bg-50 active:scale-90 border border-k-fg-10 flex items-center px-3.5 rounded-md text-k-fg-70 hover:text-k-fg"
     :href="url('home')"
+    :title="name"
+    class="flex items-center justify-center px-2.5 rounded-md border border-k-fg-10 bg-k-bg-50 active:scale-90"
     @click="onClick"
   >
-    <Icon :icon="faHome" fixed-width />
+    <img :src="logo" :alt="name" class="size-6 object-contain" />
   </a>
 </template>
 
 <script setup lang="ts">
-import { faHome } from '@fortawesome/free-solid-svg-icons'
 import { eventBus } from '@/utils/eventBus'
+import { useBranding } from '@/composables/useBranding'
 import { useRouter } from '@/composables/useRouter'
 
 const { url } = useRouter()
+const { logo, name } = useBranding()
+
 const onClick = () => eventBus.emit('TOGGLE_SIDEBAR')
 </script>
