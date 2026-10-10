@@ -18,4 +18,4 @@ album arts.
 
 The Information tab of an artist or album shows a description found online, when an integration is set up. To write your
 own, open the artist's or album's edit form and switch to the Description tab. Your text replaces the online one, and
-stays until you change it. Leave it empty to go back to the online description.
+stays until you change it. Leave it empty to use the online-fetched text when applicable.
