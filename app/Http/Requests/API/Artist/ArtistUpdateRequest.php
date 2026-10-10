@@ -19,7 +19,7 @@ class ArtistUpdateRequest extends Request
         return [
             'name' => ['string', 'required'],
             'image' => ['string', 'sometimes', 'nullable', new ValidImageData()],
-            'description' => ['string', 'sometimes', 'nullable'],
+            'description' => ['string', 'sometimes', 'nullable', 'max:16000'],
         ];
     }
 

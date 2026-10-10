@@ -21,7 +21,7 @@ class AlbumUpdateRequest extends Request
             'name' => ['string', 'required'],
             'year' => ['integer', 'nullable'],
             'cover' => ['string', 'sometimes', 'nullable', new ValidImageData()],
-            'description' => ['string', 'sometimes', 'nullable'],
+            'description' => ['string', 'sometimes', 'nullable', 'max:16000'],
         ];
     }
 
