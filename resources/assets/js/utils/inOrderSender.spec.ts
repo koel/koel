@@ -10,7 +10,12 @@ describe('createInOrderSender', () => {
     let finishFirstSend: () => void = () => {}
     const send = vi
       .fn()
-      .mockImplementationOnce(() => new Promise<void>(resolve => (finishFirstSend = resolve)))
+      .mockImplementationOnce(
+        () =>
+          new Promise<void>(resolve => {
+            finishFirstSend = resolve
+          }),
+      )
       .mockResolvedValue(undefined)
 
     const sendInOrder = createInOrderSender(send)
@@ -37,6 +42,30 @@ describe('createInOrderSender', () => {
     await done
 
     expect(logMock).toHaveBeenCalled()
+    expect(send).toHaveBeenLastCalledWith('second')
+  })
+
+  it('tells whether the newest value was saved', async () => {
+    h.mock(logger, 'error')
+    const sendInOrder = createInOrderSender(vi.fn().mockRejectedValueOnce(new Error('offline')))
+
+    await expect(sendInOrder('lost')).resolves.toBe(false)
+    await expect(sendInOrder('kept')).resolves.toBe(true)
+  })
+
+  it('keeps going after a send that throws before returning a promise', async () => {
+    h.mock(logger, 'error')
+    const send = vi
+      .fn()
+      .mockImplementationOnce(() => {
+        throw new Error('broken')
+      })
+      .mockResolvedValue(undefined)
+    const sendInOrder = createInOrderSender(send)
+
+    await sendInOrder('first')
+    await sendInOrder('second')
+
     expect(send).toHaveBeenLastCalledWith('second')
   })
 })

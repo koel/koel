@@ -53,7 +53,7 @@ export const defaultPreferences: UserPreferences = {
   home_blocks_order: [],
 }
 
-const preferenceSenders = new Map<keyof UserPreferences, (value: any) => Promise<void>>()
+const preferenceSenders = new Map<keyof UserPreferences, (value: any) => Promise<boolean>>()
 
 const preferenceStore = {
   isTemporary: false,
@@ -122,9 +122,9 @@ const preferenceStore = {
       )
     }
 
-    await preferenceSenders.get(key)!(value)
+    const saved = await preferenceSenders.get(key)!(value)
 
-    if (key === 'include_public_media') {
+    if (saved && key === 'include_public_media') {
       window.location.reload()
     }
   },
