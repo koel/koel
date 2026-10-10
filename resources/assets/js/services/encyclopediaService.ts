@@ -21,7 +21,7 @@ export const encyclopediaService = {
   },
 
   async fetchForAlbum(album: Album) {
-    album = albumStore.syncWithVault(album)[0]
+    album = albumStore.byId(album.id) ?? album
     const cacheKey = ['album.info', album.id, album.name]
 
     if (cache.has(cacheKey)) {
