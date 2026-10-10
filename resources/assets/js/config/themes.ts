@@ -15,12 +15,19 @@ import thumbCat from '@/../img/themes/thumbnails/cat.jpg'
 import bgDawn from '@/../img/themes/bg-dawn.jpg'
 import thumbDawn from '@/../img/themes/thumbnails/dawn.jpg'
 import thumbMono from '@/../img/themes/thumbnails/mono.avif'
+import thumbChameleon from '@/../img/themes/thumbnails/chameleon.svg'
 
 export default [
   {
     id: 'classic',
     name: 'Classic',
     thumbnail_color: '#181818',
+  },
+  {
+    id: 'chameleon',
+    name: 'Chameleon',
+    thumbnail_color: '#181818',
+    thumbnail_image: thumbChameleon,
   },
   {
     id: 'mono',

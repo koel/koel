@@ -6,6 +6,10 @@ const SAMPLE_SIZE = 32
 const HUE_BUCKETS = 24
 const MIN_LIGHTNESS = 0.55
 const MAX_BACKGROUND_LIGHTNESS = 0.25
+const THEME_BACKGROUND_LIGHTNESS = 0.1
+const MAX_THEME_BACKGROUND_SATURATION = 0.35
+const MIN_THEME_HIGHLIGHT_LIGHTNESS = 0.55
+const MAX_THEME_HIGHLIGHT_LIGHTNESS = 0.65
 
 const loadImage = (url: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
@@ -70,6 +74,22 @@ export const darkenToBackground = (rgb: Rgb) => {
   return `hsl(${Math.round(hue)} ${Math.round(saturation * 100)}% ${Math.round(Math.min(lightness, MAX_BACKGROUND_LIGHTNESS) * 100)}%)`
 }
 
+const hsl = (hue: number, saturation: number, lightness: number) =>
+  `hsl(${Math.round(hue)} ${Math.round(saturation * 100)}% ${Math.round(lightness * 100)}%)`
+
+export const toThemeColors = (rgb: Rgb) => {
+  const { hue, saturation, lightness } = rgbToHsl(rgb)
+
+  return {
+    background: hsl(hue, Math.min(saturation, MAX_THEME_BACKGROUND_SATURATION), THEME_BACKGROUND_LIGHTNESS),
+    highlight: hsl(
+      hue,
+      saturation,
+      Math.min(Math.max(lightness, MIN_THEME_HIGHLIGHT_LIGHTNESS), MAX_THEME_HIGHLIGHT_LIGHTNESS),
+    ),
+  }
+}
+
 const extract = async (url: string) => {
   try {
     const image = await loadImage(url)
@@ -107,6 +127,12 @@ export const getCoverColor = async (url: string) => {
   const rgb = await getCoverRgb(url)
 
   return rgb ? brightenToVisible(rgb) : null
+}
+
+export const getCoverThemeColors = async (url: string) => {
+  const rgb = await getCoverRgb(url)
+
+  return rgb ? toThemeColors(rgb) : null
 }
 
 export const getCoverBackgroundColor = async (url: string) => {
