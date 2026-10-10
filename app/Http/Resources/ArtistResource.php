@@ -91,6 +91,7 @@ class ArtistResource extends JsonResource
             'name' => $this->artist->name,
             'image' => image_storage_url($this->artist->image),
             'album_cover' => image_storage_url($this->artist->album_cover),
+            'description' => $this->unless($embedding, $this->artist->description),
             'created_at' => $this->unless($embedding, $this->artist->created_at),
             'mbid' => $this->when($musicBrainzEnabled && !$embedding, $this->artist->mbid),
             'is_external' => $this->unless($embedding, fn () => $isPlus && $this->artist->user_id !== $user->id),

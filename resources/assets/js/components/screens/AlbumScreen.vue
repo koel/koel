@@ -51,7 +51,7 @@
         <li :class="activeTab === 'other-albums' && 'active'">
           <a :href="url('albums.show', { id: album.id, tab: 'other-albums' })">Other Albums</a>
         </li>
-        <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
+        <li v-if="showsInformation" :class="activeTab === 'information' && 'active'">
           <a :href="url('albums.show', { id: album.id, tab: 'information' })">Information</a>
         </li>
       </ArtistAlbumScreenTabNav>
@@ -77,7 +77,7 @@
       </ScreenHeaderScrollBox>
 
       <ScreenHeaderScrollBox
-        v-if="useEncyclopedia && album"
+        v-if="showsInformation && album"
         v-show="activeTab === 'information'"
         class="info-pane flex-1"
       >
@@ -154,6 +154,7 @@ const {
 } = usePlayableList(songs, { type: 'Album' })
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
+const showsInformation = computed(() => useEncyclopedia.value || Boolean(album.value?.description))
 
 const isStandardArtist = computed(() => {
   if (!album.value) {

@@ -45,6 +45,11 @@ final class AlbumInformation implements Arrayable
         return new self($url, $cover, $wiki, $tracks);
     }
 
+    public function withDescription(string $description): self
+    {
+        return new self($this->url, $this->cover, ['summary' => $description, 'full' => $description], $this->tracks);
+    }
+
     public static function fromWikipediaSummary(array $summary): self
     {
         return new self(

@@ -143,6 +143,31 @@ class AlbumTest extends TestCase
     }
 
     #[Test]
+    public function updateWithDescription(): void
+    {
+        $album = Album::factory()->createOne();
+
+        $this->putAs(
+            "api/albums/{$album->id}",
+            [
+                'name' => $album->name,
+                'description' => '<h2>Recording</h2><p onclick="x()">Done in a week.</p>',
+            ],
+            create_admin(),
+        )->assertJsonPath('description', '<h2>Recording</h2><p>Done in a week.</p>');
+    }
+
+    #[Test]
+    public function updateKeepingDescriptionIntact(): void
+    {
+        $album = Album::factory()->createOne(['description' => '<p>Mine</p>']);
+
+        $this->putAs("api/albums/{$album->id}", ['name' => 'Updated Album Name'], create_admin())->assertOk();
+
+        self::assertSame('<p>Mine</p>', $album->refresh()->description);
+    }
+
+    #[Test]
     public function updateKeepingCoverIntact(): void
     {
         $album = Album::factory()->createOne(['cover' => 'neat-cover.webp']);

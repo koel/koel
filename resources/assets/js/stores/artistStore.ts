@@ -14,6 +14,7 @@ const VARIOUS_ARTISTS_NAME = 'Various Artists'
 export interface ArtistUpdateData {
   name: Artist['name']
   image?: Artist['image'] | null
+  description?: string
 }
 
 interface ArtistListPaginateParams extends CursorPaginateParams<ArtistListSortField> {
@@ -48,6 +49,7 @@ export const artistStore = {
 
   async update(artist: Artist, data: ArtistUpdateData) {
     const updated = await http.put<Artist>(`artists/${artist.id}`, data)
+    cache.remove(['artist.info', artist.id])
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(updated), 'id')
     songStore.syncArtistProperties(updated)
   },

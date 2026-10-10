@@ -45,7 +45,7 @@
         <li :class="activeTab === 'albums' && 'active'">
           <a :href="url('artists.show', { id: artist.id, tab: 'albums' })">Albums</a>
         </li>
-        <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
+        <li v-if="showsInformation" :class="activeTab === 'information' && 'active'">
           <a :href="url('artists.show', { id: artist.id, tab: 'information' })">Information</a>
         </li>
         <li v-if="useTicketmaster" :class="activeTab === 'events' && 'active'">
@@ -73,7 +73,7 @@
       </ScreenHeaderScrollBox>
 
       <ScreenHeaderScrollBox
-        v-if="useEncyclopedia && artist"
+        v-if="showsInformation && artist"
         v-show="activeTab === 'information'"
         class="info-pane flex-1"
       >
@@ -159,6 +159,7 @@ const {
 } = usePlayableList(songs, { type: 'Artist' })
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
+const showsInformation = computed(() => useEncyclopedia.value || Boolean(artist.value?.description))
 
 const albumCount = computed(() => {
   const albums = new Set()

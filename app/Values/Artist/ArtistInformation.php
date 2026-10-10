@@ -36,6 +36,11 @@ final class ArtistInformation implements Arrayable
         return new self($url, $image, $bio);
     }
 
+    public function withDescription(string $description): self
+    {
+        return new self($this->url, $this->image, ['summary' => $description, 'full' => $description]);
+    }
+
     /**
      * @param array<string, mixed> $summary
      */

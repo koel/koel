@@ -238,6 +238,31 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
+    public function updateWithDescription(): void
+    {
+        $artist = Artist::factory()->createOne();
+
+        $this->putAs(
+            "api/artists/{$artist->id}",
+            [
+                'name' => $artist->name,
+                'description' => '<p>Formed in <strong>1981</strong>.</p><script>alert(1)</script>',
+            ],
+            create_admin(),
+        )->assertJsonPath('description', '<p>Formed in <strong>1981</strong>.</p>');
+    }
+
+    #[Test]
+    public function updateKeepingDescriptionIntact(): void
+    {
+        $artist = Artist::factory()->createOne(['description' => '<p>Mine</p>']);
+
+        $this->putAs("api/artists/{$artist->id}", ['name' => 'Updated Artist Name'], create_admin())->assertOk();
+
+        self::assertSame('<p>Mine</p>', $artist->refresh()->description);
+    }
+
+    #[Test]
     public function updateKeepingImageIntact(): void
     {
         $artist = Artist::factory()->createOne(['image' => 'neat-pose.webp']);

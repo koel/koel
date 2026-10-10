@@ -30,12 +30,14 @@ class EncyclopediaService
     public function getAlbumInformation(Album $album): ?AlbumInformation
     {
         try {
-            return $this->getAlbumInformationOrThrowIfMusicBrainzIsBusy($album);
+            $info = $this->getAlbumInformationOrThrowIfMusicBrainzIsBusy($album);
         } catch (MusicBrainzBusyException) {
             $this->queueInformationFetchIfPossible(new FetchAlbumInformationJob($album));
 
-            return AlbumInformation::make();
+            $info = AlbumInformation::make();
         }
+
+        return $album->description ? ($info ?? AlbumInformation::make())->withDescription($album->description) : $info;
     }
 
     /**
@@ -67,12 +69,16 @@ class EncyclopediaService
     public function getArtistInformation(Artist $artist): ?ArtistInformation
     {
         try {
-            return $this->getArtistInformationOrThrowIfMusicBrainzIsBusy($artist);
+            $info = $this->getArtistInformationOrThrowIfMusicBrainzIsBusy($artist);
         } catch (MusicBrainzBusyException) {
             $this->queueInformationFetchIfPossible(new FetchArtistInformationJob($artist));
 
-            return ArtistInformation::make();
+            $info = ArtistInformation::make();
         }
+
+        return $artist->description
+            ? ($info ?? ArtistInformation::make())->withDescription($artist->description)
+            : $info;
     }
 
     /**

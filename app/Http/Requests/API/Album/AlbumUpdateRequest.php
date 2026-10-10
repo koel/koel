@@ -10,6 +10,7 @@ use App\Values\Album\AlbumUpdateData;
  * @property-read string $name
  * @property-read ?int $year
  * @property-read ?string $cover
+ * @property-read ?string $description
  */
 class AlbumUpdateRequest extends Request
 {
@@ -20,6 +21,7 @@ class AlbumUpdateRequest extends Request
             'name' => ['string', 'required'],
             'year' => ['integer', 'nullable'],
             'cover' => ['string', 'sometimes', 'nullable', new ValidImageData()],
+            'description' => ['string', 'sometimes', 'nullable'],
         ];
     }
 
@@ -29,6 +31,7 @@ class AlbumUpdateRequest extends Request
             name: $this->name,
             year: $this->year ?: null,
             cover: $this->has('cover') ? $this->string('cover') : null,
+            description: $this->has('description') ? (string) $this->description : null,
         );
     }
 }

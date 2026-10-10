@@ -9,6 +9,7 @@ use App\Values\Artist\ArtistUpdateData;
 /**
  * @property-read string $name
  * @property-read ?string $image
+ * @property-read ?string $description
  */
 class ArtistUpdateRequest extends Request
 {
@@ -18,6 +19,7 @@ class ArtistUpdateRequest extends Request
         return [
             'name' => ['string', 'required'],
             'image' => ['string', 'sometimes', 'nullable', new ValidImageData()],
+            'description' => ['string', 'sometimes', 'nullable'],
         ];
     }
 
@@ -27,6 +29,7 @@ class ArtistUpdateRequest extends Request
             name: $this->name,
             // null means no change to the image, when an empty string means to delete the image
             image: $this->has('image') ? $this->string('image') : null,
+            description: $this->has('description') ? (string) $this->description : null,
         );
     }
 }
