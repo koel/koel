@@ -2,9 +2,9 @@ import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
-import Component from './HomeButton.vue'
+import Component from './SidebarBrand.vue'
 
-describe('homeButton.vue', () => {
+describe('sidebarBrand.vue', () => {
   const h = createHarness()
 
   it('triggers the sidebar toggle event', async () => {
