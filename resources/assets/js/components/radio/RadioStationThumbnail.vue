@@ -6,7 +6,7 @@
     @click.prevent="emit('clicked')"
   >
     <img alt="Logo" :src="station.logo || defaultCover" class="cover-art w-full h-full object-cover" loading="lazy" />
-    <span class="absolute top-0 left-0 w-full h-full group-hover:bg-black/40 no-hover:bg-black/40 z-10" />
+    <span class="overlay absolute top-0 left-0 w-full h-full group-hover:bg-black/40 no-hover:bg-black/40 z-10" />
     <PlayIcon :playing="station.playback_state === 'Playing'" />
   </button>
 </template>

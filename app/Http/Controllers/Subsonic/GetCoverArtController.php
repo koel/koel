@@ -31,7 +31,7 @@ class GetCoverArtController extends Controller
             return redirect($podcast->image);
         }
 
-        $fileName = $album ? $album->cover : $artist?->image;
+        $fileName = $album ? $album->cover : ($artist?->image ?: $artist?->album_cover);
 
         if ($this->imageStorage->exists($fileName)) {
             return ImageStorage::disk()->response($fileName);

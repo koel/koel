@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { brightenToVisible, pickVividColor } from './coverColor'
+import { brightenToVisible, darkenToBackground, pickVividColor } from './coverColor'
 
 describe('coverColor', () => {
   const pixelsOf = (...colors: [number, number, number][]) =>
@@ -27,5 +27,13 @@ describe('coverColor', () => {
 
   it('keeps a color that is already light enough', () => {
     expect(brightenToVisible([240, 120, 40])).toBe('hsl(24 87% 55%)')
+  })
+
+  it('darkens a light color so white text reads on it', () => {
+    expect(darkenToBackground([240, 120, 40])).toBe('hsl(24 87% 25%)')
+  })
+
+  it('keeps a color that is already dark enough', () => {
+    expect(darkenToBackground([80, 10, 10])).toBe('hsl(0 78% 18%)')
   })
 })

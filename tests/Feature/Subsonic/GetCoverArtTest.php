@@ -51,6 +51,20 @@ class GetCoverArtTest extends TestCase
     }
 
     #[Test]
+    public function returnsTheAlbumCoverForAnArtistWithoutAnImage(): void
+    {
+        $user = create_user();
+        $filename = $this->stageCover('sub_artist_album_cover_test.png');
+
+        $artist = Artist::factory()->createOne(['image' => '', 'user_id' => $user->id]);
+        Album::factory()->for($artist)->createOne(['cover' => $filename, 'user_id' => $user->id]);
+
+        $response = $this->get("/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&id={$artist->id}")->assertOk();
+
+        self::assertSame(File::get(image_storage_path($filename)), $response->streamedContent());
+    }
+
+    #[Test]
     public function unknownIdReturnsCode70(): void
     {
         $user = create_user();

@@ -34,6 +34,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property ?string $image The artist's image file name
+ * @property ?string $album_cover For an artist without an image, the cover of the scoped user's most played album
  * @property Carbon $created_at
  * @property Collection<array-key, Album> $albums
  * @property Collection<array-key, Song> $songs

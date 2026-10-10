@@ -1,5 +1,5 @@
 <template>
-  <article :class="layout" class="skeleton flex flex-col overflow-hidden rounded-lg border border-k-fg-10">
+  <article :class="layout" class="skeleton flex flex-col overflow-hidden rounded-xl border border-k-fg-10">
     <aside class="aspect-square pulse" />
 
     <footer class="flex flex-col flex-1 gap-3 p-5">
@@ -16,6 +16,10 @@ withDefaults(defineProps<{ layout?: CardLayout }>(), { layout: 'full' })
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
+.full {
+  @apply aspect-[3/4];
+}
+
 .compact {
   @apply flex-row items-stretch max-w-full min-h-24 rounded-md;
 

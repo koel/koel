@@ -44,6 +44,19 @@ class GetArtistTest extends TestCase
     }
 
     #[Test]
+    public function givesAnArtistWithoutAnImageCoverArtFromTheirAlbums(): void
+    {
+        $user = create_user();
+        $artist = Artist::factory()->createOne(['image' => '', 'user_id' => $user->id]);
+        Album::factory()->for($artist)->createOne(['cover' => 'cover.webp', 'user_id' => $user->id]);
+
+        $this->getJson("/rest/getArtist.view?apiKey={$user->subsonic_api_key}&f=json&id={$artist->id}")->assertJsonPath(
+            'subsonic-response.artist.coverArt',
+            $artist->id,
+        );
+    }
+
+    #[Test]
     public function unknownIdReturnsCode70(): void
     {
         $user = create_user();

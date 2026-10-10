@@ -25,7 +25,7 @@ an identifier are skipped, so on an existing library run
 [`koel:fetch-artwork`](./cli-commands.md#koel-fetch-artwork).
 
 Artist images come from [Wikidata](https://www.wikidata.org/), found by the artist's MusicBrainz identifier, and are
-also preferred over Spotify.
+also preferred over Spotify. An artist still without an image shows the cover of their album you play the most.
 
 If an album has no release year in its tags, Koel fills it in with the year the album was first released, according to
 MusicBrainz. A year from your tags is never replaced.

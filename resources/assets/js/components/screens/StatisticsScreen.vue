@@ -34,7 +34,7 @@
 
       <ShelfSection v-if="statistics.top_artists.length">
         <template #header>Your Top Artists</template>
-        <Carousel showcase>
+        <Carousel>
           <TopArtistCard
             v-for="(entry, i) in statistics.top_artists"
             :key="entry.artist.id"

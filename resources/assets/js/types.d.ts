@@ -177,6 +177,7 @@ interface Artist {
   readonly id: string
   name: string
   image: string // empty string = no image
+  album_cover: string | null
   created_at: string
   mbid?: string | null
   is_external: boolean

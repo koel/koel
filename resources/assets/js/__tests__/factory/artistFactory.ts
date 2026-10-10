@@ -6,6 +6,7 @@ export default (): Artist => {
     id: faker.string.ulid(),
     name: faker.person.fullName(),
     image: 'foo.jpg',
+    album_cover: null,
     created_at: faker.date.past().toISOString(),
     mbid: faker.string.uuid(),
     is_external: false,

@@ -22,6 +22,14 @@ describe('albumOrArtistCardThumbnail.vue', () => {
     expect(img.src).toBe('https://example.test/artist.jpg')
   })
 
+  it('renders the album cover for an artist without an image', () => {
+    const artist = h.factory('artist').make({ image: '', album_cover: 'https://example.test/album.jpg' })
+    h.render(Component, { props: { entity: artist } })
+
+    const img = screen.getByAltText(artist.name) as HTMLImageElement
+    expect(img.src).toBe('https://example.test/album.jpg')
+  })
+
   it('emits context-menu when the more-actions button is clicked', async () => {
     const album = h.factory('album').make()
     const { emitted } = h.render(Component, { props: { entity: album } })
