@@ -39,6 +39,8 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
     activeScroller = scroller
     upwardDistance = 0
     revealed.value = false
+    sliding.value = false
+    clearTimeout(slideTimer)
     scrollTop.value = getClampedScrollTop(scroller)
     lastScrollTops.set(scroller, scrollTop.value)
   }
