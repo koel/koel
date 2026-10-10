@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { defaultPreferences, preferenceStore } from '@/stores/preferenceStore'
@@ -8,16 +8,15 @@ describe('preferenceStore', () => {
     beforeEach: () => preferenceStore.init(),
   })
 
-  it('sets preferences and saves the state', () => {
+  it('sets preferences and saves the state', async () => {
     const user = h.factory('user').make()
     user.preferences = defaultPreferences
     const mock = h.mock(http, 'patch')
     preferenceStore.set('volume', 5)
-    expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 5 })
+    await vi.waitFor(() => expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 5 }))
 
-    // test the proxy
     preferenceStore.volume = 6
-    expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 6 })
+    await vi.waitFor(() => expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'volume', value: 6 }))
   })
 
   it('does not trigger a request if the value is the same', () => {

@@ -1,5 +1,6 @@
 import { reactive, ref } from 'vue'
 import { http } from '@/services/http'
+import { createInOrderSender } from '@/utils/inOrderSender'
 
 export const defaultPreferences: UserPreferences = {
   volume: 7,
@@ -51,6 +52,8 @@ export const defaultPreferences: UserPreferences = {
   show_waveform: true,
   home_blocks_order: [],
 }
+
+const preferenceSenders = new Map<keyof UserPreferences, (value: any) => Promise<void>>()
 
 const preferenceStore = {
   isTemporary: false,
@@ -110,7 +113,16 @@ const preferenceStore = {
   },
 
   async update(key: keyof UserPreferences, value: any) {
-    await http.silently.withRetries.patch('me/preferences', { key, value })
+    if (!preferenceSenders.has(key)) {
+      preferenceSenders.set(
+        key,
+        createInOrderSender(latestValue =>
+          http.silently.withRetries.patch('me/preferences', { key, value: latestValue }),
+        ),
+      )
+    }
+
+    await preferenceSenders.get(key)!(value)
 
     if (key === 'include_public_media') {
       window.location.reload()

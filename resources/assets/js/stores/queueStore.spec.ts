@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
@@ -20,14 +20,16 @@ describe('queueStore', () => {
 
   it('returns the last queued song', () => expect(queueStore.last).toEqual(songs[2]))
 
-  it('queues to bottom', () => {
+  it('queues to bottom', async () => {
     const song = h.factory('song').make()
     const putMock = h.mock(http, 'put')
     queueStore.queue(song)
 
     expect(queueStore.all).toHaveLength(4)
     expect(queueStore.last).toEqual(song)
-    expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
+    await vi.waitFor(() =>
+      expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) }),
+    )
   })
 
   it('queues to top', () => {

@@ -1,10 +1,14 @@
 import { reactive } from 'vue'
 import { differenceBy, unionBy } from 'lodash-es'
 import { arrayify, moveItemsInList } from '@/utils/helpers'
-import { logger } from '@/utils/logger'
 import { isSong } from '@/utils/typeGuards'
 import { http } from '@/services/http'
+import { createInOrderSender } from '@/utils/inOrderSender'
 import { playableStore } from '@/stores/playableStore'
+
+const sendQueueState = createInOrderSender((songs: Playable['id'][]) =>
+  http.silently.withRetries.put('queue/state', { songs }),
+)
 
 export const queueStore = {
   state: reactive<{ playables: Playable[] }>({
@@ -161,11 +165,7 @@ export const queueStore = {
     return this.all
   },
 
-  async saveState() {
-    try {
-      await http.silently.withRetries.put('queue/state', { songs: this.state.playables.map(({ id }) => id) })
-    } catch (error: unknown) {
-      logger.error(error)
-    }
+  saveState() {
+    return sendQueueState(this.state.playables.map(({ id }) => id))
   },
 }

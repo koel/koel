@@ -14,6 +14,7 @@ import { eventBus } from '@/utils/eventBus'
 import { isAudioContextSupported } from '@/utils/supports'
 import { audioService } from '@/services/audioService'
 import { http } from '@/services/http'
+import { createInOrderSender } from '@/utils/inOrderSender'
 import { socketService } from '@/services/socketService'
 import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
 import { BasePlaybackService } from '@/services/BasePlaybackService'
@@ -32,6 +33,10 @@ const PRELOAD_BUFFER = 30
 // length or four minutes, whichever comes first. Tracks shorter than 30 seconds never count.
 const SCROBBLE_AFTER_SECONDS = 240
 const MIN_SCROBBLE_LENGTH = 30
+
+const sendPlaybackStatus = createInOrderSender((status: { song: Playable['id']; position: number }) =>
+  http.silently.withRetries.put('queue/playback-status', status),
+)
 
 export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
@@ -208,14 +213,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     this.recordStartTime(playable)
     socketService.broadcast('SOCKET_STREAMABLE', playable)
 
-    try {
-      http.silently.withRetries.put('queue/playback-status', {
-        song: playable.id,
-        position: 0,
-      })
-    } catch (error: unknown) {
-      logger.error(error)
-    }
+    sendPlaybackStatus({ song: playable.id, position: 0 })
 
     this.media.currentTime = 0
 
@@ -437,14 +435,7 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     if (Math.ceil(media.currentTime) % 5 === 0) {
       // every 5 seconds, we save the current playback position to the server
-      try {
-        http.silently.withRetries.put('queue/playback-status', {
-          song: currentPlayable.id,
-          position: Math.ceil(media.currentTime),
-        })
-      } catch (error: unknown) {
-        logger.error(error)
-      }
+      sendPlaybackStatus({ song: currentPlayable.id, position: Math.ceil(media.currentTime) })
 
       // if the current item is an episode, we emit an event to update the progress on the client side as well
       if (isEpisode(currentPlayable)) {
