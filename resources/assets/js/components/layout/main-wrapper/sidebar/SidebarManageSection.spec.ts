@@ -13,8 +13,17 @@ describe('sidebarManageSection.vue', () => {
   it('shows all menu items if current user is an admin', () => {
     h.actingAsAdmin().render(Component)
     screen.getByText('Settings')
-    screen.getByText('Users')
     screen.getByText('Upload')
+  })
+
+  it('shows Settings to someone who can only manage users', () => {
+    const manager = h
+      .factory('user')
+      .state('current')
+      .make({ abilities: ['manage users'] }) as CurrentUser
+    h.actingAsUser(manager).render(Component)
+
+    screen.getByText('Settings')
   })
 
   it('shows nothing if current user is not an admin', () => {
@@ -22,7 +31,6 @@ describe('sidebarManageSection.vue', () => {
     expect(screen.queryByText('Manage')).toBeNull()
     expect(screen.queryByText('Settings')).toBeNull()
     expect(screen.queryByText('Upload')).toBeNull()
-    expect(screen.queryByText('Users')).toBeNull()
   })
 
   it('shows only the upload menu item if current user is a Plus user', () => {
@@ -30,7 +38,6 @@ describe('sidebarManageSection.vue', () => {
       h.render(Component)
       screen.getByText('Upload')
       expect(screen.queryByText('Settings')).toBeNull()
-      expect(screen.queryByText('Users')).toBeNull()
     })
   })
 

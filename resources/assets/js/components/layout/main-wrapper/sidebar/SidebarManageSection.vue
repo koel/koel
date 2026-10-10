@@ -25,7 +25,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { faSpinner, faTools, faUpload, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner, faTools, faUpload } from '@fortawesome/free-solid-svg-icons'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import type { RouteName } from '@/config/routes'
 import { useRouter } from '@/composables/useRouter'
@@ -61,7 +61,7 @@ const items = computed(() =>
       icon: faTools,
       route: 'settings',
       screens: ['Settings'],
-      visible: () => currentUserCan.manageSettings(),
+      visible: () => currentUserCan.manageSettings() || currentUserCan.manageUsers(),
     },
     {
       label: 'Upload',
@@ -70,13 +70,6 @@ const items = computed(() =>
       screens: ['Upload'],
       visible: () => allowsUpload.value,
       isBusy: () => uploadService.getUnfinishedFiles().length > 0,
-    },
-    {
-      label: 'Users',
-      icon: faUsers,
-      route: 'users.index',
-      screens: ['Users'],
-      visible: () => currentUserCan.manageUsers(),
     },
   ]),
 )

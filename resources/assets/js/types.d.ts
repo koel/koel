@@ -625,7 +625,6 @@ interface ScreenNames {
   Settings: true
   Songs: true
   Upload: true
-  Users: true
   Visualizer: true
   YouTube: true
 }

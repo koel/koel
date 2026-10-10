@@ -17,9 +17,9 @@ vi.mock('@/composables/useModal', () => ({
   }),
 }))
 
-import UserListScreen from './UserListScreen.vue'
+import Component from './UsersSettingGroup.vue'
 
-describe('userListScreen.vue', () => {
+describe('usersSettingGroup.vue', () => {
   const h = createHarness({
     beforeEach: () => {
       openModalMock.mockClear()
@@ -35,7 +35,7 @@ describe('userListScreen.vue', () => {
 
     const fetchMock = h.mock(http, 'get').mockResolvedValue(users)
 
-    h.render(UserListScreen, {
+    h.render(Component, {
       global: {
         stubs: {
           Btn,
