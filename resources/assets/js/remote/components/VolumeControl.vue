@@ -65,7 +65,7 @@ onMounted(() => {
   }
 
   .noUi-target {
-    background: var(--color-fg);
+    background: color-mix(in srgb, var(--color-fg), transparent 80%);
     border-radius: 4px;
     border: 0;
     box-shadow: none;
@@ -86,8 +86,9 @@ onMounted(() => {
     height: 16px;
     border-radius: 50%;
     border: 0;
-    left: -12px;
-    top: 0;
+    left: -4px;
+    right: auto;
+    bottom: -8px;
     background: var(--color-highlight);
     box-shadow: none;
 
@@ -98,7 +99,7 @@ onMounted(() => {
   }
 
   .noUi-connect {
-    background: transparent;
+    background: var(--color-fg);
     box-shadow: none;
   }
 }
