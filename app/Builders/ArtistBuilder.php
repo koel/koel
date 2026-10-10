@@ -173,6 +173,7 @@ class ArtistBuilder extends FavoriteableBuilder
             $query
                 ->select('albums.cover')
                 ->from('albums')
+                ->tap(static fn (QueryBuilder $albums) => AlbumBuilder::limitToAlbumsAccessibleByUser($albums, $user))
                 ->leftJoin('songs as album_cover_songs', 'album_cover_songs.album_id', 'albums.id')
                 ->leftJoin('interactions as album_cover_interactions', static function (JoinClause $join) use (
                     $user,

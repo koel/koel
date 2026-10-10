@@ -94,4 +94,41 @@ class ArtistTest extends PlusTestCase
 
         $this->getAs("api/artists/{$curator->id}", $viewer)->assertOk();
     }
+
+    #[Test]
+    public function showLeavesOutTheCoverOfAnotherUsersPrivateAlbum(): void
+    {
+        $owner = create_user();
+        $artist = Artist::factory()->for($owner)->createOne(['image' => '']);
+        $sharedAlbum = Album::factory()
+            ->for($artist)
+            ->for($owner)
+            ->createOne([
+                'cover' => 'shared.webp',
+                'created_at' => now()->subYear(),
+            ]);
+        $privateAlbum = Album::factory()->for($artist)->for($owner)->createOne(['cover' => 'private.webp']);
+
+        Song::factory()
+            ->for($sharedAlbum)
+            ->for($artist)
+            ->for($owner, 'owner')
+            ->public()
+            ->createOne();
+        Song::factory()
+            ->for($privateAlbum)
+            ->for($artist)
+            ->for($owner, 'owner')
+            ->private()
+            ->createOne();
+
+        $viewer = create_user();
+        $viewer->preferences->includePublicMedia = true;
+        $viewer->save();
+
+        $this->getAs("api/artists/{$artist->id}", $viewer)->assertJsonPath(
+            'album_cover',
+            image_storage_url('shared.webp'),
+        );
+    }
 }
