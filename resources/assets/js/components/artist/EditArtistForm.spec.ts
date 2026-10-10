@@ -1,9 +1,29 @@
-import { beforeEach, describe, expect, it } from 'vite-plus/test'
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { screen, waitFor } from '@testing-library/vue'
 import { artistStore } from '@/stores/artistStore'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import Component from './EditArtistForm.vue'
+
+const mockShowConfirmDialog = vi.fn()
+
+vi.mock('@/composables/useDialogBox', () => ({
+  useDialogBox: () => ({ showConfirmDialog: mockShowConfirmDialog }),
+}))
+
+vi.mock('@/components/ui/form/RichTextEditor.vue', async () => {
+  const { defineComponent } = await import('vue')
+
+  return {
+    __esModule: true,
+    default: defineComponent({
+      props: ['modelValue'],
+      emits: ['update:modelValue'],
+      template:
+        '<textarea data-testid="description-editor" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+    }),
+  }
+})
 
 describe('editArtistForm.vue', () => {
   const h = createHarness()
@@ -107,5 +127,15 @@ describe('editArtistForm.vue', () => {
       expect.anything(),
       expect.objectContaining({ description: '<p>My own words</p>' }),
     )
+  })
+
+  it('asks before discarding a cleared description', async () => {
+    renderComponent(h.factory('artist').make({ description: '<p>My own words</p>' }))
+    await h.tick(2)
+
+    await h.user.clear(await screen.findByTestId('description-editor'))
+    await h.user.keyboard('{Escape}')
+
+    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Discard all changes?')
   })
 })

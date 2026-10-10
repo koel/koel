@@ -118,7 +118,8 @@ const { data, isPristine, handleSubmit } = useForm<AlbumUpdateData>({
   initialValues: { ...pick(album, 'name', 'year', 'cover'), description: album.description ?? '' },
   isPristine: (original, current) =>
     isEqual(omit(original, 'description'), omit(current, 'description')) &&
-    [original.description, onlineDescription.value].includes(current.description),
+    (current.description === original.description ||
+      (!original.description && current.description === onlineDescription.value)),
   onSubmit: async data => {
     const formData = structuredClone(toRaw(data))
 

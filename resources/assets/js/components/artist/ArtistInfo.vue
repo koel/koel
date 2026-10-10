@@ -10,7 +10,7 @@
 
     <div v-if="!loading && info?.bio" class="rich-text" v-html="info.bio.full" />
 
-    <template v-if="info && !loading" #footer>
+    <template v-if="!loading && info?.url" #footer>
       <a :href="info.url" rel="openener" target="_blank">Source</a>
     </template>
   </AlbumArtistInfo>

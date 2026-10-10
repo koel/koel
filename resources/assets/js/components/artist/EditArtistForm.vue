@@ -108,7 +108,8 @@ const { data, isPristine, handleSubmit } = useForm<ArtistUpdateData>({
   initialValues: { ...pick(artist, 'name', 'image'), description: artist.description ?? '' },
   isPristine: (original, current) =>
     isEqual(omit(original, 'description'), omit(current, 'description')) &&
-    [original.description, onlineDescription.value].includes(current.description),
+    (current.description === original.description ||
+      (!original.description && current.description === onlineDescription.value)),
   onSubmit: async data => {
     const formData = structuredClone(toRaw(data))
 

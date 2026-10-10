@@ -86,6 +86,7 @@ const html = defineModel<string>({ default: '' })
 const linkPanel = ref<HTMLElement>()
 const linkInput = ref<InstanceType<typeof TextInput>>()
 const linkUrl = ref('')
+const hasBeenFocused = ref(false)
 const editingExistingLink = ref(false)
 
 let stopPositioningLinkPanel: (() => void) | null = null
@@ -103,6 +104,7 @@ const editor = useEditor({
     }),
   ],
   editorProps: { attributes: { class: 'rich-text' } },
+  onFocus: () => (hasBeenFocused.value = true),
   onUpdate: ({ editor: instance }) => (html.value = instance.isEmpty ? '' : instance.getHTML()),
 })
 
@@ -114,7 +116,7 @@ watch(html, value => {
 
 const chain = () => editor.value!.chain().focus()
 const isActive = (name: string, attributes?: Record<string, unknown>) =>
-  Boolean(editor.value?.isFocused && editor.value.isActive(name, attributes))
+  Boolean(hasBeenFocused.value && editor.value?.isActive(name, attributes))
 
 const canEditLink = () =>
   Boolean(editor.value && (!editor.value.state.selection.empty || editor.value.isActive('link')))
