@@ -40,7 +40,7 @@ php artisan koel:admin:change-password
 ## Adding More Users
 
 With the `manage users` permission (admin and manager roles), you can add more users and manage their profiles under
-Manage → Users. If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, you can also invite a user via email. An invitation expires after a week.
+Settings → Users. If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, you can also invite a user via email. An invitation expires after a week.
 You cannot add, invite, edit, or delete users whose roles are higher than yours.
 
 When you change a user's email address, it takes effect right away. If a mailer is configured, Koel lets the user know at both the old and the new address.

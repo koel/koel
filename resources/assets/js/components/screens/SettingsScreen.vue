@@ -1,7 +1,12 @@
 <template>
   <ScreenBase scrolls-itself>
     <template #header>
-      <ScreenHeader>Settings</ScreenHeader>
+      <ScreenHeader>
+        <span class="font-thin">Settings</span>
+        <span class="separator" aria-hidden="true" />
+        <span class="sr-only">/</span>
+        <span>{{ currentSection.label }}</span>
+      </ScreenHeader>
     </template>
 
     <div class="flex flex-col md:flex-row flex-1 min-h-0">
@@ -21,10 +26,6 @@
         role="tabpanel"
         tabindex="0"
       >
-        <h2 class="mb-6 text-2xl text-k-fg" data-testid="settings-section-heading">
-          {{ currentSection.label }}
-        </h2>
-
         <component :is="currentSection.component" v-bind="currentSection.props" />
       </section>
     </div>
@@ -51,6 +52,7 @@ import MediaPathSettingGroup from '@/components/screens/settings/MediaPathSettin
 import BrandingSettingGroup from '@/components/screens/settings/BrandingSettingGroup.vue'
 import AiSettingGroup from '@/components/screens/settings/AiSettingGroup.vue'
 import ServicesSettingGroup from '@/components/screens/settings/ServicesSettingGroup.vue'
+import UsersSettingGroup from '@/components/screens/settings/UsersSettingGroup.vue'
 
 export interface SettingsTab {
   id: string
@@ -96,14 +98,14 @@ const accountSections: ProfileTab[] = [
   ...applyFilters<ProfileTab[]>(Filter.ACCOUNT_SETTINGS_TABS, []),
 ]
 
-const getServerSections = (): SettingsTab[] => {
+const getInstallSettingSections = (): SettingsTab[] => {
   if (!currentUserCan.manageSettings()) {
     return []
   }
 
   const usesLocalStorage = commonStore.state.storage_driver === 'local'
 
-  return applyFilters<SettingsTab[]>(Filter.SERVER_SETTINGS_TABS, [
+  return [
     ...(usesLocalStorage ? [{ id: 'media-path', label: 'Media Path', component: MediaPathSettingGroup }] : []),
     ...(isPlus.value
       ? [
@@ -112,8 +114,14 @@ const getServerSections = (): SettingsTab[] => {
         ]
       : []),
     { id: 'services', label: 'Services', component: ServicesSettingGroup },
-  ])
+  ]
 }
+
+const getServerSections = (): SettingsTab[] =>
+  applyFilters<SettingsTab[]>(Filter.SERVER_SETTINGS_TABS, [
+    ...(currentUserCan.manageUsers() ? [{ id: 'users', label: 'Users', component: UsersSettingGroup }] : []),
+    ...getInstallSettingSections(),
+  ])
 
 const sections: SettingsSection[] = [
   ...accountSections.map(section => ({ ...section, group: 'Account' as const })),
@@ -128,7 +136,7 @@ const currentSectionId = ref(sections[0].id)
 
 const currentSection = computed(() => sections.find(section => section.id === currentSectionId.value) ?? sections[0])
 
-usePageTitle().useScreenTitle('Settings', () => currentSection.value.label)
+usePageTitle().useScreenTitle('Settings', () => `Settings / ${currentSection.value.label}`)
 
 const openSection = (id: string) => go(url('settings', { section: id }))
 
@@ -137,3 +145,10 @@ onScreenActivated('Settings', () => {
   currentSectionId.value = isAvailableSection(requestedSectionId) ? requestedSectionId : sections[0].id
 })
 </script>
+
+<style lang="postcss" scoped>
+@reference '@css/app.pcss';
+.separator {
+  @apply inline-block w-px h-[0.7em] mx-[0.3em] bg-k-fg-30 rotate-[18deg];
+}
+</style>

@@ -5,7 +5,7 @@ import Component from './Sidebar.vue'
 
 const standardItems = ['All Songs', 'Albums', 'Artists', 'Genres', 'Favorites', 'Recently Played']
 
-const adminItems = [...standardItems, 'Users', 'Upload', 'Settings']
+const adminItems = [...standardItems, 'Upload', 'Settings']
 
 describe('sidebar.vue', () => {
   const h = createHarness()

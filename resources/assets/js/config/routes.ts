@@ -1,7 +1,6 @@
 import type { Route } from '@/router'
 import { cache } from '@/services/cache'
 import { canUploadFromThisDevice } from '@/utils/uploadAccess'
-import { usePolicies } from '@/composables/usePolicies'
 
 const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 const ULID_REGEX = '[0-9A-Za-z]{26}'
@@ -100,10 +99,9 @@ export const routes = [
   {
     name: 'users.index',
     path: '/users',
-    screen: 'Users',
-    title: 'Users',
+    screen: 'Settings',
     meta: {
-      guard: () => usePolicies().currentUserCan.manageUsers(),
+      redirect: () => 'settings/users',
     },
   },
   {

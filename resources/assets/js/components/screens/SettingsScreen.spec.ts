@@ -33,6 +33,7 @@ describe('settingsScreen.vue', () => {
           BrandingSettingGroup: h.stub('branding-setting-group'),
           AiSettingGroup: h.stub('ai-setting-group'),
           ServicesSettingGroup: h.stub('services-setting-group'),
+          UsersSettingGroup: h.stub('users-setting-group'),
         },
       },
     })
@@ -58,11 +59,23 @@ describe('settingsScreen.vue', () => {
     expect(sectionIds()).toEqual(accountSectionIds)
   })
 
-  it('adds the media path and services sections for admins in the Community edition', () => {
+  it('adds the users, media path and services sections for admins in the Community edition', () => {
     h.actingAsAdmin()
     renderComponent()
 
-    expect(sectionIds()).toEqual([...accountSectionIds, 'media-path', 'services'])
+    expect(sectionIds()).toEqual([...accountSectionIds, 'users', 'media-path', 'services'])
+  })
+
+  it('adds only the users section for someone who can manage users but not settings', () => {
+    h.actingAsUser(
+      h
+        .factory('user')
+        .state('current')
+        .make({ abilities: ['manage users'] }) as CurrentUser,
+    )
+    renderComponent()
+
+    expect(sectionIds()).toEqual([...accountSectionIds, 'users'])
   })
 
   it('adds the branding and AI sections for admins in the Plus edition', async () => {
@@ -71,7 +84,7 @@ describe('settingsScreen.vue', () => {
     await h.withPlusEdition(() => {
       renderComponent()
 
-      expect(sectionIds()).toEqual([...accountSectionIds, 'media-path', 'branding', 'ai', 'services'])
+      expect(sectionIds()).toEqual([...accountSectionIds, 'users', 'media-path', 'branding', 'ai', 'services'])
     })
   })
 
@@ -109,16 +122,13 @@ describe('settingsScreen.vue', () => {
     expect(goMock).toHaveBeenCalledWith(Router.url('settings', { section: 'media-path' }))
   })
 
-  it('shows the section under its own heading and labels the panel with it', () => {
+  it('labels the panel with the section tab', () => {
     h.actingAsAdmin()
     h.visit('/settings/media-path')
     renderComponent()
 
     const panel = screen.getByTestId('media-path-setting-group').closest('[role=tabpanel]')
     expect(panel?.getAttribute('aria-labelledby')).toBe(screen.getByTestId('settings-section-media-path').id)
-    expect(screen.getByTestId('settings-section-heading').textContent).toBe(
-      screen.getByTestId('settings-section-media-path').textContent?.trim(),
-    )
   })
 
   it('puts tabs added through the account settings filter in the account group', () => {
@@ -144,10 +154,10 @@ describe('settingsScreen.vue', () => {
     h.actingAsAdmin()
     renderComponent()
 
-    expect(sectionIds()).toEqual([...accountSectionIds, 'media-path', 'services', 'billing'])
+    expect(sectionIds()).toEqual([...accountSectionIds, 'users', 'media-path', 'services', 'billing'])
   })
 
-  it('puts the section name in the page title', async () => {
+  it('puts the section name in the screen header and the page title', async () => {
     const DocumentTitle = defineComponent({ setup: () => usePageTitle().syncDocumentTitle(), template: '<div />' })
     h.actingAsUser()
     h.visit('/settings/themes')
@@ -155,6 +165,7 @@ describe('settingsScreen.vue', () => {
     renderComponent()
     await h.tick()
 
-    expect(document.title).toBe(`${screen.getByTestId('settings-section-heading').textContent?.trim()} – Koel`)
+    screen.getByRole('heading', { level: 1, name: 'Settings / Themes' })
+    expect(document.title).toBe('Settings / Themes – Koel')
   })
 })

@@ -1,29 +1,7 @@
 <template>
-  <ScreenBase>
-    <template #header>
-      <ScreenHeader layout="collapsed">
-        Users
-
-        <template #controls>
-          <BtnGroup uppercase>
-            <Btn variant="success" @click="showAddUserForm">
-              <Icon :icon="faPlus" />
-              Add
-            </Btn>
-            <Btn variant="highlight" v-if="canInvite" @click="showInviteUserForm">Invite</Btn>
-          </BtnGroup>
-        </template>
-      </ScreenHeader>
-    </template>
-
-    <div class="flex flex-col gap-4">
-      <SegmentedControl
-        v-if="prospects.length"
-        v-model="currentFilter"
-        :options="filterOptions"
-        class="self-center"
-        name="user-filter"
-      >
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <SegmentedControl v-if="prospects.length" v-model="currentFilter" :options="filterOptions" name="user-filter">
         <template #default="{ option }">
           {{ option.label }}
           <span
@@ -36,13 +14,21 @@
         </template>
       </SegmentedControl>
 
-      <ul class="space-y-3">
-        <li v-for="user in usersByFilter[currentFilter]" :key="user.id">
-          <UserCard :user />
-        </li>
-      </ul>
+      <BtnGroup class="ml-auto" uppercase>
+        <Btn variant="success" @click="showAddUserForm">
+          <Icon :icon="faPlus" />
+          Add
+        </Btn>
+        <Btn variant="highlight" v-if="canInvite" @click="showInviteUserForm">Invite</Btn>
+      </BtnGroup>
     </div>
-  </ScreenBase>
+
+    <ul class="space-y-3">
+      <li v-for="user in usersByFilter[currentFilter]" :key="user.id">
+        <UserCard :user />
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -53,10 +39,8 @@ import { defineAsyncComponent } from '@/utils/helpers'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useModal } from '@/composables/useModal'
 
-import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import UserCard from '@/components/user/UserCard.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
-import ScreenBase from '@/components/screens/ScreenBase.vue'
 import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
