@@ -17,6 +17,8 @@ import thumbDawn from '@/../img/themes/thumbnails/dawn.jpg'
 import thumbMono from '@/../img/themes/thumbnails/mono.avif'
 import thumbKameleon from '@/../img/themes/thumbnails/kameleon.svg'
 
+export const KAMELEON_THEME_ID = 'kameleon'
+
 export default [
   {
     id: 'classic',
@@ -24,7 +26,7 @@ export default [
     thumbnail_color: '#181818',
   },
   {
-    id: 'kameleon',
+    id: KAMELEON_THEME_ID,
     name: 'Kameleon',
     thumbnail_color: '#181818',
     thumbnail_image: thumbKameleon,

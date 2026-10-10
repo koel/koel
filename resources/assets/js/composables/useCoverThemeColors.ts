@@ -2,6 +2,7 @@ import type { Ref } from 'vue'
 import { computed, watch } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { themeStore } from '@/stores/themeStore'
+import { KAMELEON_THEME_ID } from '@/config/themes'
 import { getCoverThemeColors } from '@/utils/coverColor'
 import { isEpisode, isRadioStation, isSong } from '@/utils/typeGuards'
 
@@ -23,7 +24,7 @@ const getStreamableCover = (streamable: Streamable | undefined) => {
 
 export const useCoverThemeColors = (currentStreamable: Ref<Streamable | undefined>) => {
   const cover = computed(() => getStreamableCover(currentStreamable.value))
-  const usesKameleonTheme = computed(() => preferences.state.theme === 'kameleon')
+  const usesKameleonTheme = computed(() => preferences.state.theme === KAMELEON_THEME_ID)
 
   watch(
     [cover, usesKameleonTheme],

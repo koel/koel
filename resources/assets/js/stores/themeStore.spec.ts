@@ -98,6 +98,24 @@ describe('themeStore', () => {
     }
   })
 
+  it('applies cover colors to the background and highlight', () => {
+    themeStore.setCoverColors({ background: 'hsl(24 35% 10%)', highlight: 'hsl(24 87% 55%)' })
+
+    expect(document.body.style.getPropertyValue('--color-bg')).toBe('hsl(24 35% 10%)')
+    expect(document.body.style.getPropertyValue('--color-highlight')).toBe('hsl(24 87% 55%)')
+  })
+
+  it('restores the default background and highlight without cover colors', () => {
+    themeStore.defaultProperties['--color-bg'] = '#000000'
+    themeStore.defaultProperties['--color-highlight'] = '#ff0000'
+    themeStore.setCoverColors({ background: 'hsl(24 35% 10%)', highlight: 'hsl(24 87% 55%)' })
+
+    themeStore.setCoverColors(null)
+
+    expect(document.body.style.getPropertyValue('--color-bg')).toBe('#000000')
+    expect(document.body.style.getPropertyValue('--color-highlight')).toBe('#ff0000')
+  })
+
   it('gets a theme by id', () => {
     const theme = h.factory('theme').make()
     themeStore.all.push(theme)
