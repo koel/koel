@@ -13,9 +13,19 @@ export const isHttpError = (error: unknown): error is HTTPError<HttpErrorBody> =
 export const getHttpErrorBody = (error: HTTPError<HttpErrorBody>) =>
   typeof error.data === 'object' ? error.data : undefined
 
+type RetryPolicy = 'none' | 'repeatable' | 'unprocessed'
+
+const RETRY_BACKOFF_LIMIT_MS = 10_000
+
+const retryOptions = {
+  repeatable: { limit: 3, statusCodes: [408, 429, 500, 502, 503, 504], backoffLimit: RETRY_BACKOFF_LIMIT_MS },
+  unprocessed: { limit: 3, statusCodes: [429, 502, 503], backoffLimit: RETRY_BACKOFF_LIMIT_MS },
+}
+
 class Http {
   private client: ReturnType<typeof ky.create>
   private silent = false
+  private retryPolicy: RetryPolicy = 'none'
 
   constructor() {
     this.client = ky.create({
@@ -87,8 +97,32 @@ class Http {
     return this
   }
 
+  /**
+   * Retry the next request on network errors and temporary server errors.
+   * Only for requests that are safe to send more than once, like saving a state.
+   */
+  public get withRetries() {
+    this.retryPolicy = 'repeatable'
+    return this
+  }
+
+  /**
+   * Retry the next request only when the server clearly did not handle it.
+   * For requests that add something, like a play or a scrobble, where a repeat could count twice.
+   */
+  public get withRetriesWhenUnprocessed() {
+    this.retryPolicy = 'unprocessed'
+    return this
+  }
+
   public async request<T>(method: string, url: string, data: Record<string, any> = {}) {
     const options: Record<string, any> = {}
+    const retryPolicy = this.retryPolicy
+    this.retryPolicy = 'none'
+
+    if (retryPolicy !== 'none') {
+      options.retry = { ...retryOptions[retryPolicy], methods: [method] }
+    }
 
     if (method !== 'get' && data) {
       if (data instanceof FormData) {

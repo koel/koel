@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import StarterKit from '@tiptap/starter-kit'
+import { StarterKit } from '@tiptap/starter-kit'
 import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom'
 import { EditorContent, posToDOMRect, useEditor } from '@tiptap/vue-3'
 import {

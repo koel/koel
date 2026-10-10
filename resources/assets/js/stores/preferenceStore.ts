@@ -1,5 +1,6 @@
 import { reactive, ref } from 'vue'
 import { http } from '@/services/http'
+import { lastWriteWins } from '@/utils/lastWriteWins'
 
 export const defaultPreferences: UserPreferences = {
   volume: 7,
@@ -51,6 +52,8 @@ export const defaultPreferences: UserPreferences = {
   show_waveform: true,
   home_blocks_order: [],
 }
+
+const preferenceSavers = new Map<keyof UserPreferences, (value: any) => Promise<boolean>>()
 
 const preferenceStore = {
   isTemporary: false,
@@ -110,9 +113,16 @@ const preferenceStore = {
   },
 
   async update(key: keyof UserPreferences, value: any) {
-    await http.silently.patch('me/preferences', { key, value })
+    if (!preferenceSavers.has(key)) {
+      preferenceSavers.set(
+        key,
+        lastWriteWins(latestValue => http.silently.withRetries.patch('me/preferences', { key, value: latestValue })),
+      )
+    }
 
-    if (key === 'include_public_media') {
+    const saved = await preferenceSavers.get(key)!(value)
+
+    if (saved && key === 'include_public_media') {
       window.location.reload()
     }
   },

@@ -98,7 +98,7 @@ const loadManifest = async () => {
 const syncWithServer = async (entries: OfflineManifestEntry[]) => {
   try {
     const cachedIds = entries.map(e => e.playable.id)
-    const freshPlayables = await http.silently.post<Playable[]>('songs/by-ids', { ids: cachedIds })
+    const freshPlayables = await http.silently.withRetries.post<Playable[]>('songs/by-ids', { ids: cachedIds })
     const freshIds = new Set(freshPlayables.map(p => p.id))
 
     // Update existing entries with fresh data
