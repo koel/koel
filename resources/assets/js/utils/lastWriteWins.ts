@@ -1,11 +1,11 @@
 import { logger } from '@/utils/logger'
 
 /**
- * Wrap a save so its calls never overlap: while one is in flight, only the newest value waiting is sent after it.
- * A retried request can then never land after, and overwrite, a newer one.
+ * Wrap a save so the last write wins: calls never overlap, and while one is in flight, only the newest value
+ * waiting is sent after it. A retried request can then never land after, and overwrite, a newer one.
  * The returned promise tells whether the newest value was saved.
  */
-export const createInOrderSender = <T>(send: (value: T) => Promise<unknown>) => {
+export const lastWriteWins = <T>(send: (value: T) => Promise<unknown>) => {
   let running: Promise<boolean> | null = null
   let waiting: { value: T } | null = null
 

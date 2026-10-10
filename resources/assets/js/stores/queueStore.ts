@@ -3,10 +3,10 @@ import { differenceBy, unionBy } from 'lodash-es'
 import { arrayify, moveItemsInList } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { http } from '@/services/http'
-import { createInOrderSender } from '@/utils/inOrderSender'
+import { lastWriteWins } from '@/utils/lastWriteWins'
 import { playableStore } from '@/stores/playableStore'
 
-const sendQueueState = createInOrderSender((songs: Playable['id'][]) =>
+const saveQueueState = lastWriteWins((songs: Playable['id'][]) =>
   http.silently.withRetries.put('queue/state', { songs }),
 )
 
@@ -166,6 +166,6 @@ export const queueStore = {
   },
 
   saveState() {
-    return sendQueueState(this.state.playables.map(({ id }) => id))
+    return saveQueueState(this.state.playables.map(({ id }) => id))
   },
 }

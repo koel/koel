@@ -14,7 +14,7 @@ import { eventBus } from '@/utils/eventBus'
 import { isAudioContextSupported } from '@/utils/supports'
 import { audioService } from '@/services/audioService'
 import { http } from '@/services/http'
-import { createInOrderSender } from '@/utils/inOrderSender'
+import { lastWriteWins } from '@/utils/lastWriteWins'
 import { socketService } from '@/services/socketService'
 import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
 import { BasePlaybackService } from '@/services/BasePlaybackService'
@@ -34,7 +34,7 @@ const PRELOAD_BUFFER = 30
 const SCROBBLE_AFTER_SECONDS = 240
 const MIN_SCROBBLE_LENGTH = 30
 
-const sendPlaybackStatus = createInOrderSender((status: { song: Playable['id']; position: number }) =>
+const savePlaybackStatus = lastWriteWins((status: { song: Playable['id']; position: number }) =>
   http.silently.withRetries.put('queue/playback-status', status),
 )
 
@@ -213,7 +213,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     this.recordStartTime(playable)
     socketService.broadcast('SOCKET_STREAMABLE', playable)
 
-    sendPlaybackStatus({ song: playable.id, position: 0 })
+    savePlaybackStatus({ song: playable.id, position: 0 })
 
     this.media.currentTime = 0
 
@@ -435,7 +435,7 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     if (Math.ceil(media.currentTime) % 5 === 0) {
       // every 5 seconds, we save the current playback position to the server
-      sendPlaybackStatus({ song: currentPlayable.id, position: Math.ceil(media.currentTime) })
+      savePlaybackStatus({ song: currentPlayable.id, position: Math.ceil(media.currentTime) })
 
       // if the current item is an episode, we emit an event to update the progress on the client side as well
       if (isEpisode(currentPlayable)) {
