@@ -1,12 +1,11 @@
 import { rgbToHsl } from '@/utils/color'
 import type { Rgb } from '@/utils/color'
+import { cache } from '@/services/cache'
 
 const SAMPLE_SIZE = 32
 const HUE_BUCKETS = 24
 const MIN_LIGHTNESS = 0.55
 const MAX_BACKGROUND_LIGHTNESS = 0.25
-
-const cache = new Map<string, Promise<Rgb | null>>()
 
 const loadImage = (url: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
@@ -95,11 +94,13 @@ const extract = async (url: string) => {
  * (e.g. hosted elsewhere without CORS, which keeps its pixels unreadable).
  */
 const getCoverRgb = (url: string) => {
-  if (!cache.has(url)) {
-    cache.set(url, extract(url))
+  const key = ['cover.color', url]
+
+  if (cache.miss(key)) {
+    cache.set(key, extract(url))
   }
 
-  return cache.get(url)!
+  return cache.get<Promise<Rgb | null>>(key)
 }
 
 export const getCoverColor = async (url: string) => {
