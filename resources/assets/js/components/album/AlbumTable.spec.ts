@@ -5,8 +5,9 @@ import Component from './AlbumTable.vue'
 
 const virtualScrollerStub = {
   name: 'VirtualScrollerStub',
-  props: ['items', 'itemHeight'],
-  template: '<div><template v-for="item in items" :key="item.id"><slot :item="item" /></template></div>',
+  props: ['items', 'itemHeight', 'carriesScreenHeader'],
+  template:
+    '<div><slot name="before" /><template v-for="item in items" :key="item.id"><slot :item="item" /></template></div>',
 }
 
 describe('albumTable.vue', () => {

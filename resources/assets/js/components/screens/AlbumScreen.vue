@@ -3,7 +3,7 @@
     <template #header>
       <ScreenHeaderSkeleton v-if="loading && !album" role="status" aria-busy="true" aria-label="Loading" />
 
-      <ScreenHeader v-if="album" :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
+      <ScreenHeader v-if="album" :disabled="loading" :layout="songs.length ? 'expanded' : 'collapsed'">
         {{ album.name }}
 
         <template #thumbnail>
@@ -44,31 +44,27 @@
           </SongListControls>
         </template>
       </ScreenHeader>
+      <ArtistAlbumScreenTabNav v-if="album">
+        <li :class="activeTab === 'songs' && 'active'">
+          <a :href="url('albums.show', { id: album.id, tab: 'songs' })">Songs</a>
+        </li>
+        <li :class="activeTab === 'other-albums' && 'active'">
+          <a :href="url('albums.show', { id: album.id, tab: 'other-albums' })">Other Albums</a>
+        </li>
+        <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
+          <a :href="url('albums.show', { id: album.id, tab: 'information' })">Information</a>
+        </li>
+      </ArtistAlbumScreenTabNav>
     </template>
 
     <ScreenTabs v-if="album" class="-m-6" :class="loading && 'pointer-events-none'">
-      <template #header>
-        <nav>
-          <ul>
-            <li :class="activeTab === 'songs' && 'active'">
-              <a :href="url('albums.show', { id: album.id, tab: 'songs' })">Songs</a>
-            </li>
-            <li :class="activeTab === 'other-albums' && 'active'">
-              <a :href="url('albums.show', { id: album.id, tab: 'other-albums' })">Other Albums</a>
-            </li>
-            <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
-              <a :href="url('albums.show', { id: album.id, tab: 'information' })">Information</a>
-            </li>
-          </ul>
-        </nav>
-      </template>
-
       <div v-show="activeTab === 'songs'" class="songs-pane">
+        <ScreenHeaderSpace v-if="loading" />
         <SongListSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
-        <SongList v-if="!loading && album" ref="songList" @sort="onSort" @press:enter="onPressEnter" @swipe="onSwipe" />
+        <SongList v-if="!loading && album" ref="songList" @sort="onSort" @press:enter="onPressEnter" />
       </div>
 
-      <div v-show="activeTab === 'other-albums'" class="albums-pane" data-testid="albums-pane">
+      <ScreenHeaderScrollBox v-show="activeTab === 'other-albums'" class="albums-pane" data-testid="albums-pane">
         <template v-if="otherAlbums">
           <GridListView v-if="otherAlbums.length" class="scroll-mask-y">
             <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" />
@@ -78,11 +74,15 @@
         <GridListView v-else>
           <AlbumCardSkeleton v-for="i in 6" :key="i" />
         </GridListView>
-      </div>
+      </ScreenHeaderScrollBox>
 
-      <div v-if="useEncyclopedia && album" v-show="activeTab === 'information'" class="info-pane">
+      <ScreenHeaderScrollBox
+        v-if="useEncyclopedia && album"
+        v-show="activeTab === 'information'"
+        class="info-pane flex-1"
+      >
         <AlbumInfo :album mode="full" />
-      </div>
+      </ScreenHeaderScrollBox>
     </ScreenTabs>
   </ScreenBase>
 </template>
@@ -109,6 +109,9 @@ import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.
 import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import SongListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
+import ArtistAlbumScreenTabNav from '@/components/ui/ArtistAlbumScreenTabNav.vue'
+import ScreenHeaderScrollBox from '@/components/ui/ScreenHeaderScrollBox.vue'
+import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import GridListView from '@/components/ui/GridListView.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -140,7 +143,6 @@ usePageTitle().useScreenTitle('Album', () => album.value?.name)
 
 const {
   PlayableList: SongList,
-  headerLayout,
   playableList: songList,
   duration,
   context,
@@ -149,7 +151,6 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onSwipe,
 } = usePlayableList(songs, { type: 'Album' })
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)

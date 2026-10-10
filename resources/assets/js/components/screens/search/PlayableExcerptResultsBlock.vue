@@ -35,7 +35,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, toRefs } from 'vue'
+import { computed, provide, toRefs } from 'vue'
+import { ScrollAwayHeaderKey } from '@/config/symbols'
 import { useRouter } from '@/composables/useRouter'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { usePlayableList } from '@/composables/usePlayableList'
@@ -81,6 +82,8 @@ const { go, url } = useRouter()
 
 const onPressEnter = () => selectedPlayables.value.length && playback().play(selectedPlayables.value[0])
 const goToSongResults = () => go(`${url('search.playables')}/?q=${query.value}`)
+
+provide(ScrollAwayHeaderKey, null)
 </script>
 
 <style lang="postcss" scoped>

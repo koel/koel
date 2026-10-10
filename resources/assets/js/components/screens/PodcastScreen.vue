@@ -2,7 +2,7 @@
   <ScreenBase :background-image="podcast?.image">
     <template #header>
       <ScreenHeaderSkeleton v-if="loading && !podcast" role="status" aria-busy="true" aria-label="Loading" />
-      <ScreenHeader v-if="podcast" :layout="headerLayout">
+      <ScreenHeader v-if="podcast">
         <span :title="podcast.title">{{ podcast.title }}</span>
 
         <template #thumbnail>
@@ -57,18 +57,20 @@
       </ScreenHeader>
     </template>
 
-    <div class="-m-6 min-h-full flex flex-col flex-1 overflow-auto divide-y divide-k-fg-10">
+    <div class="-m-6 flex flex-col flex-1 min-h-0 overflow-hidden divide-y divide-k-fg-10">
       <template v-if="loading && !episodes && !podcast">
         <EpisodeItemSkeleton v-for="i in 5" :key="i" />
       </template>
       <VirtualScroller
         v-if="episodes && podcast"
-        v-slot="{ item }: { item: Episode }"
+        carries-screen-header
+        class="flex-1 min-h-0"
         :item-height="161.5"
         :items="displayedEpisodes"
-        @scroll="onListScroll"
       >
-        <EpisodeItem :key="item.id" :podcast :episode="item" />
+        <template #default="{ item }: { item: Episode }">
+          <EpisodeItem :key="item.id" :podcast :episode="item" />
+        </template>
       </VirtualScroller>
     </div>
   </ScreenBase>
@@ -118,7 +120,6 @@ const description = reactive({
 
 const descriptionEl = ref<HTMLDivElement>()
 
-const headerLayout = ref<ScreenHeaderLayout>('expanded')
 const loading = ref(false)
 const podcast = ref<Podcast>()
 const episodes = ref<Episode[]>([])
@@ -213,10 +214,6 @@ const podcastPlaying = computed(() => {
 })
 
 const playButtonLabel = computed(() => {
-  if (headerLayout.value === 'collapsed') {
-    return ''
-  }
-
   if (podcastPlaying.value) {
     return ''
   }
@@ -267,20 +264,6 @@ const refresh = async () => {
   } finally {
     loading.value = false
   }
-}
-
-let lastScrollTop = 0
-
-const onListScroll = (e: Event) => {
-  const scroller = e.target as HTMLElement
-
-  if (scroller.scrollTop > 512 && lastScrollTop < 512) {
-    headerLayout.value = 'collapsed'
-  } else if (scroller.scrollTop < 512 && lastScrollTop > 512) {
-    headerLayout.value = 'expanded'
-  }
-
-  lastScrollTop = scroller.scrollTop
 }
 
 const toggleFavorite = () => podcastStore.toggleFavorite(podcast.value!)

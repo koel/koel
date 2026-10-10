@@ -1,6 +1,6 @@
 <template>
   <header
-    :class="[layout, disabled ? 'disabled' : '']"
+    :class="[effectiveLayout, disabled ? 'disabled' : '']"
     class="screen-header gap-4 min-h-0 md:min-h-full flex items-end shrink-0 relative content-stretch leading-normal p-6 border-b border-b-k-fg-5"
   >
     <aside v-if="$slots.thumbnail" class="thumbnail-wrapper hidden md:flex items-end overflow-hidden rounded-md">
@@ -25,9 +25,12 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, inject } from 'vue'
+import { ScrollAwayHeaderKey } from '@/config/symbols'
+
 import MarqueeText from '@/components/ui/MarqueeText.vue'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     layout?: ScreenHeaderLayout
     disabled?: boolean
@@ -37,6 +40,10 @@ withDefaults(
     disabled: false,
   },
 )
+
+const scrollAwayHeader = inject(ScrollAwayHeaderKey, null)
+
+const effectiveLayout = computed(() => (scrollAwayHeader?.revealed.value ? 'collapsed' : props.layout))
 </script>
 
 <style lang="postcss" scoped>

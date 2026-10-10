@@ -1,9 +1,12 @@
 <template>
   <div
     ref="scroller"
-    class="scroll-mask-y virtual-grid-scroller will-change-transform overflow-scroll h-full"
+    :class="carriesScreenHeader ? 'scroll-mask-b scroll-mask-t-from-100%' : 'scroll-mask-y'"
+    class="virtual-grid-scroller will-change-transform overflow-scroll h-full"
     @scroll.passive="onScroll"
   >
+    <ScreenHeaderSpace />
+
     <!-- Measuring phase: render one item to measure height, gap, and padding -->
     <div v-if="measuring && items.length" ref="measureContainer" v-bind="$attrs" class="grid-columns grid">
       <slot :item="items[0]" />
@@ -11,6 +14,7 @@
 
     <template v-else>
       <div
+        ref="itemsBox"
         :style="{ height: cssHeight }"
         class="will-change-transform overflow-hidden"
         data-testid="virtual-grid-height"
@@ -25,6 +29,9 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue'
+import { useScreenHeaderScroller } from '@/composables/useScreenHeaderScroller'
+
+import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -37,6 +44,10 @@ const emit = defineEmits<{ (e: 'scrolled-to-end'): void }>()
 const { items, minItemWidth } = toRefs(props)
 
 const scroller = ref<HTMLElement>()
+const itemsBox = ref<HTMLElement>()
+const itemsTop = ref(0)
+
+const { carriesScreenHeader } = useScreenHeaderScroller(() => scroller.value)
 const measureContainer = ref<HTMLElement>()
 const gridContainer = ref<HTMLElement>()
 const scrollerWidth = ref(0)
@@ -64,7 +75,9 @@ const totalHeight = computed(() =>
   rowCount.value ? rowCount.value * rowHeight.value - measuredRowGap.value + measuredPaddingY.value : 0,
 )
 
-const startRow = computed(() => Math.max(0, Math.floor(scrollTop.value / rowHeight.value) - renderAhead))
+const startRow = computed(() =>
+  Math.max(0, Math.floor((scrollTop.value - itemsTop.value) / rowHeight.value) - renderAhead),
+)
 const offsetY = computed(() => startRow.value * rowHeight.value)
 
 const renderedItems = computed(() => {
@@ -123,6 +136,7 @@ const onScroll = (e: Event) => {
     }
 
     scrollTop.value = (e.target as HTMLElement).scrollTop
+    itemsTop.value = itemsBox.value?.offsetTop ?? 0
 
     if (el.scrollTop + el.clientHeight + rowHeight.value >= el.scrollHeight) {
       emit('scrolled-to-end')
