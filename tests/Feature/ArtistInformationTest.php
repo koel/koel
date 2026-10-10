@@ -44,4 +44,18 @@ class ArtistInformationTest extends TestCase
             'api/artists/' . Artist::factory()->createOne()->id . '/information',
         )->assertJsonStructure(ArtistInformation::JSON_STRUCTURE);
     }
+
+    #[Test]
+    public function showTheUsersDescriptionInsteadOfTheFetchedOne(): void
+    {
+        config(['koel.services.lastfm.key' => null]);
+        config(['koel.services.lastfm.secret' => null]);
+
+        $artist = Artist::factory()->createOne(['description' => '<p>My own words</p>']);
+
+        $this
+            ->getAs("api/artists/{$artist->id}/information")
+            ->assertJsonPath('bio.summary', '<p>My own words</p>')
+            ->assertJsonPath('bio.full', '<p>My own words</p>');
+    }
 }

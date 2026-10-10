@@ -178,6 +178,7 @@ interface Artist {
   name: string
   image: string // empty string = no image
   album_cover: string | null
+  description?: string | null
   created_at: string
   mbid?: string | null
   is_external: boolean
@@ -199,6 +200,7 @@ interface Album {
   created_at: string
   mbid?: string | null
   year: number | null
+  description?: string | null
   length: number
   is_external: boolean
   favorite: boolean

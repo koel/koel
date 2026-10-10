@@ -14,6 +14,7 @@ export interface AlbumUpdateData {
   name: Album['name']
   year: Album['year']
   cover?: Album['cover'] | null
+  description?: string
 }
 
 interface AlbumListPaginateParams extends CursorPaginateParams<AlbumListSortField> {
@@ -49,6 +50,7 @@ export const albumStore = {
 
   async update(album: Album, data: AlbumUpdateData) {
     const updated = await http.put<Album>(`albums/${album.id}`, data)
+    cache.remove(['album.info', album.id, album.name])
     this.state.albums = unionBy(this.state.albums, this.syncWithVault(updated), 'id')
 
     songStore.syncAlbumProperties(album)

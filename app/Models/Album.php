@@ -35,6 +35,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property ?Carbon $favorited_at When the scoped user favorited the album, if at all
  * @property ?Carbon $last_played_at When the scoped user last played the album, if at all
  * @property ?int $year
+ * @property ?string $description Description written by the user, as sanitized HTML
  * @property ?string $thumbnail The album's thumbnail file name
  * @property Artist $artist The album's artist
  * @property Carbon $created_at

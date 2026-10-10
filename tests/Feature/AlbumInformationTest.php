@@ -56,4 +56,18 @@ class AlbumInformationTest extends TestCase
             'api/albums/' . Album::factory()->createOne()->id . '/information',
         )->assertJsonStructure(AlbumInformation::JSON_STRUCTURE);
     }
+
+    #[Test]
+    public function showTheUsersDescriptionInsteadOfTheFetchedOne(): void
+    {
+        config(['koel.services.lastfm.key' => null]);
+        config(['koel.services.lastfm.secret' => null]);
+
+        $album = Album::factory()->createOne(['description' => '<p>My own words</p>']);
+
+        $this
+            ->getAs("api/albums/{$album->id}/information")
+            ->assertJsonPath('wiki.summary', '<p>My own words</p>')
+            ->assertJsonPath('wiki.full', '<p>My own words</p>');
+    }
 }

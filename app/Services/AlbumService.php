@@ -16,6 +16,7 @@ use Symfony\Component\Finder\Finder;
 class AlbumService
 {
     public function __construct(
+        private readonly RichTextSanitizer $richTextSanitizer,
         private readonly AlbumRepository $albumRepository,
         private readonly ImageStorage $imageStorage,
         private readonly Finder $finder,
@@ -39,6 +40,12 @@ class AlbumService
             Arr::forget($data, 'cover');
         } else {
             $data['cover'] = $coverChange->fileName ?? '';
+        }
+
+        if ($dto->description === null) {
+            Arr::forget($data, 'description');
+        } else {
+            $data['description'] = $this->richTextSanitizer->sanitize($dto->description);
         }
 
         $album->update($data);

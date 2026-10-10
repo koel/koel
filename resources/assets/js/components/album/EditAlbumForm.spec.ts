@@ -1,11 +1,16 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { beforeEach, describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { screen, waitFor } from '@testing-library/vue'
 import { albumStore } from '@/stores/albumStore'
+import { encyclopediaService } from '@/services/encyclopediaService'
 import Component from './EditAlbumForm.vue'
 
 describe('editAlbumForm.vue', () => {
   const h = createHarness()
+
+  beforeEach(() => {
+    h.mock(encyclopediaService, 'fetchForAlbum').mockResolvedValue(null)
+  })
 
   const renderComponent = (album?: Album) => {
     album = album ?? h.factory('album').make()
@@ -36,6 +41,7 @@ describe('editAlbumForm.vue', () => {
     expect(updateMock).toHaveBeenCalledWith(album, {
       name: 'Not So Good Actually',
       year: 2022,
+      description: '',
     })
   })
 
@@ -59,6 +65,7 @@ describe('editAlbumForm.vue', () => {
       name: 'Not So Good Actually',
       year: 2022,
       cover: 'data:image/png;base64,Ynl0ZXM=',
+      description: '',
     })
   })
 
@@ -76,6 +83,35 @@ describe('editAlbumForm.vue', () => {
       name: 'Not So Good Actually',
       year: 2022,
       cover: '',
+      description: '',
     })
+  })
+
+  it('saves no description when the pre-filled online text is left unchanged', async () => {
+    h.mock(encyclopediaService, 'fetchForAlbum').mockResolvedValue({
+      wiki: { summary: '', full: '<p>Found online</p>' },
+    })
+    const updateMock = h.mock(albumStore, 'update')
+    renderComponent(h.factory('album').make({ description: null }))
+    await h.tick(2)
+
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(updateMock).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ description: '' }))
+  })
+
+  it('keeps the description written for the album without fetching the online one', async () => {
+    const fetchMock = h.mock(encyclopediaService, 'fetchForAlbum')
+    const updateMock = h.mock(albumStore, 'update')
+    renderComponent(h.factory('album').make({ description: '<p>My own words</p>' }))
+    await h.tick(2)
+
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(updateMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ description: '<p>My own words</p>' }),
+    )
   })
 })

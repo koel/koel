@@ -8,9 +8,9 @@
 
     <ParagraphSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
 
-    <div v-if="!loading && info?.bio" v-html="info.bio.full" />
+    <div v-if="!loading && info?.bio" class="rich-text" v-html="info.bio.full" />
 
-    <template v-if="info && !loading" #footer>
+    <template v-if="!loading && info?.url" #footer>
       <a :href="info.url" rel="openener" target="_blank">Source</a>
     </template>
   </AlbumArtistInfo>
@@ -34,11 +34,11 @@ const loading = ref(false)
 const info = ref<ArtistInfo | null>(null)
 
 watch(
-  artist,
+  [artist, () => artist.value.description],
   async () => {
     info.value = null
 
-    if (useMusicBrainz.value || useLastfm.value || useSpotify.value) {
+    if (useMusicBrainz.value || useLastfm.value || useSpotify.value || artist.value.description) {
       loading.value = true
       info.value = await encyclopediaService.fetchForArtist(artist.value)
       loading.value = false

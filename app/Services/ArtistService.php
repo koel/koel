@@ -14,6 +14,7 @@ use Webmozart\Assert\Assert;
 class ArtistService
 {
     public function __construct(
+        private readonly RichTextSanitizer $richTextSanitizer,
         private readonly ArtistRepository $artistRepository,
         private readonly ImageStorage $imageStorage,
     ) {}
@@ -38,6 +39,12 @@ class ArtistService
             Arr::forget($data, 'image');
         } else {
             $data['image'] = $imageChange->fileName ?? '';
+        }
+
+        if ($dto->description === null) {
+            Arr::forget($data, 'description');
+        } else {
+            $data['description'] = $this->richTextSanitizer->sanitize($dto->description);
         }
 
         $artist->update($data);

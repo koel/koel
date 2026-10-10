@@ -45,7 +45,7 @@
         <li :class="activeTab === 'albums' && 'active'">
           <a :href="url('artists.show', { id: artist.id, tab: 'albums' })">Albums</a>
         </li>
-        <li v-if="useEncyclopedia" :class="activeTab === 'information' && 'active'">
+        <li v-if="showsInformation" :class="activeTab === 'information' && 'active'">
           <a :href="url('artists.show', { id: artist.id, tab: 'information' })">Information</a>
         </li>
         <li v-if="useTicketmaster" :class="activeTab === 'events' && 'active'">
@@ -73,7 +73,7 @@
       </ScreenHeaderScrollBox>
 
       <ScreenHeaderScrollBox
-        v-if="useEncyclopedia && artist"
+        v-if="showsInformation && artist"
         v-show="activeTab === 'information'"
         class="info-pane flex-1"
       >
@@ -93,7 +93,7 @@
 
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
@@ -159,6 +159,13 @@ const {
 } = usePlayableList(songs, { type: 'Artist' })
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
+const showsInformation = computed(() => useEncyclopedia.value || Boolean(artist.value?.description))
+
+watch(showsInformation, shown => {
+  if (!shown && activeTab.value === 'information' && artist.value) {
+    go(url('artists.show', { id: artist.value.id, tab: 'songs' }))
+  }
+})
 
 const albumCount = computed(() => {
   const albums = new Set()

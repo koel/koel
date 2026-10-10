@@ -13,3 +13,9 @@ For a playlist, a random "thumbnail stack" will be generated and used based on t
 
 Newer versions of Koel also provide a [command](../cli-commands.md#koel-fetch-artwork) to fetch missing artist and
 album arts.
+
+## Descriptions
+
+The Information tab of an artist or album shows a description found online, when an integration is set up. To write your
+own, open the artist's or album's edit form and switch to the Description tab. Your text replaces the online one, and
+stays until you change it. Leave it empty to use the online-fetched text when applicable.
