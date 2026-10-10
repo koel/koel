@@ -32,12 +32,12 @@ defineExpose({
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 div {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   content-visibility: auto;
 }
 
 div.as-list {
   @apply gap-x-4 gap-y-3 content-start items-start;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 }
 </style>
