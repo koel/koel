@@ -44,9 +44,11 @@ const themeColorObserver = new StyleObserver(records =>
   }),
 )
 
-themeColorObserver.observe(document.body, ['--color-highlight', '--color-fg'])
+const themeColorProperties = ['--color-highlight', '--color-fg']
 
-onBeforeUnmount(() => themeColorObserver.unobserve(document.body))
+themeColorObserver.observe(document.body, themeColorProperties)
+
+onBeforeUnmount(() => themeColorObserver.unobserve(document.body, themeColorProperties))
 
 const chartData = computed<ChartData<'bar'>>(() => ({
   labels: props.bars.map(bar => bar.label),
