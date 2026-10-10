@@ -86,9 +86,8 @@ onMounted(() => {
     height: 16px;
     border-radius: 50%;
     border: 0;
-    left: -4px;
-    right: auto;
-    bottom: -8px;
+    top: -8px;
+    right: -4px;
     background: var(--color-highlight);
     box-shadow: none;
 
