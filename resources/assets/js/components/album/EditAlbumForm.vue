@@ -62,7 +62,7 @@
             aria-labelledby="editAlbumTabDescription"
             class="space-y-2"
           >
-            <RichTextEditor v-model="data.description" />
+            <RichTextEditor v-model="data.description" label="Description" />
             <p class="text-k-fg-50">Leave empty to use the online-fetched text when applicable.</p>
           </TabPanel>
         </TabPanelContainer>

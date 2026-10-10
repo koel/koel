@@ -81,6 +81,7 @@ import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 
+const props = defineProps<{ label: string }>()
 const html = defineModel<string>({ default: '' })
 
 const linkPanel = ref<HTMLElement>()
@@ -103,7 +104,9 @@ const editor = useEditor({
       link: { openOnClick: false },
     }),
   ],
-  editorProps: { attributes: { class: 'rich-text' } },
+  editorProps: {
+    attributes: { class: 'rich-text', 'aria-label': props.label, role: 'textbox', 'aria-multiline': 'true' },
+  },
   onFocus: () => (hasBeenFocused.value = true),
   onUpdate: ({ editor: instance }) => (html.value = instance.isEmpty ? '' : instance.getHTML()),
 })

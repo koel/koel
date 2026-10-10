@@ -89,7 +89,7 @@
 
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref } from 'vue'
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
@@ -155,6 +155,12 @@ const {
 
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
 const showsInformation = computed(() => useEncyclopedia.value || Boolean(album.value?.description))
+
+watch(showsInformation, shown => {
+  if (!shown && activeTab.value === 'information' && album.value) {
+    go(url('albums.show', { id: album.value.id, tab: 'songs' }))
+  }
+})
 
 const isStandardArtist = computed(() => {
   if (!album.value) {
