@@ -21,6 +21,7 @@ const themes = ref<Theme[]>([])
 
 onMounted(async () => {
   await themeStore.fetchCustomThemes()
+  // Kameleon follows the main player's current song, which an embed's own player never sets.
   themes.value = themeStore.all.filter(({ id }) => id !== KAMELEON_THEME_ID)
 })
 </script>
