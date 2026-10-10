@@ -25,4 +25,13 @@ describe('themeSelectBox.vue', () => {
     expect(fetchThemesMock).toHaveBeenCalled()
     await h.user.selectOptions(screen.getByRole('combobox'), ['frodo'])
   })
+
+  it('leaves out the Kameleon theme, which only follows the main player', async () => {
+    h.mock(themeStore, 'fetchCustomThemes')
+
+    h.render(Component)
+    await h.tick()
+
+    expect(screen.queryByRole('option', { name: 'Kameleon' })).toBeNull()
+  })
 })

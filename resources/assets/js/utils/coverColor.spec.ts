@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { brightenToVisible, darkenToBackground, pickVividColor } from './coverColor'
+import { brightenToVisible, darkenToBackground, pickVividColor, toThemeColors } from './coverColor'
 
 describe('coverColor', () => {
   const pixelsOf = (...colors: [number, number, number][]) =>
@@ -35,5 +35,13 @@ describe('coverColor', () => {
 
   it('keeps a color that is already dark enough', () => {
     expect(darkenToBackground([80, 10, 10])).toBe('hsl(0 78% 18%)')
+  })
+
+  it('makes a dark, muted theme background and a visible highlight from a cover color', () => {
+    expect(toThemeColors([240, 120, 40])).toEqual({ background: 'hsl(24 35% 10%)', highlight: 'hsl(24 87% 55%)' })
+  })
+
+  it('keeps the theme highlight from getting too bright', () => {
+    expect(toThemeColors([250, 220, 120]).highlight).toBe('hsl(46 93% 65%)')
   })
 })

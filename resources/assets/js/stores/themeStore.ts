@@ -85,6 +85,14 @@ export const themeStore = {
     preferences.theme = theme.id
   },
 
+  setCoverColors(colors: { background: string; highlight: string } | null) {
+    document.body.style.setProperty('--color-bg', colors?.background ?? this.defaultProperties['--color-bg'] ?? '')
+    document.body.style.setProperty(
+      '--color-highlight',
+      colors?.highlight ?? this.defaultProperties['--color-highlight'] ?? '',
+    )
+  },
+
   isCurrentTheme(theme: Theme | Theme['id']) {
     const currentTheme = this.getCurrentTheme()
     return typeof theme === 'string' ? currentTheme.id === theme : currentTheme.id === theme.id

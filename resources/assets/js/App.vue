@@ -52,6 +52,7 @@ import {
 } from '@/config/symbols'
 import { useRouter } from '@/composables/useRouter'
 import { usePageTitle } from '@/composables/usePageTitle'
+import { useCoverThemeColors } from '@/composables/useCoverThemeColors'
 import { commonStore } from '@/stores/commonStore'
 import type { Route } from '@/router'
 
@@ -158,6 +159,8 @@ watch(
 )
 
 onRouteChanged(route => (currentRoute.value = route))
+
+useCoverThemeColors(currentStreamable)
 
 const onDragEnd = () => (showDropZone.value = false)
 
