@@ -1,25 +1,7 @@
 <template>
   <div v-koel-focus class="md:w-[560px]" tabindex="0" @keydown.esc="close">
-    <header class="items-center gap-4">
-      <h1 class="flex-1">MilkDrop Presets</h1>
-      <Btn bordered variant="ghost" @click="fileInput?.click()">Import</Btn>
-      <input
-        ref="fileInput"
-        accept=".milk"
-        aria-label="Preset files"
-        class="hidden"
-        multiple
-        type="file"
-        @change="importPresets"
-      />
-      <button
-        class="w-8 h-8 inline-grid place-items-center rounded-full text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5"
-        type="button"
-        @click="close"
-      >
-        <XIcon :size="16" />
-        <span class="sr-only">Close</span>
-      </button>
+    <header>
+      <h1>MilkDrop Presets</h1>
     </header>
 
     <main class="flex flex-col gap-4">
@@ -46,11 +28,25 @@
         Showing {{ shownNames.length }} of {{ matchingNames.length.toLocaleString() }}. Search to narrow down.
       </p>
     </main>
+
+    <footer>
+      <Btn @click="fileInput?.click()">Import</Btn>
+      <Btn variant="ghost" @click.prevent="close">Close</Btn>
+      <input
+        ref="fileInput"
+        accept=".milk"
+        aria-label="Preset files"
+        class="hidden"
+        multiple
+        type="file"
+        @change="importPresets"
+      />
+    </footer>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ExternalLinkIcon, XIcon } from 'lucide-vue-next'
+import { ExternalLinkIcon } from 'lucide-vue-next'
 import { computed, ref, toRef } from 'vue'
 import { milkdropPresetStore } from '@/stores/milkdropPresetStore'
 import { useMessageToaster } from '@/composables/useMessageToaster'
