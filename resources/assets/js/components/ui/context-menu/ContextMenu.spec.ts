@@ -78,6 +78,30 @@ describe('contextMenu', () => {
     await vi.waitFor(() => expect(computePositionMock).toHaveBeenCalledTimes(timesPositionedOnOpen + 1))
   })
 
+  it('does not watch the size of a menu that closed while it was opening', async () => {
+    const observeMock = vi.fn()
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe = observeMock
+
+        disconnect() {}
+      },
+    )
+
+    computePositionMock.mockResolvedValueOnce({ x: 0, y: 0 })
+    const options = shallowRef<any>({ component: null, position: { top: 0, left: 0 } })
+
+    h.render(Component, provide(options))
+
+    options.value = { component: { template: '<div>Menu</div>' }, position: { top: 100, left: 200 } }
+    await h.tick()
+    options.value = { component: null, position: { top: 0, left: 0 } }
+    await h.tick(5)
+
+    expect(observeMock).not.toHaveBeenCalled()
+  })
+
   it('closes when options.component is cleared', async () => {
     const showSpy = vi.spyOn(HTMLElement.prototype, 'showPopover')
     const hideSpy = vi.spyOn(HTMLElement.prototype, 'hidePopover')

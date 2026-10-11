@@ -368,6 +368,10 @@ const open = async (top = 0, left = 0) => {
     logger.error(error)
   }
 
+  if (!isOpen.value || !el.value) {
+    return
+  }
+
   // Defer attaching the outside-click listener so the gesture that opened the menu
   // (the right-click or button click) doesn't immediately dismiss it. Tracked so we
   // can clear it if the menu closes/unmounts before the timer fires.
