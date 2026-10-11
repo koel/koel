@@ -45,12 +45,13 @@ export const visualizers: Visualizer[] = [
     },
   },
   {
-    id: 'butterchurn',
-    name: 'Butterchurn',
-    init: async container => (await import('@/visualizers/butterchurn')).initVisualizer(container),
+    id: 'projectm',
+    name: 'projectM (MilkDrop)',
+    importsMilkdropPresets: true,
+    init: async container => (await import('@/visualizers/projectm')).init(container),
     credits: {
-      author: 'Jordan Berg (@jberg)',
-      url: 'https://github.com/jberg/butterchurn',
+      author: 'The projectM team',
+      url: 'https://github.com/projectM-visualizer/projectm',
     },
   },
 ]

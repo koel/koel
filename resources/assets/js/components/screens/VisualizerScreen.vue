@@ -20,11 +20,22 @@
         </p>
       </div>
 
-      <div class="absolute bottom-8 right-8 border border-white/30 rounded-md">
-        <SelectBox v-model="selectedId" class="bg-black/20! text-white! block">
+      <div class="absolute bottom-8 right-8 flex gap-2">
+        <SelectBox v-model="selectedId" class="bg-black/20! text-white! block border border-white/30 rounded-md">
           <option disabled value="-1">Pick a visualizer</option>
           <option v-for="v in visualizers" :key="v.id" :value="v.id">{{ v.name }}</option>
         </SelectBox>
+        <template v-if="selectedVisualizer?.importsMilkdropPresets">
+          <SelectBox
+            v-model="presetChoice"
+            aria-label="Preset"
+            class="bg-black/20! text-white! block border border-white/30 rounded-md max-w-64"
+          >
+            <option :value="RANDOM_PRESET">Random</option>
+            <option v-for="name in presetState.names" :key="name" :value="name">{{ name }}</option>
+            <option :value="MANAGE_PRESETS">Manage presets…</option>
+          </SelectBox>
+        </template>
       </div>
     </div>
 
@@ -40,8 +51,11 @@ import { useThrottleFn } from '@vueuse/core'
 import { logger } from '@/utils/logger'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { visualizerStore } from '@/stores/visualizerStore'
+import { milkdropPresetStore, RANDOM_PRESET } from '@/stores/milkdropPresetStore'
+import { useModal } from '@/composables/useModal'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
+import ManageMilkdropPresetsModal from '@/components/visualizer/ManageMilkdropPresetsModal.vue'
 
 const visualizers = visualizerStore.all
 let destroyVisualizer: () => void
@@ -100,6 +114,28 @@ const render = async (viz: Visualizer) => {
 }
 
 const selectedVisualizer = ref<Visualizer>()
+
+const MANAGE_PRESETS = 'manage-presets'
+
+const { state: presetState } = milkdropPresetStore
+const { openModal } = useModal()
+const presetChoice = ref(presetState.selected)
+
+watch(
+  () => presetState.selected,
+  selected => (presetChoice.value = selected),
+)
+
+watch(presetChoice, async choice => {
+  if (choice === MANAGE_PRESETS) {
+    openModal<'MANAGE_MILKDROP_PRESETS'>(ManageMilkdropPresetsModal)
+    await nextTick()
+    presetChoice.value = presetState.selected
+    return
+  }
+
+  milkdropPresetStore.select(choice)
+})
 
 watch(selectedId, id => {
   preferences.visualizer = id
