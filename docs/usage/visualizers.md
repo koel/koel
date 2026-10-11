@@ -10,7 +10,7 @@ Visualizers pause along with your music and pick up again when it plays.
 
 ## MilkDrop Presets
 
-The **projectM (MilkDrop)** visualizer plays MilkDrop presets, the `.milk` files made popular by Winamp. Koel doesn't ship any, so add your own.
+The **projectM (MilkDrop)** visualizer plays MilkDrop presets, the `.milk` files made popular by Winamp. Koel doesn't come with any presets out of the box, but you can add them yourself easily.
 
 <CaptionedImage :src="projectm" alt="The projectM visualizer playing a MilkDrop preset in Koel">Urchin Kali Mod preset from projectM</CaptionedImage>
 
