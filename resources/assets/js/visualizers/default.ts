@@ -1,4 +1,3 @@
-import Sketch from 'sketch-js'
 import { random, sample } from 'lodash-es'
 import { audioService } from '@/services/audioService'
 import { startFrameLoop } from '@/visualizers/frameLoop'
@@ -141,41 +140,50 @@ class Particle {
 }
 
 export const init = (container: HTMLElement) => {
-  const particles: Particle[] = []
+  const canvas = container.appendChild(document.createElement('canvas'))
+  const context = canvas.getContext('2d')!
+
+  const resize = () => {
+    canvas.width = container.clientWidth
+    canvas.height = container.clientHeight
+  }
+
+  resize()
+
+  const particles = Array.from(
+    { length: NUM_PARTICLES },
+    () => new Particle(random(canvas.width), random(canvas.height)),
+  )
 
   const analyser = new AudioAnalyser(NUM_BANDS, SMOOTHING, bands => {
     particles.forEach(particle => (particle.energy = bands[particle.band] / 256))
   })
 
-  const sketch = Sketch.create({
-    container,
+  const draw = () => {
+    analyser.update()
 
-    setup () {
-      for (let i = 0; i < NUM_PARTICLES; ++i) {
-        particles.push(new Particle(random(this.width), random(this.height)))
+    context.globalCompositeOperation = 'source-over'
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.globalCompositeOperation = 'lighter'
+
+    particles.forEach(particle => {
+      if (particle.y < -particle.size * particle.level * particle.scale * 2) {
+        particle.reset()
+        particle.x = random(canvas.width)
+        particle.y = canvas.height + particle.size * particle.scale * particle.level * 2
       }
-    },
 
-    draw () {
-      this.globalCompositeOperation = 'lighter'
+      particle.move()
+      particle.draw(context)
+    })
+  }
 
-      particles.forEach(particle => {
-        if (particle.y < (-particle.size * particle.level * particle.scale * 2)) {
-          particle.reset()
-          particle.x = random(this.width)
-          particle.y = this.height + (particle.size * particle.scale * particle.level * 2)
-        }
-
-        particle.move()
-        particle.draw(this as CanvasRenderingContext2D)
-      })
-    },
-  })
-
-  const stopFrameLoop = startFrameLoop(() => analyser.update())
+  window.addEventListener('resize', resize)
+  const stopFrameLoop = startFrameLoop(draw)
 
   return () => {
     stopFrameLoop()
-    sketch.destroy()
+    window.removeEventListener('resize', resize)
+    canvas.remove()
   }
 }
