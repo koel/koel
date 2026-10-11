@@ -13,6 +13,7 @@ export const Filter = {
   SERVER_SETTINGS_TABS: 'server-settings-tabs',
   POLICIES: 'policies',
   SELECTED_UPLOADS: 'selected-uploads',
+  PLAYABLE_CONTEXT_MENU_SECTIONS: 'playable-context-menu-sections',
 } as const
 
 export type ActionName = (typeof Action)[keyof typeof Action]
