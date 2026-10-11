@@ -309,6 +309,8 @@ export class QueuePlaybackService extends BasePlaybackService {
 
       await this.setNowPlayingMeta(queueStore.current!)
       this.recordStartTime(playable)
+    } else if (signedUrlService.hasExpired(this.media.src)) {
+      await this.reloadExpiredSource(playable)
     }
 
     try {

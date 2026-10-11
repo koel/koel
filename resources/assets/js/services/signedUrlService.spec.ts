@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { signedUrlService } from './signedUrlService'
@@ -30,6 +30,20 @@ describe('signedUrlService', () => {
     await signedUrlService.fetch('songs/song/play-url')
 
     expect(getMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('fetches a new URL when the cached one has expired', async () => {
+    const freshUrl = urlExpiringIn(30 * 60)
+    h.mock(http, 'get')
+      .mockResolvedValueOnce({ url: urlExpiringIn(30 * 60) })
+      .mockResolvedValueOnce({ url: freshUrl })
+
+    await signedUrlService.fetch('songs/song/play-url')
+    vi.setSystemTime(Date.now() + 60 * 60 * 1000)
+
+    expect(await signedUrlService.fetch('songs/song/play-url')).toBe(freshUrl)
+
+    vi.useRealTimers()
   })
 
   it.each<[string, boolean]>([

@@ -54,12 +54,23 @@ class SignedAudioUrlTest extends TestCase
     }
 
     #[Test]
-    public function rejectExpiredSignedUrl(): void
+    public function keepSignedUrlValidForTheWholeSongPlusHalfAnHour(): void
     {
-        $song = Song::factory()->createOne();
+        $song = Song::factory()->createOne(['path' => test_path('songs/blank.mp3'), 'length' => 60 * 60]);
         $url = $this->signer->signSongPlayUrl($song, create_user(), transcode: false);
 
-        $this->travel(31)->minutes();
+        $this->travel(89)->minutes();
+
+        $this->get($url, ['Range' => 'bytes=0-1'])->assertStatus(Response::HTTP_PARTIAL_CONTENT);
+    }
+
+    #[Test]
+    public function rejectExpiredSignedUrl(): void
+    {
+        $song = Song::factory()->createOne(['length' => 60 * 60]);
+        $url = $this->signer->signSongPlayUrl($song, create_user(), transcode: false);
+
+        $this->travel(91)->minutes();
 
         $this->get($url)->assertUnauthorized();
     }

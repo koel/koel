@@ -392,6 +392,28 @@ describe('playbackService', () => {
     expect(playMock).toHaveBeenCalled()
   })
 
+  it('gets a new source URL before resuming after a long pause', async () => {
+    const song = setCurrentSong(h.factory('song').make({ playback_state: 'Paused' }))
+
+    const expiredAt = Math.floor(Date.now() / 1000) - 60 * 60
+    playbackService.media.src = `http://test/play/${song.id}?expires=${expiredAt}&signature=old`
+    const currentTimeSpy = vi.spyOn(playbackService.media, 'currentTime', 'get').mockReturnValue(42)
+
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue(`http://test/play/${song.id}?signature=new`)
+    const seekMock = h.mock(playbackService, 'seekTo')
+    const playMock = h.mock(window.HTMLMediaElement.prototype, 'play')
+
+    await playbackService.resume()
+
+    expect(playbackService.media.src).toBe(`http://test/play/${song.id}?signature=new`)
+    expect(seekMock).toHaveBeenCalledWith(42)
+    expect(playMock).toHaveBeenCalledTimes(1)
+    expect(song.playback_state).toBe('Playing')
+
+    currentTimeSpy.mockRestore()
+    playbackService.media.removeAttribute('src')
+  })
+
   it('shows the playing song in the page title', async () => {
     const song = h.factory('song').make()
     h.mock(window.HTMLMediaElement.prototype, 'play')

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\URL;
 
 class AudioUrlSigner
 {
-    private const int VALID_MINUTES = 30;
+    private const int EXTRA_VALID_SECONDS = 30 * 60;
 
     public function signSongPlayUrl(Song $song, User $user, bool $transcode): string
     {
@@ -19,7 +19,7 @@ class AudioUrlSigner
             $parameters['transcode'] = 1;
         }
 
-        return static_url(self::signRoute('song.play', $parameters));
+        return static_url(self::signRoute('song.play', $parameters, playbackSeconds: (int) ceil($song->length)));
     }
 
     public function signRadioStreamUrl(RadioStation $station, User $user): string
@@ -35,8 +35,13 @@ class AudioUrlSigner
         return url(self::signRoute('songs.download', ['songs' => [$song->id], 'user' => $user->public_id]));
     }
 
-    private static function signRoute(string $name, array $parameters): string
+    private static function signRoute(string $name, array $parameters, int $playbackSeconds = 0): string
     {
-        return URL::temporarySignedRoute($name, now()->addMinutes(self::VALID_MINUTES), $parameters, absolute: false);
+        return URL::temporarySignedRoute(
+            $name,
+            now()->addSeconds($playbackSeconds + self::EXTRA_VALID_SECONDS),
+            $parameters,
+            absolute: false,
+        );
     }
 }
