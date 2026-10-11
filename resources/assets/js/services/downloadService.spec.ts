@@ -3,6 +3,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { downloadService } from './downloadService'
 import { zipDownloadService } from '@/services/zipDownloadService'
 import { playableStore } from '@/stores/playableStore'
+import { signedUrlService } from '@/services/signedUrlService'
 
 describe('downloadService', () => {
   const h = createHarness()
@@ -16,6 +17,17 @@ describe('downloadService', () => {
 
     expect(zipMock).not.toHaveBeenCalled()
     expect(triggerMock).toHaveBeenCalledWith(song)
+  })
+
+  it('downloads a single playable through a signed URL', async () => {
+    const song = h.factory('song').make()
+    const fetchMock = h.mock(signedUrlService, 'fetch').mockResolvedValue('http://test/download/songs?signature=s')
+    const clickMock = h.mock(HTMLAnchorElement.prototype, 'click')
+
+    await downloadService.trigger(song)
+
+    expect(fetchMock).toHaveBeenCalledWith(`songs/${song.id}/download-url`)
+    expect(clickMock).toHaveBeenCalled()
   })
 
   it('zips multiple playables', async () => {

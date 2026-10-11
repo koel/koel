@@ -28,7 +28,7 @@ describe('playbackService', () => {
 
     const playMock = h.mock(playbackService.media, 'play')
     const broadcastMock = h.mock(socketService, 'broadcast')
-    h.mock(radioStationStore, 'getSourceUrl', 'https://station.com/stream.mp3')
+    h.mock(radioStationStore, 'resolveSourceUrl').mockResolvedValue('https://station.com/stream.mp3')
 
     const startPollingMock = h.mock(radioStationStore, 'startPolling')
 
@@ -57,5 +57,14 @@ describe('playbackService', () => {
     expect(playbackService.media.src).toBe('')
     expect(currentStation.playback_state).toBe('Paused')
     expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', currentStation)
+  })
+
+  it('stops showing a station as playing when its stream URL cannot be fetched', async () => {
+    const station = h.factory('radio-station').make({ playback_state: 'Stopped' })
+    h.mock(radioStationStore, 'resolveSourceUrl').mockRejectedValue(new Error('offline'))
+
+    await expect(playbackService.play(station)).rejects.toThrow('offline')
+
+    expect(station.playback_state).toBe('Stopped')
   })
 })

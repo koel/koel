@@ -62,7 +62,7 @@ describe('authService', () => {
     expect(postMock).toHaveBeenCalledWith('me', { email: 'john@doe.com', password: 'curry-wurst' })
     expect(result).toBeNull()
     expect(lsGet('api-token')).toBe('bar')
-    expect(lsGet('audio-token')).toBe('foo')
+    expect(lsGet('audio-token')).toBeNull()
   })
 
   it('returns the two-factor challenge payload from login without stashing a token', async () => {
@@ -92,7 +92,7 @@ describe('authService', () => {
       code: '123456',
     })
     expect(lsGet('api-token')).toBe('bar')
-    expect(lsGet('audio-token')).toBe('foo')
+    expect(lsGet('audio-token')).toBeNull()
   })
 
   it('enrolls in two-factor authentication', async () => {

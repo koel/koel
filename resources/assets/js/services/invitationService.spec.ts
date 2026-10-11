@@ -15,8 +15,7 @@ describe('invitationService', () => {
       token: 'my-token',
     })
 
-    const setAudioTokenMock = h.mock(authService, 'setAudioToken')
-    const setApiTokenMock = h.mock(authService, 'setApiToken')
+    const setTokensMock = h.mock(authService, 'setTokensUsingCompositeToken')
 
     await invitationService.accept('invite-token', 'foo', 'bar')
 
@@ -26,8 +25,7 @@ describe('invitationService', () => {
       password: 'bar',
     })
 
-    expect(setAudioTokenMock).toHaveBeenCalledWith('my-audio-token')
-    expect(setApiTokenMock).toHaveBeenCalledWith('my-token')
+    expect(setTokensMock).toHaveBeenCalledWith({ 'audio-token': 'my-audio-token', token: 'my-token' })
   })
 
   it('invites users', async () => {

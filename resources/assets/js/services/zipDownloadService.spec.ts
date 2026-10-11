@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { authService } from '@/services/authService'
 import {
   getExtensionFromResponse,
   isArchiveCreatedBefore,
@@ -165,6 +166,23 @@ describe('zipDownloadService', () => {
     expect(saveMock).toHaveBeenCalled()
     expect(zipDownloadService.state.archiveName).toBe('My Mix.zip')
     expect(zipDownloadService.state.bytesDone).toBe(15)
+  })
+
+  it('downloads each song with one authenticated request', async () => {
+    stubPrivateStorage()
+    stubSongDownloads()
+    h.mock(authService, 'getApiToken').mockReturnValue('api-token')
+    h.mock(zipDownloadService, 'save')
+    const songs = [makeSong({ title: 'One' }), makeSong({ title: 'Two' })]
+
+    await zipDownloadService.start(songs, 'My Mix', 'none')
+    await zipDownloadService.building
+
+    expect(fetch).toHaveBeenCalledTimes(2)
+    expect(fetch).toHaveBeenCalledWith(
+      `${window.KOEL.base_url}download/songs?songs[]=${songs[0].id}`,
+      expect.objectContaining({ headers: { Authorization: 'Bearer api-token' } }),
+    )
   })
 
   it('fails with a message when a song cannot be downloaded', async () => {

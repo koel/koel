@@ -1,11 +1,10 @@
 import type { Reactive } from 'vue'
 import { reactive, ref } from 'vue'
 import { http } from '@/services/http'
-import { authService } from '@/services/authService'
+import { signedUrlService } from '@/services/signedUrlService'
 import { logger } from '@/utils/logger'
 import { merge } from 'lodash-es'
 import { arrayify } from '@/utils/helpers'
-import { commonStore } from '@/stores/commonStore'
 
 export interface RadioStationData {
   name: RadioStation['name']
@@ -53,9 +52,8 @@ export const radioStationStore = {
     })
   },
 
-  getSourceUrl: (station: RadioStation) => {
-    return `${commonStore.state.cdn_url}radio/stream/${station.id}?t=${authService.getAudioToken()}`
-  },
+  resolveSourceUrl: async (station: RadioStation) =>
+    await signedUrlService.fetch(`radio/stations/${station.id}/stream-url`),
 
   // Unlike playable/playable, we don't support queueing radio stations and thus don't need a dedicated queue for them.
   // Rather, we keep track of the currently playing station inside the radio station store itself.

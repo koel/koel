@@ -61,4 +61,9 @@ class UserRepository extends Repository
     {
         return $this->getOneBy(['public_id' => $publicId]);
     }
+
+    public function findOneByPublicId(string $publicId): ?User
+    {
+        return User::query()->firstWhere('public_id', $publicId);
+    }
 }

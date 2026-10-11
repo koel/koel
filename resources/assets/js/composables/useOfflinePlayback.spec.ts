@@ -43,6 +43,7 @@ describe('useOfflinePlayback', () => {
     clearAllOfflineCache,
     isCached,
     isCaching,
+    hasCachingError,
     getCachingProgress,
     checkCacheStatus,
     cachedSongIds,
@@ -61,12 +62,12 @@ describe('useOfflinePlayback', () => {
     vi.mocked(offlineManifest.clear).mockClear()
   })
 
-  it('sends CACHE_AUDIO message to SW', () => {
+  it('sends CACHE_AUDIO message to SW', async () => {
     const song = h.factory('song').make()
-    const sourceUrl = 'http://localhost/play/abc123?t=token'
-    h.mock(playableStore, 'getSourceUrl').mockReturnValue(sourceUrl)
+    const sourceUrl = 'http://localhost/play/abc123?expires=1&signature=s'
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue(sourceUrl)
 
-    makeAvailableOffline(song)
+    await makeAvailableOffline(song)
 
     expect(postMessageMock).toHaveBeenCalledWith({
       type: 'CACHE_AUDIO',
@@ -75,10 +76,38 @@ describe('useOfflinePlayback', () => {
     })
   })
 
+  it('marks a song as failed when its source URL cannot be resolved', async () => {
+    const song = h.factory('song').make()
+    h.mock(playableStore, 'resolveSourceUrl').mockRejectedValue(new Error('offline'))
+
+    await makeAvailableOffline(song)
+
+    expect(postMessageMock).not.toHaveBeenCalled()
+    expect(isCaching(song)).toBe(false)
+    expect(hasCachingError(song)).toBe(true)
+  })
+
+  it.each<[string, (song: Song) => unknown]>([
+    ['removed', song => removeOfflineCache(song)],
+    ['cleared', () => clearAllOfflineCache()],
+  ])('does not save a song %s while its source URL was loading', async (_, cancel) => {
+    const song = h.factory('song').make()
+    let resolveUrl: (url: string) => void = () => {}
+    h.mock(playableStore, 'resolveSourceUrl').mockReturnValue(new Promise<string>(resolve => (resolveUrl = resolve)))
+
+    const pendingSave = makeAvailableOffline(song)
+    await cancel(song)
+    resolveUrl('http://localhost/play/abc123?signature=s')
+    await pendingSave
+
+    expect(postMessageMock).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'CACHE_AUDIO' }))
+    expect(isCaching(song)).toBe(false)
+  })
+
   it('sends DELETE_AUDIO_CACHE message to SW', () => {
     const song = h.factory('song').make()
-    const sourceUrl = 'http://localhost/play/abc123?t=token'
-    h.mock(playableStore, 'getSourceUrl').mockReturnValue(sourceUrl)
+    const sourceUrl = 'http://localhost/play/abc123'
+    h.mock(playableStore, 'getUnsignedSourceUrl').mockReturnValue(sourceUrl)
 
     removeOfflineCache(song)
 
@@ -158,7 +187,7 @@ describe('useOfflinePlayback', () => {
   it('sends GET_CACHE_STATUS message to SW', () => {
     const songs = [h.factory('song').make(), h.factory('song').make()]
     const urls = ['http://localhost/play/a?t=t1', 'http://localhost/play/b?t=t2']
-    h.mock(playableStore, 'getSourceUrl').mockReturnValueOnce(urls[0]).mockReturnValueOnce(urls[1])
+    h.mock(playableStore, 'getUnsignedSourceUrl').mockReturnValueOnce(urls[0]).mockReturnValueOnce(urls[1])
 
     checkCacheStatus(songs)
 
@@ -187,7 +216,7 @@ describe('useOfflinePlayback', () => {
     const song = h.factory('song').make()
     const sourceUrl = 'http://localhost/play/x?t=token'
     h.mock(playableStore, 'byId').mockReturnValue(song)
-    h.mock(playableStore, 'getSourceUrl').mockReturnValue(sourceUrl)
+    h.mock(playableStore, 'getUnsignedSourceUrl').mockReturnValue(sourceUrl)
 
     cachedSongIds.value.add(song.id)
     manifestEntries.value = [{ playable: song, cachedAt: Date.now(), size: 0 }]

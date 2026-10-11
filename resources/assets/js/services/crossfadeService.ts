@@ -29,10 +29,16 @@ export const crossfadeService = {
   start(nextPlayable: Playable, duration: number, currentVolume: number): boolean {
     this.cancel()
 
+    const sourceUrl = playableStore.getResolvedSourceUrl(nextPlayable)
+
+    if (!sourceUrl) {
+      return false
+    }
+
     try {
       const incomingAudio = document.createElement('audio')
       incomingAudio.crossOrigin = 'anonymous'
-      incomingAudio.src = playableStore.getSourceUrl(nextPlayable)
+      incomingAudio.src = sourceUrl
       incomingAudio.volume = 0
 
       if (audioService.context) {

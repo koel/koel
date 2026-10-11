@@ -36,6 +36,13 @@ const cachingProgress = ref(new Map<Song['id'], number>())
  * Key: song ID, Value: error message.
  */
 const cachingErrors = ref(new Map<Song['id'], string>())
+const pendingCachingRequests = new Map<Song['id'], symbol>()
+
+const cancelPendingCaching = (songId: Song['id']) => {
+  if (pendingCachingRequests.delete(songId)) {
+    cachingProgress.value.delete(songId)
+  }
+}
 
 /** Storage estimate from navigator.storage API. */
 const storageUsage = ref(0)
@@ -119,7 +126,7 @@ const syncWithServer = async (entries: OfflineManifestEntry[]) => {
           sw.postMessage({
             type: 'DELETE_AUDIO_CACHE',
             songId: entry.playable.id,
-            sourceUrl: playableStore.getSourceUrl(entry.playable),
+            sourceUrl: playableStore.getUnsignedSourceUrl(entry.playable),
           })
         }
       }
@@ -213,6 +220,8 @@ const setupSongDeletionListener = () => {
     const sw = getSW()
 
     for (const song of deletedSongs) {
+      cancelPendingCaching(song.id)
+
       if (!cachedSongIds.value.has(song.id)) {
         continue
       }
@@ -224,7 +233,7 @@ const setupSongDeletionListener = () => {
         sw.postMessage({
           type: 'DELETE_AUDIO_CACHE',
           songId: song.id,
-          sourceUrl: playableStore.getSourceUrl(song),
+          sourceUrl: playableStore.getUnsignedSourceUrl(song),
         })
       }
     }
@@ -250,14 +259,35 @@ export const useOfflinePlayback = () => {
     setupSongDeletionListener()
   }
 
-  const makeAvailableOffline = (playable: Playable) => {
+  const makeAvailableOffline = async (playable: Playable) => {
     const sw = getSW()
     if (!sw) return
 
-    const sourceUrl = playableStore.getSourceUrl(playable)
-
     cachingProgress.value.set(playable.id, 0)
     cachingErrors.value.delete(playable.id)
+
+    const request = Symbol(playable.id)
+    pendingCachingRequests.set(playable.id, request)
+
+    let sourceUrl: string
+
+    try {
+      sourceUrl = await playableStore.resolveSourceUrl(playable)
+    } catch (error: unknown) {
+      if (pendingCachingRequests.get(playable.id) === request) {
+        cancelPendingCaching(playable.id)
+        cachingErrors.value.set(playable.id, error instanceof Error ? error.message : 'Unknown error')
+      }
+
+      return
+    }
+
+    if (pendingCachingRequests.get(playable.id) !== request) {
+      return
+    }
+
+    pendingCachingRequests.delete(playable.id)
+
     sw.postMessage({
       type: 'CACHE_AUDIO',
       songId: playable.id,
@@ -266,10 +296,12 @@ export const useOfflinePlayback = () => {
   }
 
   const removeOfflineCache = (playable: Playable) => {
+    cancelPendingCaching(playable.id)
+
     const sw = getSW()
     if (!sw) return
 
-    const sourceUrl = playableStore.getSourceUrl(playable)
+    const sourceUrl = playableStore.getUnsignedSourceUrl(playable)
 
     sw.postMessage({
       type: 'DELETE_AUDIO_CACHE',
@@ -279,13 +311,15 @@ export const useOfflinePlayback = () => {
   }
 
   const clearAllOfflineCache = async () => {
+    ;[...pendingCachingRequests.keys()].forEach(cancelPendingCaching)
+
     const sw = getSW()
     if (!sw) return
 
     const entries = [...manifestEntries.value]
 
     for (const entry of entries) {
-      const sourceUrl = playableStore.getSourceUrl(entry.playable)
+      const sourceUrl = playableStore.getUnsignedSourceUrl(entry.playable)
       sw.postMessage({
         type: 'DELETE_AUDIO_CACHE',
         songId: entry.playable.id,
@@ -311,7 +345,7 @@ export const useOfflinePlayback = () => {
     const sw = getSW()
     if (!sw) return
 
-    const sourceUrls = playables.map(p => playableStore.getSourceUrl(p))
+    const sourceUrls = playables.map(p => playableStore.getUnsignedSourceUrl(p))
 
     sw.postMessage({
       type: 'GET_CACHE_STATUS',
