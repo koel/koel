@@ -4,6 +4,7 @@ namespace App\Services\Integrations;
 
 use App\Http\Integrations\iTunes\ITunesConnector;
 use App\Http\Integrations\iTunes\Requests\GetTrackRequest;
+use App\Http\Integrations\iTunes\Requests\LookupPodcastRequest;
 use App\Models\Album;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Uri;
@@ -40,5 +41,15 @@ class ITunesService
                 },
             );
         });
+    }
+
+    /**
+     * The RSS feed URL of the podcast with the given Apple Podcasts ID, or null when Apple knows of no public feed.
+     */
+    public function getPodcastFeedUrl(string $applePodcastsId): ?string
+    {
+        $response = $this->connector->send(new LookupPodcastRequest($applePodcastsId))->object();
+
+        return $response->results[0]->feedUrl ?? null;
     }
 }

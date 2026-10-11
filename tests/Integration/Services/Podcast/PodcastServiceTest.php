@@ -3,8 +3,10 @@
 namespace Tests\Integration\Services\Podcast;
 
 use App\Events\UserUnsubscribedFromPodcast;
+use App\Exceptions\ApplePodcastsFeedNotFoundException;
 use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
+use App\Http\Integrations\iTunes\Requests\LookupPodcastRequest;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
 use App\Models\Song;
@@ -20,6 +22,8 @@ use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Client\ClientInterface;
+use Saloon\Http\Faking\MockResponse;
+use Saloon\Laravel\Saloon;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -75,6 +79,34 @@ class PodcastServiceTest extends TestCase
         ]);
 
         self::assertCount(8, $podcast->episodes);
+    }
+
+    #[Test]
+    public function addPodcastFromAnApplePodcastsLink(): void
+    {
+        Saloon::fake([
+            LookupPodcastRequest::class => MockResponse::make(body: [
+                'resultCount' => 1,
+                'results' => [['feedUrl' => 'https://example.com/feed.xml']],
+            ]),
+        ]);
+
+        $this->service->addPodcast(
+            'https://podcasts.apple.com/us/podcast/podcast-feed-parser/id917918570',
+            create_user(),
+        );
+
+        $this->assertDatabaseHas(Podcast::class, ['url' => 'https://example.com/feed.xml']);
+    }
+
+    #[Test]
+    public function refuseAnApplePodcastsLinkWithoutAPublicFeed(): void
+    {
+        Saloon::fake([LookupPodcastRequest::class => MockResponse::make(body: ['resultCount' => 0, 'results' => []])]);
+
+        $this->expectException(ApplePodcastsFeedNotFoundException::class);
+
+        $this->service->addPodcast('https://podcasts.apple.com/us/podcast/exclusive/id123', create_user());
     }
 
     #[Test]

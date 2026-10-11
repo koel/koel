@@ -152,7 +152,7 @@ return [
         'itunes' => [
             'enabled' => env('USE_ITUNES', true),
             'affiliate_id' => '1000lsGu',
-            'endpoint' => 'https://itunes.apple.com/search',
+            'endpoint' => 'https://itunes.apple.com',
         ],
         'ticketmaster' => [
             'key' => env('TICKETMASTER_API_KEY'),
