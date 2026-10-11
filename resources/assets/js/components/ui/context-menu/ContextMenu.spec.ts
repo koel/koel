@@ -102,6 +102,44 @@ describe('contextMenu', () => {
     expect(observeMock).not.toHaveBeenCalled()
   })
 
+  it('lets only the latest opening watch the menu after a quick close and reopen', async () => {
+    const observeMock = vi.fn()
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe = observeMock
+
+        disconnect() {}
+      },
+    )
+
+    let finishFirstPositioning: (position: { x: number; y: number }) => void = () => {}
+    computePositionMock
+      .mockImplementationOnce(
+        () =>
+          new Promise(resolve => {
+            finishFirstPositioning = resolve
+          }),
+      )
+      .mockResolvedValueOnce({ x: 0, y: 0 })
+
+    const options = shallowRef<any>({ component: null, position: { top: 0, left: 0 } })
+
+    h.render(Component, provide(options))
+
+    options.value = { component: { template: '<div>First</div>' }, position: { top: 100, left: 200 } }
+    await h.tick()
+    options.value = { component: null, position: { top: 0, left: 0 } }
+    await h.tick()
+    options.value = { component: { template: '<div>Second</div>' }, position: { top: 50, left: 60 } }
+    await h.tick(5)
+
+    finishFirstPositioning({ x: 0, y: 0 })
+    await h.tick(5)
+
+    expect(observeMock).toHaveBeenCalledTimes(1)
+  })
+
   it('closes when options.component is cleared', async () => {
     const showSpy = vi.spyOn(HTMLElement.prototype, 'showPopover')
     const hideSpy = vi.spyOn(HTMLElement.prototype, 'hidePopover')
