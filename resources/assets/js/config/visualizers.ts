@@ -47,6 +47,7 @@ export const visualizers: Visualizer[] = [
   {
     id: 'projectm',
     name: 'projectM (MilkDrop)',
+    importsMilkdropPresets: true,
     init: async container => (await import('@/visualizers/projectm')).init(container),
     credits: {
       author: 'The projectM team',

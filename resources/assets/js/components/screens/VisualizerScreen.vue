@@ -20,8 +20,15 @@
         </p>
       </div>
 
-      <div class="absolute bottom-8 right-8 border border-white/30 rounded-md">
-        <SelectBox v-model="selectedId" class="bg-black/20! text-white! block">
+      <div class="absolute bottom-8 right-8 flex gap-2">
+        <label
+          v-if="selectedVisualizer?.importsMilkdropPresets"
+          class="px-4 py-2 border border-white/30 rounded-md bg-black/20 text-white cursor-pointer focus-within:border-white"
+        >
+          Import presets
+          <input accept=".milk" class="sr-only" multiple type="file" @change="importMilkdropPresets" />
+        </label>
+        <SelectBox v-model="selectedId" class="bg-black/20! text-white! block border border-white/30 rounded-md">
           <option disabled value="-1">Pick a visualizer</option>
           <option v-for="v in visualizers" :key="v.id" :value="v.id">{{ v.name }}</option>
         </SelectBox>
@@ -40,6 +47,7 @@ import { useThrottleFn } from '@vueuse/core'
 import { logger } from '@/utils/logger'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { visualizerStore } from '@/stores/visualizerStore'
+import { milkdropPresetLibrary } from '@/services/milkdropPresetLibrary'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
@@ -100,6 +108,13 @@ const render = async (viz: Visualizer) => {
 }
 
 const selectedVisualizer = ref<Visualizer>()
+
+const importMilkdropPresets = async (event: Event) => {
+  const input = event.target as HTMLInputElement
+
+  await milkdropPresetLibrary.importFiles(input.files ?? [])
+  input.value = ''
+}
 
 watch(selectedId, id => {
   preferences.visualizer = id

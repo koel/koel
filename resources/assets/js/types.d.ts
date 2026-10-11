@@ -810,6 +810,7 @@ interface Visualizer {
   init: (container: HTMLElement) => Promise<Closure>
   id: string
   name: string
+  importsMilkdropPresets?: boolean
   credits?: {
     author: string
     url: string

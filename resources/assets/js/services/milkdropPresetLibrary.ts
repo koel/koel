@@ -23,6 +23,8 @@ const getDB = () =>
 
 const isMilkdropPresetFile = (file: File) => file.name.toLowerCase().endsWith('.milk')
 
+const importListeners = new Set<(presets: MilkdropPreset[]) => void>()
+
 export const milkdropPresetLibrary = {
   async getAll() {
     return await (await getDB()).getAll('presets')
@@ -40,6 +42,14 @@ export const milkdropPresetLibrary = {
     const db = await getDB()
     await Promise.all(presets.map(preset => db.put('presets', preset)))
 
+    presets.length && importListeners.forEach(listener => listener(presets))
+
     return presets
+  },
+
+  onImport(listener: (presets: MilkdropPreset[]) => void) {
+    importListeners.add(listener)
+
+    return () => importListeners.delete(listener)
   },
 }

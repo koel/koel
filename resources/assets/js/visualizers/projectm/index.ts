@@ -53,7 +53,7 @@ export const init = async (container: HTMLElement) => {
 
   const hint = container.appendChild(document.createElement('p'))
   hint.className = 'absolute inset-0 grid place-items-center text-k-fg-50 pointer-events-none'
-  hint.textContent = 'Drop MilkDrop presets (.milk) here'
+  hint.textContent = 'Import MilkDrop presets (.milk) to start'
 
   const sizeCanvas = () => {
     canvas.width = Math.round(container.clientWidth * getRenderPixelRatio())
@@ -76,24 +76,11 @@ export const init = async (container: HTMLElement) => {
   loadRandomPreset()
   const presetTimer = window.setInterval(loadRandomPreset, PRESET_DURATION_MS)
 
-  const allowDrop = (event: DragEvent) => event.preventDefault()
-
-  const importDroppedPresets = async (event: DragEvent) => {
-    event.preventDefault()
-
-    const imported = await milkdropPresetLibrary.importFiles(event.dataTransfer?.files ?? [])
-
-    if (!imported.length) {
-      return
-    }
-
+  const stopListeningForImports = milkdropPresetLibrary.onImport(async imported => {
     presets = await milkdropPresetLibrary.getAll()
     hint.hidden = true
     loadPreset(imported[0].content)
-  }
-
-  container.addEventListener('dragover', allowDrop)
-  container.addEventListener('drop', importDroppedPresets)
+  })
 
   const analyser = audioService.analyzer
   analyser.fftSize = SAMPLES_PER_FRAME
@@ -118,8 +105,7 @@ export const init = async (container: HTMLElement) => {
     stopFrameLoop()
     window.clearInterval(presetTimer)
     resizeObserver.disconnect()
-    container.removeEventListener('dragover', allowDrop)
-    container.removeEventListener('drop', importDroppedPresets)
+    stopListeningForImports()
     destroy()
     projectM._free(samplesPointer)
     canvas.remove()

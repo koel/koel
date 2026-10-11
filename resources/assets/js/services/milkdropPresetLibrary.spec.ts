@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { milkdropPresetLibrary } from './milkdropPresetLibrary'
 
 const makeFile = (name: string, content: string) => {
@@ -29,5 +29,17 @@ describe('milkdropPresetLibrary', () => {
 
     const stored = (await milkdropPresetLibrary.getAll()).filter(({ name }) => name === 'Twice')
     expect(stored.map(({ content }) => content)).toEqual(['second'])
+  })
+
+  it('tells listeners about newly imported presets', async () => {
+    const listener = vi.fn()
+    const stopListening = milkdropPresetLibrary.onImport(listener)
+
+    await milkdropPresetLibrary.importFiles([makeFile('Nova.milk', 'nova')])
+    stopListening()
+    await milkdropPresetLibrary.importFiles([makeFile('Late.milk', 'late')])
+
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect(listener).toHaveBeenCalledWith([expect.objectContaining({ name: 'Nova', content: 'nova' })])
   })
 })
