@@ -378,9 +378,26 @@ const open = async (top = 0, left = 0) => {
   }, 0)
 
   startObservingSubmenus()
+  startRepositioningOnResize(left, top)
+}
+
+let sizeObserver: ResizeObserver | undefined
+
+/**
+ * A menu can grow after it opens (a lazily loaded component, late items), so keep it on screen as its size changes.
+ */
+const startRepositioningOnResize = (left: number, top: number) => {
+  sizeObserver = new ResizeObserver(() => positionAt(left, top).catch(logger.error))
+  sizeObserver.observe(el.value!)
+}
+
+const stopRepositioningOnResize = () => {
+  sizeObserver?.disconnect()
+  sizeObserver = undefined
 }
 
 const close = () => {
+  stopRepositioningOnResize()
   stopObservingSubmenus()
   clearTimeout(deferredListenerTimer)
   deferredListenerTimer = undefined
@@ -404,6 +421,7 @@ onBeforeUnmount(() => {
   deferredListenerTimer = undefined
 
   stopObservingSubmenus()
+  stopRepositioningOnResize()
   document.removeEventListener('pointerdown', onPointerDownOutside)
   el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
     clearTimeout(item.hideTimeout)

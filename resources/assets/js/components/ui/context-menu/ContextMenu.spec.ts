@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { screen } from '@testing-library/vue'
 import { defineComponent, shallowRef } from 'vue'
@@ -6,8 +6,19 @@ import { ContextMenuKey } from '@/config/symbols'
 import Component from './ContextMenu.vue'
 import ContextMenuItem from './ContextMenuItem.vue'
 
+const computePositionMock = vi.hoisted(() => vi.fn())
+
+vi.mock('@floating-ui/dom', async importOriginal => {
+  const original = await importOriginal<typeof import('@floating-ui/dom')>()
+  computePositionMock.mockImplementation(original.computePosition)
+
+  return { ...original, computePosition: computePositionMock }
+})
+
 describe('contextMenu', () => {
   const h = createHarness()
+
+  afterEach(() => vi.unstubAllGlobals())
 
   const provide = (options: ReturnType<typeof shallowRef>) => ({
     global: {
@@ -35,6 +46,36 @@ describe('contextMenu', () => {
 
     expect(showSpy).toHaveBeenCalled()
     showSpy.mockRestore()
+  })
+
+  it('positions the menu again when it grows after opening', async () => {
+    let reportResize: (() => void) | undefined
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(private readonly callback: () => void) {}
+
+        observe(target: Element) {
+          if (target.classList.contains('context-menu')) {
+            reportResize = this.callback
+          }
+        }
+
+        disconnect() {}
+      },
+    )
+
+    const options = shallowRef<any>({ component: null, position: { top: 0, left: 0 } })
+
+    h.render(Component, provide(options))
+
+    options.value = { component: { template: '<div>Menu</div>' }, position: { top: 100, left: 200 } }
+    await vi.waitFor(() => expect(reportResize).toBeDefined())
+    const timesPositionedOnOpen = computePositionMock.mock.calls.length
+
+    reportResize!()
+
+    await vi.waitFor(() => expect(computePositionMock).toHaveBeenCalledTimes(timesPositionedOnOpen + 1))
   })
 
   it('closes when options.component is cleared', async () => {
