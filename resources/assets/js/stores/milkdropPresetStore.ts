@@ -30,6 +30,15 @@ export const milkdropPresetStore = {
     return result
   },
 
+  async remove(name: string) {
+    await milkdropPresetLibrary.remove(name)
+    await this.load()
+
+    if (this.state.selected === name) {
+      this.select(RANDOM_PRESET)
+    }
+  },
+
   select(name: string) {
     this.state.selected = name
     lsSet(SELECTED_PRESET_STORAGE_KEY, name)

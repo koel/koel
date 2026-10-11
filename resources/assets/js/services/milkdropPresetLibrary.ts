@@ -32,6 +32,10 @@ export const milkdropPresetLibrary = {
     return (await (await getDB()).get('presets', name))?.content
   },
 
+  async remove(name: MilkdropPreset['name']) {
+    await (await getDB()).delete('presets', name)
+  },
+
   async importFiles(files: Iterable<File>) {
     const allFiles = [...files]
     const presetFiles = allFiles.filter(isMilkdropPresetFile)

@@ -20,6 +20,7 @@ export interface Modals {
   INVITE_USER_FORM: never
   KEYBOARD_SHORTCUTS: never
   KOEL_PLUS: never
+  MANAGE_MILKDROP_PRESETS: never
   PLAYLIST_COLLABORATION: { playlist: Playlist }
   CREATE_THEME_FORM: never
   REORDER_HOME_BLOCKS: { blocks: { id: string; label: string }[] }

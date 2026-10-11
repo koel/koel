@@ -2,7 +2,14 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { milkdropPresetStore, RANDOM_PRESET } from '@/stores/milkdropPresetStore'
+import ManageMilkdropPresetsModal from '@/components/visualizer/ManageMilkdropPresetsModal.vue'
 import Component from './VisualizerScreen.vue'
+
+const openModalSpy = vi.fn()
+
+vi.mock('@/composables/useModal', () => ({
+  useModal: () => ({ openModal: openModalSpy, closeModal: vi.fn() }),
+}))
 
 vi.mock('@/stores/visualizerStore', () => {
   const all = [
@@ -58,19 +65,13 @@ describe('visualizerScreen.vue', () => {
     expect(selectMock).toHaveBeenCalledWith('Nova')
   })
 
-  it('imports picked preset files and keeps the current choice', async () => {
-    const importMock = h
-      .mock(milkdropPresetStore, 'importFiles')
-      .mockResolvedValue({ importedNames: ['Aurora'], skippedCount: 0 })
-
+  it('opens the preset manager and keeps the current choice', async () => {
     const picker = await renderWithPresetPicker()
-    await h.user.selectOptions(picker, 'import-presets')
 
-    const preset = new File(['[preset00]'], 'Aurora.milk')
-    await h.user.upload(screen.getByLabelText('Preset files'), preset)
+    await h.user.selectOptions(picker, 'manage-presets')
 
-    expect(importMock).toHaveBeenCalledWith(expect.objectContaining({ 0: preset }))
-    expect((picker as HTMLSelectElement).value).toBe(RANDOM_PRESET)
+    expect(openModalSpy).toHaveBeenCalledWith(ManageMilkdropPresetsModal)
+    await waitFor(() => expect((picker as HTMLSelectElement).value).toBe(RANDOM_PRESET))
   })
 
   it('shows a preset the store switched to', async () => {

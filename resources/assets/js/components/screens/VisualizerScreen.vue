@@ -33,17 +33,8 @@
           >
             <option :value="RANDOM_PRESET">Random</option>
             <option v-for="name in presetState.names" :key="name" :value="name">{{ name }}</option>
-            <option :value="IMPORT_PRESETS">Import presets…</option>
+            <option :value="MANAGE_PRESETS">Manage presets…</option>
           </SelectBox>
-          <input
-            ref="presetFileInput"
-            accept=".milk"
-            aria-label="Preset files"
-            class="hidden"
-            multiple
-            type="file"
-            @change="importMilkdropPresets"
-          />
         </template>
       </div>
     </div>
@@ -61,10 +52,10 @@ import { logger } from '@/utils/logger'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { visualizerStore } from '@/stores/visualizerStore'
 import { milkdropPresetStore, RANDOM_PRESET } from '@/stores/milkdropPresetStore'
-import { useMessageToaster } from '@/composables/useMessageToaster'
-import { pluralize } from '@/utils/formatters'
+import { useModal } from '@/composables/useModal'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
+import ManageMilkdropPresetsModal from '@/components/visualizer/ManageMilkdropPresetsModal.vue'
 
 const visualizers = visualizerStore.all
 let destroyVisualizer: () => void
@@ -124,11 +115,10 @@ const render = async (viz: Visualizer) => {
 
 const selectedVisualizer = ref<Visualizer>()
 
-const IMPORT_PRESETS = 'import-presets'
+const MANAGE_PRESETS = 'manage-presets'
 
 const { state: presetState } = milkdropPresetStore
-const { toastSuccess, toastWarning } = useMessageToaster()
-const presetFileInput = ref<HTMLInputElement>()
+const { openModal } = useModal()
 const presetChoice = ref(presetState.selected)
 
 watch(
@@ -137,8 +127,8 @@ watch(
 )
 
 watch(presetChoice, async choice => {
-  if (choice === IMPORT_PRESETS) {
-    presetFileInput.value?.click()
+  if (choice === MANAGE_PRESETS) {
+    openModal<'MANAGE_MILKDROP_PRESETS'>(ManageMilkdropPresetsModal)
     await nextTick()
     presetChoice.value = presetState.selected
     return
@@ -146,21 +136,6 @@ watch(presetChoice, async choice => {
 
   milkdropPresetStore.select(choice)
 })
-
-const importMilkdropPresets = async (event: Event) => {
-  const input = event.target as HTMLInputElement
-  const { importedNames, skippedCount } = await milkdropPresetStore.importFiles(input.files ?? [])
-
-  input.value = ''
-
-  if (importedNames.length) {
-    toastSuccess(`Imported ${pluralize(importedNames, 'preset')}.`)
-  }
-
-  if (skippedCount) {
-    toastWarning(`Skipped ${pluralize(skippedCount, 'file')} that aren't .milk presets.`)
-  }
-}
 
 watch(selectedId, id => {
   preferences.visualizer = id

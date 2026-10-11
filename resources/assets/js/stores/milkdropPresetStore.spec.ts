@@ -29,4 +29,16 @@ describe('milkdropPresetStore', () => {
     expect(milkdropPresetStore.state.names).toEqual(['Aurora', 'Nova', 'Orbit'])
     expect(milkdropPresetStore.state.selected).toBe(selectedAfter)
   })
+
+  it('goes back to Random when the chosen preset is removed', async () => {
+    milkdropPresetStore.state.selected = 'Aurora'
+    const removeMock = h.mock(milkdropPresetLibrary, 'remove')
+    h.mock(milkdropPresetLibrary, 'getNames').mockResolvedValue(['Nova'])
+
+    await milkdropPresetStore.remove('Aurora')
+
+    expect(removeMock).toHaveBeenCalledWith('Aurora')
+    expect(milkdropPresetStore.state.names).toEqual(['Nova'])
+    expect(milkdropPresetStore.state.selected).toBe(RANDOM_PRESET)
+  })
 })
