@@ -25,10 +25,6 @@
 
     <footer>
       <div class="flex flex-col gap-3">
-        <div class="flex gap-2">
-          <Btn @click="fileInput?.click()">Import</Btn>
-          <Btn variant="ghost" @click.prevent="close">Close</Btn>
-        </div>
         <p class="text-k-fg-50 text-sm">
           Presets are saved in this browser only. You can download more presets
           <a
@@ -40,6 +36,10 @@
             <ExternalLinkIcon :size="12" /> </a
           >.
         </p>
+        <div class="flex gap-2">
+          <Btn @click="fileInput?.click()">Import</Btn>
+          <Btn variant="ghost" @click.prevent="close">Close</Btn>
+        </div>
         <input
           ref="fileInput"
           accept=".milk"
