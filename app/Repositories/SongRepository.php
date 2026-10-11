@@ -309,18 +309,12 @@ class SongRepository extends Repository implements ScoutableRepository
 
         $query = Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())->withUserContext();
 
-        $playlist->rule_groups->each(static function (RuleGroup $group, int $index) use ($query): void {
-            $whereClosure = static function (SongBuilder $subQuery) use ($group): void {
-                $group->rules->each(static function (Rule $rule) use ($subQuery): void {
-                    QueryModifier::applyRule($rule, $subQuery);
+        $query->where(static function (SongBuilder $anyGroupQuery) use ($playlist): void {
+            $playlist->rule_groups->each(static function (RuleGroup $group) use ($anyGroupQuery): void {
+                $anyGroupQuery->orWhere(static function (SongBuilder $groupQuery) use ($group): void {
+                    $group->rules->each(static fn (Rule $rule) => QueryModifier::applyRule($rule, $groupQuery));
                 });
-            };
-
-            $query->when(
-                $index === 0,
-                static fn (SongBuilder $query) => $query->where($whereClosure),
-                static fn (SongBuilder $query) => $query->orWhere($whereClosure),
-            );
+            });
         });
 
         return $query->orderBy('songs.title')->limit(self::LIST_SIZE_LIMIT)->get();

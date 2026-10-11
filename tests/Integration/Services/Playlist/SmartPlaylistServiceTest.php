@@ -565,6 +565,42 @@ class SmartPlaylistServiceTest extends TestCase
     }
 
     #[Test]
+    public function keepEpisodesOutOfEveryRuleGroup(): void
+    {
+        $fooSong = Song::factory()->createOne(['title' => 'Foo']);
+        $barSong = Song::factory()->createOne(['title' => 'Bar']);
+        Song::factory()->asEpisode()->createOne(['title' => 'Bar']);
+
+        $this->assertMatchesAgainstRules(
+            new Collection([$fooSong, $barSong]),
+            [
+                [
+                    'id' => Uuid::generate(),
+                    'rules' => [
+                        [
+                            'id' => Uuid::generate(),
+                            'model' => 'title',
+                            'operator' => 'is',
+                            'value' => ['Foo'],
+                        ],
+                    ],
+                ],
+                [
+                    'id' => Uuid::generate(),
+                    'rules' => [
+                        [
+                            'id' => Uuid::generate(),
+                            'model' => 'title',
+                            'operator' => 'is',
+                            'value' => ['Bar'],
+                        ],
+                    ],
+                ],
+            ],
+        );
+    }
+
+    #[Test]
     public function matchTextRegardlessOfCase(): void
     {
         $matches = Song::factory()->createMany([['title' => 'Foo Something']]);
