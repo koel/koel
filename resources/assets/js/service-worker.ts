@@ -5,14 +5,16 @@ declare const self: ServiceWorkerGlobalScope
 const AUDIO_CACHE_NAME = 'koel-audio-v1'
 const STATIC_CACHE_NAME = 'koel-static-v1'
 
+const AUTH_QUERY_PARAMS = ['t', 'expires', 'user', 'signature']
+
 /**
- * Normalize a play URL to a stable cache key by stripping the auth token query param.
+ * Normalize a play URL to a stable cache key by stripping the auth query params.
  * e.g. "https://example.com/play/abc123?t=token" -> "https://example.com/play/abc123"
- *      "https://example.com/play/abc123/1?t=token" -> "https://example.com/play/abc123/1"
+ *      "https://example.com/play/abc123/1?expires=1&user=u&signature=s" -> "https://example.com/play/abc123/1"
  */
 const normalizeCacheKey = (url: string): string => {
   const u = new URL(url)
-  u.searchParams.delete('t')
+  AUTH_QUERY_PARAMS.forEach(param => u.searchParams.delete(param))
   return u.toString()
 }
 

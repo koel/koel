@@ -79,19 +79,11 @@ export const authService = {
 
   setTokensUsingCompositeToken(compositeToken: CompositeToken) {
     this.setApiToken(compositeToken.token)
-    this.setAudioToken(compositeToken['audio-token'])
   },
 
   destroy: () => {
     lsRemove(API_TOKEN_STORAGE_KEY)
     lsRemove(AUDIO_TOKEN_STORAGE_KEY)
-  },
-
-  setAudioToken: (token: string) => lsSet(AUDIO_TOKEN_STORAGE_KEY, token),
-
-  getAudioToken: () => {
-    // for backward compatibility, we first try to get the audio token, and fall back to the (full-privileged) API token
-    return lsGet(AUDIO_TOKEN_STORAGE_KEY) || lsGet(API_TOKEN_STORAGE_KEY)
   },
 
   requestResetPasswordLink: async (email: string) => await http.post('forgot-password', { email }),

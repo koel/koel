@@ -63,7 +63,7 @@ Route::middleware('web')->group(static function (): void {
 
         if (config('koel.download.allow')) {
             Route::prefix('download')->group(static function (): void {
-                Route::get('songs', DownloadSongController::class);
+                Route::get('songs', DownloadSongController::class)->name('songs.download');
             });
         }
     });

@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import { commonStore } from '@/stores/commonStore'
-import { authService } from '@/services/authService'
+import { signedUrlService } from '@/services/signedUrlService'
 import { http } from '@/services/http'
 import { radioStationStore as store } from '@/stores/radioStationStore'
 
@@ -35,12 +34,12 @@ describe('radioStationStore', () => {
     expect(store.state.stations[0].name).toBe('Updated Station')
   })
 
-  it('gets source URL', () => {
-    commonStore.state.cdn_url = 'http://test/'
+  it('resolves a signed source URL', async () => {
     const station = h.factory('radio-station').make()
-    h.mock(authService, 'getAudioToken', 'hadouken')
+    const fetchMock = h.mock(signedUrlService, 'fetch').mockResolvedValue('http://test/radio/stream/signed')
 
-    expect(store.getSourceUrl(station)).toBe(`http://test/radio/stream/${station.id}?t=hadouken`)
+    expect(await store.resolveSourceUrl(station)).toBe('http://test/radio/stream/signed')
+    expect(fetchMock).toHaveBeenCalledWith(`radio/stations/${station.id}/stream-url`)
   })
 
   it('gets the currently playing station', () => {

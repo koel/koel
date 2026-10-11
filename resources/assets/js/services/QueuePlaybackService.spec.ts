@@ -87,6 +87,32 @@ describe('playbackService', () => {
     expect(logMock).toHaveBeenCalledWith(errorEvent)
   })
 
+  it('reloads an expired source and resumes where it stopped', async () => {
+    const song = h.factory('song').make({ playback_state: 'Playing' })
+    queueStore.state.playables = reactive([song])
+
+    const expiredAt = Math.floor(Date.now() / 1000) - 60
+    playbackService.media.src = `http://test/play/${song.id}?expires=${expiredAt}&signature=old`
+    const currentTimeSpy = vi.spyOn(playbackService.media, 'currentTime', 'get').mockReturnValue(42)
+
+    const forgetMock = h.mock(playableStore, 'forgetResolvedSourceUrl')
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue(`http://test/play/${song.id}?signature=new`)
+    const seekMock = h.mock(playbackService, 'seekTo')
+    const playMock = h.mock(window.HTMLMediaElement.prototype, 'play')
+    const playNextMock = h.mock(playbackService, 'playNext')
+
+    playbackService.media.dispatchEvent(new Event('error'))
+
+    await vi.waitFor(() => expect(playMock).toHaveBeenCalled())
+    expect(forgetMock).toHaveBeenCalledWith(song)
+    expect(playbackService.media.src).toBe(`http://test/play/${song.id}?signature=new`)
+    expect(seekMock).toHaveBeenCalledWith(42)
+    expect(playNextMock).not.toHaveBeenCalled()
+
+    currentTimeSpy.mockRestore()
+    playbackService.media.removeAttribute('src')
+  })
+
   const connectToLastfm = () => {
     commonStore.state.uses_last_fm = true
     userStore.state.current.preferences.lastfm_session_key = 'foo'
@@ -219,20 +245,20 @@ describe('playbackService', () => {
     expect(song.play_count_registered).toBe(true)
   })
 
-  it('preloads a playable', () => {
+  it('preloads a playable', async () => {
     const audioElement = {
       setAttribute: vi.fn(),
       load: vi.fn(),
     }
 
     const createElementMock = h.mock(document, 'createElement', audioElement)
-    h.mock(playableStore, 'getSourceUrl').mockReturnValue('/foo?token=o5afd')
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue('/foo?signature=o5afd')
     const song = h.factory('song').make()
 
-    playbackService.preload(song)
+    await playbackService.preload(song)
 
     expect(createElementMock).toHaveBeenCalledWith('audio')
-    expect(audioElement.setAttribute).toHaveBeenNthCalledWith(1, 'src', '/foo?token=o5afd')
+    expect(audioElement.setAttribute).toHaveBeenNthCalledWith(1, 'src', '/foo?signature=o5afd')
     expect(audioElement.setAttribute).toHaveBeenNthCalledWith(2, 'preload', 'auto')
     expect(audioElement.load).toHaveBeenCalled()
     expect(song.preloaded).toBe(true)

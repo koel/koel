@@ -14,6 +14,7 @@ import { eventBus } from '@/utils/eventBus'
 import { isAudioContextSupported } from '@/utils/supports'
 import { audioService } from '@/services/audioService'
 import { http } from '@/services/http'
+import { signedUrlService } from '@/services/signedUrlService'
 import { lastWriteWins } from '@/utils/lastWriteWins'
 import { socketService } from '@/services/socketService'
 import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
@@ -76,12 +77,13 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
   }
 
-  public preload(playable: Playable) {
+  public async preload(playable: Playable) {
+    playable.preloaded = true
+
     const audioElement = document.createElement('audio')
-    audioElement.setAttribute('src', playableStore.getSourceUrl(playable))
+    audioElement.setAttribute('src', await playableStore.resolveSourceUrl(playable))
     audioElement.setAttribute('preload', 'auto')
     audioElement.load()
-    playable.preloaded = true
   }
 
   /**
@@ -151,7 +153,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       this.showNotification(playable)
     } else {
       // Normal playback: set src and start
-      this.media.src = playableStore.getSourceUrl(playable)
+      this.media.src = await playableStore.resolveSourceUrl(playable)
 
       if (position === 0) {
         await this.restart()
@@ -302,7 +304,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     if (!this.media.src) {
       // on first load when the queue is loaded from saved state, the player's src is empty
       // we need to properly set it as well as any kind of playback metadata
-      this.media.src = playableStore.getSourceUrl(playable)
+      this.media.src = await playableStore.resolveSourceUrl(playable)
       this.seekTo(commonStore.state.queue_state.playback_position)
 
       await this.setNowPlayingMeta(queueStore.current!)
@@ -411,9 +413,29 @@ export class QueuePlaybackService extends BasePlaybackService {
     preferences.repeat_mode === 'REPEAT_ONE' ? this.restart() : this.playNext()
   }
 
-  protected onError(error: ErrorEvent): void {
+  protected async onError(error: ErrorEvent) {
     logger.error(error)
-    this.playNext()
+
+    const playable = queueStore.current
+
+    if (playable && signedUrlService.hasExpired(this.media.src)) {
+      await this.reloadExpiredSource(playable)
+      return
+    }
+
+    await this.playNext()
+  }
+
+  private async reloadExpiredSource(playable: Playable) {
+    const position = this.media.currentTime
+
+    playableStore.forgetResolvedSourceUrl(playable)
+    this.media.src = await playableStore.resolveSourceUrl(playable)
+    this.seekTo(position)
+
+    if (playable.playback_state === 'Playing') {
+      await this.media.play()
+    }
   }
 
   protected onTimeUpdate(): void {

@@ -8,8 +8,7 @@ export const invitationService = {
   async accept(token: string, name: string, password: string) {
     const compositeToken = await http.post<CompositeToken>('invitations/accept', { token, name, password })
 
-    authService.setAudioToken(compositeToken['audio-token'])
-    authService.setApiToken(compositeToken.token)
+    authService.setTokensUsingCompositeToken(compositeToken)
   },
 
   invite: async (emails: string[], role: Role) => {

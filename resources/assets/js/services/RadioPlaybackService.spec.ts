@@ -28,7 +28,7 @@ describe('playbackService', () => {
 
     const playMock = h.mock(playbackService.media, 'play')
     const broadcastMock = h.mock(socketService, 'broadcast')
-    h.mock(radioStationStore, 'getSourceUrl', 'https://station.com/stream.mp3')
+    h.mock(radioStationStore, 'resolveSourceUrl').mockResolvedValue('https://station.com/stream.mp3')
 
     const startPollingMock = h.mock(radioStationStore, 'startPolling')
 

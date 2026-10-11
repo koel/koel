@@ -1,4 +1,4 @@
-import { authService } from '@/services/authService'
+import { signedUrlService } from '@/services/signedUrlService'
 import { zipDownloadService } from '@/services/zipDownloadService'
 import { playableStore } from '@/stores/playableStore'
 import { arrayify } from '@/utils/helpers'
@@ -8,7 +8,7 @@ export const downloadService = {
     const items = arrayify(playables)
 
     if (items.length === 1) {
-      this.trigger(items[0])
+      await this.trigger(items[0])
       return
     }
 
@@ -35,7 +35,10 @@ export const downloadService = {
     await zipDownloadService.start(playableStore.state.favorites, 'Favorites', 'none')
   },
 
-  trigger: (playable: Playable) => {
-    open(`${window.KOEL.base_url}download/songs?songs[]=${playable.id}&t=${authService.getAudioToken()}`)
+  async trigger(playable: Playable) {
+    const link = document.createElement('a')
+    link.href = await signedUrlService.fetch(`songs/${playable.id}/download-url`)
+    link.download = ''
+    link.click()
   },
 }

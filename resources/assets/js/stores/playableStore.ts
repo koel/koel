@@ -6,9 +6,9 @@ import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
 import { sha256 } from '@/utils/crypto'
 import { normalizeForComparison, secondsToHumanReadable } from '@/utils/formatters'
-import { authService } from '@/services/authService'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
+import { signedUrlService } from '@/services/signedUrlService'
 import { useVault } from '@/composables/useVault'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { commonStore } from '@/stores/commonStore'
@@ -43,6 +43,11 @@ export interface SongUpdateResult {
 
 export type SongListPaginateParams = PaginateParams<PlayableListSortField>
 export type SongListCursorPaginateParams = CursorPaginateParams<PlayableListSortField>
+
+const shouldTranscode = () => isMobile.any && preferenceStore.transcode_on_mobile
+
+const getPlayUrlEndpoint = (playable: Playable) =>
+  shouldTranscode() ? `songs/${playable.id}/play-url?transcode=1` : `songs/${playable.id}/play-url`
 
 const watchPlayCount = (playable: Playable) => {
   watch(
@@ -194,11 +199,24 @@ export const playableStore = {
     return result
   },
 
-  getSourceUrl: (playable: Playable) => {
-    return isMobile.any && preferenceStore.transcode_on_mobile
-      ? `${commonStore.state.cdn_url}play/${playable.id}/1?t=${authService.getAudioToken()}`
-      : `${commonStore.state.cdn_url}play/${playable.id}?t=${authService.getAudioToken()}`
+  getUnsignedSourceUrl: (playable: Playable) => {
+    return shouldTranscode()
+      ? `${commonStore.state.cdn_url}play/${playable.id}/1`
+      : `${commonStore.state.cdn_url}play/${playable.id}`
   },
+
+  async resolveSourceUrl(playable: Playable) {
+    try {
+      return await signedUrlService.fetch(getPlayUrlEndpoint(playable))
+    } catch (error: unknown) {
+      logger.warn('Failed to get a signed play URL, falling back to the offline copy', error)
+      return this.getUnsignedSourceUrl(playable)
+    }
+  },
+
+  getResolvedSourceUrl: (playable: Playable) => signedUrlService.getCached(getPlayUrlEndpoint(playable)),
+
+  forgetResolvedSourceUrl: (playable: Playable) => signedUrlService.forget(getPlayUrlEndpoint(playable)),
 
   getShareableUrl: (song: Playable) => clientUrl(`/songs/${song.id}`),
 

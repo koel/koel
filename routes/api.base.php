@@ -39,9 +39,12 @@ use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchListeningStatisticsController;
 use App\Http\Controllers\API\FetchOverviewController;
+use App\Http\Controllers\API\FetchRadioStationStreamUrlController;
 use App\Http\Controllers\API\FetchRandomAlbumsController;
 use App\Http\Controllers\API\FetchRandomArtistsController;
 use App\Http\Controllers\API\FetchRecentlyPlayedSongController;
+use App\Http\Controllers\API\FetchSongDownloadUrlController;
+use App\Http\Controllers\API\FetchSongPlayUrlController;
 use App\Http\Controllers\API\FetchSongsByIdsController;
 use App\Http\Controllers\API\FetchSongsForQueueController;
 use App\Http\Controllers\API\FetchSongsToQueueByGenreController;
@@ -172,6 +175,14 @@ Route::prefix('api')
             Route::apiResource('artists.songs', ArtistSongController::class);
 
             Route::post('songs/{song}/scrobble', ScrobbleController::class)->where(['song' => Uuid::REGEX]);
+
+            Route::get('songs/{song}/play-url', FetchSongPlayUrlController::class)->where(['song' => Uuid::REGEX]);
+
+            if (config('koel.download.allow')) {
+                Route::get('songs/{song}/download-url', FetchSongDownloadUrlController::class)->where([
+                    'song' => Uuid::REGEX,
+                ]);
+            }
 
             Route::get('songs/{song}/waveform', FetchSongWaveformController::class)->where([
                 'song' => Uuid::REGEX,
@@ -328,6 +339,7 @@ Route::prefix('api')
             Route::group(['prefix' => 'radio', 'middleware' => 'radio.enabled'], static function (): void {
                 Route::apiResource('stations', RadioStationController::class);
                 Route::get('stations/{radioStation}/now-playing', RadioStationNowPlayingController::class);
+                Route::get('stations/{radioStation}/stream-url', FetchRadioStationStreamUrlController::class);
             });
 
             // AI assistant

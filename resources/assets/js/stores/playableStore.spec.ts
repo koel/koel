@@ -2,7 +2,7 @@ import { reactive } from 'vue'
 import { describe, expect, it } from 'vite-plus/test'
 import isMobile from 'ismobilejs'
 import { createHarness } from '@/__tests__/TestHarness'
-import { authService } from '@/services/authService'
+import { signedUrlService } from '@/services/signedUrlService'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import type { SongUpdateResult } from '@/stores/playableStore'
@@ -146,16 +146,40 @@ describe('playableStore', () => {
     expect(removeArtistsMock).toHaveBeenCalledWith(['led-zeppelin'])
   })
 
-  it('gets source URL', () => {
+  it('gets the unsigned source URL', () => {
     commonStore.state.cdn_url = 'http://test/'
     const song = h.factory('song').make()
-    h.mock(authService, 'getAudioToken', 'hadouken')
 
-    expect(playableStore.getSourceUrl(song)).toBe(`http://test/play/${song.id}?t=hadouken`)
+    expect(playableStore.getUnsignedSourceUrl(song)).toBe(`http://test/play/${song.id}`)
 
     isMobile.any = true
     preferenceStore.temporary.transcode_on_mobile = true
-    expect(playableStore.getSourceUrl(song)).toBe(`http://test/play/${song.id}/1?t=hadouken`)
+    expect(playableStore.getUnsignedSourceUrl(song)).toBe(`http://test/play/${song.id}/1`)
+  })
+
+  it('resolves a signed source URL', async () => {
+    const song = h.factory('song').make()
+    const fetchMock = h.mock(signedUrlService, 'fetch').mockResolvedValue('http://test/play/signed')
+
+    isMobile.any = false
+
+    expect(await playableStore.resolveSourceUrl(song)).toBe('http://test/play/signed')
+    expect(fetchMock).toHaveBeenCalledWith(`songs/${song.id}/play-url`)
+
+    isMobile.any = true
+    preferenceStore.temporary.transcode_on_mobile = true
+    await playableStore.resolveSourceUrl(song)
+    expect(fetchMock).toHaveBeenLastCalledWith(`songs/${song.id}/play-url?transcode=1`)
+  })
+
+  it('falls back to the unsigned source URL when signing fails', async () => {
+    commonStore.state.cdn_url = 'http://test/'
+    const song = h.factory('song').make()
+    h.mock(signedUrlService, 'fetch').mockRejectedValue(new Error('offline'))
+
+    isMobile.any = false
+
+    expect(await playableStore.resolveSourceUrl(song)).toBe(`http://test/play/${song.id}`)
   })
 
   it('gets shareable URL', () => {

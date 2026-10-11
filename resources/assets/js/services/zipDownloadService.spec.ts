@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { signedUrlService } from '@/services/signedUrlService'
 import {
   getExtensionFromResponse,
   isArchiveCreatedBefore,
@@ -77,6 +78,7 @@ describe('zipDownloadService', () => {
     )
 
   beforeEach(() => {
+    h.mock(signedUrlService, 'fetch').mockResolvedValue('http://localhost/download/songs?signature=s')
     URL.createObjectURL = vi.fn().mockReturnValue('blob:zip')
     URL.revokeObjectURL = vi.fn()
   })

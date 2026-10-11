@@ -8,7 +8,7 @@ export class RadioPlaybackService extends BasePlaybackService {
     use(radioStationStore.current, station => (station.playback_state = 'Stopped'))
 
     station.playback_state = 'Playing'
-    this.media.src = radioStationStore.getSourceUrl(station)
+    this.media.src = await radioStationStore.resolveSourceUrl(station)
     await this.media.play()
 
     radioStationStore.startPolling(station)
