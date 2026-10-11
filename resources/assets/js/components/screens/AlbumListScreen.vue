@@ -5,13 +5,7 @@
         Albums
         <template #controls>
           <div class="flex gap-2">
-            <Btn v-koel-tooltip variant="ghost" class="border border-k-fg-10" @click.prevent="toggleFavoritesOnly">
-              <Icon
-                :icon="preferences.albums_favorites_only ? faHeart : faEmptyHeart"
-                :class="preferences.albums_favorites_only && 'text-k-love'"
-              />
-              <span class="sr-only">{{ preferences.albums_favorites_only ? 'Show all' : 'Show favorites only' }}</span>
-            </Btn>
+            <FavoritesOnlyToggle :active="preferences.albums_favorites_only" @toggle="toggleFavoritesOnly" />
 
             <AlbumListSorter
               v-if="preferences.albums_view_mode !== 'table'"
@@ -84,8 +78,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
-import { faCompactDisc, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
@@ -97,11 +90,11 @@ import AlbumGrid from '@/components/album/AlbumGrid.vue'
 import AlbumTable from '@/components/album/AlbumTable.vue'
 import AlbumTableRowSkeleton from '@/components/album/AlbumTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import AlbumListSorter from '@/components/album/AlbumListSorter.vue'
-import Btn from '@/components/ui/form/Btn.vue'
 import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 
 const grid = ref<InstanceType<typeof AlbumGrid>>()

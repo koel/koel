@@ -84,7 +84,7 @@ describe('albumListScreen.vue', () => {
   it('shows all or only favorites upon toggling the button', async () => {
     const { paginateMock } = await renderComponent()
 
-    await h.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
+    await h.user.click(screen.getByRole('button', { name: 'Favorites only' }))
 
     await waitFor(() =>
       expect(paginateMock).toHaveBeenNthCalledWith(2, {
@@ -95,7 +95,7 @@ describe('albumListScreen.vue', () => {
       }),
     )
 
-    await h.user.click(screen.getByRole('button', { name: 'Show all' }))
+    await h.user.click(screen.getByRole('button', { name: 'Favorites only' }))
 
     await waitFor(() =>
       expect(paginateMock).toHaveBeenNthCalledWith(3, {

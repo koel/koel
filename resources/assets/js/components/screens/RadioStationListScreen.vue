@@ -6,22 +6,7 @@
 
         <template #controls>
           <div class="flex gap-2">
-            <Btn
-              size="small"
-              v-koel-tooltip
-              variant="ghost"
-              class="border border-k-fg-10"
-              @click.prevent="toggleFavoritesOnly"
-            >
-              <Icon
-                :icon="preferences.radio_stations_favorites_only ? faHeart : faEmptyHeart"
-                :class="preferences.radio_stations_favorites_only && 'text-k-love'"
-                size="sm"
-              />
-              <span class="sr-only">{{
-                preferences.radio_stations_favorites_only ? 'Show all' : 'Show favorites only'
-              }}</span>
-            </Btn>
+            <FavoritesOnlyToggle :active="preferences.radio_stations_favorites_only" @toggle="toggleFavoritesOnly" />
 
             <RadioStationListSorter
               v-if="preferences.radio_stations_view_mode !== 'table'"
@@ -82,9 +67,8 @@
 </template>
 
 <script setup lang="ts">
-import { faAdd, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { RadioIcon } from 'lucide-vue-next'
-import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 
 import { computed, onMounted, provide, ref } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
@@ -98,6 +82,7 @@ import { usePolicies } from '@/composables/usePolicies'
 import { useModal } from '@/composables/useModal'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
