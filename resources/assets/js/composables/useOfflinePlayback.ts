@@ -36,13 +36,6 @@ const cachingProgress = ref(new Map<Song['id'], number>())
  * Key: song ID, Value: error message.
  */
 const cachingErrors = ref(new Map<Song['id'], string>())
-const pendingCachingRequests = new Map<Song['id'], symbol>()
-
-const cancelPendingCaching = (songId: Song['id']) => {
-  if (pendingCachingRequests.delete(songId)) {
-    cachingProgress.value.delete(songId)
-  }
-}
 
 /** Storage estimate from navigator.storage API. */
 const storageUsage = ref(0)
@@ -220,8 +213,6 @@ const setupSongDeletionListener = () => {
     const sw = getSW()
 
     for (const song of deletedSongs) {
-      cancelPendingCaching(song.id)
-
       if (!cachedSongIds.value.has(song.id)) {
         continue
       }
@@ -266,27 +257,15 @@ export const useOfflinePlayback = () => {
     cachingProgress.value.set(playable.id, 0)
     cachingErrors.value.delete(playable.id)
 
-    const request = Symbol(playable.id)
-    pendingCachingRequests.set(playable.id, request)
-
     let sourceUrl: string
 
     try {
       sourceUrl = await playableStore.resolveSourceUrl(playable)
     } catch (error: unknown) {
-      if (pendingCachingRequests.get(playable.id) === request) {
-        cancelPendingCaching(playable.id)
-        cachingErrors.value.set(playable.id, error instanceof Error ? error.message : 'Unknown error')
-      }
-
+      cachingProgress.value.delete(playable.id)
+      cachingErrors.value.set(playable.id, error instanceof Error ? error.message : 'Unknown error')
       return
     }
-
-    if (pendingCachingRequests.get(playable.id) !== request) {
-      return
-    }
-
-    pendingCachingRequests.delete(playable.id)
 
     sw.postMessage({
       type: 'CACHE_AUDIO',
@@ -296,8 +275,6 @@ export const useOfflinePlayback = () => {
   }
 
   const removeOfflineCache = (playable: Playable) => {
-    cancelPendingCaching(playable.id)
-
     const sw = getSW()
     if (!sw) return
 
@@ -311,8 +288,6 @@ export const useOfflinePlayback = () => {
   }
 
   const clearAllOfflineCache = async () => {
-    ;[...pendingCachingRequests.keys()].forEach(cancelPendingCaching)
-
     const sw = getSW()
     if (!sw) return
 

@@ -182,11 +182,6 @@ export class QueuePlaybackService extends BasePlaybackService {
 
       this.media.src = sourceUrl
 
-      if (playable.playback_state !== 'Playing') {
-        this.seekTo(position)
-        return
-      }
-
       if (position === 0) {
         await this.restart()
       } else {
