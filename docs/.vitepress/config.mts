@@ -73,6 +73,7 @@ export default defineConfig({
           { text: 'Playlists', link: '/usage/playlists' },
           { text: 'Instant Search', link: '/usage/search' },
           { text: 'Themes', link: '/usage/themes' },
+          { text: 'Visualizers', link: '/usage/visualizers' },
           { text: 'Artist, Album, & Playlist Arts', link: '/usage/artist-album-playlist-arts' },
           { text: 'Podcasts', link: '/usage/podcasts' },
           { text: 'Radio', link: '/usage/radio' },

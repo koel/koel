@@ -67,7 +67,7 @@ From the same area, you can also:
 * <InterfaceIcon :src="heartIcon" alt="Heart" /> like/unlike the current song
 * <InterfaceIcon :src="repeatIcon" alt="Repeat" /> switch between repeat modes
 * <InterfaceIcon :src="queueIcon" alt="Queue" /> toggle the Queue screen
-* <InterfaceIcon :src="boltIcon" alt="Bolt" /> show the visualizer
+* <InterfaceIcon :src="boltIcon" alt="Bolt" /> show the [visualizer](./visualizers)
 * <InterfaceIcon :src="audioLinesIcon" alt="Equalizer" /> show the equalizer
 * <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
 * <InterfaceIcon :src="expandIcon" alt="Expand" /> toggle full-screen mode
