@@ -1,5 +1,10 @@
 <template>
-  <form class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form
+    class="md:w-[560px]"
+    @invalid.capture="showTabOfInvalidField"
+    @submit.prevent="handleSubmit"
+    @keydown.esc="maybeClose"
+  >
     <header>
       <h1>New Smart Playlist</h1>
     </header>
@@ -9,17 +14,17 @@
         <TabList>
           <TabButton
             id="createSmartPlaylistTabDetails"
-            :selected="currentTab === 'details'"
+            :selected="isTabActive('details')"
             aria-controls="createSmartPlaylistDetails"
-            @click="currentTab = 'details'"
+            @click="activateTab('details')"
           >
             Details
           </TabButton>
           <TabButton
             id="createSmartPlaylistTabRules"
-            :selected="currentTab === 'rules'"
+            :selected="isTabActive('rules')"
             aria-controls="createSmartPlaylistRules"
-            @click="currentTab = 'rules'"
+            @click="activateTab('rules')"
           >
             Rules
           </TabButton>
@@ -27,7 +32,8 @@
 
         <TabPanelContainer>
           <TabPanel
-            v-show="currentTab === 'details'"
+            v-show="isTabActive('details')"
+            data-tab="details"
             id="createSmartPlaylistDetails"
             aria-labelledby="createSmartPlaylistTabDetails"
             class="space-y-5"
@@ -49,7 +55,8 @@
             </div>
           </TabPanel>
           <TabPanel
-            v-show="currentTab === 'rules'"
+            v-show="isTabActive('rules')"
+            data-tab="rules"
             id="createSmartPlaylistRules"
             aria-labelledby="createSmartPlaylistTabRules"
             class="space-y-5"
@@ -73,7 +80,7 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="!collectedRuleGroups.length" type="submit">Save</Btn>
       <Btn variant="ghost" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -82,7 +89,6 @@
 <script lang="ts" setup>
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { isEqual } from 'lodash-es'
-import { ref } from 'vue'
 import type { CreatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
@@ -107,13 +113,22 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { folder: targetFolder } = props
 
-const { Btn, RuleGroup, collectedRuleGroups, addGroup, onGroupChanged } = useSmartPlaylistForm()
+const initialRuleGroups = [playlistStore.createEmptySmartPlaylistRuleGroup()]
+
+const {
+  Btn,
+  RuleGroup,
+  activateTab,
+  isTabActive,
+  showTabOfInvalidField,
+  collectedRuleGroups,
+  addGroup,
+  onGroupChanged,
+} = useSmartPlaylistForm(structuredClone(initialRuleGroups))
 
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { go, url } = useRouter()
-
-const currentTab = ref<'details' | 'rules'>('details')
 
 const close = () => emit('close')
 
@@ -125,7 +140,8 @@ const { data, isPristine, handleSubmit } = useForm<CreatePlaylistData>({
     folder_name: null,
     cover: null,
   },
-  isPristine: (original, current) => isEqual(original, current) && collectedRuleGroups.value.length === 0,
+  isPristine: (original, current) =>
+    isEqual(original, current) && isEqual(collectedRuleGroups.value, initialRuleGroups),
   onSubmit: async data =>
     await playlistStore.store({
       ...data,

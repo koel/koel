@@ -28,6 +28,22 @@ describe('smartPlaylistRule', () => {
     })
   }
 
+  it('keeps the value when switching to an operator that takes the same input', async () => {
+    const { emitted } = renderComponent(createRule({ model: titleModel, operator: 'is', value: ['Love'] }))
+
+    await h.user.selectOptions(screen.getAllByRole('combobox')[1], screen.getByRole('option', { name: 'contains' }))
+
+    expect(emitted().input.at(-1)).toEqual([expect.objectContaining({ operator: 'contains', value: ['Love'] })])
+  })
+
+  it('clears the value when switching to an operator that takes a different input', async () => {
+    const { emitted } = renderComponent(createRule({ model: yearModel, operator: 'is', value: [2020] }))
+
+    await h.user.selectOptions(screen.getAllByRole('combobox')[1], screen.getByRole('option', { name: 'is between' }))
+
+    expect(emitted().input.at(-1)).toEqual([expect.objectContaining({ operator: 'isBetween', value: ['', ''] })])
+  })
+
   it('renders the model dropdown', () => {
     renderComponent()
 

@@ -15,7 +15,10 @@
 
         <template v-if="filteredPlayables.length || playlist.is_collaborative" #meta>
           <CollaboratorsBadge v-if="collaborators.length" :collaborators />
-          <span>{{ pluralize(filteredPlayables, 'item') }}</span>
+          <span v-if="showsFirstSmartPlaylistMatchesOnly" data-testid="smart-playlist-limit-notice"
+            >First {{ SMART_PLAYLIST_MATCH_LIMIT }} matches</span
+          >
+          <span v-else>{{ pluralize(filteredPlayables, 'item') }}</span>
           <span>{{ duration }}</span>
         </template>
 
@@ -74,7 +77,7 @@
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { differenceBy } from 'lodash-es'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { playlistStore } from '@/stores/playlistStore'
@@ -145,6 +148,12 @@ const collaborators = ref<PlaylistCollaborator[]>([])
 const playlistId = ref<Playlist['id']>()
 const playlist = ref<Playlist>()
 const loading = ref(false)
+
+const SMART_PLAYLIST_MATCH_LIMIT = 500
+
+const showsFirstSmartPlaylistMatchesOnly = computed(
+  () => playlist.value?.is_smart && allPlayables.value.length >= SMART_PLAYLIST_MATCH_LIMIT,
+)
 
 usePageTitle().useScreenTitle('Playlist', () => playlist.value?.name)
 
@@ -253,7 +262,7 @@ watch(playlistId, async id => {
   // (re)apply the filter based on the current state's keywords
   filterKeywords.value = currentState.filterKeywords
 
-  await fetchDetails()
+  await fetchDetails(playlist.value.is_smart)
 
   listConfig.reorderable = currentState.sortField === 'position'
   listConfig.collaborative = playlist.value.is_collaborative
@@ -265,7 +274,15 @@ watch(playlistId, async id => {
   sort(currentState.sortField, currentState.sortOrder)
 })
 
-onScreenActivated('Playlist', () => (playlistId.value = getRouteParam('id')!))
+onScreenActivated('Playlist', () => {
+  const id = getRouteParam('id')!
+
+  if (id === playlistId.value && playlist.value?.is_smart) {
+    fetchDetails(true)
+  }
+
+  playlistId.value = id
+})
 
 const requestContextMenu = (event: MouseEvent) =>
   openContextMenu<'PLAYLIST'>(ContextMenu, event, {

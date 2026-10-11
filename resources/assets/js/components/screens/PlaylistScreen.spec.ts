@@ -17,8 +17,7 @@ vi.mock('@/composables/useContextMenu')
 describe('playlistScreen.vue', () => {
   const h = createHarness()
 
-  const renderComponent = async (songs: Playable[] = []) => {
-    const playlist = h.factory('playlist').make()
+  const renderComponent = async (songs: Playable[] = [], playlist = h.factory('playlist').make()) => {
     h.actingAsUser(h.factory('user').state('current').make({ id: playlist.owner_id }) as CurrentUser)
 
     playlistStore.state.playlists = []
@@ -37,7 +36,7 @@ describe('playlistScreen.vue', () => {
 
     h.visit(`playlists/${playlist.id}`)
 
-    await waitFor(() => expect(fetchSongsMock).toHaveBeenCalledWith(playlist, false))
+    await waitFor(() => expect(fetchSongsMock).toHaveBeenCalledWith(playlist, playlist.is_smart))
 
     return {
       ...rendered,
@@ -45,6 +44,24 @@ describe('playlistScreen.vue', () => {
       fetchSongsMock,
     }
   }
+
+  it('fetches fresh songs every time a smart playlist is opened', async () => {
+    const playlist = h.factory('playlist').state('smart').make()
+    const { fetchSongsMock } = await renderComponent([], playlist)
+    fetchSongsMock.mockResolvedValue([])
+
+    h.visit('home')
+    h.visit(`playlists/${playlist.id}`)
+
+    await waitFor(() => expect(fetchSongsMock).toHaveBeenLastCalledWith(playlist, true))
+    expect(fetchSongsMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('says when a smart playlist shows only its first matches', async () => {
+    await renderComponent(h.factory('song').make(500), h.factory('playlist').state('smart').make())
+
+    screen.getByTestId('smart-playlist-limit-notice')
+  })
 
   it('renders the playlist', async () => {
     await renderComponent(h.factory('song').make(10))

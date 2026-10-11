@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { playlistStore } from '@/stores/playlistStore'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -11,6 +11,19 @@ export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[]
   const currentTab = ref<SmartPlaylistFormTab>('details')
   const activateTab = (tab: SmartPlaylistFormTab) => (currentTab.value = tab)
   const isTabActive = (tab: SmartPlaylistFormTab) => currentTab.value === tab
+
+  const showTabOfInvalidField = async (event: Event) => {
+    const field = event.target as HTMLInputElement
+    const tab = field.closest<HTMLElement>('[data-tab]')?.dataset.tab as SmartPlaylistFormTab | undefined
+
+    if (!tab || isTabActive(tab)) {
+      return
+    }
+
+    activateTab(tab)
+    await nextTick()
+    field.reportValidity()
+  }
 
   const collectedRuleGroups = ref<SmartPlaylistRuleGroup[]>(initialRuleGroups)
 
@@ -32,6 +45,7 @@ export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[]
     currentTab,
     activateTab,
     isTabActive,
+    showTabOfInvalidField,
     collectedRuleGroups,
     addGroup,
     onGroupChanged,
