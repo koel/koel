@@ -2,6 +2,16 @@
   <div v-koel-focus class="md:w-[560px]" tabindex="0" @keydown.esc="close">
     <header class="items-center gap-4">
       <h1 class="flex-1">MilkDrop Presets</h1>
+      <Btn bordered variant="ghost" @click="fileInput?.click()">Import</Btn>
+      <input
+        ref="fileInput"
+        accept=".milk"
+        aria-label="Preset files"
+        class="hidden"
+        multiple
+        type="file"
+        @change="importPresets"
+      />
       <button
         class="w-8 h-8 inline-grid place-items-center rounded-full text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5"
         type="button"
@@ -25,19 +35,7 @@
         >.
       </p>
 
-      <div class="flex gap-2">
-        <TextInput v-model="keywords" aria-label="Search presets" class="flex-1" placeholder="Search" type="search" />
-        <Btn bordered variant="ghost" @click="fileInput?.click()">Import</Btn>
-        <input
-          ref="fileInput"
-          accept=".milk"
-          aria-label="Preset files"
-          class="hidden"
-          multiple
-          type="file"
-          @change="importPresets"
-        />
-      </div>
+      <TextInput v-model="keywords" aria-label="Search presets" placeholder="Search" type="search" />
 
       <ul v-if="shownNames.length" class="max-h-[50vh] overflow-auto">
         <MilkdropPresetListItem v-for="name in shownNames" :key="name" :name />
