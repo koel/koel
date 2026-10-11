@@ -15,10 +15,10 @@
 
         <template v-if="filteredPlayables.length || playlist.is_collaborative" #meta>
           <CollaboratorsBadge v-if="collaborators.length" :collaborators />
-          <span v-if="showsFirstSmartPlaylistMatchesOnly" data-testid="smart-playlist-limit-notice"
-            >First {{ SMART_PLAYLIST_MATCH_LIMIT }} matches</span
-          >
-          <span v-else>{{ pluralize(filteredPlayables, 'item') }}</span>
+          <span>{{ pluralize(filteredPlayables, 'item') }}</span>
+          <span v-if="showsFirstSmartPlaylistMatchesOnly" data-testid="smart-playlist-limit-notice">
+            First {{ SMART_PLAYLIST_MATCH_LIMIT }} matches
+          </span>
           <span>{{ duration }}</span>
         </template>
 
