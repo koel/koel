@@ -51,7 +51,9 @@ class UserService
 
         if ($existingUser) {
             $existingUser->update([
-                'avatar' => $existingUser->has_custom_avatar ? $existingUser->avatar : $ssoUser->avatar,
+                'avatar' => $existingUser->has_custom_avatar
+                    ? $existingUser->getRawOriginal('avatar')
+                    : $ssoUser->avatar,
                 'sso_id' => $ssoUser->id,
                 'sso_provider' => $ssoUser->provider,
             ]);

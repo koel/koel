@@ -138,6 +138,26 @@ class UserServiceTest extends PlusTestCase
     }
 
     #[Test]
+    public function updateUserFromSsoKeepsUploadedAvatar(): void
+    {
+        $user = create_user([
+            'email' => 'bruce@iron.com',
+            'avatar' => 'uploaded.webp',
+        ]);
+
+        $socialiteUser = Mockery::mock(SocialiteUser::class, [
+            'getId' => '123',
+            'getEmail' => 'bruce@iron.com',
+            'getName' => 'Bruce Dickinson',
+            'getAvatar' => 'https://lh3.googleusercontent.com/a/vatar',
+        ]);
+
+        $this->service->createOrUpdateUserFromSso(SsoUser::fromSocialite($socialiteUser, 'Google'));
+
+        self::assertSame('uploaded.webp', $user->refresh()->getRawOriginal('avatar'));
+    }
+
+    #[Test]
     public function updateSsoUserCannotChangeProfileDetails(): void
     {
         $user = create_user([
