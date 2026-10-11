@@ -1,11 +1,7 @@
 <template>
-  <div v-koel-focus class="md:w-[560px]" tabindex="0" @keydown.esc="close">
-    <header class="items-center gap-4">
-      <h1 class="flex-1">MilkDrop Presets</h1>
-      <button class="w-8 h-8 rounded-full text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5" type="button" @click="close">
-        <XIcon :size="16" />
-        <span class="sr-only">Close</span>
-      </button>
+  <div v-koel-focus class="md:w-[560px] flex flex-col" tabindex="0" @keydown.esc="close">
+    <header>
+      <h1>MilkDrop Presets</h1>
     </header>
 
     <main class="flex flex-col gap-4">
@@ -43,14 +39,19 @@
         <ExternalLinkIcon :size="14" />
       </a>
     </main>
+
+    <footer>
+      <Btn @click.prevent="close">Close</Btn>
+    </footer>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ExternalLinkIcon, XIcon } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { ExternalLinkIcon } from 'lucide-vue-next'
+import { computed, ref, toRef } from 'vue'
 import { milkdropPresetStore } from '@/stores/milkdropPresetStore'
 import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { pluralize } from '@/utils/formatters'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -68,11 +69,9 @@ const { toastSuccess, toastWarning } = useMessageToaster()
 const keywords = ref('')
 const fileInput = ref<HTMLInputElement>()
 
-const matchingNames = computed(() => {
-  const search = keywords.value.trim().toLowerCase()
+const fuzzy = useFuzzySearch(toRef(state, 'names'), [])
 
-  return search ? state.names.filter(name => name.toLowerCase().includes(search)) : state.names
-})
+const matchingNames = computed(() => fuzzy.search(keywords.value))
 
 const shownNames = computed(() => matchingNames.value.slice(0, SHOWN_LIMIT))
 

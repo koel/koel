@@ -12,7 +12,7 @@ describe('manageMilkdropPresetsModal.vue', () => {
   it('filters presets by name', async () => {
     h.render(Component)
 
-    await h.type(screen.getByRole('searchbox', { name: 'Search presets' }), 'nova')
+    await h.type(screen.getByRole('searchbox', { name: 'Search presets' }), 'nva brst')
 
     expect(screen.getAllByRole('listitem')).toHaveLength(1)
   })
@@ -39,11 +39,11 @@ describe('manageMilkdropPresetsModal.vue', () => {
     expect(removeMock).toHaveBeenCalledWith('Nova Burst')
   })
 
-  it('plays a preset when it is clicked', async () => {
+  it('activates a preset', async () => {
     const selectMock = h.mock(milkdropPresetStore, 'select')
     h.render(Component)
 
-    await h.user.click(screen.getByRole('button', { name: 'Orbit' }))
+    await h.user.click(screen.getAllByRole('button', { name: 'Activate' })[2])
 
     expect(selectMock).toHaveBeenCalledWith('Orbit')
   })

@@ -1,13 +1,15 @@
 <template>
-  <li class="flex items-center gap-3 py-1.5 border-b border-k-fg-5 last:border-b-0">
+  <li :class="isActive && 'active'" class="flex items-center gap-1 py-1.5 border-b border-k-fg-5 last:border-b-0">
+    <span :title="name" class="name flex-1 truncate">{{ name }}</span>
     <button
-      :aria-current="isActive"
-      :title="name"
-      class="flex-1 truncate text-left hover:text-k-fg aria-current:text-k-highlight"
+      v-koel-tooltip
+      :aria-pressed="isActive"
+      class="w-8 h-8 rounded-full text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 aria-pressed:text-k-highlight"
       type="button"
       @click="activate"
     >
-      {{ name }}
+      <PlayIcon :size="16" />
+      <span class="sr-only">Activate</span>
     </button>
     <button
       v-koel-tooltip
@@ -22,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Trash2Icon } from 'lucide-vue-next'
+import { PlayIcon, Trash2Icon } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { milkdropPresetStore } from '@/stores/milkdropPresetStore'
 
@@ -33,3 +35,11 @@ const isActive = computed(() => milkdropPresetStore.state.selected === props.nam
 const activate = () => milkdropPresetStore.select(props.name)
 const remove = () => milkdropPresetStore.remove(props.name)
 </script>
+
+<style lang="postcss" scoped>
+@reference '@css/app.pcss';
+
+.active .name {
+  @apply text-k-highlight;
+}
+</style>
