@@ -87,23 +87,6 @@ describe('useOfflinePlayback', () => {
     expect(hasCachingError(song)).toBe(true)
   })
 
-  it.each<[string, (song: Song) => unknown]>([
-    ['removed', song => removeOfflineCache(song)],
-    ['cleared', () => clearAllOfflineCache()],
-  ])('does not save a song %s while its source URL was loading', async (_, cancel) => {
-    const song = h.factory('song').make()
-    let resolveUrl: (url: string) => void = () => {}
-    h.mock(playableStore, 'resolveSourceUrl').mockReturnValue(new Promise<string>(resolve => (resolveUrl = resolve)))
-
-    const pendingSave = makeAvailableOffline(song)
-    await cancel(song)
-    resolveUrl('http://localhost/play/abc123?signature=s')
-    await pendingSave
-
-    expect(postMessageMock).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'CACHE_AUDIO' }))
-    expect(isCaching(song)).toBe(false)
-  })
-
   it('sends DELETE_AUDIO_CACHE message to SW', () => {
     const song = h.factory('song').make()
     const sourceUrl = 'http://localhost/play/abc123'

@@ -17,11 +17,7 @@ class AuthenticateAudioRequests
     public function handle(Request $request, Closure $next)
     {
         if ($request->hasValidRelativeSignatureWhileIgnoring(['time'])) {
-            $user = $this->userRepository->findOneByPublicId($request->string('user')->toString());
-
-            abort_unless((bool) $user, Response::HTTP_UNAUTHORIZED);
-
-            Auth::guard('web')->setUser($user);
+            Auth::guard('web')->setUser($this->userRepository->getOneByPublicId($request->string('user')->toString()));
 
             return $next($request);
         }
