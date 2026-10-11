@@ -1,10 +1,40 @@
 <template>
   <div v-koel-focus class="md:w-[560px]" tabindex="0" @keydown.esc="close">
-    <header>
-      <h1>MilkDrop Presets</h1>
+    <header class="items-center gap-4">
+      <h1 class="flex-1">MilkDrop Presets</h1>
+      <Btn bordered variant="ghost" @click="fileInput?.click()">Import</Btn>
+      <input
+        ref="fileInput"
+        accept=".milk"
+        aria-label="Preset files"
+        class="hidden"
+        multiple
+        type="file"
+        @change="importPresets"
+      />
+      <button
+        class="w-8 h-8 inline-grid place-items-center rounded-full text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5"
+        type="button"
+        @click="close"
+      >
+        <XIcon :size="16" />
+        <span class="sr-only">Close</span>
+      </button>
     </header>
 
     <main class="flex flex-col gap-4">
+      <p class="text-k-fg-50 text-sm">
+        Presets are saved in this browser only. You can download more presets
+        <a
+          :href="PRESET_DOWNLOAD_URL"
+          class="inline-flex items-center gap-1 text-k-highlight hover:text-k-fg"
+          target="_blank"
+        >
+          here
+          <ExternalLinkIcon :size="12" /> </a
+        >.
+      </p>
+
       <TextInput
         v-if="state.names.length"
         v-model="keywords"
@@ -22,40 +52,11 @@
         Showing {{ shownNames.length }} of {{ matchingNames.length.toLocaleString() }}. Search to narrow down.
       </p>
     </main>
-
-    <footer>
-      <div class="flex flex-col gap-3">
-        <p class="text-k-fg-50 text-sm">
-          Presets are saved in this browser only. You can download more presets
-          <a
-            :href="PRESET_DOWNLOAD_URL"
-            class="inline-flex items-center gap-1 text-k-highlight hover:text-k-fg"
-            target="_blank"
-          >
-            here
-            <ExternalLinkIcon :size="12" /> </a
-          >.
-        </p>
-        <div class="flex gap-2">
-          <Btn @click="fileInput?.click()">Import</Btn>
-          <Btn variant="ghost" @click.prevent="close">Close</Btn>
-        </div>
-        <input
-          ref="fileInput"
-          accept=".milk"
-          aria-label="Preset files"
-          class="hidden"
-          multiple
-          type="file"
-          @change="importPresets"
-        />
-      </div>
-    </footer>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ExternalLinkIcon } from 'lucide-vue-next'
+import { ExternalLinkIcon, XIcon } from 'lucide-vue-next'
 import { computed, ref, toRef } from 'vue'
 import { milkdropPresetStore } from '@/stores/milkdropPresetStore'
 import { useMessageToaster } from '@/composables/useMessageToaster'
