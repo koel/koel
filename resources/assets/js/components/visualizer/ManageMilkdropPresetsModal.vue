@@ -5,7 +5,17 @@
     </header>
 
     <main class="flex flex-col gap-4">
-      <p class="text-k-fg-50 text-sm">Presets are saved in this browser only.</p>
+      <p class="text-k-fg-50 text-sm">
+        Presets are saved in this browser only. You can download more presets
+        <a
+          :href="PRESET_DOWNLOAD_URL"
+          class="inline-flex items-center gap-1 text-k-highlight hover:text-k-fg"
+          target="_blank"
+        >
+          here
+          <ExternalLinkIcon :size="12" /> </a
+        >.
+      </p>
 
       <div class="flex gap-2">
         <TextInput v-model="keywords" aria-label="Search presets" class="flex-1" placeholder="Search" type="search" />
@@ -29,15 +39,6 @@
       <p v-if="matchingNames.length > shownNames.length" class="text-k-fg-50 text-sm">
         Showing {{ shownNames.length }} of {{ matchingNames.length.toLocaleString() }}. Search to narrow down.
       </p>
-
-      <a
-        :href="PRESET_DOWNLOAD_URL"
-        class="inline-flex items-center gap-1.5 self-start text-k-highlight hover:text-k-fg"
-        target="_blank"
-      >
-        Download more presets
-        <ExternalLinkIcon :size="14" />
-      </a>
     </main>
 
     <footer>
