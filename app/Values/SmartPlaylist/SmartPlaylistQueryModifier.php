@@ -90,7 +90,10 @@ final class SmartPlaylistQueryModifier
         $column = $model->toColumnName();
 
         $parameters = match (true) {
-            $model->isText() => self::generateTextParameters($column, $operator, $value),
+            $model->isText() => self::generateRawParameters("LOWER($column)", $operator, array_map(
+                static fn (mixed $text): string => mb_strtolower((string) $text),
+                $value,
+            )),
             $model->requiresRawQuery() => self::generateRawParameters($column, $operator, $value),
             default => self::generateEloquentParameters($column, $operator, $value),
         };
@@ -116,25 +119,6 @@ final class SmartPlaylistQueryModifier
             Operator::IS_NOT_BETWEEN => ["$column NOT BETWEEN ? AND ?", $value],
             Operator::NOT_CONTAIN => ["$column NOT LIKE ?", ["%{$value[0]}%"]],
             Operator::NOT_IN_LAST => static fn () => ["$column < ?", [now()->subDays($value[0])]],
-        };
-    }
-
-    /**
-     * Text is compared in lowercase so matching is case-insensitive on every database, PostgreSQL included.
-     *
-     * @return array{string, array<string>}
-     */
-    private static function generateTextParameters(string $column, Operator $operator, array $value): array
-    {
-        $text = mb_strtolower((string) $value[0]);
-
-        return match ($operator) {
-            Operator::BEGINS_WITH => ["LOWER($column) LIKE ?", ["$text%"]],
-            Operator::CONTAINS => ["LOWER($column) LIKE ?", ["%$text%"]],
-            Operator::ENDS_WITH => ["LOWER($column) LIKE ?", ["%$text"]],
-            Operator::IS => ["LOWER($column) = ?", [$text]],
-            Operator::IS_NOT => ["LOWER($column) <> ?", [$text]],
-            Operator::NOT_CONTAIN => ["LOWER($column) NOT LIKE ?", ["%$text%"]],
         };
     }
 
