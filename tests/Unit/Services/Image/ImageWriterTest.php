@@ -47,6 +47,16 @@ class ImageWriterTest extends TestCase
     }
 
     #[Test]
+    public function probesTheSupportedFormatOncePerProcess(): void
+    {
+        Image::partialMock()->shouldNotReceive('fromBase64');
+
+        $writer = new ImageWriter(new SafeHttp(new FakeNetwork()));
+
+        self::assertSame($this->writer->format(), $writer->format());
+    }
+
+    #[Test]
     public function encodesAvifWithGdAtTheConfiguredWidth(): void
     {
         if (!function_exists('imageavif') || !(imagetypes() & IMG_AVIF)) {

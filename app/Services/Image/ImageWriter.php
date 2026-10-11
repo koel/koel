@@ -25,6 +25,9 @@ class ImageWriter
     /** A 1x1 PNG, encoded to verify that a format the driver claims to support really works. */
     private const string PROBE_IMAGE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
+    /** @var array<string, string> */
+    private static array $supportedFormatsByDriver = [];
+
     private readonly string $format;
 
     public function __construct(
@@ -32,7 +35,8 @@ class ImageWriter
         #[Config('images.default')]
         private readonly string $driver = 'gd',
     ) {
-        $this->format = self::findSupportedFormat($driver);
+        self::$supportedFormatsByDriver[$driver] ??= self::findSupportedFormat($driver);
+        $this->format = self::$supportedFormatsByDriver[$driver];
     }
 
     public function format(): string
