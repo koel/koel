@@ -257,7 +257,15 @@ export const useOfflinePlayback = () => {
     cachingProgress.value.set(playable.id, 0)
     cachingErrors.value.delete(playable.id)
 
-    const sourceUrl = await playableStore.resolveSourceUrl(playable)
+    let sourceUrl: string
+
+    try {
+      sourceUrl = await playableStore.resolveSourceUrl(playable)
+    } catch (error: unknown) {
+      cachingProgress.value.delete(playable.id)
+      cachingErrors.value.set(playable.id, error instanceof Error ? error.message : 'Unknown error')
+      return
+    }
 
     sw.postMessage({
       type: 'CACHE_AUDIO',

@@ -43,6 +43,7 @@ describe('useOfflinePlayback', () => {
     clearAllOfflineCache,
     isCached,
     isCaching,
+    hasCachingError,
     getCachingProgress,
     checkCacheStatus,
     cachedSongIds,
@@ -73,6 +74,17 @@ describe('useOfflinePlayback', () => {
       songId: song.id,
       sourceUrl,
     })
+  })
+
+  it('marks a song as failed when its source URL cannot be resolved', async () => {
+    const song = h.factory('song').make()
+    h.mock(playableStore, 'resolveSourceUrl').mockRejectedValue(new Error('offline'))
+
+    await makeAvailableOffline(song)
+
+    expect(postMessageMock).not.toHaveBeenCalled()
+    expect(isCaching(song)).toBe(false)
+    expect(hasCachingError(song)).toBe(true)
   })
 
   it('sends DELETE_AUDIO_CACHE message to SW', () => {

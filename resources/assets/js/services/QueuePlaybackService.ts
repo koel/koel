@@ -83,10 +83,14 @@ export class QueuePlaybackService extends BasePlaybackService {
   public async preload(playable: Playable) {
     playable.preloaded = true
 
-    const audioElement = document.createElement('audio')
-    audioElement.setAttribute('src', await playableStore.resolveSourceUrl(playable))
-    audioElement.setAttribute('preload', 'auto')
-    audioElement.load()
+    try {
+      const audioElement = document.createElement('audio')
+      audioElement.setAttribute('src', await playableStore.resolveSourceUrl(playable))
+      audioElement.setAttribute('preload', 'auto')
+      audioElement.load()
+    } catch (error: unknown) {
+      logger.warn(error)
+    }
   }
 
   /**
@@ -158,7 +162,19 @@ export class QueuePlaybackService extends BasePlaybackService {
       const playRequest = ++this.latestPlayRequest
 
       this.media.pause()
-      const sourceUrl = await playableStore.resolveSourceUrl(playable)
+      let sourceUrl: string
+
+      try {
+        sourceUrl = await playableStore.resolveSourceUrl(playable)
+      } catch (error: unknown) {
+        logger.error(error)
+
+        if (playRequest === this.latestPlayRequest) {
+          playable.playback_state = 'Stopped'
+        }
+
+        return
+      }
 
       if (playRequest !== this.latestPlayRequest) {
         return
@@ -178,7 +194,7 @@ export class QueuePlaybackService extends BasePlaybackService {
         await this.resume()
       }
 
-      use(this.next, next => playableStore.resolveSourceUrl(next))
+      use(this.next, next => playableStore.resolveSourceUrl(next).catch(logger.warn))
     }
 
     this.setMediaSessionActionHandlers()
@@ -322,7 +338,13 @@ export class QueuePlaybackService extends BasePlaybackService {
     if (!this.media.src) {
       // on first load when the queue is loaded from saved state, the player's src is empty
       // we need to properly set it as well as any kind of playback metadata
-      this.media.src = await playableStore.resolveSourceUrl(playable)
+      try {
+        this.media.src = await playableStore.resolveSourceUrl(playable)
+      } catch (error: unknown) {
+        logger.error(error)
+        return
+      }
+
       this.seekTo(commonStore.state.queue_state.playback_position)
 
       await this.setNowPlayingMeta(queueStore.current!)
@@ -523,7 +545,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       media.currentTime + crossfadeDuration >= media.duration
     ) {
       if (!playableStore.getResolvedSourceUrl(nextPlayable)) {
-        playableStore.resolveSourceUrl(nextPlayable)
+        playableStore.resolveSourceUrl(nextPlayable).catch(logger.warn)
       } else if (crossfadeService.start(nextPlayable, crossfadeDuration, volumeManager.get())) {
         // Show the incoming track as "now playing" immediately
         queueStore.current!.playback_state = 'Stopped'

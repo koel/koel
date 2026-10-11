@@ -456,6 +456,7 @@ describe('playbackService', () => {
       }),
     )
 
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue(`http://test/play/${song.id}?signature=s`)
     const playMock = h.mock(window.HTMLMediaElement.prototype, 'play')
     const broadcastMock = h.mock(socketService, 'broadcast')
 
@@ -519,6 +520,30 @@ describe('playbackService', () => {
     expect(playbackService.media.src).toBe(`http://test/play/${fastSong.id}?signature=fast`)
 
     playbackService.media.removeAttribute('src')
+  })
+
+  it('stops a playable whose source URL cannot be resolved', async () => {
+    const song = h.factory('song').make()
+    h.mock(playableStore, 'resolveSourceUrl').mockRejectedValue(new Error('offline'))
+    const playMock = h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.mock(logger, 'error')
+
+    await playbackService.play(song)
+
+    expect(song.playback_state).toBe('Stopped')
+    expect(playMock).not.toHaveBeenCalled()
+  })
+
+  it('does not resume a playable whose source URL cannot be resolved', async () => {
+    setCurrentSong(h.factory('song').make({ playback_state: 'Paused' }))
+    playbackService.media.removeAttribute('src')
+    h.mock(playableStore, 'resolveSourceUrl').mockRejectedValue(new Error('offline'))
+    const playMock = h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.mock(logger, 'error')
+
+    await playbackService.resume()
+
+    expect(playMock).not.toHaveBeenCalled()
   })
 
   it('does not start a playable paused while its source URL was loading', async () => {

@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import isMobile from 'ismobilejs'
 import { createHarness } from '@/__tests__/TestHarness'
 import { signedUrlService } from '@/services/signedUrlService'
@@ -172,14 +172,29 @@ describe('playableStore', () => {
     expect(fetchMock).toHaveBeenLastCalledWith(`songs/${song.id}/play-url?transcode=1`)
   })
 
-  it('falls back to the unsigned source URL when signing fails', async () => {
+  it('falls back to the unsigned source URL of an offline copy when signing fails', async () => {
     commonStore.state.cdn_url = 'http://test/'
     const song = h.factory('song').make()
     h.mock(signedUrlService, 'fetch').mockRejectedValue(new Error('offline'))
+    const matchMock = vi.fn().mockResolvedValue(new Response('audio'))
+    vi.stubGlobal('caches', { match: matchMock })
 
     isMobile.any = false
 
     expect(await playableStore.resolveSourceUrl(song)).toBe(`http://test/play/${song.id}`)
+    expect(matchMock).toHaveBeenCalledWith(`http://test/play/${song.id}`)
+
+    vi.unstubAllGlobals()
+  })
+
+  it('fails to resolve a source URL when signing fails and there is no offline copy', async () => {
+    const song = h.factory('song').make()
+    h.mock(signedUrlService, 'fetch').mockRejectedValue(new Error('offline'))
+    vi.stubGlobal('caches', { match: vi.fn().mockResolvedValue(undefined) })
+
+    await expect(playableStore.resolveSourceUrl(song)).rejects.toThrow('offline')
+
+    vi.unstubAllGlobals()
   })
 
   it('gets shareable URL', () => {

@@ -46,6 +46,8 @@ export type SongListCursorPaginateParams = CursorPaginateParams<PlayableListSort
 
 const shouldTranscode = () => isMobile.any && preferenceStore.transcode_on_mobile
 
+const hasOfflineCopy = async (unsignedUrl: string) => 'caches' in window && Boolean(await caches.match(unsignedUrl))
+
 const getPlayUrlEndpoint = (playable: Playable) =>
   shouldTranscode() ? `songs/${playable.id}/play-url?transcode=1` : `songs/${playable.id}/play-url`
 
@@ -209,8 +211,13 @@ export const playableStore = {
     try {
       return await signedUrlService.fetch(getPlayUrlEndpoint(playable))
     } catch (error: unknown) {
-      logger.warn('Failed to get a signed play URL, using the unsigned one, which only works for a cached copy', error)
-      return this.getUnsignedSourceUrl(playable)
+      const unsignedUrl = this.getUnsignedSourceUrl(playable)
+
+      if (await hasOfflineCopy(unsignedUrl)) {
+        return unsignedUrl
+      }
+
+      throw error
     }
   },
 
