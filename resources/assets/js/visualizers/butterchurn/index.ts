@@ -1,6 +1,7 @@
 import butterchurnModule from 'butterchurn'
 import butterchurnPresets from 'butterchurn-presets'
 import { audioService } from '@/services/audioService'
+import { startFrameLoop } from '@/visualizers/frameLoop'
 
 // Unwrap the default export from the namespace (required for UMD module compatibility)
 const butterchurn = (butterchurnModule as any).default || butterchurnModule
@@ -43,12 +44,7 @@ export const initVisualizer = (container: HTMLElement) => {
 
   visualizer.setRendererSize(canvas.width, canvas.height)
 
-  const render = () => {
-    visualizer.render()
-    requestAnimationFrame(render)
-  }
-
-  render()
+  const stopFrameLoop = startFrameLoop(() => visualizer.render())
 
   const handleResize = () => {
     canvas.width = container.clientWidth
@@ -59,6 +55,7 @@ export const initVisualizer = (container: HTMLElement) => {
   window.addEventListener('resize', handleResize)
 
   return () => {
+    stopFrameLoop()
     window.removeEventListener('resize', handleResize)
 
     if (canvas.parentNode) {

@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import SceneInit from './lib/SceneInit'
 import shaders from './lib/shaders'
 import { audioService } from '@/services/audioService'
+import { startFrameLoop } from '@/visualizers/frameLoop'
 
 export const init = (container: HTMLElement) => {
   const sceneInit = new SceneInit(container)
@@ -42,14 +43,13 @@ export const init = (container: HTMLElement) => {
   planeMesh.position.y = 8
   sceneInit.scene.add(planeMesh)
 
-  const getByteFrequency = () => {
+  const stopFrameLoop = startFrameLoop(() => {
     analyser.getByteFrequencyData(dataArray)
-    requestAnimationFrame(getByteFrequency)
+    sceneInit.render()
+  })
+
+  return () => {
+    stopFrameLoop()
+    sceneInit.destroy()
   }
-
-  getByteFrequency()
-
-  sceneInit.animate()
-
-  return () => sceneInit.destroy()
 }
