@@ -47,4 +47,14 @@ describe('manageMilkdropPresetsModal.vue', () => {
 
     expect(selectMock).toHaveBeenCalledWith('Orbit')
   })
+
+  it('cannot apply the preset that is already applied', () => {
+    milkdropPresetStore.state.selected = 'Nova Burst'
+    h.render(Component)
+
+    const [aurora, novaBurst] = screen.getAllByRole('button', { name: 'Apply' })
+
+    expect(aurora.hasAttribute('disabled')).toBe(false)
+    expect(novaBurst.hasAttribute('disabled')).toBe(true)
+  })
 })
