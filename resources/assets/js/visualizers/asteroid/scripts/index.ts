@@ -4,6 +4,7 @@ import { ThreePointLight } from './ThreePointLight'
 import { NoiseBlob } from './NoiseBlob'
 import { AudioAnalyzer } from './AudioAnalyzer'
 import { DeviceChecker } from './DeviceChecker'
+import { startFrameLoop } from '@/visualizers/frameLoop'
 
 let analyzer: AudioAnalyzer
 let renderer: ThreeSharedRenderer
@@ -32,17 +33,16 @@ export const init = (container: HTMLElement) => {
     blob.update.bind(blob),
   ]
 
-  update()
+  const stopFrameLoop = startFrameLoop(update)
 
   return () => {
+    stopFrameLoop()
     // this will destroy the renderers and related class instances
     blob.destroy()
   }
 }
 
 const update = () => {
-  requestAnimationFrame(update)
-
   analyzer.update()
 
   // update blob

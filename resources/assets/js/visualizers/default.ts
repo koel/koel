@@ -1,7 +1,7 @@
 import Sketch from 'sketch-js'
 import { random, sample } from 'lodash-es'
 import { audioService } from '@/services/audioService'
-import { noop } from '@/utils/helpers'
+import { startFrameLoop } from '@/visualizers/frameLoop'
 
 const NUM_PARTICLES = 128
 const NUM_BANDS = 128
@@ -51,17 +51,11 @@ class AudioAnalyser {
     this.analyser.fftSize = this.bandCount * 2
 
     this.bands = new Uint8Array(this.analyser.frequencyBinCount)
-
-    this.update()
   }
 
   update () {
-    requestAnimationFrame(this.update.bind(this))
-
-    if (!this.audio.paused) {
-      this.analyser.getByteFrequencyData(this.bands)
-      this.onUpdate(this.bands)
-    }
+    this.analyser.getByteFrequencyData(this.bands)
+    this.onUpdate(this.bands)
   }
 }
 
@@ -149,18 +143,17 @@ class Particle {
 export const init = (container: HTMLElement) => {
   const particles: Particle[] = []
 
-  Sketch.create({
+  const analyser = new AudioAnalyser(NUM_BANDS, SMOOTHING, bands => {
+    particles.forEach(particle => (particle.energy = bands[particle.band] / 256))
+  })
+
+  const sketch = Sketch.create({
     container,
 
     setup () {
       for (let i = 0; i < NUM_PARTICLES; ++i) {
         particles.push(new Particle(random(this.width), random(this.height)))
       }
-
-      new AudioAnalyser(NUM_BANDS, SMOOTHING, bands => {
-        // update particles based on fft transformed audio frequencies
-        particles.forEach(particle => (particle.energy = bands[particle.band] / 256))
-      })
     },
 
     draw () {
@@ -179,5 +172,10 @@ export const init = (container: HTMLElement) => {
     },
   })
 
-  return noop
+  const stopFrameLoop = startFrameLoop(() => analyser.update())
+
+  return () => {
+    stopFrameLoop()
+    sketch.destroy()
+  }
 }
