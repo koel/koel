@@ -1,8 +1,9 @@
+import projectMScriptUrl from '@koel-project/projectm-wasm/koel_projectm.js?url'
+import projectMWasmUrl from '@koel-project/projectm-wasm/koel_projectm.wasm?url'
 import { sample } from 'lodash-es'
 import { watch } from 'vue'
 import { audioService } from '@/services/audioService'
 import { milkdropPresetLibrary } from '@/services/milkdropPresetLibrary'
-import { commonStore } from '@/stores/commonStore'
 import { milkdropPresetStore, RANDOM_PRESET } from '@/stores/milkdropPresetStore'
 import { startFrameLoop } from '@/visualizers/frameLoop'
 import { getRenderPixelRatio } from '@/visualizers/pixelRatio'
@@ -24,14 +25,12 @@ const CANVAS_ID = 'projectm-canvas'
 const PRESET_DURATION_MS = 30_000
 const SAMPLES_PER_FRAME = 2048
 
-const getAssetUrl = (file: string) => `${commonStore.state.cdn_url}visualizer/projectm/${file}`
-
 let scriptLoaded: Promise<void> | null = null
 
 const loadProjectMScript = () =>
   (scriptLoaded ??= new Promise((resolve, reject) => {
     const script = document.createElement('script')
-    script.src = getAssetUrl('koel_projectm.js')
+    script.src = projectMScriptUrl
     script.onload = () => resolve()
     script.onerror = () => reject(new Error('Failed to load projectM'))
     document.head.appendChild(script)
@@ -40,7 +39,7 @@ const loadProjectMScript = () =>
 export const init = async (container: HTMLElement) => {
   await loadProjectMScript()
 
-  const projectM = await window.KoelProjectM!({ locateFile: getAssetUrl })
+  const projectM = await window.KoelProjectM!({ locateFile: () => projectMWasmUrl })
 
   const startProjectM = projectM.cwrap('koel_projectm_init', 'number', ['string', 'number', 'number'])
   const loadPreset = projectM.cwrap('koel_projectm_load_preset', null, ['string'])

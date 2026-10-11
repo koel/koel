@@ -29,6 +29,9 @@ importers:
       '@fortawesome/vue-fontawesome':
         specifier: ^3.0.8
         version: 3.0.8(@fortawesome/fontawesome-svg-core@6.7.2)(vue@3.5.29(typescript@5.8.3))
+      '@koel-project/projectm-wasm':
+        specifier: 1.0.0
+        version: 1.0.0
       '@laravel/echo-vue':
         specifier: ^2.1.6
         version: 2.1.6(pusher-js@8.6.0)(socket.io-client@4.8.1)(vue@3.5.29(typescript@5.8.3))
@@ -691,6 +694,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@koel-project/projectm-wasm@1.0.0':
+    resolution: {integrity: sha512-0zV0cCnZe60Agvkk9tW4lA0wlBBeSkQZIAXxkWaGXuwvdEsiUkw1nfeDOpP3wLtMKzl/PV1dmtf91LgKw7aKJQ==}
 
   '@kurkle/color@0.3.4':
     resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
@@ -4479,6 +4485,8 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@koel-project/projectm-wasm@1.0.0': {}
 
   '@kurkle/color@0.3.4': {}
 
