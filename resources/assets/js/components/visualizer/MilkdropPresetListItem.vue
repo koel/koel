@@ -1,14 +1,16 @@
 <template>
   <li :class="isActive && 'active'" class="flex items-center gap-1 py-1.5 border-b border-k-fg-5 last:border-b-0">
     <span :title="name" class="name flex-1 truncate">{{ name }}</span>
-    <button
+    <Btn
       :aria-pressed="isActive"
-      class="px-2 h-8 rounded-sm text-sm text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 aria-pressed:text-k-highlight"
-      type="button"
+      bordered
+      class="aria-pressed:text-k-highlight!"
+      size="small"
+      variant="ghost"
       @click="apply"
     >
       Apply
-    </button>
+    </Btn>
     <button
       v-koel-tooltip
       class="w-8 h-8 inline-grid place-items-center rounded-full text-k-fg-70 hover:text-k-danger hover:bg-k-fg-5"
@@ -25,6 +27,8 @@
 import { Trash2Icon } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { milkdropPresetStore } from '@/stores/milkdropPresetStore'
+
+import Btn from '@/components/ui/form/Btn.vue'
 
 const props = defineProps<{ name: string }>()
 
