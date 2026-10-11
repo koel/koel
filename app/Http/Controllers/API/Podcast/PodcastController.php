@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Podcast;
 
 use App\Attributes\DisabledInDemo;
+use App\Exceptions\ApplePodcastsFeedNotFoundException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Podcast\PodcastStoreRequest;
@@ -39,6 +40,8 @@ class PodcastController extends Controller
             return PodcastResource::make($this->podcastService->addPodcast($request->url, $this->user));
         } catch (UserAlreadySubscribedToPodcastException) {
             abort(Response::HTTP_CONFLICT, 'You have already subscribed to this podcast.');
+        } catch (ApplePodcastsFeedNotFoundException) {
+            abort(Response::HTTP_UNPROCESSABLE_ENTITY, "Couldn't find this podcast's feed on Apple Podcasts.");
         }
     }
 

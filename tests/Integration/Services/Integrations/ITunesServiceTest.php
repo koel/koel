@@ -3,6 +3,7 @@
 namespace Tests\Integration\Services\Integrations;
 
 use App\Http\Integrations\iTunes\Requests\GetTrackRequest;
+use App\Http\Integrations\iTunes\Requests\LookupPodcastRequest;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Integrations\ITunesService;
@@ -88,5 +89,25 @@ class ITunesServiceTest extends TestCase
             'Bohemian Rhapsody',
             Album::factory()->createOne(),
         ));
+    }
+
+    #[Test]
+    public function getPodcastFeedUrl(): void
+    {
+        Saloon::fake([
+            LookupPodcastRequest::class => MockResponse::make(body: [
+                'resultCount' => 1,
+                'results' => [['feedUrl' => 'https://feeds.simplecast.com/PpzWFGhg']],
+            ]),
+        ]);
+
+        self::assertSame('https://feeds.simplecast.com/PpzWFGhg', $this->service->getPodcastFeedUrl('917918570'));
+
+        Saloon::assertSent(
+            static fn (LookupPodcastRequest $request): bool => $request->query()->all() === [
+                'id' => '917918570',
+                'entity' => 'podcast',
+            ],
+        );
     }
 }

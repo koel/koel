@@ -10,9 +10,9 @@ Aside from music, Koel also supports podcast streaming. This feature is still in
 
 ## Subscribe to a Podcast
 
-To subscribe to a podcast, click the <InterfaceIcon :src="plusIcon" /> button on the top right of the "Podcasts" page and enter the podcast's RSS feed URL.
+To subscribe to a podcast, click the <InterfaceIcon :src="plusIcon" /> button on the top right of the "Podcasts" page and enter the podcast's RSS feed URL or its Apple Podcasts link (`https://podcasts.apple.com/…`).
 You can find the RSS feed URL on the podcast's website or by searching for it with your favorite search engine.
-Note that Koel doesn't support proprietary podcast services like Spotify or Apple Podcasts.
+Koel plays podcasts from their public feeds, so shows that are exclusive to services like Spotify can't be added.
 
 :::warning
 Podcast parsing can be time-consuming, and not all podcasts are created equal.
