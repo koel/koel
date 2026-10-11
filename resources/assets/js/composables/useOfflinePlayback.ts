@@ -220,6 +220,8 @@ const setupSongDeletionListener = () => {
     const sw = getSW()
 
     for (const song of deletedSongs) {
+      cancelPendingCaching(song.id)
+
       if (!cachedSongIds.value.has(song.id)) {
         continue
       }
