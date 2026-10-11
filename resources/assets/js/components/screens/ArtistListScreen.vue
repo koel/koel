@@ -5,13 +5,7 @@
         Artists
         <template #controls>
           <div class="flex gap-2">
-            <Btn v-koel-tooltip variant="ghost" class="border border-k-fg-10" @click.prevent="toggleFavoritesOnly">
-              <Icon
-                :icon="preferences.artists_favorites_only ? faHeart : faEmptyHeart"
-                :class="preferences.artists_favorites_only && 'text-k-love'"
-              />
-              <span class="sr-only">{{ preferences.artists_favorites_only ? 'Show all' : 'Show favorites only' }}</span>
-            </Btn>
+            <FavoritesOnlyToggle :active="preferences.artists_favorites_only" @toggle="toggleFavoritesOnly" />
 
             <ArtistListSorter
               v-if="preferences.artists_view_mode !== 'table'"
@@ -78,8 +72,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faMicrophoneSlash, faHeart } from '@fortawesome/free-solid-svg-icons'
-import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
+import { faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, toRef } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
@@ -91,11 +84,11 @@ import ArtistGrid from '@/components/artist/ArtistGrid.vue'
 import ArtistTable from '@/components/artist/ArtistTable.vue'
 import ArtistTableRowSkeleton from '@/components/artist/ArtistTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ArtistListSorter from '@/components/artist/ArtistListSorter.vue'
-import Btn from '@/components/ui/form/Btn.vue'
 import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 
 const grid = ref<InstanceType<typeof ArtistGrid>>()

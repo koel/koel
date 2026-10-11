@@ -112,17 +112,17 @@ describe('radioStationListScreen.vue', () => {
 
     expect(screen.getAllByTestId('radio-station-card')).toHaveLength(9)
 
-    await h.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
+    await h.user.click(screen.getByRole('button', { name: 'Favorites only' }))
     await waitFor(() => expect(screen.getAllByTestId('radio-station-card')).toHaveLength(3))
 
-    await h.user.click(screen.getByRole('button', { name: 'Show all' }))
+    await h.user.click(screen.getByRole('button', { name: 'Favorites only' }))
     await waitFor(() => expect(screen.getAllByTestId('radio-station-card')).toHaveLength(9))
   })
 
   it('shows contextual empty state when no favorite stations', async () => {
     await renderComponent(h.factory('radio-station').make({ favorite: false }, 3))
 
-    await h.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
+    await h.user.click(screen.getByRole('button', { name: 'Favorites only' }))
 
     await waitFor(() => {
       const emptyState = screen.getByTestId('screen-empty-state')
