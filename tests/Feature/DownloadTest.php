@@ -50,6 +50,19 @@ class DownloadTest extends TestCase
     }
 
     #[Test]
+    public function downloadOneSongWithBearerToken(): void
+    {
+        $song = Song::factory()->createOne();
+
+        $this->downloadService->expects('getDownloadable')->andReturn(Downloadable::make(test_path('songs/blank.mp3')));
+
+        $this
+            ->withToken(create_user()->createToken('Koel')->plainTextToken)
+            ->get("download/songs?songs[]={$song->id}")
+            ->assertOk();
+    }
+
+    #[Test]
     public function answerNotFoundWhenTheSongCannotBeServed(): void
     {
         $song = Song::factory()->createOne();

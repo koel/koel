@@ -209,7 +209,7 @@ export const playableStore = {
     try {
       return await signedUrlService.fetch(getPlayUrlEndpoint(playable))
     } catch (error: unknown) {
-      logger.warn('Failed to get a signed play URL, falling back to the offline copy', error)
+      logger.warn('Failed to get a signed play URL, using the unsigned one, which only works for a cached copy', error)
       return this.getUnsignedSourceUrl(playable)
     }
   },

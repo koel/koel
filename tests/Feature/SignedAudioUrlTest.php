@@ -76,6 +76,17 @@ class SignedAudioUrlTest extends TestCase
     }
 
     #[Test]
+    public function rejectSignedUrlOfDeletedUser(): void
+    {
+        $user = create_user();
+        $url = $this->signer->signSongPlayUrl(Song::factory()->createOne(), $user, transcode: false);
+
+        $user->delete();
+
+        $this->get($url)->assertUnauthorized();
+    }
+
+    #[Test]
     public function downloadWithSignedUrl(): void
     {
         $song = Song::factory()->createOne();

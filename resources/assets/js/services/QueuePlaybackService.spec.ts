@@ -17,6 +17,7 @@ import { commonStore } from '@/stores/commonStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import { logger } from '@/utils/logger'
 import { playbackService } from '@/services/QueuePlaybackService'
+import { crossfadeService } from '@/services/crossfadeService'
 import { useBranding } from '@/composables/useBranding'
 import { usePageTitle } from '@/composables/usePageTitle'
 
@@ -110,6 +111,29 @@ describe('playbackService', () => {
     expect(playNextMock).not.toHaveBeenCalled()
 
     currentTimeSpy.mockRestore()
+    playbackService.media.removeAttribute('src')
+  })
+
+  it('reloads an expired source only once, then moves on', async () => {
+    const song = h.factory('song').make({ playback_state: 'Playing' })
+    queueStore.state.playables = reactive([song])
+
+    const expiredAt = Math.floor(Date.now() / 1000) - 60
+    playbackService.media.src = `http://test/play/${song.id}?expires=${expiredAt}&signature=old`
+
+    const resolveMock = h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue(playbackService.media.src)
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.mock(playbackService, 'seekTo')
+    const playNextMock = h.mock(playbackService, 'playNext')
+
+    playbackService.media.dispatchEvent(new Event('error'))
+    await vi.waitFor(() => expect(resolveMock).toHaveBeenCalled())
+
+    playbackService.media.dispatchEvent(new Event('error'))
+    await vi.waitFor(() => expect(playNextMock).toHaveBeenCalled())
+
+    expect(resolveMock).toHaveBeenCalledTimes(1)
+
     playbackService.media.removeAttribute('src')
   })
 
@@ -232,6 +256,29 @@ describe('playbackService', () => {
       expect(preloadMock).toHaveBeenCalledTimes(numberOfCalls)
     },
   )
+
+  it('fetches the next source URL instead of crossfading without one', () => {
+    setCurrentSong()
+    h.mock(playbackService, 'registerPlay')
+    h.setReadOnlyProperty(queueStore, 'next', h.factory('song').make({ preloaded: true }))
+    preferences.temporary.crossfade_duration = 5
+
+    const mediaElement = playbackService.media
+    h.setReadOnlyProperty(mediaElement, 'currentTime', 296)
+    h.setReadOnlyProperty(mediaElement, 'duration', 300)
+
+    h.mock(playableStore, 'getResolvedSourceUrl').mockReturnValue(undefined)
+    const resolveMock = h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue('http://test/play/signed')
+    const startMock = h.mock(crossfadeService, 'start')
+    h.mock(http, 'put')
+
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+
+    expect(resolveMock).toHaveBeenCalledWith(queueStore.next)
+    expect(startMock).not.toHaveBeenCalled()
+
+    preferences.temporary.crossfade_duration = 0
+  })
 
   it('registers play', () => {
     const recentlyPlayedStoreAddMock = h.mock(recentlyPlayedStore, 'add')
@@ -411,6 +458,54 @@ describe('playbackService', () => {
     expect(song.playback_state).toBe('Playing')
 
     currentTimeSpy.mockRestore()
+    playbackService.media.removeAttribute('src')
+  })
+
+  it('stops the current audio as soon as another playable is requested', async () => {
+    const resolveMock = h.mock(playableStore, 'resolveSourceUrl').mockReturnValue(new Promise(() => {}))
+    const pauseMock = h.mock(playbackService.media, 'pause')
+
+    playbackService.play(h.factory('song').make())
+
+    await vi.waitFor(() => expect(resolveMock).toHaveBeenCalled())
+    expect(pauseMock).toHaveBeenCalled()
+  })
+
+  it('ignores a slow source URL once a newer playable is requested', async () => {
+    const [slowSong, fastSong] = h.factory('song').make(2)
+    let resolveSlowUrl: (url: string) => void = () => {}
+
+    h.mock(playableStore, 'resolveSourceUrl').mockImplementation(async (playable: Playable) =>
+      playable.id === slowSong.id
+        ? await new Promise<string>(resolve => (resolveSlowUrl = resolve))
+        : `http://test/play/${fastSong.id}?signature=fast`,
+    )
+
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.mock(playbackService, 'showNotification')
+
+    const slowPlay = playbackService.play(slowSong)
+    await playbackService.play(fastSong)
+    resolveSlowUrl(`http://test/play/${slowSong.id}?signature=slow`)
+    await slowPlay
+
+    expect(playbackService.media.src).toBe(`http://test/play/${fastSong.id}?signature=fast`)
+
+    playbackService.media.removeAttribute('src')
+  })
+
+  it('fetches the next playable source URL as soon as a playable starts', async () => {
+    const [song, nextSong] = h.factory('song').make(2)
+    h.setReadOnlyProperty(playbackService, 'next', nextSong)
+
+    const resolveMock = h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue('http://test/play/signed')
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.mock(playbackService, 'showNotification')
+
+    await playbackService.play(song)
+
+    expect(resolveMock).toHaveBeenLastCalledWith(nextSong)
+
     playbackService.media.removeAttribute('src')
   })
 

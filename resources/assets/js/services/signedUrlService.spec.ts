@@ -20,6 +20,19 @@ describe('signedUrlService', () => {
     expect(getMock).toHaveBeenCalledTimes(1)
   })
 
+  it('sends one request for concurrent lookups of the same URL', async () => {
+    const url = urlExpiringIn(30 * 60)
+    const getMock = h.mock(http, 'get').mockResolvedValue({ url })
+
+    const urls = await Promise.all([
+      signedUrlService.fetch('songs/song/play-url'),
+      signedUrlService.fetch('songs/song/play-url'),
+    ])
+
+    expect(urls).toEqual([url, url])
+    expect(getMock).toHaveBeenCalledTimes(1)
+  })
+
   it('fetches a new URL when the cached one expires soon', async () => {
     const getMock = h
       .mock(http, 'get')

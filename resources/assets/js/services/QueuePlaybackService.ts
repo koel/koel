@@ -9,7 +9,7 @@ import { playableStore } from '@/stores/playableStore'
 import { userStore } from '@/stores/userStore'
 import { logger } from '@/utils/logger'
 import { isEpisode, isSong } from '@/utils/typeGuards'
-import { arrayify, getPlayableProp } from '@/utils/helpers'
+import { arrayify, getPlayableProp, use } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import { isAudioContextSupported } from '@/utils/supports'
 import { audioService } from '@/services/audioService'
@@ -42,6 +42,8 @@ const savePlaybackStatus = lastWriteWins((status: { song: Playable['id']; positi
 export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private upNext: Ref<Playable | null> = ref(null)
+  private latestPlayRequest = 0
+  private reloadedExpiredSourceOf: Playable['id'] | null = null
 
   /**
    * The next item in the queue.
@@ -152,8 +154,17 @@ export class QueuePlaybackService extends BasePlaybackService {
       this.recordStartTime(playable)
       this.showNotification(playable)
     } else {
-      // Normal playback: set src and start
-      this.media.src = await playableStore.resolveSourceUrl(playable)
+      const playRequest = ++this.latestPlayRequest
+      this.reloadedExpiredSourceOf = null
+
+      this.media.pause()
+      const sourceUrl = await playableStore.resolveSourceUrl(playable)
+
+      if (playRequest !== this.latestPlayRequest) {
+        return
+      }
+
+      this.media.src = sourceUrl
 
       if (position === 0) {
         await this.restart()
@@ -161,6 +172,8 @@ export class QueuePlaybackService extends BasePlaybackService {
         this.seekTo(position)
         await this.resume()
       }
+
+      use(this.next, next => playableStore.resolveSourceUrl(next))
     }
 
     this.setMediaSessionActionHandlers()
@@ -420,8 +433,15 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     const playable = queueStore.current
 
-    if (playable && signedUrlService.hasExpired(this.media.src)) {
-      await this.reloadExpiredSource(playable)
+    if (playable && this.reloadedExpiredSourceOf !== playable.id && signedUrlService.hasExpired(this.media.src)) {
+      this.reloadedExpiredSourceOf = playable.id
+
+      try {
+        await this.reloadExpiredSource(playable)
+      } catch (reloadError: unknown) {
+        logger.error(reloadError)
+      }
+
       return
     }
 
@@ -491,7 +511,9 @@ export class QueuePlaybackService extends BasePlaybackService {
       media.duration > crossfadeDuration * 2 && // skip for short tracks
       media.currentTime + crossfadeDuration >= media.duration
     ) {
-      if (crossfadeService.start(nextPlayable, crossfadeDuration, volumeManager.get())) {
+      if (!playableStore.getResolvedSourceUrl(nextPlayable)) {
+        playableStore.resolveSourceUrl(nextPlayable)
+      } else if (crossfadeService.start(nextPlayable, crossfadeDuration, volumeManager.get())) {
         // Show the incoming track as "now playing" immediately
         queueStore.current!.playback_state = 'Stopped'
         nextPlayable.playback_state = 'Playing'

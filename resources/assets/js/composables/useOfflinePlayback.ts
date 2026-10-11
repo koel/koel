@@ -254,10 +254,11 @@ export const useOfflinePlayback = () => {
     const sw = getSW()
     if (!sw) return
 
-    const sourceUrl = await playableStore.resolveSourceUrl(playable)
-
     cachingProgress.value.set(playable.id, 0)
     cachingErrors.value.delete(playable.id)
+
+    const sourceUrl = await playableStore.resolveSourceUrl(playable)
+
     sw.postMessage({
       type: 'CACHE_AUDIO',
       songId: playable.id,

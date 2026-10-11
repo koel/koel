@@ -3,6 +3,7 @@ import { http } from '@/services/http'
 const REUSE_MARGIN_SECONDS = 10 * 60
 
 const urlsByEndpoint = new Map<string, string>()
+const pendingRequestsByEndpoint = new Map<string, Promise<string>>()
 
 const getSecondsUntilExpiry = (url: string) => {
   const expiresAt = Number(new URL(url, location.href).searchParams.get('expires'))
@@ -20,10 +21,26 @@ export const signedUrlService = {
       return cached
     }
 
-    const { url } = await http.silently.get<{ url: string }>(endpoint)
-    urlsByEndpoint.set(endpoint, url)
+    const pendingRequest = pendingRequestsByEndpoint.get(endpoint)
 
-    return url
+    if (pendingRequest) {
+      return await pendingRequest
+    }
+
+    const request = http.silently.get<{ url: string }>(endpoint).then(({ url }) => {
+      urlsByEndpoint.set(endpoint, url)
+      return url
+    })
+
+    pendingRequestsByEndpoint.set(endpoint, request)
+
+    try {
+      return await request
+    } finally {
+      if (pendingRequestsByEndpoint.get(endpoint) === request) {
+        pendingRequestsByEndpoint.delete(endpoint)
+      }
+    }
   },
 
   getCached(endpoint: string) {
@@ -36,5 +53,6 @@ export const signedUrlService = {
 
   forget(endpoint: string) {
     urlsByEndpoint.delete(endpoint)
+    pendingRequestsByEndpoint.delete(endpoint)
   },
 }
