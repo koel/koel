@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 
 class ScanInformation implements Arrayable
 {
+    public const string FILE_HASH_ALGORITHM = 'xxh128';
+
     private function __construct(
         public ?string $title,
         public ?string $albumName,
@@ -94,7 +96,7 @@ class ScanInformation implements Arrayable
             length: (float) Arr::get($info, 'playtime_seconds'),
             cover: $cover,
             path: $path,
-            hash: File::hash($path),
+            hash: File::hash($path, self::FILE_HASH_ALGORITHM),
             mTime: get_mtime($path),
             mimeType: Str::lower(Arr::get($info, 'mime_type')) ?: 'audio/mpeg',
             fileSize: File::size($path),
