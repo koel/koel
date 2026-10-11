@@ -10,7 +10,7 @@ describe('smartPlaylistRuleInput', () => {
     return h.render(Component, {
       props: {
         type,
-        value,
+        modelValue: value,
       },
     })
   }
