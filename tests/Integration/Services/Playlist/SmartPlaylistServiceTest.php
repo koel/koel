@@ -564,6 +564,68 @@ class SmartPlaylistServiceTest extends TestCase
         ]);
     }
 
+    #[Test]
+    public function matchTextRegardlessOfCase(): void
+    {
+        $matches = Song::factory()->createMany([['title' => 'Foo Something']]);
+        Song::factory()->createOne(['title' => 'Bar Something']);
+
+        $this->assertMatchesAgainstRules($matches, self::makeSingleRuleGroups('title', 'is', ['foo something']));
+    }
+
+    #[Test]
+    public function countNeverPlayedSongsAsNotPlayedLately(): void
+    {
+        $user = create_user();
+        $neverPlayed = Song::factory()->createOne();
+        $playedToday = Song::factory()->createOne();
+
+        Interaction::factory()->for($user)->for($playedToday)->createOne(['last_played_at' => now()]);
+
+        $this->assertMatchesAgainstRules(
+            new Collection([$neverPlayed]),
+            self::makeSingleRuleGroups('interactions.last_played_at', 'notInLast', [2]),
+            $user,
+        );
+    }
+
+    #[Test]
+    public function countSongsWithoutAYearAsNotFromThatYear(): void
+    {
+        $matches = new Collection([
+            Song::factory()->createOne(['year' => null]),
+            Song::factory()->createOne(['year' => 1999]),
+        ]);
+
+        Song::factory()->createOne(['year' => 2020]);
+
+        $this->assertMatchesAgainstRules($matches, self::makeSingleRuleGroups('year', 'isNot', [2020]));
+    }
+
+    #[Test]
+    public function includeTheWholeLastDayOfADateRange(): void
+    {
+        $matches = Song::factory()->createMany([['created_at' => '2026-10-05 18:00:00']]);
+        Song::factory()->createOne(['created_at' => '2026-10-06 18:00:00']);
+
+        $this->assertMatchesAgainstRules($matches, self::makeSingleRuleGroups(
+            'created_at',
+            'isBetween',
+            ['2026-10-01', '2026-10-05'],
+        ));
+    }
+
+    /** @return array<array-key, mixed> */
+    private static function makeSingleRuleGroups(string $model, string $operator, array $value): array
+    {
+        return [
+            [
+                'id' => Uuid::generate(),
+                'rules' => [['id' => Uuid::generate(), 'model' => $model, 'operator' => $operator, 'value' => $value]],
+            ],
+        ];
+    }
+
     protected function assertMatchesAgainstRules(Collection $matches, array $rules, ?User $owner = null): void
     {
         $playlist = create_playlist(['rules' => $rules]);

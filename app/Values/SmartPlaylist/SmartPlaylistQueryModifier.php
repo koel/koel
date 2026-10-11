@@ -14,7 +14,7 @@ final class SmartPlaylistQueryModifier
 {
     private static function resolveWhereMethod(Rule $rule, Operator $operator): string
     {
-        return $rule->model->requiresRawQuery() ? 'whereRaw' : $operator->toWhereMethod();
+        return $rule->model->requiresRawQuery() || $rule->model->isText() ? 'whereRaw' : $operator->toWhereMethod();
     }
 
     public static function applyRule(Rule $rule, SongBuilder $query): void
@@ -22,15 +22,15 @@ final class SmartPlaylistQueryModifier
         $operator = $rule->operator;
         $value = $rule->value;
 
-        // If the rule is a date rule and the operator is "is" or "is not", we need to
-        // convert the date to a range of dates and use the "between" or "not between" operator instead,
-        // as we store dates as timestamps in the database.
-        // For instance, "IS 2023-10-01" should be converted to "IS BETWEEN 2023-10-01 AND 2023-10-02."
+        // Dates are stored as timestamps, so a day-based rule becomes a range that runs to the end of its last day.
+        // For instance, "IS 2023-10-01" becomes "IS BETWEEN 2023-10-01 AND 2023-10-02."
         if ($rule->model->isDate() && in_array($operator, [Operator::IS, Operator::IS_NOT], true)) {
             $operator = $operator === Operator::IS ? Operator::IS_BETWEEN : Operator::IS_NOT_BETWEEN;
+            $value = [$value[0], $value[0]];
+        }
 
-            $nextDay = Carbon::createFromFormat('Y-m-d', $value[0])->addDay()->format('Y-m-d');
-            $value = [$value[0], $nextDay];
+        if ($rule->model->isDate() && $operator->takesTwoValues()) {
+            $value = [$value[0], Carbon::createFromFormat('Y-m-d', $value[1])->addDay()->format('Y-m-d')];
         }
 
         if ($rule->model->getManyToManyRelation()) {
@@ -60,6 +60,16 @@ final class SmartPlaylistQueryModifier
                     $value,
                 ));
             });
+        } elseif (self::matchesUnsetValues($rule, $operator)) {
+            $query->where(static function (SongBuilder $unsetOrMatchingQuery) use ($rule, $operator, $value): void {
+                $unsetOrMatchingQuery
+                    ->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
+                        $rule->model,
+                        $operator,
+                        $value,
+                    ))
+                    ->orWhereNull($rule->model->toColumnName());
+            });
         } else {
             $query->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
                 $rule->model,
@@ -69,14 +79,21 @@ final class SmartPlaylistQueryModifier
         }
     }
 
+    private static function matchesUnsetValues(Rule $rule, Operator $operator): bool
+    {
+        return !$rule->model->requiresRawQuery() && ($operator->isNegative() || $operator === Operator::NOT_IN_LAST);
+    }
+
     /** @inheritdoc */
     private static function generateParameters(Model $model, Operator $operator, array $value): array
     {
         $column = $model->toColumnName();
 
-        $parameters = $model->requiresRawQuery()
-            ? self::generateRawParameters($column, $operator, $value)
-            : self::generateEloquentParameters($column, $operator, $value);
+        $parameters = match (true) {
+            $model->isText() => self::generateTextParameters($column, $operator, $value),
+            $model->requiresRawQuery() => self::generateRawParameters($column, $operator, $value),
+            default => self::generateEloquentParameters($column, $operator, $value),
+        };
 
         return $parameters instanceof Closure ? $parameters() : $parameters;
     }
@@ -99,6 +116,25 @@ final class SmartPlaylistQueryModifier
             Operator::IS_NOT_BETWEEN => ["$column NOT BETWEEN ? AND ?", $value],
             Operator::NOT_CONTAIN => ["$column NOT LIKE ?", ["%{$value[0]}%"]],
             Operator::NOT_IN_LAST => static fn () => ["$column < ?", [now()->subDays($value[0])]],
+        };
+    }
+
+    /**
+     * Text is compared in lowercase so matching is case-insensitive on every database, PostgreSQL included.
+     *
+     * @return array{string, array<string>}
+     */
+    private static function generateTextParameters(string $column, Operator $operator, array $value): array
+    {
+        $text = mb_strtolower((string) $value[0]);
+
+        return match ($operator) {
+            Operator::BEGINS_WITH => ["LOWER($column) LIKE ?", ["$text%"]],
+            Operator::CONTAINS => ["LOWER($column) LIKE ?", ["%$text%"]],
+            Operator::ENDS_WITH => ["LOWER($column) LIKE ?", ["%$text"]],
+            Operator::IS => ["LOWER($column) = ?", [$text]],
+            Operator::IS_NOT => ["LOWER($column) <> ?", [$text]],
+            Operator::NOT_CONTAIN => ["LOWER($column) NOT LIKE ?", ["%$text%"]],
         };
     }
 
