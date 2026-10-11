@@ -5,18 +5,6 @@
     </header>
 
     <main class="flex flex-col gap-4">
-      <p class="text-k-fg-50 text-sm">
-        Presets are saved in this browser only. You can download more presets
-        <a
-          :href="PRESET_DOWNLOAD_URL"
-          class="inline-flex items-center gap-1 text-k-highlight hover:text-k-fg"
-          target="_blank"
-        >
-          here
-          <ExternalLinkIcon :size="12" /> </a
-        >.
-      </p>
-
       <TextInput v-model="keywords" aria-label="Search presets" placeholder="Search" type="search" />
 
       <ul v-if="shownNames.length" class="max-h-[50vh] overflow-auto">
@@ -30,17 +18,32 @@
     </main>
 
     <footer>
-      <Btn @click="fileInput?.click()">Import</Btn>
-      <Btn variant="ghost" @click.prevent="close">Close</Btn>
-      <input
-        ref="fileInput"
-        accept=".milk"
-        aria-label="Preset files"
-        class="hidden"
-        multiple
-        type="file"
-        @change="importPresets"
-      />
+      <div class="flex flex-col gap-3">
+        <div class="flex gap-2">
+          <Btn @click="fileInput?.click()">Import</Btn>
+          <Btn variant="ghost" @click.prevent="close">Close</Btn>
+        </div>
+        <p class="text-k-fg-50 text-sm">
+          Presets are saved in this browser only. You can download more presets
+          <a
+            :href="PRESET_DOWNLOAD_URL"
+            class="inline-flex items-center gap-1 text-k-highlight hover:text-k-fg"
+            target="_blank"
+          >
+            here
+            <ExternalLinkIcon :size="12" /> </a
+          >.
+        </p>
+        <input
+          ref="fileInput"
+          accept=".milk"
+          aria-label="Preset files"
+          class="hidden"
+          multiple
+          type="file"
+          @change="importPresets"
+        />
+      </div>
     </footer>
   </div>
 </template>
