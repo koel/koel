@@ -76,7 +76,11 @@ const fileInput = ref<HTMLInputElement>()
 
 const fuzzy = useFuzzySearch(toRef(state, 'names'), [])
 
-const matchingNames = computed(() => fuzzy.search(keywords.value))
+const matchingNames = computed(() => {
+  const names = state.names
+
+  return keywords.value.trim() ? fuzzy.search(keywords.value) : names
+})
 
 const shownNames = computed(() => matchingNames.value.slice(0, SHOWN_LIMIT))
 

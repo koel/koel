@@ -27,4 +27,13 @@ describe('milkdropPresetLibrary', () => {
 
     expect(await milkdropPresetLibrary.getContent('Twice')).toBe('second')
   })
+
+  it('removes a preset', async () => {
+    await milkdropPresetLibrary.importFiles([makeFile('Gone.milk', 'bye')])
+
+    await milkdropPresetLibrary.remove('Gone')
+
+    expect(await milkdropPresetLibrary.getNames()).not.toContain('Gone')
+    expect(await milkdropPresetLibrary.getContent('Gone')).toBeUndefined()
+  })
 })
