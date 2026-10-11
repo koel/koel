@@ -15,6 +15,7 @@ use App\Services\Podcast\PodcastService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class PodcastController extends Controller
 {
@@ -41,7 +42,7 @@ class PodcastController extends Controller
         } catch (UserAlreadySubscribedToPodcastException) {
             abort(Response::HTTP_CONFLICT, 'You have already subscribed to this podcast.');
         } catch (ApplePodcastsFeedNotFoundException) {
-            abort(Response::HTTP_UNPROCESSABLE_ENTITY, "Couldn't find this podcast's feed on Apple Podcasts.");
+            throw ValidationException::withMessages(['url' => "Couldn't find this podcast's feed on Apple Podcasts."]);
         }
     }
 

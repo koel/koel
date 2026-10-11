@@ -113,9 +113,9 @@ class PodcastService
         throw_if($applePodcastsId === '', ApplePodcastsFeedNotFoundException::create($url));
 
         return (
-            rescue(fn (): ?string => $this->iTunesService->getPodcastFeedUrl(
+            $this->iTunesService->getPodcastFeedUrl(
                 $applePodcastsId,
-            ), report: false) ?? throw ApplePodcastsFeedNotFoundException::create($url)
+            ) ?? throw ApplePodcastsFeedNotFoundException::create($url)
         );
     }
 

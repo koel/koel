@@ -15,8 +15,11 @@ class AddPodcastFromApplePodcastsTest extends TestCase
     {
         Saloon::fake([LookupPodcastRequest::class => MockResponse::make(body: ['resultCount' => 0, 'results' => []])]);
 
-        $this->postAs('api/podcasts', [
-            'url' => 'https://podcasts.apple.com/us/podcast/exclusive/id123',
-        ])->assertUnprocessable();
+        $this
+            ->postAs('api/podcasts', [
+                'url' => 'https://podcasts.apple.com/us/podcast/exclusive/id123',
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrorFor('url');
     }
 }
