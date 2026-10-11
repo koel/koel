@@ -6,7 +6,6 @@
       v-for="sponsor in sponsors"
       :key="sponsor.url"
       :href="sponsor.url"
-      :title="sponsor.description"
       class="opacity-70 hover:opacity-100"
       target="_blank"
     >

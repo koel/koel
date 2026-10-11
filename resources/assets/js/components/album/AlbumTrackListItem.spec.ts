@@ -46,7 +46,7 @@ describe('albumTrackListItem.vue', () => {
 
     renderComponent(matchedSong)
 
-    await h.user.click(screen.getByTitle('Click to play'))
+    await h.user.click(screen.getByText('Fahrstuhl to Heaven'))
 
     expect(playMock).toHaveBeenCalledWith(matchedSong)
   })

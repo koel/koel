@@ -30,7 +30,7 @@ describe('createSmartPlaylistForm', () => {
     renderComponent()
 
     await h.user.click(screen.getByText('Rules'))
-    await h.user.click(screen.getByTitle('Add a new group'))
+    await h.user.click(screen.getByRole('button', { name: 'Group' }))
 
     await waitFor(() => {
       screen.getByText(/Include songs that match/)
@@ -62,7 +62,7 @@ describe('createSmartPlaylistForm', () => {
 
     // Add a rule group via the Rules tab
     await h.user.click(screen.getByText('Rules'))
-    await h.user.click(screen.getByTitle('Add a new group'))
+    await h.user.click(screen.getByRole('button', { name: 'Group' }))
 
     await waitFor(() => {
       screen.getByText(/Include songs that match/)

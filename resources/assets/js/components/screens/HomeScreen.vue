@@ -6,9 +6,9 @@
         <template #controls>
           <button
             v-if="!libraryEmpty"
+            v-koel-tooltip
             type="button"
             class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition shrink-0"
-            title="Reorder home blocks"
             data-testid="reorder-home-blocks-btn"
             @click="openReorderModal"
           >

@@ -1,7 +1,6 @@
 <template>
   <a
     :href="url('home')"
-    :title="name"
     class="flex items-center justify-center px-2.5 rounded-md border border-k-fg-10 bg-k-bg-50 active:scale-90"
     @click="onClick"
   >

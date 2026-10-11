@@ -5,17 +5,12 @@
         Albums
         <template #controls>
           <div class="flex gap-2">
-            <Btn
-              v-koel-tooltip
-              :title="preferences.albums_favorites_only ? 'Show all' : 'Show favorites only'"
-              variant="ghost"
-              class="border border-k-fg-10"
-              @click.prevent="toggleFavoritesOnly"
-            >
+            <Btn v-koel-tooltip variant="ghost" class="border border-k-fg-10" @click.prevent="toggleFavoritesOnly">
               <Icon
                 :icon="preferences.albums_favorites_only ? faHeart : faEmptyHeart"
                 :class="preferences.albums_favorites_only && 'text-k-love'"
               />
+              <span class="sr-only">{{ preferences.albums_favorites_only ? 'Show all' : 'Show favorites only' }}</span>
             </Btn>
 
             <AlbumListSorter

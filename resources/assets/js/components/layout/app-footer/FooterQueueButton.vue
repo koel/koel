@@ -2,7 +2,6 @@
   <FooterButton
     :class="droppable && 'droppable'"
     class="queue-btn"
-    title="Queue (Q)"
     @click.prevent="showQueue"
     @dragleave.prevent="onDragLeave"
     @drop.prevent="onDrop"
@@ -10,6 +9,7 @@
     @dragover.prevent
   >
     <Icon :icon="faListOl" fixed-width />
+    <span class="sr-only">Queue (Q)</span>
   </FooterButton>
 </template>
 

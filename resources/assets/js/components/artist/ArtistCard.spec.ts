@@ -49,7 +49,7 @@ describe('artistCard.vue', () => {
     const mock = h.mock(downloadService, 'fromArtist')
     renderComponent()
 
-    await h.user.click(screen.getByTitle('Download all songs by Led Zeppelin'))
+    await h.user.click(screen.getByRole('button', { name: 'Download' }))
     expect(mock).toHaveBeenCalledOnce()
   })
 
@@ -85,7 +85,7 @@ describe('artistCard.vue', () => {
 
     const { artist } = renderComponent()
 
-    await h.user.click(screen.getByTitle('Shuffle all songs by Led Zeppelin'))
+    await h.user.click(screen.getByRole('button', { name: 'Shuffle' }))
     await h.tick()
 
     expect(fetchMock).toHaveBeenCalledWith(artist)

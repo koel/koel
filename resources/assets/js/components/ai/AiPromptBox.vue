@@ -21,10 +21,10 @@
         :disabled="!text.trim() || disabled"
         :style="mode === 'chat' ? { height: `${buttonSize}px`, width: `${buttonSize}px` } : undefined"
         class="absolute flex items-center justify-center rounded-full bg-k-highlight text-white disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed transition-opacity"
-        title="Send"
         type="submit"
       >
         <ArrowUpIcon :class="mode === 'initial' ? 'w-5 h-5' : 'w-4 h-4'" />
+        <span class="sr-only">Send</span>
       </button>
     </div>
   </form>

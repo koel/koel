@@ -74,20 +74,20 @@ describe('playableCard.vue', () => {
   it('shows offline mark for cached songs', () => {
     isCachedMock.mockReturnValue(true)
     renderCard()
-    screen.getByTitle('Available offline')
+    screen.getByText('Available offline')
   })
 
   it('does not show offline mark for non-cached songs', () => {
     renderCard()
-    expect(screen.queryByTitle('Available offline')).toBeNull()
+    expect(screen.queryByText('Available offline')).toBeNull()
   })
 
   it('shows spinner instead of offline mark when caching', () => {
     isCachingMock.mockReturnValue(true)
     isCachedMock.mockReturnValue(true)
     renderCard()
-    screen.getByTitle('Caching for offline playback')
-    expect(screen.queryByTitle('Available offline')).toBeNull()
+    screen.getByText('Caching for offline playback')
+    expect(screen.queryByText('Available offline')).toBeNull()
   })
 
   it('toggles favorite state when the Favorite button is clicked', async () => {
@@ -128,6 +128,6 @@ describe('playableCard.vue', () => {
     hasCachingErrorMock.mockReturnValue(true)
     getCachingErrorMock.mockReturnValue('Network error')
     renderCard()
-    screen.getByTitle('Error: Network error')
+    screen.getByText('Error: Network error')
   })
 })

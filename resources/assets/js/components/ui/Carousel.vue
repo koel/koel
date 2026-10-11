@@ -4,9 +4,9 @@
       <button
         v-for="ctrl in controls"
         :key="ctrl.title"
+        v-koel-tooltip
         type="button"
         class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        :title="ctrl.title"
         @click="slide(ctrl.direction)"
       >
         <Icon :icon="ctrl.icon" />
@@ -18,9 +18,9 @@
       <button
         v-for="ctrl in controls"
         :key="ctrl.title"
+        v-koel-tooltip
         type="button"
         class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        :title="ctrl.title"
         @click="slide(ctrl.direction)"
       >
         <Icon :icon="ctrl.icon" />

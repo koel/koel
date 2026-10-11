@@ -28,7 +28,7 @@ describe('listFilter.vue', () => {
   it('mutates the injected reference', async () => {
     const { keywords } = renderComponent()
 
-    await h.user.click(screen.getByTitle('Filter'))
+    await h.user.click(screen.getByRole('button', { name: 'Filter' }))
     await h.user.type(screen.getByPlaceholderText('Keywords'), 'sample')
 
     expect(keywords.value).toBe('sample')

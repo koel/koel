@@ -35,7 +35,7 @@
     <button
       type="button"
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 opacity-0 group-hover/thumb:opacity-100 no-hover:opacity-100 transition-opacity"
-      :title="playLabel"
+      v-koel-tooltip
       @click.stop="playOrQueue"
     >
       <span
@@ -50,7 +50,7 @@
     <button
       type="button"
       class="absolute bottom-3 right-4 z-20 p-1 opacity-0 group-hover/thumb:opacity-100 no-hover:opacity-100 hover:scale-110 transition-[opacity,transform]"
-      title="More actions"
+      v-koel-tooltip
       @click.stop="emit('context-menu', $event)"
     >
       <Icon :icon="faEllipsis" />

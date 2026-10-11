@@ -9,7 +9,6 @@
             <Btn
               size="small"
               v-koel-tooltip
-              :title="preferences.radio_stations_favorites_only ? 'Show all' : 'Show favorites only'"
               variant="ghost"
               class="border border-k-fg-10"
               @click.prevent="toggleFavoritesOnly"
@@ -19,6 +18,9 @@
                 :class="preferences.radio_stations_favorites_only && 'text-k-love'"
                 size="sm"
               />
+              <span class="sr-only">{{
+                preferences.radio_stations_favorites_only ? 'Show all' : 'Show favorites only'
+              }}</span>
             </Btn>
 
             <RadioStationListSorter
@@ -30,14 +32,7 @@
 
             <ListFilter />
 
-            <Btn
-              size="small"
-              v-if="canAdd"
-              v-koel-tooltip
-              variant="highlight"
-              title="Add a new station"
-              @click.prevent="requestAddStationForm"
-            >
+            <Btn size="small" v-if="canAdd" v-koel-tooltip variant="highlight" @click.prevent="requestAddStationForm">
               <Icon :icon="faAdd" fixed-width />
               <span class="sr-only">Add a new station</span>
             </Btn>

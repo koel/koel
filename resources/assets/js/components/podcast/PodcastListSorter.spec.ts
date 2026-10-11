@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { screen, within } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './PodcastListSorter.vue'
 
@@ -14,12 +14,12 @@ describe('podcastListSorter.vue', () => {
       },
     })
 
-    screen.getByTitle('Sorting by Title, descending')
+    screen.getByRole('button', { name: 'Title descending' })
 
-    await h.user.click(screen.getByTitle('Sort by Title'))
+    await h.user.click(within(screen.getByRole('list')).getByText('Title'))
     expect(emitted().sort[0]).toEqual(['title', 'asc'])
 
-    await h.user.click(screen.getByTitle('Sort by Author'))
+    await h.user.click(within(screen.getByRole('list')).getByText('Author'))
     expect(emitted().sort[1]).toEqual(['author', 'asc'])
   })
 })

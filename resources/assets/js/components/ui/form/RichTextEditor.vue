@@ -8,7 +8,7 @@
         :key="action.label"
         :aria-pressed="action.isActive()"
         :disabled="action.isDisabled?.()"
-        :title="action.label"
+        v-koel-tooltip
         class="p-1.5 rounded-sm text-k-fg-70 hover:text-k-fg aria-pressed:text-k-highlight aria-pressed:bg-k-fg-10 disabled:opacity-30 disabled:pointer-events-none"
         type="button"
         @click="action.run"
@@ -39,14 +39,14 @@
           type="url"
           @keydown.enter.prevent="applyLink"
         />
-        <Btn bordered class="h-8 px-1.5! py-0!" title="Apply" type="button" variant="ghost" @click="applyLink">
+        <Btn v-koel-tooltip bordered class="h-8 px-1.5! py-0!" type="button" variant="ghost" @click="applyLink">
           <CheckIcon :size="14" />
           <span class="sr-only">Apply</span>
         </Btn>
         <Btn
           v-if="editingExistingLink"
+          v-koel-tooltip
           class="h-8 px-1.5! py-0!"
-          title="Remove link"
           type="button"
           variant="ghost"
           @click="removeLink"

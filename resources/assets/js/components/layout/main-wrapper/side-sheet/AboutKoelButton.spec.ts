@@ -12,9 +12,9 @@ describe('aboutKoelButton.vue', () => {
     commonStore.state.latest_version = '1.0.0'
 
     h.actingAsAdmin().render(Component)
-    expect(screen.queryByTitle('New version available!')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'New version available!' })).toBeNull()
     expect(screen.queryByTestId('new-version-indicator')).toBeNull()
-    screen.getByTitle('About Koel')
+    screen.getByRole('button', { name: 'About Koel' })
   })
 
   it('shows notification when new version available', () => {
@@ -22,7 +22,7 @@ describe('aboutKoelButton.vue', () => {
     commonStore.state.latest_version = '1.0.1'
 
     h.actingAsAdmin().render(Component)
-    screen.getByTitle('New version available!')
+    screen.getByRole('button', { name: 'New version available!' })
     screen.getByTestId('new-version-indicator')
   })
 
@@ -31,8 +31,8 @@ describe('aboutKoelButton.vue', () => {
     commonStore.state.latest_version = '1.0.1'
 
     h.actingAsUser().render(Component)
-    expect(screen.queryByTitle('New version available!')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'New version available!' })).toBeNull()
     expect(screen.queryByTestId('new-version-indicator')).toBeNull()
-    screen.getByTitle('About Koel')
+    screen.getByRole('button', { name: 'About Koel' })
   })
 })

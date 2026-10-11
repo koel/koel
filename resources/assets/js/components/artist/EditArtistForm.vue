@@ -34,14 +34,7 @@
           >
             <FormRow>
               <template #label>Name</template>
-              <TextInput
-                v-model="data.name"
-                v-koel-focus
-                name="name"
-                placeholder="Artist name"
-                required
-                title="Artist name"
-              />
+              <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Artist name" required />
             </FormRow>
             <ArtworkField v-model="data.image">Pick or paste an image (optional)</ArtworkField>
           </TabPanel>

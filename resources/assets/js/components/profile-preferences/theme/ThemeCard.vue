@@ -1,6 +1,5 @@
 <template>
   <article
-    :title="isCurrentTheme ? `${theme.name} (current theme)` : `Set current theme to ${theme.name}`"
     class="theme h-[96px] relative cursor-pointer rounded-lg transition duration-300 shadow-lg"
     data-testid="theme-card"
     @contextmenu.prevent="onContextMenu"
@@ -22,7 +21,10 @@
       </div>
     </WithGradientBorder>
 
-    <Icon v-if="isCurrentTheme" :icon="faBookmark" class="absolute z-10 -top-1 right-3 text-k-highlight" size="xl" />
+    <span v-if="isCurrentTheme" class="absolute z-10 -top-1 right-3 text-k-highlight">
+      <Icon :icon="faBookmark" size="xl" />
+      <span class="sr-only">Current theme</span>
+    </span>
   </article>
 </template>
 

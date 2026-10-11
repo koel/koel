@@ -19,15 +19,16 @@
 
     <div class="text-center absolute w-full left-0 mt-[-2px]">
       <Btn
+        v-koel-tooltip
         size="small"
         variant="success"
         class="aspect-square scale-75 hover:scale-90 active:scale-[80%]"
         rounded
-        title="Add a rule"
         data-testid="add-rule-btn"
         @click.prevent="addRule"
       >
         <Icon :icon="faPlus" />
+        <span class="sr-only">Add a rule</span>
       </Btn>
     </div>
   </div>

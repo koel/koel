@@ -1,10 +1,7 @@
 <template>
-  <SideSheetButton
-    v-koel-tooltip.left
-    :title="shouldNotifyNewVersion ? 'New version available!' : `About ${appName}`"
-    @click.prevent="openAboutKoelModal"
-  >
+  <SideSheetButton v-koel-tooltip.left @click.prevent="openAboutKoelModal">
     <Icon :icon="faInfoCircle" />
+    <span class="sr-only">{{ shouldNotifyNewVersion ? 'New version available!' : `About ${appName}` }}</span>
     <span
       v-if="shouldNotifyNewVersion"
       class="absolute w-[10px] aspect-square right-px top-px rounded-full bg-k-highlight"

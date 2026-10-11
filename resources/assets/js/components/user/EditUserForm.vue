@@ -15,14 +15,7 @@
       </FormRow>
       <FormRow>
         <template #label>Email</template>
-        <TextInput
-          v-model="data.email"
-          :readonly="user.sso_provider"
-          name="email"
-          required
-          title="Email"
-          type="email"
-        />
+        <TextInput v-model="data.email" :readonly="user.sso_provider" name="email" required type="email" />
       </FormRow>
       <FormRow v-if="!user.sso_provider">
         <template #label>Password</template>

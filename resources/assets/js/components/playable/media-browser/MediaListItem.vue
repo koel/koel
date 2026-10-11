@@ -12,8 +12,9 @@
           <FileMusicIcon class="hidden sm:block" :size="16" />
 
           <!-- on a mobile device, show a Play button for a better UX -->
-          <button class="sm:hidden py-px" title="Play" @click.prevent.stop="emit('play-song')">
+          <button class="sm:hidden py-px" @click.prevent.stop="emit('play-song')">
             <PlayCircleIcon :size="16" />
+            <span class="sr-only">Play</span>
           </button>
         </template>
       </template>
@@ -25,7 +26,6 @@
       <button
         v-if="item.type === 'folders'"
         class="sm:hidden border border-k-fg-10 rounded-sm px-1.5 py-px"
-        title="Open"
         @click.prevent.stop="emit('open-folder')"
       >
         Open

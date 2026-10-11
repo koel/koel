@@ -43,7 +43,7 @@
         >
           <FormRow v-if="editingOnlyOneSong">
             <template #label>Title</template>
-            <TextInput v-model="data.title" v-koel-focus data-testid="title-input" name="title" title="Title" />
+            <TextInput v-model="data.title" v-koel-focus data-testid="title-input" name="title" />
           </FormRow>
 
           <FormRow :cols="2">
@@ -137,7 +137,7 @@
           aria-labelledby="editSongTabLyrics"
         >
           <FormRow>
-            <TextArea v-model="data.lyrics" v-koel-focus data-testid="lyrics-input" name="lyrics" title="Lyrics" />
+            <TextArea v-model="data.lyrics" v-koel-focus data-testid="lyrics-input" name="lyrics" />
           </FormRow>
         </TabPanel>
       </TabPanelContainer>

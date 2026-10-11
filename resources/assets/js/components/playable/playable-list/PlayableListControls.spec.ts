@@ -42,7 +42,7 @@ describe('playableListControls.vue', () => {
   it.each([[0], [1]])('shuffles all if %s songs are selected', async (selectedCount: number) => {
     const { emitted } = renderComponent(selectedCount)
 
-    await h.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
+    await h.user.click(screen.getByRole('button', { name: 'Shuffle All' }))
 
     expect(emitted()['play-all'][0]).toEqual([true])
   })
@@ -51,7 +51,7 @@ describe('playableListControls.vue', () => {
     const { emitted } = renderComponent(selectedCount)
 
     await h.user.keyboard('{Alt>}')
-    await h.user.click(screen.getByTitle('Play all. Press Alt/⌥ to change mode.'))
+    await h.user.click(screen.getByRole('button', { name: 'Play All' }))
     await h.user.keyboard('{/Alt}')
 
     expect(emitted()['play-all'][0]).toEqual([false])
@@ -60,7 +60,7 @@ describe('playableListControls.vue', () => {
   it('shuffles selected if more than one song are selected', async () => {
     const { emitted } = renderComponent(2)
 
-    await h.user.click(screen.getByTitle('Shuffle selected. Press Alt/⌥ to change mode.'))
+    await h.user.click(screen.getByRole('button', { name: 'Shuffle Selected' }))
 
     expect(emitted()['play-selected'][0]).toEqual([true])
   })
@@ -69,7 +69,7 @@ describe('playableListControls.vue', () => {
     const { emitted } = renderComponent(2)
 
     await h.user.keyboard('{Alt>}')
-    await h.user.click(screen.getByTitle('Play selected. Press Alt/⌥ to change mode.'))
+    await h.user.click(screen.getByRole('button', { name: 'Play Selected' }))
     await h.user.keyboard('{/Alt}')
 
     expect(emitted()['play-selected'][0]).toEqual([false])
@@ -78,7 +78,7 @@ describe('playableListControls.vue', () => {
   it('clears queue', async () => {
     const { emitted } = renderComponent(0)
 
-    await h.user.click(screen.getByTitle('Clear current queue'))
+    await h.user.click(screen.getByRole('button', { name: 'Clear' }))
 
     expect(emitted()['clear-queue']).toBeTruthy()
   })

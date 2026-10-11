@@ -18,10 +18,10 @@ describe('volumeSlider.vue', () => {
     h.render(Component)
     expect(volumeManager.volume.value).toEqual(5)
 
-    await h.user.click(screen.getByTitle('Mute'))
+    await h.user.click(screen.getByText('Mute').closest('button')!)
     expect(volumeManager.volume.value).toEqual(0)
 
-    await h.user.click(screen.getByTitle('Unmute'))
+    await h.user.click(screen.getByText('Unmute').closest('button')!)
     expect(volumeManager.volume.value).toEqual(5)
   })
 

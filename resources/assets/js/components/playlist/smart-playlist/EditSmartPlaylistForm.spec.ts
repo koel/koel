@@ -129,7 +129,7 @@ describe('editSmartPlaylistForm', () => {
     await h.user.click(screen.getByText('Rules'))
     await waitFor(() => screen.getByText(/Include songs that match/))
 
-    await h.user.click(screen.getByTitle('Add a new group'))
+    await h.user.click(screen.getByRole('button', { name: 'Group' }))
 
     // Switch back to Details to access the name field
     await h.user.click(screen.getByText('Details'))

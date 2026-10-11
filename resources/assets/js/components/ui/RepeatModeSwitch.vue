@@ -2,7 +2,6 @@
   <button
     v-koel-tooltip
     :class="{ active: mode !== 'NO_REPEAT' }"
-    :title="`Change repeat mode (current: ${readableMode})`"
     class="relative text-k-fg-30"
     data-testid="repeat-mode-switch"
     type="button"
@@ -10,6 +9,7 @@
   >
     <Repeat1 v-if="mode === 'REPEAT_ONE'" :size="16" />
     <Repeat v-else :size="16" />
+    <span class="sr-only">Change repeat mode (current: {{ readableMode }})</span>
   </button>
 </template>
 

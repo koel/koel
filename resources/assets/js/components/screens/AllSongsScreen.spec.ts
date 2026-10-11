@@ -53,7 +53,7 @@ describe('allSongsScreen.vue', () => {
     const goMock = h.mock(Router, 'go')
     await renderComponent()
 
-    await h.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
+    await h.user.click(screen.getByRole('button', { name: 'Shuffle All' }))
 
     await waitFor(() => {
       expect(queueMock).toHaveBeenCalled()

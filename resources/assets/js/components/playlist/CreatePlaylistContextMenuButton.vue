@@ -1,11 +1,12 @@
 <template>
   <button
+    v-koel-tooltip
     class="relative before:absolute before:w-[28px] before:aspect-square before:top-[-6px] before:left-[-6px] before:cursor-pointer"
-    title="Create a new playlist or folder"
     type="button"
     @click.stop.prevent="requestContextMenu"
   >
     <Icon :icon="faCirclePlus" />
+    <span class="sr-only">Create a new playlist or folder</span>
   </button>
 </template>
 

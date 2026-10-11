@@ -34,7 +34,7 @@ describe('userCard.vue', () => {
     h.actingAsUser(user)
     renderComponent(user)
 
-    screen.getByTitle('This is you!')
+    screen.getByText('This is you!')
     expect(screen.getByRole('link', { name: 'Your Profile' }).getAttribute('href')).toBe('/#/settings')
   })
 

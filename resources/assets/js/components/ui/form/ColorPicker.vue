@@ -14,7 +14,7 @@ const attrs = useAttrs()
 
 const el = ref<HTMLInputElement>()
 
-const ariaLabel = computed(() => String(attrs.ariaLabel || attrs.title || attrs.name))
+const ariaLabel = computed(() => String(attrs['aria-label'] || attrs.ariaLabel || attrs.name))
 
 defineExpose({
   el,

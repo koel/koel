@@ -32,7 +32,7 @@ describe('addUserForm.vue', () => {
 
     await h.type(screen.getByRole('textbox', { name: 'name' }), 'John Doe')
     await h.type(screen.getByRole('textbox', { name: 'email' }), 'john@doe.com')
-    await h.type(screen.getByTitle('Password'), 'secret-password')
+    await h.type(screen.getByLabelText('Password'), 'secret-password')
     await fireEvent.update(screen.getByTestId('role-picker'), 'admin')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 

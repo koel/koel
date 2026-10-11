@@ -5,17 +5,12 @@
         Artists
         <template #controls>
           <div class="flex gap-2">
-            <Btn
-              v-koel-tooltip
-              :title="preferences.artists_favorites_only ? 'Show all' : 'Show favorites only'"
-              variant="ghost"
-              class="border border-k-fg-10"
-              @click.prevent="toggleFavoritesOnly"
-            >
+            <Btn v-koel-tooltip variant="ghost" class="border border-k-fg-10" @click.prevent="toggleFavoritesOnly">
               <Icon
                 :icon="preferences.artists_favorites_only ? faHeart : faEmptyHeart"
                 :class="preferences.artists_favorites_only && 'text-k-love'"
               />
+              <span class="sr-only">{{ preferences.artists_favorites_only ? 'Show all' : 'Show favorites only' }}</span>
             </Btn>
 
             <ArtistListSorter

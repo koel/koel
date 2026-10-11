@@ -28,28 +28,38 @@
         <span v-if="file.status === 'Retrying'" class="shrink-0 px-3 text-k-fg-50" data-testid="upload-item-state">
           Retrying&hellip;
         </span>
-        <Btn variant="ghost" v-if="canAbort" class="px-3!" icon-only title="Abort" unrounded @click="abort">
+        <Btn variant="ghost" v-if="canAbort" v-koel-tooltip class="px-3!" icon-only unrounded @click="abort">
           <Icon :icon="faXmark" />
+          <span class="sr-only">Abort</span>
         </Btn>
-        <Btn v-if="canRetry" class="h-full px-4!" icon-only title="Retry" unrounded variant="success" @click="retry">
+        <Btn v-if="canRetry" v-koel-tooltip class="h-full px-4!" icon-only unrounded variant="success" @click="retry">
           <Icon :icon="faRotateBack" />
+          <span class="sr-only">Retry</span>
         </Btn>
         <Btn
           v-if="canRemove"
+          v-koel-tooltip
           class="h-full px-4!"
           icon-only
-          title="Remove"
           unrounded
           variant="destructive"
           @click="remove"
         >
           <Icon :icon="faTrashCan" />
+          <span class="sr-only">Remove</span>
         </Btn>
-        <span v-if="file.status === 'Uploaded'" class="px-3 text-k-success" title="Uploaded">
+        <span
+          v-if="file.status === 'Uploaded'"
+          v-koel-tooltip
+          class="px-3 text-k-success"
+          data-testid="upload-item-uploaded"
+        >
           <Icon :icon="faCircleCheck" />
+          <span class="sr-only">Uploaded</span>
         </span>
-        <span v-if="isProcessing" class="px-3 text-k-fg-50" title="Processing">
+        <span v-if="isProcessing" v-koel-tooltip class="px-3 text-k-fg-50" data-testid="upload-item-processing">
           <Icon :icon="faSpinner" spin />
+          <span class="sr-only">Processing</span>
         </span>
       </div>
     </div>

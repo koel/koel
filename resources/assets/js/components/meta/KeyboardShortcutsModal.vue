@@ -2,14 +2,9 @@
   <div v-koel-focus class="md:w-[640px]" data-testid="keyboard-shortcuts" tabindex="0" @keydown.esc="close">
     <header class="items-center gap-4">
       <h1 class="flex-1">Keyboard Shortcuts</h1>
-      <button
-        aria-label="Close"
-        class="w-8 h-8 rounded-full text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5"
-        title="Close"
-        type="button"
-        @click="close"
-      >
+      <button class="w-8 h-8 rounded-full text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5" type="button" @click="close">
         <Icon :icon="faTimes" fixed-width />
+        <span class="sr-only">Close</span>
       </button>
     </header>
 
