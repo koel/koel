@@ -5,10 +5,6 @@ declare module '*.svg'
 
 declare type Closure<T = unknown | any> = (...args: Array<unknown | any>) => T
 
-declare module 'sketch-js' {
-  function create(config: Record<string, any>): any
-}
-
 declare module 'youtube-player' {
   import type { YouTubePlayer } from 'youtube-player/dist/types'
 
