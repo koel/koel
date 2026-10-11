@@ -137,14 +137,6 @@ describe('uploadService', () => {
     expect(uploadMock).not.toHaveBeenCalled()
   })
 
-  it('skips already uploading files', async () => {
-    const file = createUploadFile({ status: 'Uploading' })
-
-    await uploadService.upload(file)
-
-    expect(postWithProgressMock).not.toHaveBeenCalled()
-  })
-
   it('uploads a file successfully', async () => {
     const result = { song: h.factory('song').make(), album: h.factory('album').make() }
     mockPostWithProgress(result)

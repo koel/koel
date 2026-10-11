@@ -51,16 +51,11 @@ class Organization extends Model
 
     public function claimOwnership(User $user): void
     {
-        $claimed = static::query()
-            ->whereKey($this->getKey())
-            ->whereNull('owner_id')
-            ->update([
-                'owner_id' => $user->getKey(),
-            ]);
-
-        if ($claimed) {
-            $this->owner()->associate($user);
-            $this->syncOriginalAttribute('owner_id');
+        if ($this->owner_id) {
+            return;
         }
+
+        $this->owner()->associate($user);
+        $this->save();
     }
 }

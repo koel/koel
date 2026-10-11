@@ -13,8 +13,8 @@ type Callback = (...args: any[]) => any
 
 const DEFAULT_PRIORITY = 10
 
-const actions: Record<string, Record<number, Record<string, Callback>>> = Object.create(null)
-const filters: Record<string, Record<number, Record<string, Callback>>> = Object.create(null)
+const actions: Record<string, Record<number, Record<string, Callback>>> = {}
+const filters: Record<string, Record<number, Record<string, Callback>>> = {}
 
 const register = (
   registry: Record<string, Record<number, Record<string, Callback>>>,
@@ -24,8 +24,8 @@ const register = (
 ): HookHandle => {
   const id = crypto.randomUUID()
 
-  registry[hook] ??= Object.create(null)
-  registry[hook][priority] ??= Object.create(null)
+  registry[hook] ??= {}
+  registry[hook][priority] ??= {}
   registry[hook][priority][id] = callback
 
   return { hook, id }

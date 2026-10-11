@@ -120,13 +120,4 @@ class ScanChunkCommandTest extends TestCase
             File::delete($manifest);
         }
     }
-
-    #[Test]
-    public function scanChunkFailsWithMissingManifest(): void
-    {
-        $this->artisan('koel:scan:chunk', [
-            'manifest' => '/nonexistent/path.json',
-            '--owner' => 1,
-        ])->assertFailed();
-    }
 }

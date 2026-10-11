@@ -19,19 +19,17 @@ class PlaylistFolderService
 
     public function createFolder(User $user, string $name, ?string $parentId = null): PlaylistFolder
     {
-        return DB::transaction(function () use ($user, $name, $parentId): PlaylistFolder {
-            $parent = null;
+        $parent = null;
 
-            if ($parentId) {
-                $parent = $this->repository->findOneForUpdate($parentId);
-                self::ensureParentBelongsToUser($parent, $user);
-            }
+        if ($parentId) {
+            $parent = $this->repository->findOne($parentId);
+            self::ensureParentBelongsToUser($parent, $user);
+        }
 
-            return $user->playlistFolders()->create([
-                'name' => $name,
-                'parent_id' => $parent?->id,
-            ]);
-        }, attempts: 5);
+        return $user->playlistFolders()->create([
+            'name' => $name,
+            'parent_id' => $parent?->id,
+        ]);
     }
 
     public function renameFolder(PlaylistFolder $folder, string $name): PlaylistFolder
@@ -51,40 +49,32 @@ class PlaylistFolderService
             return $folder;
         }
 
-        return DB::transaction(function () use ($folder, $changes): PlaylistFolder {
-            $folders = $this->repository->getAllOwnedByForUpdate($folder->user);
-            $lockedFolder = $folders->firstWhere('id', $folder->id);
+        if (array_key_exists('name', $changes)) {
+            $folder->name = $changes['name'];
+        }
 
-            throw_unless($lockedFolder, ValidationException::withMessages([
-                'parent_id' => ['The playlist folder no longer exists.'],
-            ]));
+        $parentId = $changes['parent_id'];
 
-            if (array_key_exists('name', $changes)) {
-                $lockedFolder->name = $changes['name'];
-            }
+        if ($parentId === null) {
+            $folder->parent_id = null;
+        } else {
+            $folders = $this->repository->getAllOwnedBy($folder->user);
+            $parent = $folders->firstWhere('id', $parentId);
+            self::ensureParentBelongsToUser($parent, $folder->user);
 
-            $parentId = $changes['parent_id'];
+            throw_if(
+                self::movingFolderWouldCreateCycle($folder, $parent, $folders),
+                ValidationException::withMessages([
+                    'parent_id' => ['A playlist folder cannot be moved into itself or one of its descendants.'],
+                ]),
+            );
 
-            if ($parentId === null) {
-                $lockedFolder->parent_id = null;
-            } else {
-                $parent = $folders->firstWhere('id', $parentId);
-                self::ensureParentBelongsToUser($parent, $lockedFolder->user);
+            $folder->parent_id = $parent->id;
+        }
 
-                throw_if(
-                    self::movingFolderWouldCreateCycle($lockedFolder, $parent, $folders),
-                    ValidationException::withMessages([
-                        'parent_id' => ['A playlist folder cannot be moved into itself or one of its descendants.'],
-                    ]),
-                );
+        $folder->save();
 
-                $lockedFolder->parent_id = $parent->id;
-            }
-
-            $lockedFolder->save();
-
-            return $lockedFolder;
-        }, attempts: 5);
+        return $folder;
     }
 
     public function addPlaylistsToFolder(PlaylistFolder $folder, array $playlistIds): void

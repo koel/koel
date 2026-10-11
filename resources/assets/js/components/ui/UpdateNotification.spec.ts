@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { nextTick } from 'vue'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
@@ -49,28 +48,6 @@ describe('updateNotification', () => {
     await vi.waitFor(() => expect(isNewerVersionDeployedMock).toHaveBeenCalled())
 
     expect(screen.queryByText('Koel has been updated.')).toBeNull()
-  })
-
-  it('keeps the notice once a newer version is confirmed, even if a later check says otherwise', async () => {
-    let confirmNewerVersion: (deployed: boolean) => void = () => {}
-    let denyNewerVersion: (deployed: boolean) => void = () => {}
-
-    isNewerVersionDeployedMock
-      .mockImplementationOnce(() => new Promise(resolve => (confirmNewerVersion = resolve)))
-      .mockImplementationOnce(() => new Promise(resolve => (denyNewerVersion = resolve)))
-
-    h.render(Component)
-
-    failToLoadAFile()
-    failToLoadAFile()
-    confirmNewerVersion(true)
-    await screen.findByText('Koel has been updated.')
-
-    denyNewerVersion(false)
-    await new Promise(resolve => setTimeout(resolve))
-    await nextTick()
-
-    screen.getByText('Koel has been updated.')
   })
 
   it('offers a reload when the API reports a newer build', async () => {

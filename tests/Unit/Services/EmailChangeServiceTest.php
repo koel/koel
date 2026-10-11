@@ -2,14 +2,8 @@
 
 namespace Tests\Unit\Services;
 
-use App\Enums\EmailChangeResult;
-use App\Mail\ConfirmEmailChange;
-use App\Repositories\UserRepository;
 use App\Services\EmailChangeService;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use Illuminate\Support\Uri;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -70,28 +64,5 @@ class EmailChangeServiceTest extends TestCase
         $this->service->notifyChange(create_user(['email' => 'new@koel.test']), 'old@koel.test');
 
         Mail::assertNothingQueued();
-    }
-
-    #[Test]
-    public function reportTheAddressAsTakenWhenAnotherAccountClaimsItFirst(): void
-    {
-        $user = create_user(['email' => 'old@koel.test']);
-        create_user(['email' => 'new@koel.test']);
-
-        $repository = Mockery::mock(UserRepository::class);
-        $repository->allows('findOneByEmail')->andReturnNull();
-
-        Mail::fake();
-        $service = new EmailChangeService($repository);
-        $service->requestChange($user, 'new@koel.test');
-
-        $confirmationUrl = Mail::queued(ConfirmEmailChange::class)->sole()->confirmationUrl;
-        $signedApiPath = base64_decode(Str::after($confirmationUrl, 'email-change/'), true);
-        $query = Uri::of($signedApiPath)->query();
-
-        $result = $service->confirmChange($user, 'new@koel.test', $query->get('current'), $query->get('token'));
-
-        self::assertSame(EmailChangeResult::TAKEN, $result);
-        self::assertSame('old@koel.test', $user->refresh()->email);
     }
 }

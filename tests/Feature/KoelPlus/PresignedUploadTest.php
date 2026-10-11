@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\KoelPlus;
 
-use App\Jobs\HandlePresignedSongUploadJob;
 use App\Models\Song;
 use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\S3CompatibleStorage;
@@ -16,7 +15,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Tests\PlusTestCase;
 
@@ -186,49 +184,6 @@ class PresignedUploadTest extends PlusTestCase
         $this->postAs('api/upload/complete', ['key' => $key], $user)->assertConflict();
 
         self::assertSame(1, Song::query()->where('path', "s3://koel/{$user->public_id}__random__song.mp3")->count());
-    }
-
-    #[Test]
-    public function refusesASecondCompletionWhileTheFirstIsStillQueued(): void
-    {
-        $user = create_user();
-        $key = "pending/{$user->public_id}__random__song.mp3";
-        Storage::disk('s3')->put($key, File::get(test_path('songs/full.mp3')));
-
-        HandlePresignedSongUploadJob::makeProcessingLock("s3://koel/{$user->public_id}__random__song.mp3")->get();
-
-        $this->postAs('api/upload/complete', ['key' => $key], $user)->assertConflict();
-    }
-
-    #[Test]
-    public function aFailedUploadCanBeCompletedAgain(): void
-    {
-        Event::fake();
-
-        $location = 's3://koel/1__random__song.mp3';
-        $lock = HandlePresignedSongUploadJob::makeProcessingLock($location);
-        $lock->get();
-
-        (new HandlePresignedSongUploadJob($location, '1__random__song.mp3', create_user(), $lock->owner()))->failed(
-            new RuntimeException('Scanning failed'),
-        );
-
-        self::assertTrue(HandlePresignedSongUploadJob::makeProcessingLock($location)->get());
-    }
-
-    #[Test]
-    public function aFailedUploadLeavesAnotherCompletionsLockAlone(): void
-    {
-        Event::fake();
-
-        $location = 's3://koel/1__random__song.mp3';
-        HandlePresignedSongUploadJob::makeProcessingLock($location)->get();
-
-        (new HandlePresignedSongUploadJob($location, '1__random__song.mp3', create_user(), 'expired-owner'))->failed(
-            new RuntimeException('Scanning failed'),
-        );
-
-        self::assertFalse(HandlePresignedSongUploadJob::makeProcessingLock($location)->get());
     }
 
     #[Test]

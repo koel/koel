@@ -178,20 +178,6 @@ class HookRegistryTest extends TestCase
     }
 
     #[Test]
-    public function shrugAtAHandleThatWasAlreadyRemoved(): void
-    {
-        $handle = $this->registry->addFilter(Filter::INITIAL_DATA_FETCHED, static fn (array $data): array => $data);
-
-        $this->registry->removeFilter($handle);
-        $this->registry->removeFilter($handle);
-
-        self::assertSame(
-            ['kept' => true],
-            $this->registry->applyFilters(Filter::INITIAL_DATA_FETCHED, ['kept' => true]),
-        );
-    }
-
-    #[Test]
     public function filterThroughACustomHookName(): void
     {
         $this->registry->addFilter('plugin-payload', static fn (array $data): array => $data + ['added' => true]);

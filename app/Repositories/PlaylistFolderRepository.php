@@ -12,13 +12,8 @@ use Illuminate\Database\Eloquent\Collection;
 class PlaylistFolderRepository extends Repository
 {
     /** @return Collection<int, PlaylistFolder> */
-    public function getAllOwnedByForUpdate(User $user): Collection
+    public function getAllOwnedBy(User $user): Collection
     {
-        return PlaylistFolder::query()->where('user_id', $user->id)->orderBy('id')->lockForUpdate()->get();
-    }
-
-    public function findOneForUpdate(string $id): ?PlaylistFolder
-    {
-        return PlaylistFolder::query()->whereKey($id)->lockForUpdate()->first();
+        return PlaylistFolder::query()->where('user_id', $user->id)->get();
     }
 }
