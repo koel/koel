@@ -4,13 +4,7 @@
       <template #before>
         <ScreenHeaderPinned>
           <div class="radio-station-table-header sortable flex bg-k-fg-3 pl-5">
-            <SortableColumnHeader
-              :active="field === 'name'"
-              :order
-              class="name"
-              title="Sort by name"
-              @sort="onSort('name')"
-            >
+            <SortableColumnHeader :active="field === 'name'" :order class="name" @sort="onSort('name')">
               Name
             </SortableColumnHeader>
             <span v-if="shouldShowColumn('description')" class="description">Description</span>
@@ -19,7 +13,6 @@
               :active="field === 'created_at'"
               :order
               class="created-at"
-              title="Sort by date added"
               label="Date Added"
               @sort="onSort('created_at')"
             />
@@ -28,11 +21,11 @@
               :active="field === 'favorite'"
               :order
               class="favorite"
-              title="Sort by favorite"
               @sort="onSort('favorite')"
             >
-              <Icon :icon="faHeart"
-            /></SortableColumnHeader>
+              <Icon :icon="faHeart" />
+              <span class="sr-only">Favorite</span>
+            </SortableColumnHeader>
             <span class="extra">
               <TableHeaderActionMenu
                 :field

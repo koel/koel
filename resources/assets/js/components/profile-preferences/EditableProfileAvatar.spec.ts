@@ -22,8 +22,8 @@ describe('editableProfileAvatar.vue', () => {
     renderComponent()
 
     expect(screen.getByRole('img').getAttribute('src')).toBe('https://example.com/current.png')
-    screen.getByTitle('Pick a new avatar')
-    screen.getByTitle('Remove avatar')
+    screen.getByRole('button', { name: 'Pick a new avatar' })
+    screen.getByRole('button', { name: 'Remove avatar' })
   })
 
   it('previews the new avatar and allows resetting it', () => {
@@ -31,7 +31,7 @@ describe('editableProfileAvatar.vue', () => {
 
     expect(screen.getByRole('img').getAttribute('src')).toBe('data:image/png;base64,Ynl0ZXM=')
 
-    screen.getByTitle('Reset avatar').click()
+    screen.getByRole('button', { name: 'Reset avatar' }).click()
 
     expect(emitted()['update:avatar']).toEqual([[undefined]])
   })
@@ -39,7 +39,7 @@ describe('editableProfileAvatar.vue', () => {
   it('removes the avatar', async () => {
     const { emitted } = renderComponent()
 
-    await h.user.click(screen.getByTitle('Remove avatar'))
+    await h.user.click(screen.getByRole('button', { name: 'Remove avatar' }))
 
     await waitFor(() => expect(emitted()['update:avatar']).toEqual([[null]]))
   })

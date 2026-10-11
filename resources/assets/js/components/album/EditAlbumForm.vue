@@ -34,23 +34,16 @@
           >
             <FormRow>
               <template #label>Name</template>
-              <TextInput
-                v-model="data.name"
-                v-koel-focus
-                name="name"
-                placeholder="Album name"
-                required
-                title="Album name"
-              />
+              <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Album name" required />
             </FormRow>
             <div class="grid grid-cols-2 gap-2">
               <FormRow>
                 <template #label>Artist</template>
-                <TextInput v-model="album.artist_name" name="artist" disabled title="Artist name cannot be changed" />
+                <TextInput v-model="album.artist_name" name="artist" disabled />
               </FormRow>
               <FormRow>
                 <template #label>Release year</template>
-                <TextInput v-model="data.year" type="number" name="year" title="Release year" min="1000" />
+                <TextInput v-model="data.year" type="number" name="year" min="1000" />
               </FormRow>
             </div>
             <ArtworkField v-model="data.cover">Pick or paste a cover (optional)</ArtworkField>

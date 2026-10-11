@@ -52,7 +52,7 @@ describe('radioStationCard', () => {
     const playMock = h.mock(playbackService, 'play')
     const { station } = renderComponent()
 
-    await h.user.click(screen.getByTitle('Play/pause Beethoven Goes Metal'))
+    await h.user.click(screen.getByRole('button', { name: 'Play Beethoven Goes Metal' }))
 
     expect(playMock).toHaveBeenCalledWith(station)
   })

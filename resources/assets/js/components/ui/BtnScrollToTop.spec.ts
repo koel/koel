@@ -12,7 +12,7 @@ describe('btnScrollToTop.vue', () => {
     const mock = h.mock($, 'scrollTo')
     h.render(Component)
 
-    await h.user.click(screen.getByTitle('Scroll to top'))
+    await h.user.click(screen.getByRole('button', { hidden: true }))
 
     expect(mock).toHaveBeenCalled()
   })

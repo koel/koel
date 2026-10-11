@@ -113,13 +113,13 @@ describe('uploadItem.vue', () => {
   it('marks an uploaded file with a check', () => {
     renderComponent('Uploaded')
 
-    screen.getByTitle('Uploaded')
+    screen.getByTestId('upload-item-uploaded')
   })
 
   it('shows a spinner while processing', () => {
     renderComponent('Processing')
 
-    screen.getByTitle('Processing')
+    screen.getByTestId('upload-item-processing')
   })
 
   it('shows the upload progress as a ring while uploading', () => {

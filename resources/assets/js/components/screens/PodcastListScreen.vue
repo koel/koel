@@ -9,7 +9,6 @@
               size="small"
               variant="ghost"
               v-koel-tooltip
-              :title="preferences.podcasts_favorites_only ? 'Show all' : 'Show favorites only'"
               class="border border-k-fg-10"
               @click.prevent="toggleFavoritesOnly"
             >
@@ -18,6 +17,9 @@
                 :class="preferences.podcasts_favorites_only && 'text-k-love'"
                 size="sm"
               />
+              <span class="sr-only">{{
+                preferences.podcasts_favorites_only ? 'Show all' : 'Show favorites only'
+              }}</span>
             </Btn>
 
             <PodcastListSorter

@@ -27,13 +27,13 @@ describe('offlineNotification', () => {
 
   it('can be dismissed', async () => {
     h.render(Component)
-    await h.user.click(screen.getByTitle('Click to dismiss'))
+    await h.user.click(screen.getByText("You're offline."))
     expect(screen.queryByText("You're offline.")).toBeNull()
   })
 
   it('re-shows when going offline again after dismiss', async () => {
     h.render(Component)
-    await h.user.click(screen.getByTitle('Click to dismiss'))
+    await h.user.click(screen.getByText("You're offline."))
     expect(screen.queryByText("You're offline.")).toBeNull()
 
     // Go online then offline again

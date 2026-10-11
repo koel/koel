@@ -53,7 +53,7 @@ describe('folderSelect', () => {
 
     await waitFor(() => screen.getByPlaceholderText('Folder name'))
     await h.user.type(screen.getByPlaceholderText('Folder name'), 'My Folder')
-    await h.user.click(screen.getByTitle('Create'))
+    await h.user.click(screen.getByRole('button', { name: 'Create' }))
 
     await waitFor(() => {
       expect(emitted()['update:folderName']).toBeTruthy()
@@ -68,7 +68,7 @@ describe('folderSelect', () => {
     await h.user.selectOptions(screen.getByRole('combobox'), '__new__')
 
     await waitFor(() => screen.getByPlaceholderText('Folder name'))
-    await h.user.click(screen.getByTitle('Cancel'))
+    await h.user.click(screen.getByRole('button', { name: 'Cancel' }))
 
     await waitFor(() => {
       screen.getByRole('combobox')
@@ -81,7 +81,7 @@ describe('folderSelect', () => {
     await h.user.selectOptions(screen.getByRole('combobox'), '__new__')
 
     await waitFor(() => screen.getByPlaceholderText('Folder name'))
-    await h.user.click(screen.getByTitle('Create'))
+    await h.user.click(screen.getByRole('button', { name: 'Create' }))
 
     expect(emitted()['update:folderName']).toBeFalsy()
   })

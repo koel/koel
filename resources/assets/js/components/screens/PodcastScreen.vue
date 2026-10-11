@@ -20,7 +20,6 @@
               ref="descriptionEl"
               v-koel-new-tab
               :class="{ 'cursor-pointer': description.overflown }"
-              :title="descriptionTooltip"
               class="leading-5 line-clamp-3"
               @click="maybeExpandDescription"
               v-html="description.content"
@@ -177,14 +176,6 @@ const requestContextMenu = (event: MouseEvent) =>
   openContextMenu<'PODCAST'>(ContextMenu, event, {
     podcast: podcast.value!,
   })
-
-const descriptionTooltip = computed(() => {
-  if (!description.overflown) {
-    return ''
-  }
-
-  return description.expanded ? 'Collapse' : 'Expand'
-})
 
 const displayedEpisodes = computed(() => {
   if (!episodes.value) {

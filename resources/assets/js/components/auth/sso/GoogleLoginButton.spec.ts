@@ -15,7 +15,7 @@ describe('googleLoginButton.vue', () => {
 
   it('opens popup on click', async () => {
     h.render(Component)
-    await h.user.click(screen.getByTitle('Log in with Google'))
+    await h.user.click(screen.getByRole('button', { name: 'Log in with Google' }))
 
     expect(openPopupMock).toHaveBeenCalledWith('/auth/google/redirect', 'Google Login', 768, 640, window)
   })

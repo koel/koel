@@ -2,7 +2,6 @@
   <article
     v-if="!dismissed"
     class="fixed z-10000 left-4 flex items-center gap-3 max-w-xs py-3 px-4 rounded-xl border border-k-fg-10 bg-k-bg-context-menu text-k-fg shadow-lg cursor-pointer"
-    title="Click to dismiss"
     @click="dismissed = true"
   >
     <WifiOff :size="18" class="shrink-0 text-k-warning" />

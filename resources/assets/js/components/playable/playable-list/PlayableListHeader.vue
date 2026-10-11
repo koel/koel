@@ -7,17 +7,17 @@
       :sortable="isSortable"
       class="track-number"
       data-testid="header-track-number"
-      title="Sort by track number"
-      label="#"
       @sort="sort('track')"
-    />
+    >
+      <span aria-hidden="true">#</span>
+      <span class="sr-only">Track number</span>
+    </SortableColumnHeader>
     <SortableColumnHeader
       :active="isSortedBy('title')"
       :order="sortOrder"
       :sortable="isSortable"
       class="title-artist"
       data-testid="header-title"
-      title="Sort by title"
       label="Title"
       @sort="sort('title')"
     />
@@ -26,7 +26,6 @@
       :active="isSortedByAlbumOrPodcast"
       :order="sortOrder"
       :sortable="isSortable"
-      :title="`Sort by ${contentType === 'episodes' ? 'podcast' : contentType === 'songs' ? 'album' : 'album/podcast'}`"
       class="album"
       data-testid="header-album"
       @sort="
@@ -51,7 +50,6 @@
         :sortable="isSortable"
         class="collaborator"
         data-testid="header-collaborator"
-        title="Sort by user"
         label="User"
         @sort="sort('collaboration.user.name')"
       />
@@ -62,7 +60,6 @@
         :sortable="isSortable"
         class="added-at"
         data-testid="header-contributed-at"
-        title="Sort by contributed at"
         label="Contributed"
         @sort="sort('collaboration.added_at')"
       />
@@ -74,7 +71,6 @@
       :sortable="isSortable"
       class="genre"
       data-testid="header-genre"
-      title="Sort by genre"
       label="Genre"
       @sort="sort('genre')"
     />
@@ -85,7 +81,6 @@
       :sortable="isSortable"
       class="year"
       data-testid="header-year"
-      title="Sort by year"
       label="Year"
       @sort="sort('year')"
     />
@@ -96,7 +91,6 @@
       :sortable="isSortable"
       class="rating"
       data-testid="header-rating"
-      title="Sort by rating"
       label="Rating"
       @sort="sort('rating')"
     />
@@ -107,7 +101,6 @@
       :sortable="isSortable"
       class="time"
       data-testid="header-length"
-      title="Sort by duration"
       label="Time"
       @sort="sort('length')"
     />
@@ -118,11 +111,11 @@
       :sortable="isSortable"
       class="favorite"
       data-testid="header-favorite"
-      title="Sort by favorite"
       @sort="sort('favorite')"
     >
-      <Icon :icon="faHeart"
-    /></SortableColumnHeader>
+      <Icon :icon="faHeart" />
+      <span class="sr-only">Favorite</span>
+    </SortableColumnHeader>
     <span v-if="shouldShowActionMenu" class="extra" data-testid="header-extra">
       <PlayableListHeaderActionMenu
         :sortable="config.sortable"

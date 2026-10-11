@@ -9,10 +9,10 @@
         <TextInput
           v-model="data.name"
           v-koel-focus
+          aria-label="Folder name"
           name="name"
           placeholder="Folder name"
           required
-          title="Folder name"
         />
       </FormRow>
       <FormRow>

@@ -1,11 +1,7 @@
 <template>
-  <button
-    class="opacity-50 hover:opacity-100"
-    title="Log in with Google"
-    type="button"
-    @click.prevent="loginWithGoogle"
-  >
-    <img :src="googleLogo" alt="Google Logo" height="32" width="32" />
+  <button v-koel-tooltip class="opacity-50 hover:opacity-100" type="button" @click.prevent="loginWithGoogle">
+    <img :src="googleLogo" alt="" height="32" width="32" />
+    <span class="sr-only">Log in with Google</span>
   </button>
 </template>
 

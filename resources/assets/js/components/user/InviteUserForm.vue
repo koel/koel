@@ -7,15 +7,7 @@
     <main class="space-y-5">
       <FormRow>
         <template #label>Emails</template>
-        <TextArea
-          ref="emailsEl"
-          v-model="data.raw_emails"
-          v-koel-focus
-          class="min-h-32!"
-          name="emails"
-          required
-          title="Emails"
-        />
+        <TextArea ref="emailsEl" v-model="data.raw_emails" v-koel-focus class="min-h-32!" name="emails" required />
         <template #help>To invite multiple users, input one email per line.</template>
       </FormRow>
       <RolePicker v-model="data.role" />

@@ -6,9 +6,8 @@
     @dragstart="onDragStart"
   >
     <span
-      v-koel-tooltip
+      v-koel-tooltip="playable ? 'Scroll to currently playing' : undefined"
       :class="playable && 'cursor-pointer'"
-      :title="playable ? 'Scroll to currently playing' : undefined"
       class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover"
       @click="scrollToCurrentInQueue"
     />

@@ -37,7 +37,7 @@
         {{ publicationDateForHumans }}
       </time>
 
-      <h3 class="text-xl" :title="episode.title">
+      <h3 class="text-xl">
         {{ episode.title }}
 
         <FavoriteButton v-if="episode.favorite" :favorite="episode.favorite" class="ml-2" @toggle="toggleFavorite" />

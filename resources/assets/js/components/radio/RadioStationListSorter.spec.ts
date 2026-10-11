@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/vue'
+import { screen, within } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './RadioStationListSorter.vue'
@@ -14,12 +14,12 @@ describe('radioStationListSorter', () => {
       },
     })
 
-    screen.getByTitle('Sorting by Name, ascending')
+    screen.getByRole('button', { name: 'Name ascending' })
 
-    await h.user.click(screen.getByTitle('Sort by Name'))
+    await h.user.click(within(screen.getByRole('list')).getByText('Name'))
     expect(emitted().sort[0]).toEqual(['name', 'desc'])
 
-    await h.user.click(screen.getByTitle('Sort by Date Added'))
+    await h.user.click(within(screen.getByRole('list')).getByText('Date Added'))
     expect(emitted().sort[1]).toEqual(['created_at', 'asc'])
   })
 })

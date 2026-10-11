@@ -27,7 +27,7 @@ describe('radioStationTable.vue', () => {
   it('emits sort with toggled order when a header is clicked', async () => {
     const { emitted } = renderWithStations(0)
 
-    await h.user.click(screen.getByTitle('Sort by name'))
+    await h.user.click(screen.getByRole('button', { name: 'Name' }))
 
     expect(emitted('sort')?.[0]).toEqual(['name', 'desc'])
   })

@@ -22,7 +22,7 @@ describe('footerExtraControls.vue', () => {
     h.setReadOnlyProperty(document, 'fullscreenEnabled', undefined)
     renderComponent()
 
-    expect(screen.queryByTitle('Enter fullscreen mode')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Enter fullscreen mode' })).toBeNull()
   })
 
   it('toggles fullscreen mode', async () => {
@@ -30,7 +30,7 @@ describe('footerExtraControls.vue', () => {
     renderComponent()
     const emitMock = h.mock(eventBus, 'emit')
 
-    await h.user.click(screen.getByTitle('Enter fullscreen mode'))
+    await h.user.click(screen.getByRole('button', { name: 'Enter fullscreen mode' }))
 
     expect(emitMock).toHaveBeenCalledWith('FULLSCREEN_TOGGLE')
   })

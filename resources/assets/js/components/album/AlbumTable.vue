@@ -9,13 +9,7 @@
       <template #before>
         <ScreenHeaderPinned>
           <div class="album-table-header sortable flex bg-k-fg-3 pl-5">
-            <SortableColumnHeader
-              :active="field === 'name'"
-              :order
-              class="name"
-              title="Sort by name"
-              @sort="onSort('name')"
-            >
+            <SortableColumnHeader :active="field === 'name'" :order class="name" @sort="onSort('name')">
               Name
             </SortableColumnHeader>
             <SortableColumnHeader
@@ -23,7 +17,6 @@
               :active="field === 'artist_name'"
               :order
               class="artist"
-              title="Sort by artist"
               label="Artist"
               @sort="onSort('artist_name')"
             />
@@ -32,7 +25,6 @@
               :active="field === 'length'"
               :order
               class="time"
-              title="Sort by duration"
               label="Time"
               @sort="onSort('length')"
             />
@@ -41,7 +33,6 @@
               :active="field === 'year'"
               :order
               class="year"
-              title="Sort by year"
               label="Year"
               @sort="onSort('year')"
             />
@@ -50,7 +41,6 @@
               :active="field === 'rating'"
               :order
               class="rating"
-              title="Sort by rating"
               label="Rating"
               @sort="onSort('rating')"
             />
@@ -59,11 +49,11 @@
               :active="field === 'favorite'"
               :order
               class="favorite"
-              title="Sort by favorite"
               @sort="onSort('favorite')"
             >
-              <Icon :icon="faHeart"
-            /></SortableColumnHeader>
+              <Icon :icon="faHeart" />
+              <span class="sr-only">Favorite</span>
+            </SortableColumnHeader>
             <span class="extra">
               <TableHeaderActionMenu
                 :field

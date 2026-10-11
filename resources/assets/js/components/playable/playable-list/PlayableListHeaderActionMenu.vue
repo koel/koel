@@ -1,8 +1,9 @@
 <template>
   <article>
-    <button ref="button" class="w-full focus:text-k-highlight" title="Sort">
+    <button ref="button" v-koel-tooltip class="w-full focus:text-k-highlight">
       <Icon v-if="sortable" :icon="faSort" />
       <Icon v-else :icon="faEllipsis" />
+      <span class="sr-only">{{ sortable ? 'Sort and columns' : 'Columns' }}</span>
     </button>
     <Popover ref="popover" :anchor="button" placement="bottom-end" class="context-menu normal-case tracking-normal">
       <menu>
@@ -21,7 +22,7 @@
             <input
               :checked="shouldShowColumn(item.column!)"
               :disabled="!item.visibilityToggleable"
-              :title="item.visibilityToggleable ? `Click to toggle the ${item.label} column` : ''"
+              :aria-label="`Show the ${item.label} column`"
               class="disabled:opacity-20 disabled:cursor-not-allowed bg-k-fg group-hover:border-k-highlight-fg h-4 aspect-square rounded-sm checked:border-k-fg-70 checked:border-2 checked:bg-k-highlight"
               type="checkbox"
             />

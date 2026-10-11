@@ -58,7 +58,7 @@ describe('queueScreen.vue', () => {
     renderComponent(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
-    await h.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
+    await h.user.click(screen.getByRole('button', { name: 'Shuffle All' }))
     await waitFor(() => expect(playMock).toHaveBeenCalledWith(songs, true))
   })
 })

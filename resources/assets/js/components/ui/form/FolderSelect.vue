@@ -16,19 +16,21 @@
       />
       <button
         class="px-2.5 bg-k-fg-5 text-k-success hover:text-white border-l border-k-fg-10"
-        title="Create"
+        v-koel-tooltip
         type="button"
         @click="confirm"
       >
         <Icon :icon="faCheck" fixed-width />
+        <span class="sr-only">Create</span>
       </button>
       <button
         class="px-2.5 bg-k-fg-5 text-k-fg-60 hover:text-white border-l border-k-fg-10"
-        title="Cancel"
+        v-koel-tooltip
         type="button"
         @click="cancel"
       >
         <Icon :icon="faTimes" fixed-width />
+        <span class="sr-only">Cancel</span>
       </button>
     </div>
     <SelectBox v-else v-model="selected" @update:model-value="onSelectChange">

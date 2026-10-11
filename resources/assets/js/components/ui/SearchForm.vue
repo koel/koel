@@ -21,8 +21,9 @@
       @input="onInput"
     />
 
-    <button class="block md:hidden py-0 px-4 bg-k-fg-5 rounded-none" title="Search" type="submit">
+    <button class="block md:hidden py-0 px-4 bg-k-fg-5 rounded-none" type="submit">
       <Icon :icon="faSearch" />
+      <span class="sr-only">Search</span>
     </button>
 
     <span class="hidden md:flex items-center px-3 text-k-fg-30 pointer-events-none">

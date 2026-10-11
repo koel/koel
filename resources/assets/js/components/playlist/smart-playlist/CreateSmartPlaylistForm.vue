@@ -62,14 +62,7 @@
                 :is-first-group="index === 0"
                 @input="onGroupChanged"
               />
-              <Btn
-                size="small"
-                variant="success"
-                class="btn-add-group"
-                title="Add a new group"
-                uppercase
-                @click.prevent="addGroup"
-              >
+              <Btn size="small" variant="success" class="btn-add-group" uppercase @click.prevent="addGroup">
                 <Icon :icon="faPlus" />
                 Group
               </Btn>

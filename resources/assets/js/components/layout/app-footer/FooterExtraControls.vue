@@ -6,31 +6,27 @@
       <FooterBtn
         class="visualizer-btn hidden md:block!"
         data-testid="toggle-visualizer-btn"
-        title="Toggle visualizer"
         @click.prevent="toggleVisualizer"
       >
         <Icon :icon="faBolt" fixed-width />
+        <span class="sr-only">Toggle visualizer</span>
       </FooterBtn>
 
       <FooterBtn
         v-if="useEqualizer"
         :class="{ active: showEqualizer }"
         class="equalizer"
-        title="Show equalizer"
         @click.prevent="showEqualizer"
       >
         <AudioLinesIcon :size="16" />
+        <span class="sr-only">Show equalizer</span>
       </FooterBtn>
 
       <VolumeSlider />
 
-      <FooterBtn
-        v-if="isFullscreenSupported()"
-        class="hidden md:block!"
-        :title="fullscreenButtonTitle"
-        @click.prevent="toggleFullscreen"
-      >
+      <FooterBtn v-if="isFullscreenSupported()" class="hidden md:block!" @click.prevent="toggleFullscreen">
         <Icon :icon="isFullscreen ? faCompress : faExpand" fixed-width />
+        <span class="sr-only">{{ fullscreenButtonLabel }}</span>
       </FooterBtn>
     </div>
   </div>
@@ -54,7 +50,7 @@ const Equalizer = defineAsyncComponent(() => import('@/components/ui/equalizer/E
 const { openModal } = useModal()
 
 const isFullscreen = ref(false)
-const fullscreenButtonTitle = computed(() => (isFullscreen.value ? 'Exit fullscreen mode' : 'Enter fullscreen mode'))
+const fullscreenButtonLabel = computed(() => (isFullscreen.value ? 'Exit fullscreen mode' : 'Enter fullscreen mode'))
 
 const { go, isCurrentScreen, url } = useRouter()
 

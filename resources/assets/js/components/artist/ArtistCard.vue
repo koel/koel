@@ -2,7 +2,6 @@
   <BaseCard
     v-if="showing"
     :entity="artist"
-    :title="artist.name"
     @contextmenu="requestContextMenu"
     @dblclick="shuffle"
     @dragstart="onDragStart"
@@ -12,17 +11,15 @@
     </template>
 
     <template #name>
-      <a :href="url('artists.show', { id: artist.id })" class="font-medium" data-testid="name">
+      <a :href="url('artists.show', { id: artist.id })" :title="artist.name" class="font-medium" data-testid="name">
         <ExternalMark v-if="artist.is_external" class="mr-1" />
         {{ artist.name }}
       </a>
     </template>
     <template #meta>
-      <a :title="`Shuffle all songs by ${artist.name}`" role="button" @click.prevent="shuffle"> Shuffle </a>
+      <a role="button" @click.prevent="shuffle"> Shuffle </a>
       <span v-if="allowDownload" aria-hidden="true">•</span>
-      <a v-if="allowDownload" :title="`Download all songs by ${artist.name}`" role="button" @click.prevent="download">
-        Download
-      </a>
+      <a v-if="allowDownload" role="button" @click.prevent="download"> Download </a>
     </template>
   </BaseCard>
 </template>

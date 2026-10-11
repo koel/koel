@@ -2,14 +2,13 @@
   <BaseCard
     :entity="podcast"
     :layout="layout"
-    :title="`${podcast.title} by ${podcast.author}`"
     class="cursor-pointer"
     @click="goToPodcast"
     @contextmenu.prevent="onContextMenu"
   >
     <template #name>
       <h3>
-        <a :href class="font-medium" data-testid="title">{{ podcast.title }}</a>
+        <a :href :title="podcast.title" class="font-medium" data-testid="title">{{ podcast.title }}</a>
 
         <FavoriteButton v-if="podcast.favorite" :favorite="podcast.favorite" class="ml-2" @toggle="toggleFavorite" />
       </h3>

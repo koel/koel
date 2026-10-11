@@ -17,7 +17,7 @@ describe('mediaListItem.vue', () => {
       },
     })
 
-    await h.user.click(screen.getByTitle('Play'))
+    await h.user.click(screen.getByRole('button', { name: 'Play' }))
 
     expect(emitted()['play-song']).toBeTruthy()
   })
@@ -31,7 +31,7 @@ describe('mediaListItem.vue', () => {
       },
     })
 
-    await h.user.click(screen.getByTitle('Open'))
+    await h.user.click(screen.getByRole('button', { name: 'Open' }))
 
     expect(emitted()['open-folder']).toBeTruthy()
   })

@@ -8,13 +8,13 @@
     @mouseleave="onMouseLeave"
   >
     <button
-      aria-label="Dismiss"
+      v-koel-tooltip
       class="flex items-center px-3 py-0 bg-black/10 cursor-pointer"
-      title="Dismiss"
       type="button"
       @click="dismiss"
     >
       <Icon :icon="hovering ? faTimesCircle : typeIcon" />
+      <span class="sr-only">Dismiss</span>
     </button>
     <main class="flex-1 py-2 pl-3 pr-4">{{ message.content }}</main>
   </article>

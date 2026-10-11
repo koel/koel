@@ -34,8 +34,8 @@ describe('editAlbumForm.vue', () => {
 
     // there should be a "remove cover" button, though we're not clicking it
     screen.getByRole('button', { name: 'Remove' })
-    await h.type(screen.getByTitle('Album name'), 'Not So Good Actually')
-    await h.type(screen.getByTitle('Release year'), '2022')
+    await h.type(screen.getByPlaceholderText('Album name'), 'Not So Good Actually')
+    await h.type(screen.getByLabelText('Release year'), '2022')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(updateMock).toHaveBeenCalledWith(album, {
@@ -49,8 +49,8 @@ describe('editAlbumForm.vue', () => {
     const updateMock = h.mock(albumStore, 'update')
     const { album } = renderComponent(h.factory('album').make())
 
-    await h.type(screen.getByTitle('Album name'), 'Not So Good Actually')
-    await h.type(screen.getByTitle('Release year'), '2022')
+    await h.type(screen.getByPlaceholderText('Album name'), 'Not So Good Actually')
+    await h.type(screen.getByLabelText('Release year'), '2022')
 
     await h.user.upload(
       screen.getByLabelText('Pick or paste a cover (optional)'),
@@ -75,8 +75,8 @@ describe('editAlbumForm.vue', () => {
 
     await h.user.click(screen.getByRole('button', { name: 'Remove' }))
 
-    await h.type(screen.getByTitle('Album name'), 'Not So Good Actually')
-    await h.type(screen.getByTitle('Release year'), '2022')
+    await h.type(screen.getByPlaceholderText('Album name'), 'Not So Good Actually')
+    await h.type(screen.getByLabelText('Release year'), '2022')
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(updateMock).toHaveBeenCalledWith(album, {

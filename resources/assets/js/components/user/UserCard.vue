@@ -11,19 +11,20 @@
       <h3 class="font-medium flex gap-2 items-center text-k-fg">
         <span v-if="user.name" class="name">{{ user.name }}</span>
         <span v-else class="name font-light">Anonymous</span>
-        <Icon v-if="isCurrentUser" :icon="faCircleCheck" class="you text-k-highlight" title="This is you!" />
-        <Icon
-          v-if="hasAdminPrivileges"
-          :icon="faShield"
-          class="is-admin text-k-primary"
-          title="User has admin privileges"
-        />
+        <span v-if="isCurrentUser" v-koel-tooltip class="you text-k-highlight">
+          <Icon :icon="faCircleCheck" />
+          <span class="sr-only">This is you!</span>
+        </span>
+        <span v-if="hasAdminPrivileges" v-koel-tooltip class="is-admin text-k-primary">
+          <Icon :icon="faShield" />
+          <span class="sr-only">User has admin privileges</span>
+        </span>
         <img
           v-if="user.sso_provider === 'Google'"
+          v-koel-tooltip="'Google SSO'"
           :src="googleLogo"
-          alt="Google"
+          alt="Google SSO"
           height="14"
-          title="Google SSO"
           width="14"
         />
       </h3>

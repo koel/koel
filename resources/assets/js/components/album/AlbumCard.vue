@@ -2,7 +2,6 @@
   <BaseCard
     v-if="showing"
     :entity="album"
-    :title="`${album.name} by ${album.artist_name}`"
     class="group"
     @contextmenu="requestContextMenu"
     @dblclick="shuffle"
@@ -14,16 +13,17 @@
 
     <template #name>
       <div class="flex gap-2 items-center">
-        <a :href="url('albums.show', { id: album.id })" class="font-medium flex-1" data-testid="name">
+        <a
+          :href="url('albums.show', { id: album.id })"
+          :title="album.name"
+          class="font-medium flex-1"
+          data-testid="name"
+        >
           <ExternalMark v-if="album.is_external" class="mr-1" />
           {{ album.name }}
         </a>
 
-        <span
-          v-if="showReleaseYear && album.year"
-          :title="`Released in ${album.year}`"
-          class="text-sm text-k-fg rounded-sm px-2 py-[2px] bg-k-fg-10"
-        >
+        <span v-if="showReleaseYear && album.year" class="text-sm text-k-fg rounded-sm px-2 py-[2px] bg-k-fg-10">
           {{ album.year }}
         </span>
       </div>
@@ -35,16 +35,9 @@
     </template>
 
     <template #meta>
-      <a :title="`Shuffle all songs in the album ${album.name}`" role="button" @click.prevent="shuffle"> Shuffle </a>
+      <a role="button" @click.prevent="shuffle"> Shuffle </a>
       <span v-if="allowDownload" aria-hidden="true">•</span>
-      <a
-        v-if="allowDownload"
-        :title="`Download all songs in the album ${album.name}`"
-        role="button"
-        @click.prevent="download"
-      >
-        Download
-      </a>
+      <a v-if="allowDownload" role="button" @click.prevent="download"> Download </a>
     </template>
   </BaseCard>
 </template>
