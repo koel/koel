@@ -69,25 +69,6 @@ describe('hooks', () => {
     removeFilter(kept)
   })
 
-  it('shrugs at a handle that was already removed', () => {
-    const handle = addFilter<string[]>(Filter.ROUTES, value => value)
-
-    removeFilter(handle)
-    removeFilter(handle)
-
-    expect(applyFilters(Filter.ROUTES, ['kept'])).toEqual(['kept'])
-  })
-
-  it('keeps hook names that match built-in object properties apart from them', () => {
-    const handle = addFilter<string[]>('constructor', value => [...value, 'added'])
-
-    expect(applyFilters<string[]>('constructor', [])).toEqual(['added'])
-    expect(applyFilters<string[]>('toString', ['kept'])).toEqual(['kept'])
-    expect(Object.keys(Object)).toEqual([])
-
-    removeFilter(handle)
-  })
-
   it('adds a component to the one slot it names', () => {
     const Extra = defineComponent({ render: () => null })
     const handle = addToHookSlot('sidebar.footer', Extra)

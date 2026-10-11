@@ -29,10 +29,9 @@ const options = requireInjection(ContextMenuKey)
 
 const el = ref<HTMLElement>()
 const isOpen = ref(false)
-let currentOpening = 0
 let deferredListenerTimer: ReturnType<typeof setTimeout> | undefined
 
-const positionAt = async (clientX: number, clientY: number, opening = currentOpening) => {
+const positionAt = async (clientX: number, clientY: number) => {
   if (!el.value) {
     return
   }
@@ -54,7 +53,7 @@ const positionAt = async (clientX: number, clientY: number, opening = currentOpe
     strategy: 'fixed',
   })
 
-  if (opening !== currentOpening || !el.value) {
+  if (!el.value) {
     return
   }
 
@@ -359,8 +358,6 @@ const open = async (top = 0, left = 0) => {
     return
   }
 
-  const opening = ++currentOpening
-
   // Position BEFORE showing so the menu never flashes at the user-agent default location.
   el.value.style.left = `${left}px`
   el.value.style.top = `${top}px`
@@ -371,13 +368,9 @@ const open = async (top = 0, left = 0) => {
   await nextTick()
 
   try {
-    await positionAt(left, top, opening)
+    await positionAt(left, top)
   } catch (error: unknown) {
     logger.error(error)
-  }
-
-  if (opening !== currentOpening || !el.value) {
-    return
   }
 
   // Defer attaching the outside-click listener so the gesture that opened the menu
@@ -390,7 +383,7 @@ const open = async (top = 0, left = 0) => {
   }, 0)
 
   startObservingSubmenus()
-  startRepositioningOnResize(left, top, opening)
+  startRepositioningOnResize(left, top)
 }
 
 let sizeObserver: ResizeObserver | undefined
@@ -398,8 +391,8 @@ let sizeObserver: ResizeObserver | undefined
 /**
  * A menu can grow after it opens (a lazily loaded component, late items), so keep it on screen as its size changes.
  */
-const startRepositioningOnResize = (left: number, top: number, opening: number) => {
-  sizeObserver = new ResizeObserver(() => positionAt(left, top, opening).catch(logger.error))
+const startRepositioningOnResize = (left: number, top: number) => {
+  sizeObserver = new ResizeObserver(() => positionAt(left, top).catch(logger.error))
   sizeObserver.observe(el.value!)
 }
 
@@ -409,7 +402,6 @@ const stopRepositioningOnResize = () => {
 }
 
 const close = () => {
-  currentOpening++
   stopRepositioningOnResize()
   stopObservingSubmenus()
   clearTimeout(deferredListenerTimer)

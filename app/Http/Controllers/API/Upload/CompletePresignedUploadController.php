@@ -55,16 +55,10 @@ class CompletePresignedUploadController extends Controller
             'The uploaded file is too large.',
         );
 
-        $processingLock = HandlePresignedSongUploadJob::makeProcessingLock($location);
-
-        abort_unless($processingLock->get(), Response::HTTP_CONFLICT, 'This upload is already being processed.');
-
         $storage->moveUploadOutOfPending($request->key);
 
         /** @var Song|PendingDispatch $dispatchedResult */
-        $dispatchedResult = Dispatcher::dispatch(
-            new HandlePresignedSongUploadJob($location, $request->key, $user, $processingLock->owner()),
-        );
+        $dispatchedResult = Dispatcher::dispatch(new HandlePresignedSongUploadJob($location, $request->key, $user));
 
         if (!$dispatchedResult instanceof Song) {
             return response()->noContent(Response::HTTP_ACCEPTED);

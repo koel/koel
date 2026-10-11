@@ -37,9 +37,7 @@ export const signedUrlService = {
     try {
       return await request
     } finally {
-      if (pendingRequestsByEndpoint.get(endpoint) === request) {
-        pendingRequestsByEndpoint.delete(endpoint)
-      }
+      pendingRequestsByEndpoint.delete(endpoint)
     }
   },
 

@@ -9,7 +9,6 @@ use App\Mail\EmailChanged;
 use App\Mail\EmailChangeRequested;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -90,11 +89,7 @@ class EmailChangeService
             return EmailChangeResult::TAKEN;
         }
 
-        try {
-            $user->getConnection()->transaction(static fn (): bool => $user->update(['email' => $newEmail]));
-        } catch (UniqueConstraintViolationException) {
-            return EmailChangeResult::TAKEN;
-        }
+        $user->update(['email' => $newEmail]);
 
         Cache::forget(self::latestRequestCacheKey($user));
 

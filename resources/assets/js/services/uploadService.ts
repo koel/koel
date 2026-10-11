@@ -136,10 +136,6 @@ export const uploadService = {
   },
 
   async upload(file: UploadFile) {
-    if (file.status === 'Uploading') {
-      return
-    }
-
     file.progress = 0
     file.status = 'Uploading'
     file.attempts = (file.attempts ?? 0) + 1
