@@ -521,6 +521,32 @@ describe('playbackService', () => {
     playbackService.media.removeAttribute('src')
   })
 
+  it('does not start a playable paused while its source URL was loading', async () => {
+    const song = h.factory('song').make()
+    let resolveUrl: (url: string) => void = () => {}
+
+    const resolveMock = h
+      .mock(playableStore, 'resolveSourceUrl')
+      .mockReturnValue(new Promise<string>(resolve => (resolveUrl = resolve)))
+
+    const playMock = h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.mock(playbackService, 'showNotification')
+    const seekMock = h.mock(playbackService, 'seekTo')
+
+    const pendingPlay = playbackService.play(song, 42)
+    await vi.waitFor(() => expect(resolveMock).toHaveBeenCalled())
+
+    song.playback_state = 'Paused'
+    resolveUrl(`http://test/play/${song.id}?signature=s`)
+    await pendingPlay
+
+    expect(playbackService.media.src).toBe(`http://test/play/${song.id}?signature=s`)
+    expect(seekMock).toHaveBeenCalledWith(42)
+    expect(playMock).not.toHaveBeenCalled()
+
+    playbackService.media.removeAttribute('src')
+  })
+
   it('fetches the next playable source URL as soon as a playable starts', async () => {
     const [song, nextSong] = h.factory('song').make(2)
     h.setReadOnlyProperty(playbackService, 'next', nextSong)

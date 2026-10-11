@@ -46,15 +46,19 @@ describe('signedUrlService', () => {
   })
 
   it('fetches a new URL when the cached one has expired', async () => {
-    const freshUrl = urlExpiringIn(30 * 60)
-    h.mock(http, 'get')
-      .mockResolvedValueOnce({ url: urlExpiringIn(30 * 60) })
-      .mockResolvedValueOnce({ url: freshUrl })
+    const getMock = h.mock(http, 'get').mockResolvedValueOnce({ url: urlExpiringIn(30 * 60) })
 
     await signedUrlService.fetch('songs/song/play-url')
     vi.setSystemTime(Date.now() + 60 * 60 * 1000)
 
-    expect(await signedUrlService.fetch('songs/song/play-url')).toBe(freshUrl)
+    const freshUrl = urlExpiringIn(30 * 60)
+    getMock.mockResolvedValueOnce({ url: freshUrl })
+
+    const url = await signedUrlService.fetch('songs/song/play-url')
+
+    expect(getMock).toHaveBeenCalledTimes(2)
+    expect(url).toBe(freshUrl)
+    expect(signedUrlService.hasExpired(url)).toBe(false)
 
     vi.useRealTimers()
   })
