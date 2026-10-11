@@ -45,6 +45,15 @@ export const visualizers: Visualizer[] = [
     },
   },
   {
+    id: 'projectm',
+    name: 'projectM (MilkDrop)',
+    init: async container => (await import('@/visualizers/projectm')).init(container),
+    credits: {
+      author: 'The projectM team',
+      url: 'https://github.com/projectM-visualizer/projectm',
+    },
+  },
+  {
     id: 'butterchurn',
     name: 'Butterchurn',
     init: async container => (await import('@/visualizers/butterchurn')).initVisualizer(container),
