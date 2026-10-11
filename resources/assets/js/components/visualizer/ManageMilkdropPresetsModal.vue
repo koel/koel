@@ -5,7 +5,13 @@
     </header>
 
     <main class="flex flex-col gap-4">
-      <TextInput v-model="keywords" aria-label="Search presets" placeholder="Search" type="search" />
+      <TextInput
+        v-if="state.names.length"
+        v-model="keywords"
+        aria-label="Search presets"
+        placeholder="Search"
+        type="search"
+      />
 
       <ul v-if="shownNames.length" class="max-h-[50vh] overflow-auto">
         <MilkdropPresetListItem v-for="name in shownNames" :key="name" :name />

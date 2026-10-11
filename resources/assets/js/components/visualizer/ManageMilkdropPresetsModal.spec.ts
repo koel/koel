@@ -73,4 +73,11 @@ describe('manageMilkdropPresetsModal.vue', () => {
     await h.user.click(screen.getAllByRole('button', { name: 'Delete' })[0])
     await waitFor(() => expect(screen.getAllByRole('listitem')).toHaveLength(1))
   })
+
+  it('hides the search box until there are presets', () => {
+    milkdropPresetStore.state.names = []
+    h.render(Component)
+
+    expect(screen.queryByRole('searchbox', { name: 'Search presets' })).toBeNull()
+  })
 })
