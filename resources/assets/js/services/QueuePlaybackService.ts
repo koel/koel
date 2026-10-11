@@ -29,6 +29,7 @@ import { usePageTitle } from '@/composables/usePageTitle'
  * The number of seconds before the current playable ends to start preloading the next one.
  */
 const PRELOAD_BUFFER = 30
+const EXPIRED_SOURCE_RELOAD_COOLDOWN_MS = 60_000
 
 // Both Last.fm and ListenBrainz consider a track listened to once it has been played for half its
 // length or four minutes, whichever comes first. Tracks shorter than 30 seconds never count.
@@ -43,7 +44,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private upNext: Ref<Playable | null> = ref(null)
   private latestPlayRequest = 0
-  private reloadedExpiredSourceOf: Playable['id'] | null = null
+  private lastExpiredSourceReload: { playableId: Playable['id']; at: number } | null = null
 
   /**
    * The next item in the queue.
@@ -155,7 +156,6 @@ export class QueuePlaybackService extends BasePlaybackService {
       this.showNotification(playable)
     } else {
       const playRequest = ++this.latestPlayRequest
-      this.reloadedExpiredSourceOf = null
 
       this.media.pause()
       const sourceUrl = await playableStore.resolveSourceUrl(playable)
@@ -433,8 +433,8 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     const playable = queueStore.current
 
-    if (playable && this.reloadedExpiredSourceOf !== playable.id && signedUrlService.hasExpired(this.media.src)) {
-      this.reloadedExpiredSourceOf = playable.id
+    if (playable && !this.reloadedSourceRecently(playable) && signedUrlService.hasExpired(this.media.src)) {
+      this.lastExpiredSourceReload = { playableId: playable.id, at: Date.now() }
 
       try {
         await this.reloadExpiredSource(playable)
@@ -446,6 +446,12 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
 
     await this.playNext()
+  }
+
+  private reloadedSourceRecently(playable: Playable) {
+    const lastReload = this.lastExpiredSourceReload
+
+    return lastReload?.playableId === playable.id && Date.now() - lastReload.at < EXPIRED_SOURCE_RELOAD_COOLDOWN_MS
   }
 
   private async reloadExpiredSource(playable: Playable) {

@@ -114,7 +114,7 @@ describe('playbackService', () => {
     playbackService.media.removeAttribute('src')
   })
 
-  it('reloads an expired source only once, then moves on', async () => {
+  it('moves on instead of reloading an expired source again within a minute', async () => {
     const song = h.factory('song').make({ playback_state: 'Playing' })
     queueStore.state.playables = reactive([song])
 
@@ -134,6 +134,33 @@ describe('playbackService', () => {
 
     expect(resolveMock).toHaveBeenCalledTimes(1)
 
+    playbackService.media.removeAttribute('src')
+  })
+
+  it('reloads an expired source again after a minute of playback', async () => {
+    const song = h.factory('song').make({ playback_state: 'Playing' })
+    queueStore.state.playables = reactive([song])
+
+    const expiredUrl = () => `http://test/play/${song.id}?expires=${Math.floor(Date.now() / 1000) - 60}&signature=old`
+
+    playbackService.media.src = expiredUrl()
+
+    const resolveMock = h.mock(playableStore, 'resolveSourceUrl').mockImplementation(async () => expiredUrl())
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.mock(playbackService, 'seekTo')
+    const playNextMock = h.mock(playbackService, 'playNext')
+
+    playbackService.media.dispatchEvent(new Event('error'))
+    await vi.waitFor(() => expect(resolveMock).toHaveBeenCalledTimes(1))
+
+    vi.setSystemTime(Date.now() + 30 * 60 * 1000)
+    playbackService.media.src = expiredUrl()
+    playbackService.media.dispatchEvent(new Event('error'))
+    await vi.waitFor(() => expect(resolveMock).toHaveBeenCalledTimes(2))
+
+    expect(playNextMock).not.toHaveBeenCalled()
+
+    vi.useRealTimers()
     playbackService.media.removeAttribute('src')
   })
 
