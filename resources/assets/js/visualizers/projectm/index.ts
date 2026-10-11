@@ -1,7 +1,9 @@
 import { sample } from 'lodash-es'
+import { watch } from 'vue'
 import { audioService } from '@/services/audioService'
 import { milkdropPresetLibrary } from '@/services/milkdropPresetLibrary'
 import { commonStore } from '@/stores/commonStore'
+import { milkdropPresetStore, RANDOM_PRESET } from '@/stores/milkdropPresetStore'
 import { startFrameLoop } from '@/visualizers/frameLoop'
 import { getRenderPixelRatio } from '@/visualizers/pixelRatio'
 
@@ -66,21 +68,54 @@ export const init = async (container: HTMLElement) => {
     throw new Error('Failed to start projectM')
   }
 
-  let presets = await milkdropPresetLibrary.getAll()
+  const { state } = milkdropPresetStore
+  let playingName: string | null = null
+  let presetTimer = 0
 
-  const loadRandomPreset = () => {
-    hint.hidden = presets.length > 0
-    presets.length && loadPreset(sample(presets)!.content)
+  const playPreset = async (name: string) => {
+    const content = await milkdropPresetLibrary.getContent(name)
+
+    if (content) {
+      loadPreset(content)
+      playingName = name
+    }
   }
 
-  loadRandomPreset()
-  const presetTimer = window.setInterval(loadRandomPreset, PRESET_DURATION_MS)
+  const playRandomPreset = () => {
+    const otherNames = state.names.filter(name => name !== playingName)
+    const name = sample(otherNames.length ? otherNames : state.names)
 
-  const stopListeningForImports = milkdropPresetLibrary.onImport(async imported => {
-    presets = await milkdropPresetLibrary.getAll()
-    hint.hidden = true
-    loadPreset(imported[0].content)
-  })
+    name && playPreset(name)
+  }
+
+  const applySelection = () => {
+    window.clearInterval(presetTimer)
+    hint.hidden = state.names.length > 0
+
+    if (state.selected !== RANDOM_PRESET && state.names.includes(state.selected)) {
+      playPreset(state.selected)
+      return
+    }
+
+    playRandomPreset()
+    presetTimer = window.setInterval(playRandomPreset, PRESET_DURATION_MS)
+  }
+
+  await milkdropPresetStore.load()
+  applySelection()
+
+  const stopWatchingSelection = watch(() => state.selected, applySelection)
+
+  const stopWatchingNames = watch(
+    () => state.names,
+    names => {
+      hint.hidden = names.length > 0
+
+      if (!playingName && names.length) {
+        applySelection()
+      }
+    },
+  )
 
   const analyser = audioService.analyzer
   analyser.fftSize = SAMPLES_PER_FRAME
@@ -105,7 +140,8 @@ export const init = async (container: HTMLElement) => {
     stopFrameLoop()
     window.clearInterval(presetTimer)
     resizeObserver.disconnect()
-    stopListeningForImports()
+    stopWatchingSelection()
+    stopWatchingNames()
     destroy()
     projectM._free(samplesPointer)
     canvas.remove()

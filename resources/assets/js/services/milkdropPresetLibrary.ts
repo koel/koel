@@ -23,16 +23,21 @@ const getDB = () =>
 
 const isMilkdropPresetFile = (file: File) => file.name.toLowerCase().endsWith('.milk')
 
-const importListeners = new Set<(presets: MilkdropPreset[]) => void>()
-
 export const milkdropPresetLibrary = {
-  async getAll() {
-    return await (await getDB()).getAll('presets')
+  async getNames() {
+    return await (await getDB()).getAllKeys('presets')
+  },
+
+  async getContent(name: MilkdropPreset['name']) {
+    return (await (await getDB()).get('presets', name))?.content
   },
 
   async importFiles(files: Iterable<File>) {
+    const allFiles = [...files]
+    const presetFiles = allFiles.filter(isMilkdropPresetFile)
+
     const presets = await Promise.all(
-      [...files].filter(isMilkdropPresetFile).map(async file => ({
+      presetFiles.map(async file => ({
         name: file.name.replace(/\.milk$/i, ''),
         content: await file.text(),
         importedAt: Date.now(),
@@ -42,14 +47,9 @@ export const milkdropPresetLibrary = {
     const db = await getDB()
     await Promise.all(presets.map(preset => db.put('presets', preset)))
 
-    presets.length && importListeners.forEach(listener => listener(presets))
-
-    return presets
-  },
-
-  onImport(listener: (presets: MilkdropPreset[]) => void) {
-    importListeners.add(listener)
-
-    return () => importListeners.delete(listener)
+    return {
+      importedNames: presets.map(({ name }) => name),
+      skippedCount: allFiles.length - presetFiles.length,
+    }
   },
 }

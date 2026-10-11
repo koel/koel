@@ -21,17 +21,30 @@
       </div>
 
       <div class="absolute bottom-8 right-8 flex gap-2">
-        <label
-          v-if="selectedVisualizer?.importsMilkdropPresets"
-          class="px-4 py-2 border border-white/30 rounded-md bg-black/20 text-white cursor-pointer focus-within:border-white"
-        >
-          Import presets
-          <input accept=".milk" class="sr-only" multiple type="file" @change="importMilkdropPresets" />
-        </label>
         <SelectBox v-model="selectedId" class="bg-black/20! text-white! block border border-white/30 rounded-md">
           <option disabled value="-1">Pick a visualizer</option>
           <option v-for="v in visualizers" :key="v.id" :value="v.id">{{ v.name }}</option>
         </SelectBox>
+        <template v-if="selectedVisualizer?.importsMilkdropPresets">
+          <SelectBox
+            v-model="presetChoice"
+            aria-label="Preset"
+            class="bg-black/20! text-white! block border border-white/30 rounded-md max-w-64"
+          >
+            <option :value="RANDOM_PRESET">Random</option>
+            <option v-for="name in presetState.names" :key="name" :value="name">{{ name }}</option>
+            <option :value="IMPORT_PRESETS">Import presets…</option>
+          </SelectBox>
+          <input
+            ref="presetFileInput"
+            accept=".milk"
+            aria-label="Preset files"
+            class="hidden"
+            multiple
+            type="file"
+            @change="importMilkdropPresets"
+          />
+        </template>
       </div>
     </div>
 
@@ -47,7 +60,9 @@ import { useThrottleFn } from '@vueuse/core'
 import { logger } from '@/utils/logger'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { visualizerStore } from '@/stores/visualizerStore'
-import { milkdropPresetLibrary } from '@/services/milkdropPresetLibrary'
+import { milkdropPresetStore, RANDOM_PRESET } from '@/stores/milkdropPresetStore'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { pluralize } from '@/utils/formatters'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
@@ -109,11 +124,42 @@ const render = async (viz: Visualizer) => {
 
 const selectedVisualizer = ref<Visualizer>()
 
+const IMPORT_PRESETS = 'import-presets'
+
+const { state: presetState } = milkdropPresetStore
+const { toastSuccess, toastWarning } = useMessageToaster()
+const presetFileInput = ref<HTMLInputElement>()
+const presetChoice = ref(presetState.selected)
+
+watch(
+  () => presetState.selected,
+  selected => (presetChoice.value = selected),
+)
+
+watch(presetChoice, async choice => {
+  if (choice === IMPORT_PRESETS) {
+    presetFileInput.value?.click()
+    await nextTick()
+    presetChoice.value = presetState.selected
+    return
+  }
+
+  milkdropPresetStore.select(choice)
+})
+
 const importMilkdropPresets = async (event: Event) => {
   const input = event.target as HTMLInputElement
+  const { importedNames, skippedCount } = await milkdropPresetStore.importFiles(input.files ?? [])
 
-  await milkdropPresetLibrary.importFiles(input.files ?? [])
   input.value = ''
+
+  if (importedNames.length) {
+    toastSuccess(`Imported ${pluralize(importedNames, 'preset')}.`)
+  }
+
+  if (skippedCount) {
+    toastWarning(`Skipped ${pluralize(skippedCount, 'file')} that aren't .milk presets.`)
+  }
 }
 
 watch(selectedId, id => {
