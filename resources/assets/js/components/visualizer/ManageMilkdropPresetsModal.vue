@@ -13,7 +13,7 @@
 
       <div class="flex gap-2">
         <TextInput v-model="keywords" aria-label="Search presets" class="flex-1" placeholder="Search" type="search" />
-        <Btn @click="fileInput?.click()">Import</Btn>
+        <Btn bordered variant="ghost" @click="fileInput?.click()">Import</Btn>
         <input
           ref="fileInput"
           accept=".milk"
@@ -34,15 +34,20 @@
         Showing {{ shownNames.length }} of {{ matchingNames.length.toLocaleString() }}. Search to narrow down.
       </p>
 
-      <a :href="PRESET_DOWNLOAD_URL" class="text-k-highlight hover:text-k-fg self-start" target="_blank">
-        Download presets
+      <a
+        :href="PRESET_DOWNLOAD_URL"
+        class="inline-flex items-center gap-1.5 self-start text-k-highlight hover:text-k-fg"
+        target="_blank"
+      >
+        Download more presets
+        <ExternalLinkIcon :size="14" />
       </a>
     </main>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { XIcon } from 'lucide-vue-next'
+import { ExternalLinkIcon, XIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { milkdropPresetStore } from '@/stores/milkdropPresetStore'
 import { useMessageToaster } from '@/composables/useMessageToaster'

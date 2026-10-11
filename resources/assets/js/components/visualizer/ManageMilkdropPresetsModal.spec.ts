@@ -38,4 +38,13 @@ describe('manageMilkdropPresetsModal.vue', () => {
 
     expect(removeMock).toHaveBeenCalledWith('Nova Burst')
   })
+
+  it('plays a preset when it is clicked', async () => {
+    const selectMock = h.mock(milkdropPresetStore, 'select')
+    h.render(Component)
+
+    await h.user.click(screen.getByRole('button', { name: 'Orbit' }))
+
+    expect(selectMock).toHaveBeenCalledWith('Orbit')
+  })
 })
