@@ -90,6 +90,28 @@ class ValidSmartPlaylistRulePayloadTest extends TestCase
                     ],
                 ],
             ],
+            'day count is not a number' => [self::makeSingleRulePayload('created_at', 'inLast', ['last week'])],
+            'date is not a Y-m-d date' => [self::makeSingleRulePayload('created_at', 'is', ['10/05/2026'])],
+            'number is not numeric' => [self::makeSingleRulePayload('year', 'isGreaterThan', ['abc'])],
+            'range has one value' => [self::makeSingleRulePayload('year', 'isBetween', [2000])],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function makeSingleRulePayload(string $model, string $operator, array $value): array
+    {
+        return [
+            [
+                'id' => '2a4548cd-c67f-44d4-8fec-34ff75c8a026',
+                'rules' => [
+                    [
+                        'id' => '45368b8f-fec8-4b72-b826-6b295af0da65',
+                        'model' => $model,
+                        'operator' => $operator,
+                        'value' => $value,
+                    ],
+                ],
+            ],
         ];
     }
 

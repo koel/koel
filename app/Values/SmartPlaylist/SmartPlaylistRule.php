@@ -5,6 +5,7 @@ namespace App\Values\SmartPlaylist;
 use App\Enums\SmartPlaylistModel;
 use App\Enums\SmartPlaylistOperator;
 use App\Helpers\Uuid;
+use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Webmozart\Assert\Assert;
 
@@ -32,16 +33,33 @@ final class SmartPlaylistRule implements Arrayable
             Assert::uuid($config['id']);
         }
 
-        SmartPlaylistOperator::from($config['operator']);
+        $operator = SmartPlaylistOperator::from($config['operator']);
 
         if (!$allowUserIdModel) {
             Assert::false($config['model'] === SmartPlaylistModel::USER_ID);
         }
 
-        SmartPlaylistModel::from($config['model']);
+        $model = SmartPlaylistModel::from($config['model']);
 
         Assert::isArray($config['value']);
-        Assert::countBetween($config['value'], 1, 2);
+        Assert::count($config['value'], $operator->takesTwoValues() ? 2 : 1);
+
+        foreach ($config['value'] as $value) {
+            self::assertValue($model, $operator, $value);
+        }
+    }
+
+    private static function assertValue(SmartPlaylistModel $model, SmartPlaylistOperator $operator, mixed $value): void
+    {
+        if ($operator->takesDayCount()) {
+            Assert::integerish($value);
+        } elseif ($model->isDate()) {
+            Assert::true(Carbon::canBeCreatedFromFormat((string) $value, 'Y-m-d'));
+        } elseif ($model->isNumeric()) {
+            Assert::numeric($value);
+        } else {
+            Assert::string($value);
+        }
     }
 
     public static function make(array $config): self

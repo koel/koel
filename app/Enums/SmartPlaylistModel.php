@@ -32,6 +32,16 @@ enum SmartPlaylistModel: string
         };
     }
 
+    public function isText(): bool
+    {
+        return in_array($this, [self::ALBUM_NAME, self::ARTIST_NAME, self::GENRE, self::TITLE], true);
+    }
+
+    public function isNumeric(): bool
+    {
+        return in_array($this, [self::LENGTH, self::PLAY_COUNT, self::YEAR], true);
+    }
+
     public function isDate(): bool
     {
         return in_array($this, [self::LAST_PLAYED, self::DATE_ADDED, self::DATE_MODIFIED], true);
