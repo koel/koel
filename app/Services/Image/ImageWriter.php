@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
+use Intervention\Image\ImageManager;
 use RuntimeException;
 use Throwable;
 
@@ -29,7 +30,7 @@ class ImageWriter
     public function __construct(
         private readonly SafeHttp $http,
         #[Config('images.default')]
-        string $driver = 'gd',
+        private readonly string $driver = 'gd',
     ) {
         $this->format = self::findSupportedFormat($driver);
     }
@@ -85,33 +86,53 @@ class ImageWriter
     {
         $config ??= ImageWritingConfig::default();
 
-        $image = $this
-            ->read($source)
-            ->scale(width: $config->maxWidth)
-            ->when($config->blur, static fn (ProcessableImage $image) => $image->blur($config->blur))
-            ->optimize($this->format, $config->quality);
-
-        $bytes = $image->toBytes();
+        $bytes =
+            $this->driver === 'gd' && $this->format === 'avif'
+                ? $this->encodeAvifWithGd($source, $config)
+                : $this
+                    ->read($source)
+                    ->scale(width: $config->maxWidth)
+                    ->when($config->blur, static fn (ProcessableImage $image) => $image->blur($config->blur))
+                    ->optimize($this->format, $config->quality)
+                    ->toBytes();
 
         throw_if($bytes === '', RuntimeException::class, 'Encoding produced an empty image');
 
         return $bytes;
     }
 
+    private function read(mixed $source): ProcessableImage
+    {
+        return Image::fromBytes($this->readBytes($source));
+    }
+
+    private function encodeAvifWithGd(mixed $source, ImageWritingConfig $config): string
+    {
+        $image = ImageManager::usingDriver(GdDriver::class)
+            ->decodeBinary($this->readBytes($source))
+            ->scaleDown(width: $config->maxWidth);
+
+        if ($config->blur) {
+            $image->blur($config->blur);
+        }
+
+        return $image->encode(new FastGdAvifEncoder($config->quality))->toString();
+    }
+
     /**
      * @param mixed $source A data URI, a base64-encoded image, a URL, a local file path, or raw image bytes.
      */
-    private function read(mixed $source): ProcessableImage
+    private function readBytes(mixed $source): string
     {
         if (Str::startsWith($source, 'data:')) {
-            return Image::fromBase64(Str::after($source, 'base64,'));
+            return base64_decode(Str::after($source, 'base64,'), true) ?: '';
         }
 
         if (Str::isUrl($source)) {
-            return Image::fromBytes($this->fetch($source));
+            return $this->fetch($source);
         }
 
-        return self::isLocalFile($source) ? Image::fromPath($source) : Image::fromBytes($source);
+        return self::isLocalFile($source) ? File::get($source) : $source;
     }
 
     private static function isLocalFile(string $source): bool

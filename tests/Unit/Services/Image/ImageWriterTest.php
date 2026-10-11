@@ -5,6 +5,7 @@ namespace Tests\Unit\Services\Image;
 use App\Services\Image\ImageWriter;
 use App\Services\Network\SafeHttp;
 use App\Values\ImageWritingConfig;
+use finfo;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -43,6 +44,21 @@ class ImageWriterTest extends TestCase
         self::assertSame($sourceWidth, Image::fromPath($destination)->toPng()->width());
 
         File::delete($destination);
+    }
+
+    #[Test]
+    public function encodesAvifWithGdAtTheConfiguredWidth(): void
+    {
+        if (!function_exists('imageavif') || !(imagetypes() & IMG_AVIF)) {
+            self::markTestSkipped('This GD build has no AVIF support.');
+        }
+
+        self::assertSame('avif', $this->writer->format());
+
+        $bytes = $this->writer->encode(test_path('fixtures/cover.png'), ImageWritingConfig::make(maxWidth: 32));
+
+        self::assertSame('image/avif', (new finfo(FILEINFO_MIME_TYPE))->buffer($bytes));
+        self::assertSame(32, Image::fromBytes($bytes)->toPng()->width());
     }
 
     #[Test]
