@@ -50,7 +50,7 @@ class SongRepository extends Repository implements ScoutableRepository
 
     public function findOneByPath(string $path): ?Song
     {
-        return Song::query()->where('path', $path)->first();
+        return Song::query()->wherePath($path)->first();
     }
 
     /** @return LazyCollection<int, string> */
@@ -71,7 +71,7 @@ class SongRepository extends Repository implements ScoutableRepository
      */
     public function getManyByPaths(array $paths): Collection
     {
-        return Song::query()->whereIn('path', $paths)->get();
+        return Song::query()->wherePathIn($paths)->get();
     }
 
     /** @param array<string> $hashes */
