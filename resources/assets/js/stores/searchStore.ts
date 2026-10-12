@@ -34,7 +34,7 @@ export const searchStore = {
   }),
 
   async excerptSearch(q: string) {
-    const result = await http.get<ExcerptSearchResult>(`search?q=${q}`)
+    const result = await http.get<ExcerptSearchResult>(`search?${new URLSearchParams({ q })}`)
 
     this.state.excerpt.playables = playableStore.syncWithVault(result.songs)
     this.state.excerpt.albums = albumStore.syncWithVault(result.albums)
@@ -44,7 +44,9 @@ export const searchStore = {
   },
 
   async playableSearch(q: string) {
-    this.state.playables = playableStore.syncWithVault(await http.get<Playable[]>(`search/songs?q=${q}`))
+    this.state.playables = playableStore.syncWithVault(
+      await http.get<Playable[]>(`search/songs?${new URLSearchParams({ q })}`),
+    )
   },
 
   resetPlayableResultState() {
