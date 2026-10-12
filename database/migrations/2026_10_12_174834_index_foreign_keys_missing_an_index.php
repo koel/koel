@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -53,6 +54,6 @@ return new class extends Migration {
     private static function hasIndexLeadingWithColumn(string $table, string $column): bool
     {
         return collect(Schema::getIndexes($table))
-            ->contains(static fn (array $index): bool => $index['columns'][0] === $column);
+            ->contains(static fn (array $index): bool => Arr::first($index['columns']) === $column);
     }
 };
