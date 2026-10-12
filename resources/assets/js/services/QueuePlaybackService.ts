@@ -45,6 +45,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   private upNext: Ref<Playable | null> = ref(null)
   private latestPlayRequest = 0
   private lastExpiredSourceReload: { playableId: Playable['id']; at: number } | null = null
+  private lastSavedPosition: { playableId: Playable['id']; second: number } | null = null
 
   /**
    * The next item in the queue.
@@ -326,6 +327,8 @@ export class QueuePlaybackService extends BasePlaybackService {
     this.cancelCrossfade()
     this.media.pause()
 
+    this.savePosition(queueStore.current!, Math.ceil(this.media.currentTime))
+
     queueStore.current!.playback_state = 'Paused'
     navigator.mediaSession && (navigator.mediaSession.playbackState = 'paused')
 
@@ -493,6 +496,15 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
   }
 
+  private isPositionSaved(playable: Playable, second: number) {
+    return this.lastSavedPosition?.playableId === playable.id && this.lastSavedPosition.second === second
+  }
+
+  private savePosition(playable: Playable, second: number) {
+    this.lastSavedPosition = { playableId: playable.id, second }
+    savePlaybackStatus({ song: playable.id, position: second })
+  }
+
   protected onTimeUpdate(): void {
     const currentPlayable = queueStore.current
 
@@ -510,13 +522,14 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     this.scrobbleIfEligible(currentPlayable, media.currentTime, media.duration)
 
-    if (Math.ceil(media.currentTime) % 5 === 0) {
-      // every 5 seconds, we save the current playback position to the server
-      savePlaybackStatus({ song: currentPlayable.id, position: Math.ceil(media.currentTime) })
+    const second = Math.ceil(media.currentTime)
+
+    if (second % 5 === 0 && !this.isPositionSaved(currentPlayable, second)) {
+      this.savePosition(currentPlayable, second)
 
       // if the current item is an episode, we emit an event to update the progress on the client side as well
       if (isEpisode(currentPlayable)) {
-        eventBus.emit('EPISODE_PROGRESS_UPDATED', currentPlayable, Math.ceil(media.currentTime))
+        eventBus.emit('EPISODE_PROGRESS_UPDATED', currentPlayable, second)
       }
     }
 
