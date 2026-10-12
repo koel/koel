@@ -29,7 +29,7 @@ export class AudioAnalyzer {
     this.analyzer.getByteFrequencyData(this.audioBuffer)
     let bass = 0.0; let mid = 0.0; let high = 0.0
 
-    if (this.audioBuffer[0] === 0) {
+    if (!this.audioBuffer.some(value => value > 0)) {
       // create a "pulse" effect on audio idle
       if (this.frame % 40 == (Math.floor(Math.random() * 40.0))) {
         bass = Math.random()
