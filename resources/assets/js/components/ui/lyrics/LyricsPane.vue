@@ -19,7 +19,9 @@
   <p v-else class="px-6 py-8">
     <template v-if="userCanUpdateLyrics">
       No lyrics found.
-      <a role="button" @click.prevent="showEditSongForm">Click here</a>
+      <button class="text-k-fg hover:text-k-highlight [font:inherit]" type="button" @click.prevent="showEditSongForm">
+        Click here
+      </button>
       to add lyrics.
     </template>
     <span v-else>No lyrics available. Are you listening to Bach?</span>

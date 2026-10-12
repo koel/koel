@@ -59,7 +59,13 @@
         <template v-if="playlist?.is_smart">
           <p>
             No songs match the playlist's
-            <a class="inline" @click.prevent="editPlaylist">criteria</a>.
+            <button
+              class="inline text-k-highlight hover:text-k-fg [font:inherit]"
+              type="button"
+              @click.prevent="editPlaylist"
+            >
+              criteria</button
+            >.
           </p>
         </template>
         <template v-else>

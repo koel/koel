@@ -12,10 +12,22 @@
           <span>{{ pluralize(playables, 'item') }}</span>
           <span>{{ duration }}</span>
 
-          <a v-if="downloadable" class="download" role="button" @click.prevent="download"> Download All </a>
-          <a v-if="canToggleOffline" role="button" @click.prevent="toggleOffline">
+          <button
+            v-if="downloadable"
+            class="download text-k-fg hover:text-k-highlight [font:inherit]"
+            type="button"
+            @click.prevent="download"
+          >
+            Download All
+          </button>
+          <button
+            v-if="canToggleOffline"
+            class="text-k-fg hover:text-k-highlight [font:inherit]"
+            type="button"
+            @click.prevent="toggleOffline"
+          >
             {{ allCached ? 'Remove Offline' : 'Make Offline' }}
-          </a>
+          </button>
         </template>
 
         <template #controls>

@@ -17,7 +17,9 @@
       </a>
     </template>
     <template #meta>
-      <a role="button" @click.prevent="shuffle"> Shuffle </a>
+      <button class="text-k-fg hover:text-k-highlight [font:inherit]" type="button" @click.prevent="shuffle">
+        Shuffle
+      </button>
       <MoreActionsButton @click="requestContextMenu" />
     </template>
   </BaseCard>

@@ -74,10 +74,10 @@ describe('credentialsLoginForm.vue', () => {
     expect(logMock).toHaveBeenCalledWith('Unauthenticated')
   })
 
-  it('emits forgotPassword when the link is clicked', async () => {
+  it('emits forgotPassword when the button is clicked', async () => {
     const { emitted } = h.render(Component)
 
-    await h.user.click(screen.getByText('Forgot password?'))
+    await h.user.click(screen.getByRole('button', { name: 'Forgot password?' }))
 
     expect(emitted().forgotPassword).toBeTruthy()
   })
@@ -86,7 +86,7 @@ describe('credentialsLoginForm.vue', () => {
     window.KOEL.mailer_configured = false
     h.render(Component)
 
-    expect(screen.queryByText('Forgot password?')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Forgot password?' })).toBeNull()
     window.KOEL.mailer_configured = true
   })
 })

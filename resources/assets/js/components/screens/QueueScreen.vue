@@ -44,7 +44,13 @@
       No songs queued.
       <span v-if="libraryNotEmpty" class="block secondary">
         How about
-        <a class="start" @click.prevent="shuffleSome">playing some random songs</a>?
+        <button
+          class="start text-k-highlight hover:text-k-fg [font:inherit]"
+          type="button"
+          @click.prevent="shuffleSome"
+        >
+          playing some random songs</button
+        >?
       </span>
     </ScreenEmptyState>
   </ScreenBase>

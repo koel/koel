@@ -12,13 +12,38 @@
               data-testid="queue-after-current"
               tabindex="0"
               @click="queueAfterCurrent"
+              @keydown.enter.space.prevent="queueAfterCurrent"
             >
               After Current
             </li>
-            <li class="bottom-queue" data-testid="queue-bottom" tabindex="0" @click="queueToBottom">Bottom of Queue</li>
-            <li class="top-queue" data-testid="queue-top" tabindex="0" @click="queueToTop">Top of Queue</li>
+            <li
+              class="bottom-queue"
+              data-testid="queue-bottom"
+              tabindex="0"
+              @click="queueToBottom"
+              @keydown.enter.space.prevent="queueToBottom"
+            >
+              Bottom of Queue
+            </li>
+            <li
+              class="top-queue"
+              data-testid="queue-top"
+              tabindex="0"
+              @click="queueToTop"
+              @keydown.enter.space.prevent="queueToTop"
+            >
+              Top of Queue
+            </li>
           </template>
-          <li v-else data-testid="queue" tabindex="0" @click="queueToBottom">Queue</li>
+          <li
+            v-else
+            data-testid="queue"
+            tabindex="0"
+            @click="queueToBottom"
+            @keydown.enter.space.prevent="queueToBottom"
+          >
+            Queue
+          </li>
         </template>
 
         <li
@@ -27,6 +52,7 @@
           data-testid="add-to-favorites"
           tabindex="0"
           @click="addToFavorites"
+          @keydown.enter.space.prevent="addToFavorites"
         >
           Favorites
         </li>
@@ -38,6 +64,7 @@
           data-testid="add-to-playlist"
           tabindex="0"
           @click="addToExistingPlaylist(playlist)"
+          @keydown.enter.space.prevent="addToExistingPlaylist(playlist)"
         >
           {{ playlist.name }}
         </li>

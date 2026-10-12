@@ -5,10 +5,12 @@
     class="song-info px-6 py-0 flex items-center content-start w-[84px] md:w-[420px] gap-5"
     @dragstart="onDragStart"
   >
-    <span
+    <button
       v-koel-tooltip="playable ? 'Scroll to currently playing' : undefined"
-      :class="playable && 'cursor-pointer'"
-      class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover"
+      :disabled="!playable"
+      aria-label="Scroll to currently playing"
+      class="album-thumb block h-[55%] md:h-3/4 aspect-square rounded-full bg-cover disabled:cursor-default"
+      type="button"
       @click="scrollToCurrentInQueue"
     />
     <div v-if="playable" class="meta overflow-hidden hidden md:block">
