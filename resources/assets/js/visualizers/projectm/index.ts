@@ -2,9 +2,9 @@ import projectMScriptUrl from '@koel-project/projectm-wasm/koel_projectm.js?url'
 import projectMWasmUrl from '@koel-project/projectm-wasm/koel_projectm.wasm?url'
 import { sample } from 'lodash-es'
 import { watch } from 'vue'
-import { audioService } from '@/services/audioService'
 import { milkdropPresetLibrary } from '@/services/milkdropPresetLibrary'
 import { milkdropPresetStore, RANDOM_PRESET } from '@/stores/milkdropPresetStore'
+import { configureAnalyser } from '@/visualizers/analyser'
 import { startFrameLoop } from '@/visualizers/frameLoop'
 import { getRenderPixelRatio } from '@/visualizers/pixelRatio'
 
@@ -116,8 +116,7 @@ export const init = async (container: HTMLElement) => {
     },
   )
 
-  const analyser = audioService.analyzer
-  analyser.fftSize = SAMPLES_PER_FRAME
+  const analyser = configureAnalyser({ fftSize: SAMPLES_PER_FRAME })
   const samples = new Float32Array(SAMPLES_PER_FRAME)
   const samplesPointer = projectM._malloc(samples.byteLength)
 

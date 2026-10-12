@@ -1,4 +1,5 @@
-import { audioService } from '@/services/audioService'
+import { configureAnalyser } from '@/visualizers/analyser'
+import { splitIntoFrequencyBands } from './frequencyBands'
 
 export class AudioAnalyzer {
   private bass = 0.0
@@ -9,6 +10,7 @@ export class AudioAnalyzer {
   private frame = 0
 
   private readonly frequencyBinCount: number
+  private readonly binWidthHz: number
 
   // [!] this can't be read-only regardless of IDE's suggestion
   // noinspection TypeScriptFieldCanBeMadeReadonly
@@ -17,9 +19,9 @@ export class AudioAnalyzer {
   private analyzer: AnalyserNode
 
   constructor () {
-    this.analyzer = audioService.analyzer
-    this.analyzer.fftSize = 128
+    this.analyzer = configureAnalyser({ fftSize: 1024 })
     this.frequencyBinCount = this.analyzer.frequencyBinCount
+    this.binWidthHz = this.analyzer.context.sampleRate / this.analyzer.fftSize
     this.audioBuffer = new Uint8Array(this.frequencyBinCount)
   }
 
@@ -35,23 +37,12 @@ export class AudioAnalyzer {
         high = Math.random()
       }
     } else {
-      const passSize = this.frequencyBinCount / 3.0
+      const levels = Array.from(this.audioBuffer, value => (value / 196.0) ** 3.0)
+      const bands = splitIntoFrequencyBands(levels, this.binWidthHz)
 
-      for (let i = 0; i < this.frequencyBinCount; i++) {
-        const val = (this.audioBuffer[i] / 196.0) ** 3.0
-
-        if (i < passSize) {
-          bass += val
-        } else if (i >= passSize && i < passSize * 2) {
-          mid += val
-        } else if (i >= passSize * 2) {
-          high += val
-        }
-      }
-
-      bass /= passSize
-      mid /= passSize
-      high /= passSize
+      bass = bands.bass
+      mid = bands.mid
+      high = bands.high
     }
 
     this.bass = this.bass > bass ? this.bass * 0.96 : bass

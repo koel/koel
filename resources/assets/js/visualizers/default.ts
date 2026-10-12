@@ -1,5 +1,6 @@
 import { random, sample } from 'lodash-es'
 import { audioService } from '@/services/audioService'
+import { configureAnalyser } from '@/visualizers/analyser'
 import { startFrameLoop } from '@/visualizers/frameLoop'
 
 const NUM_PARTICLES = 128
@@ -45,9 +46,7 @@ class AudioAnalyser {
     this.audio = audioService.element
     this.source = audioService.source
 
-    this.analyser = audioService.analyzer
-    this.analyser.smoothingTimeConstant = this.smoothing
-    this.analyser.fftSize = this.bandCount * 2
+    this.analyser = configureAnalyser({ fftSize: this.bandCount * 2, smoothing: this.smoothing })
 
     this.bands = new Uint8Array(this.analyser.frequencyBinCount)
   }

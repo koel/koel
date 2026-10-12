@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import shaders from './shaders'
 import planeMeshParameters from './planeMeshParameters'
-import { audioService } from '@/services/audioService'
+import { configureAnalyser } from '@/visualizers/analyser'
 import { startFrameLoop } from '@/visualizers/frameLoop'
 import { getRenderPixelRatio } from '@/visualizers/pixelRatio'
 
@@ -21,9 +21,7 @@ export const init = (container: HTMLElement) => {
     },
   }
 
-  const analyser = audioService.analyzer
-
-  analyser.fftSize = 1024
+  const analyser = configureAnalyser({ fftSize: 1024 })
   const dataArray = new Uint8Array(analyser.frequencyBinCount)
 
   const width = container.clientWidth

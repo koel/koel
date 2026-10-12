@@ -1,4 +1,4 @@
-import { audioService } from '@/services/audioService'
+import { configureAnalyser } from '@/visualizers/analyser'
 import { startFrameLoop } from '@/visualizers/frameLoop'
 import { logger } from '@/utils/logger'
 import shaders from './shaders'
@@ -13,9 +13,7 @@ export const init = async (container: HTMLElement) => {
   const glowContext = glow.getContext('2d')!
   const cubeSize = 15
 
-  const analyzer = audioService.analyzer
-  analyzer.smoothingTimeConstant = 0.2
-  analyzer.fftSize = 128
+  const analyzer = configureAnalyser({ fftSize: 128, smoothing: 0.6 })
 
   const spectrumData = new Uint8Array(analyzer.frequencyBinCount)
 
