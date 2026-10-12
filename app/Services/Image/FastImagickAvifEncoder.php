@@ -13,8 +13,6 @@ use Intervention\Image\Interfaces\ImageInterface;
  */
 class FastImagickAvifEncoder extends AvifEncoder
 {
-    private const string SPEED = '9';
-
     protected function belongsToDriver(object $driver): bool
     {
         return $driver instanceof ImagickDriver;
@@ -22,7 +20,7 @@ class FastImagickAvifEncoder extends AvifEncoder
 
     public function encode(ImageInterface $image): EncodedImageInterface
     {
-        $image->core()->native()->setOption('heic:speed', self::SPEED);
+        $image->core()->native()->setOption('heic:speed', '9');
 
         return parent::encode($image);
     }

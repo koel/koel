@@ -13,8 +13,6 @@ use Intervention\Image\Interfaces\ImageInterface;
  */
 class FastGdAvifEncoder extends AvifEncoder
 {
-    private const int SPEED = 10;
-
     protected function belongsToDriver(object $driver): bool
     {
         return $driver instanceof GdDriver;
@@ -26,7 +24,7 @@ class FastGdAvifEncoder extends AvifEncoder
             $image->core()->native(),
             $stream,
             $this->quality,
-            self::SPEED,
+            speed: 10,
         ), 'image/avif');
     }
 }
