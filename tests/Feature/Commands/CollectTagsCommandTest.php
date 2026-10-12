@@ -4,12 +4,11 @@ namespace Tests\Feature\Commands;
 
 use App\Console\Commands\CollectTagsCommand;
 use App\Models\Setting;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
+use function Tests\sandbox_path;
 
 class CollectTagsCommandTest extends TestCase
 {
@@ -33,13 +32,9 @@ class CollectTagsCommandTest extends TestCase
     public function acceptValidTags(): void
     {
         config(['koel.storage_driver' => 'local']);
-        $emptyMediaPath = sys_get_temp_dir() . '/' . Str::uuid();
-        File::ensureDirectoryExists($emptyMediaPath);
-        Setting::set('media_path', $emptyMediaPath);
+        Setting::set('media_path', sandbox_path('media'));
         create_admin();
 
         $this->artisan('koel:tags:collect', ['tag' => ['year', 'genre']])->assertSuccessful();
-
-        File::deleteDirectory($emptyMediaPath);
     }
 }
