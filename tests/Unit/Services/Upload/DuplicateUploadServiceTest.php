@@ -60,8 +60,12 @@ class DuplicateUploadServiceTest extends TestCase
         $existingSong = Song::factory()->createOne();
         $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3');
 
-        File::expects('hash')->with('/tmp/song.mp3')->andReturn('abc123');
-        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturn($existingSong);
+        File::expects('hash')->with('/tmp/song.mp3', 'xxh128')->andReturn('fast-hash');
+        File::expects('hash')->with('/tmp/song.mp3', 'md5')->andReturn('legacy-hash');
+        $this->songRepository
+            ->expects('findByAnyHash')
+            ->with(['fast-hash', 'legacy-hash'], $uploader)
+            ->andReturn($existingSong);
 
         try {
             $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
@@ -80,7 +84,7 @@ class DuplicateUploadServiceTest extends TestCase
         $uploader = create_user(['preferences' => ['detect_duplicate_uploads' => false]]);
         $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3');
 
-        $this->songRepository->expects('findByHash')->never();
+        $this->songRepository->expects('findByAnyHash')->never();
 
         $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
     }
@@ -91,8 +95,8 @@ class DuplicateUploadServiceTest extends TestCase
         $uploader = create_user(['preferences' => ['detect_duplicate_uploads' => true]]);
         $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3');
 
-        File::expects('hash')->andReturn('abc123');
-        $this->songRepository->expects('findByHash')->with('abc123', $uploader)->andReturnNull();
+        File::expects('hash')->twice()->andReturn('abc123');
+        $this->songRepository->expects('findByAnyHash')->with(['abc123', 'abc123'], $uploader)->andReturnNull();
 
         $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
 

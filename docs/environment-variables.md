@@ -185,6 +185,7 @@ The AI assistant is no longer set up here. An admin turns it on and adds the pro
 | `IMAGE_STORAGE_DIR` | Where artwork is stored: a path under Koel's `public` directory for the `local` driver, or a key prefix inside the bucket otherwise. | `storage/images` |
 | `IMAGE_STORAGE_BUCKET` | A separate, public bucket for artwork, so media can stay private. | _(`AWS_BUCKET`)_ |
 | `IMAGE_STORAGE_URL` | The public URL artwork is served from. Required when the driver is not `local`. No trailing slash. | _(empty)_ |
+| `IMAGE_DRIVER` | The library used to process images. Options: `gd`, `imagick`. | `gd` |
 | `MEDIA_BROWSER_ENABLED` | Whether to enable the media browser (experimental Koel Plus feature). | `false` |
 | `CLEAN_URLS_ENABLED` | Whether to use plain URLs like `/albums` instead of `/#/albums`. | `false` |
 | `EMBED_ENABLED` | Whether to allow embedding songs, albums, artists, and playlists on external sites. Set to `false` to hide the "Embed…" menu entries and disable both creation and rendering of embed widgets. | `true` |

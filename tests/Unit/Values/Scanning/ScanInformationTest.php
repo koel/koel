@@ -51,4 +51,14 @@ class ScanInformationTest extends TestCase
 
         self::assertSame('', $info->albumArtistName);
     }
+
+    #[Test]
+    public function hashTheFileWithXxh128(): void
+    {
+        $path = test_path('songs/full-vorbis-comments.flac');
+
+        $info = ScanInformation::fromGetId3Info(['comments' => ['title' => ['Track']]], $path);
+
+        self::assertSame(hash_file('xxh128', $path), $info->hash);
+    }
 }

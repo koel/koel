@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Interfaces\ImageManagerInterface;
 use RuntimeException;
 use Throwable;
 
@@ -24,14 +26,28 @@ class ImageWriter
     /** A 1x1 PNG, encoded to verify that a format the driver claims to support really works. */
     private const string PROBE_IMAGE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
+    /** @var array<string, string> */
+    private static array $supportedFormatsByDriver = [];
+
     private readonly string $format;
+
+    private readonly ?ImageManagerInterface $fastAvifManager;
 
     public function __construct(
         private readonly SafeHttp $http,
         #[Config('images.default')]
-        string $driver = 'gd',
+        private readonly string $driver = 'gd',
     ) {
-        $this->format = self::findSupportedFormat($driver);
+        self::$supportedFormatsByDriver[$driver] ??= self::findSupportedFormat($driver);
+        $this->format = self::$supportedFormatsByDriver[$driver];
+
+        $this->fastAvifManager = $this->format === 'avif'
+            ? match ($driver) {
+                'gd' => ImageManager::usingDriver(GdDriver::class),
+                'imagick' => ImageManager::usingDriver(ImagickDriver::class),
+                default => null,
+            }
+            : null;
     }
 
     public function format(): string
@@ -43,10 +59,12 @@ class ImageWriter
      * Some builds advertise a format their encoder can't actually produce, yielding empty
      * output instead of failing, so the format is confirmed against a real encode.
      */
-    private static function canActuallyEncode(string $format): bool
+    private static function canActuallyEncode(string $driver, string $format): bool
     {
         return (bool) rescue(
-            static fn (): bool => Image::fromBase64(self::PROBE_IMAGE)->optimize($format)->toBytes() !== '',
+            static fn (): bool => (
+                Image::fromBase64(self::PROBE_IMAGE)->using($driver)->optimize($format)->toBytes() !== ''
+            ),
             false,
             report: false,
         );
@@ -66,7 +84,7 @@ class ImageWriter
         }
 
         foreach (self::FORMATS as $format) {
-            if ($imageDriver->supports($format) && self::canActuallyEncode($format)) {
+            if ($imageDriver->supports($format) && self::canActuallyEncode($driver, $format)) {
                 return $format;
             }
         }
@@ -85,33 +103,54 @@ class ImageWriter
     {
         $config ??= ImageWritingConfig::default();
 
-        $image = $this
-            ->read($source)
-            ->scale(width: $config->maxWidth)
-            ->when($config->blur, static fn (ProcessableImage $image) => $image->blur($config->blur))
-            ->optimize($this->format, $config->quality);
-
-        $bytes = $image->toBytes();
+        $bytes = $this->fastAvifManager
+            ? $this->encodeAvifFast($this->fastAvifManager, $source, $config)
+            : $this
+                ->read($source)
+                ->scale(width: $config->maxWidth)
+                ->when($config->blur, static fn (ProcessableImage $image) => $image->blur($config->blur))
+                ->optimize($this->format, $config->quality)
+                ->toBytes();
 
         throw_if($bytes === '', RuntimeException::class, 'Encoding produced an empty image');
 
         return $bytes;
     }
 
+    private function read(mixed $source): ProcessableImage
+    {
+        return Image::fromBytes($this->readBytes($source));
+    }
+
+    private function encodeAvifFast(ImageManagerInterface $manager, mixed $source, ImageWritingConfig $config): string
+    {
+        $encoder = $this->driver === 'gd'
+            ? new FastGdAvifEncoder($config->quality)
+            : new FastImagickAvifEncoder($config->quality);
+
+        $image = $manager->decodeBinary($this->readBytes($source))->scaleDown(width: $config->maxWidth);
+
+        if ($config->blur) {
+            $image->blur($config->blur);
+        }
+
+        return $image->encode($encoder)->toString();
+    }
+
     /**
      * @param mixed $source A data URI, a base64-encoded image, a URL, a local file path, or raw image bytes.
      */
-    private function read(mixed $source): ProcessableImage
+    private function readBytes(mixed $source): string
     {
         if (Str::startsWith($source, 'data:')) {
-            return Image::fromBase64(Str::after($source, 'base64,'));
+            return base64_decode(Str::after($source, 'base64,'), true) ?: '';
         }
 
         if (Str::isUrl($source)) {
-            return Image::fromBytes($this->fetch($source));
+            return $this->fetch($source);
         }
 
-        return self::isLocalFile($source) ? Image::fromPath($source) : Image::fromBytes($source);
+        return self::isLocalFile($source) ? File::get($source) : $source;
     }
 
     private static function isLocalFile(string $source): bool

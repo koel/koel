@@ -5,11 +5,13 @@ namespace Tests\Unit\Services\Image;
 use App\Services\Image\ImageWriter;
 use App\Services\Network\SafeHttp;
 use App\Values\ImageWritingConfig;
+use finfo;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Str;
+use Imagick;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\Fakes\FakeNetwork;
@@ -43,6 +45,50 @@ class ImageWriterTest extends TestCase
         self::assertSame($sourceWidth, Image::fromPath($destination)->toPng()->width());
 
         File::delete($destination);
+    }
+
+    #[Test]
+    public function probesTheSupportedFormatOncePerProcess(): void
+    {
+        Image::partialMock()->shouldNotReceive('fromBase64');
+
+        $writer = new ImageWriter(new SafeHttp(new FakeNetwork()));
+
+        self::assertSame($this->writer->format(), $writer->format());
+    }
+
+    #[Test]
+    public function encodesAvifWithGdAtTheConfiguredWidth(): void
+    {
+        if ($this->writer->format() !== 'avif') {
+            self::markTestSkipped('This GD build cannot encode AVIF.');
+        }
+
+        $bytes = $this->writer->encode(test_path('fixtures/cover.png'), ImageWritingConfig::make(maxWidth: 32));
+
+        self::assertSame('image/avif', (new finfo(FILEINFO_MIME_TYPE))->buffer($bytes));
+        self::assertSame(32, Image::fromBytes($bytes)->toPng()->width());
+    }
+
+    #[Test]
+    public function encodesAvifWithImagickAtTheConfiguredWidth(): void
+    {
+        if (!extension_loaded('imagick')) {
+            self::markTestSkipped('Imagick is not installed.');
+        }
+
+        $writer = new ImageWriter(new SafeHttp(new FakeNetwork()), 'imagick');
+
+        if ($writer->format() !== 'avif') {
+            self::markTestSkipped('This Imagick build cannot encode AVIF.');
+        }
+
+        $bytes = $writer->encode(test_path('fixtures/cover.png'), ImageWritingConfig::make(maxWidth: 32));
+        $encoded = new Imagick();
+        $encoded->readImageBlob($bytes);
+
+        self::assertSame('AVIF', $encoded->getImageFormat());
+        self::assertSame(32, $encoded->getImageWidth());
     }
 
     #[Test]

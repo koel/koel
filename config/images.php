@@ -7,12 +7,12 @@ return [
      |--------------------------------------------------------------------------
      |
      | Laravel's image manipulation features support "GD Library" and "Imagick"
-     | to process images internally. Imagick is preferred when available, as it
-     | supports more formats, but you may force either one.
+     | to process images internally. GD is used by default; set this to
+     | "imagick" to use Imagick instead.
      |
      | Supported: "gd", "imagick"
      |
      */
 
-    'default' => env('IMAGE_DRIVER', extension_loaded('imagick') ? 'imagick' : 'gd'),
+    'default' => env('IMAGE_DRIVER', 'gd'),
 ];
