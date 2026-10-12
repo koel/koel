@@ -25,15 +25,15 @@ describe('koelPlusModal.vue', () => {
   })
 
   it('opens checkout once Lemon Squeezy has loaded', async () => {
+    const openCheckoutMock = vi.fn()
     let finishLoading: Closure = () => {}
 
     loadLemonSqueezyMock.mockReturnValue(
-      new Promise<void>(resolve => {
-        finishLoading = resolve
+      new Promise(resolve => {
+        finishLoading = () => resolve({ Url: { Open: openCheckoutMock } })
       }),
     )
 
-    const openCheckoutMock = h.mock(window.LemonSqueezy.Url, 'Open')
     const { emitted } = h.render(Component)
 
     screen.getByTestId('buttons')
@@ -55,7 +55,6 @@ describe('koelPlusModal.vue', () => {
 
   it('stays open and shows an error when Lemon Squeezy fails to load', async () => {
     loadLemonSqueezyMock.mockRejectedValue(new Error('Failed to load Lemon Squeezy'))
-    const openCheckoutMock = h.mock(window.LemonSqueezy.Url, 'Open')
     const showErrorDialogMock = h.mock(DialogBoxStub.value, 'error')
     const { emitted } = h.render(Component)
 
@@ -64,16 +63,17 @@ describe('koelPlusModal.vue', () => {
     await waitFor(() =>
       expect(showErrorDialogMock).toHaveBeenCalledWith('Failed to load the checkout. Please try again.'),
     )
-    expect(openCheckoutMock).not.toHaveBeenCalled()
     expect(emitted().close).toBeUndefined()
     expect(screen.getByRole('button', { name: 'Purchase Koel Plus' })).toHaveProperty('disabled', false)
   })
 
   it('stays open and shows an error when checkout fails to open', async () => {
-    loadLemonSqueezyMock.mockResolvedValue(undefined)
-
-    h.mock(window.LemonSqueezy.Url, 'Open', () => {
-      throw new TypeError('Lemon Squeezy is not initialized')
+    loadLemonSqueezyMock.mockResolvedValue({
+      Url: {
+        Open: () => {
+          throw new Error('Checkout failed to open')
+        },
+      },
     })
 
     const showErrorDialogMock = h.mock(DialogBoxStub.value, 'error')

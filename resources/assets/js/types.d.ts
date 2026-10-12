@@ -118,7 +118,7 @@ interface Window {
   readonly MediaMetadata: Constructable<Record<string, any>>
   createLemonSqueezy?: () => Closure
 
-  LemonSqueezy: {
+  LemonSqueezy?: {
     Url: {
       Open: (url: string) => void
     }

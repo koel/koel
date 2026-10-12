@@ -1,21 +1,31 @@
 import { computed } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 
-let lemonSqueezyLoaded: Promise<void> | null = null
+let lemonSqueezyLoaded: Promise<NonNullable<Window['LemonSqueezy']>> | null = null
 
 const loadLemonSqueezy = () => {
   lemonSqueezyLoaded ??= new Promise((resolve, reject) => {
     const script = document.createElement('script')
-    script.src = 'https://app.lemonsqueezy.com/js/lemon.js'
-    script.onload = () => {
-      window.createLemonSqueezy?.()
-      resolve()
-    }
-    script.onerror = () => {
+
+    const failToLoad = () => {
       script.remove()
       lemonSqueezyLoaded = null
       reject(new Error('Failed to load Lemon Squeezy'))
     }
+
+    script.src = 'https://app.lemonsqueezy.com/js/lemon.js'
+
+    script.onload = () => {
+      window.createLemonSqueezy?.()
+
+      if (window.LemonSqueezy) {
+        resolve(window.LemonSqueezy)
+      } else {
+        failToLoad()
+      }
+    }
+
+    script.onerror = failToLoad
     document.head.appendChild(script)
   })
 

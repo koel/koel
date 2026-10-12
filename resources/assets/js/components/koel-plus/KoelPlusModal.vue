@@ -59,8 +59,8 @@ const openPurchaseOverlay = async () => {
   openingCheckout.value = true
 
   try {
-    await loadLemonSqueezy()
-    window.LemonSqueezy.Url.Open(checkoutUrl.value)
+    const lemonSqueezy = await loadLemonSqueezy()
+    lemonSqueezy.Url.Open(checkoutUrl.value)
     close()
   } catch {
     showErrorDialog('Failed to load the checkout. Please try again.')

@@ -18,7 +18,7 @@ vi.mock('@/stores/commonStore', () => ({
 import { useKoelPlus } from './useKoelPlus'
 
 describe('useKoelPlus', () => {
-  createHarness()
+  const h = createHarness()
 
   it('builds checkout URL from product id', () => {
     const { checkoutUrl } = useKoelPlus()
@@ -26,21 +26,34 @@ describe('useKoelPlus', () => {
     expect(checkoutUrl.value).toContain('store.koel.dev/checkout')
   })
 
-  it('requests Lemon Squeezy again only after it fails to load', async () => {
+  it('requests Lemon Squeezy again until it initializes', async () => {
     const lemonSqueezyScriptSelector = 'script[src="https://app.lemonsqueezy.com/js/lemon.js"]'
+    const lemonSqueezy = { Url: { Open: vi.fn() } }
     const { loadLemonSqueezy } = useKoelPlus()
 
-    const failedAttempt = loadLemonSqueezy()
-    document.head.querySelector(lemonSqueezyScriptSelector)!.dispatchEvent(new Event('error'))
+    const dispatchScriptEvent = (eventType: 'load' | 'error') =>
+      document.head.querySelector(lemonSqueezyScriptSelector)!.dispatchEvent(new Event(eventType))
 
-    await expect(failedAttempt).rejects.toThrow('Failed to load Lemon Squeezy')
+    const blockedAttempt = loadLemonSqueezy()
+    dispatchScriptEvent('error')
+
+    await expect(blockedAttempt).rejects.toThrow('Failed to load Lemon Squeezy')
     expect(document.head.querySelector(lemonSqueezyScriptSelector)).toBeNull()
 
-    const retry = loadLemonSqueezy()
-    document.head.querySelector(lemonSqueezyScriptSelector)!.dispatchEvent(new Event('load'))
+    const uninitializedAttempt = loadLemonSqueezy()
+    dispatchScriptEvent('load')
 
-    await expect(retry).resolves.toBeUndefined()
-    expect(window.createLemonSqueezy).toHaveBeenCalled()
+    await expect(uninitializedAttempt).rejects.toThrow('Failed to load Lemon Squeezy')
+    expect(document.head.querySelector(lemonSqueezyScriptSelector)).toBeNull()
+
+    h.mock(window, 'createLemonSqueezy', () => {
+      window.LemonSqueezy = lemonSqueezy
+    })
+
+    const successfulAttempt = loadLemonSqueezy()
+    dispatchScriptEvent('load')
+
+    await expect(successfulAttempt).resolves.toBe(lemonSqueezy)
 
     loadLemonSqueezy()
     expect(document.head.querySelectorAll(lemonSqueezyScriptSelector)).toHaveLength(1)
