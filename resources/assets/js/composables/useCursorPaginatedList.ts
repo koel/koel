@@ -42,11 +42,14 @@ export const useCursorPaginatedList = <Item extends { favorite: boolean }, SortF
 
   const showSkeletons = computed(() => loading.value && items.value.length === 0)
 
+  let listVersion = 0
+
   const fetchMore = async () => {
     if (loading.value || !moreAvailable.value) {
       return
     }
 
+    const requestedListVersion = listVersion
     loading.value = true
 
     try {
@@ -61,9 +64,14 @@ export const useCursorPaginatedList = <Item extends { favorite: boolean }, SortF
     } finally {
       loading.value = false
     }
+
+    if (requestedListVersion !== listVersion) {
+      await refetchFromStart()
+    }
   }
 
   const refetchFromStart = async () => {
+    listVersion++
     cursor.value = ''
     store.reset()
     onReset?.()

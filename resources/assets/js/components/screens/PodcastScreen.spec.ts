@@ -67,6 +67,26 @@ describe('podcastScreen.vue', () => {
     })
   })
 
+  it('goes back to the list if the podcast is unsubscribed', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { podcast } = await renderComponent()
+
+    eventBus.emit('PODCAST_UNSUBSCRIBED', podcast)
+
+    expect(goMock).toHaveBeenCalledWith('/#/podcasts')
+  })
+
+  it('stops watching for unsubscription once closed', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { podcast, rendered } = await renderComponent()
+
+    rendered.unmount()
+
+    eventBus.emit('PODCAST_UNSUBSCRIBED', podcast)
+
+    expect(goMock).not.toHaveBeenCalled()
+  })
+
   it('starts playing the podcast', async () => {
     h.createAudioPlayer()
 

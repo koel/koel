@@ -10,23 +10,54 @@
               v-if="currentPlayable"
               class="queue-after-current"
               data-testid="queue-after-current"
+              role="button"
               tabindex="0"
               @click="queueAfterCurrent"
+              @keydown.enter.space.prevent="queueAfterCurrent"
             >
               After Current
             </li>
-            <li class="bottom-queue" data-testid="queue-bottom" tabindex="0" @click="queueToBottom">Bottom of Queue</li>
-            <li class="top-queue" data-testid="queue-top" tabindex="0" @click="queueToTop">Top of Queue</li>
+            <li
+              class="bottom-queue"
+              data-testid="queue-bottom"
+              role="button"
+              tabindex="0"
+              @click="queueToBottom"
+              @keydown.enter.space.prevent="queueToBottom"
+            >
+              Bottom of Queue
+            </li>
+            <li
+              class="top-queue"
+              data-testid="queue-top"
+              role="button"
+              tabindex="0"
+              @click="queueToTop"
+              @keydown.enter.space.prevent="queueToTop"
+            >
+              Top of Queue
+            </li>
           </template>
-          <li v-else data-testid="queue" tabindex="0" @click="queueToBottom">Queue</li>
+          <li
+            v-else
+            data-testid="queue"
+            role="button"
+            tabindex="0"
+            @click="queueToBottom"
+            @keydown.enter.space.prevent="queueToBottom"
+          >
+            Queue
+          </li>
         </template>
 
         <li
           v-if="config.favorites"
           class="favorites"
           data-testid="add-to-favorites"
+          role="button"
           tabindex="0"
           @click="addToFavorites"
+          @keydown.enter.space.prevent="addToFavorites"
         >
           Favorites
         </li>
@@ -36,8 +67,10 @@
           :key="playlist.id"
           class="playlist"
           data-testid="add-to-playlist"
+          role="button"
           tabindex="0"
           @click="addToExistingPlaylist(playlist)"
+          @keydown.enter.space.prevent="addToExistingPlaylist(playlist)"
         >
           {{ playlist.name }}
         </li>

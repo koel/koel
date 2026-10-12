@@ -89,12 +89,12 @@
 
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { playableStore } from '@/stores/playableStore'
+import { playableStore, type SongUpdateResult } from '@/stores/playableStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
@@ -231,13 +231,14 @@ const requestContextMenu = (event: MouseEvent) =>
     album: album.value!,
   })
 
-eventBus.on('SONGS_UPDATED', result => {
-  // After songs are updated, check if the current album still exists.
-  // If it doesn't, redirect to the album list.
-  if (result.removed.album_ids.includes(album.value!.id)) {
+const leaveIfAlbumRemoved = (result: SongUpdateResult) => {
+  if (album.value && result.removed.album_ids.includes(album.value.id)) {
     go(url('albums.index'))
   }
-})
+}
+
+eventBus.on('SONGS_UPDATED', leaveIfAlbumRemoved)
+onBeforeUnmount(() => eventBus.off('SONGS_UPDATED', leaveIfAlbumRemoved))
 </script>
 
 <style lang="postcss" scoped>

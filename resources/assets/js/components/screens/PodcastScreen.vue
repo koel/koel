@@ -79,7 +79,7 @@
 import DOMPurify from 'dompurify'
 import { orderBy } from 'lodash-es'
 import { faEllipsis, faPause, faPlay, faRotateRight } from '@fortawesome/free-solid-svg-icons'
-import { computed, nextTick, onMounted, provide, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref } from 'vue'
 import { useRouter } from '@/composables/useRouter'
 import { usePageTitle } from '@/composables/usePageTitle'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -261,7 +261,10 @@ const toggleFavorite = () => podcastStore.toggleFavorite(podcast.value!)
 
 onMounted(() => init())
 
-eventBus.on('PODCAST_UNSUBSCRIBED', ({ id }) => id === podcast.value?.id && go(url('podcasts.index')))
+const leaveIfPodcastUnsubscribed = ({ id }: Podcast) => id === podcast.value?.id && go(url('podcasts.index'))
+
+eventBus.on('PODCAST_UNSUBSCRIBED', leaveIfPodcastUnsubscribed)
+onBeforeUnmount(() => eventBus.off('PODCAST_UNSUBSCRIBED', leaveIfPodcastUnsubscribed))
 </script>
 
 <style scoped lang="postcss">

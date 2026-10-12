@@ -17,11 +17,11 @@
       <Btn class="w-full" data-testid="submit" type="submit">Log In</Btn>
     </FormRow>
 
-    <FormRow v-if="canResetPassword">
-      <a class="text-right text-[.95rem] text-k-fg-70" role="button" @click.prevent="$emit('forgotPassword')">
+    <div v-if="canResetPassword">
+      <button class="text-right text-[.95rem] text-k-fg-70" type="button" @click.prevent="$emit('forgotPassword')">
         Forgot password?
-      </a>
-    </FormRow>
+      </button>
+    </div>
   </AuthFormCard>
 </template>
 

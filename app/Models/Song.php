@@ -19,10 +19,12 @@ use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
 use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Rateable;
+use App\Observers\SongObserver;
 use App\Values\SongStorageMetadata\SongStorageMetadata;
 use Carbon\Carbon;
 use Database\Factories\SongFactory;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
@@ -68,6 +70,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property string $id
  * @property string $lyrics
  * @property string $path
+ * @property ?string $path_hash
  * @property string $title
  * @property-read SongStorageMetadata $storage_metadata
  * @property-read ?string $genre The string representation of the genres associated with the song. Readonly.
@@ -89,9 +92,10 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  *
  * @method static SongFactory factory(...$parameters)
  */
+#[ObservedBy(SongObserver::class)]
 #[UseEloquentBuilder(SongBuilder::class)]
 #[Unguarded]
-#[Hidden(['updated_at', 'path', 'mtime'])]
+#[Hidden(['updated_at', 'path', 'path_hash', 'mtime'])]
 class Song extends Model implements AuditableContract, Favoriteable, Embeddable, Rateable
 {
     use Auditable;

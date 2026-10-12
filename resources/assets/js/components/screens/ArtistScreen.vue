@@ -93,13 +93,13 @@
 
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { playableStore } from '@/stores/playableStore'
+import { playableStore, type SongUpdateResult } from '@/stores/playableStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
@@ -228,13 +228,14 @@ const requestContextMenu = (event: MouseEvent) =>
     artist: artist.value!,
   })
 
-eventBus.on('SONGS_UPDATED', result => {
-  // After songs are updated, check if the current artist still exists.
-  // If not, redirect to the artist index screen.
-  if (result.removed.artist_ids.includes(artist.value!.id)) {
+const leaveIfArtistRemoved = (result: SongUpdateResult) => {
+  if (artist.value && result.removed.artist_ids.includes(artist.value.id)) {
     go(url('artists.index'))
   }
-})
+}
+
+eventBus.on('SONGS_UPDATED', leaveIfArtistRemoved)
+onBeforeUnmount(() => eventBus.off('SONGS_UPDATED', leaveIfArtistRemoved))
 </script>
 
 <style lang="postcss" scoped>

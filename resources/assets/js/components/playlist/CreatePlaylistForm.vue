@@ -90,7 +90,7 @@ const entityName = computed(() => {
     case 'songs':
       return 'song'
     case 'episodes':
-      return 'song'
+      return 'episode'
     default:
       return 'item'
   }

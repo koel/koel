@@ -65,18 +65,20 @@ class S3LambdaStorage extends S3CompatibleStorage
             $this->albumService->storeAlbumCover($album, base64_decode($cover['data'], true));
         }
 
-        return Song::query()->updateOrCreate(['path' => $path], [
-            'album_id' => $album->id,
-            'artist_id' => $artist->id,
-            'title' => $title,
-            'length' => $duration,
-            'track' => $track,
-            'lyrics' => $lyrics,
-            'mtime' => time(),
-            'owner_id' => $user->id,
-            'is_public' => true,
-            'storage' => SongStorageType::S3_LAMBDA,
-        ]);
+        return Song::query()
+            ->wherePath($path)
+            ->updateOrCreate(['path' => $path], [
+                'album_id' => $album->id,
+                'artist_id' => $artist->id,
+                'title' => $title,
+                'length' => $duration,
+                'track' => $track,
+                'lyrics' => $lyrics,
+                'mtime' => time(),
+                'owner_id' => $user->id,
+                'is_public' => true,
+                'storage' => SongStorageType::S3_LAMBDA,
+            ]);
     }
 
     public function deleteSongEntry(string $bucket, string $key): void

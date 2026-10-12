@@ -35,7 +35,7 @@
     </template>
 
     <template #meta>
-      <a role="button" @click.prevent="shuffle"> Shuffle </a>
+      <LinkButton @click.prevent="shuffle"> Shuffle </LinkButton>
       <MoreActionsButton @click="requestContextMenu" />
     </template>
   </BaseCard>
@@ -56,6 +56,7 @@ import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import CardThumbnail from '@/components/ui/album-artist/AlbumOrArtistCardThumbnail.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
 import MoreActionsButton from '@/components/ui/album-artist/AlbumOrArtistCardMoreActionsButton.vue'
+import LinkButton from '@/components/ui/form/LinkButton.vue'
 
 const props = withDefaults(
   defineProps<{
