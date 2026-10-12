@@ -24,4 +24,15 @@ class SongRepositoryTest extends TestCase
         $song = Song::factory()->createOne(['path' => 'foo']);
         self::assertSame($song->id, $this->songRepository->findOneByPath('foo')->id);
     }
+
+    #[Test]
+    public function getOneAccessibleWithoutRelations(): void
+    {
+        $song = Song::factory()->createOne();
+
+        $foundSong = $this->songRepository->getOneAccessibleWithoutRelations($song->id, $song->owner);
+
+        self::assertTrue($foundSong->is($song));
+        self::assertSame([], $foundSong->getRelations());
+    }
 }
