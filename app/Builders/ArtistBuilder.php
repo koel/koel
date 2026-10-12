@@ -72,7 +72,7 @@ class ArtistBuilder extends FavoriteableBuilder
         }]);
     }
 
-    private function accessible(): self
+    public function accessible(): self
     {
         if (License::isCommunity()) {
             return $this;
@@ -106,7 +106,7 @@ class ArtistBuilder extends FavoriteableBuilder
         });
     }
 
-    private function withPlayCount(bool $includingFavoriteStatus = false): self
+    public function withPlayCount(bool $includingFavoriteStatus = false): self
     {
         throw_unless($this->user, new LogicException('User must be set to query play counts.'));
 

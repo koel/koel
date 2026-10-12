@@ -20,7 +20,7 @@ use Illuminate\Support\LazyCollection;
  * @extends Repository<Album>
  * @implements ScoutableRepository<Album>
  */
-// @mago-ignore lint:too-many-methods,cyclomatic-complexity
+// @mago-ignore lint:too-many-methods
 class AlbumRepository extends Repository implements ScoutableRepository
 {
     /** @return LazyCollection<array-key, Album> */
@@ -67,24 +67,37 @@ class AlbumRepository extends Repository implements ScoutableRepository
 
     public function getRecentlyAdded(int $count = 6, int $offset = 0, ?User $user = null): Collection
     {
-        return Album::query()
+        $user ??= $this->auth->user();
+
+        $ids = Album::query()
+            ->select('albums.id')
             ->onlyStandard()
-            ->withUserContext(user: $user ?? $this->auth->user())
-            ->latest()
+            ->setScopedUser($user)
+            ->accessible()
+            ->orderByDesc('albums.created_at')
             ->offset($offset)
             ->limit($count)
-            ->get();
+            ->pluck('albums.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, user: $user);
     }
 
     public function getMostPlayed(int $count = 6, int $offset = 0, ?User $user = null): Collection
     {
-        return Album::query()
+        $user ??= $this->auth->user();
+
+        $ids = Album::query()
+            ->select('albums.id')
             ->onlyStandard()
-            ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
+            ->setScopedUser($user)
+            ->accessible()
+            ->withPlayCount()
             ->orderByDesc('play_count')
             ->offset($offset)
             ->limit($count)
-            ->get();
+            ->pluck('albums.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, user: $user);
     }
 
     public function getRecentlyPlayed(int $count = 6, int $offset = 0, ?User $user = null): Collection
@@ -205,12 +218,18 @@ class AlbumRepository extends Repository implements ScoutableRepository
     /** @return Collection<int, Album> */
     public function getRandom(int $limit, ?User $user = null): Collection
     {
-        return Album::query()
+        $user ??= $this->auth->user();
+
+        $ids = Album::query()
+            ->select('albums.id')
             ->onlyStandard()
-            ->withUserContext(user: $user ?? $this->auth->user())
+            ->setScopedUser($user)
+            ->accessible()
             ->inRandomOrder()
             ->limit($limit)
-            ->get();
+            ->pluck('albums.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, user: $user);
     }
 
     /** @return Collection<int, Album> */

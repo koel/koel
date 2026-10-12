@@ -106,11 +106,16 @@ class SongRepository extends Repository implements ScoutableRepository
 
     public function getRecentlyAdded(int $count = 8, ?User $scopedUser = null): Collection
     {
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->withUserContext()
-            ->latest()
+        $scopedUser ??= $this->auth->user();
+
+        $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
+            ->select('songs.id')
+            ->accessible()
+            ->orderByDesc('songs.created_at')
             ->limit($count)
-            ->get();
+            ->pluck('songs.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, scopedUser: $scopedUser);
     }
 
     public function getMostPlayed(int $count = 8, ?User $scopedUser = null, ?PlayableType $type = null): Collection
@@ -125,11 +130,17 @@ class SongRepository extends Repository implements ScoutableRepository
 
     public function getLeastPlayed(int $count = 50, ?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
-        return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
-            ->withUserContext()
+        $scopedUser ??= $this->auth->user();
+
+        $ids = Song::query(type: $type, user: $scopedUser)
+            ->select('songs.id')
+            ->accessible()
+            ->withPlayCount()
             ->orderBy('play_count')
             ->limit($count)
-            ->get();
+            ->pluck('songs.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, scopedUser: $scopedUser);
     }
 
     public function getRecentlyPlayed(int $count = 8, ?User $scopedUser = null, ?PlayableType $type = null): Collection
@@ -324,11 +335,16 @@ class SongRepository extends Repository implements ScoutableRepository
     /** @return Collection<int, Song> */
     public function getRandom(int $limit, ?User $scopedUser = null): Collection
     {
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->withUserContext()
+        $scopedUser ??= $this->auth->user();
+
+        $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
+            ->select('songs.id')
+            ->accessible()
             ->inRandomOrder()
             ->limit($limit)
-            ->get();
+            ->pluck('songs.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, scopedUser: $scopedUser);
     }
 
     public function getMany(array $ids, bool $preserveOrder = false, ?User $scopedUser = null): Collection
@@ -535,8 +551,11 @@ class SongRepository extends Repository implements ScoutableRepository
             ->unique()
             ->all();
 
-        return Song::query(type: PlayableType::SONG, user: $user ?? $this->auth->user())
-            ->withUserContext()
+        $user ??= $this->auth->user();
+
+        $similarSongIds = Song::query(type: PlayableType::SONG, user: $user)
+            ->select('songs.id')
+            ->accessible()
             ->whereNotIn('songs.id', $songIds)
             ->where(static function (SongBuilder $query) use ($artistIds, $genreIds): void {
                 $query->whereIn(
@@ -549,7 +568,9 @@ class SongRepository extends Repository implements ScoutableRepository
             })
             ->inRandomOrder()
             ->limit($limit)
-            ->get();
+            ->pluck('songs.id');
+
+        return $this->getMany($similarSongIds->all(), preserveOrder: true, scopedUser: $user);
     }
 
     public function search(string $keywords, int $limit, ?User $user = null): Collection
