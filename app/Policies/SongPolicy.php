@@ -14,6 +14,11 @@ class SongPolicy
         return License::isCommunity() || $song->accessibleBy($user);
     }
 
+    public function embed(User $user, Song $song): bool
+    {
+        return $this->access($user, $song);
+    }
+
     public function own(User $user, Song $song): bool
     {
         return $song->ownedBy($user);

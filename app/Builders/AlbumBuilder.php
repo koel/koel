@@ -44,6 +44,13 @@ class AlbumBuilder extends FavoriteableBuilder
         return $this->whereNot('albums.name', Album::UNKNOWN_NAME);
     }
 
+    public function whereAccessibleByUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this->accessible();
+    }
+
     public function accessible(): self
     {
         if (License::isCommunity()) {

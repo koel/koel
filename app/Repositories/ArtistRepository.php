@@ -18,6 +18,11 @@ use Illuminate\Support\LazyCollection;
  */
 class ArtistRepository extends Repository implements ScoutableRepository
 {
+    public function isAccessibleByUser(Artist $artist, User $user): bool
+    {
+        return Artist::query()->whereAccessibleByUser($user)->whereKey($artist->id)->exists();
+    }
+
     /**
      * @param string $id
      */

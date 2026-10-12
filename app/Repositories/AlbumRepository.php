@@ -23,6 +23,11 @@ use Illuminate\Support\LazyCollection;
 // @mago-ignore lint:too-many-methods
 class AlbumRepository extends Repository implements ScoutableRepository
 {
+    public function isAccessibleByUser(Album $album, User $user): bool
+    {
+        return Album::query()->whereAccessibleByUser($user)->whereKey($album->id)->exists();
+    }
+
     /** @return LazyCollection<array-key, Album> */
     public function lazyGetWithIncompleteMbids(): LazyCollection
     {
