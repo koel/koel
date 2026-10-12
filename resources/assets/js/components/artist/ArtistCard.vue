@@ -18,9 +18,8 @@
     </template>
     <template #meta>
       <a role="button" @click.prevent="shuffle"> Shuffle </a>
+      <MoreActionsButton @click="requestContextMenu" />
     </template>
-
-    <MoreActionsButton @click="requestContextMenu" />
   </BaseCard>
 </template>
 
