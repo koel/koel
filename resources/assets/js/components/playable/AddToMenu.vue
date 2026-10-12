@@ -10,6 +10,7 @@
               v-if="currentPlayable"
               class="queue-after-current"
               data-testid="queue-after-current"
+              role="button"
               tabindex="0"
               @click="queueAfterCurrent"
               @keydown.enter.space.prevent="queueAfterCurrent"
@@ -19,6 +20,7 @@
             <li
               class="bottom-queue"
               data-testid="queue-bottom"
+              role="button"
               tabindex="0"
               @click="queueToBottom"
               @keydown.enter.space.prevent="queueToBottom"
@@ -28,6 +30,7 @@
             <li
               class="top-queue"
               data-testid="queue-top"
+              role="button"
               tabindex="0"
               @click="queueToTop"
               @keydown.enter.space.prevent="queueToTop"
@@ -38,6 +41,7 @@
           <li
             v-else
             data-testid="queue"
+            role="button"
             tabindex="0"
             @click="queueToBottom"
             @keydown.enter.space.prevent="queueToBottom"
@@ -50,6 +54,7 @@
           v-if="config.favorites"
           class="favorites"
           data-testid="add-to-favorites"
+          role="button"
           tabindex="0"
           @click="addToFavorites"
           @keydown.enter.space.prevent="addToFavorites"
@@ -62,6 +67,7 @@
           :key="playlist.id"
           class="playlist"
           data-testid="add-to-playlist"
+          role="button"
           tabindex="0"
           @click="addToExistingPlaylist(playlist)"
           @keydown.enter.space.prevent="addToExistingPlaylist(playlist)"

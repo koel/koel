@@ -89,7 +89,7 @@ describe('addToMenu.vue', () => {
     const mock = h.mock(playableStore, 'favorite')
     const { playables } = renderComponent()
 
-    screen.getByTestId('add-to-favorites').focus()
+    screen.getByRole('button', { name: 'Favorites' }).focus()
     await h.user.keyboard(key)
 
     expect(mock).toHaveBeenCalledWith(playables)
