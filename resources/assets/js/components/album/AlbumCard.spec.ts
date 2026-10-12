@@ -2,9 +2,7 @@ import { screen } from '@testing-library/vue'
 import type { Mock } from 'vite-plus/test'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
-import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { albumStore } from '@/stores/albumStore'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -64,38 +62,6 @@ describe('albumCard', () => {
 
     screen.getByText('Various Artists')
     expect(screen.queryByRole('link', { name: 'Various Artists' })).toBeNull()
-  })
-
-  it('downloads', async () => {
-    const mock = h.mock(downloadService, 'fromAlbum')
-    renderComponent()
-
-    await h.user.click(screen.getByRole('button', { name: 'Download' }))
-
-    expect(mock).toHaveBeenCalledTimes(1)
-  })
-
-  it('does not have an option to download if downloading is disabled', async () => {
-    commonStore.state.allows_download = false
-    renderComponent()
-
-    expect(screen.queryByText('Download')).toBeNull()
-  })
-
-  it('separates Shuffle and Download with a standalone, non-link separator', () => {
-    commonStore.state.allows_download = true
-    renderComponent()
-
-    const separator = screen.getByText('•')
-    expect(separator.tagName).toBe('SPAN')
-    expect(separator.closest('a')).toBeNull()
-  })
-
-  it('does not render the separator when download is disabled', () => {
-    commonStore.state.allows_download = false
-    renderComponent()
-
-    expect(screen.queryByText('•')).toBeNull()
   })
 
   it('shuffles', async () => {

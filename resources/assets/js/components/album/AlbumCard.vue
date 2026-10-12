@@ -8,7 +8,7 @@
     @dragstart="onDragStart"
   >
     <template #thumbnail>
-      <CardThumbnail :entity="album" @toggle-favorite="toggleFavorite" @context-menu="requestContextMenu" />
+      <CardThumbnail :entity="album" @toggle-favorite="toggleFavorite" />
     </template>
 
     <template #name>
@@ -36,19 +36,17 @@
 
     <template #meta>
       <a role="button" @click.prevent="shuffle"> Shuffle </a>
-      <span v-if="allowDownload" aria-hidden="true">•</span>
-      <a v-if="allowDownload" role="button" @click.prevent="download"> Download </a>
     </template>
+
+    <MoreActionsButton @click="requestContextMenu" />
   </BaseCard>
 </template>
 
 <script lang="ts" setup>
-import { computed, toRef, toRefs } from 'vue'
+import { computed, toRefs } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
-import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
-import { useDownload } from '@/composables/useDownload'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
 import { playback } from '@/services/playbackManager'
@@ -58,6 +56,7 @@ import { defineAsyncComponent } from '@/utils/helpers'
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import CardThumbnail from '@/components/ui/album-artist/AlbumOrArtistCardThumbnail.vue'
 import ExternalMark from '@/components/ui/ExternalMark.vue'
+import MoreActionsButton from '@/components/ui/album-artist/AlbumOrArtistCardMoreActionsButton.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -77,9 +76,6 @@ const { openContextMenu } = useContextMenu()
 
 const { album, showReleaseYear } = toRefs(props)
 
-// We're not checking for supports_batch_downloading here, as the number of songs on the album is not yet known.
-const allowDownload = toRef(commonStore.state, 'allows_download')
-
 const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_name))
 const showing = computed(() => !albumStore.isUnknown(album.value))
 
@@ -90,8 +86,6 @@ const shuffle = async () => {
 
 const toggleFavorite = () => albumStore.toggleFavorite(album.value)
 
-const { fromAlbum } = useDownload()
-const download = () => fromAlbum(album.value)
 const onDragStart = (event: DragEvent) => startDragging(event, album.value)
 
 const requestContextMenu = (event: MouseEvent) =>
