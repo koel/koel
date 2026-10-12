@@ -1,5 +1,11 @@
 <template>
-  <div :class="{ active, available: matchedSong }" class="track-list-item flex flex-1 gap-1" tabindex="0" @click="play">
+  <div
+    :class="{ active, available: matchedSong }"
+    class="track-list-item flex flex-1 gap-1"
+    tabindex="0"
+    @click="play"
+    @keydown.self.enter.space.prevent="play"
+  >
     <span class="flex-1">{{ track.title }}</span>
     <AppleMusicButton v-if="useAppleMusic && !matchedSong" :url="iTunesUrl" />
     <span class="w-14 text-right text-k-fg-50">{{ fmtLength }}</span>

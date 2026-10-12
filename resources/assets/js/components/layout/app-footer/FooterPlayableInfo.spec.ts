@@ -56,7 +56,7 @@ describe('footerPlayableInfo.vue', () => {
     const goMock = h.mock(Router, 'go')
     const setMock = h.mock(cache, 'set')
 
-    const { container } = h.render(Component, {
+    h.render(Component, {
       global: {
         provide: {
           [<symbol>CurrentStreamableKey]: ref(song),
@@ -64,8 +64,7 @@ describe('footerPlayableInfo.vue', () => {
       },
     })
 
-    const thumb = container.querySelector('.album-thumb') as HTMLElement
-    await h.user.click(thumb)
+    await h.user.click(screen.getByRole('button', { name: 'Scroll to currently playing' }))
 
     expect(setMock).toHaveBeenCalledWith('scroll-to-current-in-queue', true)
     expect(goMock).toHaveBeenCalledWith('/#/queue')
@@ -75,10 +74,9 @@ describe('footerPlayableInfo.vue', () => {
     const goMock = h.mock(Router, 'go')
     const setMock = h.mock(cache, 'set')
 
-    const { container } = h.render(Component)
+    h.render(Component)
 
-    const thumb = container.querySelector('.album-thumb') as HTMLElement
-    await h.user.click(thumb)
+    await h.user.click(screen.getByRole('button', { name: 'Scroll to currently playing' }))
 
     expect(goMock).not.toHaveBeenCalled()
     expect(setMock).not.toHaveBeenCalled()
