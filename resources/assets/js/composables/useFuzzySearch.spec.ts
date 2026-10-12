@@ -34,6 +34,16 @@ describe('useFuzzySearch', () => {
     expect(results[0].name).toBe('Alice')
   })
 
+  it('finds items added to a ref list in place', async () => {
+    const refItems = ref([...items])
+    const { search } = useFuzzySearch(refItems, ['name'])
+
+    refItems.value.push({ name: 'Diana', role: 'editor' })
+    await h.tick()
+
+    expect(search('Diana').map(item => item.name)).toEqual(['Diana'])
+  })
+
   it('updates documents with setDocuments', () => {
     const { search, setDocuments } = useFuzzySearch(items, ['name'])
 

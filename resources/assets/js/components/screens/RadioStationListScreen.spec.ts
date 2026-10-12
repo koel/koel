@@ -4,6 +4,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { radioStationStore } from '@/stores/radioStationStore'
+import { http } from '@/services/http'
 import AddRadioStationForm from '@/components/radio/AddRadioStationForm.vue'
 
 const openModalMock = vi.fn()
@@ -103,6 +104,22 @@ describe('radioStationListScreen.vue', () => {
 
       screen.getByRole('button', { name: 'Add a new station' })
     }))
+
+  it('leaves a deleted station out of the filtered results', async () => {
+    const [deleted, kept] = h.factory('radio-station').make(2)
+    deleted.name = 'Rock Classics'
+    kept.name = 'Rock Ballads'
+    await renderComponent([deleted, kept])
+
+    await h.user.click(screen.getByRole('button', { name: 'Filter' }))
+    await h.user.type(screen.getByPlaceholderText('Keywords'), 'Rock')
+    await waitFor(() => expect(screen.getAllByTestId('radio-station-card')).toHaveLength(2))
+
+    h.mock(http, 'delete')
+    await radioStationStore.delete(deleted)
+
+    await waitFor(() => expect(screen.getAllByTestId('radio-station-card')).toHaveLength(1))
+  })
 
   it('shows all or only favorites upon toggling the button', async () => {
     await renderComponent([
