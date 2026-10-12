@@ -462,7 +462,7 @@ export const playableStore = {
 
   async undoFavorite(playables: MaybeArray<Playable>) {
     playables = arrayify(playables)
-    playables.forEach(playable => (playable.favorite = true))
+    playables.forEach(playable => (playable.favorite = false))
 
     await http.delete('favorites', {
       type: 'playable',
