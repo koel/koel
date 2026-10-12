@@ -77,6 +77,49 @@ describe('playbackService', () => {
     },
   )
 
+  it('saves the playback position once per five-second mark', () => {
+    const song = setCurrentSong()
+    const mediaElement = playbackService.media
+    h.setReadOnlyProperty(mediaElement, 'currentTime', 10)
+    h.setReadOnlyProperty(mediaElement, 'duration', 400)
+    const putMock = h.mock(http, 'put')
+
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+
+    expect(putMock).toHaveBeenCalledOnce()
+    expect(putMock).toHaveBeenCalledWith('queue/playback-status', { song: song.id, position: 10 })
+  })
+
+  it('saves the playback position again after the playable restarts', async () => {
+    const song = setCurrentSong()
+    const mediaElement = playbackService.media
+    const putMock = h.mock(http, 'put')
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.setReadOnlyProperty(mediaElement, 'duration', 400)
+    h.setReadOnlyProperty(mediaElement, 'currentTime', 5)
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+
+    await playbackService.restart()
+    h.setReadOnlyProperty(mediaElement, 'currentTime', 5)
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+
+    await vi.waitFor(() =>
+      expect(putMock).toHaveBeenLastCalledWith('queue/playback-status', { song: song.id, position: 5 }),
+    )
+  })
+
+  it('saves the playback position on pause', () => {
+    const song = setCurrentSong()
+    h.setReadOnlyProperty(playbackService.media, 'currentTime', 42)
+    const putMock = h.mock(http, 'put')
+
+    playbackService.pause()
+
+    expect(putMock).toHaveBeenCalledWith('queue/playback-status', { song: song.id, position: 42 })
+  })
+
   it('plays next playable if current playable is errored', () => {
     const logMock = h.mock(logger, 'error')
     const playNextMock = h.mock(playbackService, 'playNext')

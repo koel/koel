@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Http\Resources\SongResource;
+use App\Models\PodcastUserPivot;
 use App\Models\QueueState;
 use App\Models\Song;
+use App\Services\Podcast\PodcastService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -91,6 +93,27 @@ class QueueTest extends TestCase
         $state->refresh();
         self::assertSame($anotherSong->id, $state->current_song_id);
         self::assertSame(456, $state->playback_position);
+    }
+
+    #[Test]
+    public function updatePlaybackStatusOfEpisodeUpdatesPodcastProgress(): void
+    {
+        $episode = Song::factory()->asEpisode()->createOne();
+        $state = QueueState::factory()->createOne();
+        $user = $state->user;
+        app(PodcastService::class)->subscribeUserToPodcast($user, $episode->podcast);
+
+        $this->putAs(
+            'api/queue/playback-status',
+            ['song' => $episode->id, 'position' => 123],
+            $user,
+        )->assertNoContent();
+
+        /** @var PodcastUserPivot $subscription */
+        $subscription = $episode->podcast->subscribers->sole('id', $user->id)->pivot;
+
+        self::assertSame($episode->id, $subscription->state->currentEpisode);
+        self::assertSame(123, $subscription->state->progresses[$episode->id]);
     }
 
     #[Test]
