@@ -75,6 +75,26 @@ describe('artistScreen.vue', () => {
     await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/artists'))
   })
 
+  it('stops watching for artist removal once closed', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { artist, unmount } = await renderComponent()
+    await h.tick()
+
+    unmount()
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: {
+        album_ids: [],
+        artist_ids: [artist.id],
+      },
+    })
+
+    expect(goMock).not.toHaveBeenCalled()
+  })
+
   it('lays the albums out as a grid', async () => {
     h.mock(albumStore, 'fetchForArtist').mockResolvedValue(h.factory('album').make(3))
 
