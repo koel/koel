@@ -186,7 +186,7 @@ class PasskeyService
 
         throw_unless(
             in_array(self::originOf($credential->response->clientDataJSON->origin), $allowedOrigins, true),
-            InvalidPasskeyException::make(sprintf('Passkeys only work at %s.', $allowedOrigins[0])),
+            InvalidPasskeyException::make('Unrecognized passkey.'),
         );
     }
 

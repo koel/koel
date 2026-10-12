@@ -192,7 +192,7 @@ class PasskeyTest extends TestCase
 
         $this->postAs('api/me/passkeys/registration-options', ['password' => 'secret'], $user)->assertOk();
 
-        $this
+        $response = $this
             ->postAs(
                 'api/me/passkeys',
                 ['name' => 'MacBook', 'credential' => self::attestationCredential('http://localhost:8001')],
@@ -200,6 +200,8 @@ class PasskeyTest extends TestCase
             )
             ->assertUnprocessable()
             ->assertJsonValidationErrors('credential');
+
+        self::assertStringNotContainsString(rtrim(config('app.url'), '/'), $response->json('errors.credential.0'));
     }
 
     #[Test]
