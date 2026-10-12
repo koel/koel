@@ -10,11 +10,14 @@ use App\Models\DuplicateUpload;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
+use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\Concerns\ScansAndStoresSong;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
+use App\Services\Transcoding\TranscodeOnScan;
+use App\Values\Scanning\ScanInformation;
 use App\Values\Song\SongFileInfo;
 use App\Values\UploadReference;
 use Illuminate\Support\Collection;
@@ -23,6 +26,8 @@ use Throwable;
 
 class DuplicateUploadService
 {
+    private const string LEGACY_FILE_HASH_ALGORITHM = 'md5';
+
     use ScansAndStoresSong;
 
     public function __construct(
@@ -30,6 +35,8 @@ class DuplicateUploadService
         private readonly SongService $songService,
         private readonly FileScanner $scanner,
         private readonly SongStorage $storage,
+        private readonly TranscodeOnScan $transcodeOnScan,
+        private readonly AnalyzeAudioOnScan $analyzeAudioOnScan,
     ) {}
 
     /**
@@ -41,7 +48,10 @@ class DuplicateUploadService
             return;
         }
 
-        $existingSong = $this->songRepository->findByHash(File::hash($filePath), $uploader);
+        $existingSong = $this->songRepository->findByAnyHash([
+            File::hash($filePath, ScanInformation::FILE_HASH_ALGORITHM),
+            File::hash($filePath, self::LEGACY_FILE_HASH_ALGORITHM),
+        ], $uploader);
 
         if (!$existingSong) {
             return;
@@ -74,6 +84,8 @@ class DuplicateUploadService
                     $this->scanner,
                     $this->songService,
                     $this->storage,
+                    $this->transcodeOnScan,
+                    $this->analyzeAudioOnScan,
                 ));
             } catch (Throwable $error) {
                 throw SongUploadFailedException::make($error);

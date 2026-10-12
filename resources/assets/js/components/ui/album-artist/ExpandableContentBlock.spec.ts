@@ -6,14 +6,6 @@ import Component from './ExpandableContentBlock.vue'
 describe('expandableContentBlock.vue', () => {
   const h = createHarness()
 
-  it('shows Read More button initially', () => {
-    h.render(Component, {
-      slots: { default: 'Long content here' },
-    })
-
-    screen.getByText('Read More')
-  })
-
   it('hides Read More button after clicking it', async () => {
     h.render(Component, {
       slots: { default: 'Long content here' },

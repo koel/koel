@@ -51,20 +51,6 @@ describe('useVault', () => {
     expect(vault.byId('c')?.name).toBe('Charlie')
   })
 
-  it('exposes the underlying Map for direct operations', () => {
-    const vault = useVault<Item>()
-
-    vault.syncWithVault([
-      { id: 'a', name: 'Alpha' },
-      { id: 'b', name: 'Bravo' },
-    ])
-
-    expect(vault.vault.size).toBe(2)
-    vault.vault.delete('a')
-    expect(vault.byId('a')).toBeUndefined()
-    expect(vault.byId('b')?.name).toBe('Bravo')
-  })
-
   it('isolates instances from one another', () => {
     const a = useVault<Item>()
     const b = useVault<Item>()

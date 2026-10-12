@@ -20,25 +20,30 @@ describe('folderSelect', () => {
     })
   }
 
-  it('renders existing folders in the dropdown', () => {
-    renderComponent()
+  it('renders existing folders with their full paths', () => {
+    const root = h.factory('playlist-folder').make({ name: 'Music', parent_id: null })
+    const child = h.factory('playlist-folder').make({ name: 'Live', parent_id: root.id })
+    const grandchild = h.factory('playlist-folder').make({ name: '2026', parent_id: child.id })
+    const earlierRoot = h.factory('playlist-folder').make({ name: 'Archive', parent_id: null })
+    playlistFolderStore.init([root, child, grandchild, earlierRoot])
 
-    const options = screen.getAllByRole('option')
-    // empty option + 3 folders + "+ New Folder"
-    expect(options).toHaveLength(5)
-    expect(options[options.length - 1].textContent).toContain('+ New Folder')
-  })
-
-  it('switches to input mode when "+ New Folder" is selected', async () => {
-    renderComponent()
-
-    await h.user.selectOptions(screen.getByRole('combobox'), '__new__')
-
-    await waitFor(() => {
-      screen.getByPlaceholderText('Folder name')
-      screen.getByTitle('Create')
-      screen.getByTitle('Cancel')
+    h.render(Component, {
+      props: {
+        folderId: null,
+        'onUpdate:folderId': (value: any) => value,
+        folderName: null,
+        'onUpdate:folderName': (value: any) => value,
+      },
     })
+
+    expect(screen.getAllByRole('option').map(option => option.textContent)).toEqual([
+      '',
+      'Archive',
+      'Music',
+      'Music / Live',
+      'Music / Live / 2026',
+      '+ New Folder',
+    ])
   })
 
   it('emits folder name on confirm', async () => {
@@ -48,7 +53,7 @@ describe('folderSelect', () => {
 
     await waitFor(() => screen.getByPlaceholderText('Folder name'))
     await h.user.type(screen.getByPlaceholderText('Folder name'), 'My Folder')
-    await h.user.click(screen.getByTitle('Create'))
+    await h.user.click(screen.getByRole('button', { name: 'Create' }))
 
     await waitFor(() => {
       expect(emitted()['update:folderName']).toBeTruthy()
@@ -63,7 +68,7 @@ describe('folderSelect', () => {
     await h.user.selectOptions(screen.getByRole('combobox'), '__new__')
 
     await waitFor(() => screen.getByPlaceholderText('Folder name'))
-    await h.user.click(screen.getByTitle('Cancel'))
+    await h.user.click(screen.getByRole('button', { name: 'Cancel' }))
 
     await waitFor(() => {
       screen.getByRole('combobox')
@@ -76,7 +81,7 @@ describe('folderSelect', () => {
     await h.user.selectOptions(screen.getByRole('combobox'), '__new__')
 
     await waitFor(() => screen.getByPlaceholderText('Folder name'))
-    await h.user.click(screen.getByTitle('Create'))
+    await h.user.click(screen.getByRole('button', { name: 'Create' }))
 
     expect(emitted()['update:folderName']).toBeFalsy()
   })

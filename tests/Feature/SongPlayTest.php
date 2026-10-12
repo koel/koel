@@ -2,11 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song;
 use App\Services\Auth\TokenManager;
-use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Values\CompositeToken;
+use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -31,19 +32,116 @@ class SongPlayTest extends TestCase
     }
 
     #[Test]
-    public function play(): void
+    public function serveTheExactRangeAsked(): void
     {
         $user = create_user();
 
         /** @var CompositeToken $token */
         $token = app(TokenManager::class)->createCompositeToken($user);
-        $song = Song::factory()->createOne([
-            'path' => test_path('songs/blank.mp3'),
+        $path = test_path('songs/blank.mp3');
+        $song = Song::factory()->createOne(['path' => $path]);
+        $size = filesize($path);
+
+        $response = $this->get("play/{$song->id}?t=$token->audioToken", ['Range' => 'bytes=0-99']);
+
+        $response
+            ->assertStatus(Response::HTTP_PARTIAL_CONTENT)
+            ->assertHeader('content-length', '100')
+            ->assertHeader('content-range', "bytes 0-99/$size");
+
+        self::assertSame(100, strlen($response->streamedContent()));
+    }
+
+    #[Test]
+    public function answerSafarisTwoByteProbe(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $path = test_path('songs/blank.mp3');
+        $song = Song::factory()->createOne(['path' => $path]);
+
+        $this
+            ->get("play/{$song->id}?t=$token->audioToken", ['Range' => 'bytes=0-1'])
+            ->assertStatus(Response::HTTP_PARTIAL_CONTENT)
+            ->assertHeader('content-length', '2')
+            ->assertHeader('content-range', 'bytes 0-1/' . filesize($path));
+    }
+
+    #[Test]
+    public function seekToTheBytesAskedFor(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $path = test_path('songs/blank.mp3');
+        $song = Song::factory()->createOne(['path' => $path]);
+        $offset = (int) (filesize($path) / 2);
+
+        $response = $this->get("play/{$song->id}?t=$token->audioToken", [
+            'Range' => "bytes=$offset-" . ($offset + 63),
         ]);
 
-        $this->mock(LocalStreamerAdapter::class)->expects('stream');
+        $response->assertStatus(Response::HTTP_PARTIAL_CONTENT);
 
-        $this->get("play/{$song->id}?t=$token->audioToken")->assertOk();
+        self::assertSame(file_get_contents($path, offset: $offset, length: 64), $response->streamedContent());
+    }
+
+    #[Test]
+    public function nameTheFileWithoutAskingBrowsersToSaveIt(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $song = Song::factory()->createOne(['path' => test_path('songs/blank.mp3')]);
+
+        $this->get("play/{$song->id}?t=$token->audioToken")->assertOk()->assertHeader(
+            'content-disposition',
+            'inline; filename=blank.mp3',
+        );
+    }
+
+    #[Test]
+    public function refuseARangeThatStartsPastTheEnd(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $path = test_path('songs/blank.mp3');
+        $song = Song::factory()->createOne(['path' => $path]);
+        $size = filesize($path);
+
+        $response = $this->get("play/{$song->id}?t=$token->audioToken", [
+            'Range' => 'bytes=' . ($size + 1) . '-' . ($size + 64),
+        ]);
+
+        $response
+            ->assertStatus(Response::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE)
+            ->assertHeader('content-range', "bytes */$size")
+            ->assertHeader('content-length', '0');
+
+        self::assertSame('', $response->streamedContent());
+    }
+
+    #[Test]
+    public function serveTheWholeFileWhenNoRangeIsAsked(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $path = test_path('songs/blank.mp3');
+        $song = Song::factory()->createOne(['path' => $path]);
+
+        $this
+            ->get("play/{$song->id}?t=$token->audioToken")
+            ->assertOk()
+            ->assertHeader('content-length', (string) filesize($path))
+            ->assertHeader('accept-ranges', 'bytes');
     }
 
     #[Test]
@@ -59,7 +157,10 @@ class SongPlayTest extends TestCase
             'mime_type' => 'audio/flac',
         ]);
 
-        $this->mock(TranscodingStreamerAdapter::class)->expects('stream');
+        $this
+            ->mock(TranscodingStreamerAdapter::class)
+            ->expects('stream')
+            ->andReturn(new StreamedFileResponse(test_path('songs/blank.mp3')));
 
         $this->get("play/{$song->id}?t=$token->audioToken")->assertOk();
 
@@ -75,7 +176,10 @@ class SongPlayTest extends TestCase
         $token = app(TokenManager::class)->createCompositeToken($user);
         $song = Song::factory()->createOne(['path' => '/var/songs/blank.mp3']);
 
-        $this->mock(TranscodingStreamerAdapter::class)->expects('stream');
+        $this
+            ->mock(TranscodingStreamerAdapter::class)
+            ->expects('stream')
+            ->andReturn(new StreamedFileResponse(test_path('songs/blank.mp3')));
 
         $this->get("play/{$song->id}/1?t=$token->audioToken")->assertOk();
     }

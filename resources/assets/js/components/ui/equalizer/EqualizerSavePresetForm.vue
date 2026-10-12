@@ -5,7 +5,7 @@
       v-koel-focus
       name="preset-name"
       placeholder="Preset name"
-      title="Preset name"
+      aria-label="Preset name"
       required
     />
     <Btn type="submit" variant="ghost">Save</Btn>

@@ -7,12 +7,10 @@
     </span>
     <span class="flex-1">
       {{ collaborator.name }}
-      <Icon
-        v-if="collaborator.id === currentUser.id"
-        :icon="faCircleCheck"
-        class="text-k-highlight ml-1"
-        title="This is you!"
-      />
+      <span v-if="collaborator.id === currentUser.id" v-koel-tooltip class="text-k-highlight ml-1">
+        <Icon :icon="faCircleCheck" />
+        <span class="sr-only">This is you!</span>
+      </span>
     </span>
     <span class="role text-right flex-[0_0_104px] uppercase">
       <span v-if="role === 'owner'" class="owner">Owner</span>

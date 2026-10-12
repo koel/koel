@@ -53,6 +53,16 @@ describe('encyclopediaService', () => {
     expect(album.cover).toBe(albumInfo.cover)
   })
 
+  it('leaves a partial album out of the store', async () => {
+    h.mock(http, 'get').mockResolvedValue(h.factory('album-info').make())
+    h.mock(cache, 'has', false)
+    const albumId = h.factory('album').make().id
+
+    await encyclopediaService.fetchForAlbum({ id: albumId } as Album)
+
+    expect(albumStore.byId(albumId)).toBeUndefined()
+  })
+
   it('gets the album info from cache', async () => {
     const album = albumStore.syncWithVault(h.factory('album').make())[0]
     const albumInfo = h.factory('album-info').make()

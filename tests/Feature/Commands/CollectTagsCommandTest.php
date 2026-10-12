@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
+use function Tests\sandbox_path;
 
 class CollectTagsCommandTest extends TestCase
 {
@@ -31,7 +32,7 @@ class CollectTagsCommandTest extends TestCase
     public function acceptValidTags(): void
     {
         config(['koel.storage_driver' => 'local']);
-        Setting::set('media_path', '/tmp');
+        Setting::set('media_path', sandbox_path('media'));
         create_admin();
 
         $this->artisan('koel:tags:collect', ['tag' => ['year', 'genre']])->assertSuccessful();

@@ -2,6 +2,7 @@ import vueSnapshotSerializer from 'jest-serializer-vue'
 import { expect, vi } from 'vite-plus/test'
 import './shims/popover'
 import './shims/storage'
+import './shims/mediaSession'
 
 declare global {
   interface Window {
@@ -52,9 +53,11 @@ HTMLDialogElement.prototype.close = vi.fn(function mock(this: HTMLDialogElement)
 
 window.KOEL = {
   base_url: 'http://test/',
+  build: null,
   is_demo: false,
   pusher: { app_key: '', app_cluster: '' },
   branding: { name: 'Koel', logo: '', cover: '' },
+  gravatar: { url: 'https://www.gravatar.com/avatar', default: 'robohash' },
   mailer_configured: true,
   sso_providers: [],
   accepted_audio_extensions: [],

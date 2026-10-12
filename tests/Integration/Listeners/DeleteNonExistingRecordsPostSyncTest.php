@@ -10,6 +10,7 @@ use App\Models\Song;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Laravel\Scout\EngineManager;
 use Laravel\Scout\Engines\Engine;
 use Mockery;
@@ -104,6 +105,59 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     }
 
     #[Test]
+    public function refusesToDeleteEverythingWhenAScanReturnsNothing(): void
+    {
+        Log::spy();
+
+        $songs = Song::factory()->createMany(3);
+
+        // What a mount point whose backing filesystem went away produces: a scan that completes
+        // successfully over a readable directory and reports no valid files at all.
+        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+
+        $songs->each($this->assertModelExists(...));
+
+        // The warning is half of what this guard is for. Silently keeping the rows would leave an
+        // operator with a library that stopped updating and nothing saying why.
+        Log::shouldHaveReceived('warning') // @phpstan-ignore-line
+            ->once()
+            ->withArgs(static fn (string $message) => str_contains($message, 'Refusing to delete'));
+    }
+
+    #[Test]
+    public function logsHowManySongsWereRemoved(): void
+    {
+        Log::spy();
+
+        /** @var Collection|array<array-key, Song> $songs */
+        $songs = Song::factory()->createMany(3);
+
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($songs[0]->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        Log::shouldHaveReceived('info') // @phpstan-ignore-line
+            ->once()
+            ->withArgs(static fn (string $message) => str_contains($message, 'Removed 2 song(s)'));
+    }
+
+    #[Test]
+    public function logsNothingWhenNoSongWasRemoved(): void
+    {
+        Log::spy();
+
+        $song = Song::factory()->createOne();
+
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($song->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        Log::shouldNotHaveReceived('info'); // @phpstan-ignore-line
+    }
+
+    #[Test]
     public function flushesOrphanedSongsFromSearchIndex(): void
     {
         $engine = Mockery::spy(Engine::class);
@@ -111,9 +165,13 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $manager->shouldReceive('engine')->andReturn($engine);
         $this->app->instance(EngineManager::class, $manager);
 
+        $kept = Song::factory()->createOne();
         $orphan = Song::factory()->createOne();
 
-        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($kept->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
 
         self::assertModelMissing($orphan);
         $engine->shouldHaveReceived('delete')->atLeast()->once(); // @phpstan-ignore-line

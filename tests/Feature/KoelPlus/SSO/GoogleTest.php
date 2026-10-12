@@ -28,7 +28,10 @@ class GoogleTest extends PlusTestCase
         $response = $this->get('auth/google/callback');
         $response->assertOk();
         $response->assertViewIs('sso-callback');
-        $response->assertViewHas('token');
+        $response->assertViewHas(
+            'loginResponse',
+            static fn (array $loginResponse): bool => isset($loginResponse['token']),
+        );
     }
 
     #[Test]
@@ -48,7 +51,10 @@ class GoogleTest extends PlusTestCase
         $response = $this->get('auth/google/callback');
         $response->assertOk();
         $response->assertViewIs('sso-callback');
-        $response->assertViewHas('token');
+        $response->assertViewHas(
+            'loginResponse',
+            static fn (array $loginResponse): bool => isset($loginResponse['token']),
+        );
     }
 
     #[Test]
@@ -72,11 +78,14 @@ class GoogleTest extends PlusTestCase
         $response = $this->get('auth/google/callback');
         $response->assertOk();
         $response->assertViewIs('sso-callback');
-        $response->assertViewHas('token');
+        $response->assertViewHas(
+            'loginResponse',
+            static fn (array $loginResponse): bool => isset($loginResponse['token']),
+        );
     }
 
     #[Test]
-    public function callbackBypassesTwoFactorChallenge(): void
+    public function callbackAsksForTheTwoFactorCode(): void
     {
         create_user([
             'sso_provider' => 'Google',
@@ -97,6 +106,13 @@ class GoogleTest extends PlusTestCase
         $response = $this->get('auth/google/callback');
         $response->assertOk();
         $response->assertViewIs('sso-callback');
-        $response->assertViewHas('token');
+        $response->assertViewHas(
+            'loginResponse',
+            static fn (array $loginResponse): bool => (
+                $loginResponse['two_factor'] === true
+                && isset($loginResponse['login_token'])
+                && !isset($loginResponse['token'])
+            ),
+        );
     }
 }

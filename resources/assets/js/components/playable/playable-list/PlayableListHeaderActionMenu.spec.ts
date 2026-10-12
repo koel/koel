@@ -46,16 +46,6 @@ describe('playableListHeaderActionMenu.vue', () => {
     ;['Album', 'Artist', 'Podcast', 'Author'].forEach(text => expect(screen.queryByText(text)).toBeNull())
   })
 
-  it('contains collaborative items when collaborative', () => {
-    h.render(Component, {
-      props: {
-        collaborative: true,
-      },
-    })
-
-    ;['User', 'Contributed'].forEach(text => screen.getByText(text))
-  })
-
   it('does not contain collaborative items when not collaborative', () => {
     h.render(Component)
 
@@ -83,7 +73,7 @@ describe('playableListHeaderActionMenu.vue', () => {
       },
     })
 
-    ;['User', 'Contributed'].forEach(text => screen.getByTitle(`Click to toggle the ${text} column`))
+    ;['User', 'Contributed'].forEach(text => screen.getByRole('checkbox', { name: `Show the ${text} column` }))
   })
 
   it('has custom order sort if so configured', () => {
@@ -110,9 +100,11 @@ describe('playableListHeaderActionMenu.vue', () => {
   it('has a checkbox to toggle the column visibility', async () => {
     h.actingAsUser().render(Component)
 
-    ;['Album', 'Track & Disc', 'Time'].forEach(text => screen.getByTitle(`Click to toggle the ${text} column`))
+    ;['Album', 'Track & Disc', 'Time'].forEach(text =>
+      screen.getByRole('checkbox', { name: `Show the ${text} column` }),
+    )
 
-    await h.user.click(screen.getByTitle('Click to toggle the Album column'))
+    await h.user.click(screen.getByRole('checkbox', { name: 'Show the Album column' }))
 
     expect(useLocalStorage().get('playable-list-columns')).toEqual(<PlayableListColumnName[]>[
       'track',
@@ -146,7 +138,7 @@ describe('playableListHeaderActionMenu.vue', () => {
         checked: true,
       },
     ].forEach(({ title, checked }) => {
-      const el: HTMLInputElement = screen.getByTitle(`Click to toggle the ${title} column`)
+      const el: HTMLInputElement = screen.getByRole('checkbox', { name: `Show the ${title} column` })
       expect(el.checked).toBe(checked)
     })
   })

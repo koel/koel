@@ -63,11 +63,6 @@ describe('sideSheet.vue', () => {
     await h.user.click(screen.getByTestId('profile-dropdown-trigger'))
   }
 
-  it('renders without a current playable', () => {
-    renderComponent()
-    screen.getByTestId('profile-dropdown-trigger')
-  })
-
   it('gets active tab from the preference', async () => {
     preferenceStore.active_extra_panel_tab = 'Lyrics'
     renderComponent(ref(h.factory('song').make()))
@@ -141,7 +136,7 @@ describe('sideSheet.vue', () => {
     renderComponent()
     await openProfileMenu()
 
-    await h.user.click(screen.getByTestId('about-btn'))
+    await h.user.click(screen.getByTestId('profile-menu-about'))
 
     await assertOpenModal(openModalMock, AboutKoelModal)
   })
@@ -161,7 +156,7 @@ describe('sideSheet.vue', () => {
     renderComponent()
     await openProfileMenu()
 
-    await h.user.click(screen.getByTestId('logout-btn'))
+    await h.user.click(screen.getByTestId('profile-menu-logout'))
 
     expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
   })

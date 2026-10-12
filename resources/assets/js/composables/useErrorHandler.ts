@@ -1,6 +1,7 @@
-import { isHttpError } from '@/services/http'
+import { getHttpErrorBody, isHttpError } from '@/services/http'
 import { logger } from '@/utils/logger'
 import { parseValidationError } from '@/utils/formatters'
+import type { ServerValidationError } from '@/utils/formatters'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 
@@ -26,10 +27,10 @@ export const useErrorHandler = (driver: ErrorMessageDriver = 'toast') => {
     }
 
     const status = error.response.status
-    const data = (error as any).responseData
+    const data = getHttpErrorBody(error)
 
     if (!Object.prototype.hasOwnProperty.call(statusMessageMap, status) && status === 422) {
-      return showError(parseValidationError(data)[0])
+      return showError(parseValidationError(data as ServerValidationError)[0])
     }
 
     const messageOrClosure = statusMessageMap[status]

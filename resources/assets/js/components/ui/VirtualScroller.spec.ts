@@ -5,22 +5,6 @@ import Component from './VirtualScroller.vue'
 describe('virtualScroller.vue', () => {
   const h = createHarness()
 
-  it('renders items via scoped slot', () => {
-    const items = [
-      { id: 1, name: 'Item 1' },
-      { id: 2, name: 'Item 2' },
-    ]
-
-    const { container } = h.render(Component, {
-      props: { items, itemHeight: 40 },
-      slots: {
-        default: (props: { item: { name: string } }) => props.item.name,
-      },
-    })
-
-    expect(container.querySelector('.virtual-scroller')).toBeTruthy()
-  })
-
   it('exposes scrollToIndex that scrolls to the correct position', () => {
     const items = Array.from({ length: 100 }, (_, i) => ({ id: i, name: `Item ${i}` }))
     const itemHeight = 64

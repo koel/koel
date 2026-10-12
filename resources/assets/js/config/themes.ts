@@ -15,12 +15,21 @@ import thumbCat from '@/../img/themes/thumbnails/cat.jpg'
 import bgDawn from '@/../img/themes/bg-dawn.jpg'
 import thumbDawn from '@/../img/themes/thumbnails/dawn.jpg'
 import thumbMono from '@/../img/themes/thumbnails/mono.avif'
+import thumbKameleon from '@/../img/themes/thumbnails/kameleon.svg'
+
+export const KAMELEON_THEME_ID = 'kameleon'
 
 export default [
   {
     id: 'classic',
     name: 'Classic',
     thumbnail_color: '#181818',
+  },
+  {
+    id: KAMELEON_THEME_ID,
+    name: 'Kameleon',
+    thumbnail_color: '#181818',
+    thumbnail_image: thumbKameleon,
   },
   {
     id: 'mono',

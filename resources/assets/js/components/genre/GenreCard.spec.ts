@@ -1,5 +1,5 @@
 import type { Mock } from 'vite-plus/test'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { describe, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -35,8 +35,6 @@ describe('genreCard.vue', () => {
       genre,
     }
   }
-
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
 
   it('requests context menu', async () => {
     const { openContextMenu } = useContextMenu()

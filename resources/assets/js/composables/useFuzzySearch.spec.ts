@@ -34,17 +34,14 @@ describe('useFuzzySearch', () => {
     expect(results[0].name).toBe('Alice')
   })
 
-  it('finds items with fuzzy matching', () => {
-    const { search } = useFuzzySearch(items, ['name'])
-    const results = search('chrl')
-    expect(results.length).toBeGreaterThanOrEqual(1)
-    expect(results[0].name).toBe('Charlie')
-  })
+  it('finds items added to a ref list in place', async () => {
+    const refItems = ref([...items])
+    const { search } = useFuzzySearch(refItems, ['name'])
 
-  it('searches across multiple keys', () => {
-    const { search } = useFuzzySearch(items, ['name', 'role'])
-    const results = search('admin')
-    expect(results.length).toBeGreaterThanOrEqual(2)
+    refItems.value.push({ name: 'Diana', role: 'editor' })
+    await h.tick()
+
+    expect(search('Diana').map(item => item.name)).toEqual(['Diana'])
   })
 
   it('updates documents with setDocuments', () => {

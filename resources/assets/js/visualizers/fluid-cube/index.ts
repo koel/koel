@@ -1,17 +1,19 @@
-import { audioService } from '@/services/audioService'
+import { configureAnalyser } from '@/visualizers/analyser'
+import { startFrameLoop } from '@/visualizers/frameLoop'
 import { logger } from '@/utils/logger'
 import shaders from './shaders'
 
 export const init = async (container: HTMLElement) => {
-  const gl = document.createElement('canvas').getContext('webgl')!
-  const postctx = container.appendChild(document.createElement('canvas')).getContext('2d')!
-  const postprocess = postctx.canvas
-  const canvas = gl.canvas
+  const canvas = container.appendChild(document.createElement('canvas'))
+  const glow = container.appendChild(document.createElement('canvas'))
+  canvas.style.cssText = 'position: absolute; inset: 0; width: 100%; height: 100%'
+  glow.style.cssText = `${canvas.style.cssText}; filter: blur(4px); mix-blend-mode: screen`
+
+  const gl = canvas.getContext('webgl')!
+  const glowContext = glow.getContext('2d')!
   const cubeSize = 15
 
-  const analyzer = audioService.analyzer
-  analyzer.smoothingTimeConstant = 0.2
-  analyzer.fftSize = 128
+  const analyzer = configureAnalyser({ fftSize: 128, smoothing: 0.6 })
 
   const spectrumData = new Uint8Array(analyzer.frequencyBinCount)
 
@@ -66,11 +68,11 @@ export const init = async (container: HTMLElement) => {
     // Transfer spectrum data to shader program
     gl.uniform1iv(uSpectrumValue, spectrumData)
 
-    if (postprocess.width !== postprocess.offsetWidth || postprocess.height !== postprocess.offsetHeight) {
-      postprocess.width = postprocess.offsetWidth
-      postprocess.height = postprocess.offsetHeight
-      canvas.width = postprocess.width
-      canvas.height = postprocess.height
+    if (canvas.width !== canvas.offsetWidth || canvas.height !== canvas.offsetHeight) {
+      canvas.width = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+      glow.width = canvas.width
+      glow.height = canvas.height
       gl.uniform2fv(uResolution, [canvas.width, canvas.height])
       gl.viewport(0, 0, canvas.width, canvas.height)
     }
@@ -79,16 +81,7 @@ export const init = async (container: HTMLElement) => {
     gl.clear(gl.COLOR_BUFFER_BIT)
     gl.drawArrays(gl.POINTS, 0, vertices.length / 3)
 
-    // Make Bloom
-    postctx.globalAlpha = 1
-    postctx.drawImage(canvas, 0, 0)
-    postctx.filter = 'blur(4px)'
-    postctx.globalCompositeOperation = 'screen'
-    postctx.drawImage(canvas, 0, 0)
-    postctx.globalCompositeOperation = 'source-over'
-    postctx.filter = 'blur(0)'
-
-    requestAnimationFrame(render)
+    glowContext.drawImage(canvas, 0, 0)
   }
 
   gl.clearColor(0, 0, 0, 1)
@@ -114,7 +107,10 @@ export const init = async (container: HTMLElement) => {
   gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 0, 0)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
 
-  render()
+  const stopFrameLoop = startFrameLoop(render)
 
-  return () => gl?.getExtension('WEBGL_lose_context')?.loseContext()
+  return () => {
+    stopFrameLoop()
+    gl.getExtension('WEBGL_lose_context')?.loseContext()
+  }
 }

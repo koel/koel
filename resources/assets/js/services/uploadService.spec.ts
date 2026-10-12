@@ -1,17 +1,29 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
+import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 
 const postWithProgressMock = vi.fn()
+const putToStorageMock = vi.fn()
+const postJsonMock = vi.fn()
 
 vi.mock('@/services/http', async importOriginal => {
   const actual = await importOriginal<typeof import('@/services/http')>()
   return {
     ...actual,
     postWithProgress: (...args: any[]) => postWithProgressMock(...args),
+  }
+})
+
+vi.mock('@/services/httpUpload', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/services/httpUpload')>()
+  return {
+    ...actual,
+    putToStorageWithProgress: (...args: any[]) => putToStorageMock(...args),
+    postJson: (...args: any[]) => postJsonMock(...args),
   }
 })
 
@@ -24,6 +36,11 @@ describe('uploadService', () => {
     beforeEach: () => {
       uploadService.state.files = []
       uploadService.abortHandles.clear()
+      uploadService.parallelUploadLimit = 5
+      commonStore.state.supports_presigned_uploads = false
+      postWithProgressMock.mockClear()
+      putToStorageMock.mockClear()
+      postJsonMock.mockReset()
     },
   })
 
@@ -36,9 +53,9 @@ describe('uploadService', () => {
     ...overrides,
   })
 
-  const mockPostWithProgress = (resolveValue: any) => {
+  const mockPostWithProgress = (data: any, status = 200) => {
     postWithProgressMock.mockReturnValue({
-      promise: Promise.resolve(resolveValue),
+      promise: Promise.resolve({ status, data }),
       abort: vi.fn(),
     })
   }
@@ -120,14 +137,6 @@ describe('uploadService', () => {
     expect(uploadMock).not.toHaveBeenCalled()
   })
 
-  it('skips already uploading files', async () => {
-    const file = createUploadFile({ status: 'Uploading' })
-
-    await uploadService.upload(file)
-
-    expect(postWithProgressMock).not.toHaveBeenCalled()
-  })
-
   it('uploads a file successfully', async () => {
     const result = { song: h.factory('song').make(), album: h.factory('album').make() }
     mockPostWithProgress(result)
@@ -138,20 +147,171 @@ describe('uploadService', () => {
     await uploadService.upload(file)
 
     expect(file.status).toBe('Uploaded')
-    expect(handleMock).toHaveBeenCalledWith(result)
+    expect(handleMock).toHaveBeenCalledWith(result, file)
     expect(proceedMock).toHaveBeenCalled()
   })
 
-  it('marks file as errored if response is malformed', async () => {
-    mockPostWithProgress({ message: 'The POST data is too large.' })
+  it('does not send a file again when handling its upload result fails', async () => {
+    mockPostWithProgress({ song: h.factory('song').make(), album: h.factory('album').make() })
+    h.mock(uploadService, 'handleUploadResult').mockImplementation(() => {
+      throw new Error('Store sync failed')
+    })
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+
+    await expect(uploadService.upload(file)).rejects.toThrow('Store sync failed')
+    expect(file.status).not.toBe('Retrying')
+    expect(postWithProgressMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps an uploaded file in the list with its song', () => {
+    const file = createUploadFile()
+    file.status = 'Uploading'
+    uploadService.state.files = [file]
+    const song = h.factory('song').make()
+
+    uploadService.handleUploadResult({ song, album: h.factory('album').make() }, file)
+
+    expect(uploadService.state.files).toEqual([file])
+    expect(file.status).toBe('Uploaded')
+    expect(file.song).toBe(song)
+  })
+
+  it('retries a file that failed on the network, and uploads fewer at once', async () => {
+    mockPostWithProgressRejection(new Error('Network error'))
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Retrying')
+    expect(uploadService.parallelUploadLimit).toBe(2)
+  })
+
+  it('gives up on a network failure after the last attempt', async () => {
+    mockPostWithProgressRejection(new Error('Network error'))
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    file.attempts = 2
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Errored')
+  })
+
+  it('uploads more at once again after a success', async () => {
+    mockPostWithProgress({ song: h.factory('song').make(), album: h.factory('album').make() })
+    h.mock(uploadService, 'handleUploadResult')
+    h.mock(uploadService, 'proceed')
+    uploadService.parallelUploadLimit = 2
+
+    await uploadService.upload(createUploadFile())
+
+    expect(uploadService.parallelUploadLimit).toBe(3)
+  })
+
+  it('finishes a keyless queued upload rather than stranding it', async () => {
+    mockPostWithProgress(null, 202)
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Uploaded')
+  })
+
+  it('leaves a queued upload processing until the broadcast resolves it', async () => {
+    mockPostWithProgress(null, 202)
+    const handleMock = h.mock(uploadService, 'handleUploadResult')
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile({ uploadKey: '1__abc__song.mp3' })
+    await uploadService.upload(file)
+
+    expect(file.status).toBe('Processing')
+    expect(handleMock).not.toHaveBeenCalled()
+  })
+
+  it('keeps a file errored when its failure broadcast beats the 202', async () => {
+    mockPostWithProgress(null, 202)
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile({ uploadKey: '1__abc__song.mp3' })
+    uploadService.state.files = [file]
+
+    const uploading = uploadService.upload(file)
+    uploadService.handleUploadFailure({ upload_key: '1__abc__song.mp3', message: 'Empty file' })
+    await uploading
+
+    expect(file.status).toBe('Errored')
+  })
+
+  it('does not count a processing file against the upload slots', () => {
+    uploadService.state.files = [createUploadFile({ status: 'Processing' }), createUploadFile({ status: 'Uploading' })]
+
+    expect(uploadService.getUploadingFiles()).toHaveLength(1)
+  })
+
+  it('completes a processing file when its broadcast arrives', () => {
+    const file = createUploadFile({ status: 'Processing', uploadKey: '1__abc__song.mp3' })
+    uploadService.state.files = [file]
+
+    uploadService.handleUploadResult({
+      song: h.factory('song').make(),
+      album: h.factory('album').make(),
+      upload_key: '1__abc__song.mp3',
+    })
+
+    expect(file.status).toBe('Uploaded')
+  })
+
+  it('errors a processing file when its upload fails server-side', () => {
+    const file = createUploadFile({ status: 'Processing', uploadKey: '1__abc__song.mp3' })
+    uploadService.state.files = [file]
+    h.mock(uploadService, 'proceed')
+
+    uploadService.handleUploadFailure({ upload_key: '1__abc__song.mp3', message: 'Empty file' })
+
+    expect(file.status).toBe('Errored')
+    expect(file.message).toBe('Empty file')
+  })
+
+  it('ignores a broadcast for a file it no longer has', () => {
+    uploadService.state.files = []
+
+    expect(() => uploadService.handleUploadFailure({ upload_key: 'gone', message: 'Empty file' })).not.toThrow()
+  })
+
+  it('sends the file straight to storage when the server presigns uploads', async () => {
+    commonStore.state.supports_presigned_uploads = true
+
+    const presigned = {
+      key: '1__abc__song.mp3',
+      url: 'https://bucket.example.com/1__abc__song.mp3?signature=xyz',
+      headers: { 'Content-Type': 'audio/mpeg' },
+      expires_at: '2099-01-01T00:00:00+00:00',
+    }
+
+    postJsonMock
+      .mockReturnValueOnce({ promise: Promise.resolve({ status: 200, data: presigned }), abort: vi.fn() })
+      .mockReturnValueOnce({ promise: Promise.resolve({ status: 202, data: null }), abort: vi.fn() })
+    putToStorageMock.mockReturnValue({ promise: Promise.resolve({ status: 200, data: null }), abort: vi.fn() })
     const handleMock = h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
     await uploadService.upload(file)
 
-    expect(file.status).toBe('Errored')
-    expect(file.message).toContain('unexpected response')
+    expect(postJsonMock).toHaveBeenNthCalledWith(1, 'upload/presign', {
+      file_name: 'song.mp3',
+      file_size: file.file.size,
+    })
+    expect(putToStorageMock).toHaveBeenCalledWith(presigned.url, file.file, presigned.headers, expect.any(Function))
+    expect(postJsonMock).toHaveBeenNthCalledWith(2, 'upload/complete', { key: presigned.key })
+    expect(postWithProgressMock).not.toHaveBeenCalled()
+    expect(file.status).toBe('Processing')
+    expect(file.uploadKey).toBe(presigned.key)
     expect(handleMock).not.toHaveBeenCalled()
   })
 
@@ -159,7 +319,7 @@ describe('uploadService', () => {
     const result = { song: h.factory('song').make(), album: h.factory('album').make() }
     postWithProgressMock.mockImplementation((_url: string, _data: FormData, onProgress: Function) => {
       onProgress({ loaded: 50, total: 100 })
-      return { promise: Promise.resolve(result), abort: vi.fn() }
+      return { promise: Promise.resolve({ status: 200, data: result }), abort: vi.fn() }
     })
     h.mock(uploadService, 'handleUploadResult')
     h.mock(uploadService, 'proceed')
@@ -173,7 +333,8 @@ describe('uploadService', () => {
 
   it('handles upload error with message', async () => {
     const error = Object.assign(new Error('Upload failed with status 413'), {
-      responseData: { message: 'File too large' },
+      status: 413,
+      data: { message: 'File too large' },
     })
 
     mockPostWithProgressRejection(error)
@@ -187,20 +348,20 @@ describe('uploadService', () => {
   })
 
   it('handles upload error without message', async () => {
-    mockPostWithProgressRejection(new Error('network error'))
+    mockPostWithProgressRejection(Object.assign(new Error('Upload failed with status 500'), { status: 500 }))
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile()
     await uploadService.upload(file)
 
     expect(file.status).toBe('Errored')
-    expect(file.message).toBe('Server error.')
+    expect(file.message).toBe('Server error')
   })
 
-  it('shows a generic server error when responseData cannot be parsed', async () => {
+  it('shows a generic server error when the response cannot be parsed', async () => {
     const error = Object.assign(new Error('Upload failed with status 413'), {
       status: 413,
-      responseData: undefined,
+      data: undefined,
     })
 
     mockPostWithProgressRejection(error)
@@ -210,7 +371,63 @@ describe('uploadService', () => {
     await uploadService.upload(file)
 
     expect(file.status).toBe('Errored')
-    expect(file.message).toBe('Server error.')
+    expect(file.message).toBe('Server error')
+  })
+
+  it('clears the failure message when a file is reset', () => {
+    const file = createUploadFile({ status: 'Errored', message: 'Server error.' })
+
+    uploadService.resetFile(file)
+
+    expect(file.message).toBeUndefined()
+  })
+
+  it('forgets the upload key when a file is reset', () => {
+    const file = createUploadFile({ status: 'Errored', uploadKey: '1__abc__song.mp3' })
+
+    uploadService.resetFile(file)
+
+    expect(file.uploadKey).toBeUndefined()
+    expect(file.status).toBe('Ready')
+  })
+
+  it('retries only the files that can be retried', () => {
+    const errored = createUploadFile({ status: 'Errored' })
+    const processing = createUploadFile({ status: 'Processing' })
+    const uploading = createUploadFile({ status: 'Uploading' })
+    uploadService.state.files = [errored, processing, uploading]
+    h.mock(uploadService, 'proceed')
+
+    uploadService.retryAll()
+
+    expect(errored.status).toBe('Ready')
+    expect(processing.status).toBe('Processing')
+    expect(uploading.status).toBe('Uploading')
+  })
+
+  it('aborts a presigned upload while it is still being presigned', async () => {
+    commonStore.state.supports_presigned_uploads = true
+
+    const abortMock = vi.fn()
+    postJsonMock.mockReturnValue({
+      promise: new Promise((_, reject) => {
+        abortMock.mockImplementation(() => reject(new DOMException('Upload aborted', 'AbortError')))
+      }),
+      abort: (...args: any[]) => abortMock(...args),
+    })
+    h.mock(uploadService, 'proceed')
+
+    const file = createUploadFile()
+    const uploadPromise = uploadService.upload(file)
+
+    expect(uploadService.abortHandles.has(file.id)).toBe(true)
+
+    uploadService.abort(file)
+    await uploadPromise
+
+    expect(abortMock).toHaveBeenCalled()
+    expect(putToStorageMock).not.toHaveBeenCalled()
+    expect(file.status).toBe('Canceled')
   })
 
   it('aborts an in-progress upload', async () => {
@@ -283,36 +500,17 @@ describe('uploadService', () => {
     expect(proceedMock).toHaveBeenCalled()
   })
 
-  it('removes failed files', () => {
+  it('removes failed and canceled files', () => {
     uploadService.state.files = [
       createUploadFile({ status: 'Errored' }),
       createUploadFile({ status: 'Ready' }),
-      createUploadFile({ status: 'Errored' }),
+      createUploadFile({ status: 'Canceled' }),
     ]
 
     uploadService.removeFailed()
 
     expect(uploadService.state.files).toHaveLength(1)
     expect(uploadService.state.files[0].status).toBe('Ready')
-  })
-
-  it('warns upon window unload when files exist', () => {
-    uploadService.state.files = [createUploadFile()]
-    expect(uploadService.shouldWarnUponWindowUnload()).toBe(true)
-  })
-
-  it('does not warn when no files', () => {
-    uploadService.state.files = []
-    expect(uploadService.shouldWarnUponWindowUnload()).toBe(false)
-  })
-
-  it('resets a file', () => {
-    const file = createUploadFile({ status: 'Errored', progress: 75 })
-
-    uploadService.resetFile(file)
-
-    expect(file.status).toBe('Ready')
-    expect(file.progress).toBe(0)
   })
 
   it('invalidates album and artist song caches when handling an upload result', () => {

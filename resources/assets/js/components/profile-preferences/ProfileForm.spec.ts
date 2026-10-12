@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { MessageToasterStub } from '@/__tests__/stubs'
 import { authService } from '@/services/authService'
+import { userStore } from '@/stores/userStore'
 import Component from './ProfileForm.vue'
 
 describe('profileForm.vue', () => {
@@ -13,7 +14,9 @@ describe('profileForm.vue', () => {
   }
 
   it('updates profile', async () => {
-    const updateMock = h.mock(authService, 'updateProfile')
+    const updateMock = h.mock(authService, 'updateProfile', async (data: { email: string }) => {
+      userStore.state.current.email = data.email
+    })
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
     renderComponent(
@@ -29,9 +32,40 @@ describe('profileForm.vue', () => {
     expect(updateMock).toHaveBeenCalledWith({
       name: 'Koel User',
       email: 'koel@example.com',
-      avatar: 'https://gravatar.com/foo',
+      avatar: undefined,
     })
 
     expect(alertMock).toHaveBeenCalledWith('Profile updated.')
+  })
+
+  it('refreshes the avatar after updating the email address', async () => {
+    h.mock(authService, 'updateProfile', async () => {
+      userStore.state.current.avatar = 'https://gravatar.com/new-email'
+    })
+
+    renderComponent(
+      h.factory('user').make({
+        avatar: 'https://gravatar.com/old-email',
+      }) as CurrentUser,
+    )
+
+    await h.type(screen.getByTestId('email'), 'new@example.com')
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => expect(screen.getByRole('img').getAttribute('src')).toBe('https://gravatar.com/new-email'))
+  })
+
+  it('asks to confirm a new email address that has not taken effect yet', async () => {
+    h.mock(authService, 'updateProfile')
+    const infoMock = h.mock(MessageToasterStub.value, 'info')
+    const user = h.factory('user').make({ email: 'old@example.com' }) as CurrentUser
+
+    renderComponent(user)
+
+    await h.type(screen.getByTestId('email'), 'new@example.com')
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() => expect(infoMock).toHaveBeenCalled())
+    expect(screen.getByTestId<HTMLInputElement>('email').value).toBe('old@example.com')
   })
 })

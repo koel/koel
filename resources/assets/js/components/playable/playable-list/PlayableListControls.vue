@@ -5,25 +5,25 @@
         <template v-if="altPressed">
           <Btn
             v-if="selectedPlayables.length < 2 && filteredPlayables.length"
-            v-koel-tooltip
+            v-koel-tooltip="'Play all. Press Alt/⌥ to change mode.'"
             variant="highlight"
             class="btn-play-all"
-            title="Play all. Press Alt/⌥ to change mode."
             @click.prevent="playAll"
           >
             <Icon :icon="faPlay" fixed-width />
+            <span class="sr-only">Play</span>
             All
           </Btn>
 
           <Btn
             v-if="selectedPlayables.length > 1"
-            v-koel-tooltip
+            v-koel-tooltip="'Play selected. Press Alt/⌥ to change mode.'"
             variant="highlight"
             class="btn-play-selected"
-            title="Play selected. Press Alt/⌥ to change mode."
             @click.prevent="playSelected"
           >
             <Icon :icon="faPlay" fixed-width />
+            <span class="sr-only">Play</span>
             Selected
           </Btn>
         </template>
@@ -31,27 +31,27 @@
         <template v-else>
           <Btn
             v-if="selectedPlayables.length < 2 && filteredPlayables.length"
-            v-koel-tooltip
+            v-koel-tooltip="'Shuffle all. Press Alt/⌥ to change mode.'"
             variant="highlight"
             class="btn-shuffle-all"
             data-testid="btn-shuffle-all"
-            title="Shuffle all. Press Alt/⌥ to change mode."
             @click.prevent="shuffle"
           >
             <Icon :icon="faRandom" fixed-width />
+            <span class="sr-only">Shuffle</span>
             All
           </Btn>
 
           <Btn
             v-if="selectedPlayables.length > 1"
-            v-koel-tooltip
+            v-koel-tooltip="'Shuffle selected. Press Alt/⌥ to change mode.'"
             variant="highlight"
             class="btn-shuffle-selected"
             data-testid="btn-shuffle-selected"
-            title="Shuffle selected. Press Alt/⌥ to change mode."
             @click.prevent="shuffleSelected"
           >
             <Icon :icon="faRandom" fixed-width />
+            <span class="sr-only">Shuffle</span>
             Selected
           </Btn>
         </template>
@@ -60,14 +60,13 @@
           {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
         </Btn>
 
-        <Btn variant="destructive" v-if="config.clearQueue" title="Clear current queue" @click.prevent="clearQueue"
-          >Clear</Btn
-        >
+        <Btn variant="destructive" v-if="config.clearQueue" @click.prevent="clearQueue">Clear</Btn>
       </BtnGroup>
 
       <BtnGroup v-if="config.refresh">
-        <Btn variant="success" v-if="config.refresh" v-koel-tooltip title="Refresh" @click.prevent="refresh">
+        <Btn variant="success" v-if="config.refresh" v-koel-tooltip @click.prevent="refresh">
           <Icon :icon="faRotateRight" fixed-width />
+          <span class="sr-only">Refresh</span>
         </Btn>
       </BtnGroup>
 

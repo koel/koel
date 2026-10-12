@@ -8,13 +8,11 @@ import Component from './BtnScrollToTop.vue'
 describe('btnScrollToTop.vue', () => {
   const h = createHarness()
 
-  it('renders', () => expect(h.render(Component).html()).toMatchSnapshot())
-
   it('scrolls to top', async () => {
     const mock = h.mock($, 'scrollTo')
     h.render(Component)
 
-    await h.user.click(screen.getByTitle('Scroll to top'))
+    await h.user.click(screen.getByRole('button', { hidden: true }))
 
     expect(mock).toHaveBeenCalled()
   })

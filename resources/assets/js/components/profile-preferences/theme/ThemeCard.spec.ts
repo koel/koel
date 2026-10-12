@@ -24,8 +24,6 @@ describe('themeCard.vue', () => {
     }
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
   it('sets the theme when clicked', async () => {
     const { theme } = renderComponent()
     const setThemeMock = h.mock(themeStore, 'setTheme')

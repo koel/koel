@@ -53,6 +53,7 @@ use App\Http\Controllers\Subsonic\UpdateInternetRadioStationController;
 use App\Http\Controllers\Subsonic\UpdatePlaylistController;
 use App\Http\Middleware\AuthenticateSubsonicRequests;
 use App\Http\Middleware\NormalizeSubsonicArrayParams;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 
 $endpoints = [
@@ -109,10 +110,24 @@ $endpoints = [
     'savePlayQueue' => SavePlayQueueController::class,
 ];
 
+$featureMiddleware = [
+    'getInternetRadioStations' => 'radio.enabled',
+    'createInternetRadioStation' => 'radio.enabled',
+    'updateInternetRadioStation' => 'radio.enabled',
+    'deleteInternetRadioStation' => 'radio.enabled',
+    'getPodcasts' => 'podcasts.enabled',
+    'getNewestPodcasts' => 'podcasts.enabled',
+    'refreshPodcasts' => 'podcasts.enabled',
+    'createPodcastChannel' => 'podcasts.enabled',
+    'deletePodcastChannel' => 'podcasts.enabled',
+];
+
 Route::prefix('rest')
     ->middleware([NormalizeSubsonicArrayParams::class, AuthenticateSubsonicRequests::class])
-    ->group(static function () use ($endpoints): void {
+    ->group(static function () use ($endpoints, $featureMiddleware): void {
         foreach ($endpoints as $endpoint => $controller) {
-            Route::match(['get', 'post'], "{$endpoint}{format?}", $controller)->where('format', '\.view');
+            Route::match(['get', 'post'], "{$endpoint}{format?}", $controller)
+                ->where('format', '\.view')
+                ->middleware(Arr::wrap($featureMiddleware[$endpoint] ?? []));
         }
     });

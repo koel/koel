@@ -4,6 +4,7 @@
   <MessageToaster ref="toaster" />
   <GlobalEventListeners />
   <OfflineNotification v-if="!online" />
+  <UpdateNotification />
 
   <main
     v-if="layout === 'default' && initialized"
@@ -14,6 +15,7 @@
     @drop="onDrop"
   >
     <HotkeyListener />
+    <HookSlot name="app.top" />
     <MainWrapper />
     <AppFooter />
     <SupportKoel />
@@ -26,6 +28,7 @@
 
   <AcceptInvitation v-if="layout === 'invitation'" />
   <ResetPasswordForm v-if="layout === 'reset-password'" />
+  <ConfirmEmailChange v-if="layout === 'email-change'" />
 
   <AppInitializer v-if="authenticated" @error="onInitError" @success="onInitSuccess" />
 
@@ -48,6 +51,8 @@ import {
   OverlayKey,
 } from '@/config/symbols'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
+import { useCoverThemeColors } from '@/composables/useCoverThemeColors'
 import { commonStore } from '@/stores/commonStore'
 import type { Route } from '@/router'
 
@@ -55,6 +60,7 @@ import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 import Overlay from '@/components/ui/Overlay.vue'
 import OfflineNotification from '@/components/ui/OfflineNotification.vue'
+import UpdateNotification from '@/components/ui/UpdateNotification.vue'
 
 // Do not dynamic-import app footer, as it contains the <audio> element
 // that is necessary to properly initialize the playService and equalizer.
@@ -62,6 +68,7 @@ import AppFooter from '@/components/layout/app-footer/index.vue'
 
 // GlobalEventListener must NOT be lazy-loaded, so that it can handle LOG_OUT event properly.
 import GlobalEventListeners from '@/components/utils/GlobalEventListeners.vue'
+import HookSlot from '@/components/utils/HookSlot.vue'
 import AppInitializer from '@/components/utils/AppInitializer.vue'
 import ContextMenu from '@/components/ui/context-menu/ContextMenu.vue'
 
@@ -73,6 +80,7 @@ const AiAssistantScreen = defineAsyncComponent(() => import('@/components/ai/AiA
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))
 const AcceptInvitation = defineAsyncComponent(() => import('@/components/invitation/AcceptInvitation.vue'))
 const ResetPasswordForm = defineAsyncComponent(() => import('@/components/auth/ResetPasswordForm.vue'))
+const ConfirmEmailChange = defineAsyncComponent(() => import('@/components/email-change/ConfirmEmailChange.vue'))
 const Embed = defineAsyncComponent(() => import('@/components/embed/widget/EmbedWidget.vue'))
 
 const overlay = ref<InstanceType<typeof Overlay>>()
@@ -83,6 +91,8 @@ const showDropZone = ref(false)
 
 const { isCurrentScreen, resolveRoute, triggerNotFound, onRouteChanged } = useRouter()
 const { online } = useNetworkStatus()
+
+usePageTitle().syncDocumentTitle()
 
 const authenticated = ref(false)
 const initialized = ref(false)
@@ -149,6 +159,8 @@ watch(
 )
 
 onRouteChanged(route => (currentRoute.value = route))
+
+useCoverThemeColors(currentStreamable)
 
 const onDragEnd = () => (showDropZone.value = false)
 

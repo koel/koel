@@ -1,10 +1,10 @@
 ---
-description: Creating standard and smart playlists, organizing with folders, and collaborative playlist management in Koel.
+description: Creating standard and smart playlists, organizing with nested folders, and managing collaborative playlists in Koel.
 ---
 
 # Creating and Managing Playlists
 
-Koel supports creating an unlimited number of playlists as well as organizing them into folders.
+Koel supports creating an unlimited number of playlists and organizing them into nested folders.
 Start by clicking the <InterfaceIcon :src="plusIcon" alt="Add" /> button next to the "Playlists" header in the
 navigation bar. You'll be provided with three options:
 
@@ -12,11 +12,28 @@ navigation bar. You'll be provided with three options:
 * "New Smart Playlist…" brings up a dialog to create a smart playlist
 * "New Folder…" brings up a dialog to create a playlist folder
 
-Creating a **standard playlist** or **playlist folder** should be straightforward, as you only need to supply a name.
+To create a **standard playlist** or **playlist folder**, enter a name and save it.
 Once a playlist or playlist folder is created, you can:
 
 * Drag and drop songs into a standard playlist to add them
-* Drag and drop playlists a playlist folder to organize them. You can also drag and drop a playlist out of its folder.
+* Drag and drop playlists into or out of playlist folders
+
+## Organizing Playlist Folders
+
+To create a folder inside another folder, open the parent folder's context menu and choose **Add** > **New Folder…**.
+
+Drag a folder onto another folder to move it there. To move it back to the top level, drag it to the root of the
+Playlists list.
+
+To rename a folder or move it without dragging, open its context menu and choose **Edit…**. Change the folder name or
+select a **Parent Folder**, then save your changes. Select **Root** to move the folder to the top level.
+
+To remove a folder, open its context menu, choose **Delete**, and confirm the deletion.
+
+::: info Deleting a folder
+Deleting a playlist folder keeps its contents. Playlists directly inside it become unfiled, and its subfolders move to
+the top level with their contents unchanged.
+:::
 
 For a **smart playlist**, you can define the criteria that determine which songs are included in the playlist,
 and Koel will automatically update the playlist based on those criteria.

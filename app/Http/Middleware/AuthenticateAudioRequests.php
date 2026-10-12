@@ -2,14 +2,26 @@
 
 namespace App\Http\Middleware;
 
+use App\Repositories\UserRepository;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class AuthenticateAudioRequests
 {
+    public function __construct(
+        private readonly UserRepository $userRepository,
+    ) {}
+
     public function handle(Request $request, Closure $next)
     {
+        if ($request->hasValidRelativeSignatureWhileIgnoring(['time'])) {
+            Auth::guard('web')->setUser($this->userRepository->getOneByPublicId($request->string('user')->toString()));
+
+            return $next($request);
+        }
+
         abort_unless($request->user()?->tokenCan('audio'), Response::HTTP_UNAUTHORIZED);
 
         return $next($request);

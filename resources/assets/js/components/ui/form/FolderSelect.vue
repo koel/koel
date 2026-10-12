@@ -16,24 +16,28 @@
       />
       <button
         class="px-2.5 bg-k-fg-5 text-k-success hover:text-white border-l border-k-fg-10"
-        title="Create"
+        v-koel-tooltip
         type="button"
         @click="confirm"
       >
         <Icon :icon="faCheck" fixed-width />
+        <span class="sr-only">Create</span>
       </button>
       <button
         class="px-2.5 bg-k-fg-5 text-k-fg-60 hover:text-white border-l border-k-fg-10"
-        title="Cancel"
+        v-koel-tooltip
         type="button"
         @click="cancel"
       >
         <Icon :icon="faTimes" fixed-width />
+        <span class="sr-only">Cancel</span>
       </button>
     </div>
     <SelectBox v-else v-model="selected" @update:model-value="onSelectChange">
       <option :value="null" />
-      <option v-for="folder in folders" :key="folder.id" :value="folder.id">{{ folder.name }}</option>
+      <option v-for="folder in folders" :key="folder.id" :value="folder.id">
+        {{ playlistFolderStore.pathFor(folder) }}
+      </option>
       <option v-if="folderName" :value="PENDING_FOLDER">{{ folderName }} (new)</option>
       <option :value="NEW_FOLDER">+ New Folder</option>
     </SelectBox>
@@ -41,8 +45,9 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick, ref, toRef, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { orderBy } from 'lodash-es'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
@@ -53,7 +58,9 @@ const PENDING_FOLDER = '__pending__'
 const folderId = defineModel<PlaylistFolder['id'] | null | undefined>('folderId', { required: true })
 const folderName = defineModel<string | null>('folderName', { default: null })
 
-const folders = toRef(playlistFolderStore.state, 'folders')
+const folders = computed(() =>
+  orderBy(playlistFolderStore.state.folders, folder => playlistFolderStore.pathFor(folder)),
+)
 const entering = ref(false)
 const inputName = ref('')
 const newFolderInput = ref<HTMLInputElement>()

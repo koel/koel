@@ -6,10 +6,12 @@ use App\Ai\Agents\KoelAssistant;
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Serializers\AiResultSerializerRegistry;
+use App\Ai\Services\AiProviderRegistrar;
 use App\Attributes\RequiresPlus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\AiRequest;
 use App\Models\User;
+use App\Services\SettingService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -19,8 +21,18 @@ use Laravel\Ai\Exceptions\AiException;
 class AiController extends Controller
 {
     /** @param User $user */
-    public function __invoke(AiRequest $request, Authenticatable $user): JsonResponse
-    {
+    public function __invoke(
+        AiRequest $request,
+        SettingService $settingService,
+        AiProviderRegistrar $aiProviderRegistrar,
+        Authenticatable $user,
+    ): JsonResponse {
+        $aiSettings = $settingService->getAiSettings($user->organization);
+
+        abort_unless($aiSettings->isUsable(), Response::HTTP_NOT_FOUND);
+
+        $provider = $aiProviderRegistrar->registerOrganizationProvider($user->organization, $aiSettings);
+
         // Bind as a singleton so the same instance is shared between the controller and the tools
         // resolved by the container. This allows tools to write to $result during execution,
         // and the controller to read the outcome afterward.
@@ -47,7 +59,7 @@ class AiController extends Controller
         }
 
         try {
-            $response = $agent->prompt($request->input('prompt'));
+            $response = $agent->prompt($request->input('prompt'), provider: $provider);
         } catch (AiException $e) {
             return response()->json([
                 'message' => $e->getMessage(),

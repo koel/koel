@@ -5,6 +5,7 @@ namespace Tests\Unit\Services\Playlist;
 use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Services\Playlist\PlaylistFolderService;
+use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -20,7 +21,7 @@ class PlaylistFolderServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new PlaylistFolderService();
+        $this->service = app(PlaylistFolderService::class);
     }
 
     #[Test]
@@ -44,6 +45,41 @@ class PlaylistFolderServiceTest extends TestCase
         $this->service->renameFolder($folder, 'Classical');
 
         self::assertSame('Classical', $folder->fresh()->name);
+    }
+
+    #[Test]
+    public function createRejectsAParentFromAnotherUser(): void
+    {
+        $user = create_user();
+        $parent = PlaylistFolder::factory()->createOne();
+
+        try {
+            $this->service->createFolder($user, 'Classical', $parent->id);
+            self::fail('Expected parent ownership validation to fail.');
+        } catch (ValidationException $exception) {
+            self::assertArrayHasKey('parent_id', $exception->errors());
+        }
+
+        $this->assertDatabaseMissing(PlaylistFolder::class, [
+            'name' => 'Classical',
+            'user_id' => $user->id,
+        ]);
+    }
+
+    #[Test]
+    public function updateRejectsAParentFromAnotherUser(): void
+    {
+        $folder = PlaylistFolder::factory()->createOne();
+        $parent = PlaylistFolder::factory()->createOne();
+
+        try {
+            $this->service->updateFolder($folder, ['parent_id' => $parent->id]);
+            self::fail('Expected parent ownership validation to fail.');
+        } catch (ValidationException $exception) {
+            self::assertArrayHasKey('parent_id', $exception->errors());
+        }
+
+        self::assertNull($folder->fresh()->parent_id);
     }
 
     #[Test]

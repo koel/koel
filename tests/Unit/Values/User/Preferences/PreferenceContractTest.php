@@ -8,8 +8,10 @@ use App\Values\User\Preferences\ConfirmBeforeClosingPreference;
 use App\Values\User\Preferences\ContinuousPlaybackPreference;
 use App\Values\User\Preferences\CrossfadeDurationPreference;
 use App\Values\User\Preferences\DetectDuplicateUploadsPreference;
+use App\Values\User\Preferences\EqualizerPresetsPreference;
 use App\Values\User\Preferences\IncludePublicMediaPreference;
 use App\Values\User\Preferences\LastfmSessionKeyPreference;
+use App\Values\User\Preferences\ListenBrainzTokenPreference;
 use App\Values\User\Preferences\LyricsZoomLevelPreference;
 use App\Values\User\Preferences\MakeUploadsPublicPreference;
 use App\Values\User\Preferences\PodcastsFavoritesOnlyPreference;
@@ -75,11 +77,15 @@ class PreferenceContractTest extends TestCase
     /** @param class-string<Preference> $class */
     #[Test]
     #[DataProvider('preferenceClasses')]
-    public function customizableDefaultsTrueExceptForLastFmSessionKey(string $class): void
+    public function customizableExceptForValuesWithTheirOwnEndpoints(string $class): void
     {
         $customizable = (new $class())->isCustomizable();
 
-        if ($class === LastfmSessionKeyPreference::class) {
+        if (in_array(
+            $class,
+            [LastfmSessionKeyPreference::class, ListenBrainzTokenPreference::class, EqualizerPresetsPreference::class],
+            true,
+        )) {
             self::assertFalse($customizable);
         } else {
             self::assertTrue($customizable);

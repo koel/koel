@@ -18,6 +18,8 @@
             window.KOEL.demo_account = @json(session('demo_account'));
         @elseif (isset($token))
             window.KOEL.auth_token = @json($token);
+        @elseif (isset($twoFactorLoginToken))
+            window.KOEL.two_factor_login_token = @json($twoFactorLoginToken);
         @endif
     </script>
     @vite(['resources/assets/js/app.ts'])

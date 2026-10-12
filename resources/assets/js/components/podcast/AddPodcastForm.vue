@@ -6,7 +6,7 @@
 
     <main>
       <FormRow>
-        <template #label>Podcast feed URL</template>
+        <template #label>Podcast URL</template>
         <TextInput
           v-model="data.url"
           v-koel-focus
@@ -16,6 +16,7 @@
           required
           type="url"
         />
+        <template #help>An RSS feed URL or an Apple Podcasts link.</template>
       </FormRow>
     </main>
 

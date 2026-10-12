@@ -28,18 +28,29 @@ describe('smartPlaylistRule', () => {
     })
   }
 
-  it('renders model and operator dropdowns', () => {
+  it('keeps the value when switching to an operator that takes the same input', async () => {
+    const { emitted } = renderComponent(createRule({ model: titleModel, operator: 'is', value: ['Love'] }))
+
+    await h.user.selectOptions(screen.getAllByRole('combobox')[1], screen.getByRole('option', { name: 'contains' }))
+
+    expect(emitted().input.at(-1)).toEqual([expect.objectContaining({ operator: 'contains', value: ['Love'] })])
+  })
+
+  it('clears the value when switching to an operator that takes a different input', async () => {
+    const { emitted } = renderComponent(createRule({ model: yearModel, operator: 'is', value: [2020] }))
+
+    await h.user.selectOptions(screen.getAllByRole('combobox')[1], screen.getByRole('option', { name: 'is between' }))
+
+    expect(emitted().input.at(-1)).toEqual([expect.objectContaining({ operator: 'isBetween', value: ['', ''] })])
+  })
+
+  it('renders the model dropdown', () => {
     renderComponent()
 
     // Model select should contain all model labels
     screen.getByRole('option', { name: 'Title' })
     screen.getByRole('option', { name: 'Album' })
     screen.getByRole('option', { name: 'Artist' })
-
-    // Operator select should show text operators for Title (text type)
-    screen.getByRole('option', { name: 'is' })
-    screen.getByRole('option', { name: 'contains' })
-    screen.getByRole('option', { name: 'begins with' })
   })
 
   it('shows text operators for a text model', () => {
@@ -94,7 +105,7 @@ describe('smartPlaylistRule', () => {
   it('emits remove when remove button is clicked', async () => {
     const { emitted } = renderComponent()
 
-    await h.user.click(screen.getByTitle('Remove this rule'))
+    await h.user.click(screen.getByTestId('remove-rule-btn'))
 
     expect(emitted().remove).toBeTruthy()
   })

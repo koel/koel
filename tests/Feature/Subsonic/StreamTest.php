@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Subsonic;
 
+use App\Http\Responses\StreamedFileResponse;
 use App\Models\Song;
 use App\Services\Streamer\Adapters\LocalStreamerAdapter;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
@@ -50,7 +51,10 @@ class StreamTest extends TestCase
             'owner_id' => $user->id,
         ]);
 
-        $this->mock(TranscodingStreamerAdapter::class)->expects('stream');
+        $this
+            ->mock(TranscodingStreamerAdapter::class)
+            ->expects('stream')
+            ->andReturn(new StreamedFileResponse(test_path('songs/blank.mp3')));
 
         $this->get("/rest/stream.view?id={$song->id}&apiKey={$user->subsonic_api_key}&maxBitRate=128")->assertOk();
     }

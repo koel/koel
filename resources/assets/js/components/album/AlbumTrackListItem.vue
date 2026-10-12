@@ -1,10 +1,10 @@
 <template>
   <div
     :class="{ active, available: matchedSong }"
-    :title="tooltip"
     class="track-list-item flex flex-1 gap-1"
     tabindex="0"
     @click="play"
+    @keydown.self.enter.space.prevent="play"
   >
     <span class="flex-1">{{ track.title }}</span>
     <AppleMusicButton v-if="useAppleMusic && !matchedSong" :url="iTunesUrl" />
@@ -34,7 +34,6 @@ const { useAppleMusic } = useThirdPartyServices()
 const songsToMatchAgainst = requireInjection<Ref<Song[]>>(PlayablesKey)
 
 const matchedSong = computed(() => playableStore.matchSongsByTitle(track.value.title, songsToMatchAgainst.value))
-const tooltip = computed(() => (matchedSong.value ? 'Click to play' : ''))
 const fmtLength = computed(() => secondsToHis(track.value.length))
 
 const active = computed(() => matchedSong.value && matchedSong.value.playback_state !== 'Stopped')

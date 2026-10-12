@@ -4,6 +4,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { radioStationStore } from '@/stores/radioStationStore'
+import { http } from '@/services/http'
 import AddRadioStationForm from '@/components/radio/AddRadioStationForm.vue'
 
 const openModalMock = vi.fn()
@@ -42,22 +43,10 @@ describe('radioStationListScreen.vue', () => {
     return rendered
   }
 
-  it('renders', async () => {
-    await renderComponent()
-    expect(screen.getAllByTestId('radio-station-card')).toHaveLength(9)
-  })
-
   it('shows a message when there is no station', async () => {
     await renderComponent([])
 
     await waitFor(() => screen.getByTestId('screen-empty-state'))
-  })
-
-  it('renders the grid by default', async () => {
-    await renderComponent()
-
-    await waitFor(() => screen.getByTestId('radio-station-grid'))
-    expect(screen.queryByTestId('radio-station-table')).toBeNull()
   })
 
   it('renders the table when the view mode is table', async () => {
@@ -116,6 +105,22 @@ describe('radioStationListScreen.vue', () => {
       screen.getByRole('button', { name: 'Add a new station' })
     }))
 
+  it('leaves a deleted station out of the filtered results', async () => {
+    const [deleted, kept] = h.factory('radio-station').make(2)
+    deleted.name = 'Rock Classics'
+    kept.name = 'Rock Ballads'
+    await renderComponent([deleted, kept])
+
+    await h.user.click(screen.getByRole('button', { name: 'Filter' }))
+    await h.user.type(screen.getByPlaceholderText('Keywords'), 'Rock')
+    await waitFor(() => expect(screen.getAllByTestId('radio-station-card')).toHaveLength(2))
+
+    h.mock(http, 'delete')
+    await radioStationStore.delete(deleted)
+
+    await waitFor(() => expect(screen.getAllByTestId('radio-station-card')).toHaveLength(1))
+  })
+
   it('shows all or only favorites upon toggling the button', async () => {
     await renderComponent([
       ...h.factory('radio-station').make({ favorite: true }, 3),
@@ -124,17 +129,17 @@ describe('radioStationListScreen.vue', () => {
 
     expect(screen.getAllByTestId('radio-station-card')).toHaveLength(9)
 
-    await h.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
+    await h.user.click(screen.getByRole('button', { name: 'Favorites only' }))
     await waitFor(() => expect(screen.getAllByTestId('radio-station-card')).toHaveLength(3))
 
-    await h.user.click(screen.getByRole('button', { name: 'Show all' }))
+    await h.user.click(screen.getByRole('button', { name: 'Favorites only' }))
     await waitFor(() => expect(screen.getAllByTestId('radio-station-card')).toHaveLength(9))
   })
 
   it('shows contextual empty state when no favorite stations', async () => {
     await renderComponent(h.factory('radio-station').make({ favorite: false }, 3))
 
-    await h.user.click(screen.getByRole('button', { name: 'Show favorites only' }))
+    await h.user.click(screen.getByRole('button', { name: 'Favorites only' }))
 
     await waitFor(() => {
       const emptyState = screen.getByTestId('screen-empty-state')

@@ -97,14 +97,18 @@ Required when `STORAGE_DRIVER=webdav`.
 | `SCAN_JOBS` | The number of parallel worker processes for scanning. Set to `1` to disable parallel scanning. Can be overridden with `--jobs` flag. | `4` |
 | `IGNORE_DOT_FILES` | Whether to ignore dot files and folders when scanning. Greatly improves performance if your media root has folders like `.git` or `.cache`. | `true` |
 | `SYNC_LOG_LEVEL` | The verbosity of sync logs (found under `storage/logs/`). Options: `all`, `error`. | `error` |
+| `SCAN_LOG_MAX_FILES` | How many scan logs to keep under `storage/logs/`. A scan with nothing to report writes none. `0` keeps them all. | `30` |
+| `ANALYZE_AUDIO_ON_SCAN` <PlusBadge /> | Whether to analyze each song's loudness and waveform as soon as it's scanned or uploaded. Songs uploaded to cloud or remote storage are analyzed while the upload is processed; others use a queue job if a queue is configured. Requires FFmpeg. See [Volume Normalization & Waveforms](plus/volume-normalization). | `false` |
 
 ## Streaming & Transcoding
 
 | Variable | Description | Default |
 |---|---|---|
 | `STREAMING_METHOD` | The streaming method. Options: `php`, `x-sendfile`, `x-accel-redirect`. See [Streaming Music](usage/streaming). Using `x-sendfile` or `x-accel-redirect` is highly recommended for better performance. | `php` |
-| `TRANSCODE_FLAC` | Whether to transcode FLAC to MP3 on the fly. Set to `false` to stream FLAC as-is. | `true` |
+| `TRANSCODE_FLAC` | Whether to transcode FLAC to AAC on the fly. Set to `false` to stream FLAC as-is. | `true` |
+| `TRANSCODE_ON_SCAN` | Whether to transcode songs that need it as soon as they're scanned or uploaded, instead of on their first play. Songs uploaded to cloud or remote storage are transcoded while the upload is processed; others use a queue job if a queue is configured. | `false` |
 | `TRANSCODE_BIT_RATE` | The bit rate (in kbps) for transcoded audio. Higher values mean better quality but slower streaming. | `128` |
+| `TRANSCODE_AAC_FAST` | Whether to use FFmpeg's faster AAC coding algorithm. Set to `false` to use its default AAC coder. Has no effect when FFmpeg has the `libfdk_aac` encoder, which Koel then uses instead. | `true` |
 | `FFMPEG_PATH` | The full path to the ffmpeg binary. Automatically detected if left empty. | _(auto-detected)_ |
 | `TRANSCODE_TIMEOUT` | The maximum time in seconds allowed for transcoding a single file. Increase for very large files. `0` disables the timeout. | `300` |
 
@@ -112,8 +116,7 @@ Required when `STORAGE_DRIVER=webdav`.
 
 | Variable | Description | Default |
 |---|---|---|
-| `ALLOW_DOWNLOAD` | Whether to allow song downloading. Multi-song downloads require the `zip` PHP extension. | `true` |
-| `DOWNLOAD_LIMIT` | The maximum number of songs allowed in a single download. `0` means unlimited. Single-song downloads are always allowed. | `0` |
+| `ALLOW_DOWNLOAD` | Whether to allow song downloading. | `true` |
 
 ## Service Integrations
 
@@ -125,12 +128,17 @@ Also see [Service Integrations](service-integrations) for detailed setup instruc
 | `MUSICBRAINZ_USER_AGENT` | The user agent for MusicBrainz API requests. Auto-generated if empty. | _(auto-generated)_ |
 | `LASTFM_API_KEY` | Your Last.fm API key. Required for artist/album info and scrobbling. | _(empty)_ |
 | `LASTFM_API_SECRET` | Your Last.fm API secret. | _(empty)_ |
+| `LISTENBRAINZ_API_ENDPOINT` | The ListenBrainz API root. Change this only if you run your own ListenBrainz server. | `https://api.listenbrainz.org` |
 | `SPOTIFY_CLIENT_ID` | Your Spotify application client ID. Used for fetching artist and album images. | _(empty)_ |
 | `SPOTIFY_CLIENT_SECRET` | Your Spotify application client secret. | _(empty)_ |
 | `YOUTUBE_API_KEY` | Your YouTube API key. See [YouTube integration](service-integrations#youtube). | _(empty)_ |
 | `TICKETMASTER_API_KEY` | Your Ticketmaster API key. See [Ticketmaster](plus/ticketmaster). | _(empty)_ |
 | `TICKETMASTER_DEFAULT_COUNTRY_CODE` | Fallback country code for Ticketmaster when IP-based lookup fails. See [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). | `US` |
 | `IPINFO_TOKEN` | Your IPinfo token, used to look up the user's country for Ticketmaster. | _(empty)_ |
+| `PUSHER_APP_ID` | Your Pusher app ID. Pusher powers the remote controller and live updates while uploads are processed in the background. | _(empty)_ |
+| `PUSHER_APP_KEY` | Your Pusher app key. Once it's set, Koel broadcasts through Pusher. | _(empty)_ |
+| `PUSHER_APP_SECRET` | Your Pusher app secret. | _(empty)_ |
+| `PUSHER_APP_CLUSTER` | Your Pusher app cluster, e.g. `eu` or `ap1`. | _(empty)_ |
 
 ## SSO (Single Sign-On)
 
@@ -160,22 +168,26 @@ Koel Plus only. See [Proxy Authentication](plus/proxy-auth).
 
 ## AI Assistant
 
-| Variable | Description | Default |
-|---|---|---|
-| `AI_ENABLED` | Enable the AI assistant feature. Requires a configured AI provider. | `false` |
-| `AI_PROVIDER` | The AI provider to use. Supported values: `openai`, `anthropic`, `gemini`, `ollama`, and more. See `config/ai.php` for the full list. | `openai` |
-| `OPENAI_API_KEY` | API key for OpenAI. Required when `AI_PROVIDER=openai`. | _(empty)_ |
-| `ANTHROPIC_API_KEY` | API key for Anthropic (Claude). Required when `AI_PROVIDER=anthropic`. | _(empty)_ |
-
-Additional providers (Gemini, Ollama, etc.) can be configured in `config/ai.php`.
+The AI assistant is no longer set up here. An admin turns it on and adds the provider's API key under **Settings → AI Assistant**. See [AI Assistant](./plus/ai-assistant#setup).
 
 ## Miscellaneous
 
 | Variable | Description | Default |
 |---|---|---|
-| `TRUSTED_HOSTS` | A comma-separated list of hostnames allowed to access Koel. Leave empty to allow any hostname. Example: `localhost,192.168.0.1,yourdomain.com` | _(empty)_ |
+| `APP_URL` | The address people use to reach Koel, e.g. `https://music.example.com`. Links in emails, such as password resets and invitations, point here, so make sure it is correct. | `http://localhost` |
+| `TRUSTED_HOSTS` | A comma-separated list of hostnames allowed to access Koel. Requests for any other hostname are rejected. Prefix a hostname with `*.` to allow any of its subdomains. Leave empty to allow any hostname. Example: `localhost,192.168.0.1,yourdomain.com,*.yourdomain.com` | _(empty)_ |
+| `TRUSTED_PROXIES` | A comma-separated list of IP addresses or ranges of the reverse proxies in front of Koel. Koel trusts `X-Forwarded-*` headers only from these. Set it if your proxy is on a public IP, such as Cloudflare. | `PRIVATE_SUBNETS` |
 | `FORCE_HTTPS` | Force Koel to use HTTPS URLs. Set to `true` if automatic detection fails. | `false` |
+| `SENTRY_LARAVEL_DSN` | Report unhandled exceptions to [Sentry](https://sentry.io). Leave empty to disable reporting entirely. Events are tagged with `APP_ENV`. | _(empty)_ |
 | `BACKUP_ON_DELETE` | Whether to create a backup of a song when deleting it from the filesystem. | `true` |
 | `CDN_URL` | A CDN URL mapped to Koel's home URL, used to serve media files. No trailing slash. | _(empty)_ |
+| `IMAGE_STORAGE_DRIVER` | The filesystem driver for artwork — album covers, artist images and avatars. Use `s3` to keep them on S3 or an S3-compatible service such as Cloudflare R2, reusing the `AWS_*` settings. | `local` |
+| `IMAGE_STORAGE_DIR` | Where artwork is stored: a path under Koel's `public` directory for the `local` driver, or a key prefix inside the bucket otherwise. | `storage/images` |
+| `IMAGE_STORAGE_BUCKET` | A separate, public bucket for artwork, so media can stay private. | _(`AWS_BUCKET`)_ |
+| `IMAGE_STORAGE_URL` | The public URL artwork is served from. Required when the driver is not `local`. No trailing slash. | _(empty)_ |
+| `IMAGE_DRIVER` | The library used to process images. Options: `gd`, `imagick`. | `gd` |
 | `MEDIA_BROWSER_ENABLED` | Whether to enable the media browser (experimental Koel Plus feature). | `false` |
+| `CLEAN_URLS_ENABLED` | Whether to use plain URLs like `/albums` instead of `/#/albums`. | `false` |
 | `EMBED_ENABLED` | Whether to allow embedding songs, albums, artists, and playlists on external sites. Set to `false` to hide the "Embed…" menu entries and disable both creation and rendering of embed widgets. | `true` |
+| `PODCASTS_ENABLED` | Whether to enable podcasts. Set to `false` to hide podcasts from the interface and stop serving them over both Koel's own API and Subsonic. Existing subscriptions and episodes are left untouched. | `true` |
+| `RADIO_ENABLED` | Whether to enable radio stations. Set to `false` to hide radio from the interface and stop serving it over both Koel's own API and Subsonic. Existing stations are left untouched. | `true` |

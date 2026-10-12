@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API\Artist;
 
 use App\Exceptions\ArtistNameConflictException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\Artist\ArtistListRequest;
 use App\Http\Requests\API\Artist\ArtistUpdateRequest;
+use App\Http\Requests\API\CursorPaginatedListRequest;
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
 use App\Repositories\ArtistRepository;
@@ -20,7 +20,7 @@ class ArtistController extends Controller
         private readonly ArtistRepository $repository,
     ) {}
 
-    public function index(ArtistListRequest $request)
+    public function index(CursorPaginatedListRequest $request)
     {
         return ArtistResource::collection($this->repository->paginate(
             sortColumn: $request->sort ?? 'name',

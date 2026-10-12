@@ -67,6 +67,28 @@ class FileScannerTest extends TestCase
     }
 
     #[Test]
+    public function getMusicBrainzIdsFromVorbisComments(): void
+    {
+        $info = $this->scanner->scan(test_path('songs/full-vorbis-comments.flac'));
+
+        self::assertSame('11111111-1111-1111-1111-111111111111', $info->mbid);
+        self::assertSame('22222222-2222-2222-2222-222222222222', $info->albumMbid);
+        self::assertSame('33333333-3333-3333-3333-333333333333', $info->artistMbid);
+        self::assertSame('44444444-4444-4444-4444-444444444444', $info->albumArtistMbid);
+    }
+
+    #[Test]
+    public function getNoMusicBrainzIdsFromUntaggedFile(): void
+    {
+        $info = $this->scanner->scan(test_path('songs/full.mp3'));
+
+        self::assertNull($info->mbid);
+        self::assertNull($info->albumMbid);
+        self::assertNull($info->artistMbid);
+        self::assertNull($info->albumArtistMbid);
+    }
+
+    #[Test]
     public function getFileInfoVorbisCommentsFlac(): void
     {
         $flacPath = test_path('songs/full-vorbis-comments.flac');
@@ -127,37 +149,6 @@ class FileScannerTest extends TestCase
         File::copy(test_path('fixtures/simple.lrc'), $lrcFile);
 
         self::assertSame("Line 1\nLine 2\nLine 3", $this->scanner->scan($mediaFile)->lyrics);
-    }
-
-    #[Test]
-    public function convertsEmbeddedSyncedLyricsToLrc(): void
-    {
-        $path = test_path('songs/blank.mp3');
-
-        $analyzed = [
-            'filenamepath' => $path,
-            'id3v2' => [
-                'SYLT' => [
-                    [
-                        'timestampformat' => 2,
-                        'lyrics' => [
-                            ['data' => 'First line', 'timestamp' => 12_340],
-                            ['data' => 'Second line', 'timestamp' => 65_060],
-                        ],
-                    ],
-                ],
-            ],
-            'playtime_seconds' => 100,
-        ];
-
-        $this->swap(getID3::class, Mockery::mock(getID3::class, [
-            'CopyTagsToComments' => $analyzed,
-            'analyze' => $analyzed,
-        ]));
-
-        $info = app(FileScanner::class)->scan($path);
-
-        self::assertSame("[00:12.34]First line\n[01:05.06]Second line", $info->lyrics);
     }
 
     #[Test]

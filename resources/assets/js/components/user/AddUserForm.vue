@@ -15,7 +15,7 @@
       </FormRow>
       <FormRow>
         <template #label>Password</template>
-        <PasswordField v-model="data.password" autocomplete="new-password" name="password" required title="Password" />
+        <PasswordField v-model="data.password" autocomplete="new-password" name="password" required />
         <template #help>Min. 10 characters. Should be a mix of characters, numbers, and symbols.</template>
       </FormRow>
       <RolePicker v-model="data.role" />

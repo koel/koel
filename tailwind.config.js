@@ -37,6 +37,7 @@ export default {
         'k-highlight-fg': 'var(--color-highlight-fg)',
         'k-success': 'var(--color-success)',
         'k-danger': 'var(--color-danger)',
+        'k-warning': 'var(--color-warning)',
         'k-primary': 'var(--color-primary)',
         'k-love': 'var(--color-love)',
       },

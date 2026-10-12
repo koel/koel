@@ -17,6 +17,6 @@ class OpenIDConnectCallbackController extends Controller
         $user = Socialite::driver('oidc')->user();
         $user = $userService->createOrUpdateUserFromSso(SsoUser::fromSocialite($user, 'OpenID Connect'));
 
-        return view('sso-callback', ['token' => $auth->logUserIn($user)->toArray()]);
+        return view('sso-callback', ['loginResponse' => $auth->logUserInOrStartTwoFactorChallenge($user)]);
     }
 }

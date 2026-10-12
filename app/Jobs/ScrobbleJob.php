@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Song;
 use App\Models\User;
-use App\Services\Integrations\LastfmService;
+use App\Services\ScrobbleService;
 
 class ScrobbleJob extends QueuedJob
 {
@@ -14,8 +14,8 @@ class ScrobbleJob extends QueuedJob
         public int $timestamp,
     ) {}
 
-    public function handle(LastfmService $lastfmService): void
+    public function handle(ScrobbleService $scrobbleService): void
     {
-        $lastfmService->scrobble($this->song, $this->user, $this->timestamp);
+        $scrobbleService->scrobble($this->song, $this->user, $this->timestamp);
     }
 }

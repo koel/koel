@@ -5,8 +5,9 @@ import Component from './ArtistTable.vue'
 
 const virtualScrollerStub = {
   name: 'VirtualScrollerStub',
-  props: ['items', 'itemHeight'],
-  template: '<div><template v-for="item in items" :key="item.id"><slot :item="item" /></template></div>',
+  props: ['items', 'itemHeight', 'carriesScreenHeader'],
+  template:
+    '<div><slot name="before" /><template v-for="item in items" :key="item.id"><slot :item="item" /></template></div>',
 }
 
 describe('artistTable.vue', () => {
@@ -23,23 +24,11 @@ describe('artistTable.vue', () => {
     }
   }
 
-  it('renders a sort-by-name header', () => {
-    renderWithArtists(3)
-
-    screen.getByTitle('Sort by name')
-  })
-
   it('emits sort with toggled order when a header is clicked', async () => {
     const { emitted } = renderWithArtists(0)
 
-    await h.user.click(screen.getByTitle('Sort by name'))
+    await h.user.click(screen.getByRole('button', { name: 'Name' }))
 
     expect(emitted('sort')?.[0]).toEqual(['name', 'desc'])
-  })
-
-  it('shows a more-actions button in the header action menu', () => {
-    renderWithArtists(0)
-
-    screen.getByRole('button', { name: 'Sort' })
   })
 })

@@ -1,5 +1,5 @@
 <template>
-  <HomeScreenBlock>
+  <ShelfSection>
     <template #header>Random Songs</template>
     <template #actions>
       <Btn v-if="playables.length" size="small" variant="ghost" rounded :disabled="refreshing" @click.prevent="refresh">
@@ -12,7 +12,7 @@
       <PlayableCardGrid v-if="playables.length" :aria-busy="refreshing" class="-mx-6" :playables />
       <p v-else>No songs available.</p>
     </template>
-  </HomeScreenBlock>
+  </ShelfSection>
 </template>
 
 <script lang="ts" setup>
@@ -21,7 +21,7 @@ import { ref, toRef, toRefs } from 'vue'
 import { overviewStore } from '@/stores/overviewStore'
 
 import Btn from '@/components/ui/form/Btn.vue'
-import HomeScreenBlock from '@/components/screens/home/HomeScreenBlock.vue'
+import ShelfSection from '@/components/ui/ShelfSection.vue'
 import PlayableCardGrid from '@/components/screens/home/PlayableCardGrid.vue'
 import PlayableCardGridSkeleton from '@/components/screens/home/PlayableCardGridSkeleton.vue'
 

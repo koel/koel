@@ -34,16 +34,6 @@ vi.mock('@/router', () => {
 import { useRouter } from './useRouter'
 
 describe('useRouter', () => {
-  it('gets route param', () => {
-    const { getRouteParam } = useRouter()
-    expect(getRouteParam('id')).toBe('42')
-  })
-
-  it('gets current screen', () => {
-    const { getCurrentScreen } = useRouter()
-    expect(getCurrentScreen()).toBe('Home')
-  })
-
   it('checks current screen', () => {
     const { isCurrentScreen } = useRouter()
     expect(isCurrentScreen('Home' as ScreenName)).toBe(true)

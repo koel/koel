@@ -1,7 +1,5 @@
 <template>
   <section>
-    <h3 class="text-2xl mb-2">Subsonic API Key</h3>
-
     <p>
       Use this key to connect Subsonic-compatible clients (Symfonium, Feishin, substreamer, etc.) to your
       {{ appName }} library. <br />
@@ -21,22 +19,19 @@
         class="flex-1 rounded-none border-0 focus-visible:outline-hidden px-4 font-mono read-only:!bg-transparent read-only:!text-current"
         @focus="onFocus"
       />
-      <button
-        type="button"
-        class="px-3 hover:bg-k-fg-5"
-        :title="revealed ? 'Hide key' : 'Reveal key'"
-        @click.prevent="revealed = !revealed"
-      >
+      <button v-koel-tooltip type="button" class="px-3 hover:bg-k-fg-5" @click.prevent="revealed = !revealed">
         <EyeOffIcon v-if="revealed" :size="16" />
         <EyeIcon v-else :size="16" />
+        <span class="sr-only">{{ revealed ? 'Hide key' : 'Reveal key' }}</span>
       </button>
       <button
+        v-koel-tooltip
         type="button"
         class="px-3 hover:bg-k-fg-5 border-l border-k-fg-10"
-        :title="copied ? 'Copied' : 'Copy'"
         @click.prevent="copyKey"
       >
         <CopyIcon :size="16" />
+        <span class="sr-only">{{ copied ? 'Copied' : 'Copy' }}</span>
       </button>
     </div>
 

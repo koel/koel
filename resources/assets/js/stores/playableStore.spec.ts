@@ -1,8 +1,8 @@
 import { reactive } from 'vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import isMobile from 'ismobilejs'
 import { createHarness } from '@/__tests__/TestHarness'
-import { authService } from '@/services/authService'
+import { signedUrlService } from '@/services/signedUrlService'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import type { SongUpdateResult } from '@/stores/playableStore'
@@ -19,6 +19,7 @@ describe('playableStore', () => {
     afterEach: () => {
       isMobile.any = false
       preferenceStore.temporary.transcode_on_mobile = false
+      playlistStore.state.playlists = []
     },
   })
 
@@ -145,16 +146,55 @@ describe('playableStore', () => {
     expect(removeArtistsMock).toHaveBeenCalledWith(['led-zeppelin'])
   })
 
-  it('gets source URL', () => {
+  it('gets the unsigned source URL', () => {
     commonStore.state.cdn_url = 'http://test/'
     const song = h.factory('song').make()
-    h.mock(authService, 'getAudioToken', 'hadouken')
 
-    expect(playableStore.getSourceUrl(song)).toBe(`http://test/play/${song.id}?t=hadouken`)
+    expect(playableStore.getUnsignedSourceUrl(song)).toBe(`http://test/play/${song.id}`)
 
     isMobile.any = true
     preferenceStore.temporary.transcode_on_mobile = true
-    expect(playableStore.getSourceUrl(song)).toBe(`http://test/play/${song.id}/1?t=hadouken`)
+    expect(playableStore.getUnsignedSourceUrl(song)).toBe(`http://test/play/${song.id}/1`)
+  })
+
+  it('resolves a signed source URL', async () => {
+    const song = h.factory('song').make()
+    const fetchMock = h.mock(signedUrlService, 'fetch').mockResolvedValue('http://test/play/signed')
+
+    isMobile.any = false
+
+    expect(await playableStore.resolveSourceUrl(song)).toBe('http://test/play/signed')
+    expect(fetchMock).toHaveBeenCalledWith(`songs/${song.id}/play-url`)
+
+    isMobile.any = true
+    preferenceStore.temporary.transcode_on_mobile = true
+    await playableStore.resolveSourceUrl(song)
+    expect(fetchMock).toHaveBeenLastCalledWith(`songs/${song.id}/play-url?transcode=1`)
+  })
+
+  it('falls back to the unsigned source URL of an offline copy when signing fails', async () => {
+    commonStore.state.cdn_url = 'http://test/'
+    const song = h.factory('song').make()
+    h.mock(signedUrlService, 'fetch').mockRejectedValue(new Error('offline'))
+    const matchMock = vi.fn().mockResolvedValue(new Response('audio'))
+    vi.stubGlobal('caches', { match: matchMock })
+
+    isMobile.any = false
+
+    expect(await playableStore.resolveSourceUrl(song)).toBe(`http://test/play/${song.id}`)
+    expect(matchMock).toHaveBeenCalledWith(`http://test/play/${song.id}`)
+
+    vi.unstubAllGlobals()
+  })
+
+  it('fails to resolve a source URL when signing fails and there is no offline copy', async () => {
+    const song = h.factory('song').make()
+    h.mock(signedUrlService, 'fetch').mockRejectedValue(new Error('offline'))
+    vi.stubGlobal('caches', { match: vi.fn().mockResolvedValue(undefined) })
+
+    await expect(playableStore.resolveSourceUrl(song)).rejects.toThrow('offline')
+
+    vi.unstubAllGlobals()
   })
 
   it('gets shareable URL', () => {
@@ -271,6 +311,27 @@ describe('playableStore', () => {
     expect(getMock).toHaveBeenCalled()
     expect(cache.get(['playlist.songs', playlist.id])).toEqual([])
     expect(playlist.playables).toEqual([])
+  })
+
+  it('fetches and deduplicates songs for playlists', async () => {
+    const playlists = h.factory('playlist').make(3)
+    const sharedSong = h.factory('song').make()
+    const firstSong = h.factory('song').make()
+    const secondSong = h.factory('song').make()
+    const thirdSong = h.factory('song').make()
+    const fetchMock = h
+      .mock(playableStore, 'fetchForPlaylist')
+      .mockResolvedValueOnce([sharedSong, firstSong])
+      .mockResolvedValueOnce([secondSong, sharedSong])
+      .mockResolvedValueOnce([thirdSong])
+
+    const songs = await playableStore.fetchForPlaylists(playlists)
+
+    expect(fetchMock).toHaveBeenNthCalledWith(1, playlists[0])
+    expect(fetchMock).toHaveBeenNthCalledWith(2, playlists[1])
+    expect(fetchMock).toHaveBeenNthCalledWith(3, playlists[2])
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+    expect(songs).toEqual([sharedSong, firstSong, secondSong, thirdSong])
   })
 
   it('paginates', async () => {

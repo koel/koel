@@ -26,12 +26,15 @@ class AlbumThumbnailTest extends TestCase
     {
         $createdAlbum = Album::factory()->createOne(['cover' => 'foo.jpg']);
 
+        $this->imageStorage->expects('exists')->with('foo_thumb.jpg')->andReturnFalse();
+        $this->imageStorage->expects('get')->with('foo.jpg')->andReturn('cover-bytes');
+
         $this->imageStorage
             ->expects('storeImage')
             ->with(
-                image_storage_path('foo.jpg'),
+                'cover-bytes',
                 Mockery::on(static fn (ImageWritingConfig $config) => $config->maxWidth === 48),
-                image_storage_path('foo_thumb.jpg'),
+                'foo_thumb.jpg',
             )
             ->andReturn('foo_thumb.jpg');
 

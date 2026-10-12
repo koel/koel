@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { getRenderPixelRatio } from '@/visualizers/pixelRatio'
 
 export class ThreeSharedRenderer {
   public readonly camera: THREE.PerspectiveCamera
@@ -26,14 +27,14 @@ export class ThreeSharedRenderer {
     this.camera.aspect = this.container.clientWidth / this.container.clientHeight
     this.camera.updateProjectionMatrix()
 
-    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setPixelRatio(getRenderPixelRatio())
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
   }
 
   initRenderer () {
     this.renderer = new THREE.WebGLRenderer()
 
-    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setPixelRatio(getRenderPixelRatio())
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
 
     this.renderer.autoClear = true

@@ -1,7 +1,7 @@
-import Sketch from 'sketch-js'
 import { random, sample } from 'lodash-es'
 import { audioService } from '@/services/audioService'
-import { noop } from '@/utils/helpers'
+import { configureAnalyser } from '@/visualizers/analyser'
+import { startFrameLoop } from '@/visualizers/frameLoop'
 
 const NUM_PARTICLES = 128
 const NUM_BANDS = 128
@@ -46,22 +46,14 @@ class AudioAnalyser {
     this.audio = audioService.element
     this.source = audioService.source
 
-    this.analyser = audioService.analyzer
-    this.analyser.smoothingTimeConstant = this.smoothing
-    this.analyser.fftSize = this.bandCount * 2
+    this.analyser = configureAnalyser({ fftSize: this.bandCount * 2, smoothing: this.smoothing })
 
     this.bands = new Uint8Array(this.analyser.frequencyBinCount)
-
-    this.update()
   }
 
   update () {
-    requestAnimationFrame(this.update.bind(this))
-
-    if (!this.audio.paused) {
-      this.analyser.getByteFrequencyData(this.bands)
-      this.onUpdate(this.bands)
-    }
+    this.analyser.getByteFrequencyData(this.bands)
+    this.onUpdate(this.bands)
   }
 }
 
@@ -147,37 +139,50 @@ class Particle {
 }
 
 export const init = (container: HTMLElement) => {
-  const particles: Particle[] = []
+  const canvas = container.appendChild(document.createElement('canvas'))
+  const context = canvas.getContext('2d')!
 
-  Sketch.create({
-    container,
+  const resize = () => {
+    canvas.width = container.clientWidth
+    canvas.height = container.clientHeight
+  }
 
-    setup () {
-      for (let i = 0; i < NUM_PARTICLES; ++i) {
-        particles.push(new Particle(random(this.width), random(this.height)))
-      }
+  resize()
 
-      new AudioAnalyser(NUM_BANDS, SMOOTHING, bands => {
-        // update particles based on fft transformed audio frequencies
-        particles.forEach(particle => (particle.energy = bands[particle.band] / 256))
-      })
-    },
+  const particles = Array.from(
+    { length: NUM_PARTICLES },
+    () => new Particle(random(canvas.width), random(canvas.height)),
+  )
 
-    draw () {
-      this.globalCompositeOperation = 'lighter'
-
-      particles.forEach(particle => {
-        if (particle.y < (-particle.size * particle.level * particle.scale * 2)) {
-          particle.reset()
-          particle.x = random(this.width)
-          particle.y = this.height + (particle.size * particle.scale * particle.level * 2)
-        }
-
-        particle.move()
-        particle.draw(this as CanvasRenderingContext2D)
-      })
-    },
+  const analyser = new AudioAnalyser(NUM_BANDS, SMOOTHING, bands => {
+    particles.forEach(particle => (particle.energy = bands[particle.band] / 256))
   })
 
-  return noop
+  const draw = () => {
+    analyser.update()
+
+    context.globalCompositeOperation = 'source-over'
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.globalCompositeOperation = 'lighter'
+
+    particles.forEach(particle => {
+      if (particle.y < -particle.size * particle.level * particle.scale * 2) {
+        particle.reset()
+        particle.x = random(canvas.width)
+        particle.y = canvas.height + particle.size * particle.scale * particle.level * 2
+      }
+
+      particle.move()
+      particle.draw(context)
+    })
+  }
+
+  window.addEventListener('resize', resize)
+  const stopFrameLoop = startFrameLoop(draw)
+
+  return () => {
+    stopFrameLoop()
+    window.removeEventListener('resize', resize)
+    canvas.remove()
+  }
 }

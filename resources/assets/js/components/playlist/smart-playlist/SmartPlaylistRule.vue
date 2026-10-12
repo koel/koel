@@ -11,27 +11,27 @@
 
       <span class="inline-flex flex-1 items-center gap-3">
         <RuleInput
-          v-for="input in availableInputs"
-          :key="input.id"
-          v-model="input.value"
-          :type="(selectedOperator?.type || selectedModel?.type)!"
-          :value="input.value"
+          v-for="(_, index) in inputCount"
+          :key="index"
+          v-model="values[index]"
+          :type="inputType"
           class="flex-1!"
-          @update:model-value="onInput"
         />
 
         <span v-if="valueSuffix" class="suffix mr-5 text-sm">{{ valueSuffix }}</span>
       </span>
 
       <Btn
+        v-koel-tooltip
         size="small"
         variant="destructive"
         class="absolute right-[-14px] aspect-square top-1 scale-[60%] hover:scale-75 active:scale-[60%]"
         rounded
-        title="Remove this rule"
+        data-testid="remove-rule-btn"
         @click.prevent="removeRule"
       >
         <Icon :icon="faMinus" />
+        <span class="sr-only">Remove this rule</span>
       </Btn>
     </div>
   </FormRow>
@@ -39,13 +39,14 @@
 
 <script lang="ts" setup>
 import { faMinus } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, ref, toRefs, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import models from '@/config/smart-playlist/models'
 import inputTypes from '@/config/smart-playlist/inputTypes'
 
 import FormRow from '@/components/ui/form/FormRow.vue'
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 import Btn from '@/components/ui/form/Btn.vue'
+import RuleInput from '@/components/playlist/smart-playlist/SmartPlaylistRuleInput.vue'
 
 const props = defineProps<{ rule: SmartPlaylistRule }>()
 
@@ -54,76 +55,52 @@ const emit = defineEmits<{
   (e: 'remove'): void
 }>()
 
-const RuleInput = defineAsyncComponent(() => import('@/components/playlist/smart-playlist/SmartPlaylistRuleInput.vue'))
+const findModel = (name: SmartPlaylistModel['name']) => {
+  const model = models.find(candidate => candidate.name === name)
 
-const { rule } = toRefs(props)
-
-const mutatedRule = Object.assign({}, rule.value) as SmartPlaylistRule
-
-const selectedModel = ref<SmartPlaylistModel>()
-const selectedOperator = ref<SmartPlaylistOperator>()
-
-const model = models.find(({ name }) => name === mutatedRule.model.name)
-
-if (!model) {
-  throw new Error(`Invalid smart playlist model: ${mutatedRule.model.name}`)
-}
-
-mutatedRule.model = selectedModel.value = model
-
-const availableOperators = computed<SmartPlaylistOperator[]>(() => {
-  return selectedModel.value ? inputTypes[selectedModel.value.type] : []
-})
-
-const operator = availableOperators.value.find(({ operator }) => operator === mutatedRule.operator)
-
-if (!operator) {
-  throw new Error(`Invalid smart playlist operator: ${mutatedRule.operator}`)
-}
-
-selectedOperator.value = operator
-
-const isOriginalOperatorSelected = computed(() => {
-  return (
-    selectedModel.value?.name === mutatedRule.model.name && selectedOperator.value?.operator === mutatedRule.operator
-  )
-})
-
-const availableInputs = computed<{ id: string; value: any }[]>(() => {
-  if (!selectedOperator.value) {
-    return []
+  if (!model) {
+    throw new Error(`Invalid smart playlist model: ${name}`)
   }
 
-  const inputs: Array<{ id: string; value: string }> = []
+  return model
+}
 
-  for (let i = 0, inputCount = selectedOperator.value.inputs || 1; i < inputCount; ++i) {
-    inputs.push({
-      id: `${mutatedRule.model.name}_${selectedOperator.value.operator}_${i}`,
-      value: isOriginalOperatorSelected.value ? mutatedRule.value[i] : '',
-    })
-  }
+const selectedModel = ref<SmartPlaylistModel>(findModel(props.rule.model.name))
+const availableOperators = computed<SmartPlaylistOperator[]>(() => inputTypes[selectedModel.value.type])
 
-  return inputs
-})
+const selectedOperator = ref<SmartPlaylistOperator>(
+  availableOperators.value.find(({ operator }) => operator === props.rule.operator) ?? availableOperators.value[0],
+)
 
-watch(availableOperators, () => {
-  if (selectedModel.value?.name === mutatedRule.model.name) {
-    selectedOperator.value = availableOperators.value.find(({ operator }) => operator === mutatedRule.operator)!
-  } else {
-    selectedOperator.value = availableOperators.value[0]
+const values = ref<any[]>([...props.rule.value])
+
+const inputCount = computed(() => selectedOperator.value.inputs || 1)
+const inputType = computed(() => selectedOperator.value.type || selectedModel.value.type)
+const valueSuffix = computed(() => selectedOperator.value.unit || selectedModel.value.unit)
+
+watch(availableOperators, (operators, previousOperators) => {
+  if (operators !== previousOperators) {
+    selectedOperator.value = operators[0]
   }
 })
 
-const valueSuffix = computed(() => selectedOperator.value?.unit || selectedModel.value?.unit)
+watch([inputType, inputCount], ([type, count], [previousType, previousCount]) => {
+  if (type !== previousType || count !== previousCount) {
+    values.value = Array.from({ length: count }, () => '')
+  }
+})
 
-const onInput = () => {
-  emit('input', {
-    id: mutatedRule.id,
-    model: selectedModel.value!,
-    operator: selectedOperator.value!.operator,
-    value: availableInputs.value.map(input => input.value),
-  })
-}
+watch(
+  [selectedModel, selectedOperator, values],
+  () =>
+    emit('input', {
+      id: props.rule.id,
+      model: selectedModel.value,
+      operator: selectedOperator.value.operator,
+      value: values.value.slice(0, inputCount.value),
+    }),
+  { deep: true },
+)
 
 const removeRule = () => emit('remove')
 </script>

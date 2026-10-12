@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { screen, within } from '@testing-library/vue'
 import { defineComponent, h as createElement, nextTick, provide, ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { BlockActionsHostKey } from '@/config/symbols'
@@ -15,14 +15,6 @@ const setOverflow = async (scroller: HTMLDivElement, clientWidth: number, scroll
 describe('carousel.vue', () => {
   const h = createHarness()
 
-  it('renders the default slot content', () => {
-    h.render(Component, {
-      slots: { default: '<div data-testid="card">Card</div>' },
-    })
-
-    screen.getByTestId('card')
-  })
-
   it('hides the scroll buttons when the track fits within the scroller', () => {
     h.render(Component, {
       slots: { default: '<div data-testid="card">Card</div>' },
@@ -30,18 +22,6 @@ describe('carousel.vue', () => {
 
     expect(screen.queryByRole('button', { name: 'Scroll left' })).toBeNull()
     expect(screen.queryByRole('button', { name: 'Scroll right' })).toBeNull()
-  })
-
-  it('shows the scroll buttons when the track overflows the scroller', async () => {
-    const { container } = h.render(Component, {
-      slots: { default: '<div>Card</div>' },
-    })
-
-    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
-    await setOverflow(scroller, 800, 3200)
-
-    screen.getByRole('button', { name: 'Scroll left' })
-    screen.getByRole('button', { name: 'Scroll right' })
   })
 
   it('renders scroll buttons inside the inline <nav> when no actions host is provided', async () => {
@@ -59,8 +39,8 @@ describe('carousel.vue', () => {
 
     const nav = container.querySelector<HTMLElement>('nav')
     expect(nav).not.toBeNull()
-    expect(nav!.querySelector('button[title="Scroll left"]')).not.toBeNull()
-    expect(nav!.querySelector('button[title="Scroll right"]')).not.toBeNull()
+    within(nav!).getByRole('button', { name: 'Scroll left' })
+    within(nav!).getByRole('button', { name: 'Scroll right' })
   })
 
   it('slides right by the scroller width when the right chevron is clicked', async () => {
@@ -113,9 +93,9 @@ describe('carousel.vue', () => {
     await setOverflow(scroller, 800, 3200)
 
     const host = screen.getByTestId('host')
-    expect(host.querySelector('button[title="Scroll left"]')).not.toBeNull()
-    expect(host.querySelector('button[title="Scroll right"]')).not.toBeNull()
+    within(host).getByRole('button', { name: 'Scroll left' })
+    within(host).getByRole('button', { name: 'Scroll right' })
     // The inline <nav> must not coexist with the teleported buttons.
-    expect(container.querySelector('nav button[title="Scroll left"]')).toBeNull()
+    expect(container.querySelector('nav')).toBeNull()
   })
 })

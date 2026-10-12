@@ -7,17 +7,13 @@ use App\Http\Requests\Subsonic\Search2Request;
 use App\Http\Responses\Subsonic\Resources\SearchResult2Resource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Models\User;
-use App\Repositories\AlbumRepository;
-use App\Repositories\ArtistRepository;
-use App\Repositories\SongRepository;
+use App\Services\Subsonic\SubsonicSearchService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class Search2Controller extends Controller
 {
     public function __construct(
-        private readonly ArtistRepository $artistRepository,
-        private readonly AlbumRepository $albumRepository,
-        private readonly SongRepository $songRepository,
+        private readonly SubsonicSearchService $searchService,
     ) {}
 
     /** @param User $user */
@@ -25,13 +21,23 @@ class Search2Controller extends Controller
     {
         $query = (string) $request->input('query');
 
-        if ($query === '') {
-            return SubsonicResponse::ok(['searchResult2' => SearchResult2Resource::empty()]);
-        }
+        $artists = $this->searchService
+            ->searchArtists($query, $request->integer('artistCount', 20), $request->integer('artistOffset'), $user)
+            ->loadCount('albums');
 
-        $artists = $this->artistRepository->search($query, $request->integer('artistCount', 20))->loadCount('albums');
-        $albums = $this->albumRepository->search($query, $request->integer('albumCount', 20));
-        $songs = $this->songRepository->search($query, $request->integer('songCount', 20));
+        $albums = $this->searchService->searchAlbums(
+            $query,
+            $request->integer('albumCount', 20),
+            $request->integer('albumOffset'),
+            $user,
+        );
+
+        $songs = $this->searchService->searchSongs(
+            $query,
+            $request->integer('songCount', 20),
+            $request->integer('songOffset'),
+            $user,
+        );
 
         return SubsonicResponse::ok([
             'searchResult2' => SearchResult2Resource::toArray($artists, $albums, $songs, $user),

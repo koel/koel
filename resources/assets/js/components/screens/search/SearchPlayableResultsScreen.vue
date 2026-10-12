@@ -1,8 +1,8 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :disabled="loading" :layout="playables.length ? headerLayout : 'collapsed'">
-        Results for <span class="font-thin">{{ decodedQ }}</span>
+      <ScreenHeader :disabled="loading" :layout="playables.length ? 'expanded' : 'collapsed'">
+        Results for <span class="font-thin">{{ q }}</span>
 
         <template #thumbnail>
           <ThumbnailStack :thumbnails="thumbnails" />
@@ -26,16 +26,17 @@
     </template>
 
     <PlayableListSkeleton v-if="loading" class="-m-6" role="status" aria-busy="true" aria-label="Loading" />
-    <PlayableList v-else ref="playableList" class="-m-6" @press:enter="onPressEnter" @swipe="onSwipe" />
+    <PlayableList v-else ref="playableList" class="-m-6" @press:enter="onPressEnter" />
   </ScreenBase>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRef } from 'vue'
+import { onMounted, ref, toRef } from 'vue'
 import { searchStore } from '@/stores/searchStore'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { pluralize } from '@/utils/formatters'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -48,7 +49,6 @@ const q = ref('')
 const {
   PlayableList,
   ThumbnailStack,
-  headerLayout,
   playables,
   playableList,
   thumbnails,
@@ -57,11 +57,11 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onSwipe,
 } = usePlayableList(toRef(searchStore.state, 'playables'), { type: 'Search.Playables' })
 
 const { PlayableListControls, config } = usePlayableListControls('Search.Playables')
-const decodedQ = computed(() => decodeURIComponent(q.value))
+
+usePageTitle().useScreenTitle('Search.Playables', () => q.value)
 const loading = ref(false)
 
 searchStore.resetPlayableResultState()

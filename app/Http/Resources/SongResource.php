@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\Integrations\MusicBrainzService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
@@ -34,6 +35,7 @@ class SongResource extends JsonResource
         'disc',
         'is_public',
         'created_at',
+        'mbid',
     ];
 
     public const array PAGINATION_JSON_STRUCTURE = [
@@ -100,6 +102,7 @@ class SongResource extends JsonResource
         $isPlus = once(static fn () => License::isPlus());
         $user = $this->user ?? once(static fn () => auth()->user());
         $embedding = $request->routeIs('embeds.payload');
+        $musicBrainzEnabled = MusicBrainzService::enabled();
 
         $data = [
             'type' => Str::plural($this->song->type->value),
@@ -124,6 +127,9 @@ class SongResource extends JsonResource
             'year' => $this->unless($embedding, $this->song->year),
             'is_public' => $this->unless($embedding, $this->song->is_public),
             'created_at' => $this->unless($embedding, $this->song->created_at),
+            'mbid' => $this->when($musicBrainzEnabled && !$embedding, $this->song->mbid),
+            'loudness' => $this->when($isPlus, $this->song->analysis?->loudness),
+            'true_peak' => $this->when($isPlus, $this->song->analysis?->true_peak),
             'embed_stream_url' => $this->when($embedding, fn () => URL::temporarySignedRoute(
                 'embeds.stream',
                 now()->addDay(),
@@ -147,6 +153,7 @@ class SongResource extends JsonResource
         } else {
             $data += [
                 'owner_id' => $this->unless($embedding, $this->song->owner->public_id),
+                'file_size' => $this->unless($embedding, $this->song->file_size),
                 'is_external' => $this->unless($embedding, fn () => $isPlus && !$this->song->ownedBy($user)),
             ];
         }

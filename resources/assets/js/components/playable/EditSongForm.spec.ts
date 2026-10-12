@@ -44,7 +44,7 @@ describe('editSongForm.vue', () => {
     const emitMock = h.mock(eventBus, 'emit')
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-    const { songs, html } = await renderComponent(
+    const { songs } = await renderComponent(
       h.factory('song').make({
         title: 'Rocket to Heaven',
         artist_name: 'Led Zeppelin',
@@ -53,8 +53,6 @@ describe('editSongForm.vue', () => {
         genre: 'Rock',
       }),
     )
-
-    expect(html()).toMatchSnapshot()
 
     await h.type(screen.getByTestId('title-input'), 'Highway to Hell')
     await h.type(screen.getByTestId('artist-input'), 'AC/DC')
@@ -99,9 +97,8 @@ describe('editSongForm.vue', () => {
     const emitMock = h.mock(eventBus, 'emit')
     const alertMock = h.mock(MessageToasterStub.value, 'success')
 
-    const { songs, html } = await renderComponent(h.factory('song').make(3))
+    const { songs } = await renderComponent(h.factory('song').make(3))
 
-    expect(html()).toMatchSnapshot()
     expect(screen.queryByTestId('title-input')).toBeNull()
     expect(screen.queryByTestId('lyrics-input')).toBeNull()
 
@@ -127,6 +124,38 @@ describe('editSongForm.vue', () => {
 
     expect(alertMock).toHaveBeenCalledWith('Updated 3 songs.')
     expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED', result)
+  })
+
+  it('leaves an untouched album artist out of the update', async () => {
+    const updateMock = h.mock(songStore, 'updateSongs').mockResolvedValue({
+      songs: [],
+      albums: [],
+      artists: [],
+      removed: { album_ids: [], artist_ids: [] },
+    })
+
+    await renderComponent(h.factory('song').state('partOfCompilation').make())
+
+    await h.type(screen.getByTestId('track-input'), '5')
+    await h.user.click(screen.getByRole('button', { name: 'Update' }))
+
+    expect(updateMock.mock.calls[0][1]).not.toHaveProperty('album_artist_name')
+  })
+
+  it('sends a cleared album artist as empty', async () => {
+    const updateMock = h.mock(songStore, 'updateSongs').mockResolvedValue({
+      songs: [],
+      albums: [],
+      artists: [],
+      removed: { album_ids: [], artist_ids: [] },
+    })
+
+    await renderComponent(h.factory('song').state('partOfCompilation').make())
+
+    await h.user.clear(screen.getByTestId('albumArtist-input'))
+    await h.user.click(screen.getByRole('button', { name: 'Update' }))
+
+    expect(updateMock.mock.calls[0][1]).toHaveProperty('album_artist_name', '')
   })
 
   it('displays artist name if all songs have the same artist', async () => {

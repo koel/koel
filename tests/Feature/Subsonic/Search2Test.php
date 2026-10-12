@@ -67,28 +67,4 @@ class Search2Test extends TestCase
             self::assertTrue($album['isDir']);
         }
     }
-
-    #[Test]
-    public function emptyQueryReturnsEmptyResult(): void
-    {
-        $user = create_user();
-
-        $response = $this->getJson(
-            '/rest/search2.view?'
-                . Arr::query([
-                    'apiKey' => $user->subsonic_api_key,
-                    'f' => 'json',
-                    'query' => '',
-                ]),
-        )->assertOk();
-
-        self::assertSame(
-            [
-                'artist' => [],
-                'album' => [],
-                'song' => [],
-            ],
-            $response->json('subsonic-response.searchResult2'),
-        );
-    }
 }

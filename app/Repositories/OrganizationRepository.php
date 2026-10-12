@@ -13,4 +13,9 @@ class OrganizationRepository extends Repository
     {
         return Organization::default();
     }
+
+    public function getRequestedOrganization(): Organization
+    {
+        return $this->getDefault();
+    }
 }

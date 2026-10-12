@@ -14,6 +14,7 @@
       </div>
 
       <div class="btn-group">
+        <ZipDownloadButton />
         <AiButton v-if="usesAi" />
         <ProfileDropdown />
       </div>
@@ -80,7 +81,7 @@
 <script lang="ts" setup>
 import isMobile from 'ismobilejs'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, toRef, watch } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { preferenceStore } from '@/stores/preferenceStore'
@@ -92,6 +93,7 @@ import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
 import { CurrentStreamableKey } from '@/config/symbols'
 
 import AiButton from '@/components/layout/main-wrapper/side-sheet/AiButton.vue'
+import ZipDownloadButton from '@/components/layout/main-wrapper/side-sheet/ZipDownloadButton.vue'
 import ProfileDropdown from '@/components/layout/main-wrapper/side-sheet/ProfileDropdown.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 import SideSheetPanelLazyWrapper from '@/components/layout/main-wrapper/side-sheet/SideSheetPanelLazyWrapper.vue'
@@ -104,7 +106,7 @@ const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInf
 const YouTubeVideoList = defineAsyncComponent(() => import('@/components/ui/youtube/YouTubeVideoList.vue'))
 
 const { useYouTube } = useThirdPartyServices()
-const usesAi = commonStore.state.uses_ai
+const usesAi = toRef(commonStore.state, 'uses_ai')
 
 const streamable = requireInjection(CurrentStreamableKey, ref(undefined))
 const activeTab = ref<SideSheetTab | null>(null)

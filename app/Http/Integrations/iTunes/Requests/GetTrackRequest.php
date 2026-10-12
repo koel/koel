@@ -42,6 +42,6 @@ class GetTrackRequest extends Request
 
     public function resolveEndpoint(): string
     {
-        return '/';
+        return '/search';
     }
 }

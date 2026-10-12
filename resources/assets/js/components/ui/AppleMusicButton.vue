@@ -1,9 +1,9 @@
 <template>
   <a
+    v-koel-tooltip
     :href="url"
     class="rounded-sm px-2 py-0 h-6 flex items-center itunes-gradient focus:itunes-gradient"
     target="_blank"
-    title="Preview and buy this song on Apple Music"
   >
     <svg
       class="fill-white"
@@ -20,6 +20,7 @@
         stroke-width="1"
       />
     </svg>
+    <span class="sr-only">Preview and buy this song on Apple Music</span>
   </a>
 </template>
 

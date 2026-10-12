@@ -46,6 +46,18 @@ describe('themeStore', () => {
     expect(setThemeMock).toHaveBeenCalledWith('classic')
   })
 
+  it.each([
+    ['#ffbd41', '#111111'],
+    ['#1a1a1a', '#ffffff'],
+  ])('picks readable text for a highlight of %s that is already in place at start', (highlight, foreground) => {
+    document.body.style.setProperty('--color-highlight', highlight)
+
+    themeStore.init()
+
+    expect(document.body.style.getPropertyValue('--color-highlight-fg')).toBe(foreground)
+    document.body.style.removeProperty('--color-highlight-fg')
+  })
+
   it('initializes the store with a custom theme', () => {
     const setThemeMock = h.mock(themeStore, 'setTheme')
 
@@ -62,7 +74,7 @@ describe('themeStore', () => {
 
     themeStore.init(theme)
 
-    expect(themeStore.all.filter(({ id }) => id === theme.id)).toBeTruthy()
+    expect(themeStore.getThemeById(theme.id)).toEqual(theme)
     expect(setThemeMock).toHaveBeenCalledWith(theme)
   })
 
@@ -84,6 +96,24 @@ describe('themeStore', () => {
     for (const key in theme.properties) {
       expect(document.body.style.getPropertyValue(key)).toEqual(theme.properties[key])
     }
+  })
+
+  it('applies cover colors to the background and highlight', () => {
+    themeStore.setCoverColors({ background: 'hsl(24 35% 10%)', highlight: 'hsl(24 87% 55%)' })
+
+    expect(document.body.style.getPropertyValue('--color-bg')).toBe('hsl(24 35% 10%)')
+    expect(document.body.style.getPropertyValue('--color-highlight')).toBe('hsl(24 87% 55%)')
+  })
+
+  it('restores the default background and highlight without cover colors', () => {
+    themeStore.defaultProperties['--color-bg'] = '#000000'
+    themeStore.defaultProperties['--color-highlight'] = '#ff0000'
+    themeStore.setCoverColors({ background: 'hsl(24 35% 10%)', highlight: 'hsl(24 87% 55%)' })
+
+    themeStore.setCoverColors(null)
+
+    expect(document.body.style.getPropertyValue('--color-bg')).toBe('#000000')
+    expect(document.body.style.getPropertyValue('--color-highlight')).toBe('#ff0000')
   })
 
   it('gets a theme by id', () => {
@@ -134,6 +164,7 @@ describe('themeStore', () => {
     const deleteMock = h.mock(http, 'delete')
     await themeStore.destroy(customTheme)
 
-    expect(deleteMock)
+    expect(deleteMock).toHaveBeenCalledWith(`themes/${customTheme.id}`)
+    expect(themeStore.getThemeById(customTheme.id)).toBeUndefined()
   })
 })

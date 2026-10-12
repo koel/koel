@@ -19,11 +19,6 @@ describe('useEpisodeProgressTracking', () => {
     },
   })
 
-  it('returns trackEpisode function', () => {
-    const { trackEpisode } = useEpisodeProgressTracking()
-    expect(typeof trackEpisode).toBe('function')
-  })
-
   it('updates progress on tracked episode', async () => {
     const podcast = h.factory('podcast').make()
     podcast.state.current_episode = null

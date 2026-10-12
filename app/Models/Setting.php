@@ -11,13 +11,14 @@ use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
+ * @property int $id
+ * @property ?string $organization_id
  * @property string $key
  * @property mixed $value
  *
- * @method static self find(string $key)
  * @method static SettingFactory factory(...$parameters)
  */
-#[Table(key: 'key', keyType: 'string', timestamps: false)]
+#[Table(timestamps: false)]
 #[Unguarded]
 class Setting extends Model implements AuditableContract
 {
@@ -29,9 +30,12 @@ class Setting extends Model implements AuditableContract
         return ['value' => 'json'];
     }
 
-    public static function get(string $key): mixed
+    /**
+     * @param ?Organization $organization the organization the setting belongs to, or null for an install-wide one
+     */
+    public static function get(string $key, ?Organization $organization = null): mixed
     {
-        return self::find($key)?->value;
+        return self::query()->where('key', $key)->where('organization_id', $organization?->id)->first()?->value;
     }
 
     /**
@@ -39,17 +43,18 @@ class Setting extends Model implements AuditableContract
      *
      * @param array|string $key the key of the setting, or an associative array of settings,
      *                            in which case $value will be discarded
+     * @param ?Organization $organization the organization the setting belongs to, or null for an install-wide one
      */
-    public static function set(array|string $key, $value = ''): void
+    public static function set(array|string $key, $value = '', ?Organization $organization = null): void
     {
         if (is_array($key)) {
             foreach ($key as $k => $v) {
-                self::set($k, $v);
+                self::set($k, $v, $organization);
             }
 
             return;
         }
 
-        self::query()->updateOrCreate(compact('key'), compact('value'));
+        self::query()->updateOrCreate(['key' => $key, 'organization_id' => $organization?->id], compact('value'));
     }
 }

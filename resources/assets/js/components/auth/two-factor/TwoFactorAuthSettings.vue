@@ -8,7 +8,9 @@
         verification when you log in. You can use an authenticator app like Google Authenticator or Authy to generate
         time-based one-time passwords.
       </p>
-      <Btn type="button" @click.prevent="stage = 'enrolling'"> Enable Two-Factor Authentication </Btn>
+      <Btn type="button" variant="ghost" bordered @click.prevent="stage = 'enrolling'">
+        Enable Two-Factor Authentication
+      </Btn>
     </template>
 
     <TwoFactorManageActions

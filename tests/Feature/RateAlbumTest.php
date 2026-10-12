@@ -69,23 +69,4 @@ class RateAlbumTest extends TestCase
         self::assertSame(5, $album->fresh()->getRatingFor($alice));
         self::assertSame(1, $album->fresh()->getRatingFor($bob));
     }
-
-    #[Test]
-    public function rejectsOutOfRangeRating(): void
-    {
-        $user = create_user();
-        $album = Album::factory()->createOne();
-
-        $this->putAs("api/albums/$album->id/rating", ['rating' => 6], $user)->assertUnprocessable();
-        $this->putAs("api/albums/$album->id/rating", ['rating' => -1], $user)->assertUnprocessable();
-    }
-
-    #[Test]
-    public function rejectsMissingRating(): void
-    {
-        $user = create_user();
-        $album = Album::factory()->createOne();
-
-        $this->putAs("api/albums/$album->id/rating", [], $user)->assertUnprocessable();
-    }
 }

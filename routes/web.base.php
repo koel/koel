@@ -1,39 +1,46 @@
 <?php
 
 use App\Facades\ITunes;
+use App\Http\Controllers\AppManifestController;
 use App\Http\Controllers\AuthorizeDropboxController;
 use App\Http\Controllers\Demo\IndexController as DemoIndexController;
 use App\Http\Controllers\Demo\NewSessionController;
-use App\Http\Controllers\Download\DownloadAlbumController;
-use App\Http\Controllers\Download\DownloadArtistController;
-use App\Http\Controllers\Download\DownloadFavoritesController;
-use App\Http\Controllers\Download\DownloadPlaylistController;
-use App\Http\Controllers\Download\DownloadSongsController;
+use App\Http\Controllers\DownloadSongController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LastfmController;
 use App\Http\Controllers\PlayController;
+use App\Http\Controllers\RemoteManifestController;
 use App\Http\Controllers\SSO\GoogleCallbackController;
 use App\Http\Controllers\SSO\OpenIDConnectCallbackController;
 use App\Http\Controllers\StreamEmbedController;
 use App\Http\Controllers\StreamRadioController;
 use App\Http\Controllers\ViewSongOnITunesController;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
 Route::middleware('web')->group(static function (): void {
     // Using a closure to determine the controller instead of static configuration to allow for testing.
-    Route::get('/', static fn () => app()->call(
+    $showApp = static fn () => app()->call(
         config('koel.misc.demo') ? DemoIndexController::class : IndexController::class,
-    ));
+    );
+
+    Route::get('/', $showApp);
+
+    Route::fallback(static function () use ($showApp) {
+        abort_unless(config('koel.clean_urls.enabled') && !request()->is('api/*'), Response::HTTP_NOT_FOUND);
+
+        return $showApp();
+    });
 
     Route::get('remote', static fn () => view('remote'));
 
-    Route::middleware('auth')->group(static function (): void {
-        Route::prefix('lastfm')->group(static function (): void {
-            Route::get('connect', [LastfmController::class, 'connect'])->name('lastfm.connect');
-            Route::get('callback', [LastfmController::class, 'callback'])->name('lastfm.callback');
-        });
+    Route::get('manifest.json', AppManifestController::class)->name('manifest');
+    Route::get('manifest-remote.json', RemoteManifestController::class)->name('manifest.remote');
 
+    Route::get('lastfm/callback', [LastfmController::class, 'callback'])->name('lastfm.callback');
+
+    Route::middleware('auth')->group(static function (): void {
         if (ITunes::used()) {
             Route::get('itunes/song/{album}', ViewSongOnITunesController::class)->name('iTunes.viewSong');
         }
@@ -50,15 +57,13 @@ Route::middleware('web')->group(static function (): void {
     Route::middleware('audio.auth')->group(static function (): void {
         Route::get('play/{song}/{transcode?}', PlayController::class)->name('song.play');
 
-        Route::get('radio/stream/{radioStation}', StreamRadioController::class)->name('radio.stream');
+        Route::get('radio/stream/{radioStation}', StreamRadioController::class)->name('radio.stream')->middleware(
+            'radio.enabled',
+        );
 
         if (config('koel.download.allow')) {
             Route::prefix('download')->group(static function (): void {
-                Route::get('songs', DownloadSongsController::class);
-                Route::get('album/{album}', DownloadAlbumController::class);
-                Route::get('artist/{artist}', DownloadArtistController::class);
-                Route::get('playlist/{playlist}', DownloadPlaylistController::class);
-                Route::get('favorites', DownloadFavoritesController::class);
+                Route::get('songs', DownloadSongController::class)->name('songs.download');
             });
         }
     });

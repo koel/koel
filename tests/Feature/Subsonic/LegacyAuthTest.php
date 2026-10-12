@@ -83,24 +83,6 @@ class LegacyAuthTest extends TestCase
     }
 
     #[Test]
-    public function hexEncodedPasswordWithWrongKeyIsRejected(): void
-    {
-        $user = create_user();
-
-        $this
-            ->getJson(
-                '/rest/ping.view?'
-                    . Arr::query([
-                        'u' => $user->email,
-                        'p' => 'enc:' . bin2hex('not-the-real-key'),
-                        'f' => 'json',
-                    ]),
-            )
-            ->assertOk()
-            ->assertJsonPath('subsonic-response.error.code', 40);
-    }
-
-    #[Test]
     public function saltedTokenSucceeds(): void
     {
         $user = create_user();

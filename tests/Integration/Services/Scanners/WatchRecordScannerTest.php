@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services\Scanners;
 
+use App\Events\LibraryChanged;
 use App\Events\MediaScanCompleted;
 use App\Models\Setting;
 use App\Models\Song;
@@ -71,5 +72,19 @@ class WatchRecordScannerTest extends TestCase
         $this->assertDatabaseMissing(Song::class, ['path' => $this->path('/subdir/sic.mp3')]);
         $this->assertDatabaseMissing(Song::class, ['path' => $this->path('/subdir/no-name.mp3')]);
         $this->assertDatabaseMissing(Song::class, ['path' => $this->path('/subdir/back-in-black.mp3')]);
+    }
+
+    #[Test]
+    public function watchedChangesPruneTheLibrary(): void
+    {
+        Event::fake(LibraryChanged::class);
+        $song = Song::factory()->createOne();
+
+        $this->scanner->scan(
+            new InotifyWatchRecord("DELETE $song->path"),
+            ScanConfiguration::make(owner: create_admin()),
+        );
+
+        Event::assertDispatched(LibraryChanged::class);
     }
 }

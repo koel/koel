@@ -1,6 +1,6 @@
 import type { Route } from '@/router'
 import { cache } from '@/services/cache'
-import { usePolicies } from '@/composables/usePolicies'
+import { canUploadFromThisDevice } from '@/utils/uploadAccess'
 
 const UUID_REGEX = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 const ULID_REGEX = '[0-9A-Za-z]{26}'
@@ -10,11 +10,13 @@ export const routes = [
     name: 'home',
     path: '/home',
     screen: 'Home',
+    title: 'Home',
   },
   {
     name: '404',
     path: '/404',
     screen: '404',
+    title: 'Not Found',
     meta: {
       public: true,
     },
@@ -23,85 +25,104 @@ export const routes = [
     name: 'queue',
     path: '/queue',
     screen: 'Queue',
+    title: 'Current Queue',
   },
   {
     name: 'songs.index',
     path: '/songs',
     screen: 'Songs',
+    title: 'All Songs',
   },
   {
     name: 'albums.index',
     path: '/albums',
     screen: 'Albums',
+    title: 'Albums',
   },
   {
     name: 'artists.index',
     path: '/artists',
     screen: 'Artists',
+    title: 'Artists',
   },
   {
     name: 'favorites',
     path: '/favorites',
     screen: 'Favorites',
+    title: 'Your Favorites',
   },
   {
     name: 'recently-played',
     path: '/recently-played',
     screen: 'RecentlyPlayed',
+    title: 'Recently Played',
+  },
+  {
+    name: 'statistics',
+    path: '/statistics',
+    screen: 'Statistics',
+    title: 'Listening Statistics',
   },
   {
     name: 'offline-songs',
     path: '/offline-songs',
     screen: 'OfflineSongs',
+    title: 'Available Offline',
   },
   {
     name: 'search',
     path: '/search',
     screen: 'Search.Excerpt',
+    title: 'Search',
   },
   {
     name: 'search.playables',
     path: '/search/songs',
     screen: 'Search.Playables',
+    title: 'Search',
   },
   {
     name: 'upload',
     path: '/upload',
     screen: 'Upload',
+    title: 'Upload Media',
     meta: {
-      guard: () => usePolicies().currentUserCan.uploadSongs(),
+      guard: canUploadFromThisDevice,
     },
   },
   {
     name: 'settings',
-    path: '/settings',
+    path: '/settings/:section?',
     screen: 'Settings',
-    meta: {
-      guard: () => usePolicies().currentUserCan.manageSettings(),
-    },
+    title: 'Settings',
   },
   {
     name: 'users.index',
     path: '/users',
-    screen: 'Users',
+    screen: 'Settings',
     meta: {
-      guard: () => usePolicies().currentUserCan.manageUsers(),
+      redirect: () => 'settings/users',
     },
   },
   {
     name: 'youtube',
     path: '/youtube',
     screen: 'YouTube',
+    title: 'YouTube',
   },
   {
     name: 'profile',
     path: '/profile',
-    screen: 'Profile',
+    screen: 'Settings',
+    meta: {
+      redirect: () => 'settings/profile',
+    },
   },
   {
     name: 'visualizer',
     path: 'visualizer',
     screen: 'Visualizer',
+    title: 'Visualizer',
   },
   {
     name: 'albums.show',
@@ -141,6 +162,7 @@ export const routes = [
     name: 'genres.index',
     path: '/genres',
     screen: 'Genres',
+    title: 'Genres',
   },
   {
     name: 'genres.show',
@@ -151,6 +173,7 @@ export const routes = [
     name: 'podcasts.index',
     path: '/podcasts',
     screen: 'Podcasts',
+    title: 'Podcasts',
   },
   {
     name: 'podcasts.show',
@@ -169,16 +192,19 @@ export const routes = [
     name: 'radio-stations.index',
     path: '/radio/stations',
     screen: 'Radio.Stations',
+    title: 'Radio Stations',
   },
   {
     name: 'visualizer',
     path: '/visualizer',
     screen: 'Visualizer',
+    title: 'Visualizer',
   },
   {
     name: 'songs.queue',
     path: '/songs/:id',
     screen: 'Queue',
+    title: 'Current Queue',
     constraints: {
       id: UUID_REGEX,
     },
@@ -212,14 +238,28 @@ export const routes = [
     },
   },
   {
+    name: 'email-change.confirm',
+    path: '/email-change/:payload',
+    screen: 'EmailChange.Confirm',
+    meta: {
+      public: true,
+      layout: 'email-change',
+    },
+    constraints: {
+      payload: '[a-zA-Z0-9\\+/=]+',
+    },
+  },
+  {
     name: 'ai',
     path: '/ai',
     screen: 'AI',
+    title: 'AI Assistant',
   },
   {
     name: 'media-browser',
     path: '/browse/:folder?',
     screen: 'MediaBrowser',
+    title: 'Media Browser',
     constraints: {
       folder: UUID_REGEX,
     },
@@ -238,4 +278,4 @@ export const routes = [
   },
 ] as const satisfies Route[]
 
-export type RouteName = (typeof routes)[number]['name']
+export type RouteName = (typeof routes)[number]['name'] | keyof RouteNames

@@ -69,17 +69,6 @@ describe('playableListHeader.vue', () => {
     expect(emitted().sort[1]).toEqual([field, 'asc'])
   })
 
-  it('shows collaborative columns when collaborative', async () => {
-    await renderComponent({
-      sortable: true,
-      reorderable: true,
-      collaborative: true,
-    })
-
-    screen.getByTestId('header-collaborator')
-    screen.getByTestId('header-contributed-at')
-  })
-
   it('does not show collaborative columns when not collaborative', async () => {
     await renderComponent()
 

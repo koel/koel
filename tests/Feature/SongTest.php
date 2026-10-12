@@ -8,8 +8,10 @@ use App\Jobs\DeleteSongFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Favorite;
+use App\Models\Genre;
 use App\Models\Rating;
 use App\Models\Song;
+use App\Models\SongAnalysis;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\Test;
@@ -27,6 +29,14 @@ class SongTest extends TestCase
 
         $this->getAs('api/songs')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
         $this->getAs('api/songs?sort=title&order=desc')->assertJsonStructure(SongResource::PAGINATION_JSON_STRUCTURE);
+    }
+
+    #[Test]
+    public function includeTheFileSize(): void
+    {
+        $song = Song::factory()->createOne(['file_size' => 12_345_678]);
+
+        $this->getAs("api/songs/{$song->id}", $song->owner)->assertJsonPath('file_size', 12_345_678);
     }
 
     #[Test]
@@ -52,6 +62,19 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function sortingByGenreListsASongWithMultipleGenresOnce(): void
+    {
+        $song = Song::factory()->createOne();
+        $song->genres()->attach(Genre::factory()->createMany(2));
+
+        $this
+            ->getAs('api/songs?sort=genre&order=asc', $song->owner)
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $song->id);
+    }
+
+    #[Test]
     public function indexWithCursorTraversesAllSupportedSortsWithoutDuplicates(): void
     {
         $user = create_user();
@@ -67,6 +90,12 @@ class SongTest extends TestCase
             Favorite::factory()->for($user)->for($song, 'favoriteable')->createOne();
         }
 
+        $genres = Genre::factory()->createMany(2);
+
+        foreach ($songs->slice(30, 20) as $song) {
+            $song->genres()->attach($genres);
+        }
+
         foreach ([
             'title',
             'track',
@@ -77,6 +106,7 @@ class SongTest extends TestCase
             'album_name',
             'rating',
             'favorite',
+            'genre',
         ] as $sort) {
             $allIds = [];
             $cursor = '';
@@ -150,6 +180,23 @@ class SongTest extends TestCase
         $song = Song::factory()->createOne();
 
         $this->getAs("api/songs/{$song->id}")->assertJsonStructure(SongResource::JSON_STRUCTURE);
+    }
+
+    #[Test]
+    public function showIncludesTheMusicBrainzIdentifier(): void
+    {
+        $song = Song::factory()->createOne(['mbid' => '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d']);
+
+        $this->getAs("api/songs/{$song->id}")->assertJsonPath('mbid', '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d');
+    }
+
+    #[Test]
+    public function showOmitsTheMusicBrainzIdentifierWhenMusicBrainzIsDisabled(): void
+    {
+        config(['koel.services.musicbrainz.enabled' => false]);
+        $song = Song::factory()->createOne(['mbid' => '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d']);
+
+        $this->getAs("api/songs/{$song->id}")->assertJsonMissingPath('mbid');
     }
 
     #[Test]
@@ -364,6 +411,42 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function clearingTheAlbumArtistTurnsACompilationSongIntoANormalOne(): void
+    {
+        $song = $this->createCompilationSong();
+
+        $this->putAs(
+            '/api/songs',
+            ['songs' => [$song->id], 'data' => ['album_artist_name' => '']],
+            create_admin(),
+        )->assertOk();
+
+        $song->refresh();
+
+        self::assertFalse($song->album_artist->is_various);
+        self::assertTrue($song->album_artist->is($song->artist));
+    }
+
+    #[Test]
+    public function leavingOutTheAlbumArtistKeepsACompilationSongAsIs(): void
+    {
+        $song = $this->createCompilationSong();
+
+        $this->putAs('/api/songs', ['songs' => [$song->id], 'data' => ['track' => 5]], create_admin())->assertOk();
+
+        self::assertTrue($song->refresh()->album_artist->is_various);
+    }
+
+    private function createCompilationSong(): Song
+    {
+        $compilation = Album::factory()->for(Artist::factory()->createOne([
+            'name' => Artist::VARIOUS_NAME,
+        ]))->createOne();
+
+        return Song::factory()->for($compilation)->for(Artist::factory()->createOne())->createOne();
+    }
+
+    #[Test]
     public function updateSingleSongWithEmptyTrackAndDisc(): void
     {
         $song = Song::factory()->createOne([
@@ -387,5 +470,14 @@ class SongTest extends TestCase
 
         self::assertSame(0, $song->track);
         self::assertSame(1, $song->disc);
+    }
+
+    #[Test]
+    public function hideLoudnessWithoutKoelPlus(): void
+    {
+        $song = Song::factory()->createOne();
+        SongAnalysis::factory()->for($song)->createOne();
+
+        $this->getAs("api/songs/{$song->id}")->assertJsonMissingPath('loudness')->assertJsonMissingPath('true_peak');
     }
 }

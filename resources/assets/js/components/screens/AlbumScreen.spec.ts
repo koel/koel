@@ -77,6 +77,26 @@ describe('albumScreen.vue', () => {
     await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/albums'))
   })
 
+  it('stops watching for album removal once closed', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { album, unmount } = await renderComponent()
+    await h.tick()
+
+    unmount()
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: {
+        album_ids: [album.id],
+        artist_ids: [],
+      },
+    })
+
+    expect(goMock).not.toHaveBeenCalled()
+  })
+
   it('shows the song list', async () => {
     await renderComponent()
     await waitFor(async () => screen.getByTestId('song-list'))
@@ -93,6 +113,16 @@ describe('albumScreen.vue', () => {
       expect(fetchMock).toHaveBeenCalledWith(album.artist_id)
       expect(screen.getAllByTestId('album-card')).toHaveLength(3) // current album is excluded
     })
+  })
+
+  it('lays the other albums out as a grid', async () => {
+    h.mock(albumStore, 'fetchForArtist').mockResolvedValue(h.factory('album').make(3))
+
+    await renderComponent('other-albums')
+
+    const [card] = await screen.findAllByTestId('album-card')
+
+    expect(card.closest('.as-grid')).toBeTruthy()
   })
 
   it('has a Favorite button if album is favorite', async () => {

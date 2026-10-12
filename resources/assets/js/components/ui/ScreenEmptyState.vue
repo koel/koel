@@ -18,7 +18,7 @@
 @reference '@css/app.pcss';
 .text {
   a {
-    @apply text-k-fg-20;
+    @apply text-k-highlight;
 
     &:hover {
       @apply text-k-fg;

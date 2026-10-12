@@ -1,19 +1,12 @@
 <template>
   <div
-    class="card-thumbnail group/thumb relative w-full aspect-square rounded-xl overflow-hidden bg-cover bg-center bg-no-repeat text-k-fg"
-    :style="{ backgroundImage: `url(${defaultCover})` }"
+    class="card-thumbnail relative w-full aspect-square overflow-hidden text-k-fg"
     data-testid="album-artist-card-thumbnail"
   >
-    <img
-      v-if="image"
-      :src="image"
-      :alt="entity.name"
-      class="absolute inset-0 w-full h-full object-cover"
-      loading="lazy"
-    />
+    <img :src="image" :alt="entity.name" class="cover-art absolute inset-0 w-full h-full object-cover" loading="lazy" />
 
     <div
-      class="overlay absolute inset-0 z-10 bg-black/60 opacity-0 group-hover/thumb:opacity-100 no-hover:opacity-100 transition-opacity duration-200"
+      class="overlay absolute inset-0 z-10 bg-black/60 opacity-0 group-hover/card:opacity-100 group-focus-within/card:opacity-100 no-hover:opacity-100 transition-opacity duration-200"
     />
 
     <FavoriteButton
@@ -23,7 +16,7 @@
       :class="
         entity.favorite
           ? 'opacity-100 drop-shadow-[0_1px_4px_var(--k-bg-50)]'
-          : 'opacity-0 group-hover/thumb:opacity-100 no-hover:opacity-100'
+          : 'opacity-0 group-hover/card:opacity-100 group-focus-within/card:opacity-100 no-hover:opacity-100'
       "
       @toggle="emit('toggle-favorite')"
     />
@@ -35,14 +28,14 @@
       :class="
         entity.rating > 0
           ? 'opacity-100 drop-shadow-[0_1px_4px_var(--k-bg-50)]'
-          : 'opacity-0 group-hover/thumb:opacity-100 no-hover:opacity-100'
+          : 'opacity-0 group-hover/card:opacity-100 group-focus-within/card:opacity-100 no-hover:opacity-100'
       "
     />
 
     <button
       type="button"
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 opacity-0 group-hover/thumb:opacity-100 no-hover:opacity-100 transition-opacity"
-      :title="playLabel"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 opacity-0 group-hover/card:opacity-100 group-focus-within/card:opacity-100 no-hover:opacity-100 transition-opacity"
+      v-koel-tooltip
       @click.stop="playOrQueue"
     >
       <span
@@ -53,22 +46,12 @@
       </span>
       <span class="sr-only">{{ playLabel }}</span>
     </button>
-
-    <button
-      type="button"
-      class="absolute bottom-3 right-4 z-20 p-1 opacity-0 group-hover/thumb:opacity-100 no-hover:opacity-100 hover:scale-110 transition-[opacity,transform]"
-      title="More actions"
-      @click.stop="emit('context-menu', $event)"
-    >
-      <Icon :icon="faEllipsis" />
-      <span class="sr-only">More actions</span>
-    </button>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { orderBy } from 'lodash-es'
-import { faEllipsis, faPlay } from '@fortawesome/free-solid-svg-icons'
+import { faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
@@ -85,7 +68,6 @@ const { entity } = toRefs(props)
 
 const emit = defineEmits<{
   (e: 'toggle-favorite'): void
-  (e: 'context-menu', event: MouseEvent): void
 }>()
 
 const { toastSuccess } = useMessageToaster()
@@ -95,7 +77,9 @@ const { cover: defaultCover } = useBranding()
 const forAlbum = computed(() => entity.value.type === 'albums')
 
 const image = computed(() =>
-  forAlbum.value ? (entity.value as Album).cover || defaultCover : (entity.value as Artist).image || defaultCover,
+  forAlbum.value
+    ? (entity.value as Album).cover || defaultCover
+    : (entity.value as Artist).image || (entity.value as Artist).album_cover || defaultCover,
 )
 
 const playLabel = computed(() =>

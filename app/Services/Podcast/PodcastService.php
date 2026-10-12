@@ -3,6 +3,7 @@
 namespace App\Services\Podcast;
 
 use App\Events\UserUnsubscribedFromPodcast;
+use App\Exceptions\ApplePodcastsFeedNotFoundException;
 use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
 use App\Helpers\Uuid;
@@ -12,6 +13,7 @@ use App\Models\Song as Episode;
 use App\Models\User;
 use App\Repositories\PodcastRepository;
 use App\Repositories\SongRepository;
+use App\Services\Integrations\ITunesService;
 use App\Services\Network\Network;
 use App\Services\Network\SafeHttp;
 use Carbon\Carbon;
@@ -21,6 +23,8 @@ use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Illuminate\Support\Uri;
 use PhanAn\Poddle\Poddle;
 use PhanAn\Poddle\Values\Episode as EpisodeValue;
 use PhanAn\Poddle\Values\EpisodeCollection;
@@ -36,6 +40,7 @@ class PodcastService
         private readonly SongRepository $songRepository,
         private readonly Network $network,
         private readonly SafeHttp $http,
+        private readonly ITunesService $iTunesService,
         private readonly ?ClientInterface $client = null,
     ) {}
 
@@ -45,6 +50,7 @@ class PodcastService
         // @mago-ignore lint:no-ini-set,no-error-control-operator
         @ini_set('max_execution_time', 300);
 
+        $url = $this->resolveFeedUrl($url);
         $podcast = $this->podcastRepository->findOneByUrl($url);
 
         if ($podcast) {
@@ -89,6 +95,28 @@ class PodcastService
             Log::error($exception);
             throw FailedToParsePodcastFeedException::create($url, $exception);
         }
+    }
+
+    /**
+     * Turn an Apple Podcasts link (podcasts.apple.com/…/id123) into its RSS feed URL; other URLs pass through as-is.
+     */
+    private function resolveFeedUrl(string $url): string
+    {
+        $uri = Uri::of($url);
+
+        if (!in_array($uri->host(), ['podcasts.apple.com', 'itunes.apple.com'], true)) {
+            return $url;
+        }
+
+        $applePodcastsId = Str::match('/\/id(\d+)/', $uri->path());
+
+        throw_if($applePodcastsId === '', ApplePodcastsFeedNotFoundException::create($url));
+
+        return (
+            $this->iTunesService->getPodcastFeedUrl(
+                $applePodcastsId,
+            ) ?? throw ApplePodcastsFeedNotFoundException::create($url)
+        );
     }
 
     public function refreshPodcast(Podcast $podcast): Podcast
@@ -211,6 +239,13 @@ class PodcastService
         event(new UserUnsubscribedFromPodcast($user, $podcast));
     }
 
+    public function unsubscribeUserFromAllPodcasts(User $user): void
+    {
+        $user
+            ->loadMissing('podcasts')
+            ->podcasts->each(fn (Podcast $podcast) => $this->unsubscribeUserFromPodcast($user, $podcast));
+    }
+
     public function isPodcastObsolete(Podcast $podcast): bool
     {
         if (abs($podcast->last_synced_at->diffInHours(now())) < 12) {
@@ -255,7 +290,7 @@ class PodcastService
         try {
             $response = $client->request($method, $url, [
                 RequestOptions::HEADERS => [
-                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15',
+                    'User-Agent' => http_user_agent(),
                     'Origin' => '*',
                 ],
                 RequestOptions::HTTP_ERRORS => false,

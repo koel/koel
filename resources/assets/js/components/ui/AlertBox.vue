@@ -1,7 +1,7 @@
 <template>
   <div
     :class="`alert-box-${props.type}`"
-    class="alert-box flex items-center gap-4 bg-k-fg-10 mb-6 p-4 rounded-md text-k-fg"
+    class="alert-box flex items-center gap-4 border border-k-fg-10 mb-6 p-4 rounded-md text-k-fg"
   >
     <Icon v-if="props.type === 'info' || props.type === 'default'" :icon="faInfoCircle" />
     <Icon v-if="props.type === 'danger'" :icon="faExclamationCircle" />
@@ -29,21 +29,36 @@ const props = withDefaults(defineProps<{ type?: 'default' | 'info' | 'danger' | 
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
-.alert-box {
-  &-info {
-    @apply bg-blue-500;
-  }
 
-  &-success {
-    @apply bg-green-600;
-  }
+.alert-box-info {
+  @apply border-k-primary;
 
-  &-warning {
-    @apply bg-orange-500;
+  > svg {
+    @apply text-k-primary;
   }
+}
 
-  &-danger {
-    @apply bg-red-500;
+.alert-box-success {
+  @apply border-k-success;
+
+  > svg {
+    @apply text-k-success;
+  }
+}
+
+.alert-box-warning {
+  @apply border-k-warning;
+
+  > svg {
+    @apply text-k-warning;
+  }
+}
+
+.alert-box-danger {
+  @apply border-k-danger;
+
+  > svg {
+    @apply text-k-danger;
   }
 }
 </style>

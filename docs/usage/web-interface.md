@@ -67,7 +67,7 @@ From the same area, you can also:
 * <InterfaceIcon :src="heartIcon" alt="Heart" /> like/unlike the current song
 * <InterfaceIcon :src="repeatIcon" alt="Repeat" /> switch between repeat modes
 * <InterfaceIcon :src="queueIcon" alt="Queue" /> toggle the Queue screen
-* <InterfaceIcon :src="boltIcon" alt="Bolt" /> show the visualizer
+* <InterfaceIcon :src="boltIcon" alt="Bolt" /> show the [visualizer](./visualizers)
 * <InterfaceIcon :src="audioLinesIcon" alt="Equalizer" /> show the equalizer
 * <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
 * <InterfaceIcon :src="expandIcon" alt="Expand" /> toggle full-screen mode
@@ -91,16 +91,6 @@ on it and choosing "Download."
 
 You can also download several songs, all songs from an album, all songs by an artist, or a whole playlist as a zip file
 via the "Download" buttons found on according screens or context menus.
-This feature requires the [`zip` extension](https://www.php.net/manual/en/book.zip.php) to be installed and enabled on
-the server.
-
-### Download Limit
-
-By default, there is no limit to the number of songs that can be downloaded at once.
-However, it is recommended to set a limit via the `DOWNLOAD_LIMIT` environment variable to avoid excessive memory usage
-and disk space consumption during zip file creation.
-For example, setting `DOWNLOAD_LIMIT=100` will prevent downloading more than 100 songs at once.
-A value of `0` (the default) means no limit. Single-song downloads are always allowed regardless of this setting.
 
 ## Deleting Songs
 
@@ -126,6 +116,7 @@ See [Embedding](./embedding) for more details.
 ## Keyboard Shortcuts
 
 Koel has a number of keyboard shortcuts to make it easier to navigate and control playback.
+Press <kbd>?</kbd> anywhere to see them all.
 Note that these shortcuts are only triggered when the focus is not on an input field (including the volume control and
 the music track)
 or a textarea.
@@ -143,9 +134,15 @@ or a textarea.
 * <kbd>r</kbd> circles through repeat modes (no repeat, repeat all, repeat one)
 * <kbd>→</kbd> seeks forward 10 seconds
 * <kbd>←</kbd> seeks backward 10 seconds
+* <kbd>0</kbd>–<kbd>9</kbd> jumps to 0%–90% of the current song
 * <kbd>↑</kbd> increases volume by 10%
 * <kbd>↓</kbd> decreases volume by 10%
 * <kbd>m</kbd> mutes/unmutes
+* <kbd>e</kbd> opens the equalizer
+* <kbd>v</kbd> toggles the visualizer
+* <kbd>Shift</kbd>+<kbd>f</kbd> toggles fullscreen
+* <kbd>/</kbd> toggles the AI Assistant, if it's enabled
+* <kbd>?</kbd> shows the list of keyboard shortcuts
 * <kbd>Cmd/Ctrl</kbd>+<kbd>a</kbd> selects all songs in the current song-list screen when the list is focused
 * <kbd>Delete</kbd> removes selected song(s) from the current queue/playlist
 

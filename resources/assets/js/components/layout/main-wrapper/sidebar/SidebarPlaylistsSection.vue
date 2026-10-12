@@ -6,13 +6,13 @@
     </SidebarSectionHeader>
 
     <ul
-      :class="{ dragging: isDraggingPlaylist, 'has-folder-target': isDraggingPlaylist && hasFolderTarget }"
+      :class="{ dragging: isDraggingItem, 'has-folder-target': isDraggingItem && hasFolderTarget }"
       @dragover="onDragOver"
       @drop="onDrop"
     >
       <PlaylistSidebarItem :list="{ name: 'Favorites', playables: favorites }" />
       <PlaylistSidebarItem :list="{ name: 'Recently Played', playables: [] }" />
-      <PlaylistFolderSidebarItem v-for="folder in folders" :key="folder.id" :folder="folder" />
+      <PlaylistFolderSidebarItem v-for="folder in rootFolders" :key="folder.id" :folder />
       <PlaylistSidebarItem v-for="playlist in orphanPlaylists" :key="playlist.id" :list="playlist" />
     </ul>
   </SidebarSection>
@@ -24,7 +24,7 @@ import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
 import { currentDragType, setDragText, useDroppable } from '@/composables/useDragAndDrop'
-import { DraggedPlaylistKey, PlaylistFolderDropTargetKey } from '@/config/symbols'
+import { DraggedPlaylistFolderKey, DraggedPlaylistKey, PlaylistFolderDropTargetKey } from '@/config/symbols'
 
 import PlaylistSidebarItem from './PlaylistSidebarItem.vue'
 import PlaylistFolderSidebarItem from './PlaylistFolderSidebarItem.vue'
@@ -36,9 +36,13 @@ const folders = toRef(playlistFolderStore.state, 'folders')
 const playlists = toRef(playlistStore.state, 'playlists')
 const favorites = toRef(playableStore.state, 'favorites')
 
-const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist'])
+const rootFolders = computed(() => playlistFolderStore.byParent(null))
 
-const isDraggingPlaylist = computed(() => currentDragType.value === 'playlist')
+const { acceptsDrop, resolveDroppedValue } = useDroppable(['playlist', 'playlist-folder'])
+
+const isDraggingItem = computed(
+  () => currentDragType.value === 'playlist' || currentDragType.value === 'playlist-folder',
+)
 
 const folderDropTargetId = ref<string | null>(null)
 provide(PlaylistFolderDropTargetKey, folderDropTargetId)
@@ -46,10 +50,15 @@ const hasFolderTarget = computed(() => folderDropTargetId.value !== null)
 
 const draggedPlaylist = ref<Playlist | null>(null)
 provide(DraggedPlaylistKey, draggedPlaylist)
+const draggedPlaylistFolder = ref<PlaylistFolder | null>(null)
+provide(DraggedPlaylistFolderKey, draggedPlaylistFolder)
 
-const clearDraggedPlaylist = () => (draggedPlaylist.value = null)
-onMounted(() => document.addEventListener('dragend', clearDraggedPlaylist))
-onBeforeUnmount(() => document.removeEventListener('dragend', clearDraggedPlaylist))
+const clearDraggedItems = () => {
+  draggedPlaylist.value = null
+  draggedPlaylistFolder.value = null
+}
+onMounted(() => document.addEventListener('dragend', clearDraggedItems))
+onBeforeUnmount(() => document.removeEventListener('dragend', clearDraggedItems))
 
 const orphanPlaylists = computed(() =>
   playlists.value.filter(({ folder_id }) => {
@@ -70,9 +79,17 @@ const onDragOver = (event: DragEvent) => {
 
   event.preventDefault()
 
+  const isFolderDrag = currentDragType.value === 'playlist-folder'
+
   // macOS ignores CSS cursor: during DnD; dropEffect drives the native + cursor.
   if (event.dataTransfer) {
-    event.dataTransfer.dropEffect = 'copy'
+    event.dataTransfer.dropEffect = isFolderDrag ? 'move' : 'copy'
+  }
+
+  if (isFolderDrag) {
+    const folder = draggedPlaylistFolder.value
+    setDragText(folder?.parent_id ? `Move ${folder.name} to root` : '')
+    return
   }
 
   const playlist = draggedPlaylist.value
@@ -92,12 +109,19 @@ const onDrop = async (event: DragEvent) => {
 
   event.preventDefault()
 
-  const playlist = await resolveDroppedValue<Playlist>(event)
-  if (!playlist || playlist.folder_id === null) {
+  const dropped = await resolveDroppedValue<Playlist | PlaylistFolder>(event)
+  if (!dropped) {
     return
   }
 
-  await playlistFolderStore.movePlaylistToFolder(playlist, null)
+  if (dropped.type === 'playlist-folders') {
+    await playlistFolderStore.moveFolderToFolder(dropped, null)
+    return
+  }
+
+  if (dropped.folder_id !== null) {
+    await playlistFolderStore.movePlaylistToFolder(dropped, null)
+  }
 }
 </script>
 
@@ -117,7 +141,7 @@ ul.dragging.has-folder-target > :deep(*) {
   transition: opacity 0.15s ease;
 }
 
-ul.dragging.has-folder-target > :deep(.droppable) {
+ul.dragging.has-folder-target > :deep(.drop-target-path) {
   opacity: 1;
 }
 </style>

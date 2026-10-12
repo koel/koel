@@ -8,6 +8,8 @@ description: Built-in theme selection and custom theme support in Koel Plus.
 
 <Themes />
 
-Koel supports multiple themes out of the box. You can preview and choose one from the [Profile & Preferences](./profile-preferences.md#themes) screen.
+Koel supports multiple themes out of the box. You can preview and choose one from the [Themes](./profile-preferences.md#themes) section of Settings.
+
+The Kameleon theme takes its colors from the cover of whatever is playing, so the app changes with every song.
 
 Koel Plus users can also [create their own themes](../plus/custom-themes.md).

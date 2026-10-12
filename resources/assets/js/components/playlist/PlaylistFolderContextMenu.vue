@@ -10,10 +10,11 @@
       <template #subMenuItems>
         <MenuItem @click="createPlaylist">New Playlist…</MenuItem>
         <MenuItem @click="createSmartPlaylist">New Smart Playlist…</MenuItem>
+        <MenuItem @click="createFolder">New Folder…</MenuItem>
       </template>
     </MenuItem>
     <Separator />
-    <MenuItem @click="rename">Rename</MenuItem>
+    <MenuItem @click="edit">Edit…</MenuItem>
     <MenuItem @click="destroy">Delete</MenuItem>
   </ul>
 </template>
@@ -21,7 +22,6 @@
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
-import { playlistStore } from '@/stores/playlistStore'
 import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
@@ -38,6 +38,9 @@ const CreatePlaylistForm = defineAsyncComponent(() => import('@/components/playl
 const CreateSmartPlaylistForm = defineAsyncComponent(
   () => import('@/components/playlist/smart-playlist/CreateSmartPlaylistForm.vue'),
 )
+const CreatePlaylistFolderForm = defineAsyncComponent(
+  () => import('@/components/playlist/CreatePlaylistFolderForm.vue'),
+)
 const EditPlaylistFolderForm = defineAsyncComponent(() => import('@/components/playlist/EditPlaylistFolderForm.vue'))
 
 const { MenuItem, Separator, trigger } = useContextMenu()
@@ -46,12 +49,12 @@ const { go, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
-const playlistsInFolder = computed(() => (folder.value ? playlistStore.byFolder(folder.value) : []))
-const playable = computed(() => playlistsInFolder.value.length > 0)
+const playlistsInFolderTree = computed(() => playlistFolderStore.playlistsInTree(folder.value))
+const playable = computed(() => playlistsInFolderTree.value.length > 0)
 
 const play = () =>
   trigger(async () => {
-    const songs = await playableStore.fetchForPlaylistFolder(folder.value!)
+    const songs = await playableStore.fetchForPlaylists(playlistsInFolderTree.value)
 
     if (songs.length) {
       playback().queueAndPlay(songs)
@@ -63,7 +66,7 @@ const play = () =>
 
 const shuffle = () =>
   trigger(async () => {
-    const songs = await playableStore.fetchForPlaylistFolder(folder.value!)
+    const songs = await playableStore.fetchForPlaylists(playlistsInFolderTree.value)
 
     if (songs.length) {
       playback().queueAndPlay(songs, true)
@@ -77,14 +80,20 @@ const createPlaylist = () =>
   trigger(() => openModal<'CREATE_PLAYLIST_FORM'>(CreatePlaylistForm, { folder: folder.value!, playables: [] }))
 const createSmartPlaylist = () =>
   trigger(() => openModal<'CREATE_SMART_PLAYLIST_FORM'>(CreateSmartPlaylistForm, { folder: folder.value! }))
-const rename = () =>
+const createFolder = () =>
+  trigger(() => openModal<'CREATE_PLAYLIST_FOLDER_FORM'>(CreatePlaylistFolderForm, { parent: folder.value }))
+const edit = () =>
   trigger(() => openModal<'EDIT_PLAYLIST_FOLDER_FORM'>(EditPlaylistFolderForm, { folder: folder.value! }))
 
 const destroy = () =>
   trigger(async () => {
-    if (await showConfirmDialog(`Delete the playlist folder "${folder.value!.name}"?`)) {
-      await playlistFolderStore.delete(folder.value!)
-      toastSuccess(`Playlist folder "${folder.value!.name}" deleted.`)
+    if (
+      await showConfirmDialog(
+        `Delete the playlist folder "${folder.value.name}"? Its playlists and subfolders will be kept.`,
+      )
+    ) {
+      await playlistFolderStore.delete(folder.value)
+      toastSuccess(`Playlist folder "${folder.value.name}" deleted.`)
     }
   })
 </script>

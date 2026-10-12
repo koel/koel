@@ -4,9 +4,9 @@
       <button
         v-for="ctrl in controls"
         :key="ctrl.title"
+        v-koel-tooltip
         type="button"
         class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        :title="ctrl.title"
         @click="slide(ctrl.direction)"
       >
         <Icon :icon="ctrl.icon" />
@@ -18,9 +18,9 @@
       <button
         v-for="ctrl in controls"
         :key="ctrl.title"
+        v-koel-tooltip
         type="button"
         class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        :title="ctrl.title"
         @click="slide(ctrl.direction)"
       >
         <Icon :icon="ctrl.icon" />
@@ -32,7 +32,7 @@
       ref="scroller"
       class="home-carousel scroll-mask-x-from-[calc(100%-2rem)] md:scroll-mask-x overflow-x-auto overflow-y-hidden w-full"
     >
-      <div class="home-carousel-track flex gap-4">
+      <div class="home-carousel-track flex gap-6">
         <slot />
       </div>
     </div>

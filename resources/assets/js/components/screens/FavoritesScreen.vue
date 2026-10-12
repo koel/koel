@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : 'expanded'">
         Your Favorites
 
         <template #thumbnail>
@@ -12,18 +12,10 @@
           <span>{{ pluralize(playables, 'item') }}</span>
           <span>{{ duration }}</span>
 
-          <a
-            v-if="downloadable"
-            class="download"
-            role="button"
-            title="Download all favorites"
-            @click.prevent="download"
-          >
-            Download All
-          </a>
-          <a v-if="canToggleOffline" role="button" @click.prevent="toggleOffline">
+          <LinkButton v-if="downloadable" class="download" @click.prevent="download"> Download All </LinkButton>
+          <LinkButton v-if="canToggleOffline" @click.prevent="toggleOffline">
             {{ allCached ? 'Remove Offline' : 'Make Offline' }}
-          </a>
+          </LinkButton>
         </template>
 
         <template #controls>
@@ -47,7 +39,6 @@
       @sort="sort"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
-      @swipe="onSwipe"
     />
 
     <ScreenEmptyState v-else>
@@ -81,13 +72,13 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
+import LinkButton from '@/components/ui/form/LinkButton.vue'
 
 const allPlayables = ref<Playable[]>([])
 
 const {
   PlayableList,
   ThumbnailStack,
-  headerLayout,
   playables,
   playableList,
   duration,
@@ -98,7 +89,6 @@ const {
   playAll,
   playSelected,
   applyFilter,
-  onSwipe,
   sort: baseSort,
   config: listConfig,
 } = usePlayableList(allPlayables, { type: 'Favorites' })

@@ -1,47 +1,67 @@
 import ky, { HTTPError } from 'ky'
 import NProgress from 'nprogress'
+import type { ServerValidationError } from '@/utils/formatters'
 import { authService } from '@/services/authService'
 import { eventBus } from '@/utils/eventBus'
 
 export { HTTPError }
 
-export const isHttpError = (error: unknown): error is HTTPError => error instanceof HTTPError
+export type HttpErrorBody = Partial<ServerValidationError>
+
+export const isHttpError = (error: unknown): error is HTTPError<HttpErrorBody> => error instanceof HTTPError
+
+export const getHttpErrorBody = (error: HTTPError<HttpErrorBody>) =>
+  typeof error.data === 'object' ? error.data : undefined
+
+type RetryPolicy = 'none' | 'repeatable' | 'unprocessed'
+
+const RETRY_BACKOFF_LIMIT_MS = 10_000
+
+const retryOptions = {
+  repeatable: { limit: 3, statusCodes: [408, 429, 500, 502, 503, 504], backoffLimit: RETRY_BACKOFF_LIMIT_MS },
+  unprocessed: { limit: 3, statusCodes: [429, 502, 503], backoffLimit: RETRY_BACKOFF_LIMIT_MS },
+}
 
 class Http {
   private client: ReturnType<typeof ky.create>
   private silent = false
+  private retryPolicy: RetryPolicy = 'none'
 
   constructor() {
     this.client = ky.create({
-      prefixUrl: `${window.KOEL.base_url}api`,
+      prefix: `${window.KOEL.base_url}api`,
       headers: {
         Accept: 'application/json',
         'X-Api-Version': 'v7',
       },
       hooks: {
         beforeRequest: [
-          request => {
+          ({ request }) => {
             this.silent || this.showLoadingIndicator()
             request.headers.set('Authorization', `Bearer ${authService.getApiToken()}`)
           },
         ],
         afterResponse: [
-          (_request, _options, response) => {
+          ({ response }) => {
             this.silent || this.hideLoadingIndicator()
             this.silent = false
 
             const token = response.headers.get('authorization')
             token && authService.setApiToken(token)
+
+            const build = response.headers.get('x-koel-build')
+
+            if (build && window.KOEL.build && build !== window.KOEL.build) {
+              eventBus.emit('NEW_VERSION_DEPLOYED')
+            }
           },
         ],
         beforeError: [
-          async error => {
+          ({ error }) => {
             this.silent || this.hideLoadingIndicator()
             this.silent = false
 
-            const { response } = error
-
-            if (response && (response.status === 400 || response.status === 401)) {
+            if (isHttpError(error) && (error.response.status === 400 || error.response.status === 401)) {
               const method = (error.request?.method || '').toLowerCase()
 
               let url = ''
@@ -62,13 +82,6 @@ class Http {
               }
             }
 
-            // Attach parsed response data for error handlers
-            try {
-              ;(error as any).responseData = await response?.clone().json()
-            } catch {
-              ;(error as any).responseData = null
-            }
-
             return error
           },
         ],
@@ -84,8 +97,32 @@ class Http {
     return this
   }
 
+  /**
+   * Retry the next request on network errors and temporary server errors.
+   * Only for requests that are safe to send more than once, like saving a state.
+   */
+  public get withRetries() {
+    this.retryPolicy = 'repeatable'
+    return this
+  }
+
+  /**
+   * Retry the next request only when the server clearly did not handle it.
+   * For requests that add something, like a play or a scrobble, where a repeat could count twice.
+   */
+  public get withRetriesWhenUnprocessed() {
+    this.retryPolicy = 'unprocessed'
+    return this
+  }
+
   public async request<T>(method: string, url: string, data: Record<string, any> = {}) {
     const options: Record<string, any> = {}
+    const retryPolicy = this.retryPolicy
+    this.retryPolicy = 'none'
+
+    if (retryPolicy !== 'none') {
+      options.retry = { ...retryOptions[retryPolicy], methods: [method] }
+    }
 
     if (method !== 'get' && data) {
       if (data instanceof FormData) {

@@ -9,7 +9,7 @@
     <ParagraphSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
 
     <template v-if="!loading && info?.wiki">
-      <div v-html="info.wiki.full" />
+      <div class="rich-text" v-html="info.wiki.full" />
 
       <TrackList v-if="info.tracks?.length" :album :tracks="info.tracks" class="mt-8" data-testid="album-info-tracks" />
     </template>
@@ -46,7 +46,7 @@ watch(
   async () => {
     info.value = null
 
-    if (useMusicBrainz.value || useLastfm.value || useSpotify.value) {
+    if (useMusicBrainz.value || useLastfm.value || useSpotify.value || album.value.description) {
       loading.value = true
       info.value = await encyclopediaService.fetchForAlbum(album.value)
       loading.value = false

@@ -30,7 +30,7 @@ const onItemClicked = (action: 'new-playlist' | 'new-smart-playlist' | 'new-fold
       case 'new-smart-playlist':
         return openModal<'CREATE_SMART_PLAYLIST_FORM'>(CreateSmartPlaylistForm, { folder: null })
       case 'new-folder':
-        return openModal<'CREATE_PLAYLIST_FOLDER_FORM'>(CreatePlaylistFolderForm)
+        return openModal<'CREATE_PLAYLIST_FOLDER_FORM'>(CreatePlaylistFolderForm, { parent: null })
     }
   })
 </script>

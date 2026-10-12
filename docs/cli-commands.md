@@ -115,9 +115,13 @@ php artisan koel:extract-folders
 
 ### `koel:fetch-artwork`
 
-Attempt to fetch missing album covers and artist images from the available sources (Spotify, Last.fm, and MusicBrainz).
+Attempt to fetch missing album covers and artist images from the available sources (the Cover Art Archive, Spotify,
+Last.fm, and Wikipedia).
 You'll need to configure and enable the corresponding [3rd-party integrations](./service-integrations.md) for this
 command to work.
+
+The Cover Art Archive finds covers by MusicBrainz identifier, so run [`koel:fetch-mbids`](#koel-fetch-mbids) first to
+fill in the albums that do not have one yet.
 
 To avoid hitting rate limits, Koel pauses between requests. By default, this delay is 1 second, but you can customize it
 with the `--delay` option.
@@ -128,6 +132,27 @@ with the `--delay` option.
 php artisan koel:fetch-artwork
 # Or with a custom delay (in seconds) between requests:
 php artisan koel:fetch-artwork --delay=2
+```
+
+### `koel:fetch-mbids`
+
+Attempt to fetch missing MusicBrainz identifiers for albums, artists and songs. Koel reads these
+identifiers from your files when it scans them, and looks up the rest when you open an album or an
+artist. Run this command to look up everything that is still missing in one go, so songs you have not
+browsed to also carry an identifier when Koel submits a listen to ListenBrainz or answers a Subsonic
+client.
+
+A song's identifier is found through its album, so an album is revisited when any of its songs is still
+missing one, even if the album itself already has one.
+
+MusicBrainz accepts one request per second, so a large library takes a while. You can stop the command at
+any time and run it again later: it only looks up what is still missing, and it never replaces an
+identifier your files already supplied.
+
+#### Usage
+
+```bash
+php artisan koel:fetch-mbids
 ```
 
 ### `koel:init`

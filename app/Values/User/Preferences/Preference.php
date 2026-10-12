@@ -79,6 +79,11 @@ abstract class Preference
         return true;
     }
 
+    public function isEncrypted(): bool
+    {
+        return false;
+    }
+
     /** @return list<string> Legacy storage keys to read as a backwards-compat fallback. */
     public function getAliases(): array
     {

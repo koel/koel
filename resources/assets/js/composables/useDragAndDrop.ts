@@ -202,6 +202,9 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
         case 'playlist':
           const id = String(JSON.parse(event.dataTransfer!.getData('application/x-koel.playlist')))
           return playlistStore.byId(id) as T | undefined
+        case 'playlist-folder':
+          const folderId = String(JSON.parse(event.dataTransfer!.getData('application/x-koel.playlist-folder')))
+          return playlistFolderStore.byId(folderId) as T | undefined
         default:
           return undefined
       }
@@ -235,7 +238,9 @@ export const useDroppable = (acceptedTypes: DraggableType[]) => {
           return playlist ? await playableStore.fetchForPlaylist(playlist) : <Song[]>[]
         case 'playlist-folder':
           const folder = playlistFolderStore.byId(<string>data)
-          return folder ? await playableStore.fetchForPlaylistFolder(folder) : <Song[]>[]
+          return folder
+            ? await playableStore.fetchForPlaylists(playlistFolderStore.playlistsInTree(folder))
+            : <Song[]>[]
         case 'browser-media':
           return await playableStore.resolveSongsFromMediaReferences(data)
         case 'genre':

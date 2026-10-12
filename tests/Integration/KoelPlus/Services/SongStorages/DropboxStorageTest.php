@@ -81,7 +81,7 @@ class DropboxStorageTest extends PlusTestCase
         $this->filesystem->expects('writeStream');
         $reference = $service->storeUploadedFile($this->uploadedFilePath, $user);
 
-        self::assertSame("dropbox://{$user->id}__random__song.mp3", $reference->location);
+        self::assertSame("dropbox://{$user->public_id}__random__song.mp3", $reference->location);
         self::assertSame(artifact_path('tmp/random/song.mp3'), $reference->localPath);
 
         self::assertSame('free-bird', Cache::get('dropbox_access_token'));

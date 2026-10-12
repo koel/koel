@@ -6,10 +6,14 @@ use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Models\Transcode;
 use App\Repositories\TranscodeRepository;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 
 abstract class TranscodingStrategy
 {
+    private const int TRANSCODE_LOCK_SECONDS = 600;
+    private const int TRANSCODE_LOCK_WAIT_SECONDS = 60;
+
     public function __construct(
         protected TranscodeRepository $transcodeRepository,
         protected Transcoder $transcoder,
@@ -58,7 +62,26 @@ abstract class TranscodingStrategy
         );
     }
 
-    abstract public function getTranscodeLocation(Song $song, int $bitRate): string;
+    /**
+     * @param string|null $localSourcePath A copy of the song already on this machine, used instead of fetching one
+     */
+    public function getTranscodeLocation(Song $song, int $bitRate, ?string $localSourcePath = null): string
+    {
+        return Cache::lock(
+            cache_key('transcode', $song->id, $bitRate),
+            self::TRANSCODE_LOCK_SECONDS,
+        )->block(self::TRANSCODE_LOCK_WAIT_SECONDS, fn (): string => $this->findOrCreateTranscodeLocation(
+            $song,
+            $bitRate,
+            $localSourcePath,
+        ));
+    }
+
+    abstract protected function findOrCreateTranscodeLocation(
+        Song $song,
+        int $bitRate,
+        ?string $localSourcePath,
+    ): string;
 
     abstract public function deleteTranscodeFile(string $location, SongStorageType $storageType): void;
 }

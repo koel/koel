@@ -3,10 +3,8 @@
 namespace App\Http\Requests\API;
 
 use App\Enums\Acl\Role;
-use App\Rules\AvailableRole;
-use App\Rules\UserCanManageRole;
+use App\Http\Requests\API\Concerns\ValidatesRole;
 use App\Values\User\UserCreateData;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -16,6 +14,8 @@ use Illuminate\Validation\Rules\Password;
  */
 class UserStoreRequest extends Request
 {
+    use ValidatesRole;
+
     /** @inheritdoc */
     public function rules(): array
     {
@@ -23,12 +23,7 @@ class UserStoreRequest extends Request
             'name' => 'required',
             'email' => ['required', 'email', 'unique:users'],
             'password' => ['required', Password::defaults()],
-            'role' => [
-                'required',
-                Rule::enum(Role::class),
-                new AvailableRole(),
-                new UserCanManageRole($this->user()),
-            ],
+            'role' => $this->roleRule(),
         ];
     }
 

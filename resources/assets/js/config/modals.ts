@@ -1,11 +1,12 @@
 export interface Modals {
   ABOUT_KOEL: never
+  ADD_PASSKEY_FORM: { hasPasskeys: boolean }
   ADD_PODCAST_FORM: never
   ADD_RADIO_STATION_FORM: never
   ADD_USER_FORM: never
   CREATE_EMBED_FORM: { embeddable: Embeddable }
   CREATE_PLAYLIST_FORM: { folder: PlaylistFolder | null; playables: Playable[] }
-  CREATE_PLAYLIST_FOLDER_FORM: never
+  CREATE_PLAYLIST_FOLDER_FORM: { parent: PlaylistFolder | null }
   CREATE_SMART_PLAYLIST_FORM: { folder: PlaylistFolder | null }
   EDIT_ALBUM_FORM: { album: Album }
   EDIT_ARTIST_FORM: { artist: Artist }
@@ -17,7 +18,9 @@ export interface Modals {
   EDIT_USER_FORM: { user: User }
   EQUALIZER: never
   INVITE_USER_FORM: never
+  KEYBOARD_SHORTCUTS: never
   KOEL_PLUS: never
+  MANAGE_MILKDROP_PRESETS: never
   PLAYLIST_COLLABORATION: { playlist: Playlist }
   CREATE_THEME_FORM: never
   REORDER_HOME_BLOCKS: { blocks: { id: string; label: string }[] }

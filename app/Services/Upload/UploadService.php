@@ -6,11 +6,14 @@ use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\Concerns\ScansAndStoresSong;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
+use App\Services\Transcoding\TranscodeOnScan;
+use App\Values\UploadReference;
 use Illuminate\Support\Facades\File;
 use Throwable;
 
@@ -23,12 +26,17 @@ class UploadService
         private readonly SongStorage $storage,
         private readonly FileScanner $scanner,
         private readonly DuplicateUploadService $duplicateUploadService,
+        private readonly TranscodeOnScan $transcodeOnScan,
+        private readonly AnalyzeAudioOnScan $analyzeAudioOnScan,
     ) {}
 
     public function handleUpload(string $filePath, User $uploader): Song
     {
-        $uploadReference = $this->storage->storeUploadedFile($filePath, $uploader);
+        return $this->handleStoredUpload($this->storage->storeUploadedFile($filePath, $uploader), $uploader);
+    }
 
+    public function handleStoredUpload(UploadReference $uploadReference, User $uploader): Song
+    {
         try {
             $this->duplicateUploadService->detectDuplicate($uploadReference->localPath, $uploadReference, $uploader);
 
@@ -39,6 +47,8 @@ class UploadService
                 $this->scanner,
                 $this->songService,
                 $this->storage,
+                $this->transcodeOnScan,
+                $this->analyzeAudioOnScan,
             );
         } catch (DuplicateSongUploadException $e) {
             throw $e;

@@ -11,7 +11,7 @@ return [
     // or downloaded podcast episodes. By default, it is set to the system's temporary directory.
     'artifacts_path' => env('ARTIFACTS_PATH') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'koel',
 
-    'image_storage_dir' => 'storage/images',
+    'image_storage_dir' => env('IMAGE_STORAGE_DIR', 'storage/images'),
 
     /*
      |--------------------------------------------------------------------------
@@ -26,6 +26,7 @@ return [
         'timeout' => env('APP_MAX_SCAN_TIME', 600),
         'memory_limit' => env('MEMORY_LIMIT'),
         'jobs' => env('SCAN_JOBS', 4),
+        'analyze_audio' => env('ANALYZE_AUDIO_ON_SCAN', false),
     ],
 
     /*
@@ -41,9 +42,11 @@ return [
 
     'streaming' => [
         'bitrate' => env('TRANSCODE_BIT_RATE') ?: env('OUTPUT_BIT_RATE', 128),
+        'aac_fast' => env('TRANSCODE_AAC_FAST', true),
         'method' => env('STREAMING_METHOD'),
         'ffmpeg_path' => env('FFMPEG_PATH') ?: find_ffmpeg_path(),
         'transcode_flac' => env('TRANSCODE_FLAC', true),
+        'transcode_on_scan' => env('TRANSCODE_ON_SCAN', false),
         'transcode_timeout' => max((int) env('TRANSCODE_TIMEOUT', 300), 0),
         'supported_mime_types' => [
             // Lossy formats
@@ -127,6 +130,7 @@ return [
         'musicbrainz' => [
             'enabled' => env('USE_MUSICBRAINZ', true),
             'endpoint' => 'https://musicbrainz.org/ws/2',
+            'cover_art_endpoint' => 'https://coverartarchive.org',
             'user_agent' => env('MUSICBRAINZ_USER_AGENT'),
         ],
         'youtube' => [
@@ -138,6 +142,9 @@ return [
             'secret' => env('LASTFM_API_SECRET'),
             'endpoint' => 'https://ws.audioscrobbler.com/2.0',
         ],
+        'listenbrainz' => [
+            'endpoint' => env('LISTENBRAINZ_API_ENDPOINT', 'https://api.listenbrainz.org'),
+        ],
         'spotify' => [
             'client_id' => env('SPOTIFY_CLIENT_ID'),
             'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
@@ -145,7 +152,7 @@ return [
         'itunes' => [
             'enabled' => env('USE_ITUNES', true),
             'affiliate_id' => '1000lsGu',
-            'endpoint' => 'https://itunes.apple.com/search',
+            'endpoint' => 'https://itunes.apple.com',
         ],
         'ticketmaster' => [
             'key' => env('TICKETMASTER_API_KEY'),
@@ -173,15 +180,26 @@ return [
 
     'download' => [
         'allow' => env('ALLOW_DOWNLOAD', true),
-        'limit' => max((int) env('DOWNLOAD_LIMIT', 0), 0),
     ],
 
     'media_browser' => [
         'enabled' => env('MEDIA_BROWSER_ENABLED', false),
     ],
 
+    'clean_urls' => [
+        'enabled' => env('CLEAN_URLS_ENABLED', false),
+    ],
+
     'embed' => [
         'enabled' => env('EMBED_ENABLED', true),
+    ],
+
+    'podcasts' => [
+        'enabled' => env('PODCASTS_ENABLED', true),
+    ],
+
+    'radio' => [
+        'enabled' => env('RADIO_ENABLED', true),
     ],
 
     /*
@@ -198,6 +216,8 @@ return [
     'backup_on_delete' => env('BACKUP_ON_DELETE', true),
 
     'sync_log_level' => env('SYNC_LOG_LEVEL', 'error'),
+
+    'scan_log_max_files' => env('SCAN_LOG_MAX_FILES', 30),
 
     'proxy_auth' => [
         'enabled' => env('PROXY_AUTH_ENABLED', false),

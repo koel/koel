@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\API;
 
+use App\Values\User\AvatarUpdateData;
 use App\Values\User\UserUpdateData;
-use Illuminate\Support\Str;
 
 /**
  * @property-read string $name
@@ -18,7 +18,7 @@ class ProfileUpdateRequest extends Request
         return [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . auth()->user()->getAuthIdentifier(),
-            'avatar' => 'sometimes',
+            'avatar' => ['sometimes', 'nullable', 'string', 'starts_with:data:image/'],
         ];
     }
 
@@ -27,7 +27,7 @@ class ProfileUpdateRequest extends Request
         return UserUpdateData::make(
             name: $this->name,
             email: $this->email,
-            avatar: Str::startsWith($this->avatar, 'data:') ? $this->avatar : null,
+            avatar: $this->has('avatar') ? AvatarUpdateData::make($this->avatar) : null,
         );
     }
 }

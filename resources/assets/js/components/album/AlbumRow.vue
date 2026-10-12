@@ -14,7 +14,7 @@
       <a :href="url('albums.show', { id: album.id })" class="truncate">{{ album.name }}</a>
     </span>
     <span v-if="shouldShowColumn('artist')" class="artist truncate">
-      <a v-if="artistStore.isStandard(album.artist_id)" :href="url('artists.show', { id: album.artist_id })">
+      <a v-if="artistStore.isStandard(album.artist_name)" :href="url('artists.show', { id: album.artist_id })">
         {{ album.artist_name }}
       </a>
       <template v-else>{{ album.artist_name }}</template>
@@ -30,8 +30,9 @@
       <FavoriteButton :favorite="album.favorite" @toggle="emit('toggle-favorite', album)" />
     </span>
     <span class="extra">
-      <button class="text-k-fg-50 hover:text-k-fg p-1" title="More actions" @click="onContextMenu">
+      <button v-koel-tooltip class="text-k-fg-50 hover:text-k-fg p-1" @click="onContextMenu">
         <Icon :icon="faEllipsis" />
+        <span class="sr-only">More actions</span>
       </button>
     </span>
   </article>

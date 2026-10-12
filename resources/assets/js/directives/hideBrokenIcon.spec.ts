@@ -16,13 +16,4 @@ describe('hideBrokenIcon directive', () => {
 
     expect(img.style.visibility).toBe('hidden')
   })
-
-  it('renders the image element', () => {
-    const { container } = h.render({
-      directives: { hideBrokenIcon },
-      template: '<img v-hide-broken-icon src="valid.png" />',
-    })
-
-    expect(container.querySelector('img')).toBeTruthy()
-  })
 })

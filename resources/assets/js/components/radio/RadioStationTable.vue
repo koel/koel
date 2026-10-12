@@ -1,51 +1,43 @@
 <template>
   <div class="radio-station-table-wrap relative flex flex-col flex-1 overflow-auto" data-testid="radio-station-table">
-    <div class="radio-station-table-header sortable flex z-2 bg-k-fg-3 pl-5 sticky top-0">
-      <span
-        class="name"
-        role="button"
-        tabindex="0"
-        title="Sort by name"
-        @click="onSort('name')"
-        @keydown.enter.space.prevent="onSort('name')"
-      >
-        Name
-        <Icon v-if="field === 'name' && order === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon v-if="field === 'name' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
-      </span>
-      <span v-if="shouldShowColumn('description')" class="description">Description</span>
-      <span
-        v-if="shouldShowColumn('created_at')"
-        class="created-at"
-        role="button"
-        tabindex="0"
-        title="Sort by date added"
-        @click="onSort('created_at')"
-        @keydown.enter.space.prevent="onSort('created_at')"
-      >
-        Date Added
-        <Icon v-if="field === 'created_at' && order === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon v-if="field === 'created_at' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
-      </span>
-      <span
-        v-if="shouldShowColumn('favorite')"
-        class="favorite"
-        role="button"
-        tabindex="0"
-        title="Sort by favorite"
-        @click="onSort('favorite')"
-        @keydown.enter.space.prevent="onSort('favorite')"
-      >
-        <Icon :icon="faHeart" />
-        <Icon v-if="field === 'favorite' && order === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon v-if="field === 'favorite' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
-      </span>
-      <span class="extra">
-        <RadioStationTableHeaderActionMenu :field :order @sort="onSort" />
-      </span>
-    </div>
-
-    <VirtualScroller :items="stations" :item-height="64">
+    <VirtualScroller carries-screen-header :items="stations" :item-height="64">
+      <template #before>
+        <ScreenHeaderPinned>
+          <div class="radio-station-table-header sortable flex bg-k-fg-3 pl-5">
+            <SortableColumnHeader :active="field === 'name'" :order class="name" @sort="onSort('name')">
+              Name
+            </SortableColumnHeader>
+            <span v-if="shouldShowColumn('description')" class="description">Description</span>
+            <SortableColumnHeader
+              v-if="shouldShowColumn('created_at')"
+              :active="field === 'created_at'"
+              :order
+              class="created-at"
+              label="Date Added"
+              @sort="onSort('created_at')"
+            />
+            <SortableColumnHeader
+              v-if="shouldShowColumn('favorite')"
+              :active="field === 'favorite'"
+              :order
+              class="favorite"
+              @sort="onSort('favorite')"
+            >
+              <Icon :icon="faHeart" />
+              <span class="sr-only">Favorite</span>
+            </SortableColumnHeader>
+            <span class="extra">
+              <TableHeaderActionMenu
+                :field
+                :order
+                :items="radioStationTableMenuItems"
+                :column-config="radioStationTableColumnConfig"
+                @sort="onSort"
+              />
+            </span>
+          </div>
+        </ScreenHeaderPinned>
+      </template>
       <template #default="{ item }: { item: RadioStation }">
         <RadioStationRow :station="item" @toggle-favorite="emit('toggle-favorite', $event)" />
       </template>
@@ -54,14 +46,16 @@
 </template>
 
 <script lang="ts" setup>
-import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
-import { radioStationTableColumnConfig } from '@/config/tables'
+import { radioStationTableColumnConfig, radioStationTableMenuItems } from '@/config/tables'
 
+import SortableColumnHeader from '@/components/ui/SortableColumnHeader.vue'
+import TableHeaderActionMenu from '@/components/ui/TableHeaderActionMenu.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
+import ScreenHeaderPinned from '@/components/ui/ScreenHeaderPinned.vue'
 import RadioStationRow from '@/components/radio/RadioStationRow.vue'
-import RadioStationTableHeaderActionMenu from '@/components/radio/RadioStationTableHeaderActionMenu.vue'
 
 const props = defineProps<{
   stations: RadioStation[]

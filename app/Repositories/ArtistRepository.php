@@ -10,6 +10,7 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\LazyCollection;
 
 /**
  * @extends Repository<Artist>
@@ -92,13 +93,24 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /** @return LazyCollection<array-key, Artist> */
+    public function lazyGetWithoutMbid(): LazyCollection
+    {
+        return Artist::query()->onlyStandard()->whereNull('mbid')->lazyById();
+    }
+
+    public function countWithoutMbid(): int
+    {
+        return Artist::query()->onlyStandard()->whereNull('mbid')->count();
+    }
+
     public function getAll(?User $user = null): Collection
     {
         return Artist::query()
             ->withUserContext(user: $user ?? $this->auth->user())
             ->onlyStandard()
             ->onlyAlbumArtists()
-            ->withCount('albums')
+            ->withAlbumCountIncludingAppearances()
             ->orderBy('name')
             ->get();
     }
@@ -121,12 +133,31 @@ class ArtistRepository extends Repository implements ScoutableRepository
         );
     }
 
+    /** @return Collection<int, Artist> */
+    public function getOrdered(
+        string $sortColumn,
+        string $sortDirection,
+        int $limit,
+        int $offset = 0,
+        ?User $user = null,
+    ): Collection {
+        return Artist::query()
+            ->onlyStandard()
+            ->onlyAlbumArtists()
+            ->withUserContext(user: $user ?? $this->auth->user())
+            ->sort($sortColumn, $sortDirection)
+            ->orderBy('artists.id')
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+    }
+
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: Artist::search($keywords)->take($limit)->get()->modelKeys(),
+            ids: Artist::search($keywords)->take(self::SEARCH_CANDIDATE_LIMIT)->keys()->all(),
             preserveOrder: true,
             user: $user,
-        );
+        )->take($limit);
     }
 }

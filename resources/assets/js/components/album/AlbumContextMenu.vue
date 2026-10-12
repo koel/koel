@@ -3,6 +3,19 @@
     <MenuItem @click="play">Play All</MenuItem>
     <MenuItem @click="shuffle">Shuffle All</MenuItem>
     <Separator />
+    <MenuItem v-if="!isOnAlbumScreen" @click="viewDetails">View Details</MenuItem>
+    <MenuItem v-if="hasStandardArtist">
+      Go to
+      <template #subMenuItems>
+        <MenuItem :title="album.artist_name" @click="viewArtist">
+          <template #icon>
+            <MicVocalIcon :size="16" class="inline-block" />
+          </template>
+          {{ album.artist_name }}
+        </MenuItem>
+      </template>
+    </MenuItem>
+    <Separator v-if="!isOnAlbumScreen || hasStandardArtist" />
     <MenuItem @click="toggleFavorite">{{ album.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
     <Separator />
     <li
@@ -28,12 +41,18 @@
       <Separator />
       <MenuItem @click="showEmbedModal">Embed…</MenuItem>
     </template>
+    <template v-if="musicBrainzUrl">
+      <Separator />
+      <MenuItem @click="viewOnMusicBrainz">View on MusicBrainz</MenuItem>
+    </template>
   </ul>
 </template>
 
 <script lang="ts" setup>
+import { MicVocalIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref, toRef, toRefs } from 'vue'
 import { albumStore } from '@/stores/albumStore'
+import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { useDownload } from '@/composables/useDownload'
@@ -45,6 +64,7 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
 import { usePolicies } from '@/composables/usePolicies'
 import { useRouter } from '@/composables/useRouter'
+import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { playback } from '@/services/playbackManager'
 
 import StarRating from '@/components/ui/StarRating.vue'
@@ -55,7 +75,7 @@ const { album } = toRefs(props)
 const EditAlbumForm = defineAsyncComponent(() => import('@/components/album/EditAlbumForm.vue'))
 const CreateEmbedForm = defineAsyncComponent(() => import('@/components/embed/CreateEmbedForm.vue'))
 
-const { go, url } = useRouter()
+const { getRouteParam, go, isCurrentScreen, url } = useRouter()
 const { MenuItem, Separator, closeContextMenu, trigger } = useContextMenu()
 const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
@@ -65,6 +85,19 @@ const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
 const allowEdit = computed(() => currentUserCan.editAlbum(album.value))
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))
+const hasStandardArtist = computed(() => artistStore.isStandard(album.value.artist_name))
+const isOnAlbumScreen = computed(() => isCurrentScreen('Album') && getRouteParam('id') === album.value.id)
+
+const viewDetails = () => trigger(() => go(url('albums.show', { id: album.value.id })))
+const viewArtist = () => trigger(() => go(url('artists.show', { id: album.value.artist_id })))
+
+const { useMusicBrainz } = useThirdPartyServices()
+
+const musicBrainzUrl = computed(() =>
+  useMusicBrainz.value && album.value.mbid ? `https://musicbrainz.org/release/${album.value.mbid}` : null,
+)
+
+const viewOnMusicBrainz = () => trigger(() => window.open(musicBrainzUrl.value!, '_blank'))
 
 const play = () =>
   trigger(async () => {

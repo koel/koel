@@ -7,6 +7,7 @@ use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
 use App\Services\AlbumService;
 use App\Services\SongStorages\S3LambdaStorage;
+use App\Services\SongStorages\S3UploadUrlSigner;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -29,7 +30,12 @@ class S3LambdaStorageTest extends TestCase
         $this->songRepository = Mockery::mock(SongRepository::class);
         $this->userRepository = Mockery::mock(UserRepository::class);
 
-        $this->storage = new S3LambdaStorage($this->albumService, $this->songRepository, $this->userRepository);
+        $this->storage = new S3LambdaStorage(
+            $this->albumService,
+            $this->songRepository,
+            $this->userRepository,
+            Mockery::mock(S3UploadUrlSigner::class),
+        );
     }
 
     #[Test]

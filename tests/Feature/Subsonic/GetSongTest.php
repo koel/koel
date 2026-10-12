@@ -3,6 +3,8 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Http\Responses\Subsonic\Resources\SongResource;
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -35,5 +37,25 @@ class GetSongTest extends TestCase
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'failed')
             ->assertJsonPath('subsonic-response.error.code', 70);
+    }
+
+    #[Test]
+    public function exposesTheAlbumArtistOfACompilationSong(): void
+    {
+        $user = create_user();
+        $variousArtists = Artist::factory()->for($user)->createOne(['name' => Artist::VARIOUS_NAME]);
+        $compilation = Album::factory()->for($variousArtists)->for($user)->createOne();
+        $song = Song::factory()
+            ->for($compilation)
+            ->for(Artist::factory()->for($user)->createOne(['name' => 'Radiohead']))
+            ->createOne(['owner_id' => $user->id]);
+
+        $this
+            ->getJson("/rest/getSong.view?apiKey={$user->subsonic_api_key}&f=json&id={$song->id}")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.song.displayAlbumArtist', Artist::VARIOUS_NAME)
+            ->assertJsonPath('subsonic-response.song.albumArtists', [
+                ['id' => $variousArtists->id, 'name' => Artist::VARIOUS_NAME],
+            ]);
     }
 }

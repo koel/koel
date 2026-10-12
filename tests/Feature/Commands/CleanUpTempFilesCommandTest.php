@@ -46,10 +46,4 @@ class CleanUpTempFilesCommandTest extends TestCase
 
         self::assertFileDoesNotExist($file);
     }
-
-    #[Test]
-    public function reportWhenNoFilesToDelete(): void
-    {
-        $this->artisan('koel:clean-up-temp-files')->assertSuccessful();
-    }
 }

@@ -1,12 +1,17 @@
 <?php
 
 use App\Exceptions\SubsonicAwareErrorRenderer;
+use App\Http\Middleware\AddBuildHeader;
+use App\Http\Middleware\AddRequestContextForLogging;
 use App\Http\Middleware\AuthenticateAudioRequests;
 use App\Http\Middleware\EnsureEmbedsEnabled;
+use App\Http\Middleware\EnsurePodcastsEnabled;
+use App\Http\Middleware\EnsureRadioEnabled;
 use App\Http\Middleware\ForceHttps;
 use App\Http\Middleware\HandleDemoMode;
 use App\Http\Middleware\ObjectStorageAuthenticate;
 use App\Http\Middleware\RestrictPlusFeatures;
+use App\Http\Middleware\TrustHosts;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -17,6 +22,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Sentry\Laravel\Integration as SentryIntegration;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -32,7 +38,25 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(static function (Middleware $middleware): void {
+        $middleware->prepend(TrustHosts::class);
+
+        $middleware->trustProxies(
+            headers: Request::HEADER_X_FORWARDED_FOR
+            | Request::HEADER_X_FORWARDED_HOST
+            | Request::HEADER_X_FORWARDED_PORT
+            | Request::HEADER_X_FORWARDED_PROTO,
+        );
+
+        $middleware->api(prepend: [
+            AddRequestContextForLogging::class,
+        ]);
+
+        $middleware->web(prepend: [
+            AddRequestContextForLogging::class,
+        ]);
+
         $middleware->api(append: [
+            AddBuildHeader::class,
             RestrictPlusFeatures::class,
             HandleDemoMode::class,
             ForceHttps::class,
@@ -48,6 +72,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'audio.auth' => AuthenticateAudioRequests::class,
             'os.auth' => ObjectStorageAuthenticate::class,
             'embeds.enabled' => EnsureEmbedsEnabled::class,
+            'podcasts.enabled' => EnsurePodcastsEnabled::class,
+            'radio.enabled' => EnsureRadioEnabled::class,
         ]);
 
         // Koel is an SPA without a `login` route, so the Authenticate middleware would otherwise
@@ -55,6 +81,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo('/');
     })
     ->withExceptions(static function (Exceptions $exceptions): void {
+        if (config('sentry.dsn')) {
+            SentryIntegration::handles($exceptions);
+        }
+
         $exceptions->render(static function (
             AuthenticationException $e,
             Request $request,
@@ -66,6 +96,8 @@ return Application::configure(basePath: dirname(__DIR__))
             return redirect()->guest('/');
         });
 
+        // @mago-ignore lint:prefer-first-class-callable (Laravel reflects on the closure's parameter
+        // types to decide which exceptions this renderer applies to)
         $exceptions->render(
             static fn (Throwable $e, Request $request): ?SymfonyResponse => SubsonicAwareErrorRenderer::render(
                 $e,

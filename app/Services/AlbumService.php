@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\ImageChangeType;
 use App\Exceptions\AlbumNameConflictException;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
@@ -10,12 +11,12 @@ use App\Values\Album\AlbumUpdateData;
 use App\Values\ImageWritingConfig;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 
 class AlbumService
 {
     public function __construct(
+        private readonly RichTextSanitizer $richTextSanitizer,
         private readonly AlbumRepository $albumRepository,
         private readonly ImageStorage $imageStorage,
         private readonly Finder $finder,
@@ -33,13 +34,18 @@ class AlbumService
 
         $data = $dto->toArray();
 
-        if (is_string($dto->cover)) {
-            // A non-empty string means the user is uploading another cover,
-            // when an empty string means the user is removing the cover.
-            $data['cover'] = rescue_if($dto->cover, fn () => $this->imageStorage->storeImage($dto->cover), '');
-        } else {
-            // If the cover is null, the user's not changing or removing the cover at all.
+        $coverChange = $this->imageStorage->storeOptionalImage($dto->cover);
+
+        if ($coverChange->type === ImageChangeType::KEEP) {
             Arr::forget($data, 'cover');
+        } else {
+            $data['cover'] = $coverChange->fileName ?? '';
+        }
+
+        if ($dto->description === null) {
+            Arr::forget($data, 'description');
+        } else {
+            $data['description'] = $this->richTextSanitizer->sanitize($dto->description);
         }
 
         $album->update($data);
@@ -83,9 +89,9 @@ class AlbumService
     public function generateAlbumThumbnail(Album $album): string
     {
         $this->imageStorage->storeImage(
-            source: image_storage_path($album->cover),
+            source: $this->imageStorage->get($album->cover),
             config: ImageWritingConfig::make(maxWidth: 48, blur: 10),
-            path: image_storage_path($album->thumbnail),
+            fileName: $album->thumbnail,
         );
 
         return $album->thumbnail;
@@ -93,9 +99,7 @@ class AlbumService
 
     public function getOrCreateAlbumThumbnail(Album $album): ?string
     {
-        $thumbnailPath = image_storage_path($album->thumbnail);
-
-        if ($thumbnailPath && !File::exists($thumbnailPath)) {
+        if ($album->thumbnail && !$this->imageStorage->exists($album->thumbnail)) {
             $this->generateAlbumThumbnail($album);
         }
 

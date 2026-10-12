@@ -29,13 +29,4 @@ describe('newTab directive', () => {
     const anchors = container.querySelectorAll('a')
     anchors.forEach(a => expect(a.getAttribute('target')).toBe('_blank'))
   })
-
-  it('handles elements without anchors', () => {
-    const { container } = h.render({
-      directives: { newTab },
-      template: '<div v-new-tab><span>No links</span></div>',
-    })
-
-    expect(container.querySelectorAll('a')).toHaveLength(0)
-  })
 })

@@ -10,11 +10,19 @@ final readonly class AlbumUpdateData implements Arrayable
         public string $name,
         public ?int $year,
         public ?string $cover,
+        public ?string $description,
     ) {}
 
-    public static function make(string $name, ?int $year = null, ?string $cover = null): self
-    {
-        return new self(name: $name, year: $year, cover: $cover);
+    /**
+     * @param ?string $description null leaves the description unchanged; an empty string removes it
+     */
+    public static function make(
+        string $name,
+        ?int $year = null,
+        ?string $cover = null,
+        ?string $description = null,
+    ): self {
+        return new self(name: $name, year: $year, cover: $cover, description: $description);
     }
 
     /** @inheritdoc */

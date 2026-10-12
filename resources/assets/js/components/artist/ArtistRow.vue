@@ -20,8 +20,9 @@
       <FavoriteButton :favorite="artist.favorite" @toggle="emit('toggle-favorite', artist)" />
     </span>
     <span class="extra">
-      <button class="text-k-fg-50 hover:text-k-fg p-1" title="More actions" @click="onContextMenu">
+      <button v-koel-tooltip class="text-k-fg-50 hover:text-k-fg p-1" @click="onContextMenu">
         <Icon :icon="faEllipsis" />
+        <span class="sr-only">More actions</span>
       </button>
     </span>
   </article>

@@ -15,7 +15,10 @@
         @logged-in="$emit('loggedIn')"
         @two-factor-required="twoFactorLoginToken = $event"
       />
-      <SsoLoginOptions @logged-in="$emit('loggedIn')" />
+      <div class="flex flex-wrap gap-3 items-center justify-center">
+        <PasskeyLoginButton @logged-in="$emit('loggedIn')" />
+        <SsoLoginOptions @logged-in="$emit('loggedIn')" @two-factor-required="twoFactorLoginToken = $event" />
+      </div>
     </template>
   </div>
 </template>
@@ -28,6 +31,7 @@ import { defineAsyncComponent } from '@/utils/helpers'
 
 const CredentialsLoginForm = defineAsyncComponent(() => import('@/components/auth/CredentialsLoginForm.vue'))
 const ForgotPasswordForm = defineAsyncComponent(() => import('@/components/auth/ForgotPasswordForm.vue'))
+const PasskeyLoginButton = defineAsyncComponent(() => import('@/components/auth/PasskeyLoginButton.vue'))
 const SsoLoginOptions = defineAsyncComponent(() => import('@/components/auth/sso/SsoLoginOptions.vue'))
 const TwoFactorChallengeForm = defineAsyncComponent(
   () => import('@/components/auth/two-factor/TwoFactorChallengeForm.vue'),
@@ -38,7 +42,7 @@ defineEmits<{ (e: 'loggedIn'): void }>()
 const { toastWarning } = useMessageToaster()
 
 const showingForgotPasswordForm = ref(false)
-const twoFactorLoginToken = ref('')
+const twoFactorLoginToken = ref(window.KOEL.two_factor_login_token ?? '')
 
 onMounted(() => {
   if (authService.hasRedirect()) {

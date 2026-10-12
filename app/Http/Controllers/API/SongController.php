@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\CursorPaginatedListRequest;
 use App\Http\Requests\API\DeleteSongsRequest;
-use App\Http\Requests\API\SongListRequest;
 use App\Http\Requests\API\SongUpdateRequest;
 use App\Http\Resources\AlbumResource;
 use App\Http\Resources\ArtistResource;
@@ -29,7 +29,7 @@ class SongController extends Controller
         private readonly Authenticatable $user,
     ) {}
 
-    public function index(SongListRequest $request)
+    public function index(CursorPaginatedListRequest $request)
     {
         return SongResource::collection($this->songRepository->paginate(
             sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],

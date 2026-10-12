@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : headerLayout">
+      <ScreenHeader :layout="playables.length === 0 ? 'collapsed' : 'expanded'">
         Current Queue
 
         <template #thumbnail>
@@ -34,7 +34,6 @@
       @reorder="onReorder"
       @press:delete="removeSelected"
       @press:enter="onPressEnter"
-      @swipe="onSwipe"
     />
 
     <ScreenEmptyState v-else>
@@ -45,7 +44,9 @@
       No songs queued.
       <span v-if="libraryNotEmpty" class="block secondary">
         How about
-        <a class="start" @click.prevent="shuffleSome">playing some random songs</a>?
+        <LinkButton class="start" variant="highlight" @click.prevent="shuffleSome">
+          playing some random songs</LinkButton
+        >?
       </span>
     </ScreenEmptyState>
   </ScreenBase>
@@ -69,13 +70,13 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
+import LinkButton from '@/components/ui/form/LinkButton.vue'
 
 const { go, onScreenActivated, url } = useRouter()
 
 const {
   PlayableList,
   ThumbnailStack,
-  headerLayout,
   playables,
   playableList,
   duration,
@@ -83,7 +84,6 @@ const {
   selectedPlayables,
   playSelected,
   applyFilter,
-  onSwipe,
 } = usePlayableList(toRef(queueStore.state, 'playables'), { type: 'Queue' }, { reorderable: true, sortable: false })
 
 const { PlayableListControls, config } = usePlayableListControls('Queue')

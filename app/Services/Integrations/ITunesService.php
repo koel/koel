@@ -4,8 +4,10 @@ namespace App\Services\Integrations;
 
 use App\Http\Integrations\iTunes\ITunesConnector;
 use App\Http\Integrations\iTunes\Requests\GetTrackRequest;
+use App\Http\Integrations\iTunes\Requests\LookupPodcastRequest;
 use App\Models\Album;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Uri;
 
 class ITunesService
 {
@@ -33,12 +35,21 @@ class ITunesService
                         return null;
                     }
 
-                    $trackUrl = $response->results[0]->trackViewUrl;
-                    $connector = parse_url($trackUrl, PHP_URL_QUERY) ? '&' : '?';
-
-                    return $trackUrl . "{$connector}at=" . config('koel.services.itunes.affiliate_id');
+                    return Uri::of($response->results[0]->trackViewUrl)->withQuery([
+                        'at' => config('koel.services.itunes.affiliate_id'),
+                    ])->value();
                 },
             );
         });
+    }
+
+    /**
+     * The RSS feed URL of the podcast with the given Apple Podcasts ID, or null when Apple knows of no public feed.
+     */
+    public function getPodcastFeedUrl(string $applePodcastsId): ?string
+    {
+        $response = $this->connector->send(new LookupPodcastRequest($applePodcastsId))->object();
+
+        return $response->results[0]->feedUrl ?? null;
     }
 }

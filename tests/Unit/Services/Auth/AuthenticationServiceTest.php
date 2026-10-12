@@ -9,6 +9,7 @@ use App\Repositories\UserRepository;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\TokenManager;
 use App\Services\Auth\TwoFactorAuthenticator;
+use App\Services\SecurityNoticeService;
 use App\Values\CompositeToken;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Cache;
@@ -43,6 +44,7 @@ class AuthenticationServiceTest extends TestCase
             $this->tokenManager,
             $this->passwordBroker,
             $this->twoFactorAuth,
+            $this->mock(SecurityNoticeService::class),
         );
     }
 
@@ -86,22 +88,28 @@ class AuthenticationServiceTest extends TestCase
     }
 
     #[Test]
-    public function logUserInBypassesTwoFactorGate(): void
+    public function logUserInOrStartTwoFactorChallengeLogsInWithoutTwoFactor(): void
     {
-        // SSO + proxy-auth flows call logUserIn() directly without going
-        // through login(). Confirm a 2FA-enabled user still mints a token
-        // and that RequiresTwoFactorException never fires from this seam.
         $user = create_user();
-        $user->two_factor_confirmed_at = now();
-        $user->save();
-
         $compositeToken = CompositeToken::fromAccessTokens(
             new NewAccessToken(new PersonalAccessToken(), 'api-token'),
             new NewAccessToken(new PersonalAccessToken(), 'audio-token'),
         );
         $this->tokenManager->expects('createCompositeToken')->with($user)->andReturn($compositeToken);
 
-        self::assertSame($compositeToken, $this->service->logUserIn($user));
+        self::assertSame($compositeToken->toArray(), $this->service->logUserInOrStartTwoFactorChallenge($user));
+    }
+
+    #[Test]
+    public function logUserInOrStartTwoFactorChallengeAsksForTheCodeWithTwoFactor(): void
+    {
+        $user = create_user(['two_factor_confirmed_at' => now()]);
+        $this->tokenManager->expects('createCompositeToken')->never();
+
+        $loginResponse = $this->service->logUserInOrStartTwoFactorChallenge($user);
+
+        self::assertArrayNotHasKey('token', $loginResponse);
+        self::assertNotEmpty($loginResponse['login_token']);
     }
 
     #[Test]

@@ -2,7 +2,6 @@
   <button
     v-koel-tooltip.left
     class="ai-btn relative flex items-center justify-center h-[42px] aspect-square rounded-full cursor-pointer p-0.5 active:scale-90"
-    title="AI Assistant (/)"
     type="button"
     @click.prevent="go(url('ai'))"
   >
@@ -32,6 +31,7 @@
         <path stroke="url(#ai-btn-gradient)" d="M5 18H3" />
       </svg>
     </span>
+    <span class="sr-only">AI Assistant (/)</span>
   </button>
 </template>
 

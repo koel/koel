@@ -49,4 +49,23 @@ describe('broadcastSubscriber', () => {
     privateChannel.trigger('.song.uploaded', 'some data')
     expect(handleMock).toHaveBeenCalledWith('some data')
   })
+
+  it('connects to Pusher with the credentials the server rendered', async () => {
+    window.KOEL.pusher = { app_key: 'the-key', app_cluster: 'eu' }
+
+    const instance = await broadcastSubscriber.newEchoInstance()
+
+    expect(instance.options.broadcaster).toBe('pusher')
+    expect(instance.options.key).toBe('the-key')
+    expect(instance.options.cluster).toBe('eu')
+    expect(instance.options.authEndpoint).toBe(`${window.KOEL.base_url}api/broadcasting/auth`)
+  })
+
+  it('falls back to no broadcaster when the server rendered no credentials', async () => {
+    window.KOEL.pusher = { app_key: '', app_cluster: '' }
+
+    const instance = await broadcastSubscriber.newEchoInstance()
+
+    expect(instance.options.broadcaster).toBe('null')
+  })
 })

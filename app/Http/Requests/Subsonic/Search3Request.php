@@ -12,8 +12,11 @@ class Search3Request extends Request
         return [
             'query' => ['nullable', 'string'],
             'artistCount' => ['integer', 'min:0', 'max:500'],
+            'artistOffset' => ['integer', 'min:0'],
             'albumCount' => ['integer', 'min:0', 'max:500'],
+            'albumOffset' => ['integer', 'min:0'],
             'songCount' => ['integer', 'min:0', 'max:500'],
+            'songOffset' => ['integer', 'min:0'],
         ];
     }
 }

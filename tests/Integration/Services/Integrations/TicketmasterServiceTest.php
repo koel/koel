@@ -11,6 +11,7 @@ use App\Values\Ticketmaster\TicketmasterEvent;
 use App\Values\Ticketmaster\TicketmasterVenue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
 use Saloon\Http\PendingRequest;
@@ -80,7 +81,7 @@ class TicketmasterServiceTest extends TestCase
             'name' => 'Slayer',
         ]);
 
-        $events = $this->service->searchEventForArtist($artist->name, '84.124.22.13');
+        $events = $this->service->searchEventForArtist($artist, '84.124.22.13');
         self::assertCount(2, $events);
     }
 
@@ -108,7 +109,30 @@ class TicketmasterServiceTest extends TestCase
         Cache::put(cache_key('Ticketmaster events', 'Coolio', 'BR'), $events, now()->addDay());
         Cache::put(cache_key('IP to country code', '84.124.22.13'), 'BR', now()->addDay());
 
-        self::assertSame($events, $this->service->searchEventForArtist('Coolio', '84.124.22.13'));
+        $artist = Artist::factory()->createOne(['name' => 'Coolio']);
+
+        self::assertSame($events, $this->service->searchEventForArtist($artist, '84.124.22.13'));
+        Saloon::assertNothingSent();
+    }
+
+    /** @return array<string, array{string}> */
+    public static function provideNonStandardArtistNames(): array
+    {
+        return [
+            'Various Artists' => [Artist::VARIOUS_NAME],
+            'Unknown Artist' => [Artist::UNKNOWN_NAME],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideNonStandardArtistNames')]
+    public function skipNonStandardArtists(string $name): void
+    {
+        Saloon::fake([]);
+
+        $artist = Artist::factory()->createOne(['name' => $name]);
+
+        self::assertEmpty($this->service->searchEventForArtist($artist, '84.124.22.13'));
         Saloon::assertNothingSent();
     }
 }

@@ -38,8 +38,6 @@ describe('albumTrackListItem.vue', () => {
     return rendered
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
   it('plays', async () => {
     h.createAudioPlayer()
 
@@ -48,7 +46,21 @@ describe('albumTrackListItem.vue', () => {
 
     renderComponent(matchedSong)
 
-    await h.user.click(screen.getByTitle('Click to play'))
+    await h.user.click(screen.getByText('Fahrstuhl to Heaven'))
+
+    expect(playMock).toHaveBeenCalledWith(matchedSong)
+  })
+
+  it.each(['{Enter}', ' '])('plays when %s is pressed', async (key: string) => {
+    h.createAudioPlayer()
+
+    const matchedSong = h.factory('song').make()
+    const playMock = h.mock(playbackService, 'play')
+
+    renderComponent(matchedSong)
+
+    await h.user.tab()
+    await h.user.keyboard(key)
 
     expect(playMock).toHaveBeenCalledWith(matchedSong)
   })

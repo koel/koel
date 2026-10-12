@@ -15,6 +15,7 @@ use App\Services\AlbumService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
+use App\Values\Scanning\ScanInformation;
 use App\Values\Song\SongUpdateData;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
@@ -227,6 +228,67 @@ class SongServiceTest extends TestCase
     }
 
     #[Test]
+    public function createFromScanStoresMusicBrainzIds(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
+
+        $info = app(FileScanner::class)->scan(test_path('songs/full-vorbis-comments.flac'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertSame('11111111-1111-1111-1111-111111111111', $song->mbid);
+        self::assertSame('22222222-2222-2222-2222-222222222222', $song->album->mbid);
+        self::assertSame('33333333-3333-3333-3333-333333333333', $song->artist->mbid);
+    }
+
+    #[Test]
+    public function createFromScanKeepsExistingAlbumAndArtistMusicBrainzIds(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
+
+        $owner = create_admin();
+
+        $artist = Artist::getOrCreate($owner, 'Koel');
+        $artist->update(['mbid' => 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa']);
+
+        $album = Album::getOrCreate($artist, 'Koel Testing Vol. 1');
+        $album->update(['mbid' => 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb']);
+
+        $info = app(FileScanner::class)->scan(test_path('songs/full-vorbis-comments.flac'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+
+        self::assertSame('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', $song->artist->mbid);
+        self::assertSame('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', $song->album->mbid);
+        self::assertSame('11111111-1111-1111-1111-111111111111', $song->mbid);
+    }
+
+    #[Test]
+    public function createFromScanDoesNotStampTheAlbumArtistIdOnTheSongArtist(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
+
+        // The file credits the same name as both artist and album artist, so both resolve to one row.
+        // Its artist identifier must win over the album artist's.
+        $info = app(FileScanner::class)->scan(test_path('songs/full-vorbis-comments.flac'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertTrue($song->artist->is($song->album_artist));
+        self::assertSame('33333333-3333-3333-3333-333333333333', $song->artist->mbid);
+    }
+
+    #[Test]
+    public function createFromScanLeavesMusicBrainzIdsEmptyForUntaggedFile(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
+
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertNull($song->mbid);
+        self::assertNull($song->album->mbid);
+        self::assertNull($song->artist->mbid);
+    }
+
+    #[Test]
     public function createOrUpdateFromScan(): void
     {
         Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);
@@ -434,23 +496,95 @@ class SongServiceTest extends TestCase
     }
 
     #[Test]
-    public function updateNonCompilationSongArtistAlsoUpdatesAlbumArtist(): void
+    public function rescanIgnoringArtistKeepsTheCurrentArtist(): void
     {
-        $song = Song::factory()->createOne();
-        $originalAlbumArtist = $song->album_artist;
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
 
-        // Verify non-compilation: album artist === song artist
-        self::assertTrue($originalAlbumArtist->is($song->artist));
+        $editedArtist = Artist::getOrCreate($owner, 'Edited Artist');
+        $song->update(['artist_id' => $editedArtist->id, 'artist_name' => $editedArtist->name]);
 
-        // Change artist without specifying album artist
-        $data = SongUpdateData::make(artistName: 'New Artist');
-        $result = $this->service->updateSongs([$song->id], $data);
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['artist'],
+            force: true,
+        ));
 
-        /** @var Song $updatedSong */
-        $updatedSong = $result->updatedSongs->first();
+        self::assertTrue($song->refresh()->artist->is($editedArtist));
+    }
 
-        // For non-compilation songs, album artist should follow the song artist
-        self::assertSame('New Artist', $updatedSong->artist->name);
-        self::assertSame('New Artist', $updatedSong->album_artist->name);
+    #[Test]
+    public function rescanIgnoringAlbumKeepsTheCurrentAlbum(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+
+        $editedAlbum = Album::getOrCreate($song->album->artist, 'Edited Album');
+        $song->update(['album_id' => $editedAlbum->id, 'album_name' => $editedAlbum->name]);
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['album'],
+            force: true,
+        ));
+
+        self::assertTrue($song->refresh()->album->is($editedAlbum));
+    }
+
+    #[Test]
+    public function rescanIgnoringAlbumArtistKeepsTheCurrentAlbumArtist(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+
+        $variousArtists = Artist::getOrCreate($owner, Artist::VARIOUS_NAME);
+        $compilation = Album::getOrCreate($variousArtists, $song->album->name);
+        $song->update(['album_id' => $compilation->id]);
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['albumartist'],
+            force: true,
+        ));
+
+        self::assertTrue($song->refresh()->album->is($compilation));
+    }
+
+    #[Test]
+    public function rescanIgnoringArtistLeavesTheFilesArtistMbidOut(): void
+    {
+        $owner = create_admin();
+        $path = test_path('songs/full.mp3');
+        $info = ScanInformation::make(
+            title: 'Song',
+            albumName: 'Album',
+            artistName: 'Original Artist',
+            artistMbid: 'original-artist-mbid',
+            track: 1,
+            disc: 1,
+            genre: '',
+            lyrics: '',
+            length: 10,
+            path: $path,
+            hash: 'hash',
+            mTime: get_mtime($path),
+            mimeType: 'audio/mpeg',
+            fileSize: 1_024,
+        );
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+
+        $editedArtist = Artist::getOrCreate($owner, 'Edited Artist');
+        $song->update(['artist_id' => $editedArtist->id, 'artist_name' => $editedArtist->name]);
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['artist'],
+            force: true,
+        ));
+
+        self::assertNull($editedArtist->refresh()->mbid);
     }
 }

@@ -1,19 +1,23 @@
 <template>
-  <div class="w-full h-full fixed top-0 left-0 flex items-center justify-center z-99 bg-black/70">
-    <div class="relative max-w-full max-h-full rounded-md flex">
-      <Cropper
-        ref="cropper"
-        :max-width="config.maxWidth"
-        :min-width="config.minWidth"
-        :src="source"
-        :stencil-props="{ aspectRatio: 1 }"
-      />
-      <div class="fixed top-6 right-6 flex flex-1 gap-2">
-        <Btn variant="success" @click.prevent="crop">Crop</Btn>
-        <Btn variant="ghost" @click.prevent="emits('cancel')">Cancel</Btn>
+  <!-- Teleported to the body: screens establish a containing block for fixed positioning, which would
+       otherwise size this overlay to the current screen and clip it to that screen's bounds. -->
+  <Teleport to="body">
+    <div class="w-full h-full fixed top-0 left-0 flex items-center justify-center z-99 bg-black/70">
+      <div class="relative max-w-full max-h-full rounded-md flex">
+        <Cropper
+          ref="cropper"
+          :max-width="config.maxWidth"
+          :min-width="config.minWidth"
+          :src="source"
+          :stencil-props="{ aspectRatio: 1 }"
+        />
+        <div class="fixed top-6 right-6 flex flex-1 gap-2">
+          <Btn variant="success" @click.prevent="crop">Crop</Btn>
+          <Btn variant="ghost" @click.prevent="emits('cancel')">Cancel</Btn>
+        </div>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script lang="ts" setup>

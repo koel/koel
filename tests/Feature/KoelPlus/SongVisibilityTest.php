@@ -22,7 +22,7 @@ class SongVisibilityTest extends PlusTestCase
         $this->putAs('api/songs/publicize', ['songs' => $externalSongs->modelKeys()], $currentUser)->assertForbidden();
 
         // But we can our own songs.
-        $ownSongs = Song::factory()->for($currentUser, 'owner')->createMany(2);
+        $ownSongs = Song::factory()->for($currentUser, 'owner')->private()->createMany(2);
 
         $this->putAs('api/songs/publicize', ['songs' => $ownSongs->modelKeys()], $currentUser)->assertSuccessful();
 

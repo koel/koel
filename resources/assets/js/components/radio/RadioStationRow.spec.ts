@@ -26,13 +26,6 @@ describe('radioStationRow.vue', () => {
     return { station, ...h.render(Component, { props: { station } }) }
   }
 
-  it('renders the station name and description', () => {
-    renderComponent()
-
-    screen.getByText('WCPE')
-    screen.getByText('The Classical Station')
-  })
-
   it('emits toggle-favorite when the favorite button is clicked', async () => {
     const { station, emitted } = renderComponent({ favorite: true })
 

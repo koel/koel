@@ -15,19 +15,9 @@ describe('dialogBox', () => {
     return h.render(Component)
   }
 
-  it('renders OK button', () => {
-    renderComponent()
-    screen.getByRole('button', { name: 'OK', hidden: true })
-  })
-
   it('does not show Cancel button by default', () => {
     renderComponent()
     expect(screen.queryByRole('button', { name: 'Cancel', hidden: true })).toBeNull()
-  })
-
-  it('renders a dialog element', () => {
-    renderComponent()
-    expect(document.querySelector('dialog')).toBeTruthy()
   })
 
   it('has info class by default', () => {

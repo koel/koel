@@ -6,18 +6,6 @@ import Component from './ScreenBase.vue'
 describe('screenBase', () => {
   const h = createHarness()
 
-  it('renders header and default slots', () => {
-    h.render(Component, {
-      slots: {
-        header: 'Screen Header',
-        default: 'Screen Content',
-      },
-    })
-
-    screen.getByText('Screen Header')
-    screen.getByText('Screen Content')
-  })
-
   it('renders cover background when backgroundImage is provided', () => {
     h.render(Component, {
       props: {

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Organization;
 use App\Models\Setting;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -56,5 +57,29 @@ class SettingTest extends TestCase
         ]);
 
         self::assertSame('bar', Setting::get('foo'));
+    }
+
+    #[Test]
+    public function keepAnOrganizationSettingApartFromTheInstallWideOne(): void
+    {
+        $organization = Organization::factory()->createOne();
+
+        Setting::set('foo', 'install-wide');
+        Setting::set('foo', 'organization', $organization);
+
+        self::assertSame('install-wide', Setting::get('foo'));
+        self::assertSame('organization', Setting::get('foo', $organization));
+    }
+
+    #[Test]
+    public function keepEachOrganizationSettingToItself(): void
+    {
+        $organization = Organization::factory()->createOne();
+        $otherOrganization = Organization::factory()->createOne();
+
+        Setting::set('foo', 'bar', $organization);
+
+        self::assertNull(Setting::get('foo', $otherOrganization));
+        self::assertNull(Setting::get('foo'));
     }
 }

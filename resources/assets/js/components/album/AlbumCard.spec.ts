@@ -2,9 +2,7 @@ import { screen } from '@testing-library/vue'
 import type { Mock } from 'vite-plus/test'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
-import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { albumStore } from '@/stores/albumStore'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -50,36 +48,20 @@ describe('albumCard', () => {
     }
   }
 
-  it('downloads', async () => {
-    const mock = h.mock(downloadService, 'fromAlbum')
+  it('links the album artist to their page', () => {
     renderComponent()
 
-    await h.user.click(screen.getByTitle('Download all songs in the album IV'))
-
-    expect(mock).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('link', { name: 'Led Zeppelin' })).toHaveProperty(
+      'href',
+      expect.stringContaining('/artists/led-zeppelin'),
+    )
   })
 
-  it('does not have an option to download if downloading is disabled', async () => {
-    commonStore.state.allows_download = false
-    renderComponent()
+  it('shows a compilation album artist without a link', () => {
+    renderComponent(createAlbum({ artist_id: 'various', artist_name: 'Various Artists' }))
 
-    expect(screen.queryByText('Download')).toBeNull()
-  })
-
-  it('separates Shuffle and Download with a standalone, non-link separator', () => {
-    commonStore.state.allows_download = true
-    renderComponent()
-
-    const separator = screen.getByText('•')
-    expect(separator.tagName).toBe('SPAN')
-    expect(separator.closest('a')).toBeNull()
-  })
-
-  it('does not render the separator when download is disabled', () => {
-    commonStore.state.allows_download = false
-    renderComponent()
-
-    expect(screen.queryByText('•')).toBeNull()
+    screen.getByText('Various Artists')
+    expect(screen.queryByRole('link', { name: 'Various Artists' })).toBeNull()
   })
 
   it('shuffles', async () => {
@@ -90,7 +72,7 @@ describe('albumCard', () => {
     const shuffleMock = h.mock(playbackService, 'queueAndPlay').mockResolvedValue(void 0)
     const { album } = renderComponent(undefined, false)
 
-    await h.user.click(screen.getByTitle('Shuffle all songs in the album IV'))
+    await h.user.click(screen.getByRole('button', { name: 'Shuffle' }))
     await h.tick()
 
     expect(fetchMock).toHaveBeenCalledWith(album)

@@ -19,6 +19,8 @@
     <div v-else class="h-screen flex flex-col items-center justify-center">
       <Auth @logged-in="onUserLoggedIn" />
     </div>
+
+    <UpdateNotification />
   </div>
 </template>
 
@@ -31,6 +33,8 @@ import { userStore } from '@/stores/userStore'
 import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
 import type { RemoteState } from '@/remote/types'
+
+import UpdateNotification from '@/components/ui/UpdateNotification.vue'
 
 const StreamableDetails = defineAsyncComponent(() => import('@/remote/components/StreamableDetails.vue'))
 const Scanner = defineAsyncComponent(() => import('@/remote/components/Scanner.vue'))

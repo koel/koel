@@ -1,6 +1,7 @@
 <template>
-  <SideSheetButton v-koel-tooltip.left title="Log out" @click.prevent="logout">
+  <SideSheetButton v-koel-tooltip.left @click.prevent="logout">
     <Icon :icon="faArrowRightFromBracket" />
+    <span class="sr-only">Log out</span>
   </SideSheetButton>
 </template>
 

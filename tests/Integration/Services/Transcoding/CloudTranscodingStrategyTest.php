@@ -94,4 +94,32 @@ class CloudTranscodingStrategyTest extends TestCase
             128,
         ));
     }
+
+    #[Test]
+    public function transcodeFromALocalCopyWithoutFetchingTheSong(): void
+    {
+        $song = Song::factory()->createOne([
+            'path' => 's3://bucket/key.flac',
+            'storage' => SongStorageType::S3,
+        ]);
+
+        $storage = $this->mock(S3CompatibleStorage::class);
+
+        $ulid = Ulid::freeze();
+        $tmpDestination = artifact_path("tmp/$ulid.m4a", ensureDirectoryExists: false);
+        $transcodeKey = "transcodes/128/$ulid.m4a";
+
+        $storage->expects('getPresignedUrl')->with('key.flac')->never();
+        $storage->expects('getPresignedUrl')->with($transcodeKey)->andReturn('https://s3.song.presigned.url/transcode');
+        $storage->expects('uploadToStorage')->with($transcodeKey, $tmpDestination);
+
+        $this->transcoder->expects('transcode')->with('/tmp/upload/song.flac', $tmpDestination, 128);
+
+        File::expects('ensureDirectoryExists')->with(dirname($tmpDestination));
+        File::expects('hash')->with($tmpDestination)->andReturn('mocked-checksum');
+        File::expects('delete')->with($tmpDestination);
+        File::expects('size')->with($tmpDestination)->andReturn(1_024);
+
+        $this->strategy->getTranscodeLocation($song, 128, '/tmp/upload/song.flac');
+    }
 }

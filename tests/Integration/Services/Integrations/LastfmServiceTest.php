@@ -11,6 +11,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Services\Integrations\LastfmService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -35,6 +36,42 @@ class LastfmServiceTest extends TestCase
         ]);
 
         $this->service = app(LastfmService::class);
+    }
+
+    #[Test]
+    public function keepArtistInformationWhenTheDefaultCacheIsCleared(): void
+    {
+        $artist = Artist::factory()->make(['name' => 'Kamelot']);
+
+        Saloon::fake([
+            GetArtistInfoRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/lastfm/artist.json',
+            ))),
+        ]);
+
+        $firstInfo = $this->service->getArtistInformation($artist);
+        Cache::clear();
+
+        self::assertEquals($firstInfo, $this->service->getArtistInformation($artist));
+        Saloon::assertSentCount(1);
+    }
+
+    #[Test]
+    public function keepAlbumInformationWhenTheDefaultCacheIsCleared(): void
+    {
+        $album = Album::factory()->for(Artist::factory()->createOne(['name' => 'Kamelot']))->createOne([
+            'name' => 'Epica',
+        ]);
+
+        Saloon::fake([
+            GetAlbumInfoRequest::class => MockResponse::make(body: File::get(test_path('fixtures/lastfm/album.json'))),
+        ]);
+
+        $firstInfo = $this->service->getAlbumInformation($album);
+        Cache::clear();
+
+        self::assertEquals($firstInfo, $this->service->getAlbumInformation($album));
+        Saloon::assertSentCount(1);
     }
 
     #[Test]

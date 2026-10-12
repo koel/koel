@@ -32,7 +32,7 @@ describe('playlistCollaboratorListItem.vue', () => {
       role: 'owner',
     })
 
-    expect(screen.queryByTitle('This is you!')).toBeNull()
+    expect(screen.queryByText('This is you!')).toBeNull()
   })
 
   it('shows a badge when current user is the collaborator', async () => {
@@ -49,7 +49,7 @@ describe('playlistCollaboratorListItem.vue', () => {
       role: 'owner',
     })
 
-    screen.getByTitle('This is you!')
+    screen.getByText('This is you!')
   })
 
   it('shows the role', async () => {

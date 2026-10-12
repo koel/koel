@@ -17,11 +17,15 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 use Throwable;
 
+// @mago-ignore lint:cyclomatic-complexity
 class LicenseService implements LicenseServiceInterface
 {
+    private const UNKNOWN_STATUS_CACHE_TTL_IN_MINUTES = 15;
+
     public function __construct(
         private readonly LemonSqueezyConnector $connector,
         #[Config('app.key')]
@@ -95,7 +99,13 @@ class LicenseService implements LicenseServiceInterface
                 return self::cacheStatus(LicenseStatus::invalid($license));
             }
 
-            throw $e;
+            Log::error($e);
+
+            return self::cacheUnknownStatus($license);
+        } catch (FatalRequestException $e) {
+            Log::error($e);
+
+            return self::cacheUnknownStatus($license);
         } catch (DecryptException) {
             // the license key has been tampered with somehow
             return self::cacheStatus(LicenseStatus::invalid($license));
@@ -129,6 +139,19 @@ class LicenseService implements LicenseServiceInterface
     private static function cacheStatus(LicenseStatus $status): LicenseStatus
     {
         Cache::put('license_status', $status, now()->addWeek());
+
+        return $status;
+    }
+
+    /**
+     * Cached only briefly: the validation service is expected back, and until it is, every
+     * uncached call blocks the request for the full HTTP timeout.
+     */
+    private static function cacheUnknownStatus(License $license): LicenseStatus
+    {
+        $status = LicenseStatus::unknown($license);
+
+        Cache::put('license_status', $status, now()->addMinutes(self::UNKNOWN_STATUS_CACHE_TTL_IN_MINUTES));
 
         return $status;
     }

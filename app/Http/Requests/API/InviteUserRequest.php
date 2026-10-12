@@ -2,16 +2,15 @@
 
 namespace App\Http\Requests\API;
 
-use App\Enums\Acl\Role;
-use App\Rules\AvailableRole;
-use App\Rules\UserCanManageRole;
-use Illuminate\Validation\Rule;
+use App\Http\Requests\API\Concerns\ValidatesRole;
 
 /**
  * @property-read array<string> $emails
  */
 class InviteUserRequest extends Request
 {
+    use ValidatesRole;
+
     /**
      * @inheritdoc
      */
@@ -19,12 +18,7 @@ class InviteUserRequest extends Request
     {
         return [
             'emails.*' => ['required', 'email', 'unique:users,email'],
-            'role' => [
-                'required',
-                Rule::enum(Role::class),
-                new AvailableRole(),
-                new UserCanManageRole($this->user()),
-            ],
+            'role' => $this->roleRule(),
         ];
     }
 

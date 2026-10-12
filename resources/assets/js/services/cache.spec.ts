@@ -24,6 +24,17 @@ describe('cache', () => {
     expect(cache.has('foo')).toBe(false)
   })
 
+  it('keeps an entry for a day by default', () => {
+    vi.useFakeTimers()
+    cache.set('foo', 'bar')
+
+    vi.advanceTimersByTime(23 * 60 * 60 * 1000)
+    expect(cache.has('foo')).toBe(true)
+
+    vi.advanceTimersByTime(2 * 60 * 60 * 1000)
+    expect(cache.has('foo')).toBe(false)
+  })
+
   it('removes an entry', () => {
     cache.set('foo', 'bar')
     cache.remove('foo')

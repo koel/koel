@@ -14,10 +14,10 @@
       <FooterBtn
         :class="isRadio && 'pointer-events-none opacity-30 cursor-not-allowed'"
         class="text-2xl"
-        title="Play previous in queue"
         @click.prevent="playPrev"
       >
         <Icon :icon="faStepBackward" />
+        <span class="sr-only">Play previous in queue</span>
       </FooterBtn>
 
       <PlayButton />
@@ -25,10 +25,10 @@
       <FooterBtn
         :class="isRadio && 'pointer-events-none opacity-30 cursor-not-allowed'"
         class="text-2xl"
-        title="Play next in queue"
         @click.prevent="playNext"
       >
         <Icon :icon="faStepForward" />
+        <span class="sr-only">Play next in queue</span>
       </FooterBtn>
 
       <RepeatModeSwitch :class="isRadio && 'pointer-events-none opacity-30 cursor-not-allowed'" class="text-base" />

@@ -1,16 +1,10 @@
 <template>
-  <BaseCard
-    :entity="station"
-    :layout="layout"
-    :title="station.name"
-    @contextmenu="onContextMenu"
-    @dblclick="togglePlay"
-  >
+  <BaseCard :entity="station" :layout="layout" @contextmenu="onContextMenu" @dblclick="togglePlay">
     <template #thumbnail>
       <RadioStationThumbnail :station @clicked="togglePlay" />
     </template>
     <template #name>
-      <h3 class="font-medium text-k-fg">
+      <h3 :title="station.name" class="font-medium text-k-fg">
         {{ station.name }}
         <FavoriteButton v-if="station.favorite" :favorite="station.favorite" class="ml-1" @toggle="toggleFavorite" />
       </h3>

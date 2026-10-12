@@ -6,6 +6,7 @@ use App\Builders\ArtistBuilder;
 use App\Facades\License;
 use App\Helpers\Encoding\Bom;
 use App\Models\Concerns\Artists\HasArtistAttributes;
+use App\Models\Concerns\HasMbid;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\MorphsToRatings;
@@ -26,12 +27,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * @property ?string $image The artist's image file name
+ * @property ?string $description Description written by the user, as sanitized HTML
+ * @property ?string $album_cover For an artist without an image, the cover of the scoped user's most played album
  * @property Carbon $created_at
  * @property Collection<array-key, Album> $albums
  * @property Collection<array-key, Song> $songs
@@ -40,6 +44,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property bool $is_various If the artist is Various Artists
  * @property int $user_id The ID of the user that owns this artist
  * @property string $id
+ * @property ?string $mbid The MusicBrainz artist ID
  * @property string $name
  * @property ?bool $favorite Whether the artist is liked by the scoped user
  * @property ?Carbon $favorited_at When the scoped user favorited the artist, if at all
@@ -54,6 +59,7 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
 {
     use Auditable;
     use HasArtistAttributes;
+    use HasMbid;
     use HasFactory;
     use HasUlids;
     use MorphsToEmbeds;
@@ -104,9 +110,16 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
      * Get an Artist object from their name (and if Koel Plus, belonging to a specific user).
      * If such is not found, a new artist will be created.
      */
-    public static function getOrCreate(User $user, ?string $name = null): self
+    private static function normalizeName(?string $name): string
     {
         $name = trim(Bom::strip($name) ?? '') ?: self::UNKNOWN_NAME;
+
+        return in_array(Str::lower($name), ['various artists', 'va'], true) ? self::VARIOUS_NAME : $name;
+    }
+
+    public static function getOrCreate(User $user, ?string $name = null): self
+    {
+        $name = self::normalizeName($name);
 
         // In the Community license, all artists are shared, so we determine the first artist by the name only.
         // In the Plus license, artists are user-specific, so we create or return the artist for the given user.
@@ -125,6 +138,11 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
                         'name' => $name,
                     ]);
             });
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return !$this->is_various && !$this->is_unknown;
     }
 
     /** @return array<mixed> */

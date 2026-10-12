@@ -1,5 +1,5 @@
 ---
-description: Requirements, installation methods (pre-compiled, source, Docker), configuration, running with FrankenPHP (binary + systemd), upgrading, and downgrading Koel.
+description: Requirements, installation methods (pre-compiled, source, Docker, Railway), configuration, running with FrankenPHP (binary + systemd), upgrading, and downgrading Koel.
 ---
 
 # Getting Started
@@ -25,7 +25,7 @@ The requirements for each part are as follows:
 
 ## Installation
 
-There are four methods to install and start using Koel:
+There are five methods to install and start using Koel:
 
 ### Using the Standalone Binary
 
@@ -88,6 +88,16 @@ and `Caddyfile.example` for [FrankenPHP](/guide/running-with-frankenphp).
 
 Koel has an official Docker image: [koel/docker](https://github.com/koel/docker). Please refer to the repository for
 detailed instructions and issue reporting.
+
+### Using Railway (community)
+
+To deploy Koel with PostgreSQL on [Railway](https://railway.com), use this community-maintained template:
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/koel?utm_medium=integration&utm_source=button&utm_campaign=koel)
+
+This is not an official Koel offering — please report template issues to the maintainers at
+[osbytes/template-koel](https://github.com/osbytes/template-koel). After the first deploy, change the default admin
+password immediately (`admin@koel.dev` / `KoelIsCool`).
 
 ## Configuration
 

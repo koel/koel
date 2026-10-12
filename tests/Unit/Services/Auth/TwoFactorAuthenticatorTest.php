@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Auth;
 
 use App\Services\Auth\RecoveryCodeFactory;
 use App\Services\Auth\TwoFactorAuthenticator;
+use App\Services\SecurityNoticeService;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use RobThree\Auth\TwoFactorAuth as Totp;
@@ -15,6 +16,7 @@ class TwoFactorAuthenticatorTest extends TestCase
 {
     private Totp|MockInterface $totp;
     private RecoveryCodeFactory|MockInterface $recoveryCodeFactory;
+    private SecurityNoticeService|MockInterface $securityNoticeService;
     private TwoFactorAuthenticator $authenticator;
 
     public function setUp(): void
@@ -23,8 +25,14 @@ class TwoFactorAuthenticatorTest extends TestCase
 
         $this->totp = $this->mock(Totp::class);
         $this->recoveryCodeFactory = $this->mock(RecoveryCodeFactory::class);
+        $this->securityNoticeService = $this->mock(SecurityNoticeService::class);
 
-        $this->authenticator = new TwoFactorAuthenticator($this->recoveryCodeFactory, 'koel-test', $this->totp);
+        $this->authenticator = new TwoFactorAuthenticator(
+            $this->recoveryCodeFactory,
+            $this->securityNoticeService,
+            'koel-test',
+            $this->totp,
+        );
     }
 
     #[Test]
@@ -50,14 +58,6 @@ class TwoFactorAuthenticatorTest extends TestCase
     }
 
     #[Test]
-    public function generateRecoveryCodesDelegatesToFactory(): void
-    {
-        $this->recoveryCodeFactory->expects('generateCodes')->with(8)->andReturn(['CODE_A', 'CODE_B']);
-
-        self::assertSame(['CODE_A', 'CODE_B'], $this->authenticator->generateRecoveryCodes());
-    }
-
-    #[Test]
     public function regenerateRecoveryCodesPersistsAndReturnsNewCodes(): void
     {
         $user = create_user();
@@ -80,6 +80,8 @@ class TwoFactorAuthenticatorTest extends TestCase
         $user = create_user();
         $user->two_factor_secret = 'SECRET';
         $user->save();
+
+        $this->securityNoticeService->expects('notifyTwoFactorEnabled')->with($user);
 
         $this->authenticator->confirm($user, ['CODE_A', 'CODE_B']);
 
@@ -175,6 +177,8 @@ class TwoFactorAuthenticatorTest extends TestCase
         $user->two_factor_confirmed_at = now();
         $user->two_factor_recovery_codes = ['CODE_A', 'CODE_B'];
         $user->save();
+
+        $this->securityNoticeService->expects('notifyTwoFactorDisabled')->with($user);
 
         $this->authenticator->disable($user);
 

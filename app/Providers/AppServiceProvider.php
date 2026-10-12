@@ -3,9 +3,12 @@
 namespace App\Providers;
 
 use App\Enums\Acl\Role;
+use App\Hooks\Action;
+use App\Hooks\HookRegistry;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
+use App\Models\Passkey;
 use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\RadioStation;
@@ -33,6 +36,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passkeys\Passkeys;
 use SpotifyWebAPI\Session as SpotifySession;
 
 class AppServiceProvider extends ServiceProvider
@@ -50,6 +54,8 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping();
 
         self::grantAllPermissionsToSuperAdminRole();
+
+        do_action(Action::APPLICATION_BOOTED);
 
         $this->app->bind(SpotifySession::class, static function () {
             return SpotifyService::enabled()
@@ -109,6 +115,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->app->singleton(HookRegistry::class);
+
+        Passkeys::ignoreRoutes();
+        Passkeys::useUserModel(User::class);
+        Passkeys::usePasskeyModel(Passkey::class);
+
         if (class_exists('Laravel\Tinker\TinkerServiceProvider')) {
             $this->app->register('Laravel\Tinker\TinkerServiceProvider');
         }

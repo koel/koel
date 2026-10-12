@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Services\Auth\AuthenticationService;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -15,19 +17,7 @@ use function Tests\create_user;
 class ForgotPasswordTest extends TestCase
 {
     #[Test]
-    public function sendResetPasswordRequest(): void
-    {
-        $this
-            ->mock(AuthenticationService::class)
-            ->expects('trySendResetPasswordLink')
-            ->with('foo@bar.com')
-            ->andReturnTrue();
-
-        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])->assertNoContent();
-    }
-
-    #[Test]
-    public function sendResetPasswordRequestFailed(): void
+    public function answerTheSameWayForAnAddressWithoutAnAccount(): void
     {
         $this
             ->mock(AuthenticationService::class)
@@ -35,7 +25,27 @@ class ForgotPasswordTest extends TestCase
             ->with('foo@bar.com')
             ->andReturnFalse();
 
-        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])->assertNotFound();
+        $this->postJson('/api/forgot-password', ['email' => 'foo@bar.com'])->assertNoContent();
+    }
+
+    #[Test]
+    public function resetLinkPointsToAppUrlWhateverTheRequestHost(): void
+    {
+        config(['app.url' => 'https://music.example.com']);
+        Notification::fake();
+        $user = create_user();
+
+        $this
+            ->withHeaders(['Host' => 'evil.example', 'X-Forwarded-Host' => 'evil.example'])
+            ->postJson('/api/forgot-password', ['email' => $user->email])
+            ->assertNoContent();
+
+        Notification::assertSentTo($user, static function (ResetPassword $notification) use ($user): bool {
+            return str_contains(
+                (string) $notification->toMail($user)->render(),
+                'https://music.example.com/#/reset-password/',
+            );
+        });
     }
 
     #[Test]

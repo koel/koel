@@ -38,7 +38,7 @@ describe('starRating.vue', () => {
   it('clicking the active star clears the rating', async () => {
     const { emitted } = h.render(Component, { props: { rating: 3 } })
 
-    await h.user.click(screen.getByRole('radio', { name: 'Rate 3 of 5' }))
+    await h.user.click(screen.getByRole('radio', { name: 'Remove rating' }))
 
     expect(emitted('rate')?.[0]).toEqual([0])
   })
@@ -83,32 +83,11 @@ describe('starRating.vue', () => {
     expect(spy).toHaveBeenCalledWith(podcast, 4)
   })
 
-  it('labels stars with their numeric value when they do not match the current rating', () => {
+  it('offers to remove the rating on the star matching the current rating', () => {
     h.render(Component, { props: { rating: 3 } })
 
-    expect(screen.getByRole('radio', { name: 'Rate 1 of 5' }).closest('label')!.title).toBe('1 star')
-    expect(screen.getByRole('radio', { name: 'Rate 2 of 5' }).closest('label')!.title).toBe('2 stars')
-    expect(screen.getByRole('radio', { name: 'Rate 4 of 5' }).closest('label')!.title).toBe('4 stars')
-    expect(screen.getByRole('radio', { name: 'Rate 5 of 5' }).closest('label')!.title).toBe('5 stars')
-  })
-
-  it('labels the star matching the current rating with "Remove rating"', () => {
-    h.render(Component, { props: { rating: 3 } })
-
-    expect(screen.getByRole('radio', { name: 'Rate 3 of 5' }).closest('label')!.title).toBe('Remove rating')
-  })
-
-  it('shows "Remove rating" on the singular star when current rating is 1', () => {
-    h.render(Component, { props: { rating: 1 } })
-
-    expect(screen.getByRole('radio', { name: 'Rate 1 of 5' }).closest('label')!.title).toBe('Remove rating')
-    expect(screen.getByRole('radio', { name: 'Rate 2 of 5' }).closest('label')!.title).toBe('2 stars')
-  })
-
-  it('falls back to numeric labels for every star when no rating is set', () => {
-    h.render(Component, { props: { rating: 0 } })
-
-    expect(screen.getByRole('radio', { name: 'Rate 1 of 5' }).closest('label')!.title).toBe('1 star')
-    expect(screen.getByRole('radio', { name: 'Rate 5 of 5' }).closest('label')!.title).toBe('5 stars')
+    screen.getByRole('radio', { name: 'Remove rating' })
+    screen.getByRole('radio', { name: 'Rate 4 of 5' })
+    expect(screen.queryByRole('radio', { name: 'Rate 3 of 5' })).toBeNull()
   })
 })

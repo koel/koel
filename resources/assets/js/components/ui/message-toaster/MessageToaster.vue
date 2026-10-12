@@ -6,6 +6,9 @@
       </li>
     </TransitionGroup>
   </div>
+  <div aria-live="polite" class="sr-only" data-testid="toast-announcements">
+    <p v-for="message in messages" :key="message.id">{{ message.content }}</p>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -24,7 +27,7 @@ const root = ref<
 const messages = ref<ToastMessage[]>([])
 
 const addMessage = (type: 'info' | 'success' | 'warning' | 'danger', content: string, timeout = 5) => {
-  root.value?.showPopover?.()
+  messages.value.length || root.value?.showPopover?.()
 
   messages.value.push({
     type,

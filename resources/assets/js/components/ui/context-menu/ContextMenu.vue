@@ -11,7 +11,7 @@
     @contextmenu.prevent
     @keydown="onKeyDown"
   >
-    <component :is="options.component" v-if="options.component" v-bind="options.props" />
+    <component :is="options.component" v-if="options.component" v-bind="options.props" role="none" />
   </div>
 </template>
 
@@ -52,6 +52,11 @@ const positionAt = async (clientX: number, clientY: number) => {
     middleware: [flip(), shift({ padding: 8 })],
     strategy: 'fixed',
   })
+
+  if (!el.value) {
+    return
+  }
+
   el.value.style.left = `${x}px`
   el.value.style.top = `${y}px`
 }
@@ -85,6 +90,7 @@ const HIDE_DELAY = 150
 const hideSubmenu = (item: MenuItem, submenu: HTMLElement) => {
   submenu.removeAttribute('data-open')
   submenu.removeAttribute('style')
+  item.setAttribute('aria-expanded', 'false')
 }
 
 const scheduleHide = (item: MenuItem, submenu: HTMLElement) => {
@@ -124,6 +130,7 @@ const showSubmenu = async (item: MenuItem, submenu: HTMLElement) => {
 
   submenu.removeAttribute('style')
   submenu.setAttribute('data-open', '')
+  item.setAttribute('aria-expanded', 'true')
 
   await nextTick()
   await positionSubmenu(item, submenu)
@@ -376,9 +383,26 @@ const open = async (top = 0, left = 0) => {
   }, 0)
 
   startObservingSubmenus()
+  startRepositioningOnResize(left, top)
+}
+
+let sizeObserver: ResizeObserver | undefined
+
+/**
+ * A menu can grow after it opens (a lazily loaded component, late items), so keep it on screen as its size changes.
+ */
+const startRepositioningOnResize = (left: number, top: number) => {
+  sizeObserver = new ResizeObserver(() => positionAt(left, top).catch(logger.error))
+  sizeObserver.observe(el.value!)
+}
+
+const stopRepositioningOnResize = () => {
+  sizeObserver?.disconnect()
+  sizeObserver = undefined
 }
 
 const close = () => {
+  stopRepositioningOnResize()
   stopObservingSubmenus()
   clearTimeout(deferredListenerTimer)
   deferredListenerTimer = undefined
@@ -402,6 +426,7 @@ onBeforeUnmount(() => {
   deferredListenerTimer = undefined
 
   stopObservingSubmenus()
+  stopRepositioningOnResize()
   document.removeEventListener('pointerdown', onPointerDownOutside)
   el.value?.querySelectorAll<HTMLElement>('.has-sub').forEach((item: MenuItem) => {
     clearTimeout(item.hideTimeout)

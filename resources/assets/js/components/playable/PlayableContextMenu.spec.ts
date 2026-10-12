@@ -259,7 +259,7 @@ describe('playableContextMenu.vue', () => {
     h.mock(MessageToasterStub.value, 'success')
     const { playables } = await renderComponent()
 
-    playlistStore.state.playlists.forEach(playlist => screen.queryByText(playlist.name))
+    playlistStore.state.playlists.forEach(playlist => screen.getByText(playlist.name))
 
     await h.user.click(screen.getByText(playlistStore.state.playlists[0].name))
 
@@ -366,12 +366,6 @@ describe('playableContextMenu.vue', () => {
     await h.user.click(screen.getByText('New Playlist…'))
 
     await assertOpenModal(openModalMock, CreatePlaylistForm, { folder: null, playables })
-  })
-
-  it('does not have the options to mark song as private or public in Community edition', async () => {
-    await renderComponent(h.factory('song').make())
-    expect(screen.queryByText('Mark as Private')).toBeNull()
-    expect(screen.queryByText('Unmark as Private')).toBeNull()
   })
 
   it('makes songs private', async () =>
@@ -522,6 +516,38 @@ describe('playableContextMenu.vue', () => {
     for (const playable of playables) {
       expect(removeOfflineCacheMock).toHaveBeenCalledWith(playable)
     }
+  })
+
+  it('links to MusicBrainz', async () => {
+    commonStore.state.uses_musicbrainz = true
+    const openMock = h.mock(window, 'open')
+    const song = h.factory('song').make()
+
+    await renderComponent(song)
+    await h.user.click(screen.getByText('View on MusicBrainz'))
+
+    expect(openMock).toHaveBeenCalledWith(`https://musicbrainz.org/recording/${song.mbid}`, '_blank')
+  })
+
+  it('does not link to MusicBrainz when MusicBrainz is disabled', async () => {
+    commonStore.state.uses_musicbrainz = false
+    await renderComponent(h.factory('song').make())
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
+  it('does not link to MusicBrainz when the song has no identifier', async () => {
+    commonStore.state.uses_musicbrainz = true
+    await renderComponent(h.factory('song').make({ mbid: null }))
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
+  it('does not link to MusicBrainz when multiple playables are selected', async () => {
+    commonStore.state.uses_musicbrainz = true
+    await renderComponent(h.factory('song').make(3))
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
   })
 
   it('closes the menu after rating', async () => {

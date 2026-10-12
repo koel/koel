@@ -5,6 +5,7 @@ namespace App\Pipelines\Encyclopedia;
 use App\Http\Integrations\Wikipedia\Requests\GetPageSummaryRequest;
 use App\Http\Integrations\Wikipedia\WikipediaConnector;
 use Closure;
+use Illuminate\Support\Arr;
 
 class GetWikipediaPageSummaryUsingPageTitle
 {
@@ -20,12 +21,34 @@ class GetWikipediaPageSummaryUsingPageTitle
             return $next(null);
         }
 
-        $summary = $this->tryRemember(
+        $summary = self::tryRemember(
             key: cache_key('wikipedia page summary from page title', $pageTitle),
             ttl: now()->addMonth(),
-            callback: fn () => $this->connector->send(new GetPageSummaryRequest($pageTitle))->json(),
+            nothingFoundTtl: now()->addWeek(),
+            callback: fn (): ?array => self::trimSummaryToUsedFields(
+                $this->connector->send(new GetPageSummaryRequest($pageTitle))->json(),
+            ),
         );
 
         return $next($summary);
+    }
+
+    /**
+     * @param array<string, mixed>|null $summary
+     *
+     * @return array<string, mixed>|null
+     */
+    private static function trimSummaryToUsedFields(?array $summary): ?array
+    {
+        if (!$summary) {
+            return null;
+        }
+
+        return Arr::undot(Arr::only(Arr::dot($summary), [
+            'extract',
+            'extract_html',
+            'content_urls.desktop.page',
+            'thumbnail.source',
+        ]));
     }
 }

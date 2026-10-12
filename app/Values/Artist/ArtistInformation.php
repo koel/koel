@@ -2,7 +2,7 @@
 
 namespace App\Values\Artist;
 
-use HTMLPurifier;
+use App\Services\RichTextSanitizer;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 
@@ -22,10 +22,10 @@ final class ArtistInformation implements Arrayable
         public ?string $image,
         public array $bio,
     ) {
-        $purifier = new HTMLPurifier();
+        $sanitizer = new RichTextSanitizer();
 
-        $this->bio['summary'] = $purifier->purify($this->bio['summary']);
-        $this->bio['full'] = $purifier->purify($this->bio['full']);
+        $this->bio['summary'] = $sanitizer->sanitize($this->bio['summary']) ?? '';
+        $this->bio['full'] = $sanitizer->sanitize($this->bio['full']) ?? '';
     }
 
     public static function make(
@@ -34,6 +34,11 @@ final class ArtistInformation implements Arrayable
         array $bio = ['summary' => '', 'full' => ''],
     ): self {
         return new self($url, $image, $bio);
+    }
+
+    public function withDescription(string $description): self
+    {
+        return new self($this->url, $this->image, ['summary' => $description, 'full' => $description]);
     }
 
     /**

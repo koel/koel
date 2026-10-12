@@ -44,8 +44,6 @@ describe('lyricsPane.vue', () => {
     }
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
   it('renders plain text lyrics when lyrics are not synced', () => {
     renderComponent(
       h.factory('song').make({

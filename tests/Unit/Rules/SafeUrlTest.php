@@ -42,8 +42,24 @@ class SafeUrlTest extends TestCase
     #[Test]
     public function rejectsLoopbackAddress(): void
     {
+        Http::fake(['*' => Http::response()]);
+
         self::assertFalse($this->passes('http://127.0.0.1/feed'));
         self::assertFalse($this->passes('http://[::1]/feed'));
+
+        Http::assertNothingSent();
+    }
+
+    #[Test]
+    public function rejectsOctalEncodedLoopback(): void
+    {
+        // ip-lib reads the first octet as decimal and sees a public 177.0.0.1, while the
+        // resolver reads it as octal and reaches 127.0.0.1.
+        Http::fake(['*' => Http::response()]);
+
+        self::assertFalse($this->passes('http://0177.0.0.1/feed'));
+
+        Http::assertNothingSent();
     }
 
     #[Test]

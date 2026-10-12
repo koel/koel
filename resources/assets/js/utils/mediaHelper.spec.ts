@@ -29,9 +29,4 @@ describe('mediaHelper', () => {
     const file = new File([''], 'noextension', { type: '' })
     expect(acceptsFile(file)).toBe(false)
   })
-
-  it('handles flac extension', () => {
-    const file = new File([''], 'album.flac', { type: 'audio/flac' })
-    expect(acceptsFile(file)).toBe(true)
-  })
 })

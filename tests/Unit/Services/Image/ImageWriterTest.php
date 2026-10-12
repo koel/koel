@@ -1,0 +1,156 @@
+<?php
+
+namespace Tests\Unit\Services\Image;
+
+use App\Services\Image\ImageWriter;
+use App\Services\Network\SafeHttp;
+use App\Values\ImageWritingConfig;
+use finfo;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Image;
+use Illuminate\Support\Str;
+use Imagick;
+use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
+use Tests\Fakes\FakeNetwork;
+use Tests\TestCase;
+
+use function Tests\test_path;
+
+class ImageWriterTest extends TestCase
+{
+    private ImageWriter $writer;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->writer = new ImageWriter(new SafeHttp(new FakeNetwork()));
+    }
+
+    #[Test]
+    public function doesNotUpscaleImagesNarrowerThanTheMaxWidth(): void
+    {
+        $source = test_path('fixtures/cover.png');
+        $sourceWidth = Image::fromPath($source)->width();
+
+        $destination = sys_get_temp_dir() . '/' . Str::uuid() . '.img';
+
+        $this->writer->write($destination, $source, ImageWritingConfig::make(maxWidth: $sourceWidth * 2));
+
+        // Re-encode before measuring: the written format may be one that getimagesize() can't read,
+        // even when the image driver is perfectly able to encode it.
+        self::assertSame($sourceWidth, Image::fromPath($destination)->toPng()->width());
+
+        File::delete($destination);
+    }
+
+    #[Test]
+    public function probesTheSupportedFormatOncePerProcess(): void
+    {
+        Image::partialMock()->shouldNotReceive('fromBase64');
+
+        $writer = new ImageWriter(new SafeHttp(new FakeNetwork()));
+
+        self::assertSame($this->writer->format(), $writer->format());
+    }
+
+    #[Test]
+    public function encodesAvifWithGdAtTheConfiguredWidth(): void
+    {
+        if ($this->writer->format() !== 'avif') {
+            self::markTestSkipped('This GD build cannot encode AVIF.');
+        }
+
+        $bytes = $this->writer->encode(test_path('fixtures/cover.png'), ImageWritingConfig::make(maxWidth: 32));
+
+        self::assertSame('image/avif', (new finfo(FILEINFO_MIME_TYPE))->buffer($bytes));
+        self::assertSame(32, Image::fromBytes($bytes)->toPng()->width());
+    }
+
+    #[Test]
+    public function encodesAvifWithImagickAtTheConfiguredWidth(): void
+    {
+        if (!extension_loaded('imagick')) {
+            self::markTestSkipped('Imagick is not installed.');
+        }
+
+        $writer = new ImageWriter(new SafeHttp(new FakeNetwork()), 'imagick');
+
+        if ($writer->format() !== 'avif') {
+            self::markTestSkipped('This Imagick build cannot encode AVIF.');
+        }
+
+        $bytes = $writer->encode(test_path('fixtures/cover.png'), ImageWritingConfig::make(maxWidth: 32));
+        $encoded = new Imagick();
+        $encoded->readImageBlob($bytes);
+
+        self::assertSame('AVIF', $encoded->getImageFormat());
+        self::assertSame(32, $encoded->getImageWidth());
+    }
+
+    #[Test]
+    public function retriesAsKoelWhenAHostRefusesTheBrowserUserAgent(): void
+    {
+        $image = File::get(test_path('fixtures/cover.png'));
+
+        Http::fake(static fn (Request $request) => (
+            $request->hasHeader('User-Agent', koel_user_agent()) ? Http::response($image, 200, [
+                    'Content-Type' => 'image/png',
+                ]) : Http::response('Too Many Requests', 429)
+        ));
+
+        $destination = sys_get_temp_dir() . '/' . Str::uuid() . '.img';
+
+        $this->writer->write($destination, 'https://commons.wikimedia.org/wiki/Special:FilePath/Cover.png');
+
+        self::assertFileExists($destination);
+        Http::assertSentCount(2);
+
+        File::delete($destination);
+    }
+
+    #[Test]
+    public function asksOnlyOnceWhenTheBrowserUserAgentIsServed(): void
+    {
+        $image = File::get(test_path('fixtures/cover.png'));
+
+        Http::fake(['*' => Http::response($image, 200, ['Content-Type' => 'image/png'])]);
+
+        $destination = sys_get_temp_dir() . '/' . Str::uuid() . '.img';
+
+        $this->writer->write($destination, 'https://example.com/cover.png');
+
+        self::assertFileExists($destination);
+        Http::assertSentCount(1);
+
+        File::delete($destination);
+    }
+
+    #[Test]
+    public function refusesToFetchFromAPrivateAddress(): void
+    {
+        Http::fake();
+
+        $this->expectException(RuntimeException::class);
+
+        try {
+            $this->writer->encode('http://169.254.169.254/latest/meta-data/');
+        } finally {
+            Http::assertNothingSent();
+        }
+    }
+
+    #[Test]
+    public function aFailedFetchNamesItsCause(): void
+    {
+        Http::fake(['https://example.com/cover.jpg' => Http::response('', 429)]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageMatches('/example\.com\/cover\.jpg.*429/');
+
+        $this->writer->encode('https://example.com/cover.jpg');
+    }
+}

@@ -20,7 +20,7 @@
       </button>
     </div>
 
-    <Btn type="button" variant="success" @click.prevent="$emit('dismiss')">I've saved them</Btn>
+    <Btn type="button" @click.prevent="$emit('dismiss')">I've saved them</Btn>
   </div>
 </template>
 

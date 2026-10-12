@@ -23,6 +23,8 @@ class UserService
         private readonly UserRepository $repository,
         private readonly ImageStorage $imageStorage,
         private readonly OrganizationService $organizationService,
+        private readonly EmailChangeService $emailChangeService,
+        private readonly SecurityNoticeService $securityNoticeService,
         #[Config('koel.sso.default_role')]
         private readonly Role $defaultSsoRole = Role::USER,
     ) {}
@@ -38,6 +40,8 @@ class UserService
         /** @var User $user */
         $user = $organization->users()->create($data);
 
+        $organization->claimOwnership($user);
+
         return $user->syncRoles($dto->role);
     }
 
@@ -47,7 +51,9 @@ class UserService
 
         if ($existingUser) {
             $existingUser->update([
-                'avatar' => $existingUser->has_custom_avatar ? $existingUser->avatar : $ssoUser->avatar,
+                'avatar' => $existingUser->has_custom_avatar
+                    ? $existingUser->getRawOriginal('avatar')
+                    : $ssoUser->avatar,
                 'sso_id' => $ssoUser->id,
                 'sso_provider' => $ssoUser->provider,
             ]);
@@ -62,9 +68,37 @@ class UserService
     {
         $user->password = $newPassword;
         $user->save();
+
+        $this->securityNoticeService->notifyPasswordChanged($user);
     }
 
     public function updateUser(User $user, UserUpdateData $dto): User
+    {
+        $previousEmail = $user->email;
+
+        $this->applyUpdate($user, $dto, keepCurrentEmail: false);
+
+        if ($user->email !== $previousEmail) {
+            $this->emailChangeService->notifyChange($user, $previousEmail);
+        }
+
+        return $user->refresh(); // make sure the roles and permissions are refreshed
+    }
+
+    public function updateOwnProfile(User $user, UserUpdateData $dto): User
+    {
+        $emailChangeRequiresConfirmation = $this->emailChangeService->requiresConfirmation($user, $dto->email);
+
+        $this->applyUpdate($user, $dto, keepCurrentEmail: $emailChangeRequiresConfirmation);
+
+        if ($emailChangeRequiresConfirmation) {
+            $this->emailChangeService->requestChange($user, $dto->email);
+        }
+
+        return $user->refresh(); // make sure the roles and permissions are refreshed
+    }
+
+    private function applyUpdate(User $user, UserUpdateData $dto, bool $keepCurrentEmail): void
     {
         throw_if($user->is_prospect, new UserProspectUpdateDeniedException());
         $dto->role?->assertAvailable();
@@ -73,21 +107,30 @@ class UserService
             'name' => $dto->name,
             'email' => $dto->email,
             'password' => $dto->password ?? $user->password,
-            'avatar' => $dto->avatar ? $this->maybeStoreAvatar($dto->avatar) : null,
         ];
+
+        if ($dto->avatar) {
+            $data['avatar'] = $dto->avatar->image ? $this->maybeStoreAvatar($dto->avatar->image) : null;
+        }
 
         if ($user->sso_provider) {
             // SSO users cannot change their password or email
             Arr::forget($data, ['password', 'email']);
         }
 
+        if ($keepCurrentEmail) {
+            Arr::forget($data, 'email');
+        }
+
         $user->update($data);
+
+        if ($user->wasChanged('password')) {
+            $this->securityNoticeService->notifyPasswordChanged($user);
+        }
 
         if ($dto->role && $user->role !== $dto->role) {
             $user->syncRoles($dto->role);
         }
-
-        return $user->refresh(); // make sure the roles and permissions are refreshed
     }
 
     /**

@@ -1,4 +1,4 @@
-const DEFAULT_EXPIRATION_TIME = 1000 * 60 * 60 * 24 // 1 day
+const DEFAULT_EXPIRATION_SECONDS = 60 * 60 * 24
 
 export class Cache {
   private storage = new Map<
@@ -21,7 +21,7 @@ export class Cache {
     return this.storage.get(Cache.normalizeKey(key))?.value as T
   }
 
-  public set(key: any, value: any, seconds: number = DEFAULT_EXPIRATION_TIME) {
+  public set(key: any, value: any, seconds: number = DEFAULT_EXPIRATION_SECONDS) {
     this.storage.set(Cache.normalizeKey(key), {
       value,
       expires: Date.now() + seconds * 1000,
@@ -53,7 +53,7 @@ export class Cache {
     this.storage.delete(Cache.normalizeKey(key))
   }
 
-  async remember<R>(key: any, resolver: () => R | Promise<R>, seconds: number = DEFAULT_EXPIRATION_TIME) {
+  async remember<R>(key: any, resolver: () => R | Promise<R>, seconds: number = DEFAULT_EXPIRATION_SECONDS) {
     this.hit(key) || this.set(key, await resolver(), seconds)
     return this.get(key) as Awaited<R>
   }

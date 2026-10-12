@@ -2,16 +2,15 @@
 
 namespace Tests\Feature;
 
-use App\Exceptions\MediaPathNotSetException;
-use App\Exceptions\SongUploadFailedException;
 use App\Models\Setting;
-use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_admin;
+use function Tests\create_manager;
 use function Tests\create_user;
+use function Tests\sandbox_path;
 use function Tests\test_path;
 
 class UploadTest extends TestCase
@@ -28,18 +27,9 @@ class UploadTest extends TestCase
     #[Test]
     public function unauthorizedPost(): void
     {
-        Setting::set('media_path', '');
+        Setting::set('media_path', sandbox_path('media'));
 
-        $this->postAs('/api/upload', ['file' => $this->file])->assertForbidden();
-    }
-
-    /** @return array<mixed> */
-    public function provideUploadExceptions(): array
-    {
-        return [
-            [MediaPathNotSetException::class,  Response::HTTP_FORBIDDEN],
-            [SongUploadFailedException::class, Response::HTTP_BAD_REQUEST],
-        ];
+        $this->postAs('/api/upload', ['file' => $this->file], create_user())->assertForbidden();
     }
 
     #[Test]
@@ -53,7 +43,7 @@ class UploadTest extends TestCase
     #[Test]
     public function uploadSuccessful(): void
     {
-        Setting::set('media_path', public_path('sandbox/media'));
+        Setting::set('media_path', sandbox_path('media'));
 
         $this->postAs('/api/upload', ['file' => $this->file], create_admin())->assertJsonStructure(['song', 'album']);
     }
@@ -62,10 +52,10 @@ class UploadTest extends TestCase
     public function uploadDisabledInDemoMode(): void
     {
         config(['koel.misc.demo' => true]);
-        Setting::set('media_path', public_path('sandbox/media'));
+        Setting::set('media_path', sandbox_path('media'));
 
         try {
-            $this->postAs('/api/upload', ['file' => $this->file], create_user())->assertForbidden();
+            $this->postAs('/api/upload', ['file' => $this->file], create_manager())->assertForbidden();
         } finally {
             config(['koel.misc.demo' => false]);
         }

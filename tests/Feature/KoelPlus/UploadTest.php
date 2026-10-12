@@ -10,6 +10,7 @@ use Tests\PlusTestCase;
 
 use function Tests\create_guest;
 use function Tests\create_user;
+use function Tests\sandbox_path;
 use function Tests\test_path;
 
 class UploadTest extends PlusTestCase
@@ -20,7 +21,7 @@ class UploadTest extends PlusTestCase
     {
         parent::setUp();
 
-        Setting::set('media_path', public_path('sandbox/media'));
+        Setting::set('media_path', sandbox_path('media'));
         $this->file = UploadedFile::fromFile(test_path('songs/full.mp3'), 'song.mp3'); //@phpstan-ignore-line
     }
 
@@ -30,8 +31,8 @@ class UploadTest extends PlusTestCase
         $user = create_user();
 
         $this->postAs('api/upload', ['file' => $this->file], $user)->assertSuccessful();
-        self::assertDirectoryExists(public_path("sandbox/media/__KOEL_UPLOADS_\${$user->id}__"));
-        self::assertFileExists(public_path("sandbox/media/__KOEL_UPLOADS_\${$user->id}__/song.mp3"));
+        self::assertDirectoryExists(sandbox_path("media/__KOEL_UPLOADS_\${$user->id}__"));
+        self::assertFileExists(sandbox_path("media/__KOEL_UPLOADS_\${$user->id}__/song.mp3"));
 
         /** @var Song $song */
         $song = Song::query()->latest()->first();

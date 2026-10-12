@@ -3,20 +3,6 @@ import { effectScope, nextTick, ref } from 'vue'
 import { useInfiniteScroll } from './useInfiniteScroll'
 
 describe('useInfiniteScroll', () => {
-  it('returns ToTopButton and sentinel ref', () => {
-    const scope = effectScope()
-
-    scope.run(() => {
-      const el = ref<HTMLElement>()
-      const result = useInfiniteScroll(el, vi.fn())
-
-      expect(result.ToTopButton).toBeTruthy()
-      expect(result.sentinel).toBeDefined()
-    })
-
-    scope.stop()
-  })
-
   it('calls loadMore when sentinel becomes visible', async () => {
     let intersectionCallback: IntersectionObserverCallback
 

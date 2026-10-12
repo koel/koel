@@ -22,27 +22,27 @@ class GetReleaseAndReleaseGroupMbidsForAlbum
             return $next(null);
         }
 
-        $mbids = $this->tryRememberForever(
+        $mbids = self::tryRememberForever(
             key: cache_key('release and release group mbids', $params['album'], $params['artist']),
-            callback: function () use ($params): array {
+            nothingFoundTtl: now()->addWeek(),
+            callback: function () use ($params): ?array {
                 $response = $this->connector->send(new SearchForReleaseRequest($params['album'], $params['artist']));
 
                 // Opportunistically, cache the artist mbids as well.
                 // Our future requests for artist mbids will be faster this way.
                 foreach ($response->json('releases.0.artist-credit', []) as $credit) {
-                    Cache::forever(
+                    Cache::store('encyclopedia')->forever(
                         cache_key('artist mbid', Arr::get($credit, 'artist.name')),
                         Arr::get($credit, 'artist.id'),
                     );
                 }
 
-                return [
-                    $response->json('releases.0.id'),
-                    $response->json('releases.0.release-group.id'),
-                ];
+                $releaseMbid = $response->json('releases.0.id');
+
+                return $releaseMbid === null ? null : [$releaseMbid, $response->json('releases.0.release-group.id')];
             },
         );
 
-        return $next($mbids);
+        return $next($mbids ?? [null, null]);
     }
 }

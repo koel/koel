@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { isDarkColor } from './color'
+import { cssColorToRgb, isDarkColor } from './color'
 
 describe('isDarkColor', () => {
   it.each([
@@ -37,5 +37,15 @@ describe('isDarkColor', () => {
 
   it('returns true for an unparseable input', () => {
     expect(isDarkColor('not-a-color')).toBe(true)
+  })
+})
+
+describe('cssColorToRgb', () => {
+  it.each([
+    ['#0a141e', [10, 20, 30]],
+    ['rgb(10, 20, 30)', [10, 20, 30]],
+    ['hsl(0, 100%, 50%)', [255, 0, 0]],
+  ])('reads the channels of %s', (color, channels) => {
+    expect(cssColorToRgb(color)).toEqual(channels)
   })
 })

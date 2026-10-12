@@ -16,6 +16,6 @@ describe('similarSongs.vue', () => {
   it('hides when no similar songs', () => {
     overviewStore.state.similarSongs = []
     h.render(Component)
-    expect(screen.queryAllByTestId('song-card')).toHaveLength(0)
+    expect(screen.queryByRole('heading')).toBeNull()
   })
 })

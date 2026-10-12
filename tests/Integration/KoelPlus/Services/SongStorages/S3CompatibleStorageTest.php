@@ -2,9 +2,13 @@
 
 namespace Tests\Integration\KoelPlus\Services\SongStorages;
 
+use App\Exceptions\SongUploadFailedException;
 use App\Helpers\Ulid;
 use App\Services\SongStorages\S3CompatibleStorage;
+use App\Services\SongStorages\S3UploadUrlSigner;
+use App\Values\PresignedUpload;
 use App\Values\UploadReference;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -24,6 +28,21 @@ class S3CompatibleStorageTest extends PlusTestCase
         parent::setUp();
 
         Storage::fake('s3');
+
+        $this
+            ->mock(S3UploadUrlSigner::class)
+            ->allows('sign')
+            ->andReturnUsing(static fn (
+                string $key,
+                int $size,
+                Carbon $expiresAt,
+            ): PresignedUpload => PresignedUpload::make(
+                key: $key,
+                url: "https://storage.example.com/$key",
+                headers: [],
+                expiresAt: $expiresAt,
+            ));
+
         $this->service = app(S3CompatibleStorage::class);
 
         File::copy(test_path('songs/full.mp3'), artifact_path('tmp/random/full.mp3'));
@@ -39,7 +58,7 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         Storage::disk('s3')->assertExists(Str::after($reference->location, 's3://koel/')); // 'koel' is the bucket name
 
-        self::assertSame("s3://koel/{$user->id}__random__full.mp3", $reference->location);
+        self::assertSame("s3://koel/{$user->public_id}__random__full.mp3", $reference->location);
         self::assertSame(artifact_path('tmp/random/full.mp3'), $reference->localPath);
     }
 
@@ -77,6 +96,110 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         Storage::disk('s3')->assertMissing('full.mp3');
         Storage::disk('s3')->assertExists('backup/full.mp3.bak');
+    }
+
+    #[Test]
+    public function presignUpload(): void
+    {
+        Ulid::freeze('random');
+        $user = create_user();
+
+        $presigned = $this->service->presignUpload('full.mp3', 1234, $user);
+
+        self::assertSame("pending/{$user->public_id}__random__full.mp3", $presigned->key);
+        self::assertTrue($presigned->expiresAt->isFuture());
+    }
+
+    #[Test]
+    public function onlyTheUploaderOwnsTheirKey(): void
+    {
+        $user = create_user();
+        $someoneElse = create_user();
+
+        self::assertTrue($this->service->ownsUploadKey("pending/{$user->public_id}__random__full.mp3", $user));
+        self::assertFalse($this->service->ownsUploadKey("pending/{$someoneElse->public_id}__random__full.mp3", $user));
+    }
+
+    #[Test]
+    public function aKeyOutsideThePendingPrefixIsNotAnUpload(): void
+    {
+        $user = create_user();
+
+        self::assertFalse($this->service->ownsUploadKey("{$user->public_id}__random__full.mp3", $user));
+    }
+
+    #[Test]
+    public function movesACompletedUploadOutOfPending(): void
+    {
+        Storage::disk('s3')->put('pending/123__random__song.mp3', 'fake content');
+
+        $this->service->moveUploadOutOfPending('pending/123__random__song.mp3');
+
+        Storage::disk('s3')->assertMissing('pending/123__random__song.mp3');
+        Storage::disk('s3')->assertExists('123__random__song.mp3');
+    }
+
+    #[Test]
+    public function failsWhenAPendingUploadCannotBeMoved(): void
+    {
+        $this->expectException(SongUploadFailedException::class);
+
+        $this->service->moveUploadOutOfPending('pending/123__random__missing.mp3');
+    }
+
+    #[Test]
+    public function aKeyThatClimbsOutOfItsPrefixIsNotOurs(): void
+    {
+        $user = create_user();
+
+        self::assertFalse($this->service->ownsUploadKey("pending/{$user->public_id}__random__../../secret.mp3", $user));
+        self::assertFalse($this->service->ownsUploadKey("pending/{$user->public_id}__random__..\\secret.mp3", $user));
+    }
+
+    #[Test]
+    public function aDotInTheNameIsNotTraversal(): void
+    {
+        $user = create_user();
+
+        self::assertTrue($this->service->ownsUploadKey("pending/{$user->public_id}__random__mix..live.mp3", $user));
+    }
+
+    #[Test]
+    public function stripsAnyPathFromTheUploadedName(): void
+    {
+        Ulid::freeze('random');
+        $user = create_user();
+
+        self::assertSame(
+            "pending/{$user->public_id}__random__passwd.mp3",
+            $this->service->presignUpload('../../etc/passwd.mp3', 1234, $user)->key,
+        );
+
+        self::assertSame(
+            "pending/{$user->public_id}__random__song.mp3",
+            $this->service->presignUpload('..\\..\\windows\\song.mp3', 1234, $user)->key,
+        );
+    }
+
+    #[Test]
+    public function everyKeyItPresignsCanBeCompleted(): void
+    {
+        $user = create_user();
+
+        foreach (['../../etc/passwd.mp3', '..\\..\\song.mp3', 'mix..live.mp3', 'ordinary.mp3'] as $name) {
+            $key = $this->service->presignUpload($name, 1234, $user)->key;
+
+            self::assertTrue($this->service->ownsUploadKey($key, $user), "rejected its own key for $name");
+        }
+    }
+
+    #[Test]
+    public function locationFromKey(): void
+    {
+        self::assertSame(
+            's3://koel/1__random__full.mp3',
+            $this->service->locationFromKey('pending/1__random__full.mp3'),
+        );
     }
 
     #[Test]

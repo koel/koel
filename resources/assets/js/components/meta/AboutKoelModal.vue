@@ -36,7 +36,7 @@
         </a>
       </p>
 
-      <p v-if="!hasCustomBranding" class="author">
+      <p v-if="!hasCustomBranding" class="author" data-testid="about-author">
         Made with ❤️ by
         <a href="https://github.com/phanan" rel="noopener" target="_blank">Phan An</a>
         and quite a few awesome

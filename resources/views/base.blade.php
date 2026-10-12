@@ -8,12 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="mobile-web-app-capable" content="yes">
 
-    <meta name="theme-color" content="#282828">
-    <meta name="msapplication-navbutton-color" content="#282828">
+    <meta name="theme-color" content="#111111">
+    <meta name="msapplication-navbutton-color" content="#111111">
 
     <link rel="stylesheet" href="{{ static_url('css/layer-order.css') }}">
 
-    <link rel="manifest" href="{{ static_url('manifest.json') }}" />
+    <link rel="manifest" crossorigin="use-credentials" href="@yield('manifest', route('manifest'))" />
     <meta name="msapplication-config" content="{{ static_url('browserconfig.xml') }}" />
     <link rel="icon" type="image/x-icon" href="{{ koel_branding('logo') ?? static_url('img/favicon.ico') }}" />
     <link rel="icon" href="{{ koel_branding('logo') ?? static_url('img/icon.png') }}">
@@ -35,12 +35,18 @@
     @php
         $koelGlobals = [
             'base_url' => base_url(),
+            'build' => koel_build_id(),
+            'clean_urls' => (bool) config('koel.clean_urls.enabled'),
             'is_demo' => config('koel.misc.demo'),
             'pusher' => [
                 'app_key' => config('broadcasting.connections.pusher.key'),
                 'app_cluster' => config('broadcasting.connections.pusher.options.cluster'),
             ],
             'branding' => koel_branding(),
+            'gravatar' => [
+                'url' => config('services.gravatar.url'),
+                'default' => config('services.gravatar.default'),
+            ],
         ];
     @endphp
     window.KOEL = @json($koelGlobals);

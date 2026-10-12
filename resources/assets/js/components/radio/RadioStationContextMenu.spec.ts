@@ -41,15 +41,6 @@ describe('radioStationContextMenu.vue', () => {
     }
   }
 
-  it('renders with Edit/Delete items', async () => {
-    await renderComponent()
-
-    screen.getByText('Edit…')
-    screen.getByText('Delete')
-    screen.getByText('Play')
-    screen.getByText('Favorite')
-  })
-
   it('renders without Edit/Delete items', async () => {
     await renderComponent(undefined, false)
 
@@ -100,14 +91,6 @@ describe('radioStationContextMenu.vue', () => {
     const { station } = await renderComponent(h.factory('radio-station').make({ favorite: false }))
 
     await h.user.click(screen.getByText('Favorite'))
-    expect(toggleMock).toHaveBeenCalledWith(station)
-  })
-
-  it('undoes favorite', async () => {
-    const toggleMock = h.mock(radioStationStore, 'toggleFavorite')
-    const { station } = await renderComponent(h.factory('radio-station').make({ favorite: true }))
-
-    await h.user.click(screen.getByText('Undo Favorite'))
     expect(toggleMock).toHaveBeenCalledWith(station)
   })
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { ref } from 'vue'
+import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { CurrentStreamableKey } from '@/config/symbols'
 import { cache } from '@/services/cache'
@@ -9,28 +10,38 @@ import Component from './FooterPlayableInfo.vue'
 describe('footerPlayableInfo.vue', () => {
   const h = createHarness()
 
-  it('renders with no current playable', () => expect(h.render(Component).html()).toMatchSnapshot())
+  it('shows no details without a current playable', () => {
+    h.render(Component)
 
-  it('renders with current playable', () => {
-    const song = h.factory('song').make({
-      title: 'Fahrstuhl zum Mond',
-      album_cover: 'https://via.placeholder.com/150',
-      playback_state: 'Playing',
-      artist_id: 'led-zeppelin',
-      artist_name: 'Led Zeppelin',
+    expect(screen.queryByRole('link')).toBeNull()
+  })
+
+  it('links a song to its artist', () => {
+    const song = h.factory('song').make()
+
+    h.render(Component, {
+      global: {
+        provide: {
+          [<symbol>CurrentStreamableKey]: ref(song),
+        },
+      },
     })
 
-    expect(
-      h
-        .render(Component, {
-          global: {
-            provide: {
-              [<symbol>CurrentStreamableKey]: ref(song),
-            },
-          },
-        })
-        .html(),
-    ).toMatchSnapshot()
+    expect(screen.getByRole('link').getAttribute('href')).toBe(Router.url('artists.show', { id: song.artist_id }))
+  })
+
+  it('links an episode to its podcast', () => {
+    const episode = h.factory('episode').make()
+
+    h.render(Component, {
+      global: {
+        provide: {
+          [<symbol>CurrentStreamableKey]: ref(episode),
+        },
+      },
+    })
+
+    expect(screen.getByRole('link').getAttribute('href')).toBe(Router.url('podcasts.show', { id: episode.podcast_id }))
   })
 
   it('navigates to queue and sets scroll intent on thumbnail click', async () => {
@@ -45,7 +56,7 @@ describe('footerPlayableInfo.vue', () => {
     const goMock = h.mock(Router, 'go')
     const setMock = h.mock(cache, 'set')
 
-    const { container } = h.render(Component, {
+    h.render(Component, {
       global: {
         provide: {
           [<symbol>CurrentStreamableKey]: ref(song),
@@ -53,8 +64,7 @@ describe('footerPlayableInfo.vue', () => {
       },
     })
 
-    const thumb = container.querySelector('.album-thumb') as HTMLElement
-    await h.user.click(thumb)
+    await h.user.click(screen.getByRole('button', { name: 'Scroll to currently playing' }))
 
     expect(setMock).toHaveBeenCalledWith('scroll-to-current-in-queue', true)
     expect(goMock).toHaveBeenCalledWith('/#/queue')
@@ -64,10 +74,9 @@ describe('footerPlayableInfo.vue', () => {
     const goMock = h.mock(Router, 'go')
     const setMock = h.mock(cache, 'set')
 
-    const { container } = h.render(Component)
+    h.render(Component)
 
-    const thumb = container.querySelector('.album-thumb') as HTMLElement
-    await h.user.click(thumb)
+    await h.user.click(screen.getByRole('button', { name: 'Scroll to currently playing' }))
 
     expect(goMock).not.toHaveBeenCalled()
     expect(setMock).not.toHaveBeenCalled()

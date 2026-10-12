@@ -34,8 +34,8 @@ describe('userCard.vue', () => {
     h.actingAsUser(user)
     renderComponent(user)
 
-    screen.getByTitle('This is you!')
-    expect(screen.getByRole('link', { name: 'Your Profile' }).getAttribute('href')).toBe('/#/profile')
+    screen.getByText('This is you!')
+    expect(screen.getByRole('link', { name: 'Your Profile' }).getAttribute('href')).toBe('/#/settings')
   })
 
   it('does not show profile link for other users', () => {

@@ -1,5 +1,10 @@
 <template>
-  <form class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form
+    class="md:w-[560px]"
+    @invalid.capture="showTabOfInvalidField"
+    @submit.prevent="handleSubmit"
+    @keydown.esc="maybeClose"
+  >
     <header>
       <h1>Edit Smart Playlist</h1>
     </header>
@@ -28,6 +33,7 @@
         <TabPanelContainer>
           <TabPanel
             v-show="isTabActive('details')"
+            data-tab="details"
             id="createSmartPlaylistDetails"
             aria-labelledby="createSmartPlaylistTabDetails"
             class="space-y-5"
@@ -51,6 +57,7 @@
 
           <TabPanel
             v-show="isTabActive('rules')"
+            data-tab="rules"
             id="createSmartPlaylistRules"
             aria-labelledby="createSmartPlaylistTabRules"
             class="space-y-5"
@@ -63,14 +70,7 @@
                 :is-first-group="index === 0"
                 @input="onGroupChanged"
               />
-              <Btn
-                size="small"
-                variant="success"
-                class="btn-add-group"
-                title="Add a new group"
-                uppercase
-                @click.prevent="addGroup"
-              >
+              <Btn size="small" variant="success" class="btn-add-group" uppercase @click.prevent="addGroup">
                 <Icon :icon="faPlus" />
                 Group
               </Btn>
@@ -81,7 +81,7 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="!collectedRuleGroups.length" type="submit">Save</Btn>
       <Btn variant="ghost" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -119,8 +119,16 @@ const { playlist } = props
 const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
-const { Btn, RuleGroup, activateTab, isTabActive, collectedRuleGroups, addGroup, onGroupChanged } =
-  useSmartPlaylistForm(structuredClone(toRaw(playlist.rules)))
+const {
+  Btn,
+  RuleGroup,
+  activateTab,
+  isTabActive,
+  showTabOfInvalidField,
+  collectedRuleGroups,
+  addGroup,
+  onGroupChanged,
+} = useSmartPlaylistForm(structuredClone(toRaw(playlist.rules)))
 
 const close = () => emit('close')
 

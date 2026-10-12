@@ -9,11 +9,15 @@ final readonly class ArtistUpdateData implements Arrayable
     private function __construct(
         public string $name,
         public ?string $image,
+        public ?string $description,
     ) {}
 
-    public static function make(string $name, ?string $image = null): self
+    /**
+     * @param ?string $description null leaves the description unchanged; an empty string removes it
+     */
+    public static function make(string $name, ?string $image = null, ?string $description = null): self
     {
-        return new self(name: $name, image: $image);
+        return new self(name: $name, image: $image, description: $description);
     }
 
     /** @inheritdoc */

@@ -25,6 +25,10 @@ on:
       - .github/workflows/test-proxy-auth-e2e.yml
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -35,19 +39,19 @@ jobs:
     # Skip on fork PRs — secrets.KOEL_PLUS_LICENSE_KEY isn't available there.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           persist-credentials: false
 
       - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: 8.3
           tools: composer:v2
           extensions: pdo_sqlite, sqlite3, zip, gd
 
       - name: Install PHP dependencies
-        uses: ramsey/composer-install@v2
+        uses: ramsey/composer-install@1919f6c305aea6ab10e6181a8ddf72317ad77e0e # 2.3.1
         with:
           composer-options: --prefer-dist
 
@@ -108,14 +112,18 @@ jobs:
           }
 
       - name: Install Caddy
+        env:
+          CADDY_VERSION: 2.11.4
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends debian-keyring debian-archive-keyring apt-transport-https curl
-          curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-          curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list >/dev/null
-          sudo apt-get update -qq
-          sudo apt-get install -y caddy
-          sudo systemctl stop caddy || true
+          cd /tmp
+          base="https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}"
+          archive="caddy_${CADDY_VERSION}_linux_amd64.tar.gz"
+          curl -fsSLO "$base/$archive"
+          curl -fsSLO "$base/caddy_${CADDY_VERSION}_checksums.txt"
+          grep " $archive\$" "caddy_${CADDY_VERSION}_checksums.txt" | sha512sum -c -
+          tar -xzf "$archive" caddy
+          sudo install -m 755 caddy /usr/local/bin/caddy
+          caddy version
 
       - name: Write Caddyfile
         run: |
@@ -201,7 +209,7 @@ jobs:
 
       - name: Upload logs on failure
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: proxy-auth-e2e-logs-${{ github.run_id }}
           path: |

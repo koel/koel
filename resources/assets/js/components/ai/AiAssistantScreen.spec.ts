@@ -14,16 +14,6 @@ describe('aiAssistantScreen.vue', () => {
     useAiChat().clearHistory()
   })
 
-  it('renders the prompt textarea', () => {
-    h.render(Component)
-    screen.getByPlaceholderText('Ask Koel to play songs, create playlists, add radio stations, and more.')
-  })
-
-  it('shows sample prompts when empty', () => {
-    h.render(Component)
-    expect(screen.getAllByRole('button').length).toBeGreaterThan(1)
-  })
-
   it('submits a prompt and transitions to chat mode', async () => {
     const response: AiResponse = {
       message: 'Playing some jazz for you.',
@@ -42,7 +32,7 @@ describe('aiAssistantScreen.vue', () => {
     h.render(Component)
 
     await h.type(screen.getByRole('textbox'), 'Play some jazz')
-    await h.user.click(screen.getByTitle('Send'))
+    await h.user.click(screen.getByRole('button', { name: 'Send' }))
 
     await waitFor(() => {
       expect(aiService.prompt).toHaveBeenCalledWith('Play some jazz', expect.objectContaining({}))
@@ -57,7 +47,7 @@ describe('aiAssistantScreen.vue', () => {
     const mock = h.mock(aiService, 'prompt')
     h.render(Component)
 
-    await h.user.click(screen.getByTitle('Send'))
+    await h.user.click(screen.getByRole('button', { name: 'Send' }))
 
     expect(mock).not.toHaveBeenCalled()
   })
@@ -66,7 +56,7 @@ describe('aiAssistantScreen.vue', () => {
     const mock = h.mock(Router, 'go')
     h.render(Component)
 
-    await h.user.click(screen.getByTitle('Close'))
+    await h.user.click(screen.getByRole('button', { name: 'Close' }))
 
     expect(mock).toHaveBeenCalledWith(-1)
   })
@@ -74,7 +64,9 @@ describe('aiAssistantScreen.vue', () => {
   it('populates textarea when a sample prompt is selected', async () => {
     h.render(Component)
 
-    const sampleButton = screen.getAllByRole('button').find(btn => !['Send', 'Close'].includes(btn.title))!
+    const sampleButton = screen
+      .getAllByRole('button')
+      .find(btn => !['Send', 'Close'].includes(btn.textContent?.trim() ?? ''))!
     const promptText = sampleButton.textContent!.trim()
     await h.user.click(sampleButton)
 
@@ -99,7 +91,7 @@ describe('aiAssistantScreen.vue', () => {
     h.render(Component)
 
     await h.type(screen.getByRole('textbox'), 'Hello')
-    await h.user.click(screen.getByTitle('Send'))
+    await h.user.click(screen.getByRole('button', { name: 'Send' }))
 
     await waitFor(() => {
       screen.getByPlaceholderText('Send a message…')

@@ -1,10 +1,13 @@
 <template>
   <div
     ref="scroller"
-    class="scroll-mask-y virtual-scroller will-change-transform overflow-scroll"
+    :class="carriesScreenHeader || $slots.before ? 'scroll-mask-b scroll-mask-t-from-100%' : 'scroll-mask-y'"
+    class="virtual-scroller will-change-transform overflow-scroll"
     @scroll.passive="onScroll"
   >
-    <div :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
+    <ScreenHeaderSpace v-if="carriesScreenHeader" />
+    <slot name="before" />
+    <div ref="itemsBox" :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
       <div :style="{ transform: `translateY(${offsetY}px)` }" class="will-change-transform items-wrapper">
         <slot v-for="item in renderedItems" :item="item" />
       </div>
@@ -14,8 +17,19 @@
 
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
+import { useScreenHeaderScroller } from '@/composables/useScreenHeaderScroller'
 
-const props = defineProps<{ items: any[]; itemHeight: number }>()
+import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
+
+const props = withDefaults(
+  defineProps<{
+    items: any[]
+    itemHeight: number
+    /** Scrolls the screen header away with the items and leaves room for it at the top. */
+    carriesScreenHeader?: boolean
+  }>(),
+  { carriesScreenHeader: false },
+)
 const emit = defineEmits<{
   (e: 'scrolled-to-end'): void
   (e: 'scroll', event: Event): void
@@ -24,12 +38,18 @@ const emit = defineEmits<{
 const { items, itemHeight } = toRefs(props)
 
 const scroller = ref<HTMLElement>()
+
+useScreenHeaderScroller(() => (props.carriesScreenHeader ? scroller.value : null))
+const itemsBox = ref<HTMLElement>()
+const itemsTop = ref(0)
 const scrollerHeight = ref(0)
 const renderAhead = 5
 const scrollTop = ref(0)
 
 const totalHeight = computed(() => items.value.length * itemHeight.value)
-const startPosition = computed(() => Math.max(0, Math.floor(scrollTop.value / itemHeight.value) - renderAhead))
+const startPosition = computed(() =>
+  Math.max(0, Math.floor((scrollTop.value - itemsTop.value) / itemHeight.value) - renderAhead),
+)
 const offsetY = computed(() => startPosition.value * itemHeight.value)
 
 const renderedItems = computed(() => {
@@ -41,6 +61,7 @@ const renderedItems = computed(() => {
 const onScroll = (e: Event) =>
   requestAnimationFrame(() => {
     scrollTop.value = (e.target as HTMLElement).scrollTop
+    itemsTop.value = itemsBox.value?.offsetTop ?? 0
 
     if (!scroller.value) {
       return
@@ -58,6 +79,7 @@ const observer = new ResizeObserver(entries => entries.forEach(el => (scrollerHe
 onMounted(() => {
   observer.observe(scroller.value!)
   scrollerHeight.value = scroller.value!.offsetHeight
+  itemsTop.value = itemsBox.value?.offsetTop ?? 0
 })
 
 onBeforeUnmount(() => observer.unobserve(scroller.value!))
@@ -67,11 +89,13 @@ const scrollToIndex = (index: number) => {
     return
   }
 
-  const top = index * itemHeight.value - scrollerHeight.value / 2 + itemHeight.value / 2
+  itemsTop.value = itemsBox.value?.offsetTop ?? 0
+
+  const top = itemsTop.value + index * itemHeight.value - scrollerHeight.value / 2 + itemHeight.value / 2
   scroller.value.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
 }
 
-defineExpose({ scrollToIndex })
+defineExpose({ scrollToIndex, getScrollerElement: () => scroller.value })
 </script>
 
 <style lang="postcss" scoped>

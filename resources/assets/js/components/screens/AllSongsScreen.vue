@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader :disabled="loading" :layout="songs.length ? headerLayout : 'collapsed'">
+      <ScreenHeader :disabled="loading" :layout="songs.length ? 'expanded' : 'collapsed'">
         All Songs
 
         <template #thumbnail>
@@ -28,7 +28,6 @@
         ref="songList"
         class="-m-6"
         @sort="sort"
-        @swipe="onSwipe"
         @press:enter="onPressEnter"
         @scrolled-to-end="fetchSongs"
       />
@@ -67,13 +66,11 @@ const totalDuration = computed(() => secondsToHumanReadable(commonStore.state.so
 const {
   PlayableList: SongList,
   ThumbnailStack,
-  headerLayout,
   thumbnails,
   playables: songs,
   playableList: songList,
   onPressEnter,
   playSelected,
-  onSwipe,
   sort: composableSort,
 } = usePlayableList(toRef(playableStore.state, 'playables'), { type: 'Songs' }, { filterable: false, sortable: true })
 

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\Scanners\DirectoryScanner;
 use App\Services\Scanners\WatchRecordScanner;
+use App\Services\SettingService;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanResult;
 use App\Values\WatchRecord\InotifyWatchRecord;
@@ -38,6 +39,7 @@ class ScanCommand extends Command
         private readonly DirectoryScanner $directoryScanner,
         private readonly WatchRecordScanner $watchRecordScanner,
         private readonly UserRepository $userRepository,
+        private readonly SettingService $settingService,
     ) {
         parent::__construct();
     }
@@ -53,6 +55,12 @@ class ScanCommand extends Command
     {
         if (config('koel.storage_driver') !== 'local') {
             $this->components->error('This command only works with the local storage driver.');
+
+            return self::INVALID;
+        }
+
+        if (!Setting::get('media_path') && !$this->input->isInteractive()) {
+            $this->components->error("Media path hasn't been configured. Run this command interactively to set it up.");
 
             return self::INVALID;
         }
@@ -163,14 +171,11 @@ class ScanCommand extends Command
             $path = $this->ask('Absolute path to your media directory');
 
             if (File::isDirectory($path) && File::isReadable($path)) {
-                Setting::set('media_path', $path);
-                break;
+                return $this->settingService->updateMediaPath($path);
             }
 
             $this->error('The path does not exist or is not readable. Try again.');
         }
-
-        return $path;
     }
 
     private function getOwner(): User

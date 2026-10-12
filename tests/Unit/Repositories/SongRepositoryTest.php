@@ -12,34 +12,34 @@ use function Tests\create_user;
 class SongRepositoryTest extends TestCase
 {
     #[Test]
-    public function findByHashReturnsMatchingSongForOwner(): void
+    public function findByAnyHashReturnsMatchingSongForOwner(): void
     {
         $user = create_user();
         $song = Song::factory()->createOne(['hash' => 'abc123', 'owner_id' => $user->id]);
 
-        $result = app(SongRepository::class)->findByHash('abc123', $user);
+        $result = app(SongRepository::class)->findByAnyHash(['xyz789', 'abc123'], $user);
 
         self::assertTrue($song->is($result));
     }
 
     #[Test]
-    public function findByHashReturnsNullWhenNoSongWithHash(): void
+    public function findByAnyHashReturnsNullWhenNoSongWithHash(): void
     {
         $user = create_user();
 
-        $result = app(SongRepository::class)->findByHash('deadbeef', $user);
+        $result = app(SongRepository::class)->findByAnyHash(['deadbeef'], $user);
 
         self::assertNull($result);
     }
 
     #[Test]
-    public function findByHashScopesToOwnerOnly(): void
+    public function findByAnyHashScopesToOwnerOnly(): void
     {
         $userA = create_user();
         $userB = create_user();
         Song::factory()->createOne(['hash' => 'abc123', 'owner_id' => $userA->id]);
 
-        $result = app(SongRepository::class)->findByHash('abc123', $userB);
+        $result = app(SongRepository::class)->findByAnyHash(['abc123'], $userB);
 
         self::assertNull($result);
     }

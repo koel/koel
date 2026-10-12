@@ -6,9 +6,8 @@ use App\Enums\SongStorageType;
 use App\Models\Song;
 use App\Services\Streamer\Adapters\DropboxStreamerAdapter;
 use App\Services\Streamer\Adapters\LocalStreamerAdapter;
+use App\Services\Streamer\Adapters\RemoteDiskStreamerAdapter;
 use App\Services\Streamer\Adapters\S3CompatibleStreamerAdapter;
-use App\Services\Streamer\Adapters\SftpStreamerAdapter;
-use App\Services\Streamer\Adapters\WebDAVStreamerAdapter;
 use App\Services\Streamer\Streamer;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Integration\KoelPlus\Services\TestingDropboxStorage;
@@ -45,11 +44,11 @@ class StreamerTest extends PlusTestCase
                     break;
 
                 case SongStorageType::SFTP:
-                    self::assertInstanceOf(SftpStreamerAdapter::class, $streamer->getAdapter());
+                    self::assertInstanceOf(RemoteDiskStreamerAdapter::class, $streamer->getAdapter());
                     break;
 
                 case SongStorageType::WEBDAV:
-                    self::assertInstanceOf(WebDAVStreamerAdapter::class, $streamer->getAdapter());
+                    self::assertInstanceOf(RemoteDiskStreamerAdapter::class, $streamer->getAdapter());
                     break;
 
                 default:

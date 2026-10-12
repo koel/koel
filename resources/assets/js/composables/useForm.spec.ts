@@ -18,16 +18,6 @@ vi.mock('@/composables/useErrorHandler', () => ({
 }))
 
 describe('useForm', () => {
-  it('initializes with given values', () => {
-    const { data } = useForm({
-      initialValues: { name: 'John', age: 30 },
-      onSubmit: vi.fn(),
-    })
-
-    expect(data.name).toBe('John')
-    expect(data.age).toBe(30)
-  })
-
   it('detects pristine state', () => {
     const { isPristine, isDirty } = useForm({
       initialValues: { name: 'John' },
@@ -58,18 +48,6 @@ describe('useForm', () => {
     })
 
     expect(isPristine()).toBe(true)
-  })
-
-  it('calls onSubmit on handleSubmit', async () => {
-    const onSubmit = vi.fn().mockResolvedValue('result')
-    const { handleSubmit } = useForm({
-      initialValues: { name: 'John' },
-      onSubmit,
-    })
-
-    await handleSubmit()
-
-    expect(onSubmit).toHaveBeenCalled()
   })
 
   it('calls onSuccess after successful submit', async () => {

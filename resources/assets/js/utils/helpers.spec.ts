@@ -1,7 +1,42 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
-import { arrayify, flattenParams, limitBy, use } from './helpers'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
+import { defineComponent, h } from 'vue'
+import { render, screen } from '@testing-library/vue'
+import { arrayify, defineAsyncComponent, flattenParams, gravatar, limitBy, use } from './helpers'
 
 describe('helpers utils', () => {
+  describe('gravatar()', () => {
+    // Must match the URL built by the gravatar() PHP helper, which is what the server serves as an avatar.
+    const EMAIL_SHA256 = 'efbe2fad818a477cc2eef45f6be5fd0a1111aead627c3529562f17f0375d4523'
+
+    afterEach(() => (window.KOEL.gravatar = { url: 'https://www.gravatar.com/avatar', default: 'robohash' }))
+
+    it('identifies the email by its SHA-256 hash', async () => {
+      expect(await gravatar('koel@example.com')).toBe(
+        `https://www.gravatar.com/avatar/${EMAIL_SHA256}?s=192&d=robohash`,
+      )
+    })
+
+    it('normalizes the email before hashing', async () => {
+      expect(await gravatar('  KOEL@Example.com  ')).toBe(await gravatar('koel@example.com'))
+    })
+
+    it('honors the configured URL and default', async () => {
+      window.KOEL.gravatar = { url: 'https://gravatar.example.com/avatar', default: 'identicon' }
+
+      expect(await gravatar('koel@example.com', 64)).toBe(
+        `https://gravatar.example.com/avatar/${EMAIL_SHA256}?s=64&d=identicon`,
+      )
+    })
+
+    it('encodes a default that is an image URL', async () => {
+      window.KOEL.gravatar = { url: 'https://www.gravatar.com/avatar', default: 'https://example.com/avatar.png' }
+
+      expect(await gravatar('koel@example.com')).toBe(
+        `https://www.gravatar.com/avatar/${EMAIL_SHA256}?s=192&d=https%3A%2F%2Fexample.com%2Favatar.png`,
+      )
+    })
+  })
+
   it('use() triggers a closure with a defined value', () => {
     const mock = vi.fn()
     use('foo', mock)
@@ -56,6 +91,23 @@ describe('helpers utils', () => {
 
     it('skips null and undefined values', () => {
       expect(flattenParams({ type: 'favorites', id: null, extra: undefined })).toEqual({ type: 'favorites' })
+    })
+  })
+
+  describe('defineAsyncComponent', () => {
+    it('stops showing the loading state once the component fails to load', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+      vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+      const FailingComponent = defineAsyncComponent(() =>
+        Promise.reject(new Error('Failed to fetch dynamically imported module')),
+      )
+
+      render(defineComponent({ render: () => h('div', h(FailingComponent)) }))
+
+      await new Promise(resolve => setTimeout(resolve, 300))
+
+      expect(screen.queryByRole('status', { name: 'Loading' })).toBeNull()
     })
   })
 })

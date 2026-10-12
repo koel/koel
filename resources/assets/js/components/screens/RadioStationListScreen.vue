@@ -6,20 +6,7 @@
 
         <template #controls>
           <div class="flex gap-2">
-            <Btn
-              size="small"
-              v-koel-tooltip
-              :title="preferences.radio_stations_favorites_only ? 'Show all' : 'Show favorites only'"
-              variant="ghost"
-              class="border border-k-fg-10"
-              @click.prevent="toggleFavoritesOnly"
-            >
-              <Icon
-                :icon="preferences.radio_stations_favorites_only ? faHeart : faEmptyHeart"
-                :class="preferences.radio_stations_favorites_only && 'text-k-love'"
-                size="sm"
-              />
-            </Btn>
+            <FavoritesOnlyToggle :active="preferences.radio_stations_favorites_only" @toggle="toggleFavoritesOnly" />
 
             <RadioStationListSorter
               v-if="preferences.radio_stations_view_mode !== 'table'"
@@ -30,14 +17,7 @@
 
             <ListFilter />
 
-            <Btn
-              size="small"
-              v-if="canAdd"
-              v-koel-tooltip
-              variant="highlight"
-              title="Add a new station"
-              @click.prevent="requestAddStationForm"
-            >
+            <Btn size="small" v-if="canAdd" v-koel-tooltip variant="highlight" @click.prevent="requestAddStationForm">
               <Icon :icon="faAdd" fixed-width />
               <span class="sr-only">Add a new station</span>
             </Btn>
@@ -72,7 +52,7 @@
         @toggle-favorite="toggleFavorite"
       />
     </div>
-    <div v-else ref="gridContainer" class="scroll-mask-y -m-6 flex-1 overflow-auto">
+    <ScreenHeaderScrollBox v-else class="-m-6 flex-1">
       <GridListView ref="grid" :view-mode="preferences.radio_stations_view_mode" data-testid="radio-station-grid">
         <div v-if="showSkeletons" role="status" aria-busy="true" aria-label="Loading" class="contents">
           <AlbumCardSkeleton v-for="i in 10" :key="i" :layout="itemLayout" />
@@ -82,16 +62,15 @@
           <BtnScrollToTop />
         </template>
       </GridListView>
-    </div>
+    </ScreenHeaderScrollBox>
   </ScreenBase>
 </template>
 
 <script setup lang="ts">
-import { faAdd, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { RadioIcon } from 'lucide-vue-next'
-import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
 
-import { computed, onMounted, provide, ref } from 'vue'
+import { computed, onMounted, provide, ref, toRef } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -103,6 +82,7 @@ import { usePolicies } from '@/composables/usePolicies'
 import { useModal } from '@/composables/useModal'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import ListFilter from '@/components/ui/ListFilter.vue'
@@ -112,6 +92,7 @@ import RadioStationTableRowSkeleton from '@/components/radio/RadioStationTableRo
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import RadioStationCard from '@/components/radio/RadioStationCard.vue'
 import GridListView from '@/components/ui/GridListView.vue'
+import ScreenHeaderScrollBox from '@/components/ui/ScreenHeaderScrollBox.vue'
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
@@ -119,11 +100,10 @@ import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 const AddRadioStationForm = defineAsyncComponent(() => import('@/components/radio/AddRadioStationForm.vue'))
 const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
-const fuzzy = useFuzzySearch<RadioStation>(radioStationStore.state.stations, ['name', 'description'])
+const fuzzy = useFuzzySearch<RadioStation>(toRef(radioStationStore.state, 'stations'), ['name', 'description'])
 
 const loading = ref(false)
 const keywords = ref('')
-const gridContainer = ref<HTMLDivElement>()
 const grid = ref<InstanceType<typeof GridListView>>()
 
 provide(FilterKeywordsKey, keywords)

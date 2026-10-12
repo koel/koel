@@ -19,19 +19,39 @@ describe('messageToast.vue', () => {
     })
   }
 
-  it('renders', () => expect(renderComponent().html()).toMatchSnapshot())
-
-  it('dismisses upon click', async () => {
+  it('dismisses with the dismiss button', async () => {
     const { emitted } = renderComponent()
-    await h.user.click(screen.getByTitle('Click to dismiss'))
+    await h.user.click(screen.getByRole('button', { name: 'Dismiss' }))
 
     expect(emitted().dismiss).toBeTruthy()
+  })
+
+  it('stays open when its text is clicked, so the text can be copied', async () => {
+    const { emitted } = renderComponent()
+    await h.user.click(screen.getByRole('main'))
+
+    expect(emitted().dismiss).toBeUndefined()
   })
 
   it('dismisses upon timeout', async () => {
     vi.useFakeTimers()
 
     const { emitted } = renderComponent()
+    vi.advanceTimersByTime(5000)
+    expect(emitted().dismiss).toBeTruthy()
+
+    vi.useRealTimers()
+  })
+
+  it('stays open while its dismiss button has keyboard focus', async () => {
+    vi.useFakeTimers()
+
+    const { emitted } = renderComponent()
+    screen.getByRole('button', { name: 'Dismiss' }).focus()
+    vi.advanceTimersByTime(5000)
+    expect(emitted().dismiss).toBeUndefined()
+
+    screen.getByRole('button', { name: 'Dismiss' }).blur()
     vi.advanceTimersByTime(5000)
     expect(emitted().dismiss).toBeTruthy()
 

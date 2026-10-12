@@ -1,48 +1,78 @@
 <template>
-  <article :title="file.message" class="upload-item relative">
+  <article class="upload-item relative">
     <div :class="cssClass" class="h-full w-full min-h-[32px] bg-k-fg-5 relative rounded-lg overflow-hidden">
       <div class="absolute z-1 h-full w-full flex items-center">
-        <span class="name px-4 flex-1 flex items-center">{{ file.name }}</span>
-        <Btn variant="ghost" v-if="canRetry" class="px-3!" icon-only title="Retry" unrounded @click="retry">
-          <Icon :icon="faRotateBack" />
-        </Btn>
-        <Btn variant="ghost" v-if="canAbort" class="px-3!" icon-only title="Abort" unrounded @click="abort">
+        <ProgressRing
+          v-if="showsProgressRing"
+          :aria-label="`Upload progress for ${file.name}`"
+          :value="file.status === 'Ready' ? 0 : file.progress"
+          class="size-4 shrink-0 ml-4"
+          data-testid="upload-item-progress"
+        />
+        <a
+          v-if="file.song"
+          :href="url('albums.show', { id: file.song.album_id })"
+          class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)] text-current focus:text-current"
+          data-testid="upload-item-album-link"
+        >
+          {{ file.name }}
+        </a>
+        <span
+          v-else
+          class="name min-w-0 flex-1 overflow-hidden whitespace-nowrap px-4 [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)]"
+          >{{ file.name }}</span
+        >
+        <span v-if="showsReasonInRow" class="min-w-0 truncate px-4 text-k-fg-50" data-testid="upload-item-reason">
+          {{ file.message }}
+        </span>
+        <span v-if="file.status === 'Retrying'" class="shrink-0 px-3 text-k-fg-50" data-testid="upload-item-state">
+          Retrying&hellip;
+        </span>
+        <Btn variant="ghost" v-if="canAbort" v-koel-tooltip class="px-3!" icon-only unrounded @click="abort">
           <Icon :icon="faXmark" />
+          <span class="sr-only">Abort</span>
         </Btn>
-        <Btn variant="ghost" v-if="canRemove" class="px-3!" icon-only title="Remove" unrounded @click="remove">
+        <Btn v-if="canRetry" v-koel-tooltip class="h-full px-4!" icon-only unrounded variant="success" @click="retry">
+          <Icon :icon="faRotateBack" />
+          <span class="sr-only">Retry</span>
+        </Btn>
+        <Btn
+          v-if="canRemove"
+          v-koel-tooltip
+          class="h-full px-4!"
+          icon-only
+          unrounded
+          variant="destructive"
+          @click="remove"
+        >
           <Icon :icon="faTrashCan" />
+          <span class="sr-only">Remove</span>
         </Btn>
+        <span
+          v-if="file.status === 'Uploaded'"
+          v-koel-tooltip
+          class="px-3 text-k-success"
+          data-testid="upload-item-uploaded"
+        >
+          <Icon :icon="faCircleCheck" />
+          <span class="sr-only">Uploaded</span>
+        </span>
+        <span v-if="isProcessing" v-koel-tooltip class="px-3 text-k-fg-50" data-testid="upload-item-processing">
+          <Icon :icon="faSpinner" spin />
+          <span class="sr-only">Processing</span>
+        </span>
       </div>
     </div>
-    <p class="text-[.90rem] mt-1 ml-4">
-      <span v-if="file.status === 'Errored'" class="text-k-danger">
-        <Icon :icon="faExclamationCircle" class="mr-1" />
-        {{ file.message }}
-      </span>
-      <span v-if="file.status === 'Canceled'">Canceled.</span>
-      <span v-if="file.status === 'Ready'">Queued.</span>
-      <span v-if="file.status === 'Uploading'">
-        Uploading
-        <span class="tabular-nums">
-          <strong>{{ Math.round(file.progress * 100) / 100 }}</strong
-          >%
-        </span>
-      </span>
-      <span v-if="file.status === 'Uploaded'" class="text-k-success">
-        <Icon :icon="faCheckCircle" class="mr-1" />
-        Uploaded.
-      </span>
-    </p>
   </article>
 </template>
 
 <script lang="ts" setup>
 import {
-  faCheckCircle,
-  faExclamationCircle,
+  faCircleCheck,
   faExclamationTriangle,
   faInfoCircle,
   faRotateBack,
+  faSpinner,
   faTrashCan,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
@@ -50,18 +80,36 @@ import { computed, defineAsyncComponent, toRefs } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
+import { useRouter } from '@/composables/useRouter'
+
+import ProgressRing from '@/components/ui/ProgressRing.vue'
 
 const props = defineProps<{ file: UploadFile }>()
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
 const { file } = toRefs(props)
+const { url } = useRouter()
 
+const isProcessing = computed(() => file.value.status === 'Processing')
+const showsProgressRing = computed(() => ['Ready', 'Uploading', 'Retrying'].includes(file.value.status))
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canAbort = computed(() => file.value.status === 'Uploading')
-const canRemove = computed(() => file.value.status !== 'Uploading')
+
+const canRemove = computed(
+  () => !['Uploading', 'Uploaded', 'Skipped'].includes(file.value.status) && !isProcessing.value,
+)
+
 const cssClass = computed(() => file.value.status.toLowerCase())
-const progressBarWidth = computed(() => (file.value.status === 'Uploading' ? `${file.value.progress}%` : '0'))
+const showsReasonInRow = computed(() => ['Skipped', 'Errored', 'Canceled'].includes(file.value.status))
+
+const progressBarWidth = computed(() => {
+  if (isProcessing.value) {
+    return '100%'
+  }
+
+  return file.value.status === 'Uploading' ? `${file.value.progress}%` : '0'
+})
 
 const { showConfirmDialog } = useDialogBox()
 
@@ -83,11 +131,11 @@ article > div::before {
   @apply absolute h-full top-0 left-0 z-0 duration-200 ease-out bg-k-highlight;
 }
 
-.uploaded {
-  @apply bg-k-success;
+.uploaded:hover {
+  @apply bg-k-fg-10;
 }
 
-.errored {
-  @apply bg-k-danger;
+.processing {
+  @apply text-k-highlight-fg;
 }
 </style>

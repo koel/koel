@@ -5,20 +5,7 @@
         Podcasts
         <template #controls>
           <div class="flex gap-2">
-            <Btn
-              size="small"
-              variant="ghost"
-              v-koel-tooltip
-              :title="preferences.podcasts_favorites_only ? 'Show all' : 'Show favorites only'"
-              class="border border-k-fg-10"
-              @click.prevent="toggleFavoritesOnly"
-            >
-              <Icon
-                :icon="preferences.podcasts_favorites_only ? faHeart : faEmptyHeart"
-                :class="preferences.podcasts_favorites_only && 'text-k-love'"
-                size="sm"
-              />
-            </Btn>
+            <FavoritesOnlyToggle :active="preferences.podcasts_favorites_only" @toggle="toggleFavoritesOnly" />
 
             <PodcastListSorter
               :field="preferences.podcasts_sort_field"
@@ -48,20 +35,21 @@
       </template>
     </ScreenEmptyState>
 
-    <div v-else class="scroll-mask-y -m-6 p-6 flex-1 overflow-auto space-y-3">
-      <div v-if="loading" role="status" aria-busy="true" aria-label="Loading" class="contents">
-        <PodcastItemSkeleton v-for="i in 5" :key="i" />
+    <ScreenHeaderScrollBox v-else class="-m-6 flex-1">
+      <div class="p-6 space-y-3">
+        <div v-if="loading" role="status" aria-busy="true" aria-label="Loading" class="contents">
+          <PodcastItemSkeleton v-for="i in 5" :key="i" />
+        </div>
+        <template v-else>
+          <PodcastItem v-for="podcast in podcasts" :key="podcast.id" :podcast />
+        </template>
       </div>
-      <template v-else>
-        <PodcastItem v-for="podcast in podcasts" :key="podcast.id" :podcast />
-      </template>
-    </div>
+    </ScreenHeaderScrollBox>
   </ScreenBase>
 </template>
 
 <script setup lang="ts">
-import { faAdd, faPodcast, faHeart } from '@fortawesome/free-solid-svg-icons'
-import { faHeart as faEmptyHeart } from '@fortawesome/free-regular-svg-icons'
+import { faAdd, faPodcast } from '@fortawesome/free-solid-svg-icons'
 import { orderBy } from 'lodash-es'
 import { computed, onMounted, provide, ref } from 'vue'
 import { podcastStore } from '@/stores/podcastStore'
@@ -79,8 +67,10 @@ import PodcastItem from '@/components/podcast/PodcastItem.vue'
 import PodcastItemSkeleton from '@/components/podcast/PodcastItemSkeleton.vue'
 import PodcastListSorter from '@/components/podcast/PodcastListSorter.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import ScreenHeaderScrollBox from '@/components/ui/ScreenHeaderScrollBox.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 
 const AddPodcastForm = defineAsyncComponent(() => import('@/components/podcast/AddPodcastForm.vue'))
 const { openModal } = useModal()

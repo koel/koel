@@ -51,16 +51,6 @@ describe('addToMenu.vue', () => {
     }
   }
 
-  it('renders', () => {
-    playlistStore.state.playlists = [
-      h.factory('playlist').make({ name: 'Foo' }),
-      h.factory('playlist').make({ name: 'Bar' }),
-      h.factory('playlist').make({ name: 'Baz' }),
-    ]
-
-    expect(renderComponent().html()).toMatchSnapshot()
-  })
-
   it.each<[keyof AddToMenuConfig, string | string[]]>([
     ['queue', ['queue-after-current', 'queue-bottom', 'queue-top', 'queue']],
     ['favorites', 'add-to-favorites'],
@@ -91,6 +81,16 @@ describe('addToMenu.vue', () => {
     const { playables } = renderComponent()
 
     await h.user.click(screen.getByTestId('add-to-favorites'))
+
+    expect(mock).toHaveBeenCalledWith(playables)
+  })
+
+  it.each(['{Enter}', ' '])('adds songs to Favorites when %s is pressed', async (key: string) => {
+    const mock = h.mock(playableStore, 'favorite')
+    const { playables } = renderComponent()
+
+    screen.getByRole('button', { name: 'Favorites' }).focus()
+    await h.user.keyboard(key)
 
     expect(mock).toHaveBeenCalledWith(playables)
   })

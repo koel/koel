@@ -26,6 +26,16 @@ enum SmartPlaylistOperator: string
         };
     }
 
+    public function takesTwoValues(): bool
+    {
+        return in_array($this, [self::IS_BETWEEN, self::IS_NOT_BETWEEN], true);
+    }
+
+    public function takesDayCount(): bool
+    {
+        return in_array($this, [self::IN_LAST, self::NOT_IN_LAST], true);
+    }
+
     public function isNegative(): bool
     {
         return in_array($this, [self::IS_NOT, self::NOT_CONTAIN, self::IS_NOT_BETWEEN], true);

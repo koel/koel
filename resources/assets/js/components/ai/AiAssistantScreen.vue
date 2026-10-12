@@ -5,11 +5,11 @@
   >
     <button
       class="fixed top-4 right-4 z-20 text-k-fg-50 hover:text-k-fg transition-colors cursor-pointer"
-      title="Close"
       type="button"
       @click="goBack"
     >
       <XIcon class="w-6 h-6" />
+      <span class="sr-only">Close</span>
     </button>
 
     <!-- Initial state: centered prompt -->

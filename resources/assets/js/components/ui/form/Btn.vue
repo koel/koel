@@ -101,7 +101,7 @@ a {
     }
 
     &[data-variant='highlight'] {
-      @apply border-k-highlight;
+      @apply border-k-highlight text-k-highlight;
     }
   }
 }

@@ -30,16 +30,4 @@ describe('albumOrArtistInfo.vue', () => {
     expect(queryByText('Artist Name')).toBeNull()
     getByText('Bio content')
   })
-
-  it('renders footer slot when provided', () => {
-    const { getByText } = h.render(Component, {
-      props: { mode: 'aside' },
-      slots: {
-        default: 'Content',
-        footer: 'Footer content',
-      },
-    })
-
-    getByText('Footer content')
-  })
 })

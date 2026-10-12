@@ -27,6 +27,6 @@ class ProfileController extends Controller
     #[DisabledInDemo(Response::HTTP_NO_CONTENT)]
     public function update(ProfileUpdateRequest $request)
     {
-        return UserResource::make($this->userService->updateUser($this->user, $request->toDto()));
+        return UserResource::make($this->userService->updateOwnProfile($this->user, $request->toDto()));
     }
 }

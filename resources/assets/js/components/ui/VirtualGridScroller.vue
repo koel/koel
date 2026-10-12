@@ -1,17 +1,25 @@
 <template>
   <div
     ref="scroller"
-    class="scroll-mask-y virtual-grid-scroller will-change-transform overflow-scroll h-full"
+    :class="carriesScreenHeader ? 'scroll-mask-b scroll-mask-t-from-100%' : 'scroll-mask-y'"
+    class="virtual-grid-scroller will-change-transform overflow-scroll h-full"
     @scroll.passive="onScroll"
   >
+    <ScreenHeaderSpace />
+
     <!-- Measuring phase: render one item to measure height, gap, and padding -->
-    <div v-if="measuring && items.length" ref="measureContainer" v-bind="$attrs" class="grid">
+    <div v-if="measuring && items.length" ref="measureContainer" v-bind="$attrs" class="grid-columns grid">
       <slot :item="items[0]" />
     </div>
 
     <template v-else>
-      <div class="height-container will-change-transform overflow-hidden">
-        <div v-bind="$attrs" class="grid-container will-change-transform grid">
+      <div
+        ref="itemsBox"
+        :style="{ height: cssHeight }"
+        class="will-change-transform overflow-hidden"
+        data-testid="virtual-grid-height"
+      >
+        <div ref="gridContainer" v-bind="$attrs" class="grid-container grid-columns will-change-transform grid">
           <slot v-for="item in renderedItems" :item />
         </div>
       </div>
@@ -21,6 +29,9 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue'
+import { useScreenHeaderScroller } from '@/composables/useScreenHeaderScroller'
+
+import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -33,7 +44,12 @@ const emit = defineEmits<{ (e: 'scrolled-to-end'): void }>()
 const { items, minItemWidth } = toRefs(props)
 
 const scroller = ref<HTMLElement>()
+const itemsBox = ref<HTMLElement>()
+const itemsTop = ref(0)
+
+const { carriesScreenHeader } = useScreenHeaderScroller(() => scroller.value)
 const measureContainer = ref<HTMLElement>()
+const gridContainer = ref<HTMLElement>()
 const scrollerWidth = ref(0)
 const scrollerHeight = ref(0)
 const scrollTop = ref(0)
@@ -59,7 +75,9 @@ const totalHeight = computed(() =>
   rowCount.value ? rowCount.value * rowHeight.value - measuredRowGap.value + measuredPaddingY.value : 0,
 )
 
-const startRow = computed(() => Math.max(0, Math.floor(scrollTop.value / rowHeight.value) - renderAhead))
+const startRow = computed(() =>
+  Math.max(0, Math.floor((scrollTop.value - itemsTop.value) / rowHeight.value) - renderAhead),
+)
 const offsetY = computed(() => startRow.value * rowHeight.value)
 
 const renderedItems = computed(() => {
@@ -118,6 +136,7 @@ const onScroll = (e: Event) => {
     }
 
     scrollTop.value = (e.target as HTMLElement).scrollTop
+    itemsTop.value = itemsBox.value?.offsetTop ?? 0
 
     if (el.scrollTop + el.clientHeight + rowHeight.value >= el.scrollHeight) {
       emit('scrolled-to-end')
@@ -131,6 +150,32 @@ const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
     scrollerHeight.value = entry.contentRect.height
   }
 })
+
+const itemResizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+  for (const entry of entries) {
+    const itemHeight = (entry.target as HTMLElement).offsetHeight
+
+    if (itemHeight) {
+      measuredItemHeight.value = itemHeight
+    }
+  }
+})
+
+let observedItem: Element | null = null
+
+const followFirstRenderedItemHeight = () => {
+  const firstItem = gridContainer.value?.firstElementChild ?? null
+
+  if (firstItem === observedItem) {
+    return
+  }
+
+  observedItem && itemResizeObserver.unobserve(observedItem)
+  firstItem && itemResizeObserver.observe(firstItem)
+  observedItem = firstItem
+}
+
+watch(renderedItems, followFirstRenderedItemHeight, { flush: 'post' })
 
 onMounted(async () => {
   if (scroller.value) {
@@ -148,6 +193,8 @@ onBeforeUnmount(() => {
   if (scroller.value) {
     resizeObserver.unobserve(scroller.value)
   }
+
+  itemResizeObserver.disconnect()
 })
 
 const scrollToTop = () => scroller.value?.scrollTo({ top: 0, behavior: 'smooth' })
@@ -155,7 +202,7 @@ const scrollToTop = () => scroller.value?.scrollTo({ top: 0, behavior: 'smooth' 
 watch(minItemWidth, () => measure())
 
 watch(
-  [() => items.value.length, scrollerHeight, measuring],
+  [() => items.value.length, scrollerHeight, measuring, totalHeight],
   () => {
     if (
       !measuring.value &&
@@ -197,12 +244,11 @@ defineExpose({ scrollToTop })
   }
 }
 
-.height-container {
-  height: v-bind(cssHeight);
+.grid-columns {
+  grid-template-columns: v-bind(cssColumns);
 }
 
 .grid-container {
   transform: v-bind(cssTransform);
-  grid-template-columns: v-bind(cssColumns);
 }
 </style>

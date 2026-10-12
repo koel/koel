@@ -1,50 +1,47 @@
 <template>
   <div class="artist-table-wrap relative flex flex-col flex-1 overflow-auto" data-testid="artist-table">
-    <div class="artist-table-header sortable flex z-2 bg-k-fg-3 pl-5 sticky top-0">
-      <span
-        class="name"
-        role="button"
-        tabindex="0"
-        title="Sort by name"
-        @click="onSort('name')"
-        @keydown.enter.space.prevent="onSort('name')"
-      >
-        Name
-        <Icon v-if="field === 'name' && order === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon v-if="field === 'name' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
-      </span>
-      <span
-        v-if="shouldShowColumn('rating')"
-        class="rating"
-        role="button"
-        tabindex="0"
-        title="Sort by rating"
-        @click="onSort('rating')"
-        @keydown.enter.space.prevent="onSort('rating')"
-      >
-        Rating
-        <Icon v-if="field === 'rating' && order === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon v-if="field === 'rating' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
-      </span>
-      <span
-        v-if="shouldShowColumn('favorite')"
-        class="favorite"
-        role="button"
-        tabindex="0"
-        title="Sort by favorite"
-        @click="onSort('favorite')"
-        @keydown.enter.space.prevent="onSort('favorite')"
-      >
-        <Icon :icon="faHeart" />
-        <Icon v-if="field === 'favorite' && order === 'asc'" :icon="faCaretUp" class="ml-2 text-k-highlight" />
-        <Icon v-if="field === 'favorite' && order === 'desc'" :icon="faCaretDown" class="ml-2 text-k-highlight" />
-      </span>
-      <span class="extra">
-        <ArtistTableHeaderActionMenu :field :order @sort="onSort" />
-      </span>
-    </div>
-
-    <VirtualScroller :items="artists" :item-height="64" @scrolled-to-end="$emit('scrolled-to-end')">
+    <VirtualScroller
+      carries-screen-header
+      :items="artists"
+      :item-height="64"
+      @scrolled-to-end="$emit('scrolled-to-end')"
+    >
+      <template #before>
+        <ScreenHeaderPinned>
+          <div class="artist-table-header sortable flex bg-k-fg-3 pl-5">
+            <SortableColumnHeader :active="field === 'name'" :order class="name" @sort="onSort('name')">
+              Name
+            </SortableColumnHeader>
+            <SortableColumnHeader
+              v-if="shouldShowColumn('rating')"
+              :active="field === 'rating'"
+              :order
+              class="rating"
+              label="Rating"
+              @sort="onSort('rating')"
+            />
+            <SortableColumnHeader
+              v-if="shouldShowColumn('favorite')"
+              :active="field === 'favorite'"
+              :order
+              class="favorite"
+              @sort="onSort('favorite')"
+            >
+              <Icon :icon="faHeart" />
+              <span class="sr-only">Favorite</span>
+            </SortableColumnHeader>
+            <span class="extra">
+              <TableHeaderActionMenu
+                :field
+                :order
+                :items="artistTableMenuItems"
+                :column-config="artistTableColumnConfig"
+                @sort="onSort"
+              />
+            </span>
+          </div>
+        </ScreenHeaderPinned>
+      </template>
       <template #default="{ item }: { item: Artist }">
         <ArtistRow :artist="item" @toggle-favorite="emit('toggle-favorite', $event)" />
       </template>
@@ -53,14 +50,16 @@
 </template>
 
 <script lang="ts" setup>
-import { faCaretDown, faCaretUp, faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { toRefs } from 'vue'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
-import { artistTableColumnConfig } from '@/config/tables'
+import { artistTableColumnConfig, artistTableMenuItems } from '@/config/tables'
 
+import SortableColumnHeader from '@/components/ui/SortableColumnHeader.vue'
+import TableHeaderActionMenu from '@/components/ui/TableHeaderActionMenu.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
+import ScreenHeaderPinned from '@/components/ui/ScreenHeaderPinned.vue'
 import ArtistRow from '@/components/artist/ArtistRow.vue'
-import ArtistTableHeaderActionMenu from '@/components/artist/ArtistTableHeaderActionMenu.vue'
 
 const props = defineProps<{
   artists: Artist[]

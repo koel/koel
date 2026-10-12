@@ -1,11 +1,13 @@
 <template>
-  <section>
-    <h3 class="text-2xl mb-2">
-      <span class="mr-2 text-(--lastfm-color)">
-        <Icon :icon="faLastfm" />
+  <SettingGroup>
+    <template #title>
+      <span class="inline-flex items-center gap-2">
+        <span class="text-(--lastfm-color)">
+          <Icon :icon="faLastfm" />
+        </span>
+        Last.fm
       </span>
-      Last.fm Integration
-    </h3>
+    </template>
 
     <div v-if="useLastfm" data-testid="lastfm-integrated">
       <p>
@@ -16,11 +18,17 @@
       <p v-else>You can also connect your Last.fm account here.</p>
       <p>
         Connecting {{ appName }} and your Last.fm account enables such exciting features as
-        <a href="https://www.last.fm/about/trackmymusic" rel="noopener" target="_blank">scrobbling</a>.
+        <a
+          class="text-k-highlight hover:text-k-fg"
+          href="https://www.last.fm/about/trackmymusic"
+          rel="noopener"
+          target="_blank"
+          >scrobbling</a
+        >.
       </p>
       <div class="buttons mt-4 space-x-2">
-        <Btn class="bg-(--lastfm-color)!" @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
-        <Btn variant="ghost" v-if="connected" class="disconnect" @click.prevent="disconnect">Disconnect</Btn>
+        <Btn variant="ghost" bordered @click.prevent="connect">{{ connected ? 'Reconnect' : 'Connect' }}</Btn>
+        <Btn variant="ghost" bordered v-if="connected" class="disconnect" @click.prevent="disconnect">Disconnect</Btn>
       </div>
     </div>
 
@@ -29,25 +37,31 @@
         Last.fm integration is not enabled.
         <span v-if="currentUserCan.manageSettings()" data-testid="lastfm-admin-instruction">
           Check
-          <a href="https://docs.koel.dev/service-integrations#last-fm" target="_blank">Documentation</a>
+          <a
+            class="text-k-highlight hover:text-k-fg"
+            href="https://docs.koel.dev/service-integrations#last-fm"
+            target="_blank"
+            >documentation</a
+          >
           for integration instructions.
         </span>
         <span v-else data-testid="lastfm-user-instruction"> Try politely asking an administrator to enable it. </span>
       </p>
     </div>
-  </section>
+  </SettingGroup>
 </template>
 
 <script lang="ts" setup>
 import { faLastfm } from '@fortawesome/free-brands-svg-icons'
 import { computed, defineAsyncComponent } from 'vue'
-import { authService } from '@/services/authService'
 import { http } from '@/services/http'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
 import { forceReloadWindow } from '@/utils/helpers'
 import { usePolicies } from '@/composables/usePolicies'
 import { useBranding } from '@/composables/useBranding'
+
+import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
 
 const Btn = defineAsyncComponent(() => import('@/components/ui/form/Btn.vue'))
 
@@ -62,13 +76,13 @@ const connected = computed(() => Boolean(currentUser.value.preferences.lastfm_se
  * Connect the current user to Last.fm.
  * This method opens a new window.
  * Koel will reload once the connection is successful.
+ * The window is opened before the request so that popup blockers don't stop it.
  */
-const connect = () =>
-  window.open(
-    `${window.KOEL.base_url}lastfm/connect?api_token=${authService.getApiToken()}`,
-    '_blank',
-    'toolbar=no,titlebar=no,location=no,width=1024,height=640',
-  )
+const connect = async () => {
+  const popup = window.open('', '_blank', 'toolbar=no,titlebar=no,location=no,width=1024,height=640')
+  const { url } = await http.get<{ url: string }>('lastfm/authorization-url')
+  popup?.location.assign(url)
+}
 
 const disconnect = async () => {
   await http.delete('lastfm/disconnect')

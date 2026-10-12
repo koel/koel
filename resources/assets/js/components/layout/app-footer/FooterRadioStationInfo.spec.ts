@@ -12,25 +12,18 @@ describe('footerRadioStationInfo.vue', () => {
     },
   })
 
-  it('renders with current radio', () => {
-    const station = h.factory('radio-station').make({
-      name: 'Classic Rock',
-      logo: 'https://via.placeholder.com/150',
-      description: 'The best classic rock hits',
-      playback_state: 'Playing',
+  it('marks a playing station', () => {
+    const station = h.factory('radio-station').make({ playback_state: 'Playing' })
+
+    const { container } = h.render(Component, {
+      global: {
+        provide: {
+          [<symbol>CurrentStreamableKey]: ref(station),
+        },
+      },
     })
 
-    expect(
-      h
-        .render(Component, {
-          global: {
-            provide: {
-              [<symbol>CurrentStreamableKey]: ref(station),
-            },
-          },
-        })
-        .html(),
-    ).toMatchSnapshot()
+    expect(container.querySelector('.station-info')?.classList.contains('playing')).toBe(true)
   })
 
   it('shows now-playing info when available', async () => {

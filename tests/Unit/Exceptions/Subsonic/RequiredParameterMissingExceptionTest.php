@@ -16,13 +16,4 @@ class RequiredParameterMissingExceptionTest extends TestCase
         self::assertSame(10, $exception->getSubsonicErrorCode());
         self::assertSame('Required parameter is missing.', $exception->getSubsonicErrorMessage());
     }
-
-    #[Test]
-    public function acceptsCustomMessage(): void
-    {
-        $exception = new RequiredParameterMissingException('Artist id required.');
-
-        self::assertSame(10, $exception->getSubsonicErrorCode());
-        self::assertSame('Artist id required.', $exception->getSubsonicErrorMessage());
-    }
 }

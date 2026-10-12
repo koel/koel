@@ -14,18 +14,19 @@
     </section>
 
     <section class="home-search-block p-6 flex gap-2">
-      <HomeButton v-show="!searchFocused" />
+      <SidebarBrand v-show="!searchFocused" />
       <SearchForm class="flex-1" @focus-change="onSearchFocusChange" />
     </section>
 
     <section class="scroll-mask-y pt-2 pb-10 overflow-y-auto space-y-8">
       <SidebarYourMusicSection />
       <SidebarPlaylistsSection />
-      <SidebarManageSection v-if="showManageOptions" />
+      <SidebarManageSection />
     </section>
 
-    <section v-if="canUpgradeToPlus" class="p-6 flex-1 flex flex-col-reverse">
-      <BtnUpgradeToPlus />
+    <section v-if="canUpgradeToPlus || footerItems.length" class="p-6 flex-1 flex flex-col justify-end gap-3">
+      <BtnUpgradeToPlus v-if="canUpgradeToPlus" />
+      <component :is="item" v-for="(item, index) in footerItems" :key="index" />
     </section>
 
     <SidebarToggleButton
@@ -44,9 +45,10 @@ import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useRouter } from '@/composables/useRouter'
 import { usePolicies } from '@/composables/usePolicies'
+import { useHookSlot } from '@/composables/useHookSlot'
 
 import BtnUpgradeToPlus from '@/components/koel-plus/BtnUpgradeToPlus.vue'
-import HomeButton from '@/components/layout/main-wrapper/sidebar/HomeButton.vue'
+import SidebarBrand from '@/components/layout/main-wrapper/sidebar/SidebarBrand.vue'
 import SearchForm from '@/components/ui/SearchForm.vue'
 import SideSheetButton from '@/components/layout/main-wrapper/side-sheet/SideSheetButton.vue'
 import SidebarManageSection from './SidebarManageSection.vue'
@@ -135,11 +137,9 @@ onBeforeUnmount(() => {
   clearCollapseTimer()
 })
 
-const showManageOptions = computed(
-  () => currentUserCan.manageSettings() || currentUserCan.manageUsers() || currentUserCan.uploadSongs(),
-)
-
 const canUpgradeToPlus = computed(() => !isPlus.value && currentUserCan.manageSettings())
+
+const footerItems = useHookSlot('sidebar.footer')
 
 onRouteChanged(_ => (mobileShowing.value = false))
 

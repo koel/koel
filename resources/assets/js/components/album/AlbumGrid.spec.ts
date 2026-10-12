@@ -33,11 +33,6 @@ describe('albumGrid.vue', () => {
     }
   }
 
-  it('renders one AlbumCard per album', () => {
-    renderComponent(5)
-    expect(screen.getAllByTestId('album-card')).toHaveLength(5)
-  })
-
   it('forwards scrolled-to-end from the underlying scroller', async () => {
     const { emitted } = renderComponent(1)
 

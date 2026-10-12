@@ -1,13 +1,13 @@
 import * as THREE from 'three'
 import SceneInit from './lib/SceneInit'
 import shaders from './lib/shaders'
-import { audioService } from '@/services/audioService'
+import { configureAnalyser } from '@/visualizers/analyser'
+import { startFrameLoop } from '@/visualizers/frameLoop'
 
 export const init = (container: HTMLElement) => {
   const sceneInit = new SceneInit(container)
 
-  const analyser = audioService.analyzer
-  analyser.fftSize = 512
+  const analyser = configureAnalyser({ fftSize: 512 })
   const dataArray = new Uint8Array(analyser.frequencyBinCount)
 
   const uniforms = {
@@ -42,14 +42,13 @@ export const init = (container: HTMLElement) => {
   planeMesh.position.y = 8
   sceneInit.scene.add(planeMesh)
 
-  const getByteFrequency = () => {
+  const stopFrameLoop = startFrameLoop(() => {
     analyser.getByteFrequencyData(dataArray)
-    requestAnimationFrame(getByteFrequency)
+    sceneInit.render()
+  })
+
+  return () => {
+    stopFrameLoop()
+    sceneInit.destroy()
   }
-
-  getByteFrequency()
-
-  sceneInit.animate()
-
-  return () => sceneInit.destroy()
 }

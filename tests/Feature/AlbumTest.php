@@ -11,6 +11,7 @@ use Tests\TestCase;
 use function Tests\create_admin;
 use function Tests\create_user;
 use function Tests\minimal_base64_encoded_image;
+use function Tests\stored_image_name;
 
 class AlbumTest extends TestCase
 {
@@ -98,6 +99,23 @@ class AlbumTest extends TestCase
     }
 
     #[Test]
+    public function showIncludesTheMusicBrainzIdentifier(): void
+    {
+        $album = Album::factory()->createOne(['mbid' => '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d']);
+
+        $this->getAs("api/albums/{$album->id}")->assertJsonPath('mbid', '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d');
+    }
+
+    #[Test]
+    public function showOmitsTheMusicBrainzIdentifierWhenMusicBrainzIsDisabled(): void
+    {
+        config(['koel.services.musicbrainz.enabled' => false]);
+        $album = Album::factory()->createOne(['mbid' => '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d']);
+
+        $this->getAs("api/albums/{$album->id}")->assertJsonMissingPath('mbid');
+    }
+
+    #[Test]
     public function updateWithCover(): void
     {
         $album = Album::factory()->createOne();
@@ -121,7 +139,32 @@ class AlbumTest extends TestCase
 
         self::assertEquals('Updated Album Name', $album->name);
         self::assertEquals(2023, $album->year);
-        self::assertEquals("$ulid.webp", $album->cover);
+        self::assertEquals(stored_image_name($ulid), $album->cover);
+    }
+
+    #[Test]
+    public function updateWithDescription(): void
+    {
+        $album = Album::factory()->createOne();
+
+        $this->putAs(
+            "api/albums/{$album->id}",
+            [
+                'name' => $album->name,
+                'description' => '<h2>Recording</h2><p onclick="x()">Done in a week.</p>',
+            ],
+            create_admin(),
+        )->assertJsonPath('description', '<h2>Recording</h2><p>Done in a week.</p>');
+    }
+
+    #[Test]
+    public function updateKeepingDescriptionIntact(): void
+    {
+        $album = Album::factory()->createOne(['description' => '<p>Mine</p>']);
+
+        $this->putAs("api/albums/{$album->id}", ['name' => 'Updated Album Name'], create_admin())->assertOk();
+
+        self::assertSame('<p>Mine</p>', $album->refresh()->description);
     }
 
     #[Test]

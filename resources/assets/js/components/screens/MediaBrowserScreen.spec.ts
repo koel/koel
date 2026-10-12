@@ -8,6 +8,7 @@ vi.mock('@/composables/useRouter', () => ({
   useRouter: () => ({
     onRouteChanged: vi.fn(),
     getRouteParam: () => '',
+    getCurrentScreen: () => 'MediaBrowser',
     onScreenActivated: vi.fn(),
     go: vi.fn(),
     url: vi.fn(),

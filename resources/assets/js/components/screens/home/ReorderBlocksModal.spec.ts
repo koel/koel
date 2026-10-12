@@ -46,12 +46,6 @@ describe('ReorderBlocksModal', () => {
     },
   })
 
-  it('renders one row per block in canonical order when no preference is set', () => {
-    h.render(Component, { props: { blocks } })
-
-    blocks.forEach(b => screen.getByText(b.label))
-  })
-
   it('renders rows in the order they arrive via props (the parent owns the sort)', () => {
     const reordered = [blocks[3], blocks[1], blocks[2], blocks[0]]
 

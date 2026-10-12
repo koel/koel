@@ -1,10 +1,12 @@
 <template>
   <span class="flex transition-opacity duration-200">
-    <button class="rounded-l! border-r-0!" title="Zoom out" type="button" @click.prevent="$emit('out')">
+    <button v-koel-tooltip class="rounded-l! border-r-0!" type="button" @click.prevent="$emit('out')">
       <Icon :icon="faSearchMinus" />
+      <span class="sr-only">Zoom out</span>
     </button>
-    <button class="rounded-r!" title="Zoom in" type="button" @click.prevent="$emit('in')">
+    <button v-koel-tooltip class="rounded-r!" type="button" @click.prevent="$emit('in')">
       <Icon :icon="faSearchPlus" />
+      <span class="sr-only">Zoom in</span>
     </button>
   </span>
 </template>

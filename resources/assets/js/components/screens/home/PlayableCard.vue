@@ -6,34 +6,38 @@
     draggable="true"
     tabindex="0"
     @dblclick="play"
-    @keydown.enter.prevent="play"
+    @keydown.enter.self.prevent="play"
     @dragstart="onDragStart"
     @contextmenu.prevent="onContextMenu"
   >
     <PlayableThumbnail :playable @clicked="play" />
     <span class="flex-1 min-w-0 gap-1 flex flex-col">
       <span class="title flex gap-2 items-center truncate">
-        <Icon
-          v-if="cachingOffline"
-          :icon="faSpinner"
-          class="opacity-50!"
-          spin
-          title="Caching for offline playback"
-          aria-label="Caching for offline playback"
-        />
-        <Icon
-          v-else-if="cachingFailed"
-          :icon="faExclamationTriangle"
-          class="text-k-danger opacity-75!"
-          :title="`Error: ${cachingErrorMessage}`"
-        />
+        <span v-if="cachingOffline" v-koel-tooltip class="opacity-50!">
+          <Icon :icon="faSpinner" spin />
+          <span class="sr-only">Caching for offline playback</span>
+        </span>
+        <span v-else-if="cachingFailed" v-koel-tooltip class="text-k-danger opacity-75!">
+          <Icon :icon="faExclamationTriangle" />
+          <span class="sr-only">Error: {{ cachingErrorMessage }}</span>
+        </span>
         <OfflineMark v-else-if="cachedOffline" />
         <span class="truncate">{{ playable.title }}</span>
       </span>
       <span class="block truncate text-k-fg-50 text-[0.9rem]">{{ artist }}</span>
     </span>
-    <span class="text-k-fg-50 text-[0.9rem] tabular-nums">
-      {{ fmtLength }}
+    <span class="flex flex-col items-end gap-1">
+      <FavoriteButton
+        :favorite="playable.favorite"
+        class="text-k-fg-50 hover:text-k-fg transition-opacity"
+        :class="
+          playable.favorite ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus:opacity-100 no-hover:opacity-100'
+        "
+        @toggle="toggleFavorite"
+      />
+      <span class="text-k-fg-50 text-[0.9rem] tabular-nums">
+        {{ fmtLength }}
+      </span>
     </span>
   </li>
 </template>
@@ -48,9 +52,11 @@ import { useDraggable } from '@/composables/useDragAndDrop'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { playback } from '@/services/playbackManager'
+import { playableStore } from '@/stores/playableStore'
 
 import PlayableThumbnail from '@/components/playable/PlayableThumbnail.vue'
 import OfflineMark from '@/components/ui/OfflineMark.vue'
+import FavoriteButton from '@/components/ui/FavoriteButton.vue'
 
 const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
 
@@ -78,6 +84,8 @@ const play = () => {
     playback().play(playable.value)
   }
 }
+
+const toggleFavorite = () => playableStore.toggleFavorite(playable.value)
 
 const onDragStart = (event: DragEvent) => startDragging(event, [playable.value])
 

@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vite-plus/test'
+import { faTools } from '@fortawesome/free-solid-svg-icons'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import Component from './SidebarManageSection.vue'
+import { uploadService } from '@/services/uploadService'
+import { Filter } from '@/config/hooks'
+import { addFilter, removeFilter } from '@/hooks'
+import Component, { type ManageSidebarItem } from './SidebarManageSection.vue'
 
 describe('sidebarManageSection.vue', () => {
   const h = createHarness()
@@ -9,15 +13,24 @@ describe('sidebarManageSection.vue', () => {
   it('shows all menu items if current user is an admin', () => {
     h.actingAsAdmin().render(Component)
     screen.getByText('Settings')
-    screen.getByText('Users')
     screen.getByText('Upload')
+  })
+
+  it('shows Settings to someone who can only manage users', () => {
+    const manager = h
+      .factory('user')
+      .state('current')
+      .make({ abilities: ['manage users'] }) as CurrentUser
+    h.actingAsUser(manager).render(Component)
+
+    screen.getByText('Settings')
   })
 
   it('shows nothing if current user is not an admin', () => {
     h.actingAsUser().render(Component)
+    expect(screen.queryByText('Manage')).toBeNull()
     expect(screen.queryByText('Settings')).toBeNull()
     expect(screen.queryByText('Upload')).toBeNull()
-    expect(screen.queryByText('Users')).toBeNull()
   })
 
   it('shows only the upload menu item if current user is a Plus user', () => {
@@ -25,7 +38,35 @@ describe('sidebarManageSection.vue', () => {
       h.render(Component)
       screen.getByText('Upload')
       expect(screen.queryByText('Settings')).toBeNull()
-      expect(screen.queryByText('Users')).toBeNull()
     })
+  })
+
+  it.each([
+    ['Trial', 1],
+    [null, 0],
+  ])('shows a badge only for an item that has one (%s)', (badge, badgeCount) => {
+    const handle = addFilter<ManageSidebarItem[]>(Filter.MANAGE_SIDEBAR_ITEMS, items => [
+      ...items,
+      { label: 'Extra', icon: faTools, route: 'home', screens: ['Home'], visible: () => true, badge: () => badge },
+    ])
+
+    h.actingAsUser().render(Component)
+
+    expect(screen.queryAllByTestId('sidebar-item-badge')).toHaveLength(badgeCount)
+
+    removeFilter(handle)
+  })
+
+  it.each([
+    ['Uploading', 1],
+    ['Uploaded', 0],
+  ] as const)('spins the upload icon only while files are uploading (%s)', (status, spinnerCount) => {
+    uploadService.state.files = [{ id: '1', file: new File([], 'song.mp3'), status, name: 'song.mp3', progress: 0 }]
+
+    const { container } = h.actingAsAdmin().render(Component)
+
+    expect(container.querySelectorAll('[spin="true"]')).toHaveLength(spinnerCount)
+
+    uploadService.state.files = []
   })
 })

@@ -7,6 +7,7 @@ use App\Exceptions\InvalidLoginTokenException;
 use App\Exceptions\RequiresTwoFactorException;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\SecurityNoticeService;
 use App\Values\CompositeToken;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Passwords\PasswordBroker;
@@ -24,6 +25,7 @@ class AuthenticationService
         private readonly TokenManager $tokenManager,
         private readonly PasswordBroker $passwordBroker,
         private readonly TwoFactorAuthenticator $twoFactorAuth,
+        private readonly SecurityNoticeService $securityNoticeService,
     ) {}
 
     public function authenticate(string $email, #[SensitiveParameter] string $password): User
@@ -71,6 +73,18 @@ class AuthenticationService
         return $this->logUserIn($user);
     }
 
+    /**
+     * @return array{two_factor: true, login_token: string}|array{token: string, audio-token: string}
+     */
+    public function logUserInOrStartTwoFactorChallenge(User $user): array
+    {
+        if ($user->hasTwoFactorEnabled()) {
+            return ['two_factor' => true, 'login_token' => $this->generateTwoFactorLoginToken($user)];
+        }
+
+        return $this->logUserIn($user)->toArray();
+    }
+
     public function logUserIn(User $user): CompositeToken
     {
         return $this->tokenManager->createCompositeToken($user);
@@ -100,7 +114,7 @@ class AuthenticationService
             'token' => $token,
         ];
 
-        $status = $this->passwordBroker->reset($credentials, static function (
+        $status = $this->passwordBroker->reset($credentials, function (
             User $user,
             #[SensitiveParameter]
             string $password,
@@ -108,6 +122,7 @@ class AuthenticationService
             $user->password = $password;
             $user->save();
             event(new PasswordReset($user));
+            $this->securityNoticeService->notifyPasswordChanged($user);
         });
 
         return $status === Password::PASSWORD_RESET;

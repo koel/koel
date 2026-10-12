@@ -7,7 +7,9 @@
       <MenuItem v-if="user.is_prospect" @click="revokeInvite">Revoke Invitation</MenuItem>
       <MenuItem v-else @click="destroy">Delete</MenuItem>
     </template>
-    <MenuItem v-if="!allowEdit && !allowDelete" class="italic pointer-events-none"> No available actions </MenuItem>
+    <MenuItem v-if="!allowEdit && !allowDelete" class="italic pointer-events-none" data-testid="no-available-actions">
+      No available actions
+    </MenuItem>
   </ul>
 </template>
 

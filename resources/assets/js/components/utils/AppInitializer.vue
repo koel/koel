@@ -10,7 +10,7 @@ import { useOverlay } from '@/composables/useOverlay'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { shouldWarnUponWindowUnload as shouldWarnAboutOfflineCaching } from '@/composables/useOfflinePlayback'
-import { uploadService } from '@/services/uploadService'
+import { useUpload } from '@/composables/useUpload'
 
 const emits = defineEmits<{
   (e: 'success'): void
@@ -20,6 +20,7 @@ const emits = defineEmits<{
 const { showOverlay, hideOverlay } = useOverlay()
 const { currentUser } = useAuthorization()
 const { handleHttpError } = useErrorHandler()
+const { unfinishedUploadCount } = useUpload()
 
 /**
  * Request for notification permission if it's not provided and the user is OK with notifications.
@@ -43,11 +44,7 @@ onMounted(async () => {
     await requestNotificationPermission()
 
     window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
-      if (
-        uploadService.shouldWarnUponWindowUnload() ||
-        shouldWarnAboutOfflineCaching() ||
-        preferences.confirm_before_closing
-      ) {
+      if (unfinishedUploadCount.value > 0 || shouldWarnAboutOfflineCaching() || preferences.confirm_before_closing) {
         e.preventDefault()
         e.returnValue = ''
       }

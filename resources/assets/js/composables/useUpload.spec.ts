@@ -1,5 +1,13 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { commonStore } from '@/stores/commonStore'
+import { uploadService } from '@/services/uploadService'
+import { addFilter, removeFilter } from '@/hooks'
+import { Filter } from '@/config/hooks'
+import type { UploadFile, UploadStatus } from '@/services/uploadService'
+
+const device = vi.hoisted(() => ({ any: false }))
+
+vi.mock('ismobilejs', () => ({ default: device }))
 
 vi.mock('@/utils/mediaHelper', () => ({
   acceptedExtensions: ['mp3', 'flac', 'ogg'],
@@ -32,6 +40,20 @@ vi.mock('@/composables/usePolicies', () => ({
 import { useUpload } from './useUpload'
 
 describe('useUpload', () => {
+  afterEach(() => {
+    device.any = false
+  })
+
+  it('allows uploading on a desktop device', () => {
+    expect(useUpload().allowsUpload.value).toBe(true)
+  })
+
+  it('disallows uploading on a mobile device', () => {
+    device.any = true
+
+    expect(useUpload().allowsUpload.value).toBe(false)
+  })
+
   it('computes mediaPathSetUp when storage is not local', () => {
     commonStore.state.storage_driver = 's3'
 
@@ -55,5 +77,46 @@ describe('useUpload', () => {
 
     expect(result.length).toBe(1)
     expect(result[0].name).toBe('song.mp3')
+  })
+
+  it('lists a file it cannot play as skipped rather than dropping it', () => {
+    const { queueFilesForUpload } = useUpload()
+
+    const result = queueFilesForUpload([new File(['content'], 'notes.txt', { type: 'text/plain' })])
+
+    expect(result).toEqual([])
+    expect(uploadService.state.files.map(({ name, status }) => [name, status])).toContainEqual(['notes.txt', 'Skipped'])
+  })
+
+  it('never sends the selected uploads a filter skips', () => {
+    const handle = addFilter<UploadFile[]>(Filter.SELECTED_UPLOADS, uploads =>
+      uploads.map(upload => ({ ...upload, status: 'Skipped', message: 'Not today' })),
+    )
+
+    const result = useUpload().queueFilesForUpload([new File(['content'], 'blocked.mp3', { type: 'audio/mpeg' })])
+
+    expect(result).toEqual([])
+    expect(uploadService.state.files.map(({ name, status }) => [name, status])).toContainEqual([
+      'blocked.mp3',
+      'Skipped',
+    ])
+
+    removeFilter(handle)
+  })
+
+  it('counts only the uploads that are queued or still uploading', () => {
+    const statuses: UploadStatus[] = [
+      'Ready',
+      'Uploading',
+      'Retrying',
+      'Processing',
+      'Uploaded',
+      'Canceled',
+      'Errored',
+      'Skipped',
+    ]
+    uploadService.state.files = statuses.map(status => ({ status }) as UploadFile)
+
+    expect(useUpload().unfinishedUploadCount.value).toBe(3)
   })
 })

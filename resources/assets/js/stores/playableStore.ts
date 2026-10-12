@@ -6,9 +6,9 @@ import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
 import { sha256 } from '@/utils/crypto'
 import { normalizeForComparison, secondsToHumanReadable } from '@/utils/formatters'
-import { authService } from '@/services/authService'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
+import { signedUrlService } from '@/services/signedUrlService'
 import { useVault } from '@/composables/useVault'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { commonStore } from '@/stores/commonStore'
@@ -16,6 +16,7 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { playlistStore } from '@/stores/playlistStore'
+import { clientUrl } from '@/utils/clientUrl'
 
 export interface SongUpdateData {
   title?: string
@@ -42,6 +43,13 @@ export interface SongUpdateResult {
 
 export type SongListPaginateParams = PaginateParams<PlayableListSortField>
 export type SongListCursorPaginateParams = CursorPaginateParams<PlayableListSortField>
+
+const shouldTranscode = () => isMobile.any && preferenceStore.transcode_on_mobile
+
+const hasOfflineCopy = async (unsignedUrl: string) => 'caches' in window && Boolean(await caches.match(unsignedUrl))
+
+const getPlayUrlEndpoint = (playable: Playable) =>
+  shouldTranscode() ? `songs/${playable.id}/play-url?transcode=1` : `songs/${playable.id}/play-url`
 
 const watchPlayCount = (playable: Playable) => {
   watch(
@@ -154,7 +162,9 @@ export const playableStore = {
    * Increase the play count for a playable.
    */
   registerPlay: async (playable: Playable) => {
-    const interaction = await http.silently.post<Interaction>('interaction/play', { song: playable.id })
+    const interaction = await http.silently.withRetriesWhenUnprocessed.post<Interaction>('interaction/play', {
+      song: playable.id,
+    })
 
     // Use the data from the server to make sure we don't miss a play from another device.
     playable.play_count = interaction.play_count
@@ -165,7 +175,7 @@ export const playableStore = {
       throw new Error('Scrobble is only supported for songs.')
     }
 
-    return await http.silently.post(`songs/${song.id}/scrobble`, {
+    return await http.silently.withRetriesWhenUnprocessed.post(`songs/${song.id}/scrobble`, {
       timestamp: song.play_start_time,
     })
   },
@@ -191,13 +201,31 @@ export const playableStore = {
     return result
   },
 
-  getSourceUrl: (playable: Playable) => {
-    return isMobile.any && preferenceStore.transcode_on_mobile
-      ? `${commonStore.state.cdn_url}play/${playable.id}/1?t=${authService.getAudioToken()}`
-      : `${commonStore.state.cdn_url}play/${playable.id}?t=${authService.getAudioToken()}`
+  getUnsignedSourceUrl: (playable: Playable) => {
+    return shouldTranscode()
+      ? `${commonStore.state.cdn_url}play/${playable.id}/1`
+      : `${commonStore.state.cdn_url}play/${playable.id}`
   },
 
-  getShareableUrl: (song: Playable) => `${window.KOEL.base_url}#/songs/${song.id}`,
+  async resolveSourceUrl(playable: Playable) {
+    try {
+      return await signedUrlService.fetch(getPlayUrlEndpoint(playable))
+    } catch (error: unknown) {
+      const unsignedUrl = this.getUnsignedSourceUrl(playable)
+
+      if (await hasOfflineCopy(unsignedUrl)) {
+        return unsignedUrl
+      }
+
+      throw error
+    }
+  },
+
+  getResolvedSourceUrl: (playable: Playable) => signedUrlService.getCached(getPlayUrlEndpoint(playable)),
+
+  forgetResolvedSourceUrl: (playable: Playable) => signedUrlService.forget(getPlayUrlEndpoint(playable)),
+
+  getShareableUrl: (song: Playable) => clientUrl(`/songs/${song.id}`),
 
   ensureNotDeleted: (songs: MaybeArray<Song>) => arrayify(songs).filter(({ deleted }) => !deleted),
 
@@ -244,10 +272,10 @@ export const playableStore = {
     return songs
   },
 
-  async fetchForPlaylistFolder(folder: PlaylistFolder) {
+  async fetchForPlaylists(playlists: Playlist[]) {
     const playables: Playable[] = []
 
-    for await (const playlist of playlistStore.byFolder(folder)) {
+    for await (const playlist of playlists) {
       playables.push(...(await this.fetchForPlaylist(playlist)))
     }
 

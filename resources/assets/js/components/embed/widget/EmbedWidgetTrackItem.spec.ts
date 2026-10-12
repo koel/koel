@@ -27,31 +27,19 @@ describe('playableEmbedItem.vue', async () => {
     }
   }
 
-  it('renders a song', () => {
-    const { html } = renderComponent(
-      h.factory('song').make({
-        title: 'Bohemian Rhapsody',
-        length: 280,
-        artist_name: 'Queen',
-        album_name: 'A Night at the Opera',
-        track: 9,
-      }),
-    )
+  it('shows the track number, artist, and album of a song', () => {
+    const song = h.factory('song').make({ track: 9 })
+    renderComponent(song)
 
-    expect(html()).toMatchSnapshot()
+    screen.getByText('9')
+    screen.getByText(`${song.artist_name} - ${song.album_name}`)
   })
 
-  it('renders a podcast episode', () => {
-    const { html } = renderComponent(
-      h.factory('episode').make({
-        title: 'How to tell people to shut up about Queen',
-        length: 280,
-        podcast_title: 'The Everyday Guide',
-        podcast_author: 'The Everyday Guy',
-      }),
-    )
+  it('shows the author and podcast of an episode', () => {
+    const episode = h.factory('episode').make()
+    renderComponent(episode)
 
-    expect(html()).toMatchSnapshot()
+    screen.getByText(`${episode.podcast_author} - ${episode.podcast_title}`)
   })
 
   it('emits the play event on double-click', async () => {

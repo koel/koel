@@ -142,24 +142,18 @@ describe('playableListItem.vue', () => {
     expect(toggleFavoriteMock).toHaveBeenCalledWith(row.playable)
   })
 
-  it('shows spinner when caching offline', () => {
-    isCachingMock.mockReturnValue(true)
-    renderComponent()
-    screen.getByTitle('Caching for offline playback')
-  })
-
   it('shows spinner instead of offline mark when caching', () => {
     isCachingMock.mockReturnValue(true)
     isCachedMock.mockReturnValue(true)
     renderComponent()
-    screen.getByTitle('Caching for offline playback')
-    expect(screen.queryByTitle('Available offline')).toBeNull()
+    screen.getByLabelText('Caching for offline playback')
+    expect(screen.queryByText('Available offline')).toBeNull()
   })
 
   it('shows error icon when caching fails', () => {
     hasCachingErrorMock.mockReturnValue(true)
     getCachingErrorMock.mockReturnValue('Network error')
     renderComponent()
-    screen.getByTitle('Error: Network error')
+    screen.getByText('Error: Network error')
   })
 })

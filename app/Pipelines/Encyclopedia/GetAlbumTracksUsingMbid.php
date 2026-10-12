@@ -21,20 +21,36 @@ class GetAlbumTracksUsingMbid
             return $next(null);
         }
 
-        $tracks = $this->tryRememberForever(key: cache_key('album tracks', $mbid), callback: function () use (
-            $mbid,
-        ): array {
-            $tracks = [];
+        $tracks = self::tryRememberForever(
+            key: cache_key('album tracks', $mbid),
+            nothingFoundTtl: now()->addWeek(),
+            callback: function () use ($mbid): ?array {
+                $tracks = [];
 
-            // There can be multiple media entries (e.g. CDs) in a release, each with its own set of tracks.
-            // To simplify things, we will collect all tracks from all media entries.
-            foreach ($this->connector->send(new GetRecordingsRequest($mbid))->json('media', []) as $media) {
-                array_push($tracks, ...Arr::get($media, 'tracks', []));
-            }
+                // There can be multiple media entries (e.g. CDs) in a release, each with its own set of tracks.
+                // To simplify things, we will collect all tracks from all media entries.
+                foreach ($this->connector->send(new GetRecordingsRequest($mbid))->json('media', []) as $media) {
+                    array_push($tracks, ...array_map(self::trimTrackToUsedFields(...), Arr::get($media, 'tracks', [])));
+                }
 
-            return $tracks;
-        });
+                return $tracks ?: null;
+            },
+        );
 
         return $next($tracks);
+    }
+
+    /**
+     * @param array<string, mixed> $track
+     *
+     * @return array{title: ?string, length: ?int, recording: array{id: ?string}}
+     */
+    private static function trimTrackToUsedFields(array $track): array
+    {
+        return [
+            'title' => Arr::get($track, 'title'),
+            'length' => Arr::get($track, 'length'),
+            'recording' => ['id' => Arr::get($track, 'recording.id')],
+        ];
     }
 }

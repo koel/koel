@@ -43,7 +43,7 @@ describe('queueScreen.vue', () => {
     const playMock = h.mock(playbackService, 'playFirstInQueue')
 
     renderComponent()
-    await h.user.click(screen.getByText('playing some random songs'))
+    await h.user.click(screen.getByRole('button', { name: 'playing some random songs' }))
 
     await waitFor(() => {
       expect(fetchRandomMock).toHaveBeenCalled()
@@ -58,7 +58,7 @@ describe('queueScreen.vue', () => {
     renderComponent(songs)
     const playMock = h.mock(playbackService, 'queueAndPlay')
 
-    await h.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
+    await h.user.click(screen.getByRole('button', { name: 'Shuffle All' }))
     await waitFor(() => expect(playMock).toHaveBeenCalledWith(songs, true))
   })
 })

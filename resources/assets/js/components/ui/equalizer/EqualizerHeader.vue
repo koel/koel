@@ -4,7 +4,7 @@
       <SelectBox
         :model-value="selectedId"
         class="bg-black/30! text-white!"
-        title="Select equalizer"
+        aria-label="Select equalizer"
         @update:model-value="id => emit('select', id)"
       >
         <option :value="null" disabled>Preset</option>

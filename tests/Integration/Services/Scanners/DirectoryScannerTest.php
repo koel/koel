@@ -13,6 +13,7 @@ use App\Services\Scanners\DirectoryScanner;
 use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -258,5 +259,35 @@ class DirectoryScannerTest extends TestCase
         config(['koel.ignore_dot_files' => false]);
         $this->scanner->scan($this->mediaPath, $config);
         $this->assertDatabaseHas(Album::class, ['name' => 'Hidden Album']);
+    }
+
+    #[Test]
+    public function parallelScanLeavesNoTemporaryFilesBehind(): void
+    {
+        $manifests = [];
+
+        File::partialMock()
+            ->shouldReceive('put')
+            ->withArgs(static function (string $path) use (&$manifests): bool {
+                if (str_starts_with(basename($path), 'koel_scan_')) {
+                    $manifests[] = $path;
+                }
+
+                return true;
+            })
+            ->passthru();
+
+        rescue(fn () => $this->scanner->scan(
+            $this->mediaPath,
+            ScanConfiguration::make(owner: create_admin()),
+            jobs: 2,
+        ), report: false);
+
+        self::assertCount(2, $manifests);
+
+        foreach ($manifests as $manifest) {
+            $name = pathinfo($manifest, PATHINFO_DIRNAME) . '/' . pathinfo($manifest, PATHINFO_FILENAME);
+            self::assertSame([], glob($name . '*'));
+        }
     }
 }

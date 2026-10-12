@@ -48,10 +48,13 @@ use Webmozart\Assert\Assert;
  * @property bool $supportBarNoBugging
  * @property bool $continuousPlayback
  * @property int $crossfadeDuration
+ * @property bool $normalizeVolume
+ * @property bool $showWaveform
  * @property int $lyricsZoomLevel
  * @property string $visualizer
  * @property ?string $activeExtraPanelTab
  * @property ?string $lastFmSessionKey
+ * @property ?string $listenBrainzToken
  * @property list<string> $homeBlocksOrder
  */
 final class UserPreferences implements Arrayable, JsonSerializable
@@ -100,6 +103,17 @@ final class UserPreferences implements Arrayable, JsonSerializable
         $class = self::classByKey($key);
 
         return $class !== null && (new $class())->isCustomizable();
+    }
+
+    /** @return list<string> */
+    public static function encryptedKeys(): array
+    {
+        return self::preferenceClasses()
+            ->map(static fn (string $class): Preference => new $class())
+            ->filter(static fn (Preference $preference): bool => $preference->isEncrypted())
+            ->map(static fn (Preference $preference): string => $preference->getKey())
+            ->values()
+            ->all();
     }
 
     public function set(string $key, mixed $value): self

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class RadioStreamService
 {
     public function __construct(
+        private readonly RadioStreamConnector $connector,
         private readonly RadioStreamProxy $proxy,
     ) {}
 
@@ -18,7 +19,7 @@ class RadioStreamService
     public function stream(RadioStation $station): StreamedResponse
     {
         return new StreamedResponse(function () use ($station) {
-            $stream = $this->proxy->openStream($station->url);
+            $stream = $this->connector->connect($station->url);
 
             if (!$stream) {
                 return;

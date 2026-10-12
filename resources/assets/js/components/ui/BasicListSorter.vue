@@ -2,11 +2,11 @@
   <article>
     <button
       ref="button"
-      :title="title"
       class="border px-3 rounded-md h-full border-k-fg-10 w-full focus:text-k-fg hover:text-k-fg active:text-k-fg"
     >
       <span class="mr-2">{{ currentLabel }}</span>
       <Icon :icon="order === 'asc' ? faArrowUp : faArrowDown" />
+      <span class="sr-only">{{ currentOrder === 'asc' ? 'ascending' : 'descending' }}</span>
     </button>
     <Popover ref="popover" :anchor="button" placement="bottom-end" class="context-menu normal-case tracking-normal">
       <menu>
@@ -14,7 +14,6 @@
           v-for="item in items"
           :key="item.label"
           :class="isCurrentField(item.field) && 'active'"
-          :title="`Sort by ${item.label}`"
           class="cursor-pointer group flex justify-between hover:bg-k-highlight hover:text-k-highlight-fg"
           @click="sort(item.field)"
         >
@@ -65,8 +64,4 @@ const sort = (field: T) => {
 }
 
 const isCurrentField = (field: T) => field === currentField.value
-
-const title = computed(
-  () => `Sorting by ${currentLabel.value}, ${currentOrder.value === 'asc' ? 'ascending' : 'descending'}`,
-)
 </script>

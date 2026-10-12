@@ -65,15 +65,6 @@ describe('homeScreen.vue', () => {
     },
   )
 
-  it('renders the reorder trigger button when the library is not empty', () => {
-    commonStore.state.song_length = 100
-    h.mock(overviewStore, 'fetch')
-
-    h.render(Component)
-
-    screen.getByTestId('reorder-home-blocks-btn')
-  })
-
   it('hides the reorder trigger button on the empty state', () => {
     commonStore.state.song_length = 0
     h.mock(overviewStore, 'fetch')

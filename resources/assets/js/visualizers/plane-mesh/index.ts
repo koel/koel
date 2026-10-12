@@ -1,7 +1,9 @@
 import * as THREE from 'three'
 import shaders from './shaders'
 import planeMeshParameters from './planeMeshParameters'
-import { audioService } from '@/services/audioService'
+import { configureAnalyser } from '@/visualizers/analyser'
+import { startFrameLoop } from '@/visualizers/frameLoop'
+import { getRenderPixelRatio } from '@/visualizers/pixelRatio'
 
 export const init = (container: HTMLElement) => {
   const uniforms = {
@@ -19,9 +21,7 @@ export const init = (container: HTMLElement) => {
     },
   }
 
-  const analyser = audioService.analyzer
-
-  analyser.fftSize = 1024
+  const analyser = configureAnalyser({ fftSize: 1024 })
   const dataArray = new Uint8Array(analyser.frequencyBinCount)
 
   const width = container.clientWidth
@@ -45,6 +45,7 @@ export const init = (container: HTMLElement) => {
   camera.position.z = 80
 
   const renderer = new THREE.WebGLRenderer()
+  renderer.setPixelRatio(getRenderPixelRatio())
   renderer.setSize(width, height)
   renderer.setClearAlpha(0)
 
@@ -87,19 +88,14 @@ export const init = (container: HTMLElement) => {
     renderer.render(scene, camera)
   }
 
-  const animate = () => {
-    requestAnimationFrame(animate)
-    render()
-  }
 
   const windowResizeHandler = () => {
     const width = container.clientWidth
     const height = container.clientHeight
+    renderer.setPixelRatio(getRenderPixelRatio())
     renderer.setSize(width, height)
     camera.aspect = width / height
     camera.updateProjectionMatrix()
-    renderer.domElement.width = width
-    renderer.domElement.height = height
   }
 
   const wheelHandler = event => {
@@ -110,9 +106,10 @@ export const init = (container: HTMLElement) => {
   window.addEventListener('resize', windowResizeHandler)
   document.addEventListener('wheel', wheelHandler)
 
-  animate()
+  const stopFrameLoop = startFrameLoop(render)
 
   return () => {
+    stopFrameLoop()
     renderer.domElement.remove()
     renderer.dispose()
     window.removeEventListener('resize', windowResizeHandler)

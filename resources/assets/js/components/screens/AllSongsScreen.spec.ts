@@ -45,11 +45,6 @@ describe('allSongsScreen.vue', () => {
     return [rendered, fetchMock] as const
   }
 
-  it('renders', async () => {
-    const [{ html }] = await renderComponent()
-    await waitFor(() => expect(html()).toMatchSnapshot())
-  })
-
   it('shuffles', async () => {
     h.createAudioPlayer()
 
@@ -58,7 +53,7 @@ describe('allSongsScreen.vue', () => {
     const goMock = h.mock(Router, 'go')
     await renderComponent()
 
-    await h.user.click(screen.getByTitle('Shuffle all. Press Alt/⌥ to change mode.'))
+    await h.user.click(screen.getByRole('button', { name: 'Shuffle All' }))
 
     await waitFor(() => {
       expect(queueMock).toHaveBeenCalled()

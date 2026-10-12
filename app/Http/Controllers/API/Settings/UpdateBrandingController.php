@@ -24,7 +24,12 @@ class UpdateBrandingController extends Controller
     {
         abort_unless($this->user->hasPermissionTo(Permission::MANAGE_SETTINGS), Response::HTTP_FORBIDDEN);
 
-        $this->settingService->updateBranding($request->name, $request->logo, $request->cover);
+        $this->settingService->updateBranding(
+            $this->user->organization,
+            $request->name,
+            $request->logo,
+            $request->cover,
+        );
 
         return response()->noContent();
     }

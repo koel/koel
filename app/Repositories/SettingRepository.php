@@ -8,8 +8,8 @@ use App\Models\Setting;
 class SettingRepository extends Repository
 {
     /** @return array<mixed> */
-    public function getAllAsKeyValueArray(): array
+    public function getInstallWideAsKeyValueArray(): array
     {
-        return $this->modelClass::query()->pluck('value', 'key')->toArray();
+        return $this->modelClass::query()->whereNull('organization_id')->pluck('value', 'key')->toArray();
     }
 }

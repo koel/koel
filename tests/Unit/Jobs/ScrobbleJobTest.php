@@ -4,7 +4,7 @@ namespace Tests\Unit\Jobs;
 
 use App\Jobs\ScrobbleJob;
 use App\Models\Song;
-use App\Services\Integrations\LastfmService;
+use App\Services\ScrobbleService;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -19,10 +19,10 @@ class ScrobbleJobTest extends TestCase
         $user = create_user();
         $song = Song::factory()->make();
         $job = new ScrobbleJob($user, $song, 100);
-        $lastfm = Mockery::mock(LastfmService::class);
+        $scrobbleService = Mockery::mock(ScrobbleService::class);
 
-        $lastfm->expects('scrobble')->with($song, $user, 100);
+        $scrobbleService->expects('scrobble')->with($song, $user, 100);
 
-        $job->handle($lastfm);
+        $job->handle($scrobbleService);
     }
 }

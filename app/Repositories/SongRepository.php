@@ -27,6 +27,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 use LogicException;
 
 /**
@@ -52,9 +53,31 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query()->where('path', $path)->first();
     }
 
-    public function findByHash(string $hash, User $owner): ?Song
+    /** @return LazyCollection<int, string> */
+    public function lazyGetIdsByOwner(User $owner): LazyCollection
     {
-        return Song::query()->where('hash', $hash)->where('owner_id', $owner->id)->first();
+        return Song::query()
+            ->withoutEagerLoads()
+            ->whereBelongsTo($owner, 'owner')
+            ->select('songs.id')
+            ->lazyById(column: 'songs.id', alias: 'id')
+            ->map(static fn (Song $song): string => $song->id);
+    }
+
+    /**
+     * @param array<string> $paths
+     *
+     * @return Collection<int, Song>
+     */
+    public function getManyByPaths(array $paths): Collection
+    {
+        return Song::query()->whereIn('path', $paths)->get();
+    }
+
+    /** @param array<string> $hashes */
+    public function findByAnyHash(array $hashes, User $owner): ?Song
+    {
+        return Song::query()->whereIn('hash', $hashes)->where('owner_id', $owner->id)->first();
     }
 
     public function findOneByArtistAndTitle(?string $artist, ?string $title, ?User $scopedUser = null): ?Song
@@ -174,6 +197,23 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection<int, Song> */
+    public function getOrdered(
+        array $sortColumns,
+        string $sortDirection,
+        int $limit,
+        int $offset = 0,
+        ?User $scopedUser = null,
+    ): Collection {
+        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->withUserContext()
+            ->sort($sortColumns, $sortDirection)
+            ->orderBy('songs.id')
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+    }
+
+    /** @return Collection<int, Song> */
     public function getFavorites(?User $scopedUser = null, ?PlayableType $type = null): Collection
     {
         return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
@@ -270,18 +310,12 @@ class SongRepository extends Repository implements ScoutableRepository
 
         $query = Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())->withUserContext();
 
-        $playlist->rule_groups->each(static function (RuleGroup $group, int $index) use ($query): void {
-            $whereClosure = static function (SongBuilder $subQuery) use ($group): void {
-                $group->rules->each(static function (Rule $rule) use ($subQuery): void {
-                    QueryModifier::applyRule($rule, $subQuery);
+        $query->where(static function (SongBuilder $anyGroupQuery) use ($playlist): void {
+            $playlist->rule_groups->each(static function (RuleGroup $group) use ($anyGroupQuery): void {
+                $anyGroupQuery->orWhere(static function (SongBuilder $groupQuery) use ($group): void {
+                    $group->rules->each(static fn (Rule $rule) => QueryModifier::applyRule($rule, $groupQuery));
                 });
-            };
-
-            $query->when(
-                $index === 0,
-                static fn (SongBuilder $query) => $query->where($whereClosure),
-                static fn (SongBuilder $query) => $query->orWhere($whereClosure),
-            );
+            });
         });
 
         return $query->orderBy('songs.title')->limit(self::LIST_SIZE_LIMIT)->get();
@@ -521,10 +555,10 @@ class SongRepository extends Repository implements ScoutableRepository
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
         return $this->getMany(
-            ids: Song::search($keywords)->take($limit)->get()->modelKeys(),
+            ids: Song::search($keywords)->take(self::SEARCH_CANDIDATE_LIMIT)->keys()->all(),
             preserveOrder: true,
             scopedUser: $user,
-        );
+        )->take($limit);
     }
 
     public function getForEmbed(Embed $embed): Collection

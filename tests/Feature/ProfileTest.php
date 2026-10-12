@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -52,6 +53,25 @@ class ProfileTest extends TestCase
     }
 
     #[Test]
+    public function updateProfileKeepingAvatar(): void
+    {
+        $user = create_user(['avatar' => 'foo.jpg']);
+
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Foo',
+                'email' => 'bar@baz.com',
+            ],
+            $user,
+        )->assertOk();
+
+        $user->refresh();
+
+        self::assertSame('foo.jpg', $user->getRawOriginal('avatar'));
+    }
+
+    #[Test]
     public function updateProfileRemovingAvatar(): void
     {
         $user = create_user(['avatar' => 'foo.jpg']);
@@ -61,6 +81,7 @@ class ProfileTest extends TestCase
             [
                 'name' => 'Foo',
                 'email' => $user->email,
+                'avatar' => null,
             ],
             $user,
         )->assertOk();
@@ -68,6 +89,34 @@ class ProfileTest extends TestCase
         $user->refresh();
 
         self::assertNull($user->getRawOriginal('avatar'));
+    }
+
+    /** @return array<string, array<string>> */
+    public static function avatarsThatAreNotImageDataProvider(): array
+    {
+        return [
+            'remote URL' => ['https://example.com/avatar.jpg'],
+            'non-image data URL' => ['data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=='],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('avatarsThatAreNotImageDataProvider')]
+    public function updateProfileRejectsAvatarThatIsNotImageData(string $avatar): void
+    {
+        $user = create_user(['avatar' => 'foo.jpg']);
+
+        $this->putAs(
+            'api/me',
+            [
+                'name' => 'Foo',
+                'email' => $user->email,
+                'avatar' => $avatar,
+            ],
+            $user,
+        )->assertUnprocessable();
+
+        self::assertSame('foo.jpg', $user->refresh()->getRawOriginal('avatar'));
     }
 
     #[Test]

@@ -29,19 +29,25 @@
     <AlbumScreen v-if="screen === 'Album'" />
     <ArtistScreen v-if="screen === 'Artist'" />
     <SettingsScreen v-if="screen === 'Settings'" />
-    <ProfileScreen v-if="screen === 'Profile'" />
+    <StatisticsScreen v-if="screen === 'Statistics'" />
     <PodcastScreen v-if="screen === 'Podcast'" />
     <EpisodeScreen v-if="screen === 'Episode'" />
-    <UserListScreen v-if="screen === 'Users'" />
     <YouTubeScreen v-if="useYouTube" v-show="screen === 'YouTube'" />
     <NotFoundScreen v-if="screen === '404'" />
     <AcceptPlaylistCollaborationInvite v-if="screen === 'Playlist.Collaborate'" />
+
+    <template v-for="(component, name) in addedScreens" :key="name">
+      <component :is="component" v-if="screen === name" />
+    </template>
   </section>
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref, toRef } from 'vue'
+import type { Component } from 'vue'
 import { isSong } from '@/utils/typeGuards'
+import { Filter } from '@/config/hooks'
+import { applyFilters } from '@/hooks'
 import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useRouter } from '@/composables/useRouter'
@@ -69,7 +75,6 @@ const NotFoundScreen = defineAsyncComponent(() => import('@/components/screens/N
 const PlaylistScreen = defineAsyncComponent(() => import('@/components/screens/PlaylistScreen.vue'))
 const PodcastListScreen = defineAsyncComponent(() => import('@/components/screens/PodcastListScreen.vue'))
 const PodcastScreen = defineAsyncComponent(() => import('@/components/screens/PodcastScreen.vue'))
-const ProfileScreen = defineAsyncComponent(() => import('@/components/screens/ProfileScreen.vue'))
 // QueueScreen and OfflineSongsScreen must NOT be lazy-loaded, so they work offline.
 import QueueScreen from '@/components/screens/QueueScreen.vue'
 import OfflineSongsScreen from '@/components/screens/OfflineSongsScreen.vue'
@@ -81,9 +86,11 @@ const SearchSongResultsScreen = defineAsyncComponent(
 )
 const SettingsScreen = defineAsyncComponent(() => import('@/components/screens/SettingsScreen.vue'))
 const UploadScreen = defineAsyncComponent(() => import('@/components/screens/UploadScreen.vue'))
-const UserListScreen = defineAsyncComponent(() => import('@/components/screens/UserListScreen.vue'))
 const VisualizerScreen = defineAsyncComponent(() => import('@/components/screens/VisualizerScreen.vue'))
+const StatisticsScreen = defineAsyncComponent(() => import('@/components/screens/StatisticsScreen.vue'))
 const YouTubeScreen = defineAsyncComponent(() => import('@/components/screens/YouTubeScreen.vue'))
+
+const addedScreens = applyFilters<Partial<Record<ScreenName, Component>>>(Filter.SCREENS, {})
 
 const { useYouTube } = useThirdPartyServices()
 const { onRouteChanged, getCurrentScreen } = useRouter()

@@ -29,15 +29,12 @@
             :icon="faSpinner"
             class="opacity-50!"
             spin
-            title="Caching for offline playback"
             aria-label="Caching for offline playback"
           />
-          <Icon
-            v-else-if="cachingFailed"
-            :icon="faExclamationTriangle"
-            class="text-k-danger opacity-75!"
-            :title="`Error: ${cachingErrorMessage}`"
-          />
+          <span v-else-if="cachingFailed" v-koel-tooltip class="text-k-danger opacity-75!">
+            <Icon :icon="faExclamationTriangle" />
+            <span class="sr-only">Error: {{ cachingErrorMessage }}</span>
+          </span>
           <OfflineMark v-else-if="cachedOffline" />
           <span class="flex-1">{{ playable.title }}</span>
         </span>
@@ -46,7 +43,7 @@
       <span v-if="shouldShowColumn('album')" class="album">{{ album }}</span>
       <template v-if="config.collaborative && isSong(playable) && playable.collaboration">
         <span v-if="shouldShowColumn('playlist_collaborator')" class="collaborator">
-          <UserAvatar :user="collaborator" width="24" />
+          <UserAvatar v-koel-tooltip="collaborator.name" :user="collaborator" width="24" />
         </span>
         <span
           v-if="shouldShowColumn('playlist_added_at')"
@@ -71,11 +68,12 @@
       </span>
       <span class="extra">
         <button
+          v-koel-tooltip
           class="text-k-fg-50 hover:text-k-fg p-1"
-          title="More actions"
           @click.stop="emit('request-context-menu', $event)"
         >
           <Icon :icon="faEllipsis" />
+          <span class="sr-only">More actions</span>
         </button>
       </span>
     </article>

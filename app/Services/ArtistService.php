@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\ImageChangeType;
 use App\Exceptions\ArtistNameConflictException;
 use App\Models\Artist;
 use App\Repositories\ArtistRepository;
@@ -13,6 +14,7 @@ use Webmozart\Assert\Assert;
 class ArtistService
 {
     public function __construct(
+        private readonly RichTextSanitizer $richTextSanitizer,
         private readonly ArtistRepository $artistRepository,
         private readonly ImageStorage $imageStorage,
     ) {}
@@ -31,13 +33,18 @@ class ArtistService
 
         $data = $dto->toArray();
 
-        if (is_string($dto->image)) {
-            // A non-empty string means the user is uploading another image,
-            // when an empty string means the user is removing the image.
-            $data['image'] = rescue_if($dto->image, fn () => $this->imageStorage->storeImage($dto->image), '');
-        } else {
-            // If the image is null, the user's not changing or removing the image at all.
+        $imageChange = $this->imageStorage->storeOptionalImage($dto->image);
+
+        if ($imageChange->type === ImageChangeType::KEEP) {
             Arr::forget($data, 'image');
+        } else {
+            $data['image'] = $imageChange->fileName ?? '';
+        }
+
+        if ($dto->description === null) {
+            Arr::forget($data, 'description');
+        } else {
+            $data['description'] = $this->richTextSanitizer->sanitize($dto->description);
         }
 
         $artist->update($data);

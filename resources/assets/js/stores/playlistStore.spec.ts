@@ -155,12 +155,13 @@ describe('playlistStore', () => {
   it('does not modify a smart playlist content', async () => {
     const playlist = factory('playlist').state('smart').make()
     const postMock = h.mock(http, 'post')
+    const deleteMock = h.mock(http, 'delete')
 
     await playlistStore.addContent(playlist, h.factory('song').make(3))
     expect(postMock).not.toHaveBeenCalled()
 
     await playlistStore.removeContent(playlist, h.factory('song').make(3))
-    expect(postMock).not.toHaveBeenCalled()
+    expect(deleteMock).not.toHaveBeenCalled()
   })
 
   it('updates a standard playlist', async () => {

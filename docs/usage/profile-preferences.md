@@ -2,16 +2,20 @@
 description: Managing your profile, avatar, theme selection, playback preferences, and service integration settings.
 ---
 
-# Profile and Preferences
+# Account Settings
 
-To manage your profile and preferences, click on your avatar in the bottom-right corner of the screen.
-From here, you can manage a couple aspects of your account:
+To manage your account, click your avatar in the bottom-right corner of the screen and choose **Settings**.
+Your own settings are listed under **Account**. If you're allowed to manage Koel's settings, you also see a **Server** group with settings for the whole Koel installation.
 
 ## Profile
 
 To update your profile, you must first authenticate yourself by entering your current password.
 After that, you can update your name and email, and set a new password.
 Leaving the New Password field blank will keep your current password intact.
+
+If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, a new email address only takes effect once you confirm it: Koel sends a confirmation link to the new address, valid for 24 hours, and lets your old address know about the change. If you change your mind and enter another address, only the newest link works. Until then, you keep logging in with your old address.
+
+With a mailer, Koel also emails you whenever your password changes: here, through a reset link, or by an admin. If you didn't expect that email, reset your password right away.
 
 :::tip Pick a strong password
 Koel enforces a strong password policy.
@@ -56,9 +60,9 @@ These preferences are saved immediately upon change and synced across all of you
 If you have songs [cached for offline playback](./offline-playback), this section displays your current storage usage
 with a progress bar showing used vs. available space. You can clear all cached songs at once by clicking the "Clear All" button.
 
-## Service Integration Statuses
+## Service Integrations
 
-If your Koel installation is [integrated](../service-integrations) with any external services, such as Last.fm or Spotify, you can see their statuses here along with the ability to connect or disconnect them when applicable.
+Connect your own [Last.fm](../service-integrations#last-fm) or [ListenBrainz](../service-integrations#listenbrainz) account here, so Koel can submit what you listen to. You can disconnect them at any time.
 
 ## Subsonic API Key
 

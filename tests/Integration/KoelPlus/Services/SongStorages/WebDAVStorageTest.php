@@ -38,7 +38,7 @@ class WebDAVStorageTest extends PlusTestCase
 
         Storage::disk('webdav')->assertExists(Str::after($reference->location, 'webdav://'));
 
-        self::assertSame("webdav://{$user->id}__random__song.mp3", $reference->location);
+        self::assertSame("webdav://{$user->public_id}__random__song.mp3", $reference->location);
         self::assertSame(artifact_path('tmp/random/song.mp3'), $reference->localPath);
     }
 

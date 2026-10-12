@@ -24,12 +24,12 @@ class GetArtistController extends Controller
     public function __invoke(IdRequest $request, Authenticatable $user)
     {
         $artist = $this->artistRepository->getOne($request->id);
-        $artist->loadCount('albums');
 
         $albums = $this->albumRepository->getByArtist($artist)->loadCount('songs')->loadSum('songs', 'length');
 
         return SubsonicResponse::ok([
-            'artist' => ArtistResource::toArray($artist, $user)
+            'artist' => ['albumCount' => $albums->count()]
+                + ArtistResource::toArray($artist, $user)
                 + [
                     'album' => $albums->map(static fn (Album $album) => AlbumResource::toArray($album, $user))->all(),
                 ],

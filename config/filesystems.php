@@ -43,6 +43,22 @@ return [
      */
 
     'disks' => [
+        'images' => [
+            'driver' => env('IMAGE_STORAGE_DRIVER', 'local'),
+            'root' => env('IMAGE_STORAGE_DRIVER', 'local') === 'local'
+                ? public_path(env('IMAGE_STORAGE_DIR', 'storage/images'))
+                : trim(env('IMAGE_STORAGE_DIR', ''), '/'),
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_REGION', 'us-east-1'),
+            'bucket' => env('IMAGE_STORAGE_BUCKET', env('AWS_BUCKET')),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'url' => env('IMAGE_STORAGE_URL'),
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),

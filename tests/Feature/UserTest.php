@@ -130,6 +130,26 @@ class UserTest extends TestCase
     }
 
     #[Test]
+    public function adminUpdatesUserKeepingAvatar(): void
+    {
+        $user = create_user(['avatar' => 'foo.jpg']);
+
+        $this->putAs(
+            "api/users/{$user->public_id}",
+            [
+                'name' => 'Foo',
+                'email' => 'bar@baz.com',
+                'role' => 'user',
+            ],
+            create_admin(),
+        )->assertSuccessful();
+
+        $user->refresh();
+
+        self::assertSame('foo.jpg', $user->getRawOriginal('avatar'));
+    }
+
+    #[Test]
     public function privilegeEscalationIsForbiddenWhenUpdating(): void
     {
         $manager = create_manager();
@@ -228,6 +248,24 @@ class UserTest extends TestCase
         $this->assertModelExists($newUser);
 
         config(['koel.misc.demo' => false]);
+    }
+
+    #[Test]
+    public function pruneInvitationsOlderThanAWeek(): void
+    {
+        $expired = User::factory()
+            ->prospect()
+            ->createOne(['invited_at' => now()->subDays(8)]);
+        $pending = User::factory()
+            ->prospect()
+            ->createOne(['invited_at' => now()->subDays(6)]);
+        $member = create_user(['created_at' => now()->subDays(30)]);
+
+        Artisan::call('model:prune');
+
+        $this->assertModelMissing($expired);
+        $this->assertModelExists($pending);
+        $this->assertModelExists($member);
     }
 
     #[Test]

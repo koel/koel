@@ -2,57 +2,39 @@
 
 namespace App\Console\Commands\Storage;
 
-use App\Facades\License;
-use App\Services\DotenvEditor;
 use App\Services\SongStorages\DropboxStorage;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Throwable;
 
-use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
-class SetupDropboxStorageCommand extends Command
+class SetupDropboxStorageCommand extends SetupStorageCommand
 {
     protected $signature = 'koel:storage:dropbox';
     protected $description = 'Set up Dropbox as the storage driver for Koel';
 
-    public function __construct(
-        private readonly DotenvEditor $dotenvEditor,
-    ) {
-        parent::__construct();
-    }
-
     public function handle(bool $firstTry = true): int
     {
-        if (!License::isPlus()) {
-            $this->components->error('Dropbox as a storage driver is only available in Koel Plus.');
-
+        if (!$this->ensureKoelPlus('Dropbox')) {
             return self::FAILURE;
         }
 
         if ($firstTry) {
-            $this->components->info('Setting up Dropbox as the storage driver for Koel.');
-            $this->components->warn('Changing the storage configuration can cause irreversible data loss.');
-            $this->components->warn('Consider backing up your data before proceeding.');
+            $this->introduceSetup('Setting up Dropbox as the storage driver for Koel.');
         }
 
         $config = ['STORAGE_DRIVER' => 'dropbox'];
 
         $config['DROPBOX_APP_KEY'] = text(
             label: 'Enter your Dropbox app key',
-            default: (string) env('DROPBOX_APP_KEY'),
+            default: (string) config('filesystems.disks.dropbox.app_key'),
         );
 
-        $config['DROPBOX_APP_SECRET'] = password(
+        $config['DROPBOX_APP_SECRET'] = self::askForSecret(
             label: 'Enter your Dropbox app secret',
-            hint: 'Leave blank to keep the current secret.',
+            currentValue: (string) config('filesystems.disks.dropbox.app_secret'),
         );
-
-        $config['DROPBOX_APP_SECRET'] = $config['DROPBOX_APP_SECRET'] !== ''
-            ? $config['DROPBOX_APP_SECRET']
-            : (string) env('DROPBOX_APP_SECRET');
 
         $accessCode = text(
             label: 'Access code',
@@ -80,25 +62,29 @@ class SetupDropboxStorageCommand extends Command
 
         $config['DROPBOX_REFRESH_TOKEN'] = $response->json('refresh_token');
 
-        $this->dotenvEditor->backup()->setKeys($config);
+        $verified = $this->saveAndVerifyConfig(
+            $config,
+            static function () use ($config): void {
+                config()->set('filesystems.disks.dropbox', [
+                    'app_key' => $config['DROPBOX_APP_KEY'],
+                    'app_secret' => $config['DROPBOX_APP_SECRET'],
+                    'refresh_token' => $config['DROPBOX_REFRESH_TOKEN'],
+                ]);
 
-        config()->set('filesystems.disks.dropbox', [
-            'app_key' => $config['DROPBOX_APP_KEY'],
-            'app_secret' => $config['DROPBOX_APP_SECRET'],
-            'refresh_token' => $config['DROPBOX_REFRESH_TOKEN'],
-        ]);
+                Cache::forget('dropbox_access_token');
 
-        $this->comment('Uploading a test file to make sure everything is working...');
+                try {
+                    app()->build(DropboxStorage::class)->testSetup(); // build instead of make to avoid singleton issues
+                } catch (Throwable $e) {
+                    Cache::forget('dropbox_access_token');
 
-        try {
-            app()->build(DropboxStorage::class)->testSetup(); // build instead of make to avoid singleton issues
-        } catch (Throwable $e) {
-            $this->error('Failed to upload test file: ' . $e->getMessage() . '.');
-            $this->comment('Please make sure the app has the correct permissions and try again.');
+                    throw $e;
+                }
+            },
+            'Please make sure the app has the correct permissions and try again.',
+        );
 
-            $this->dotenvEditor->restore();
-            Artisan::call('config:clear', ['--quiet' => true]);
-
+        if (!$verified) {
             return $this->handle(firstTry: false);
         }
 

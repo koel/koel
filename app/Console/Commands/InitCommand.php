@@ -3,11 +3,16 @@
 namespace App\Console\Commands;
 
 use App\Console\Commands\Concerns\AskForPassword;
+use App\Exceptions\EnvFileIsDirectoryException;
 use App\Exceptions\InstallationFailedException;
 use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\DotenvEditor;
+use App\Services\Image\LegacyArtworkMigrator;
+use App\Services\PublicStorageLinker;
+use App\Services\PwaManifestService;
+use App\Services\SettingService;
 use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
@@ -34,6 +39,10 @@ class InitCommand extends Command
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly DotenvEditor $dotenvEditor,
+        private readonly PublicStorageLinker $publicStorageLinker,
+        private readonly PwaManifestService $pwaManifestService,
+        private readonly SettingService $settingService,
+        private readonly LegacyArtworkMigrator $legacyArtworkMigrator,
     ) {
         parent::__construct();
     }
@@ -61,7 +70,7 @@ class InitCommand extends Command
             $this->migrateLegacyImages();
             $this->maybeSetMediaPath();
             $this->maybeCompileFrontEndAssets();
-            $this->maybeCopyManifests();
+            $this->removeLegacyManifests();
             $this->tryInstallingScheduler();
         } catch (Throwable $e) {
             Log::error($e);
@@ -112,9 +121,18 @@ class InitCommand extends Command
 
     private function ensureEnvFileExists(): void
     {
-        if (!File::exists(base_path('.env'))) {
-            $this->components->task('Copying .env file', static function (): void {
-                File::copy(base_path('.env.example'), base_path('.env'));
+        $envFilePath = $this->laravel->environmentFilePath();
+
+        if (File::isDirectory($envFilePath)) {
+            $exception = EnvFileIsDirectoryException::create($envFilePath);
+            $this->components->error($exception->getMessage());
+
+            throw $exception;
+        }
+
+        if (!File::exists($envFilePath)) {
+            $this->components->task('Copying .env file', static function () use ($envFilePath): void {
+                File::copy(base_path('.env.example'), $envFilePath);
             });
         } else {
             $this->components->task('.env file exists -- skipping');
@@ -267,13 +285,13 @@ class InitCommand extends Command
 
     private function linkStorage(): void
     {
-        $result = self::SUCCESS;
+        $linked = false;
 
-        $this->components->task('Linking storage', static function () use (&$result): void {
-            $result = Artisan::call('storage:link', ['--quiet' => true]);
+        $this->components->task('Linking storage', function () use (&$linked): void {
+            $linked = $this->publicStorageLinker->link();
         });
 
-        if ($result !== self::SUCCESS) {
+        if (!$linked) {
             $this->components->warn('Failed to link storage. Album and artist images may not load until you run '
             . '`php artisan storage:link` manually.');
         }
@@ -281,43 +299,25 @@ class InitCommand extends Command
 
     private function migrateLegacyImages(): void
     {
-        $legacyDir = public_path('img/storage');
-
-        if (!File::isDirectory($legacyDir)) {
+        if (!$this->legacyArtworkMigrator->hasLegacyDirectory()) {
             return;
         }
 
-        $files = File::files($legacyDir);
+        $count = $this->legacyArtworkMigrator->pendingCount();
 
-        if (!count($files)) {
-            File::deleteDirectory($legacyDir);
+        if (!$count) {
+            $this->legacyArtworkMigrator->migrate();
 
             return;
         }
 
-        $allMigrated = true;
+        $migrated = true;
 
-        $this->components->task(
-            sprintf('Migrating %d legacy image(s) to storage/app/public/images/', count($files)),
-            static function () use ($files, &$allMigrated): void {
-                $destDir = storage_path('app/public/images');
-                File::ensureDirectoryExists($destDir);
+        $this->components->task(sprintf('Migrating %d legacy image(s)', $count), function () use (&$migrated): void {
+            $migrated = $this->legacyArtworkMigrator->migrate();
+        });
 
-                foreach ($files as $file) {
-                    $dest = $destDir . DIRECTORY_SEPARATOR . $file->getFilename();
-
-                    $ok = File::exists($dest)
-                        ? File::delete($file->getPathname())
-                        : File::move($file->getPathname(), $dest);
-
-                    $allMigrated = $allMigrated && $ok;
-                }
-            },
-        );
-
-        if ($allMigrated) {
-            File::deleteDirectory($legacyDir);
-        } else {
+        if (!$migrated) {
             $this->components->warn(
                 'Some legacy images could not be migrated. Keeping public/img/storage for manual recovery.',
             );
@@ -350,7 +350,7 @@ class InitCommand extends Command
             }
 
             if (self::isValidMediaPath($path)) {
-                Setting::set('media_path', $path);
+                $this->settingService->updateMediaPath($path);
 
                 return;
             }
@@ -390,7 +390,7 @@ class InitCommand extends Command
         }
 
         if (self::isValidMediaPath($path)) {
-            Setting::set('media_path', $path);
+            $this->settingService->updateMediaPath($path);
         } else {
             $this->components->warn(sprintf('The path %s does not exist or not readable. Skipping.', $path));
         }
@@ -428,20 +428,10 @@ class InitCommand extends Command
         }
     }
 
-    private function maybeCopyManifests(): void
+    private function removeLegacyManifests(): void
     {
-        foreach (['manifest.json', 'manifest-remote.json'] as $file) {
-            $destination = public_path($file);
-            $source = public_path("$file.example");
-
-            if (File::exists($destination)) {
-                $this->components->task("$file already exists -- skipping");
-                continue;
-            }
-
-            $this->components->task("Copying $file", static function () use ($source, $destination): void {
-                File::copy($source, $destination);
-            });
-        }
+        $this->components->task('Removing legacy manifests', function (): void {
+            $this->pwaManifestService->removeUncustomizedLegacyFiles();
+        });
     }
 }

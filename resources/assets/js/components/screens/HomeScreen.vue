@@ -6,9 +6,9 @@
         <template #controls>
           <button
             v-if="!libraryEmpty"
+            v-koel-tooltip
             type="button"
             class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition shrink-0"
-            title="Reorder home blocks"
             data-testid="reorder-home-blocks-btn"
             @click="openReorderModal"
           >
@@ -24,7 +24,7 @@
         <Icon :icon="faVolumeOff" />
       </template>
       No songs found.
-      <span v-if="currentUserCan.manageSettings()" class="secondary block"> Have you set up your library yet? </span>
+      <EmptyLibraryHint />
     </ScreenEmptyState>
 
     <div v-else class="home-sections space-y-12 w-full">
@@ -53,7 +53,6 @@ import { preferenceStore } from '@/stores/preferenceStore'
 import { userStore } from '@/stores/userStore'
 import { useRouter } from '@/composables/useRouter'
 import { useModal } from '@/composables/useModal'
-import { usePolicies } from '@/composables/usePolicies'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
 import MostPlayedSongs from '@/components/screens/home/MostPlayedSongs.vue'
@@ -72,6 +71,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import BtnScrollToTop from '@/components/ui/BtnScrollToTop.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
+import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 
 const ReorderBlocksModal = defineAsyncComponent(() => import('@/components/screens/home/ReorderBlocksModal.vue'))
 
@@ -96,7 +96,6 @@ const blocks: Block[] = [
   { id: 'random-artists', label: 'Random Artists', component: RandomArtists },
 ]
 
-const { currentUserCan } = usePolicies()
 const { openModal } = useModal()
 
 const greetings = [

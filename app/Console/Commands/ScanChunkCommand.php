@@ -31,21 +31,7 @@ class ScanChunkCommand extends Command
 
     public function handle(): int
     {
-        $manifestPath = $this->argument('manifest');
-
-        if (!File::exists($manifestPath)) {
-            $this->components->error("Manifest file not found: $manifestPath");
-
-            return self::FAILURE;
-        }
-
-        $paths = json_decode(File::get($manifestPath), true);
-
-        if (!is_array($paths)) {
-            $this->components->error("Malformed manifest file: $manifestPath");
-
-            return self::FAILURE;
-        }
+        $paths = json_decode(File::get($this->argument('manifest')), true);
 
         /** @var User $owner */
         $owner = User::query()->findOrFail($this->option('owner'));
@@ -58,6 +44,10 @@ class ScanChunkCommand extends Command
         );
 
         $files = array_map(static fn (string $path) => new SplFileInfo($path), $paths);
+
+        if (config('scout.driver') === 'tntsearch') {
+            config(['scout.driver' => 'null']);
+        }
 
         $this->scanner->scan($files, $config, function (ScanResult $result): void {
             $this->output->writeln(json_encode([

@@ -6,6 +6,7 @@ use App\Facades\License;
 use App\Http\Integrations\Ticketmaster\Requests\AttractionSearchRequest;
 use App\Http\Integrations\Ticketmaster\Requests\EventSearchRequest;
 use App\Http\Integrations\Ticketmaster\TicketmasterConnector;
+use App\Models\Artist;
 use App\Services\Geolocation\Contracts\GeolocationService;
 use App\Values\Ticketmaster\TicketmasterAttraction;
 use App\Values\Ticketmaster\TicketmasterEvent;
@@ -29,8 +30,13 @@ class TicketmasterService
     }
 
     /** @return Collection<TicketmasterEvent>|array<array-key, TicketmasterEvent> */
-    public function searchEventForArtist(string $artistName, string $ip): Collection
+    public function searchEventForArtist(Artist $artist, string $ip): Collection
     {
+        if ($artist->is_unknown || $artist->is_various) {
+            return collect();
+        }
+
+        $artistName = $artist->name;
         $countryCode = $this->geolocator->getCountryCodeFromIp($ip) ?: $this->defaultCountryCode;
 
         return rescue(function () use ($artistName, $countryCode) {

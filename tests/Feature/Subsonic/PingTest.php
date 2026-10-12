@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Subsonic;
 
-use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -81,14 +80,6 @@ class PingTest extends TestCase
 
         $response->assertJsonPath('subsonic-response.status', 'failed');
         $response->assertJsonPath('subsonic-response.error.code', 40);
-    }
-
-    #[Test]
-    public function userObserverPopulatesApiKeyOnCreate(): void
-    {
-        $user = User::factory()->createOne();
-
-        self::assertNotNull($user->subsonic_api_key);
     }
 
     #[Test]

@@ -24,28 +24,6 @@ describe('aiChatMessage', () => {
     screen.getByText('Here is some jazz.')
   })
 
-  it('renders user message content', () => {
-    h.render(Component, {
-      props: {
-        message: { id: '2', role: 'user', content: 'Play some jazz', error: false },
-        user,
-      },
-    })
-
-    screen.getByText('Play some jazz')
-  })
-
-  it('shows copy button for assistant messages', () => {
-    h.render(Component, {
-      props: {
-        message: { id: '1', role: 'assistant', content: 'Hello!', error: false },
-        user,
-      },
-    })
-
-    screen.getByRole('button', { name: /copy/i })
-  })
-
   it('does not show copy button for user messages', () => {
     h.render(Component, {
       props: {

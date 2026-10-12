@@ -14,6 +14,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Repositories\TranscodeRepository;
+use App\Services\Image\ImageStorage;
 use App\Services\Scanners\Contracts\ScannerCacheStrategy as CacheStrategy;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanInformation;
@@ -25,15 +26,18 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\LazyCollection;
 
 // @mago-ignore lint:cyclomatic-complexity
 class SongService
 {
+    private const int DELETION_BATCH_SIZE = 500;
+
     public function __construct(
         private readonly SongRepository $songRepository,
         private readonly TranscodeRepository $transcodeRepository,
         private readonly AlbumService $albumService,
+        private readonly ImageStorage $imageStorage,
         private readonly CacheStrategy $cache,
     ) {}
 
@@ -119,13 +123,14 @@ class SongService
         // (i.e., when multiple songs are being updated and the user did not provide a value).
         // This allows us to clear those fields (when the user provides an empty string).
         // Album artist handling:
-        // If the user provided an explicit album artist, use it.
-        // If not (null/empty), check if this is a compilation (album artist ≠ song artist).
-        // For compilations, preserve the existing album artist (e.g. "Various Artists").
-        // For non-compilations, let the album artist follow the (potentially updated) song artist.
-        if (!$data->albumArtistName) {
+        // An explicit album artist is used as-is, and an empty one (the user cleared it) means
+        // "same as the song artist". When none is given, a compilation (album artist ≠ song artist)
+        // keeps its album artist (e.g. "Various Artists"), and any other song follows its artist.
+        if ($data->albumArtistName === null) {
             $isCompilation = !$song->album_artist->is($song->artist);
             $data->albumArtistName = $isCompilation ? $song->album_artist->name : $data->artistName;
+        } elseif ($data->albumArtistName === '') {
+            $data->albumArtistName = $data->artistName;
         }
         $data->lyrics ??= $song->lyrics;
         $data->track ??= $song->track;
@@ -186,6 +191,14 @@ class SongService
         return $applicableSongIds;
     }
 
+    public function deleteSongsByUser(User $user): void
+    {
+        $this->songRepository
+            ->lazyGetIdsByOwner($user)
+            ->chunk(self::DELETION_BATCH_SIZE)
+            ->each(fn (LazyCollection $ids) => $this->deleteSongs($ids->all()));
+    }
+
     /**
      * @param array<string>|string $ids
      */
@@ -234,7 +247,8 @@ class SongService
         // If the file is new, we take all necessary metadata, totally discarding the "ignores" config.
         // Otherwise, we only take the metadata not in the "ignores" config.
         if (!$isFileNew) {
-            Arr::forget($data, $config->ignores);
+            Arr::forget($data, [...$config->ignores, ...self::getMbidKeysOfIgnoredNames($config->ignores)]);
+            $data += self::getCurrentArtistAndAlbumNames($song);
         }
 
         $artist = $this->resolveArtist($config->owner, Arr::get($data, 'artist'));
@@ -245,7 +259,11 @@ class SongService
 
         $album = $this->resolveAlbum($albumArtist, Arr::get($data, 'album'));
 
-        $hasCover = $album->cover && File::exists(image_storage_path($album->cover));
+        $artist->setMbidIfMissing(Arr::get($data, 'artist_mbid'));
+        $albumArtist->setMbidIfMissing(Arr::get($data, 'albumartist_mbid'));
+        $album->setMbidIfMissing(Arr::get($data, 'album_mbid'));
+
+        $hasCover = $this->imageStorage->exists($album->cover);
 
         if (!$hasCover && !in_array('cover', $config->ignores, true)) {
             $coverData = Arr::get($data, 'cover.data');
@@ -257,7 +275,15 @@ class SongService
             }
         }
 
-        Arr::forget($data, ['album', 'artist', 'albumartist', 'cover']);
+        Arr::forget($data, [
+            'album',
+            'artist',
+            'albumartist',
+            'cover',
+            'album_mbid',
+            'artist_mbid',
+            'albumartist_mbid',
+        ]);
 
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
@@ -287,6 +313,32 @@ class SongService
         }
 
         return $song;
+    }
+
+    /**
+     * @param array<string> $ignores
+     *
+     * @return array<string>
+     */
+    private static function getMbidKeysOfIgnoredNames(array $ignores): array
+    {
+        return array_values(Arr::only([
+            'artist' => 'artist_mbid',
+            'albumartist' => 'albumartist_mbid',
+            'album' => 'album_mbid',
+        ], $ignores));
+    }
+
+    /**
+     * @return array{artist: string, albumartist: string, album: string}
+     */
+    private static function getCurrentArtistAndAlbumNames(Song $song): array
+    {
+        return [
+            'artist' => $song->artist->name,
+            'albumartist' => $song->album_artist->name,
+            'album' => $song->album->name,
+        ];
     }
 
     private function resolveArtist(User $user, ?string $name): Artist

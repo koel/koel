@@ -79,11 +79,15 @@ describe('formatters utils', () => {
   it.each([
     [0, '0 B'],
     [512, '512 B'],
-    [1024, '1.0 KB'],
+    [1024, '1 KB'],
     [1536, '1.5 KB'],
-    [1048576, '1.0 MB'],
-    [1073741824, '1.0 GB'],
-    [524288000, '500.0 MB'],
+    [1048576, '1 MB'],
+    [1073741824, '1 GB'],
+    [524288000, '500 MB'],
+    [250 * 1024 ** 3, '250 GB'],
+    [1024 ** 4, '1 TB'],
+    [1.5 * 1024 ** 4, '1.5 TB'],
+    [1024 ** 6, '1024 PB'],
   ])('formats %d bytes', (bytes, formatted) => expect(formatBytes(bytes)).toBe(formatted))
 
   it.each<[string, string]>([

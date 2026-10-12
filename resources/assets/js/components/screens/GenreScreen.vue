@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader v-if="genre" :layout="headerLayout">
+      <ScreenHeader v-if="genre">
         <template v-if="genre.name">
           <span class="font-thin">Genre:</span>
           {{ genre.name }}
@@ -36,7 +36,6 @@
       class="-m-6"
       @sort="fetchWithSort"
       @press:enter="onPressEnter"
-      @swipe="onSwipe"
       @scrolled-to-end="fetch"
     />
 
@@ -61,6 +60,7 @@ import { genreStore } from '@/stores/genreStore'
 import { playableStore } from '@/stores/playableStore'
 import { playback } from '@/services/playbackManager'
 import { useRouter } from '@/composables/useRouter'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
@@ -81,12 +81,10 @@ const songs = ref<Song[]>([])
 const {
   PlayableList: SongList,
   ThumbnailStack,
-  headerLayout,
   playableList: songList,
   thumbnails,
   onPressEnter,
   playSelected,
-  onSwipe,
   sort: composableSort,
 } = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
 
@@ -102,6 +100,8 @@ const id = ref<Genre['id'] | null>(null)
 const genre = ref<Genre | null>(null)
 const loading = ref(false)
 const cursor = ref<string | null>('')
+
+usePageTitle().useScreenTitle('Genre', () => (genre.value ? genre.value.name || 'No Genre' : null))
 
 const moreSongsAvailable = computed(() => cursor.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)

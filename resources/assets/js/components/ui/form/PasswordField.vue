@@ -27,3 +27,9 @@ const type = ref<'password' | 'text'>('password')
 
 const toggleReveal = () => (type.value = type.value === 'password' ? 'text' : 'password')
 </script>
+
+<style scoped>
+input::-ms-reveal {
+  display: none;
+}
+</style>

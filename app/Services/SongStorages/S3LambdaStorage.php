@@ -24,8 +24,9 @@ class S3LambdaStorage extends S3CompatibleStorage
         private readonly AlbumService $albumService,
         private readonly SongRepository $songRepository,
         private readonly UserRepository $userRepository,
+        S3UploadUrlSigner $uploadUrlSigner,
     ) {
-        parent::__construct();
+        parent::__construct($uploadUrlSigner);
     }
 
     public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference

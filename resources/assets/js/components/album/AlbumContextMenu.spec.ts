@@ -5,6 +5,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { assertOpenModal } from '@/__tests__/assertions'
 import factory from '@/__tests__/factory'
 import { ContextMenuKey } from '@/config/symbols'
+import Router from '@/router'
 import { downloadService } from '@/services/downloadService'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { albumStore } from '@/stores/albumStore'
@@ -102,8 +103,7 @@ describe('albumContextMenu.vue', () => {
   it('does not have an option to download or go to Unknown Album and Artist', async () => {
     await renderComponent(factory('album').state('unknown').make())
 
-    expect(screen.queryByText('Go to Album')).toBeNull()
-    expect(screen.queryByText('Go to Artist')).toBeNull()
+    expect(screen.queryByText('Go to')).toBeNull()
     expect(screen.queryByText('Download')).toBeNull()
   })
 
@@ -129,6 +129,30 @@ describe('albumContextMenu.vue', () => {
     expect(screen.queryByText('Embed…')).toBeNull()
   })
 
+  it('links to MusicBrainz', async () => {
+    commonStore.state.uses_musicbrainz = true
+    const openMock = h.mock(window, 'open')
+    const { album } = await renderComponent(h.factory('album').make())
+
+    await h.user.click(screen.getByText('View on MusicBrainz'))
+
+    expect(openMock).toHaveBeenCalledWith(`https://musicbrainz.org/release/${album.mbid}`, '_blank')
+  })
+
+  it('does not link to MusicBrainz when MusicBrainz is disabled', async () => {
+    commonStore.state.uses_musicbrainz = false
+    await renderComponent()
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
+  it('does not link to MusicBrainz when the album has no identifier', async () => {
+    commonStore.state.uses_musicbrainz = true
+    await renderComponent(h.factory('album').make({ mbid: null }))
+
+    expect(screen.queryByText('View on MusicBrainz')).toBeNull()
+  })
+
   it('closes the menu after rating', async () => {
     h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue([])
     h.mock(albumStore, 'rate')
@@ -143,5 +167,37 @@ describe('albumContextMenu.vue', () => {
     await h.user.click(screen.getByRole('radio', { name: 'Rate 4 of 5' }))
 
     expect(menu.value.component).toBeNull()
+  })
+
+  it('goes to the album details', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { album } = await renderComponent()
+
+    await h.user.click(screen.getByText('View Details'))
+
+    expect(goMock).toHaveBeenCalledWith(Router.url('albums.show', { id: album.id }))
+  })
+
+  it('does not offer the album details on the album screen', async () => {
+    const album = h.factory('album').make()
+    h.visit(`/albums/${album.id}`)
+    await renderComponent(album)
+
+    expect(screen.queryByText('View Details')).toBeNull()
+  })
+
+  it('goes to the album artist', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { album } = await renderComponent()
+
+    await h.user.click(screen.getByTitle(album.artist_name))
+
+    expect(goMock).toHaveBeenCalledWith(Router.url('artists.show', { id: album.artist_id }))
+  })
+
+  it('does not offer to go to Various Artists', async () => {
+    await renderComponent(h.factory('album').make({ artist_name: 'Various Artists' }))
+
+    expect(screen.queryByText('Go to')).toBeNull()
   })
 })
