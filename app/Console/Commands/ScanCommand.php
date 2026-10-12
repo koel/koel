@@ -59,6 +59,12 @@ class ScanCommand extends Command
             return self::INVALID;
         }
 
+        if (!Setting::get('media_path') && !$this->input->isInteractive()) {
+            $this->components->error("Media path hasn't been configured. Run this command interactively to set it up.");
+
+            return self::INVALID;
+        }
+
         $this->mediaPath = $this->getMediaPath();
 
         $config = ScanConfiguration::make(

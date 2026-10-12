@@ -5,6 +5,7 @@ namespace Tests\Feature\Commands;
 use App\Models\Setting;
 use App\Services\Scanners\DirectoryScanner;
 use App\Values\Scanning\ScanResultCollection;
+use Illuminate\Console\Command;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -31,5 +32,16 @@ class ScanCommandTest extends TestCase
             ->assertSuccessful();
 
         self::assertSame(realpath($this->mediaPath), Setting::get('media_path'));
+    }
+
+    #[Test]
+    public function failsWithoutAskingWhenNoMediaPathIsSetAndNotInteractive(): void
+    {
+        config(['koel.storage_driver' => 'local']);
+        Setting::set('media_path', '');
+
+        $this->artisan('koel:scan', ['--no-interaction' => true])->assertExitCode(Command::INVALID);
+
+        self::assertSame('', Setting::get('media_path'));
     }
 }
