@@ -104,6 +104,18 @@ class DuplicateUploadServiceTest extends TestCase
     }
 
     #[Test]
+    public function discardDeletesAFileOnCloudStorageByItsKey(): void
+    {
+        $uploads = DuplicateUpload::factory()->createMany([
+            ['location' => 's3://koel-bucket/songs/duplicate.mp3', 'storage' => SongStorageType::S3],
+        ]);
+
+        $this->mock(SongStorage::class)->expects('delete')->with('songs/duplicate.mp3', Mockery::any());
+
+        $this->makeService()->discard($uploads);
+    }
+
+    #[Test]
     public function discardDeletesRecordsAndFiles(): void
     {
         $uploads = DuplicateUpload::factory()->createMany([[], []]);
