@@ -68,7 +68,7 @@ class SongBuilder extends FavoriteableBuilder
         return $this->where('path', 'LIKE', "$path%");
     }
 
-    private function withPlayCount(): self
+    public function withPlayCount(): self
     {
         throw_unless($this->user, new LogicException('User must be set to query play counts.'));
 
