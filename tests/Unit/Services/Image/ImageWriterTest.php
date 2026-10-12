@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Image;
 use Illuminate\Support\Str;
+use Imagick;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\Fakes\FakeNetwork;
@@ -69,6 +70,25 @@ class ImageWriterTest extends TestCase
 
         self::assertSame('image/avif', (new finfo(FILEINFO_MIME_TYPE))->buffer($bytes));
         self::assertSame(32, Image::fromBytes($bytes)->toPng()->width());
+    }
+
+    #[Test]
+    public function encodesAvifWithImagickAtTheConfiguredWidth(): void
+    {
+        if (!extension_loaded('imagick') || !Imagick::queryFormats('AVIF')) {
+            self::markTestSkipped('Imagick with AVIF support is not available.');
+        }
+
+        $writer = new ImageWriter(new SafeHttp(new FakeNetwork()), 'imagick');
+
+        self::assertSame('avif', $writer->format());
+
+        $bytes = $writer->encode(test_path('fixtures/cover.png'), ImageWritingConfig::make(maxWidth: 32));
+        $encoded = new Imagick();
+        $encoded->readImageBlob($bytes);
+
+        self::assertSame('AVIF', $encoded->getImageFormat());
+        self::assertSame(32, $encoded->getImageWidth());
     }
 
     #[Test]

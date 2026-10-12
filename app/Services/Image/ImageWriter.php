@@ -48,10 +48,12 @@ class ImageWriter
      * Some builds advertise a format their encoder can't actually produce, yielding empty
      * output instead of failing, so the format is confirmed against a real encode.
      */
-    private static function canActuallyEncode(string $format): bool
+    private static function canActuallyEncode(string $driver, string $format): bool
     {
         return (bool) rescue(
-            static fn (): bool => Image::fromBase64(self::PROBE_IMAGE)->optimize($format)->toBytes() !== '',
+            static fn (): bool => (
+                Image::fromBase64(self::PROBE_IMAGE)->using($driver)->optimize($format)->toBytes() !== ''
+            ),
             false,
             report: false,
         );
@@ -71,7 +73,7 @@ class ImageWriter
         }
 
         foreach (self::FORMATS as $format) {
-            if ($imageDriver->supports($format) && self::canActuallyEncode($format)) {
+            if ($imageDriver->supports($format) && self::canActuallyEncode($driver, $format)) {
                 return $format;
             }
         }
@@ -90,15 +92,14 @@ class ImageWriter
     {
         $config ??= ImageWritingConfig::default();
 
-        $bytes =
-            $this->driver === 'gd' && $this->format === 'avif'
-                ? $this->encodeAvifWithGd($source, $config)
-                : $this
-                    ->read($source)
-                    ->scale(width: $config->maxWidth)
-                    ->when($config->blur, static fn (ProcessableImage $image) => $image->blur($config->blur))
-                    ->optimize($this->format, $config->quality)
-                    ->toBytes();
+        $bytes = $this->format === 'avif' && in_array($this->driver, ['gd', 'imagick'], true)
+            ? $this->encodeAvifFast($source, $config)
+            : $this
+                ->read($source)
+                ->scale(width: $config->maxWidth)
+                ->when($config->blur, static fn (ProcessableImage $image) => $image->blur($config->blur))
+                ->optimize($this->format, $config->quality)
+                ->toBytes();
 
         throw_if($bytes === '', RuntimeException::class, 'Encoding produced an empty image');
 
@@ -110,9 +111,13 @@ class ImageWriter
         return Image::fromBytes($this->readBytes($source));
     }
 
-    private function encodeAvifWithGd(mixed $source, ImageWritingConfig $config): string
+    private function encodeAvifFast(mixed $source, ImageWritingConfig $config): string
     {
-        $image = ImageManager::usingDriver(GdDriver::class)
+        [$driverClass, $encoder] = $this->driver === 'gd'
+            ? [GdDriver::class, new FastGdAvifEncoder($config->quality)]
+            : [ImagickDriver::class, new FastImagickAvifEncoder($config->quality)];
+
+        $image = ImageManager::usingDriver($driverClass)
             ->decodeBinary($this->readBytes($source))
             ->scaleDown(width: $config->maxWidth);
 
@@ -120,7 +125,7 @@ class ImageWriter
             $image->blur($config->blur);
         }
 
-        return $image->encode(new FastGdAvifEncoder($config->quality))->toString();
+        return $image->encode($encoder)->toString();
     }
 
     /**
