@@ -149,6 +149,15 @@ class SongBuilder extends FavoriteableBuilder
                 ->orderBy('songs.title');
         }
 
+        if ($column === 'genres.name') {
+            return $this
+                ->addSelect(DB::raw(
+                    "(COALESCE((SELECT MIN(genres.name) FROM genres INNER JOIN genre_song ON genre_song.genre_id = genres.id WHERE genre_song.song_id = songs.id), '')) as genre_sort_name",
+                ))
+                ->orderBy('genre_sort_name', $direction)
+                ->orderBy('songs.title');
+        }
+
         if ($column === 'songs.track') {
             return $this->orderBy('songs.disc', $direction)->orderBy('songs.track', $direction)->orderBy('songs.title');
         }
@@ -170,26 +179,19 @@ class SongBuilder extends FavoriteableBuilder
 
     public function sort(array $columns, string $direction): self
     {
-        $this
-            ->when(
-                in_array('podcast_title', $columns, true) || in_array('podcast_author', $columns, true),
-                static fn (self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id'),
-            )
-            ->when(in_array('genre', $columns, true), static fn (self $query) => $query->leftJoin(
-                'genre_song',
-                'songs.id',
-                'genre_song.song_id',
-            )->leftJoin('genres', 'genre_song.genre_id', 'genres.id'))
-            ->when(in_array('rating', $columns, true), function (self $query): void {
-                throw_unless($this->user, new LogicException('User must be set to sort by rating.'));
+        $this->when(
+            in_array('podcast_title', $columns, true) || in_array('podcast_author', $columns, true),
+            static fn (self $query) => $query->leftJoin('podcasts', 'songs.podcast_id', 'podcasts.id'),
+        )->when(in_array('rating', $columns, true), function (self $query): void {
+            throw_unless($this->user, new LogicException('User must be set to sort by rating.'));
 
-                $query->leftJoin('ratings as user_ratings', function (JoinClause $join): void {
-                    $join->on('user_ratings.rateable_id', 'songs.id')->where(
-                        'user_ratings.rateable_type',
-                        'playable',
-                    )->where('user_ratings.user_id', $this->user->id);
-                });
+            $query->leftJoin('ratings as user_ratings', function (JoinClause $join): void {
+                $join->on('user_ratings.rateable_id', 'songs.id')->where(
+                    'user_ratings.rateable_type',
+                    'playable',
+                )->where('user_ratings.user_id', $this->user->id);
             });
+        });
 
         foreach ($columns as $column) {
             $this->sortByOneColumn($column, $direction);
