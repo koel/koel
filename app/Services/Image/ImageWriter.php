@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Interfaces\ImageManagerInterface;
 use RuntimeException;
 use Throwable;
 
@@ -30,6 +31,8 @@ class ImageWriter
 
     private readonly string $format;
 
+    private readonly ?ImageManagerInterface $fastAvifManager;
+
     public function __construct(
         private readonly SafeHttp $http,
         #[Config('images.default')]
@@ -37,6 +40,14 @@ class ImageWriter
     ) {
         self::$supportedFormatsByDriver[$driver] ??= self::findSupportedFormat($driver);
         $this->format = self::$supportedFormatsByDriver[$driver];
+
+        $this->fastAvifManager = $this->format === 'avif'
+            ? match ($driver) {
+                'gd' => ImageManager::usingDriver(GdDriver::class),
+                'imagick' => ImageManager::usingDriver(ImagickDriver::class),
+                default => null,
+            }
+            : null;
     }
 
     public function format(): string
@@ -92,8 +103,8 @@ class ImageWriter
     {
         $config ??= ImageWritingConfig::default();
 
-        $bytes = $this->format === 'avif' && in_array($this->driver, ['gd', 'imagick'], true)
-            ? $this->encodeAvifFast($source, $config)
+        $bytes = $this->fastAvifManager
+            ? $this->encodeAvifFast($this->fastAvifManager, $source, $config)
             : $this
                 ->read($source)
                 ->scale(width: $config->maxWidth)
@@ -111,15 +122,13 @@ class ImageWriter
         return Image::fromBytes($this->readBytes($source));
     }
 
-    private function encodeAvifFast(mixed $source, ImageWritingConfig $config): string
+    private function encodeAvifFast(ImageManagerInterface $manager, mixed $source, ImageWritingConfig $config): string
     {
-        [$driverClass, $encoder] = $this->driver === 'gd'
-            ? [GdDriver::class, new FastGdAvifEncoder($config->quality)]
-            : [ImagickDriver::class, new FastImagickAvifEncoder($config->quality)];
+        $encoder = $this->driver === 'gd'
+            ? new FastGdAvifEncoder($config->quality)
+            : new FastImagickAvifEncoder($config->quality);
 
-        $image = ImageManager::usingDriver($driverClass)
-            ->decodeBinary($this->readBytes($source))
-            ->scaleDown(width: $config->maxWidth);
+        $image = $manager->decodeBinary($this->readBytes($source))->scaleDown(width: $config->maxWidth);
 
         if ($config->blur) {
             $image->blur($config->blur);
