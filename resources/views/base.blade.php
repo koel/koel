@@ -19,10 +19,6 @@
     <link rel="icon" href="{{ koel_branding('logo') ?? static_url('img/icon.png') }}">
     <link rel="apple-touch-icon" href="{{ koel_branding('logo') ?? static_url('img/icon.png') }}">
 
-    @unless(License::isPlus())
-        <script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
-    @endunless
-
     <script>
         // Work around for "global is not defined" error with local-storage.js
         window.global = window

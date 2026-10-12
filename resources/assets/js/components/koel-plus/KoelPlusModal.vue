@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -44,19 +44,18 @@ import ActivateLicenseForm from '@/components/koel-plus/ActivateLicenseForm.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const { checkoutUrl } = useKoelPlus()
+const { checkoutUrl, loadLemonSqueezy } = useKoelPlus()
 
 const close = () => emit('close')
 
 const showingActivateLicenseForm = ref(false)
 
-const openPurchaseOverlay = () => {
+const openPurchaseOverlay = async () => {
   close()
+  await loadLemonSqueezy()
   window.LemonSqueezy.Url.Open(checkoutUrl.value)
 }
 
 const showActivateLicenseForm = () => (showingActivateLicenseForm.value = true)
 const hideActivateLicenseForm = () => (showingActivateLicenseForm.value = false)
-
-onMounted(() => window.createLemonSqueezy?.())
 </script>

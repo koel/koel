@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
@@ -14,8 +14,14 @@ describe('koelPlusModal.vue', () => {
     screen.getByTestId('buttons')
     expect(screen.queryByTestId('activateForm')).toBeNull()
     await h.user.click(screen.getByText('Purchase Koel Plus'))
-    expect(globalThis.LemonSqueezy.Url.Open).toHaveBeenCalledWith(
-      'https://store.koel.dev/checkout/buy/42?embed=1&media=0&desc=0',
+    document.head
+      .querySelector('script[src="https://app.lemonsqueezy.com/js/lemon.js"]')!
+      .dispatchEvent(new Event('load'))
+
+    await waitFor(() =>
+      expect(globalThis.LemonSqueezy.Url.Open).toHaveBeenCalledWith(
+        'https://store.koel.dev/checkout/buy/42?embed=1&media=0&desc=0',
+      ),
     )
   })
 
