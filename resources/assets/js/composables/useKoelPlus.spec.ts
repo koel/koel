@@ -26,7 +26,7 @@ describe('useKoelPlus', () => {
     expect(checkoutUrl.value).toContain('store.koel.dev/checkout')
   })
 
-  it('requests Lemon Squeezy again after it fails to load', async () => {
+  it('requests Lemon Squeezy again only after it fails to load', async () => {
     const lemonSqueezyScriptSelector = 'script[src="https://app.lemonsqueezy.com/js/lemon.js"]'
     const { loadLemonSqueezy } = useKoelPlus()
 
@@ -41,5 +41,8 @@ describe('useKoelPlus', () => {
 
     await expect(retry).resolves.toBeUndefined()
     expect(window.createLemonSqueezy).toHaveBeenCalled()
+
+    loadLemonSqueezy()
+    expect(document.head.querySelectorAll(lemonSqueezyScriptSelector)).toHaveLength(1)
   })
 })

@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import { MessageToasterStub } from '@/__tests__/stubs'
+import { DialogBoxStub } from '@/__tests__/stubs'
 import { commonStore } from '@/stores/commonStore'
 
 const loadLemonSqueezyMock = vi.fn()
@@ -26,7 +26,13 @@ describe('koelPlusModal.vue', () => {
 
   it('opens checkout once Lemon Squeezy has loaded', async () => {
     let finishLoading: Closure = () => {}
-    loadLemonSqueezyMock.mockReturnValue(new Promise<void>(resolve => (finishLoading = resolve)))
+
+    loadLemonSqueezyMock.mockReturnValue(
+      new Promise<void>(resolve => {
+        finishLoading = resolve
+      }),
+    )
+
     const openCheckoutMock = h.mock(window.LemonSqueezy.Url, 'Open')
     const { emitted } = h.render(Component)
 
@@ -50,15 +56,35 @@ describe('koelPlusModal.vue', () => {
   it('stays open and shows an error when Lemon Squeezy fails to load', async () => {
     loadLemonSqueezyMock.mockRejectedValue(new Error('Failed to load Lemon Squeezy'))
     const openCheckoutMock = h.mock(window.LemonSqueezy.Url, 'Open')
-    const toastErrorMock = h.mock(MessageToasterStub.value, 'error')
+    const showErrorDialogMock = h.mock(DialogBoxStub.value, 'error')
     const { emitted } = h.render(Component)
 
     await h.user.click(screen.getByText('Purchase Koel Plus'))
 
-    await waitFor(() => expect(toastErrorMock).toHaveBeenCalledWith('Failed to load the checkout. Please try again.'))
+    await waitFor(() =>
+      expect(showErrorDialogMock).toHaveBeenCalledWith('Failed to load the checkout. Please try again.'),
+    )
     expect(openCheckoutMock).not.toHaveBeenCalled()
     expect(emitted().close).toBeUndefined()
     expect(screen.getByRole('button', { name: 'Purchase Koel Plus' })).toHaveProperty('disabled', false)
+  })
+
+  it('stays open and shows an error when checkout fails to open', async () => {
+    loadLemonSqueezyMock.mockResolvedValue(undefined)
+
+    h.mock(window.LemonSqueezy.Url, 'Open', () => {
+      throw new TypeError('Lemon Squeezy is not initialized')
+    })
+
+    const showErrorDialogMock = h.mock(DialogBoxStub.value, 'error')
+    const { emitted } = h.render(Component)
+
+    await h.user.click(screen.getByText('Purchase Koel Plus'))
+
+    await waitFor(() =>
+      expect(showErrorDialogMock).toHaveBeenCalledWith('Failed to load the checkout. Please try again.'),
+    )
+    expect(emitted().close).toBeUndefined()
   })
 
   it('shows form to activate Koel Plus', async () => {

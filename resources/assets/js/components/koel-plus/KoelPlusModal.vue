@@ -40,7 +40,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useKoelPlus } from '@/composables/useKoelPlus'
-import { useMessageToaster } from '@/composables/useMessageToaster'
+import { useDialogBox } from '@/composables/useDialogBox'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import ActivateLicenseForm from '@/components/koel-plus/ActivateLicenseForm.vue'
@@ -48,7 +48,7 @@ import ActivateLicenseForm from '@/components/koel-plus/ActivateLicenseForm.vue'
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { checkoutUrl, loadLemonSqueezy } = useKoelPlus()
-const { toastError } = useMessageToaster()
+const { showErrorDialog } = useDialogBox()
 
 const close = () => emit('close')
 
@@ -60,10 +60,10 @@ const openPurchaseOverlay = async () => {
 
   try {
     await loadLemonSqueezy()
-    close()
     window.LemonSqueezy.Url.Open(checkoutUrl.value)
+    close()
   } catch {
-    toastError('Failed to load the checkout. Please try again.')
+    showErrorDialog('Failed to load the checkout. Please try again.')
   } finally {
     openingCheckout.value = false
   }
