@@ -34,7 +34,10 @@ export const artistStore = {
       ids.map(id => this.byId(id)),
       'id',
     )
-    ids.forEach(id => this.vault.delete(id))
+    ids.forEach(id => {
+      this.vault.delete(id)
+      cache.remove(['artist', id])
+    })
   },
 
   isVarious: (artist: Artist | Artist['name']) =>

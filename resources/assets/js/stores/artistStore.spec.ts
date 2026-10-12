@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import factory from '@/__tests__/factory'
+import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
 import { artistStore } from '@/stores/artistStore'
@@ -17,6 +18,7 @@ describe('artistStore', () => {
     const artists = h.factory('artist').make(3)
     artists.forEach(artist => artistStore.vault.set(artist.id, artist))
     artistStore.state.artists = artists
+    cache.set(['artist', artists[0].id], artists[0])
 
     artistStore.removeByIds([artists[0].id, artists[1].id])
 
@@ -24,6 +26,7 @@ describe('artistStore', () => {
     expect(artistStore.vault.has(artists[0].id)).toBe(false)
     expect(artistStore.vault.has(artists[1].id)).toBe(false)
     expect(artistStore.state.artists).toEqual([artists[2]])
+    expect(cache.has(['artist', artists[0].id])).toBe(false)
   })
 
   it('identifies an unknown artist', () => {
