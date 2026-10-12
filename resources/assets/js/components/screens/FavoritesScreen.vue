@@ -12,22 +12,10 @@
           <span>{{ pluralize(playables, 'item') }}</span>
           <span>{{ duration }}</span>
 
-          <button
-            v-if="downloadable"
-            class="download text-k-fg hover:text-k-highlight [font:inherit]"
-            type="button"
-            @click.prevent="download"
-          >
-            Download All
-          </button>
-          <button
-            v-if="canToggleOffline"
-            class="text-k-fg hover:text-k-highlight [font:inherit]"
-            type="button"
-            @click.prevent="toggleOffline"
-          >
+          <LinkButton v-if="downloadable" class="download" @click.prevent="download"> Download All </LinkButton>
+          <LinkButton v-if="canToggleOffline" @click.prevent="toggleOffline">
             {{ allCached ? 'Remove Offline' : 'Make Offline' }}
-          </button>
+          </LinkButton>
         </template>
 
         <template #controls>
@@ -84,6 +72,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
+import LinkButton from '@/components/ui/form/LinkButton.vue'
 
 const allPlayables = ref<Playable[]>([])
 

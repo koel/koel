@@ -44,12 +44,8 @@
       No songs queued.
       <span v-if="libraryNotEmpty" class="block secondary">
         How about
-        <button
-          class="start text-k-highlight hover:text-k-fg [font:inherit]"
-          type="button"
-          @click.prevent="shuffleSome"
-        >
-          playing some random songs</button
+        <LinkButton class="start" variant="highlight" @click.prevent="shuffleSome">
+          playing some random songs</LinkButton
         >?
       </span>
     </ScreenEmptyState>
@@ -74,6 +70,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
+import LinkButton from '@/components/ui/form/LinkButton.vue'
 
 const { go, onScreenActivated, url } = useRouter()
 
