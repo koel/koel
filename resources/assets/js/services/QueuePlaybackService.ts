@@ -250,7 +250,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     this.recordStartTime(playable)
     socketService.broadcast('SOCKET_STREAMABLE', playable)
 
-    savePlaybackStatus({ song: playable.id, position: 0 })
+    this.savePosition(playable, 0)
 
     this.media.currentTime = 0
 

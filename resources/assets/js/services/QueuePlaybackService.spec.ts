@@ -92,6 +92,24 @@ describe('playbackService', () => {
     expect(putMock).toHaveBeenCalledWith('queue/playback-status', { song: song.id, position: 10 })
   })
 
+  it('saves the playback position again after the playable restarts', async () => {
+    const song = setCurrentSong()
+    const mediaElement = playbackService.media
+    const putMock = h.mock(http, 'put')
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+    h.setReadOnlyProperty(mediaElement, 'duration', 400)
+    h.setReadOnlyProperty(mediaElement, 'currentTime', 5)
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+
+    await playbackService.restart()
+    h.setReadOnlyProperty(mediaElement, 'currentTime', 5)
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+
+    await vi.waitFor(() =>
+      expect(putMock).toHaveBeenLastCalledWith('queue/playback-status', { song: song.id, position: 5 }),
+    )
+  })
+
   it('saves the playback position on pause', () => {
     const song = setCurrentSong()
     h.setReadOnlyProperty(playbackService.media, 'currentTime', 42)
