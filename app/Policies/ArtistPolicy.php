@@ -19,6 +19,11 @@ class ArtistPolicy
         return License::isCommunity() || $this->artistRepository->isAccessibleByUser($artist, $user);
     }
 
+    public function embed(User $user, Artist $artist): bool
+    {
+        return License::isCommunity() || $artist->belongsToUser($user);
+    }
+
     public function update(User $user, Artist $artist): bool
     {
         if ($artist->is_unknown || $artist->is_various) {

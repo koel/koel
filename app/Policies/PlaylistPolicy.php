@@ -13,6 +13,11 @@ class PlaylistPolicy
         return $this->own($user, $playlist) || $playlist->hasCollaborator($user);
     }
 
+    public function embed(User $user, Playlist $playlist): bool
+    {
+        return $this->access($user, $playlist);
+    }
+
     public function own(User $user, Playlist $playlist): bool
     {
         return $playlist->ownedBy($user);

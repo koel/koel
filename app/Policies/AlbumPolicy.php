@@ -19,6 +19,11 @@ class AlbumPolicy
         return License::isCommunity() || $this->albumRepository->isAccessibleByUser($album, $user);
     }
 
+    public function embed(User $user, Album $album): bool
+    {
+        return License::isCommunity() || $album->belongsToUser($user);
+    }
+
     /**
      * If the user can update the album (e.g., edit name, year, or upload the cover image).
      */

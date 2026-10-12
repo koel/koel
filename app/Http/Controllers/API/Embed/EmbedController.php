@@ -35,7 +35,7 @@ class EmbedController extends Controller
         $type = $request->enum('embeddable_type', EmbeddableType::class);
         $embeddable = $type->modelClass()::findOrFail($request->embeddable_id);
 
-        $this->authorize('access', $embeddable);
+        $this->authorize('embed', $embeddable);
 
         return EmbedResource::make($this->service->resolveEmbedForEmbeddable($embeddable, $this->user));
     }
