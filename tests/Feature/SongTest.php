@@ -8,6 +8,7 @@ use App\Jobs\DeleteSongFilesJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Favorite;
+use App\Models\Genre;
 use App\Models\Rating;
 use App\Models\Song;
 use App\Models\SongAnalysis;
@@ -61,6 +62,19 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function sortingByGenreListsASongWithMultipleGenresOnce(): void
+    {
+        $song = Song::factory()->createOne();
+        $song->genres()->attach(Genre::factory()->createMany(2));
+
+        $this
+            ->getAs('api/songs?sort=genre&order=asc', $song->owner)
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $song->id);
+    }
+
+    #[Test]
     public function indexWithCursorTraversesAllSupportedSortsWithoutDuplicates(): void
     {
         $user = create_user();
@@ -76,6 +90,12 @@ class SongTest extends TestCase
             Favorite::factory()->for($user)->for($song, 'favoriteable')->createOne();
         }
 
+        $genres = Genre::factory()->createMany(2);
+
+        foreach ($songs->slice(30, 20) as $song) {
+            $song->genres()->attach($genres);
+        }
+
         foreach ([
             'title',
             'track',
@@ -86,6 +106,7 @@ class SongTest extends TestCase
             'album_name',
             'rating',
             'favorite',
+            'genre',
         ] as $sort) {
             $allIds = [];
             $cursor = '';

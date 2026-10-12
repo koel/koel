@@ -103,7 +103,7 @@ class DuplicateUploadService
 
     public function discard(Collection $uploads): void
     {
-        $songFiles = $uploads->map(static fn (DuplicateUpload $upload) => SongFileInfo::make(
+        $songFiles = $uploads->map(static fn (DuplicateUpload $upload) => SongFileInfo::fromLocation(
             $upload->location,
             $upload->storage,
         ));

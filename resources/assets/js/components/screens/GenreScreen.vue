@@ -107,11 +107,14 @@ const moreSongsAvailable = computed(() => cursor.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 const duration = computed(() => (genre.value ? secondsToHumanReadable(genre.value.length) : ''))
 
+let songListVersion = 0
+
 const fetch = async () => {
   if (!moreSongsAvailable.value || loading.value) {
     return
   }
 
+  const requestedSongListVersion = songListVersion
   loading.value = true
 
   try {
@@ -133,6 +136,18 @@ const fetch = async () => {
   } finally {
     loading.value = false
   }
+
+  if (requestedSongListVersion !== songListVersion) {
+    await refetchSongsFromStart()
+  }
+}
+
+const refetchSongsFromStart = async () => {
+  songListVersion++
+  cursor.value = ''
+  songs.value = []
+
+  await fetch()
 }
 
 const refresh = async () => {
@@ -144,15 +159,13 @@ const refresh = async () => {
 }
 
 const fetchWithSort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
-  cursor.value = ''
-  songs.value = []
   sortField = field
   sortOrder = order
 
   lsSet('genre-sort-field', field)
   lsSet('genre-sort-order', order)
 
-  await fetch()
+  await refetchSongsFromStart()
 }
 
 const getIdFromRoute = () => getRouteParam('id') ?? null

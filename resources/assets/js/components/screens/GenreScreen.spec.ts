@@ -57,4 +57,50 @@ describe('genreScreen', () => {
 
     expect(document.title).toBe('No Genre – Koel')
   })
+
+  it('keeps a new sort made while a page is loading', async () => {
+    const genre = h.factory('genre').make()
+    let resolveStalePage: (page: { songs: Song[]; nextCursor: string | null }) => void = () => {}
+
+    h.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
+
+    const paginateMock = h
+      .mock(playableStore, 'paginateSongsByGenre')
+      .mockResolvedValueOnce({ songs: h.factory('song').make(5), nextCursor: 'next-token' })
+      .mockImplementationOnce(
+        () =>
+          new Promise(resolve => {
+            resolveStalePage = resolve
+          }),
+      )
+      .mockResolvedValueOnce({ songs: h.factory('song').make(5), nextCursor: null })
+
+    h.visit(`genres/${genre.id}`).render(Component, {
+      global: {
+        stubs: {
+          SongList: defineComponent({
+            emits: ['sort', 'scrolled-to-end'],
+            template: `
+              <div data-testid="song-list">
+                <button @click="$emit('scrolled-to-end')">More</button>
+                <button @click="$emit('sort', 'artist_name', 'desc')">Sort</button>
+              </div>
+            `,
+          }),
+        },
+      },
+    })
+
+    await waitFor(() => expect(paginateMock).toHaveBeenCalledOnce())
+    await h.tick(2)
+
+    await h.user.click(screen.getByRole('button', { name: 'More' }))
+    await h.user.click(screen.getByRole('button', { name: 'Sort' }))
+    resolveStalePage({ songs: h.factory('song').make(5), nextCursor: 'stale-cursor' })
+
+    await waitFor(() => {
+      expect(paginateMock).toHaveBeenCalledTimes(3)
+      expect(paginateMock).toHaveBeenLastCalledWith(genre.id, { sort: 'artist_name', order: 'desc', cursor: '' })
+    })
+  })
 })

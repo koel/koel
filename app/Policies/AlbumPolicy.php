@@ -6,10 +6,20 @@ use App\Enums\Acl\Permission;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\User;
+use App\Repositories\AlbumRepository;
 
 class AlbumPolicy
 {
+    public function __construct(
+        private readonly AlbumRepository $albumRepository,
+    ) {}
+
     public function access(User $user, Album $album): bool
+    {
+        return License::isCommunity() || $this->albumRepository->isAccessibleByUser($album, $user);
+    }
+
+    public function embed(User $user, Album $album): bool
     {
         return License::isCommunity() || $album->belongsToUser($user);
     }

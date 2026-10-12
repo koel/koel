@@ -483,7 +483,7 @@ describe('playableStore', () => {
   })
 
   it('removes from favorites', async () => {
-    const songs = h.factory('song').make(3)
+    const songs = h.factory('song').make({ favorite: true }, 3)
     const deleteMock = h.mock(http, 'delete')
 
     await playableStore.undoFavorite(songs)
@@ -492,6 +492,7 @@ describe('playableStore', () => {
       type: 'playable',
       ids: songs.map(song => song.id),
     })
+    expect(songs.every(song => !song.favorite)).toBe(true)
   })
 
   it('syncs album properties', () => {

@@ -1,7 +1,7 @@
 import { differenceBy, orderBy } from 'lodash-es'
 import { useThrottleFn } from '@vueuse/core'
 import type { Ref } from 'vue'
-import { computed, provide, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, provide, reactive, ref } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
@@ -194,7 +194,12 @@ export const usePlayableList = (
     sortOrder.value = order
   }
 
-  eventBus.on('SONGS_DELETED', deletedSongs => (playables.value = differenceBy(playables.value, deletedSongs, 'id')))
+  const removeDeletedSongs = (deletedSongs: Song[]) => {
+    playables.value = differenceBy(playables.value, deletedSongs, 'id')
+  }
+
+  eventBus.on('SONGS_DELETED', removeDeletedSongs)
+  onBeforeUnmount(() => eventBus.off('SONGS_DELETED', removeDeletedSongs))
 
   provideReadonly(PlayablesKey, playables, false)
   provideReadonly(FilteredPlayablesKey, filteredPlayables, false)

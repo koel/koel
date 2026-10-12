@@ -59,7 +59,7 @@
         <template v-if="playlist?.is_smart">
           <p>
             No songs match the playlist's
-            <a class="inline" @click.prevent="editPlaylist">criteria</a>.
+            <LinkButton class="inline" variant="highlight" @click.prevent="editPlaylist">criteria</LinkButton>.
           </p>
         </template>
         <template v-else>
@@ -102,6 +102,7 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import Btn from '@/components/ui/form/Btn.vue'
+import LinkButton from '@/components/ui/form/LinkButton.vue'
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/playlist/PlaylistContextMenu.vue'))
 const EditPlaylistForm = defineAsyncComponent(() => import('@/components/playlist/EditPlaylistForm.vue'))

@@ -81,7 +81,7 @@ const headingText = computed(() => {
 const { go, url } = useRouter()
 
 const onPressEnter = () => selectedPlayables.value.length && playback().play(selectedPlayables.value[0])
-const goToSongResults = () => go(`${url('search.playables')}/?q=${query.value}`)
+const goToSongResults = () => go(`${url('search.playables')}/?${new URLSearchParams({ q: query.value })}`)
 
 provide(ScrollAwayHeaderKey, null)
 </script>

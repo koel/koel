@@ -9,7 +9,7 @@
     </template>
     <p v-else>
       No active {{ appName }} instance found.
-      <a class="text-k-highlight ml-1" @click.prevent="rescan">Rescan</a>
+      <button class="text-k-highlight ml-1 [font:inherit]" type="button" @click.prevent="rescan">Rescan</button>
     </p>
   </div>
 </template>

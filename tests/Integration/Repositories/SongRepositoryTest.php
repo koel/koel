@@ -35,4 +35,16 @@ class SongRepositoryTest extends TestCase
         self::assertTrue($foundSong->is($song));
         self::assertSame([], $foundSong->getRelations());
     }
+
+    #[Test]
+    public function getManyByPaths(): void
+    {
+        $foo = Song::factory()->createOne(['path' => 'foo']);
+        $bar = Song::factory()->createOne(['path' => 'bar']);
+        Song::factory()->createOne(['path' => 'baz']);
+
+        $songs = $this->songRepository->getManyByPaths(['foo', 'bar', 'qux']);
+
+        self::assertEqualsCanonicalizing([$foo->id, $bar->id], $songs->modelKeys());
+    }
 }

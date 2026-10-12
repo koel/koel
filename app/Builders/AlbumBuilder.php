@@ -44,7 +44,14 @@ class AlbumBuilder extends FavoriteableBuilder
         return $this->whereNot('albums.name', Album::UNKNOWN_NAME);
     }
 
-    private function accessible(): self
+    public function whereAccessibleByUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this->accessible();
+    }
+
+    public function accessible(): self
     {
         if (License::isCommunity()) {
             return $this;
@@ -89,7 +96,7 @@ class AlbumBuilder extends FavoriteableBuilder
         });
     }
 
-    private function withPlayCount($includingFavoriteStatus = false): self
+    public function withPlayCount($includingFavoriteStatus = false): self
     {
         throw_unless($this->user, new LogicException('User must be set to query play counts.'));
 

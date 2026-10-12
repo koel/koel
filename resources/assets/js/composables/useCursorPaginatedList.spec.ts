@@ -52,6 +52,29 @@ describe('useCursorPaginatedList', () => {
     expect(store.paginate).toHaveBeenLastCalledWith({ favorites_only: false, cursor: '', sort: 'year', order: 'desc' })
   })
 
+  it('fetches the first page in the new order when sorting while a page is loading', async () => {
+    const { list, store, sortField } = setup()
+    let resolveStalePage: (cursor: string) => void = () => {}
+
+    store.paginate.mockImplementationOnce(
+      () =>
+        new Promise<string>(resolve => {
+          resolveStalePage = resolve
+        }),
+    )
+
+    const stalePageFetch = list.fetchMore()
+    const sorting = list.sort('year', 'desc')
+
+    resolveStalePage('stale-cursor')
+    await Promise.all([stalePageFetch, sorting])
+
+    expect(sortField.value).toBe('year')
+    expect(store.reset).toHaveBeenCalledTimes(2)
+    expect(store.paginate).toHaveBeenCalledTimes(2)
+    expect(store.paginate).toHaveBeenLastCalledWith({ favorites_only: false, cursor: '', sort: 'year', order: 'desc' })
+  })
+
   it('shows only favorites, and says so when there are none', async () => {
     const { list, items, favoritesOnly } = setup()
     items.value = [

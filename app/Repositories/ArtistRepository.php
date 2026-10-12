@@ -18,6 +18,11 @@ use Illuminate\Support\LazyCollection;
  */
 class ArtistRepository extends Repository implements ScoutableRepository
 {
+    public function isAccessibleByUser(Artist $artist, User $user): bool
+    {
+        return Artist::query()->whereAccessibleByUser($user)->whereKey($artist->id)->exists();
+    }
+
     /**
      * @param string $id
      */
@@ -38,36 +43,55 @@ class ArtistRepository extends Repository implements ScoutableRepository
 
     public function getRecentlyAdded(int $count = 6, ?User $user = null): Collection
     {
-        return Artist::query()
+        $user ??= $this->auth->user();
+
+        $ids = Artist::query()
+            ->select('artists.id')
             ->onlyStandard()
             ->onlyAlbumArtists()
-            ->withUserContext(user: $user ?? $this->auth->user())
-            ->latest()
+            ->setScopedUser($user)
+            ->accessible()
+            ->orderByDesc('artists.created_at')
             ->limit($count)
-            ->get();
+            ->pluck('artists.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, user: $user);
     }
 
     public function getMostPlayed(int $count = 6, ?User $user = null): Collection
     {
-        return Artist::query()
-            ->withUserContext(user: $user ?? $this->auth->user(), includePlayCount: true)
+        $user ??= $this->auth->user();
+
+        $ids = Artist::query()
+            ->select('artists.id')
             ->onlyStandard()
             ->onlyAlbumArtists()
+            ->setScopedUser($user)
+            ->accessible()
+            ->withPlayCount()
             ->orderByDesc('play_count')
             ->limit($count)
-            ->get();
+            ->pluck('artists.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, user: $user);
     }
 
     /** @return Collection<int, Artist> */
     public function getRandom(int $limit, ?User $user = null): Collection
     {
-        return Artist::query()
+        $user ??= $this->auth->user();
+
+        $ids = Artist::query()
+            ->select('artists.id')
             ->onlyStandard()
             ->onlyAlbumArtists()
-            ->withUserContext(user: $user ?? $this->auth->user())
+            ->setScopedUser($user)
+            ->accessible()
             ->inRandomOrder()
             ->limit($limit)
-            ->get();
+            ->pluck('artists.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, user: $user);
     }
 
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
