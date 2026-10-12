@@ -49,6 +49,17 @@ class SongBuilder extends FavoriteableBuilder
         'favorite',
     ];
 
+    public function wherePath(string $path): self
+    {
+        return $this->where('songs.path_hash', simple_hash($path))->where('songs.path', $path);
+    }
+
+    /** @param array<string> $paths */
+    public function wherePathIn(array $paths): self
+    {
+        return $this->whereIn('songs.path_hash', array_map(simple_hash(...), $paths))->whereIn('songs.path', $paths);
+    }
+
     public function inDirectory(string $path): self
     {
         // Make sure the path ends with a directory separator.
