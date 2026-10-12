@@ -12,10 +12,10 @@ describe('searchPlayableResultsScreen.vue', () => {
     const resetResultMock = h.mock(searchStore, 'resetPlayableResultState')
     const searchMock = h.mock(searchStore, 'playableSearch')
 
-    h.visit('/search/songs?q=foo').render(SearchPlayableResultsScreen)
+    h.visit('/search/songs?q=R%26B+%231+%2B+100%25').render(SearchPlayableResultsScreen)
 
     expect(resetResultMock).toHaveBeenCalled()
-    expect(searchMock).toHaveBeenCalledWith('foo')
+    expect(searchMock).toHaveBeenCalledWith('R&B #1 + 100%')
   })
 
   it('puts the search terms in the page title', async () => {

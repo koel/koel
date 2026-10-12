@@ -41,9 +41,9 @@ describe('searchStore', () => {
     const syncAlbumsMock = h.mock(albumStore, 'syncWithVault', result.albums)
     const syncArtistsMock = h.mock(artistStore, 'syncWithVault', result.artists)
 
-    await searchStore.excerptSearch('test')
+    await searchStore.excerptSearch('R&B #1 + more')
 
-    expect(getMock).toHaveBeenCalledWith('search?q=test')
+    expect(getMock).toHaveBeenCalledWith('search?q=R%26B+%231+%2B+more')
     expect(syncSongsMock).toHaveBeenCalledWith(result.songs)
     expect(syncAlbumsMock).toHaveBeenCalledWith(result.albums)
     expect(syncArtistsMock).toHaveBeenCalledWith(result.artists)
@@ -59,9 +59,9 @@ describe('searchStore', () => {
     const getMock = h.mock(http, 'get').mockResolvedValue(songs)
     const syncMock = h.mock(playableStore, 'syncWithVault', songs)
 
-    await searchStore.playableSearch('test')
+    await searchStore.playableSearch('R&B #1 + more')
 
-    expect(getMock).toHaveBeenCalledWith('search/songs?q=test')
+    expect(getMock).toHaveBeenCalledWith('search/songs?q=R%26B+%231+%2B+more')
     expect(syncMock).toHaveBeenCalledWith(songs)
 
     expect(searchStore.state.playables).toEqual(songs)
