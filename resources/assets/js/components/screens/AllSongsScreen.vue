@@ -86,11 +86,14 @@ const cursor = ref<string | null>('')
 const moreSongsAvailable = computed(() => cursor.value !== null)
 const showSkeletons = computed(() => loading.value && songs.value.length === 0)
 
+let listVersion = 0
+
 const fetchSongs = async () => {
   if (!moreSongsAvailable.value || loading.value) {
     return
   }
 
+  const requestedListVersion = listVersion
   loading.value = true
 
   try {
@@ -104,6 +107,18 @@ const fetchSongs = async () => {
   } finally {
     loading.value = false
   }
+
+  if (requestedListVersion !== listVersion) {
+    await refetchFromStart()
+  }
+}
+
+const refetchFromStart = async () => {
+  listVersion++
+  cursor.value = ''
+  playableStore.state.playables = []
+
+  await fetchSongs()
 }
 
 const playAll = async (shuffle: boolean) => {
@@ -118,15 +133,13 @@ const playAll = async (shuffle: boolean) => {
 }
 
 const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
-  cursor.value = ''
-  playableStore.state.playables = []
   sortField = field
   sortOrder = order
 
   lsSet('all-songs-sort-field', field)
   lsSet('all-songs-sort-order', order)
 
-  await fetchSongs()
+  await refetchFromStart()
 }
 
 onMounted(async () => {
