@@ -9,7 +9,7 @@
     <article
       :class="[layout, { tinted: coverBackgroundColor }]"
       :style="{ backgroundColor: coverBackgroundColor }"
-      class="relative group flex h-full overflow-hidden rounded-[inherit] flex-col"
+      class="relative group group/card flex h-full overflow-hidden rounded-[inherit] flex-col"
       data-testid="artist-album-card"
       :draggable="!isMobile.any"
       tabindex="0"
