@@ -70,7 +70,7 @@
 import { faAdd } from '@fortawesome/free-solid-svg-icons'
 import { RadioIcon } from 'lucide-vue-next'
 
-import { computed, onMounted, provide, ref } from 'vue'
+import { computed, onMounted, provide, ref, toRef } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -100,7 +100,7 @@ import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 const AddRadioStationForm = defineAsyncComponent(() => import('@/components/radio/AddRadioStationForm.vue'))
 const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
-const fuzzy = useFuzzySearch<RadioStation>(radioStationStore.state.stations, ['name', 'description'])
+const fuzzy = useFuzzySearch<RadioStation>(toRef(radioStationStore.state, 'stations'), ['name', 'description'])
 
 const loading = ref(false)
 const keywords = ref('')
