@@ -15,7 +15,9 @@
       </div>
 
       <div v-show="!showingActivateLicenseForm" class="space-x-3" data-testid="buttons">
-        <Btn size="large" variant="destructive" @click.prevent="openPurchaseOverlay">Purchase Koel Plus</Btn>
+        <Btn size="large" variant="destructive" :disabled="openingCheckout" @click.prevent="openPurchaseOverlay">
+          Purchase Koel Plus
+        </Btn>
         <Btn size="large" variant="success" @click.prevent="showActivateLicenseForm">I have a license key</Btn>
       </div>
 
@@ -38,6 +40,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import ActivateLicenseForm from '@/components/koel-plus/ActivateLicenseForm.vue'
@@ -45,15 +48,25 @@ import ActivateLicenseForm from '@/components/koel-plus/ActivateLicenseForm.vue'
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { checkoutUrl, loadLemonSqueezy } = useKoelPlus()
+const { toastError } = useMessageToaster()
 
 const close = () => emit('close')
 
 const showingActivateLicenseForm = ref(false)
+const openingCheckout = ref(false)
 
 const openPurchaseOverlay = async () => {
-  close()
-  await loadLemonSqueezy()
-  window.LemonSqueezy.Url.Open(checkoutUrl.value)
+  openingCheckout.value = true
+
+  try {
+    await loadLemonSqueezy()
+    close()
+    window.LemonSqueezy.Url.Open(checkoutUrl.value)
+  } catch {
+    toastError('Failed to load the checkout. Please try again.')
+  } finally {
+    openingCheckout.value = false
+  }
 }
 
 const showActivateLicenseForm = () => (showingActivateLicenseForm.value = true)

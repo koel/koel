@@ -11,7 +11,11 @@ const loadLemonSqueezy = () => {
       window.createLemonSqueezy?.()
       resolve()
     }
-    script.onerror = () => reject(new Error('Failed to load Lemon Squeezy'))
+    script.onerror = () => {
+      script.remove()
+      lemonSqueezyLoaded = null
+      reject(new Error('Failed to load Lemon Squeezy'))
+    }
     document.head.appendChild(script)
   })
 

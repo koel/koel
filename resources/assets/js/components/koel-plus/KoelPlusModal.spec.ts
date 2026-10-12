@@ -1,32 +1,67 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { MessageToasterStub } from '@/__tests__/stubs'
 import { commonStore } from '@/stores/commonStore'
+
+const loadLemonSqueezyMock = vi.fn()
+
+vi.mock('@/composables/useKoelPlus', async importOriginal => {
+  const { useKoelPlus } = await importOriginal<typeof import('@/composables/useKoelPlus')>()
+
+  return {
+    useKoelPlus: () => ({ ...useKoelPlus(), loadLemonSqueezy: loadLemonSqueezyMock }),
+  }
+})
+
 import Component from './KoelPlusModal.vue'
 
 describe('koelPlusModal.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => {
+      loadLemonSqueezyMock.mockReset()
+      commonStore.state.koel_plus.product_id = '42'
+    },
+  })
 
-  it('shows button to purchase Koel Plus', async () => {
-    commonStore.state.koel_plus.product_id = '42'
-    h.render(Component)
+  it('opens checkout once Lemon Squeezy has loaded', async () => {
+    let finishLoading: Closure = () => {}
+    loadLemonSqueezyMock.mockReturnValue(new Promise<void>(resolve => (finishLoading = resolve)))
+    const openCheckoutMock = h.mock(window.LemonSqueezy.Url, 'Open')
+    const { emitted } = h.render(Component)
 
     screen.getByTestId('buttons')
     expect(screen.queryByTestId('activateForm')).toBeNull()
+
     await h.user.click(screen.getByText('Purchase Koel Plus'))
-    document.head
-      .querySelector('script[src="https://app.lemonsqueezy.com/js/lemon.js"]')!
-      .dispatchEvent(new Event('load'))
+
+    expect(openCheckoutMock).not.toHaveBeenCalled()
+    expect(emitted().close).toBeUndefined()
+    expect(screen.getByRole('button', { name: 'Purchase Koel Plus' })).toHaveProperty('disabled', true)
+
+    finishLoading()
 
     await waitFor(() =>
-      expect(globalThis.LemonSqueezy.Url.Open).toHaveBeenCalledWith(
-        'https://store.koel.dev/checkout/buy/42?embed=1&media=0&desc=0',
-      ),
+      expect(openCheckoutMock).toHaveBeenCalledWith('https://store.koel.dev/checkout/buy/42?embed=1&media=0&desc=0'),
     )
+    expect(emitted().close).toHaveLength(1)
+  })
+
+  it('stays open and shows an error when Lemon Squeezy fails to load', async () => {
+    loadLemonSqueezyMock.mockRejectedValue(new Error('Failed to load Lemon Squeezy'))
+    const openCheckoutMock = h.mock(window.LemonSqueezy.Url, 'Open')
+    const toastErrorMock = h.mock(MessageToasterStub.value, 'error')
+    const { emitted } = h.render(Component)
+
+    await h.user.click(screen.getByText('Purchase Koel Plus'))
+
+    await waitFor(() => expect(toastErrorMock).toHaveBeenCalledWith('Failed to load the checkout. Please try again.'))
+    expect(openCheckoutMock).not.toHaveBeenCalled()
+    expect(emitted().close).toBeUndefined()
+    expect(screen.getByRole('button', { name: 'Purchase Koel Plus' })).toHaveProperty('disabled', false)
   })
 
   it('shows form to activate Koel Plus', async () => {
-    commonStore.state.koel_plus.product_id = '42'
     h.render(Component)
     await h.user.click(screen.getByText('I have a license key'))
     screen.getByTestId('activateForm')
