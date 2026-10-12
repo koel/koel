@@ -72,6 +72,13 @@ class ArtistBuilder extends FavoriteableBuilder
         }]);
     }
 
+    public function whereAccessibleByUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this->accessible();
+    }
+
     private function accessible(): self
     {
         if (License::isCommunity()) {

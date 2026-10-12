@@ -6,12 +6,17 @@ use App\Enums\Acl\Permission;
 use App\Facades\License;
 use App\Models\Artist;
 use App\Models\User;
+use App\Repositories\ArtistRepository;
 
 class ArtistPolicy
 {
+    public function __construct(
+        private readonly ArtistRepository $artistRepository,
+    ) {}
+
     public function access(User $user, Artist $artist): bool
     {
-        return License::isCommunity() || $artist->belongsToUser($user);
+        return License::isCommunity() || $this->artistRepository->isAccessibleByUser($artist, $user);
     }
 
     public function update(User $user, Artist $artist): bool
