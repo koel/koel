@@ -7,7 +7,16 @@
       extending above and below the visible 4px track for easy clicking.
     -->
     <div
+      :aria-valuemax="durationSeconds"
+      :aria-valuenow="positionSeconds"
+      :aria-valuetext="positionText"
+      aria-label="Seek"
+      aria-valuemin="0"
       class="hit-area"
+      role="slider"
+      tabindex="0"
+      @keydown.home.prevent="seekToStart"
+      @keydown.end.prevent="seekToEnd"
       @pointerdown="onPointerDown"
       @click="onClickSeek"
       @mousemove="onHover"
@@ -23,15 +32,20 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { playback } from '@/services/playbackManager'
 import { crossfadeService } from '@/services/crossfadeService'
+import { secondsToHis } from '@/utils/formatters'
 
 const progress = ref(0)
 const bufferProgress = ref(0)
 const hoverProgress = ref(0)
 const isLoading = ref(false)
 const isDragging = ref(false)
+const positionSeconds = ref(0)
+const durationSeconds = ref(0)
+
+const positionText = computed(() => `${secondsToHis(positionSeconds.value)} of ${secondsToHis(durationSeconds.value)}`)
 
 const getActiveMedia = (): HTMLMediaElement | null => {
   if (crossfadeService.active && crossfadeService.state) {
@@ -55,6 +69,11 @@ const updateProgress = () => {
   } else {
     progress.value = 0
   }
+
+  const hasKnownDuration = Number.isFinite(duration) && duration > 0
+
+  positionSeconds.value = hasKnownDuration ? Math.round(currentTime) : 0
+  durationSeconds.value = hasKnownDuration ? Math.round(duration) : 0
 
   // Buffer progress
   if (buffered.length > 0 && duration > 0) {
@@ -88,6 +107,18 @@ const seekFromEvent = (e: MouseEvent | PointerEvent) => {
   }
 
   service.seekTo(computeRatio(e.clientX, targetTrack) * service.media.duration)
+}
+
+const seekToStart = () => playback('current')?.seekTo(0)
+
+const seekToEnd = () => {
+  const service = playback('current')
+
+  if (!service?.media?.duration) {
+    return
+  }
+
+  service.seekTo(service.media.duration)
 }
 
 const onClickSeek = (e: MouseEvent) => {
