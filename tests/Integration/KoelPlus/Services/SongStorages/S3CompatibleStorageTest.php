@@ -78,6 +78,21 @@ class S3CompatibleStorageTest extends PlusTestCase
     }
 
     #[Test]
+    public function getLocalPath(): void
+    {
+        Ulid::freeze('random');
+        $this->freezeTime();
+
+        $presignedUrl = $this->service->getPresignedUrl('123__random__song.mp3');
+        $expectedLocalPath = artifact_path('tmp/random_123__random__song.mp3');
+
+        File::expects('ensureDirectoryExists')->with(dirname($expectedLocalPath));
+        File::expects('copy')->with($presignedUrl, $expectedLocalPath);
+
+        self::assertSame($expectedLocalPath, $this->service->getLocalPath('s3://koel/123__random__song.mp3'));
+    }
+
+    #[Test]
     public function deleteWithNoBackup(): void
     {
         Storage::disk('s3')->put('full.mp3', 'fake content');
