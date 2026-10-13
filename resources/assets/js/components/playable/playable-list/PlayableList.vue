@@ -126,7 +126,7 @@ const contentType = computed(() => getPlayableCollectionContentType(rows.value.m
 
 const getAllPlayablesWithSort = () => rows.value.map(row => row.playable)
 
-watch(selected, () => setSelectedPlayables(selected.value.map(({ playable }) => playable)), { deep: true })
+watch(selected, () => setSelectedPlayables(selected.value.map(({ playable }) => playable)))
 
 const sort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
   // we simply pass the sort event from the header up to the parent component
@@ -138,7 +138,7 @@ const render = () => {
   reapplySelection()
 }
 
-watch(playables, () => render(), { deep: true })
+watch(rows, () => render())
 
 const handleDelete = () => {
   emit('press:delete') // eslint-disable-line vue/custom-event-name-casing

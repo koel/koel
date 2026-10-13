@@ -82,7 +82,7 @@ const {
   reapplySelection,
 } = useListSelection(rows, () => 'item.id')
 
-watch(items, () => reapplySelection(), { deep: true })
+watch(rows, () => reapplySelection())
 
 const selectedItems = computed(() => selected.value.map(row => row.item))
 const onlySongsSelected = computed(() => selectedItems.value.every(isSong))
