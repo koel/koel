@@ -133,39 +133,14 @@ class ArtistBuilder extends FavoriteableBuilder
             ->addSelect(DB::raw('COALESCE(SUM(interactions.play_count), 0) as play_count'));
     }
 
-    private static function normalizeSortColumn(string $column): string
-    {
-        return array_key_exists($column, self::SORT_COLUMNS_NORMALIZE_MAP)
-            ? self::SORT_COLUMNS_NORMALIZE_MAP[$column]
-            : $column;
-    }
-
     public function sort(string $column, string $direction): self
     {
-        $column = self::normalizeSortColumn($column);
+        $column = self::SORT_COLUMNS_NORMALIZE_MAP[$column] ?? $column;
 
         Assert::oneOf($column, self::VALID_SORT_COLUMNS);
         Assert::oneOf(strtolower($direction), ['asc', 'desc']);
 
         return $this->orderBy($column, $direction);
-    }
-
-    private function withRatingSubquery(): self
-    {
-        throw_unless($this->user, new LogicException('User must be set to query artist ratings.'));
-
-        $this->leftJoin('ratings as artist_ratings', function (JoinClause $join): void {
-            $join->on('artist_ratings.rateable_id', 'artists.id')->where(
-                'artist_ratings.rateable_type',
-                'artist',
-            )->where('artist_ratings.user_id', $this->user->id);
-        })->addSelect(DB::raw('(COALESCE(artist_ratings.rating, 0)) as rating'));
-
-        if ($this->getQuery()->groups) {
-            $this->groupBy('artist_ratings.rating');
-        }
-
-        return $this;
     }
 
     /**
@@ -214,7 +189,7 @@ class ArtistBuilder extends FavoriteableBuilder
             ->accessible()
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
             ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus))
-            ->withRatingSubquery()
+            ->withRatingJoin()
             ->withAlbumCover();
     }
 }

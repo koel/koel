@@ -138,24 +138,6 @@ class AlbumBuilder extends FavoriteableBuilder
         ]);
     }
 
-    private function withRatingSubquery(): self
-    {
-        throw_unless($this->user, new LogicException('User must be set to query album ratings.'));
-
-        $this->leftJoin('ratings as album_ratings', function (JoinClause $join): void {
-            $join->on('album_ratings.rateable_id', 'albums.id')->where('album_ratings.rateable_type', 'album')->where(
-                'album_ratings.user_id',
-                $this->user->id,
-            );
-        })->addSelect(DB::raw('(COALESCE(album_ratings.rating, 0)) as rating'));
-
-        if ($this->getQuery()->groups) {
-            $this->groupBy('album_ratings.rating');
-        }
-
-        return $this;
-    }
-
     public function withUserContext(
         User $user,
         bool $includeFavoriteStatus = true,
@@ -170,19 +152,12 @@ class AlbumBuilder extends FavoriteableBuilder
             ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus))
             ->withLengthSubquery()
             ->withLastPlayedSubquery()
-            ->withRatingSubquery();
-    }
-
-    private static function normalizeSortColumn(string $column): string
-    {
-        return array_key_exists($column, self::SORT_COLUMNS_NORMALIZE_MAP)
-            ? self::SORT_COLUMNS_NORMALIZE_MAP[$column]
-            : $column;
+            ->withRatingJoin();
     }
 
     public function sort(string $column, string $direction): self
     {
-        $column = self::normalizeSortColumn($column);
+        $column = self::SORT_COLUMNS_NORMALIZE_MAP[$column] ?? $column;
 
         Assert::oneOf($column, self::VALID_SORT_COLUMNS);
         Assert::oneOf(strtolower($direction), ['asc', 'desc']);

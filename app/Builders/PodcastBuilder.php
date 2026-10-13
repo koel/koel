@@ -6,7 +6,6 @@ use App\Builders\Concerns\CanScopeByUser;
 use App\Models\Podcast;
 use App\Models\User;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\DB;
 use LogicException;
 
 /**
@@ -30,18 +29,5 @@ class PodcastBuilder extends FavoriteableBuilder
         $this->user = $user;
 
         return $this->withFavoriteStatus(favoritesOnly: $favoritesOnly)->withRatingSubquery();
-    }
-
-    private function withRatingSubquery(): self
-    {
-        throw_unless($this->user, new LogicException('User must be set to query podcast ratings.'));
-
-        return $this->addSelect([
-            'rating' => DB::table('ratings')
-                ->where('rateable_type', 'podcast')
-                ->where('user_id', $this->user->id)
-                ->whereColumn('rateable_id', 'podcasts.id')
-                ->selectRaw('COALESCE(MAX(rating), 0)'),
-        ]);
     }
 }

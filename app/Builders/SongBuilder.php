@@ -121,19 +121,6 @@ class SongBuilder extends FavoriteableBuilder
         });
     }
 
-    private function withRatingSubquery(): self
-    {
-        throw_unless($this->user, new LogicException('User must be set to query song ratings.'));
-
-        return $this->addSelect([
-            'rating' => DB::table('ratings')
-                ->where('rateable_type', 'playable')
-                ->where('user_id', $this->user->id)
-                ->whereColumn('rateable_id', 'songs.id')
-                ->selectRaw('COALESCE(MAX(rating), 0)'),
-        ]);
-    }
-
     public function withUserContext(
         bool $includeFavoriteStatus = true,
         bool $favoritesOnly = false,
@@ -148,7 +135,7 @@ class SongBuilder extends FavoriteableBuilder
 
     private function sortByOneColumn(string $column, string $direction): self
     {
-        $column = self::normalizeSortColumn($column);
+        $column = self::SORT_COLUMNS_NORMALIZE_MAP[$column] ?? $column;
 
         Assert::oneOf($column, self::VALID_SORT_COLUMNS);
         Assert::oneOf(strtolower($direction), ['asc', 'desc']);
@@ -209,13 +196,6 @@ class SongBuilder extends FavoriteableBuilder
         }
 
         return $this;
-    }
-
-    private static function normalizeSortColumn(string $column): string
-    {
-        return array_key_exists($column, self::SORT_COLUMNS_NORMALIZE_MAP)
-            ? self::SORT_COLUMNS_NORMALIZE_MAP[$column]
-            : $column;
     }
 
     public function storedOnCloud(): self
