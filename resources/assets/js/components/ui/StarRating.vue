@@ -19,6 +19,7 @@
         :name="groupName"
         :value="star"
         :checked="currentRating === star"
+        :tabindex="focusable ? undefined : -1"
         class="sr-only"
         @change="onChange(star)"
       />
@@ -43,8 +44,9 @@ const props = withDefaults(
     rateable?: Rateable
     rating?: number
     size?: 'xs' | 'sm'
+    focusable?: boolean
   }>(),
-  { size: 'sm' },
+  { size: 'sm', focusable: true },
 )
 
 const emit = defineEmits<{ (e: 'rate', value: number): void }>()

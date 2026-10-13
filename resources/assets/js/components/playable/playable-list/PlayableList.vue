@@ -6,16 +6,19 @@
     @keydown.delete.prevent.stop="handleDelete"
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="selectAllWithKeyboard"
+    @keydown="onKeydown"
+    @focusin="onFocusIn"
   >
     <VirtualScroller
       carries-screen-header
       ref="virtualScroller"
       :item-height="calculatedItemHeight"
       :items="rows"
+      :list-attrs="{ role: 'listbox', 'aria-multiselectable': 'true', 'aria-label': 'Songs' }"
       @scrolled-to-end="$emit('scrolled-to-end')"
     >
       <template #before>
-        <ScreenHeaderPinned v-if="config.hasHeader">
+        <ScreenHeaderPinned v-if="config.hasHeader" ref="pinnedHeader">
           <PlayableListHeader :content-type="contentType" @sort="sort" />
         </ScreenHeaderPinned>
       </template>
@@ -25,6 +28,7 @@
           :key="item.playable.id"
           :item="item"
           :show-disc="showDiscLabel(item.playable)"
+          :tabbable="item.playable.id === tabStopPlayableId"
           :draggable="!isMobile.any"
           @click="onClick(item, $event)"
           @dragleave="onDragLeave"
@@ -90,6 +94,7 @@ const [context] = requireInjection<[PlayableListContext]>(PlayableListContextKey
 
 const wrapper = ref<HTMLElement>()
 const virtualScroller = ref<InstanceType<typeof VirtualScroller>>()
+const pinnedHeader = ref<InstanceType<typeof ScreenHeaderPinned>>()
 const sortFields = ref<PlayableListSortField[]>([])
 
 const rows = computed(() => {
@@ -148,6 +153,122 @@ const handleDelete = () => {
 const handleEnter = (event: KeyboardEvent) => {
   emit('press:enter', event) // eslint-disable-line vue/custom-event-name-casing
   clearSelection()
+}
+
+const activePlayableId = ref<Playable['id'] | null>(null)
+
+const renderedRows = ref<PlayableRow[]>([])
+
+watch(
+  () => virtualScroller.value?.renderedItems ?? [],
+  items => (renderedRows.value = items),
+)
+
+const tabStopPlayableId = computed(() => {
+  if (renderedRows.value.some(row => row.playable.id === activePlayableId.value)) {
+    return activePlayableId.value
+  }
+
+  return renderedRows.value[0]?.playable.id ?? null
+})
+
+const findRowElement = (row: PlayableRow) =>
+  Array.from(wrapper.value?.querySelectorAll<HTMLElement>('[role="option"]') ?? []).find(
+    element => element.dataset.playableId === row.playable.id,
+  )
+
+const findRowOfElement = (element: Element | null) => {
+  const playableId = element?.closest<HTMLElement>('[role="option"]')?.dataset.playableId
+
+  return rows.value.find(row => row.playable.id === playableId)
+}
+
+const revealRowElement = (element: HTMLElement) => {
+  const scroller = virtualScroller.value?.getScrollerElement()
+
+  if (!scroller) {
+    return
+  }
+
+  const rowRect = element.getBoundingClientRect()
+  const scrollerRect = scroller.getBoundingClientRect()
+  const visibleTop = pinnedHeader.value ? pinnedHeader.value.$el.getBoundingClientRect().bottom : scrollerRect.top
+  const visibleBottom = scrollerRect.bottom
+
+  if (rowRect.top < visibleTop) {
+    virtualScroller.value?.jumpTo(scroller.scrollTop - (visibleTop - rowRect.top))
+  } else if (rowRect.bottom > visibleBottom) {
+    virtualScroller.value?.jumpTo(scroller.scrollTop + (rowRect.bottom - visibleBottom))
+  }
+}
+
+const focusRow = async (row: PlayableRow) => {
+  activePlayableId.value = row.playable.id
+
+  if (!findRowElement(row)) {
+    virtualScroller.value?.jumpToIndex(rows.value.indexOf(row))
+    await nextTick()
+  }
+
+  const element = findRowElement(row)
+
+  if (!element) {
+    return
+  }
+
+  revealRowElement(element)
+  await nextTick()
+
+  findRowElement(row)?.focus({ preventScroll: true })
+}
+
+const onFocusIn = (event: FocusEvent) => {
+  const row = findRowOfElement(event.target as Element)
+
+  if (row) {
+    activePlayableId.value = row.playable.id
+  }
+}
+
+const onKeydown = async (event: KeyboardEvent) => {
+  const target = event.target as HTMLElement
+  const row = target.getAttribute('role') === 'option' ? findRowOfElement(target) : undefined
+
+  if (!row) {
+    return
+  }
+
+  if (event.key === ' ') {
+    event.preventDefault()
+    toggleSelected(row)
+    return
+  }
+
+  const index = rows.value.indexOf(row)
+  const lastIndex = rows.value.length - 1
+
+  const nextIndexByKey: Record<string, number> = {
+    ArrowDown: Math.min(index + 1, lastIndex),
+    ArrowUp: Math.max(index - 1, 0),
+    Home: 0,
+    End: lastIndex,
+  }
+
+  if (!(event.key in nextIndexByKey)) {
+    return
+  }
+
+  event.preventDefault()
+
+  const nextRow = rows.value[nextIndexByKey[event.key]]
+  const extendsSelection = event.shiftKey && ['ArrowDown', 'ArrowUp'].includes(event.key)
+
+  if (extendsSelection) {
+    select(row)
+    select(nextRow)
+  }
+
+  await focusRow(nextRow)
 }
 
 const onDragStart = async (row: PlayableRow, event: DragEvent) => {

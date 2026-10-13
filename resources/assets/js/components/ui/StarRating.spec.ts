@@ -90,4 +90,10 @@ describe('starRating.vue', () => {
     screen.getByRole('radio', { name: 'Rate 4 of 5' })
     expect(screen.queryByRole('radio', { name: 'Rate 3 of 5' })).toBeNull()
   })
+
+  it('keeps the stars out of the tab order when not focusable', () => {
+    h.render(Component, { props: { rating: 3, focusable: false } })
+
+    expect(screen.getAllByRole('radio').map(star => star.tabIndex)).toEqual([-1, -1, -1, -1, -1])
+  })
 })

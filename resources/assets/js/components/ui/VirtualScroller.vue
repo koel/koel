@@ -11,7 +11,11 @@
     <ScreenHeaderSpace v-if="carriesScreenHeader" />
     <slot name="before" />
     <div ref="itemsBox" :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
-      <div :style="{ transform: `translateY(${offsetY}px)` }" class="will-change-transform items-wrapper">
+      <div
+        v-bind="listAttrs"
+        :style="{ transform: `translateY(${offsetY}px)` }"
+        class="will-change-transform items-wrapper"
+      >
         <slot v-for="item in renderedItems" :item="item" />
       </div>
     </div>
@@ -30,8 +34,9 @@ const props = withDefaults(
     itemHeight: number
     /** Scrolls the screen header away with the items and leaves room for it at the top. */
     carriesScreenHeader?: boolean
+    listAttrs?: Record<string, string>
   }>(),
-  { carriesScreenHeader: false },
+  { carriesScreenHeader: false, listAttrs: () => ({}) },
 )
 const emit = defineEmits<{
   (e: 'scrolled-to-end'): void
@@ -87,18 +92,28 @@ onMounted(() => {
 
 onBeforeUnmount(() => observer.unobserve(scroller.value!))
 
+const centeredTopOf = (index: number) => {
+  itemsTop.value = itemsBox.value?.offsetTop ?? 0
+
+  return Math.max(0, itemsTop.value + index * itemHeight.value - scrollerHeight.value / 2 + itemHeight.value / 2)
+}
+
 const scrollToIndex = (index: number) => {
+  scroller.value?.scrollTo({ top: centeredTopOf(index), behavior: 'smooth' })
+}
+
+const jumpTo = (top: number) => {
   if (!scroller.value) {
     return
   }
 
-  itemsTop.value = itemsBox.value?.offsetTop ?? 0
-
-  const top = itemsTop.value + index * itemHeight.value - scrollerHeight.value / 2 + itemHeight.value / 2
-  scroller.value.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
+  scroller.value.scrollTop = Math.max(0, top)
+  scrollTop.value = scroller.value.scrollTop
 }
 
-defineExpose({ scrollToIndex, getScrollerElement: () => scroller.value })
+const jumpToIndex = (index: number) => jumpTo(centeredTopOf(index))
+
+defineExpose({ scrollToIndex, jumpTo, jumpToIndex, renderedItems, getScrollerElement: () => scroller.value })
 </script>
 
 <style lang="postcss" scoped>

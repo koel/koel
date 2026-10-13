@@ -142,6 +142,13 @@ describe('playableListItem.vue', () => {
     expect(toggleFavoriteMock).toHaveBeenCalledWith(row.playable)
   })
 
+  it('keeps its controls out of the tab order', () => {
+    const { container } = renderComponent()
+    const buttons = Array.from(container.querySelectorAll('button'))
+
+    expect(buttons.map(button => button.tabIndex)).toEqual([-1, -1, -1])
+  })
+
   it('shows spinner instead of offline mark when caching', () => {
     isCachingMock.mockReturnValue(true)
     isCachedMock.mockReturnValue(true)
