@@ -2,20 +2,19 @@
 
 namespace App\Services\Scanners\Strategies;
 
+use App\Services\WorkerProcessPool;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
 use SplFileInfo;
-use Symfony\Component\Process\Process;
-use Throwable;
 
-// @mago-ignore lint:cyclomatic-complexity,kan-defect
 class ParallelScanStrategy
 {
     public function __construct(
         private readonly ScanResultDeserializer $deserializer,
+        private readonly WorkerProcessPool $workerPool,
     ) {}
 
     /** @param iterable<SplFileInfo> $files */
@@ -45,22 +44,36 @@ class ParallelScanStrategy
         ScanConfiguration $config,
         ?callable $onProgress,
     ): ScanResultCollection {
+        $results = ScanResultCollection::create();
         $manifests = [];
-        $processes = [];
 
         try {
             foreach ($chunks as $chunk) {
                 $manifest = tempnam(sys_get_temp_dir(), 'koel_scan_');
                 File::put($manifest, json_encode($chunk));
                 $manifests[] = $manifest;
-
-                $process = new Process(self::buildCommand($manifest, $config), base_path());
-                $process->setTimeout(config('koel.scan.timeout'));
-                $process->start();
-                $processes[] = $process;
             }
 
-            return $this->collectResults($processes, $onProgress);
+            $this->workerPool->run(
+                commands: array_map(static fn (string $manifest): array => self::buildCommand(
+                    $manifest,
+                    $config,
+                ), $manifests),
+                timeout: config('koel.scan.timeout'),
+                onOutputLine: fn (string $line) => $this->addResult(
+                    $this->deserializer->deserialize($line),
+                    $results,
+                    $onProgress,
+                ),
+                onWorkerFailure: static function (?int $exitCode, string $errorOutput): void {
+                    $stderr = trim($errorOutput);
+                    $msg = $stderr ?: 'Process exited with code ' . ($exitCode ?? 'unknown');
+
+                    throw new RuntimeException("Parallel scan worker failed: $msg");
+                },
+            );
+
+            return $results;
         } finally {
             foreach ($manifests as $manifest) {
                 File::delete($manifest);
@@ -94,104 +107,6 @@ class ParallelScanStrategy
         }
 
         return $command;
-    }
-
-    /** @param Process[] $processes */
-    private function collectResults(array $processes, ?callable $onProgress): ScanResultCollection
-    {
-        $results = ScanResultCollection::create();
-        $buffers = array_fill(0, count($processes), '');
-        $errBuffers = array_fill(0, count($processes), '');
-
-        try {
-            while ($processes) {
-                foreach ($processes as $i => $process) {
-                    $this->drainStdout($process, $buffers[$i], $results, $onProgress);
-                    $this->drainStderr($process, $errBuffers[$i]);
-
-                    if (!$process->isRunning()) {
-                        $this->finalizeProcess($process, $buffers[$i], $errBuffers[$i], $results, $onProgress);
-                        unset($processes[$i], $buffers[$i], $errBuffers[$i]);
-                    }
-                }
-
-                if ($processes) {
-                    usleep(50_000); // 50ms
-                }
-            }
-        } catch (Throwable $e) {
-            $this->terminateAll($processes);
-            throw $e;
-        }
-
-        return $results;
-    }
-
-    /** @param Process[] $processes */
-    private function terminateAll(array $processes): void
-    {
-        foreach ($processes as $process) {
-            try {
-                if (!$process->isRunning()) {
-                    continue;
-                }
-
-                $process->stop(1);
-
-                // @mago-ignore lint:no-empty-catch-clause
-            } catch (Throwable) {
-            }
-        }
-    }
-
-    private function drainStdout(
-        Process $process,
-        string &$buffer,
-        ScanResultCollection $results,
-        ?callable $onProgress,
-    ): void {
-        $output = $process->getIncrementalOutput();
-
-        if ($output === '') {
-            return;
-        }
-
-        $buffer .= $output;
-
-        while (($newlinePos = strpos($buffer, "\n")) !== false) {
-            $line = substr($buffer, 0, $newlinePos);
-            $buffer = substr($buffer, $newlinePos + 1);
-
-            $this->addResult($this->deserializer->deserialize($line), $results, $onProgress);
-        }
-    }
-
-    private function drainStderr(Process $process, string &$errBuffer): void
-    {
-        $errOutput = $process->getIncrementalErrorOutput();
-
-        if ($errOutput !== '') {
-            $errBuffer .= $errOutput;
-        }
-    }
-
-    private function finalizeProcess(
-        Process $process,
-        string $buffer,
-        string $errBuffer,
-        ScanResultCollection $results,
-        ?callable $onProgress,
-    ): void {
-        if (trim($buffer) !== '') {
-            $this->addResult($this->deserializer->deserialize($buffer), $results, $onProgress);
-        }
-
-        if (!$process->isSuccessful()) {
-            $stderr = trim($errBuffer);
-            $msg = $stderr ?: 'Process exited with code ' . ($process->getExitCode() ?? 'unknown');
-
-            throw new RuntimeException("Parallel scan worker failed: $msg");
-        }
     }
 
     private function addResult(?ScanResult $result, ScanResultCollection $results, ?callable $onProgress): void
