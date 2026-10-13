@@ -35,6 +35,7 @@
 </template>
 
 <script lang="ts" setup>
+import { onBeforeUnmount } from 'vue'
 import { useRouter } from '@/composables/useRouter'
 import { eventBus } from '@/utils/eventBus'
 import MarqueeText from '@/components/ui/MarqueeText.vue'
@@ -86,6 +87,8 @@ const onDblClick = () => {
   clearTimeout(clickTimer)
   props.onDblclick?.()
 }
+
+onBeforeUnmount(() => clearTimeout(clickTimer))
 </script>
 
 <style lang="postcss" scoped>

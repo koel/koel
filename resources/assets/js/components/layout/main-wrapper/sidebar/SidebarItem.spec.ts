@@ -56,6 +56,30 @@ describe('sidebarItem', () => {
     expect(mock).not.toHaveBeenCalledWith('TOGGLE_SIDEBAR')
   })
 
+  it('does not navigate after being removed during the double-click wait', async () => {
+    vi.useFakeTimers()
+    const mock = h.mock(eventBus, 'emit')
+    const { unmount } = renderComponent(null, vi.fn())
+
+    screen.getByRole('link').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    unmount()
+    vi.advanceTimersByTime(200)
+    vi.useRealTimers()
+
+    expect(mock).not.toHaveBeenCalledWith('TOGGLE_SIDEBAR')
+  })
+
+  it.each([1, 2])('leaves a click with mouse button %i to the browser', button => {
+    const mock = h.mock(eventBus, 'emit')
+    renderComponent()
+
+    const click = new MouseEvent('click', { bubbles: true, cancelable: true, button })
+    screen.getByRole('link').dispatchEvent(click)
+
+    expect(click.defaultPrevented).toBe(false)
+    expect(mock).not.toHaveBeenCalledWith('TOGGLE_SIDEBAR')
+  })
+
   it('stays in place and explains why when disabled', async () => {
     const mock = h.mock(eventBus, 'emit')
     renderComponent('Not now')
