@@ -44,7 +44,9 @@ class EmbedController extends Controller
     {
         try {
             $options = EmbedOptions::fromRequest($request);
-            $theme = License::isPlus() ? $this->themeRepository->findOne($options->theme) : null;
+            $theme = License::isPlus()
+                ? $this->themeRepository->findUserThemeById($options->theme, $embed->user)
+                : null;
 
             return response()->json([
                 'embed' => EmbedResource::make($embed, $this->songRepository->getForEmbed($embed)),

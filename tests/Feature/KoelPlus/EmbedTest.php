@@ -20,20 +20,30 @@ class EmbedTest extends PlusTestCase
     #[Test]
     public function getPayloadWithCustomTheme(): void
     {
-        $theme = Theme::factory()->createOne();
+        $embed = Embed::factory()->createOne();
+        $theme = Theme::factory()->for($embed->user)->createOne();
 
         $jsonStructure = [
             'embed' => EmbedResource::JSON_PUBLIC_STRUCTURE,
             'options' => EmbedOptionsResource::JSON_STRUCTURE,
             'theme' => ThemeResource::JSON_STRUCTURE,
         ];
-        $embed = Embed::factory()->createOne();
         $options = EmbedOptions::make(theme: $theme->id);
 
         $this->getAs("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonStructure($jsonStructure);
 
         // getJson() instead of getAs() to make sure it passes without authentication
         $this->getJson("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonStructure($jsonStructure);
+    }
+
+    #[Test]
+    public function getPayloadIgnoresAnotherUsersTheme(): void
+    {
+        $embed = Embed::factory()->createOne();
+        $theme = Theme::factory()->createOne();
+        $options = EmbedOptions::make(theme: $theme->id);
+
+        $this->getJson("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonPath('theme', null);
     }
 
     #[Test]
