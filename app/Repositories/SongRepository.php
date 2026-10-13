@@ -321,15 +321,49 @@ class SongRepository extends Repository implements ScoutableRepository
 
         $query = Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())->withUserContext();
 
-        $query->where(static function (SongBuilder $anyGroupQuery) use ($playlist): void {
+        return self::limitToSmartPlaylistRules($query, $playlist)
+            ->orderBy('songs.title')
+            ->limit(self::LIST_SIZE_LIMIT)
+            ->get();
+    }
+
+    /**
+     * Count and total the length of the songs a smart playlist returns, without loading them.
+     *
+     * @return array{count: int, length: float}
+     */
+    public function getSmartPlaylistStats(Playlist $playlist, User $user): array
+    {
+        throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
+
+        $matchingSongs = self::limitToSmartPlaylistRules(
+            Song::query(type: PlayableType::SONG, user: $user)->withUserContext(includeFavoriteStatus: false),
+            $playlist,
+        )
+            ->select('songs.length')
+            ->orderBy('songs.title')
+            ->limit(self::LIST_SIZE_LIMIT);
+
+        $stats = DB::query()
+            ->fromSub($matchingSongs, 'matching_songs')
+            ->selectRaw('COUNT(*) as song_count, COALESCE(SUM(length), 0) as total_length')
+            ->first();
+
+        return [
+            'count' => (int) $stats->song_count,
+            'length' => (float) $stats->total_length,
+        ];
+    }
+
+    private static function limitToSmartPlaylistRules(SongBuilder $query, Playlist $playlist): SongBuilder
+    {
+        return $query->where(static function (SongBuilder $anyGroupQuery) use ($playlist): void {
             $playlist->rule_groups->each(static function (RuleGroup $group) use ($anyGroupQuery): void {
                 $anyGroupQuery->orWhere(static function (SongBuilder $groupQuery) use ($group): void {
                     $group->rules->each(static fn (Rule $rule) => QueryModifier::applyRule($rule, $groupQuery));
                 });
             });
         });
-
-        return $query->orderBy('songs.title')->limit(self::LIST_SIZE_LIMIT)->get();
     }
 
     /** @return Collection<int, Song> */

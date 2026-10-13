@@ -29,11 +29,11 @@ class GetPlaylistsController extends Controller
         $playlists
             ->where('is_smart', true)
             ->each(function (Playlist $playlist) use ($user): void {
-                $songs = $this->songRepository->getByPlaylist($playlist, $user);
+                $stats = $this->songRepository->getSmartPlaylistStats($playlist, $user);
 
-                $playlist->setAttribute('playables_count', $songs->count())->setAttribute(
+                $playlist->setAttribute('playables_count', $stats['count'])->setAttribute(
                     'playables_sum_length',
-                    $songs->sum('length'),
+                    $stats['length'],
                 );
             });
 
