@@ -61,7 +61,7 @@
       <div v-show="activeTab === 'songs'" class="songs-pane">
         <ScreenHeaderSpace v-if="loading" />
         <SongListSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
-        <SongList v-if="!loading && album" ref="songList" @sort="onSort" @press:enter="onPressEnter" />
+        <SongList v-if="!loading && album" ref="songList" @sort="saveSort" @press:enter="onPressEnter" />
       </div>
 
       <ScreenHeaderScrollBox v-show="activeTab === 'other-albums'" class="albums-pane" data-testid="albums-pane">
@@ -98,7 +98,7 @@ import { playableStore, type SongUpdateResult } from '@/stores/playableStore'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
-import { useLocalStorage } from '@/composables/useLocalStorage'
+import { usePersistedSort } from '@/composables/usePersistedSort'
 import { useRouter } from '@/composables/useRouter'
 import { usePageTitle } from '@/composables/usePageTitle'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
@@ -128,7 +128,7 @@ const StarRating = defineAsyncComponent(() => import('@/components/ui/StarRating
 
 const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFound } = useRouter()
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Album')
-const { get: lsGet, set: lsSet } = useLocalStorage()
+const { getSavedSort, saveSort } = usePersistedSort('album', 'track')
 const { useLastfm, useMusicBrainz } = useThirdPartyServices()
 const { openContextMenu } = useContextMenu()
 
@@ -203,9 +203,8 @@ const fetchScreenData = async () => {
 
     context.entity = album.value
 
-    const restoredField = lsGet<PlayableListSortField>('album-sort-field', 'track')!
-    const restoredOrder = lsGet<SortOrder>('album-sort-order', 'asc')!
-    sort(restoredField, restoredOrder)
+    const { sortField, sortOrder } = getSavedSort()
+    sort(sortField, sortOrder)
   } catch (error: unknown) {
     if ((error as any)?.status === 404) {
       triggerNotFound()
@@ -216,11 +215,6 @@ const fetchScreenData = async () => {
   } finally {
     loading.value = false
   }
-}
-
-const onSort = (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {
-  lsSet('album-sort-field', field)
-  lsSet('album-sort-order', order)
 }
 
 onScreenActivated('Album', () => fetchScreenData())

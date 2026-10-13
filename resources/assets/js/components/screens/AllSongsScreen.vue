@@ -52,7 +52,7 @@ import { useRouter } from '@/composables/useRouter'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
-import { useLocalStorage } from '@/composables/useLocalStorage'
+import { usePersistedSort } from '@/composables/usePersistedSort'
 import { playback } from '@/services/playbackManager'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -76,11 +76,10 @@ const {
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Songs')
 const { go, url } = useRouter()
-const { get: lsGet, set: lsSet } = useLocalStorage()
+const { getSavedSort, saveSort } = usePersistedSort('all-songs', 'title')
 
 const loading = ref(false)
-let sortField: MaybeArray<PlayableListSortField> = lsGet<PlayableListSortField>('all-songs-sort-field', 'title')!
-let sortOrder: SortOrder = lsGet<SortOrder>('all-songs-sort-order', 'asc')!
+let { sortField, sortOrder } = getSavedSort()
 
 const cursor = ref<string | null>('')
 const moreSongsAvailable = computed(() => cursor.value !== null)
@@ -136,8 +135,7 @@ const sort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) 
   sortField = field
   sortOrder = order
 
-  lsSet('all-songs-sort-field', field)
-  lsSet('all-songs-sort-order', order)
+  saveSort(field, order)
 
   await refetchFromStart()
 }
