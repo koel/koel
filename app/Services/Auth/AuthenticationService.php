@@ -95,6 +95,11 @@ class AuthenticationService
         $this->tokenManager->deleteCompositionToken($token);
     }
 
+    public function logOutOtherSessions(User $user, #[SensitiveParameter] string $currentToken): void
+    {
+        $this->tokenManager->destroyOtherSessions($user, $currentToken);
+    }
+
     public function trySendResetPasswordLink(string $email): bool
     {
         return $this->passwordBroker->sendResetLink(['email' => $email]) === Password::RESET_LINK_SENT;

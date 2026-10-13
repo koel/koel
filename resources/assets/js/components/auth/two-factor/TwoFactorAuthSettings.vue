@@ -1,17 +1,21 @@
 <template>
   <SettingGroup>
     <template #title>Two-Factor Authentication</template>
-
-    <template v-if="stage === 'idle' && !currentUser.two_factor">
-      <p class="mb-4">
-        Two-factor authentication adds an extra layer of security to your account by requiring a second form of
-        verification when you log in. You can use an authenticator app like Google Authenticator or Authy to generate
-        time-based one-time passwords.
-      </p>
-      <Btn type="button" variant="ghost" bordered @click.prevent="stage = 'enrolling'">
-        Enable Two-Factor Authentication
-      </Btn>
+    <template v-if="stage === 'idle' && !currentUser.two_factor" #subtitle>
+      Two-factor authentication adds an extra layer of security to your account by requiring a second form of
+      verification when you log in. You can use an authenticator app like Google Authenticator or Authy to generate
+      time-based one-time passwords.
     </template>
+
+    <Btn
+      v-if="stage === 'idle' && !currentUser.two_factor"
+      type="button"
+      variant="ghost"
+      bordered
+      @click.prevent="stage = 'enrolling'"
+    >
+      Enable Two-Factor Authentication
+    </Btn>
 
     <TwoFactorManageActions
       v-else-if="stage === 'idle' && currentUser.two_factor"

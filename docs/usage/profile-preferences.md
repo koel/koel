@@ -1,5 +1,5 @@
 ---
-description: Managing your profile, avatar, theme selection, playback preferences, and service integration settings.
+description: Managing your profile, avatar, theme selection, playback preferences, service integration settings, and other logged-in sessions.
 ---
 
 # Account Settings
@@ -22,6 +22,10 @@ Koel enforces a strong password policy.
 Make sure to pick a password that is at least 10 characters long and contains a mix of letters, numbers, and special characters.
 Your password will also be checked against a list of leaked passwords for extra security.
 :::
+
+## Other Sessions
+
+Under **Security**, click **Log Out Other Sessions** to log out of Koel on every other browser and device, including [Koel Player](../mobile-apps.md). The session you're using stays logged in.
 
 ## Custom Avatar
 

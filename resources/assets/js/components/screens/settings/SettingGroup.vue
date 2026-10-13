@@ -1,6 +1,6 @@
 <template>
   <article class="flex flex-col gap-4">
-    <header v-if="$slots.title || $slots.subtitle">
+    <header v-if="$slots.title || $slots.subtitle" class="flex flex-col gap-1.5">
       <h3 v-if="$slots.title" class="text-lg font-semibold text-k-fg">
         <slot name="title" />
       </h3>

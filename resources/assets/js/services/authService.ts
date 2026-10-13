@@ -54,6 +54,8 @@ export const authService = {
   regenerateRecoveryCodes: async (code: string) =>
     await http.post<{ recovery_codes: string[] }>('me/two-factor/recovery-codes', { code }),
 
+  logOutOtherSessions: async () => await http.delete('me/sessions/others'),
+
   async logout() {
     await http.delete('me')
     this.destroy()

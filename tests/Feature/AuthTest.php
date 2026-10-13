@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Services\Auth\AuthenticationService;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\PersonalAccessToken;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -85,5 +86,27 @@ class AuthTest extends TestCase
         $this->withToken($response->json('token'))->delete('api/me')->assertNoContent();
 
         self::assertSame(0, $user->tokens()->count());
+    }
+
+    #[Test]
+    public function logOutOtherSessions(): void
+    {
+        $user = create_user([
+            'email' => 'koel@koel.dev',
+            'password' => Hash::make('secret'),
+        ]);
+
+        $credentials = ['email' => 'koel@koel.dev', 'password' => 'secret'];
+        $currentSession = $this->post('api/me', $credentials)->json();
+        $this->post('api/me', $credentials);
+        $this->post('api/me', $credentials);
+
+        self::assertSame(6, $user->tokens()->count());
+
+        $this->withToken($currentSession['token'])->delete('api/me/sessions/others')->assertNoContent();
+
+        self::assertSame(2, $user->tokens()->count());
+        self::assertNotNull(PersonalAccessToken::findToken($currentSession['token']));
+        self::assertNotNull(PersonalAccessToken::findToken($currentSession['audio-token']));
     }
 }
