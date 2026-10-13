@@ -5,7 +5,10 @@
 </template>
 
 <script lang="ts">
+import { createSharedComposable, usePointer } from '@vueuse/core'
 import type { Fn } from '@vueuse/core'
+
+const useSharedPointer = createSharedComposable(() => usePointer())
 
 // Shared scroll listener registry: one listener per scrollable container, many subscribers.
 const scrollSubscribers = new Map<Element, Set<Fn>>()
@@ -66,7 +69,7 @@ const subscribeToScroll = (container: Element, cb: Fn): Fn => {
 </script>
 
 <script lang="ts" setup>
-import { usePointer, useThrottleFn } from '@vueuse/core'
+import { useThrottleFn } from '@vueuse/core'
 import { onBeforeUnmount, onMounted, reactive, ref, toRef, type WatchHandle } from 'vue'
 import { watch } from 'vue'
 
@@ -91,7 +94,7 @@ const color = toRef(props, 'color')
 const borderColor = toRef(props, 'borderColor')
 const el = ref<HTMLElement | null>(null)
 
-const pointer = reactive(usePointer())
+const pointer = reactive(useSharedPointer())
 const x = ref('0')
 const y = ref('0')
 const size = ref('0')
