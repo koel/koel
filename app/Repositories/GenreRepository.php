@@ -20,10 +20,10 @@ class GenreRepository extends Repository
 
     public function getAllSummaries(?User $scopedUser = null): Collection
     {
-        $genres = Genre::query()
-            ->join('genre_song', 'genre_song.genre_id', '=', 'genres.id')
-            ->join('songs', 'songs.id', '=', 'genre_song.song_id')
-            ->accessibleBy($scopedUser ?? $this->auth->user())
+        $genres = Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->accessible()
+            ->join('genre_song', 'songs.id', '=', 'genre_song.song_id')
+            ->join('genres', 'genre_song.genre_id', '=', 'genres.id')
             ->groupBy('genres.id', 'genres.name', 'genres.public_id')
             ->orderBy('genres.name')
             ->select(
@@ -32,6 +32,7 @@ class GenreRepository extends Repository
                 DB::raw('COUNT(songs.id) AS song_count'),
                 DB::raw('SUM(songs.length) AS length'),
             )
+            ->toBase()
             ->get()
             ->map(static fn (object $genre) => GenreSummary::make(
                 publicId: $genre->public_id,
