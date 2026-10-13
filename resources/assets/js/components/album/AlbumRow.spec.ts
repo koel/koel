@@ -33,7 +33,7 @@ describe('albumRow.vue', () => {
   it('shows a compilation album artist without a link', () => {
     renderComponent({ artist_id: 'various', artist_name: 'Various Artists' })
 
-    screen.getByText('Various Artists')
+    expect(screen.getAllByText('Various Artists')).not.toHaveLength(0)
     expect(screen.queryByRole('link', { name: 'Various Artists' })).toBeNull()
   })
 

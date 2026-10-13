@@ -16,7 +16,7 @@
               v-if="shouldShowColumn('artist')"
               :active="field === 'artist_name'"
               :order
-              class="artist"
+              class="artist max-md:hidden"
               label="Artist"
               @sort="onSort('artist_name')"
             />
