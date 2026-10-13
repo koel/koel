@@ -93,3 +93,4 @@ demo-credits.json
 public/sandbox
 public/storage
 build/
+.vitest/

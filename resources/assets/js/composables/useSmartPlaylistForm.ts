@@ -30,7 +30,10 @@ export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[]
   const addGroup = () => collectedRuleGroups.value.push(playlistStore.createEmptySmartPlaylistRuleGroup())
 
   const onGroupChanged = (data: SmartPlaylistRuleGroup) => {
-    const changedGroup = Object.assign(collectedRuleGroups.value.find(({ id }) => id === data.id)!, data)
+    const changedGroup = Object.assign(
+      collectedRuleGroups.value.find(({ id }) => id === data.id)!,
+      data,
+    )
 
     // Remove empty groups
     if (changedGroup.rules.length === 0) {
