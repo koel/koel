@@ -50,26 +50,24 @@ class ArtistBuilder extends FavoriteableBuilder
     {
         $user = $this->user;
 
-        return $this->addSelect(['albums_count' => static function (QueryBuilder $count) use ($user): void {
-            $count
-                ->selectRaw('COUNT(*)')
-                ->from('albums')
-                ->when($user, static fn (QueryBuilder $query) => AlbumBuilder::limitToAlbumsAccessibleByUser(
-                    $query,
-                    $user,
-                ))
-                ->where(static function (QueryBuilder $ownedOrAppearedOn): void {
-                    $ownedOrAppearedOn
-                        ->whereColumn('albums.artist_id', 'artists.id')
-                        ->orWhereExists(static function (QueryBuilder $appearance): void {
-                            $appearance
-                                ->select(DB::raw(1))
-                                ->from('songs')
-                                ->whereColumn('songs.album_id', 'albums.id')
-                                ->whereColumn('songs.artist_id', 'artists.id');
-                        });
-                });
-        }]);
+        $ownAlbums = DB::query()
+            ->selectRaw('COUNT(*)')
+            ->from('albums')
+            ->when($user, static fn (QueryBuilder $query) => AlbumBuilder::limitToAlbumsAccessibleByUser($query, $user))
+            ->whereColumn('albums.artist_id', 'artists.id');
+
+        $appearedOnAlbums = DB::query()
+            ->selectRaw('COUNT(DISTINCT albums.id)')
+            ->from('songs as appearance_songs')
+            ->join('albums', 'albums.id', 'appearance_songs.album_id')
+            ->when($user, static fn (QueryBuilder $query) => AlbumBuilder::limitToAlbumsAccessibleByUser($query, $user))
+            ->whereColumn('appearance_songs.artist_id', 'artists.id')
+            ->whereColumn('albums.artist_id', '<>', 'artists.id');
+
+        return $this->selectRaw(
+            sprintf('(%s) + (%s) as albums_count', $ownAlbums->toSql(), $appearedOnAlbums->toSql()),
+            [...$ownAlbums->getBindings(), ...$appearedOnAlbums->getBindings()],
+        );
     }
 
     public function whereAccessibleByUser(User $user): self

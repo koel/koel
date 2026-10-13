@@ -70,7 +70,7 @@ class GetArtistsTest extends TestCase
             'name' => Artist::VARIOUS_NAME,
         ]))->createOne();
 
-        Song::factory()->for($compilation)->for($artist)->createOne();
+        Song::factory()->for($compilation)->for($artist)->createMany(2);
 
         return $artist;
     }
