@@ -45,7 +45,7 @@ class EncyclopediaService
      */
     public function getAlbumInformationOrThrowIfMusicBrainzIsBusy(Album $album): ?AlbumInformation
     {
-        if (!$album->is_standard) {
+        if (!$album->is_identifiable) {
             return null;
         }
 

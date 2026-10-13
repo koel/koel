@@ -17,6 +17,11 @@ trait HasAlbumAttributes
         return Attribute::get(fn (): bool => !$this->is_unknown);
     }
 
+    protected function isIdentifiable(): Attribute
+    {
+        return Attribute::get(fn (): bool => !$this->is_unknown && !$this->artist->is_unknown);
+    }
+
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.

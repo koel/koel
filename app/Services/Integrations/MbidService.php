@@ -39,7 +39,7 @@ class MbidService
 
     public function fetchAndStoreAlbumMbids(Album $album): void
     {
-        if ($album->is_unknown || $album->artist->is_unknown) {
+        if (!$album->is_identifiable) {
             return;
         }
 

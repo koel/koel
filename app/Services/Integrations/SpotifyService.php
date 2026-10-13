@@ -39,7 +39,7 @@ class SpotifyService
             return null;
         }
 
-        if ($album->is_unknown || $album->artist->is_unknown || $album->artist->is_various) {
+        if (!$album->is_identifiable) {
             return null;
         }
 

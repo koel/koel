@@ -43,6 +43,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property User $user
  * @property bool $is_unknown If the album is the Unknown Album
  * @property bool $is_standard If the album is not the Unknown Album
+ * @property bool $is_identifiable If both the album and its artist are known, so online sources can look it up
  * @property int $user_id
  * @property string $artist_id
  * @property string $artist_name
