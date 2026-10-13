@@ -14,11 +14,10 @@ class PlaylistRepository extends Repository
     /** @return Collection<int, Playlist> */
     public function getAllAccessibleByUser(User $user): Collection
     {
-        return Playlist::query()
-            ->whereIn('playlists.id', $this->accessibleByUser($user)->select('playlists.id'))
-            ->leftJoin('playlist_playlist_folder', 'playlists.id', '=', 'playlist_playlist_folder.playlist_id')
-            ->distinct()
-            ->get(['playlists.*', 'playlist_playlist_folder.folder_id']);
+        return Playlist::query()->whereIn(
+            'playlists.id',
+            $this->accessibleByUser($user)->select('playlists.id'),
+        )->get();
     }
 
     public function searchAccessibleByName(string $name, User $user): ?Playlist
