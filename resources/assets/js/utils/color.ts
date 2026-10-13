@@ -23,21 +23,50 @@ export const cssColorToRgb = (cssColor: string): Rgb | null => {
   return [red, green, blue]
 }
 
-/**
- * Returns true when the given CSS color is perceptually dark.
- *
- * The threshold matches what the `color` npm package's `isDark()` used:
- * a YIQ-weighted brightness < 128 on the 0-255 scale (W3C WCAG 1.0).
- */
-export const isDarkColor = (cssColor: string) => {
-  const rgb = cssColorToRgb(cssColor)
+const screenLuminance = ([red, green, blue]: Rgb) => {
+  const luminance = 0.2126729 * (red / 255) ** 2.4 + 0.7151522 * (green / 255) ** 2.4 + 0.072175 * (blue / 255) ** 2.4
 
-  if (!rgb) {
-    return true
+  return luminance > 0.022 ? luminance : luminance + (0.022 - luminance) ** 1.414
+}
+
+/**
+ * Returns the APCA-W3 (0.0.98G) lightness contrast (Lc) of text on a background.
+ * Positive for dark text on a light background, negative for light text on a dark one.
+ * Constants from https://github.com/Myndex/apca-w3/blob/master/src/apca-w3.js
+ */
+export const apcaContrast = (text: Rgb, background: Rgb) => {
+  const textY = screenLuminance(text)
+  const backgroundY = screenLuminance(background)
+
+  if (Math.abs(backgroundY - textY) < 0.0005) {
+    return 0
   }
 
-  const [red, green, blue] = rgb
-  return (red * 299 + green * 587 + blue * 114) / 1000 < 128
+  if (backgroundY > textY) {
+    const contrast = (backgroundY ** 0.56 - textY ** 0.57) * 1.14
+
+    return contrast < 0.1 ? 0 : (contrast - 0.027) * 100
+  }
+
+  const contrast = (backgroundY ** 0.65 - textY ** 0.62) * 1.14
+
+  return contrast > -0.1 ? 0 : (contrast + 0.027) * 100
+}
+
+const LIGHT_TEXT = { css: '#ffffff', rgb: [255, 255, 255] as Rgb }
+const DARK_TEXT = { css: '#111111', rgb: [17, 17, 17] as Rgb }
+
+export const pickReadableTextColor = (backgroundColor: string) => {
+  const background = cssColorToRgb(backgroundColor)
+
+  if (!background) {
+    return LIGHT_TEXT.css
+  }
+
+  const lightTextContrast = Math.abs(apcaContrast(LIGHT_TEXT.rgb, background))
+  const darkTextContrast = Math.abs(apcaContrast(DARK_TEXT.rgb, background))
+
+  return lightTextContrast >= darkTextContrast ? LIGHT_TEXT.css : DARK_TEXT.css
 }
 
 export const rgbToHsl = ([red, green, blue]: Rgb) => {

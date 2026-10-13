@@ -5,7 +5,7 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { http } from '@/services/http'
 import themes from '@/config/themes'
 import { cache } from '@/services/cache'
-import { isDarkColor } from '@/utils/color'
+import { pickReadableTextColor } from '@/utils/color'
 
 export interface ThemeData {
   name: string
@@ -18,7 +18,7 @@ export interface ThemeData {
 }
 
 const setHighlightForeground = (highlight: string) =>
-  document.body.style.setProperty('--color-highlight-fg', isDarkColor(highlight) ? '#ffffff' : '#111111')
+  document.body.style.setProperty('--color-highlight-fg', pickReadableTextColor(highlight))
 
 export const themeStore = {
   defaultProperties: {
