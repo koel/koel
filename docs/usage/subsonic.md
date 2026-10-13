@@ -48,9 +48,9 @@ Regenerating the key invalidates the old one straight away. Any client still usi
 
 ## What Koel Supports
 
-Koel implements the OpenSubsonic API for browsing, streaming, search, playlists, favorites, ratings, internet radio stations, podcasts, and lyrics.
+Koel implements the OpenSubsonic API for browsing, streaming, search, playlists, favorites, ratings, internet radio stations, podcasts, lyrics, and play-queue sync.
 
-Sharing, bookmarks, chat, and play-queue sync endpoints are not implemented.
+Sharing, bookmarks, and chat endpoints are not implemented.
 
 <script lang="ts" setup>
 import feishin from '../assets/img/interface/feishin.avif'
