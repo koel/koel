@@ -118,16 +118,11 @@ const fetch = async () => {
   loading.value = true
 
   try {
-    let fetched: { songs: Song[]; nextCursor: string | null }
-
-    ;[genre.value, fetched] = await Promise.all([
-      genreStore.fetchOne(id.value!),
-      playableStore.paginateSongsByGenre(id.value!, {
-        sort: sortField,
-        order: sortOrder,
-        cursor: cursor.value,
-      }),
-    ])
+    const fetched = await playableStore.paginateSongsByGenre(id.value!, {
+      sort: sortField,
+      order: sortOrder,
+      cursor: cursor.value,
+    })
 
     cursor.value = fetched.nextCursor
     songs.value.push(...fetched.songs)
@@ -150,12 +145,28 @@ const refetchSongsFromStart = async () => {
   await fetch()
 }
 
+const fetchGenre = async () => {
+  const requestedId = id.value!
+
+  try {
+    const fetchedGenre = await genreStore.fetchOne(requestedId)
+
+    if (id.value === requestedId) {
+      genre.value = fetchedGenre
+    }
+  } catch (error: unknown) {
+    if (id.value === requestedId) {
+      useErrorHandler('dialog').handleHttpError(error)
+    }
+  }
+}
+
 const refresh = async () => {
   genre.value = null
   cursor.value = ''
   songs.value = []
 
-  await fetch()
+  await Promise.all([fetchGenre(), fetch()])
 }
 
 const fetchWithSort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {

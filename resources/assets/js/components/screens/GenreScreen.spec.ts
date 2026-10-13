@@ -58,6 +58,68 @@ describe('genreScreen', () => {
     expect(document.title).toBe('No Genre – Koel')
   })
 
+  it('does not fetch the genre again when loading more songs', async () => {
+    const genre = h.factory('genre').make()
+    const fetchGenreMock = h.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
+    const paginateMock = h.mock(playableStore, 'paginateSongsByGenre').mockResolvedValue({
+      songs: h.factory('song').make(5),
+      nextCursor: 'next-token',
+    })
+
+    h.visit(`genres/${genre.id}`).render(Component, {
+      global: {
+        stubs: {
+          SongList: defineComponent({
+            emits: ['scrolled-to-end'],
+            template: '<button @click="$emit(\'scrolled-to-end\')">More</button>',
+          }),
+        },
+      },
+    })
+
+    await waitFor(() => expect(paginateMock).toHaveBeenCalledOnce())
+    await h.tick(2)
+
+    await h.user.click(screen.getByRole('button', { name: 'More' }))
+
+    await waitFor(() => expect(paginateMock).toHaveBeenCalledTimes(2))
+    expect(fetchGenreMock).toHaveBeenCalledOnce()
+  })
+
+  it('fetches the new genre when switching genres', async () => {
+    await renderComponent()
+    const otherGenre = h.factory('genre').make()
+    const fetchGenreMock = h.mock(genreStore, 'fetchOne').mockResolvedValue(otherGenre)
+
+    h.visit(`genres/${otherGenre.id}`)
+
+    await waitFor(() => expect(fetchGenreMock).toHaveBeenLastCalledWith(otherGenre.id))
+  })
+
+  it('ignores a slow response for a genre that is no longer shown', async () => {
+    const DocumentTitle = defineComponent({ setup: () => usePageTitle().syncDocumentTitle(), template: '<div />' })
+    h.render(DocumentTitle)
+    await renderComponent()
+
+    const slowGenre = h.factory('genre').make({ name: 'Slow' })
+    const currentGenre = h.factory('genre').make({ name: 'Current' })
+    let resolveSlowGenre: (genre: Genre) => void = () => {}
+
+    h.mock(genreStore, 'fetchOne').mockImplementation(id =>
+      id === slowGenre.id ? new Promise<Genre>(resolve => (resolveSlowGenre = resolve)) : Promise.resolve(currentGenre),
+    )
+
+    h.visit(`genres/${slowGenre.id}`)
+    await h.tick(2)
+    h.visit(`genres/${currentGenre.id}`)
+    await waitFor(() => expect(document.title).toBe('Current – Koel'))
+
+    resolveSlowGenre(slowGenre)
+    await h.tick(2)
+
+    expect(document.title).toBe('Current – Koel')
+  })
+
   it('keeps a new sort made while a page is loading', async () => {
     const genre = h.factory('genre').make()
     let resolveStalePage: (page: { songs: Song[]; nextCursor: string | null }) => void = () => {}
