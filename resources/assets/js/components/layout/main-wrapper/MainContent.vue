@@ -1,5 +1,5 @@
 <template>
-  <section id="mainContent" class="flex-1 relative overflow-hidden">
+  <section id="mainContent" class="flex-1 relative overflow-hidden" tabindex="-1">
     <!--
       Most of the views are render-expensive and have their own UI states (viewport/scroll position), e.g. the playable
       lists), so we use v-show.

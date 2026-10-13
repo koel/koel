@@ -7,10 +7,11 @@ import Component from './SidebarItem.vue'
 describe('sidebarItem', () => {
   const h = createHarness()
 
-  const renderComponent = (disabledReason: string | null = null, onDblclick?: () => void) => {
+  const renderComponent = (disabledReason: string | null = null, onDblclick?: () => void, active = false) => {
     return h.render(Component, {
       props: {
         href: '#',
+        active,
         disabledReason,
         onDblclick,
       },
@@ -103,5 +104,14 @@ describe('sidebarItem', () => {
 
     expect(onDblclick).toHaveBeenCalled()
     expect(mock).not.toHaveBeenCalledWith('TOGGLE_SIDEBAR')
+  })
+
+  it.each([
+    [true, 'page'],
+    [false, null],
+  ])('marks the link as the current page only when active (active: %s)', (active, ariaCurrent) => {
+    renderComponent(null, undefined, active)
+
+    expect(screen.getByRole('link').getAttribute('aria-current')).toBe(ariaCurrent)
   })
 })

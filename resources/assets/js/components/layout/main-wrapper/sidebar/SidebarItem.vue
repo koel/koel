@@ -5,6 +5,7 @@
     data-testid="sidebar-item"
   >
     <a
+      :aria-current="active ? 'page' : undefined"
       :aria-disabled="disabledReason ? true : undefined"
       :class="disabledReason ? 'opacity-50 cursor-not-allowed' : 'hover:text-k-fg'"
       :href="disabledReason ? undefined : props.href"
