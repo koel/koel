@@ -42,6 +42,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property User $user
  * @property bool $is_unknown If the artist is Unknown Artist
  * @property bool $is_various If the artist is Various Artists
+ * @property bool $is_standard If the artist is neither Unknown Artist nor Various Artists
  * @property int $user_id The ID of the user that owns this artist
  * @property string $id
  * @property ?string $mbid The MusicBrainz artist ID
@@ -142,7 +143,7 @@ class Artist extends Model implements AuditableContract, Embeddable, Favoriteabl
 
     public function shouldBeSearchable(): bool
     {
-        return !$this->is_various && !$this->is_unknown;
+        return $this->is_standard;
     }
 
     /** @return array<mixed> */

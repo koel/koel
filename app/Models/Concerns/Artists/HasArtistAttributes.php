@@ -16,6 +16,11 @@ trait HasArtistAttributes
         return Attribute::get(fn (): bool => $this->name === self::VARIOUS_NAME);
     }
 
+    protected function isStandard(): Attribute
+    {
+        return Attribute::get(fn (): bool => !$this->is_unknown && !$this->is_various);
+    }
+
     /**
      * Sometimes the tags extracted from getID3 are HTML entity encoded.
      * This makes sure they are always sane.

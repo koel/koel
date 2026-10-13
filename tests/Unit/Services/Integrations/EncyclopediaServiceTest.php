@@ -267,6 +267,34 @@ class EncyclopediaServiceTest extends TestCase
     }
 
     #[Test]
+    public function forgetCachedAlbumInformation(): void
+    {
+        $album = Album::factory()->createOne(['cover' => 'existing.jpg']);
+
+        $this->encyclopedia->expects('getAlbumInformation')->with($album)->twice()->andReturn(AlbumInformation::make());
+
+        $this->encyclopediaService->getAlbumInformation($album);
+        $this->encyclopediaService->forgetAlbumInformation($album);
+        $this->encyclopediaService->getAlbumInformation($album);
+    }
+
+    #[Test]
+    public function forgetCachedArtistInformation(): void
+    {
+        $artist = Artist::factory()->createOne(['image' => 'existing.jpg']);
+
+        $this->encyclopedia
+            ->expects('getArtistInformation')
+            ->with($artist)
+            ->twice()
+            ->andReturn(ArtistInformation::make());
+
+        $this->encyclopediaService->getArtistInformation($artist);
+        $this->encyclopediaService->forgetArtistInformation($artist);
+        $this->encyclopediaService->getArtistInformation($artist);
+    }
+
+    #[Test]
     public function leaveABusyAlbumLookupUncachedAndFillItInLater(): void
     {
         Bus::fake();

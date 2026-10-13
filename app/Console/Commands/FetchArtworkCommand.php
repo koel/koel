@@ -10,7 +10,6 @@ use App\Services\Integrations\EncyclopediaService;
 use App\Services\Integrations\MusicBrainzService;
 use App\Services\Integrations\SpotifyService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 
 class FetchArtworkCommand extends Command
 {
@@ -36,12 +35,12 @@ class FetchArtworkCommand extends Command
         $this->components->info('Fetching artist images...');
 
         Artist::query()
-            ->whereNotIn('name', [Artist::UNKNOWN_NAME, Artist::VARIOUS_NAME])
+            ->onlyStandard()
             ->where(static fn (ArtistBuilder $query) => $query->whereNull('image')->orWhere('image', ''))
             ->orderBy('name')
             ->lazy()
             ->each(function (Artist $artist) use ($delay): void {
-                Cache::forget(cache_key('artist information', $artist->name));
+                $this->encyclopedia->forgetArtistInformation($artist);
 
                 $this->encyclopedia->getArtistInformation($artist);
 
@@ -54,13 +53,13 @@ class FetchArtworkCommand extends Command
         $this->components->info('Fetching album covers...');
 
         Album::query()
-            ->whereNot('name', Album::UNKNOWN_NAME)
+            ->onlyStandard()
             ->whereNotIn('artist_name', [Artist::UNKNOWN_NAME, Artist::VARIOUS_NAME])
             ->where(static fn (AlbumBuilder $query) => $query->whereNull('cover')->orWhere('cover', ''))
             ->orderBy('name')
             ->lazy()
             ->each(function (Album $album) use ($delay): void {
-                Cache::forget(cache_key('album information', $album->name, $album->artist->name));
+                $this->encyclopedia->forgetAlbumInformation($album);
 
                 $this->encyclopedia->getAlbumInformation($album);
 

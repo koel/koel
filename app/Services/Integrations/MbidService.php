@@ -25,7 +25,7 @@ class MbidService
 {
     public function fetchAndStoreArtistMbid(Artist $artist): void
     {
-        if ($artist->is_unknown || $artist->is_various || $artist->mbid) {
+        if (!$artist->is_standard || $artist->mbid) {
             return;
         }
 

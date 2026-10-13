@@ -5,7 +5,6 @@ namespace Tests\Feature\Commands;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Integrations\EncyclopediaService;
-use Illuminate\Support\Facades\Cache;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -36,6 +35,8 @@ class FetchArtworkCommandTest extends TestCase
         Album::factory()->createOne(['cover' => '']);
 
         $encyclopedia = Mockery::mock(EncyclopediaService::class);
+        $encyclopedia->shouldReceive('forgetArtistInformation');
+        $encyclopedia->shouldReceive('forgetAlbumInformation');
         $encyclopedia->shouldReceive('getArtistInformation')->atLeast()->once();
         $encyclopedia->shouldReceive('getAlbumInformation')->atLeast()->once();
 
@@ -53,17 +54,18 @@ class FetchArtworkCommandTest extends TestCase
         ]);
 
         $album = Album::factory()->createOne(['cover' => '']);
-        $cacheKey = cache_key('album information', $album->name, $album->artist->name);
-        Cache::put($cacheKey, 'stale');
 
         $encyclopedia = Mockery::mock(EncyclopediaService::class);
+        $encyclopedia->shouldReceive('forgetArtistInformation');
         $encyclopedia->shouldReceive('getArtistInformation');
-        $encyclopedia->shouldReceive('getAlbumInformation')->once();
+        $encyclopedia
+            ->expects('forgetAlbumInformation')
+            ->with(Mockery::on(static fn (Album $forgotten): bool => $forgotten->is($album)))
+            ->ordered();
+        $encyclopedia->expects('getAlbumInformation')->ordered();
 
         $this->app->instance(EncyclopediaService::class, $encyclopedia);
 
         $this->artisan('koel:fetch-artwork', ['--delay' => 0])->assertSuccessful();
-
-        self::assertFalse(Cache::has($cacheKey));
     }
 }

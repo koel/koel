@@ -28,7 +28,7 @@ class SearchVideosRequest extends Request
             $q = $this->song->title;
 
             // If the artist is worth noticing, include them into the search.
-            if (!$this->song->artist->is_unknown && !$this->song->artist->is_various) {
+            if ($this->song->artist->is_standard) {
                 $q .= " {$this->song->artist->name}";
             }
         } else {

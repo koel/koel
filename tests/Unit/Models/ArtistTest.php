@@ -102,4 +102,21 @@ class ArtistTest extends TestCase
     {
         self::assertSame($searchable, Artist::factory()->createOne(['name' => $name])->shouldBeSearchable());
     }
+
+    /** @return array<string, array{string, bool}> */
+    public static function provideIsStandardData(): array
+    {
+        return [
+            'standard artist' => ['Metallica', true],
+            'Various Artists' => [Artist::VARIOUS_NAME, false],
+            'Unknown Artist' => [Artist::UNKNOWN_NAME, false],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideIsStandardData')]
+    public function onlyArtistsOtherThanUnknownAndVariousAreStandard(string $name, bool $standard): void
+    {
+        self::assertSame($standard, Artist::factory()->createOne(['name' => $name])->is_standard);
+    }
 }

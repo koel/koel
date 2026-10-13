@@ -30,7 +30,7 @@ class AlbumPolicy
     public function update(User $user, Album $album): bool
     {
         // Unknown albums are not editable.
-        if ($album->is_unknown) {
+        if (!$album->is_standard) {
             return false;
         }
 
