@@ -6,14 +6,7 @@ import './shims/mediaSession'
 
 declare global {
   interface Window {
-    createLemonSqueezy?: () => Closure
     RUNNING_UNIT_TESTS?: boolean
-  }
-
-  interface LemonSqueezy {
-    Url: {
-      Open: () => void
-    }
   }
 }
 
@@ -28,12 +21,6 @@ globalThis.ResizeObserver =
       unobserve: vi.fn(),
     }
   })
-
-globalThis.LemonSqueezy = {
-  Url: {
-    Open: vi.fn(),
-  },
-}
 
 HTMLMediaElement.prototype.load = vi.fn()
 HTMLMediaElement.prototype.play = vi.fn()
@@ -63,8 +50,6 @@ window.KOEL = {
   accepted_audio_extensions: [],
 }
 window.RUNNING_UNIT_TESTS = true
-
-window.createLemonSqueezy = vi.fn()
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
