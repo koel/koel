@@ -5,6 +5,7 @@ namespace App\Builders;
 use App\Builders\Concerns\CanScopeByUser;
 use App\Facades\License;
 use App\Models\Album;
+use App\Models\Artist;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -42,6 +43,11 @@ class AlbumBuilder extends FavoriteableBuilder
     public function onlyStandard(): self
     {
         return $this->whereNot('albums.name', Album::UNKNOWN_NAME);
+    }
+
+    public function onlyIdentifiable(): self
+    {
+        return $this->onlyStandard()->whereNot('albums.artist_name', Artist::UNKNOWN_NAME);
     }
 
     public function whereAccessibleByUser(User $user): self

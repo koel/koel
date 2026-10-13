@@ -78,7 +78,7 @@ class MusicBrainzService implements Encyclopedia
 
     public function getAlbumInformation(Album $album): ?AlbumInformation
     {
-        if ($album->is_unknown || $album->artist->is_unknown) {
+        if (!$album->is_identifiable) {
             return null;
         }
 

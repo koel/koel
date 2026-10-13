@@ -53,8 +53,7 @@ class FetchArtworkCommand extends Command
         $this->components->info('Fetching album covers...');
 
         Album::query()
-            ->onlyStandard()
-            ->whereNotIn('artist_name', [Artist::UNKNOWN_NAME, Artist::VARIOUS_NAME])
+            ->onlyIdentifiable()
             ->where(static fn (AlbumBuilder $query) => $query->whereNull('cover')->orWhere('cover', ''))
             ->orderBy('name')
             ->lazy()

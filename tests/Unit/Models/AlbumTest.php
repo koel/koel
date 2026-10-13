@@ -69,4 +69,29 @@ class AlbumTest extends TestCase
     {
         self::assertSame($standard, Album::factory()->createOne(['name' => $name])->is_standard);
     }
+
+    /** @return array<string, array{string, string, bool}> */
+    public static function provideIsIdentifiableData(): array
+    {
+        return [
+            'known album and artist' => ['Master of Puppets', 'Metallica', true],
+            'compilation' => ['Now 100', Artist::VARIOUS_NAME, true],
+            'Unknown Album' => [Album::UNKNOWN_NAME, 'Metallica', false],
+            'Unknown Artist' => ['Master of Puppets', Artist::UNKNOWN_NAME, false],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideIsIdentifiableData')]
+    public function onlyAlbumsWithAKnownNameAndArtistAreIdentifiable(
+        string $albumName,
+        string $artistName,
+        bool $identifiable,
+    ): void {
+        $album = Album::factory()->for(Artist::factory()->createOne(['name' => $artistName]))->createOne([
+            'name' => $albumName,
+        ]);
+
+        self::assertSame($identifiable, $album->is_identifiable);
+    }
 }
