@@ -71,4 +71,24 @@ describe('useLocalStorage', () => {
     remove('theme')
     expect(localStorage.getItem('42::theme')).toBeNull()
   })
+
+  it('returns the default value when storage cannot be read', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('Blocked', 'SecurityError')
+    })
+
+    const { get } = useLocalStorage()
+    expect(get('theme', 'fallback')).toBe('fallback')
+  })
+
+  it.each([
+    ['set', 'setItem', (storage: ReturnType<typeof useLocalStorage>) => storage.set('theme', 'dark')],
+    ['remove', 'removeItem', (storage: ReturnType<typeof useLocalStorage>) => storage.remove('theme')],
+  ] as const)('does not throw on %s when storage fails', (_label, method, act) => {
+    vi.spyOn(Storage.prototype, method).mockImplementation(() => {
+      throw new DOMException('Full', 'QuotaExceededError')
+    })
+
+    expect(() => act(useLocalStorage())).not.toThrow()
+  })
 })
