@@ -1,42 +1,36 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { cssColorToRgb, isDarkColor } from './color'
+import type { Rgb } from './color'
+import { apcaContrast, cssColorToRgb, pickReadableTextColor } from './color'
 
-describe('isDarkColor', () => {
+describe('apcaContrast', () => {
   it.each([
-    ['#000000', true],
-    ['#000', true],
-    ['#111111', true],
-    ['rgb(0, 0, 0)', true],
-    ['rgb(64, 64, 64)', true],
-    ['red', true],
-    ['rebeccapurple', true],
-    ['hsl(0, 100%, 50%)', true],
-    ['hsla(0, 100%, 50%, 0.5)', true],
-  ])('treats %s as dark', (color, expected) => {
-    expect(isDarkColor(color)).toBe(expected)
+    [[136, 136, 136], [255, 255, 255], 63.1],
+    [[255, 255, 255], [0, 0, 0], -107.9],
+    [[255, 255, 255], [241, 102, 27], -63.2],
+    [[17, 17, 17], [241, 102, 27], 45.6],
+  ] as [Rgb, Rgb, number][])('rates text %j on %j at Lc %d', (text, background, expected) => {
+    expect(apcaContrast(text, background)).toBeCloseTo(expected, 1)
   })
 
+  it('returns 0 for identical colors', () => {
+    expect(apcaContrast([241, 102, 27], [241, 102, 27])).toBe(0)
+  })
+})
+
+describe('pickReadableTextColor', () => {
   it.each([
-    ['#ffffff', false],
-    ['#fff', false],
-    ['#fbab18', false],
-    ['rgb(255, 255, 255)', false],
-    ['rgb(200, 200, 200)', false],
-    ['white', false],
-    ['lightyellow', false],
-    ['hsl(0, 0%, 100%)', false],
-    ['hsl(60, 100%, 90%)', false],
-  ])('treats %s as not dark', (color, expected) => {
-    expect(isDarkColor(color)).toBe(expected)
+    ['#f1661b', '#ffffff'],
+    ['#000000', '#ffffff'],
+    ['#7a78dd', '#ffffff'],
+    ['#f9d423', '#111111'],
+    ['#ffffff', '#111111'],
+    ['rgba(240, 240, 240, 0.5)', '#111111'],
+  ])('picks readable text on %s', (background, expected) => {
+    expect(pickReadableTextColor(background)).toBe(expected)
   })
 
-  it('honors alpha-prefixed rgba() syntax', () => {
-    expect(isDarkColor('rgba(10, 10, 10, 0.5)')).toBe(true)
-    expect(isDarkColor('rgba(240, 240, 240, 0.5)')).toBe(false)
-  })
-
-  it('returns true for an unparseable input', () => {
-    expect(isDarkColor('not-a-color')).toBe(true)
+  it('falls back to light text for an unparseable input', () => {
+    expect(pickReadableTextColor('not-a-color')).toBe('#ffffff')
   })
 })
 
