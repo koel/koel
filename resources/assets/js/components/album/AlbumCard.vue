@@ -48,8 +48,8 @@ import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
-import { playback } from '@/services/playbackManager'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { usePlayCollection } from '@/composables/usePlayCollection'
 import { defineAsyncComponent } from '@/utils/helpers'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
@@ -70,19 +70,21 @@ const props = withDefaults(
 
 const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
 
-const { go, url } = useRouter()
+const { url } = useRouter()
 const { startDragging } = useDraggable('album')
 const { openContextMenu } = useContextMenu()
+const { playCollection } = usePlayCollection()
 
 const { album, showReleaseYear } = toRefs(props)
 
 const isStandardArtist = computed(() => artistStore.isStandard(album.value.artist_name))
 const showing = computed(() => !albumStore.isUnknown(album.value))
 
-const shuffle = async () => {
-  go(url('queue'))
-  await playback().queueAndPlay(await playableStore.fetchSongsForAlbum(album.value), true /* shuffled */)
-}
+const shuffle = () =>
+  playCollection(() => playableStore.fetchSongsForAlbum(album.value), {
+    shuffle: true,
+    emptyMessage: 'The album is empty.',
+  })
 
 const toggleFavorite = () => albumStore.toggleFavorite(album.value)
 

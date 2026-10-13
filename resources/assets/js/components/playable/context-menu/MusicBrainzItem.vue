@@ -1,30 +1,14 @@
 <template>
-  <template v-if="musicBrainzUrl">
-    <Separator />
-    <MenuItem @click="viewOnMusicBrainz">View on MusicBrainz</MenuItem>
-  </template>
+  <ContextMenuMusicBrainzItem v-if="song" entity-type="recording" :mbid="song.mbid" />
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { isSong } from '@/utils/typeGuards'
-import { useContextMenu } from '@/composables/useContextMenu'
-import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+
+import ContextMenuMusicBrainzItem from '@/components/ui/context-menu/ContextMenuMusicBrainzItem.vue'
 
 const props = defineProps<{ playables: Playable[] }>()
 
-const { MenuItem, Separator, trigger } = useContextMenu()
-const { useMusicBrainz } = useThirdPartyServices()
-
-const musicBrainzUrl = computed(() => {
-  if (!useMusicBrainz.value || props.playables.length !== 1 || !isSong(props.playables[0])) {
-    return null
-  }
-
-  const { mbid } = props.playables[0]
-
-  return mbid ? `https://musicbrainz.org/recording/${mbid}` : null
-})
-
-const viewOnMusicBrainz = () => trigger(() => window.open(musicBrainzUrl.value!, '_blank'))
+const song = computed(() => (props.playables.length === 1 && isSong(props.playables[0]) ? props.playables[0] : null))
 </script>

@@ -3,6 +3,8 @@ import { playableStore } from '@/stores/playableStore'
 import { offlineManifest } from '@/services/offlineManifest'
 import type { OfflineManifestEntry } from '@/services/offlineManifest'
 import { http } from '@/services/http'
+import { useMessageToaster } from '@/composables/useMessageToaster'
+import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 import { isSong } from '@/utils/typeGuards'
@@ -341,6 +343,20 @@ export const useOfflinePlayback = () => {
     return songs.length > 0 && songs.every(p => isCached(p))
   }
 
+  const togglePlayablesOffline = (playables: Playable[], collectionLabel: string) => {
+    if (!playables.length) return
+
+    const { toastSuccess } = useMessageToaster()
+
+    if (allPlayablesCached(playables)) {
+      removePlayablesOfflineCache(playables)
+      toastSuccess(`Removed offline versions for ${collectionLabel}.`)
+    } else {
+      makePlayablesAvailableOffline(playables)
+      toastSuccess(`Making ${pluralize(playables, 'song')} available offline…`)
+    }
+  }
+
   return {
     swReady,
     cachedSongIds,
@@ -355,6 +371,7 @@ export const useOfflinePlayback = () => {
     makePlayablesAvailableOffline,
     removePlayablesOfflineCache,
     allPlayablesCached,
+    togglePlayablesOffline,
     isCached,
     isCaching,
     getCachingProgress,

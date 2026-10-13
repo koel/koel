@@ -8,15 +8,7 @@
       <Separator />
     </template>
     <MenuItem @click="toggleFavorite">{{ artist.favorite ? 'Undo Favorite' : 'Favorite' }}</MenuItem>
-    <Separator />
-    <li
-      tabindex="-1"
-      class="px-4 py-2 focus:outline-hidden"
-      @mouseover="($event.currentTarget as HTMLLIElement).focus()"
-    >
-      <StarRating :rateable="artist" @rate="closeContextMenu" />
-    </li>
-    <Separator />
+    <ContextMenuRatingItem :rateable="artist" />
     <MenuItem v-if="allowEdit" @click="requestEditForm">Edit…</MenuItem>
     <template v-if="isStandardArtist && allowDownload">
       <Separator />
@@ -26,10 +18,7 @@
       <Separator />
       <MenuItem @click="showEmbedModal">Embed…</MenuItem>
     </template>
-    <template v-if="musicBrainzUrl">
-      <Separator />
-      <MenuItem @click="viewOnMusicBrainz">View on MusicBrainz</MenuItem>
-    </template>
+    <ContextMenuMusicBrainzItem entity-type="artist" :mbid="artist.mbid" />
   </ul>
 </template>
 
@@ -43,11 +32,11 @@ import { defineAsyncComponent } from '@/utils/helpers'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
 import { useRouter } from '@/composables/useRouter'
-import { playback } from '@/services/playbackManager'
 import { usePolicies } from '@/composables/usePolicies'
-import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+import { usePlayCollection } from '@/composables/usePlayCollection'
 
-import StarRating from '@/components/ui/StarRating.vue'
+import ContextMenuRatingItem from '@/components/ui/context-menu/ContextMenuRatingItem.vue'
+import ContextMenuMusicBrainzItem from '@/components/ui/context-menu/ContextMenuMusicBrainzItem.vue'
 
 const props = defineProps<{ artist: Artist }>()
 const { artist } = toRefs(props)
@@ -56,7 +45,7 @@ const EditArtistForm = defineAsyncComponent(() => import('@/components/artist/Ed
 const CreateEmbedForm = defineAsyncComponent(() => import('@/components/embed/CreateEmbedForm.vue'))
 
 const { getRouteParam, go, isCurrentScreen, url } = useRouter()
-const { MenuItem, Separator, closeContextMenu, trigger } = useContextMenu()
+const { MenuItem, Separator, trigger } = useContextMenu()
 const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
@@ -69,25 +58,18 @@ const allowEdit = computed(() => currentUserCan.editArtist(artist.value))
 
 const isStandardArtist = computed(() => !artistStore.isUnknown(artist.value) && !artistStore.isVarious(artist.value))
 
-const { useMusicBrainz } = useThirdPartyServices()
+const { playCollection } = usePlayCollection()
 
-const musicBrainzUrl = computed(() =>
-  useMusicBrainz.value && artist.value.mbid ? `https://musicbrainz.org/artist/${artist.value.mbid}` : null,
-)
+const playSongs = (shuffle: boolean) =>
+  trigger(() =>
+    playCollection(() => playableStore.fetchSongsForArtist(artist.value), {
+      shuffle,
+      emptyMessage: 'The artist has no songs.',
+    }),
+  )
 
-const viewOnMusicBrainz = () => trigger(() => window.open(musicBrainzUrl.value!, '_blank'))
-
-const play = () =>
-  trigger(async () => {
-    go(url('queue'))
-    await playback().queueAndPlay(await playableStore.fetchSongsForArtist(artist.value))
-  })
-
-const shuffle = () =>
-  trigger(async () => {
-    go(url('queue'))
-    await playback().queueAndPlay(await playableStore.fetchSongsForArtist(artist.value), true)
-  })
+const play = () => playSongs(false)
+const shuffle = () => playSongs(true)
 
 const { fromArtist } = useDownload()
 const download = () => trigger(() => fromArtist(artist.value))
