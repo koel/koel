@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\ImageChangeType;
 use App\Models\RadioStation;
 use App\Models\User;
 use App\Repositories\RadioStationRepository;
@@ -36,19 +35,13 @@ class RadioService
 
     public function updateRadioStation(RadioStation $radioStation, RadioStationUpdateData $dto): RadioStation
     {
-        $data = [
+        $data = $this->imageStorage->storeOptionalImage($dto->logo)->applyToAttributes([
             'url' => $dto->url,
             'name' => $dto->name,
             'description' => $dto->description,
             'is_public' => $dto->isPublic,
             'homepage_url' => $dto->homepageUrl,
-        ];
-
-        $logoChange = $this->imageStorage->storeOptionalImage($dto->logo);
-
-        if ($logoChange->type !== ImageChangeType::KEEP) {
-            $data['logo'] = $logoChange->fileName ?? '';
-        }
+        ], 'logo');
 
         $radioStation->update($data);
 

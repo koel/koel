@@ -2,7 +2,6 @@
 
 namespace App\Services\Playlist;
 
-use App\Enums\ImageChangeType;
 use App\Enums\Placement;
 use App\Exceptions\OperationNotApplicableForSmartPlaylistException;
 use App\Facades\License as LicenseFacade;
@@ -71,17 +70,11 @@ class PlaylistService
 
     public function updatePlaylist(Playlist $playlist, PlaylistUpdateData $dto): Playlist
     {
-        $data = [
+        $data = $this->imageStorage->storeOptionalImage($dto->cover)->applyToAttributes([
             'name' => $dto->name,
             'description' => $dto->description,
             'rules' => $dto->ruleGroups,
-        ];
-
-        $coverChange = $this->imageStorage->storeOptionalImage($dto->cover);
-
-        if ($coverChange->type !== ImageChangeType::KEEP) {
-            $data['cover'] = $coverChange->fileName ?? '';
-        }
+        ], 'cover');
 
         $playlist->update($data);
 

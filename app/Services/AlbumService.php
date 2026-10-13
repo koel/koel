@@ -2,14 +2,12 @@
 
 namespace App\Services;
 
-use App\Enums\ImageChangeType;
 use App\Exceptions\AlbumNameConflictException;
 use App\Models\Album;
 use App\Repositories\AlbumRepository;
 use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
 use App\Values\ImageWritingConfig;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Finder\Finder;
 
@@ -32,21 +30,9 @@ class AlbumService
 
         throw_if($existingAlbumWithTheSameName?->isNot($album), AlbumNameConflictException::class);
 
-        $data = $dto->toArray();
+        $data = $this->imageStorage->storeOptionalImage($dto->cover)->applyToAttributes($dto->toArray(), 'cover');
 
-        $coverChange = $this->imageStorage->storeOptionalImage($dto->cover);
-
-        if ($coverChange->type === ImageChangeType::KEEP) {
-            Arr::forget($data, 'cover');
-        } else {
-            $data['cover'] = $coverChange->fileName ?? '';
-        }
-
-        if ($dto->description === null) {
-            Arr::forget($data, 'description');
-        } else {
-            $data['description'] = $this->richTextSanitizer->sanitize($dto->description);
-        }
+        $data = $this->richTextSanitizer->applySanitizedToAttributes($data, 'description', $dto->description);
 
         $album->update($data);
 

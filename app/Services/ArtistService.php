@@ -2,13 +2,11 @@
 
 namespace App\Services;
 
-use App\Enums\ImageChangeType;
 use App\Exceptions\ArtistNameConflictException;
 use App\Models\Artist;
 use App\Repositories\ArtistRepository;
 use App\Services\Image\ImageStorage;
 use App\Values\Artist\ArtistUpdateData;
-use Illuminate\Support\Arr;
 use Webmozart\Assert\Assert;
 
 class ArtistService
@@ -31,21 +29,9 @@ class ArtistService
 
         throw_if($existingArtistWithTheSameName?->isNot($artist), ArtistNameConflictException::class);
 
-        $data = $dto->toArray();
+        $data = $this->imageStorage->storeOptionalImage($dto->image)->applyToAttributes($dto->toArray(), 'image');
 
-        $imageChange = $this->imageStorage->storeOptionalImage($dto->image);
-
-        if ($imageChange->type === ImageChangeType::KEEP) {
-            Arr::forget($data, 'image');
-        } else {
-            $data['image'] = $imageChange->fileName ?? '';
-        }
-
-        if ($dto->description === null) {
-            Arr::forget($data, 'description');
-        } else {
-            $data['description'] = $this->richTextSanitizer->sanitize($dto->description);
-        }
+        $data = $this->richTextSanitizer->applySanitizedToAttributes($data, 'description', $dto->description);
 
         $artist->update($data);
 

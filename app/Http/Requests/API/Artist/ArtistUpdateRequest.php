@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\API\Artist;
 
+use App\Http\Requests\API\Concerns\ValidatesOptionalImage;
 use App\Http\Requests\API\Request;
-use App\Rules\ValidImageData;
 use App\Values\Artist\ArtistUpdateData;
 
 /**
@@ -13,12 +13,14 @@ use App\Values\Artist\ArtistUpdateData;
  */
 class ArtistUpdateRequest extends Request
 {
+    use ValidatesOptionalImage;
+
     /** @inheritDoc */
     public function rules(): array
     {
         return [
             'name' => ['string', 'required'],
-            'image' => ['string', 'sometimes', 'nullable', new ValidImageData()],
+            'image' => self::optionalImageRules(),
             'description' => ['string', 'sometimes', 'nullable', 'max:16000'],
         ];
     }
@@ -27,8 +29,7 @@ class ArtistUpdateRequest extends Request
     {
         return ArtistUpdateData::make(
             name: $this->name,
-            // null means no change to the image, when an empty string means to delete the image
-            image: $this->has('image') ? $this->string('image') : null,
+            image: $this->optionalImageInput('image'),
             description: $this->has('description') ? (string) $this->description : null,
         );
     }

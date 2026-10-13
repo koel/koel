@@ -43,4 +43,28 @@ class RichTextSanitizerTest extends TestCase
     {
         self::assertNull($this->sanitizer->sanitize('<p> </p><p><br></p>'));
     }
+
+    #[Test]
+    public function applySanitizedToAttributes(): void
+    {
+        $attributes = $this->sanitizer->applySanitizedToAttributes(
+            ['name' => 'Foo'],
+            'description',
+            '<p>Hi<script>steal()</script></p>',
+        );
+
+        self::assertSame(['name' => 'Foo', 'description' => '<p>Hi</p>'], $attributes);
+    }
+
+    #[Test]
+    public function leaveTheAttributeOutWhenThereIsNoHtml(): void
+    {
+        $attributes = $this->sanitizer->applySanitizedToAttributes(
+            ['name' => 'Foo', 'description' => 'Old'],
+            'description',
+            null,
+        );
+
+        self::assertSame(['name' => 'Foo'], $attributes);
+    }
 }
