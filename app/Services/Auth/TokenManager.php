@@ -46,6 +46,25 @@ class TokenManager
         $user->tokens()->delete();
     }
 
+    /**
+     * Delete every token of the user except the API token in use and the audio token created with it.
+     */
+    public function destroyOtherSessions(User $user, #[SensitiveParameter] string $currentPlainTextApiToken): void
+    {
+        /** @var ?string $currentAudioToken */
+        $currentAudioToken = Cache::get("app.composite-tokens.$currentPlainTextApiToken");
+
+        $currentSessionTokenIds = collect([$currentPlainTextApiToken, $currentAudioToken])
+            ->filter()
+            ->map(PersonalAccessToken::findToken(...))
+            ->filter()
+            ->map
+            ->getKey()
+            ->all();
+
+        $user->tokens()->whereKeyNot($currentSessionTokenIds)->delete();
+    }
+
     public function deleteTokenByPlainTextToken(#[SensitiveParameter] string $plainTextToken): void
     {
         PersonalAccessToken::findToken($plainTextToken)?->delete();

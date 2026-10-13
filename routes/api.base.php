@@ -14,6 +14,7 @@ use App\Http\Controllers\API\Artist\FetchArtistInformationController;
 use App\Http\Controllers\API\Auth\LoginWithCredentialsController;
 use App\Http\Controllers\API\Auth\LoginWithOneTimeTokenController;
 use App\Http\Controllers\API\Auth\LogoutController;
+use App\Http\Controllers\API\Auth\LogOutOtherSessionsController;
 use App\Http\Controllers\API\Auth\Passkey\ConfirmationOptionsController as PasskeyConfirmationOptionsController;
 use App\Http\Controllers\API\Auth\Passkey\LoginController as PasskeyLoginController;
 use App\Http\Controllers\API\Auth\Passkey\LoginOptionsController as PasskeyLoginOptionsController;
@@ -264,6 +265,7 @@ Route::prefix('api')
             Route::get('me', [ProfileController::class, 'show']);
             Route::put('me', [ProfileController::class, 'update']);
             Route::put('me/password', ChangePasswordController::class);
+            Route::delete('me/sessions/others', LogOutOtherSessionsController::class);
             Route::patch('me/preferences', UpdateUserPreferenceController::class);
             Route::post('me/equalizer-presets', [EqualizerPresetController::class, 'store']);
             Route::delete('me/equalizer-presets/{id}', [EqualizerPresetController::class, 'destroy']);
