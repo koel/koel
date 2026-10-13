@@ -25,7 +25,7 @@ final readonly class ArtistUpdateData implements Arrayable
     {
         return [
             'name' => $this->name,
-            'cover' => $this->image,
+            'image' => $this->image,
         ];
     }
 }
