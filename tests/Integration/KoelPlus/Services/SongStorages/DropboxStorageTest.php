@@ -5,6 +5,7 @@ namespace Tests\Integration\KoelPlus\Services\SongStorages;
 use App\Filesystems\DropboxFilesystem;
 use App\Helpers\Ulid;
 use App\Models\Song;
+use App\Models\User;
 use App\Services\SongStorages\DropboxStorage;
 use App\Values\UploadReference;
 use Illuminate\Http\Client\Request;
@@ -29,10 +30,13 @@ class DropboxStorageTest extends PlusTestCase
     private MockInterface|DropboxFilesystem $filesystem;
     private MockInterface|Client $client;
     private string $uploadedFilePath;
+    private User $uploader;
 
     public function setUp(): void
     {
         parent::setUp();
+
+        $this->uploader = create_user();
 
         config([
             'koel.storage_driver' => 'dropbox',
@@ -77,11 +81,10 @@ class DropboxStorageTest extends PlusTestCase
             );
         });
 
-        $user = create_user();
         $this->filesystem->expects('writeStream');
-        $reference = $service->storeUploadedFile($this->uploadedFilePath, $user);
+        $reference = $service->storeUploadedFile($this->uploadedFilePath, $this->uploader);
 
-        self::assertSame("dropbox://{$user->public_id}__random__song.mp3", $reference->location);
+        self::assertSame("dropbox://{$this->uploader->public_id}__random__song.mp3", $reference->location);
         self::assertSame(artifact_path('tmp/random/song.mp3'), $reference->localPath);
 
         self::assertSame('free-bird', Cache::get('dropbox_access_token'));
