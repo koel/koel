@@ -284,8 +284,10 @@ interface RadioStation extends IStreamable {
 }
 
 type Playable = Song | Episode
+
 type Streamable = Playable | RadioStation
 type Embeddable = Playable | Playlist | Artist | Album
+type Rateable = Song | Album | Artist | Podcast
 
 interface Embed {
   type: 'embeds'

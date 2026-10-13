@@ -30,8 +30,8 @@ import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
-import { playback } from '@/services/playbackManager'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { usePlayCollection } from '@/composables/usePlayCollection'
 
 import BaseCard from '@/components/ui/album-artist/AlbumOrArtistCard.vue'
 import CardThumbnail from '@/components/ui/album-artist/AlbumOrArtistCardThumbnail.vue'
@@ -43,18 +43,20 @@ const props = defineProps<{ artist: Artist }>()
 
 const ContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 
-const { go, url } = useRouter()
+const { url } = useRouter()
 const { startDragging } = useDraggable('artist')
 const { openContextMenu } = useContextMenu()
+const { playCollection } = usePlayCollection()
 
 const { artist } = toRefs(props)
 
 const showing = computed(() => artistStore.isStandard(artist.value))
 
-const shuffle = async () => {
-  playback().queueAndPlay(await playableStore.fetchSongsForArtist(artist.value), true /* shuffled */)
-  go(url('queue'))
-}
+const shuffle = () =>
+  playCollection(() => playableStore.fetchSongsForArtist(artist.value), {
+    shuffle: true,
+    emptyMessage: 'The artist has no songs.',
+  })
 
 const toggleFavorite = () => artistStore.toggleFavorite(artist.value)
 

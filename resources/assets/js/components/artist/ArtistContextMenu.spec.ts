@@ -61,7 +61,7 @@ describe('artistContextMenu.vue', () => {
     await h.tick()
 
     expect(fetchMock).toHaveBeenCalledWith(artist)
-    expect(playMock).toHaveBeenCalledWith(songs)
+    expect(playMock).toHaveBeenCalledWith(songs, false)
   })
 
   it('shuffles all', async () => {

@@ -57,14 +57,17 @@ describe('mediaBrowserContextMenu.vue', () => {
 
     await h.user.click(screen.getByText('Play'))
 
-    expect(resolveMock).toHaveBeenCalledWith([
-      {
-        id: 'foo',
-        type: 'song',
-      },
-    ])
+    expect(resolveMock).toHaveBeenCalledWith(
+      [
+        {
+          id: 'foo',
+          type: 'song',
+        },
+      ],
+      false,
+    )
 
-    expect(playMock).toHaveBeenCalledWith(resolvedSongs)
+    expect(playMock).toHaveBeenCalledWith(resolvedSongs, false)
     expect(goMock).toHaveBeenCalledWith('/#/queue')
   })
 

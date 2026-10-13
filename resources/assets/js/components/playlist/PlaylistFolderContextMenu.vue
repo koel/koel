@@ -22,14 +22,13 @@
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
-import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { playableStore } from '@/stores/playableStore'
-import { playback } from '@/services/playbackManager'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { useDialogBox } from '@/composables/useDialogBox'
+import { usePlayCollection } from '@/composables/usePlayCollection'
 
 const props = defineProps<{ folder: PlaylistFolder }>()
 const { folder } = toRefs(props)
@@ -45,36 +44,24 @@ const EditPlaylistFolderForm = defineAsyncComponent(() => import('@/components/p
 
 const { MenuItem, Separator, trigger } = useContextMenu()
 const { openModal } = useModal()
-const { go, url } = useRouter()
-const { toastWarning, toastSuccess } = useMessageToaster()
+const { toastSuccess } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 
 const playlistsInFolderTree = computed(() => playlistFolderStore.playlistsInTree(folder.value))
 const playable = computed(() => playlistsInFolderTree.value.length > 0)
 
-const play = () =>
-  trigger(async () => {
-    const songs = await playableStore.fetchForPlaylists(playlistsInFolderTree.value)
+const { playCollection } = usePlayCollection()
 
-    if (songs.length) {
-      playback().queueAndPlay(songs)
-      go(url('queue'))
-    } else {
-      toastWarning('No songs available.')
-    }
-  })
+const playSongs = (shuffle: boolean) =>
+  trigger(() =>
+    playCollection(() => playableStore.fetchForPlaylists(playlistsInFolderTree.value), {
+      shuffle,
+      emptyMessage: 'No songs available.',
+    }),
+  )
 
-const shuffle = () =>
-  trigger(async () => {
-    const songs = await playableStore.fetchForPlaylists(playlistsInFolderTree.value)
-
-    if (songs.length) {
-      playback().queueAndPlay(songs, true)
-      go(url('queue'))
-    } else {
-      toastWarning('No songs available.')
-    }
-  })
+const play = () => playSongs(false)
+const shuffle = () => playSongs(true)
 
 const createPlaylist = () =>
   trigger(() => openModal<'CREATE_PLAYLIST_FORM'>(CreatePlaylistForm, { folder: folder.value!, playables: [] }))

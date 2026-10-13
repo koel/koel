@@ -41,9 +41,9 @@ describe('genreContextMenu.vue', () => {
     await h.user.click(screen.getByText('Play'))
     await h.tick()
 
-    expect(fetchMock).toHaveBeenCalledWith(genre)
-    expect(playMock).toHaveBeenCalledWith(songs)
-    expect(goMock).toHaveBeenCalledWith('queue')
+    expect(fetchMock).toHaveBeenCalledWith(genre, false)
+    expect(playMock).toHaveBeenCalledWith(songs, false)
+    expect(goMock).toHaveBeenCalledWith(Router.url('queue'))
   })
 
   it('shuffles all', async () => {
@@ -59,8 +59,8 @@ describe('genreContextMenu.vue', () => {
     await h.tick()
 
     expect(fetchMock).toHaveBeenCalledWith(genre, true)
-    expect(playMock).toHaveBeenCalledWith(songs)
-    expect(goMock).toHaveBeenCalledWith('queue')
+    expect(playMock).toHaveBeenCalledWith(songs, false)
+    expect(goMock).toHaveBeenCalledWith(Router.url('queue'))
   })
 
   it('adds to queue', async () => {

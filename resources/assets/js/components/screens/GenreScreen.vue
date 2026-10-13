@@ -58,7 +58,6 @@ import { eventBus } from '@/utils/eventBus'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { genreStore } from '@/stores/genreStore'
 import { playableStore } from '@/stores/playableStore'
-import { playback } from '@/services/playbackManager'
 import { useRouter } from '@/composables/useRouter'
 import { usePageTitle } from '@/composables/usePageTitle'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -66,6 +65,7 @@ import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { usePersistedSort } from '@/composables/usePersistedSort'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { usePlayCollection } from '@/composables/usePlayCollection'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -89,8 +89,9 @@ const {
 } = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Genre')
-const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
+const { getRouteParam, isCurrentScreen, onRouteChanged } = useRouter()
 const { openContextMenu } = useContextMenu()
+const { playCollection } = usePlayCollection()
 const { getSavedSort, saveSort } = usePersistedSort('genre', 'title')
 
 let { sortField, sortOrder } = getSavedSort()
@@ -174,18 +175,16 @@ onRouteChanged(route => {
   }
 })
 
-const playAll = async (shuffle = false) => {
-  if (!genre.value) {
+const playAll = async (random = false) => {
+  const currentGenre = genre.value
+
+  if (!currentGenre) {
     return
   }
 
-  go(url('queue'))
-
-  if (shuffle) {
-    await playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, true))
-  } else {
-    await playback().queueAndPlay(await playableStore.fetchSongsByGenre(genre.value!, false))
-  }
+  await playCollection(() => playableStore.fetchSongsByGenre(currentGenre, random), {
+    emptyMessage: 'The genre is empty.',
+  })
 }
 
 const requestContextMenu = (event: MouseEvent) =>

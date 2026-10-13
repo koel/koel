@@ -66,7 +66,7 @@ describe('albumContextMenu.vue', () => {
     await h.tick()
 
     expect(fetchMock).toHaveBeenCalledWith(album)
-    expect(playMock).toHaveBeenCalledWith(songs)
+    expect(playMock).toHaveBeenCalledWith(songs, false)
   })
 
   it('shuffles all', async () => {

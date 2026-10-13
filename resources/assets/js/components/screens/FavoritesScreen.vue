@@ -62,7 +62,6 @@ import { pluralize } from '@/utils/formatters'
 import { playableStore } from '@/stores/playableStore'
 import { useDownload } from '@/composables/useDownload'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useRouter } from '@/composables/useRouter'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
@@ -103,19 +102,11 @@ const { fromFavorites } = useDownload()
 const download = () => fromFavorites()
 const removeSelected = () => selectedPlayables.value.length && playableStore.undoFavorite(selectedPlayables.value)
 
-const { swReady, makePlayablesAvailableOffline, removePlayablesOfflineCache, allPlayablesCached } = useOfflinePlayback()
-const canToggleOffline = computed(() => swReady.value && playables.value.length > 0)
+const { swReady, allPlayablesCached, hasOfflineCapablePlayables, togglePlayablesOffline } = useOfflinePlayback()
+const canToggleOffline = computed(() => swReady.value && hasOfflineCapablePlayables(playables.value))
 const allCached = computed(() => allPlayablesCached(playables.value))
 
-const toggleOffline = () => {
-  if (allCached.value) {
-    removePlayablesOfflineCache(playables.value)
-    useMessageToaster().toastSuccess('Removed offline versions for favorites.')
-  } else {
-    makePlayablesAvailableOffline(playables.value)
-    useMessageToaster().toastSuccess(`Making ${pluralize(playables.value, 'song')} available offline…`)
-  }
-}
+const toggleOffline = () => togglePlayablesOffline(playables.value, 'favorites')
 
 let initialized = false
 const loading = ref(false)

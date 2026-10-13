@@ -38,8 +38,6 @@ import { artistStore } from '@/stores/artistStore'
 import { playableStore } from '@/stores/playableStore'
 import { podcastStore } from '@/stores/podcastStore'
 
-type Rateable = Song | Album | Artist | Podcast
-
 const props = withDefaults(
   defineProps<{
     rateable?: Rateable

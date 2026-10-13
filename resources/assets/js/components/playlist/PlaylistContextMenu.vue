@@ -14,10 +14,7 @@
       <Separator />
       <MenuItem @click="download">Download</MenuItem>
     </template>
-    <template v-if="canToggleOffline">
-      <Separator />
-      <MenuItem @click="toggleOffline">{{ allCached ? 'Remove Offline Versions' : 'Make Available Offline' }}</MenuItem>
-    </template>
+    <ContextMenuOfflineItem :playables="playlistSongs" :collection-name="playlist.name" />
     <template v-if="canMoveOutOfFolder">
       <Separator />
       <MenuItem @click="moveOutOfFolder">Move Out of Folder</MenuItem>
@@ -34,22 +31,21 @@
 import { computed, onMounted, ref, toRef, toRefs } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { defineAsyncComponent } from '@/utils/helpers'
-import { pluralize } from '@/utils/formatters'
-import { useRouter } from '@/composables/useRouter'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { usePolicies } from '@/composables/usePolicies'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { queueStore } from '@/stores/queueStore'
 import { playableStore } from '@/stores/playableStore'
-import { playback } from '@/services/playbackManager'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { commonStore } from '@/stores/commonStore'
 import { useDownload } from '@/composables/useDownload'
+import { usePlayCollection } from '@/composables/usePlayCollection'
+
+import ContextMenuOfflineItem from '@/components/ui/context-menu/ContextMenuOfflineItem.vue'
 
 const props = defineProps<{ playlist: Playlist }>()
 const { playlist } = toRefs(props)
@@ -65,7 +61,6 @@ const CreateEmbedForm = defineAsyncComponent(() => import('@/components/embed/Cr
 
 const { MenuItem, Separator, trigger } = useContextMenu()
 const { openModal } = useModal()
-const { go, url } = useRouter()
 const { toastWarning, toastSuccess } = useMessageToaster()
 const { isPlus } = useKoelPlus()
 const { currentUserCan } = usePolicies()
@@ -100,29 +95,18 @@ const destroy = () =>
 const { fromPlaylist } = useDownload()
 const download = () => trigger(() => fromPlaylist(playlist.value))
 
-const play = () =>
-  trigger(async () => {
-    const songs = await playableStore.fetchForPlaylist(playlist.value)
+const { playCollection } = usePlayCollection()
 
-    if (songs.length) {
-      playback().queueAndPlay(songs)
-      go(url('queue'))
-    } else {
-      toastWarning('The playlist is empty.')
-    }
-  })
+const playSongs = (shuffle: boolean) =>
+  trigger(() =>
+    playCollection(() => playableStore.fetchForPlaylist(playlist.value), {
+      shuffle,
+      emptyMessage: 'The playlist is empty.',
+    }),
+  )
 
-const shuffle = () =>
-  trigger(async () => {
-    const songs = await playableStore.fetchForPlaylist(playlist.value)
-
-    if (songs.length) {
-      playback().queueAndPlay(songs, true)
-      go(url('queue'))
-    } else {
-      toastWarning('The playlist is empty.')
-    }
-  })
+const play = () => playSongs(false)
+const shuffle = () => playSongs(true)
 
 const addToQueue = () =>
   trigger(async () => {
@@ -143,23 +127,7 @@ const showCollaborationModal = () =>
 const showEmbedModal = () =>
   trigger(() => openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, { embeddable: playlist.value }))
 
-const { swReady, makePlayablesAvailableOffline, removePlayablesOfflineCache, allPlayablesCached } = useOfflinePlayback()
-const canToggleOffline = computed(() => swReady.value)
 const playlistSongs = ref<Playable[]>([])
-const allCached = computed(() => allPlayablesCached(playlistSongs.value))
-
-const toggleOffline = () =>
-  trigger(async () => {
-    if (!playlistSongs.value.length) return
-
-    if (allCached.value) {
-      removePlayablesOfflineCache(playlistSongs.value)
-      toastSuccess(`Removed offline versions for "${playlist.value.name}".`)
-    } else {
-      makePlayablesAvailableOffline(playlistSongs.value)
-      toastSuccess(`Making ${pluralize(playlistSongs.value, 'song')} available offline…`)
-    }
-  })
 
 onMounted(async () => {
   playlistSongs.value = await playableStore.fetchForPlaylist(playlist.value)

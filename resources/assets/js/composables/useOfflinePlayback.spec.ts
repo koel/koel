@@ -14,6 +14,14 @@ vi.mock('@/services/offlineManifest', () => ({
   },
 }))
 
+const toastSuccessMock = vi.fn()
+
+vi.mock('@/composables/useMessageToaster', () => ({
+  useMessageToaster: () => ({
+    toastSuccess: toastSuccessMock,
+  }),
+}))
+
 describe('useOfflinePlayback', () => {
   const h = createHarness()
 
@@ -50,10 +58,13 @@ describe('useOfflinePlayback', () => {
     cachedSongCount,
     cachingProgress,
     manifestEntries,
+    togglePlayablesOffline,
+    hasOfflineCapablePlayables,
   } = useOfflinePlayback()
 
   beforeEach(() => {
     postMessageMock.mockClear()
+    toastSuccessMock.mockClear()
     cachedSongIds.value.clear()
     cachingProgress.value.clear()
     manifestEntries.value = []
@@ -209,5 +220,55 @@ describe('useOfflinePlayback', () => {
     expect(cachedSongIds.value.size).toBe(0)
     expect(manifestEntries.value).toHaveLength(0)
     expect(offlineManifest.clear).toHaveBeenCalled()
+  })
+
+  it('removes offline versions when all playables are cached', () => {
+    const songs = h.factory('song').make(2)
+    songs.forEach(song => cachedSongIds.value.add(song.id))
+    h.mock(playableStore, 'getUnsignedSourceUrl').mockReturnValue('http://localhost/play/abc123')
+
+    togglePlayablesOffline(songs, 'favorites')
+
+    songs.forEach(song =>
+      expect(postMessageMock).toHaveBeenCalledWith({
+        type: 'DELETE_AUDIO_CACHE',
+        songId: song.id,
+        sourceUrl: 'http://localhost/play/abc123',
+      }),
+    )
+
+    expect(toastSuccessMock).toHaveBeenCalledWith('Removed offline versions for favorites.')
+  })
+
+  it('makes the uncached playables available offline when not all are cached', async () => {
+    const [cachedSong, uncachedSong] = h.factory('song').make(2)
+    cachedSongIds.value.add(cachedSong.id)
+    const sourceUrl = 'http://localhost/play/abc123?expires=1&signature=s'
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue(sourceUrl)
+
+    togglePlayablesOffline([cachedSong, uncachedSong], 'favorites')
+    await h.tick()
+
+    expect(postMessageMock).toHaveBeenCalledOnce()
+
+    expect(postMessageMock).toHaveBeenCalledWith({
+      type: 'CACHE_AUDIO',
+      songId: uncachedSong.id,
+      sourceUrl,
+    })
+
+    expect(toastSuccessMock).toHaveBeenCalledWith('Making 2 songs available offline…')
+  })
+
+  it('does nothing when no playable is a song', () => {
+    togglePlayablesOffline(h.factory('episode').make(2), 'favorites')
+
+    expect(postMessageMock).not.toHaveBeenCalled()
+    expect(toastSuccessMock).not.toHaveBeenCalled()
+  })
+
+  it('tells whether any playable can be made available offline', () => {
+    expect(hasOfflineCapablePlayables(h.factory('episode').make(2))).toBe(false)
+    expect(hasOfflineCapablePlayables([h.factory('episode').make(), h.factory('song').make()])).toBe(true)
   })
 })
