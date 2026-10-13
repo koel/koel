@@ -5,6 +5,7 @@ namespace App\Services\Integrations;
 use App\Exceptions\MusicBrainzBusyException;
 use App\Jobs\FetchAlbumInformationJob;
 use App\Jobs\FetchArtistInformationJob;
+use App\Jobs\FetchEncyclopediaInformationJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Services\Contracts\Encyclopedia;
@@ -12,7 +13,6 @@ use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
 use Illuminate\Support\Facades\Cache;
-use Throwable;
 
 // @mago-ignore lint:cyclomatic-complexity
 class EncyclopediaService
@@ -45,7 +45,7 @@ class EncyclopediaService
      */
     public function getAlbumInformationOrThrowIfMusicBrainzIsBusy(Album $album): ?AlbumInformation
     {
-        if ($album->is_unknown) {
+        if (!$album->is_standard) {
             return null;
         }
 
@@ -53,16 +53,13 @@ class EncyclopediaService
         $this->mbidService->fetchAndStoreAlbumMbids($album);
         $this->mbidService->fetchAndStoreAlbumYear($album);
 
-        return rescue(
+        return MusicBrainzService::rescueUnlessMusicBrainzIsBusy(
             fn () => Cache::remember(
-                cache_key('album information', $album->name, $album->artist->name),
+                self::resolveAlbumInformationCacheKey($album),
                 now()->addWeek(),
                 fn () => $this->fetchAlbumInformation($album),
             ),
-            fn (Throwable $e) => $e instanceof MusicBrainzBusyException
-                ? throw $e
-                : $this->fetchAlbumInformation($album),
-            report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
+            fn () => $this->fetchAlbumInformation($album),
         );
     }
 
@@ -86,26 +83,43 @@ class EncyclopediaService
      */
     public function getArtistInformationOrThrowIfMusicBrainzIsBusy(Artist $artist): ?ArtistInformation
     {
-        if ($artist->is_unknown || $artist->is_various) {
+        if (!$artist->is_standard) {
             return null;
         }
 
         $this->mbidService->fetchAndStoreArtistMbid($artist);
 
-        return rescue(
+        return MusicBrainzService::rescueUnlessMusicBrainzIsBusy(
             fn () => Cache::remember(
-                cache_key('artist information', $artist->name),
+                self::resolveArtistInformationCacheKey($artist),
                 now()->addWeek(),
                 fn () => $this->fetchArtistInformation($artist),
             ),
-            fn (Throwable $e) => $e instanceof MusicBrainzBusyException
-                ? throw $e
-                : $this->fetchArtistInformation($artist),
-            report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
+            fn () => $this->fetchArtistInformation($artist),
         );
     }
 
-    private function queueInformationFetchIfPossible(FetchAlbumInformationJob|FetchArtistInformationJob $job): void
+    public function forgetAlbumInformation(Album $album): void
+    {
+        Cache::forget(self::resolveAlbumInformationCacheKey($album));
+    }
+
+    public function forgetArtistInformation(Artist $artist): void
+    {
+        Cache::forget(self::resolveArtistInformationCacheKey($artist));
+    }
+
+    private static function resolveAlbumInformationCacheKey(Album $album): string
+    {
+        return cache_key('album information', $album->name, $album->artist->name);
+    }
+
+    private static function resolveArtistInformationCacheKey(Artist $artist): string
+    {
+        return cache_key('artist information', $artist->name);
+    }
+
+    private function queueInformationFetchIfPossible(FetchEncyclopediaInformationJob $job): void
     {
         if ($this->rateLimiter->canQueueLookups()) {
             dispatch($job);

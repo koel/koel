@@ -50,7 +50,7 @@ class LastfmService implements Encyclopedia, Scrobbler
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation
     {
-        if ($artist->is_unknown || $artist->is_various) {
+        if (!$artist->is_standard) {
             return null;
         }
 

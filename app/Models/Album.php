@@ -42,6 +42,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property Collection<array-key, Song> $songs
  * @property User $user
  * @property bool $is_unknown If the album is the Unknown Album
+ * @property bool $is_standard If the album is not the Unknown Album
  * @property int $user_id
  * @property string $artist_id
  * @property string $artist_name

@@ -32,7 +32,7 @@ class TicketmasterService
     /** @return Collection<TicketmasterEvent>|array<array-key, TicketmasterEvent> */
     public function searchEventForArtist(Artist $artist, string $ip): Collection
     {
-        if ($artist->is_unknown || $artist->is_various) {
+        if (!$artist->is_standard) {
             return collect();
         }
 

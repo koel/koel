@@ -34,7 +34,7 @@ class MusicBrainzService implements Encyclopedia
 
     public function getArtistInformation(Artist $artist): ?ArtistInformation
     {
-        if ($artist->is_unknown || $artist->is_various) {
+        if (!$artist->is_standard) {
             return null;
         }
 
@@ -122,14 +122,19 @@ class MusicBrainzService implements Encyclopedia
      * @template TResult
      *
      * @param Closure(): TResult $callback
+     * @param (Closure(): TResult)|null $fallback
      *
      * @return TResult|null
      */
-    private static function rescueUnlessMusicBrainzIsBusy(Closure $callback): mixed
+    public static function rescueUnlessMusicBrainzIsBusy(Closure $callback, ?Closure $fallback = null): mixed
     {
         return rescue(
             $callback,
-            static fn (Throwable $e) => $e instanceof MusicBrainzBusyException ? throw $e : null,
+            static function (Throwable $e) use ($fallback): mixed {
+                throw_if($e instanceof MusicBrainzBusyException, $e);
+
+                return $fallback ? $fallback() : null;
+            },
             report: static fn (Throwable $e): bool => !$e instanceof MusicBrainzBusyException,
         );
     }

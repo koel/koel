@@ -26,7 +26,7 @@ class ArtistPolicy
 
     public function update(User $user, Artist $artist): bool
     {
-        if ($artist->is_unknown || $artist->is_various) {
+        if (!$artist->is_standard) {
             return false;
         }
 
