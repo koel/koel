@@ -39,7 +39,7 @@ describe('playableList.vue', () => {
   })
 
   const renderComponent = (songs: Song[]) => {
-    const playables = ref(songs) as Ref<Playable[]>
+    const playables = ref<Playable[]>(songs)
     const selectedPlayables = ref<Playable[]>([])
     const setSelectedPlayables = vi.fn((value: Playable[]) => (selectedPlayables.value = value))
 
