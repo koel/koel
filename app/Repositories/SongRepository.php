@@ -323,6 +323,7 @@ class SongRepository extends Repository implements ScoutableRepository
 
         return self::limitToSmartPlaylistRules($query, $playlist)
             ->orderBy('songs.title')
+            ->orderBy('songs.id')
             ->limit(self::LIST_SIZE_LIMIT)
             ->get();
     }
@@ -342,6 +343,7 @@ class SongRepository extends Repository implements ScoutableRepository
         )
             ->select('songs.length')
             ->orderBy('songs.title')
+            ->orderBy('songs.id')
             ->limit(self::LIST_SIZE_LIMIT);
 
         $stats = DB::query()
