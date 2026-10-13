@@ -8,14 +8,11 @@ use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
 use App\Values\PresignedUpload;
-use App\Values\UploadReference;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-// @mago-ignore lint:too-many-methods
 class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadUrls
 {
     use DeletesUsingFilesystem;
@@ -67,24 +64,7 @@ class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadU
 
     public function locationFromKey(string $key): string
     {
-        return "s3://$this->bucket/" . Str::after($key, self::PENDING_UPLOAD_PREFIX);
-    }
-
-    public function storeUploadedFile(string $uploadedFilePath, User $uploader): UploadReference
-    {
-        $key = $this->generateStorageKey(basename($uploadedFilePath), $uploader);
-        $this->uploadToStorage($key, $uploadedFilePath);
-
-        return UploadReference::make(location: "s3://$this->bucket/$key", localPath: $uploadedFilePath);
-    }
-
-    public function undoUpload(UploadReference $reference): void
-    {
-        // Delete the temporary file
-        File::delete($reference->localPath);
-
-        // Delete the file from S3
-        $this->deleteFileWithKey(Str::after($reference->location, "s3://$this->bucket/"));
+        return $this->getLocationPrefix() . Str::after($key, self::PENDING_UPLOAD_PREFIX);
     }
 
     public function getPresignedUrl(string $key): string
@@ -113,13 +93,13 @@ class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadU
         Storage::disk('s3')->delete('test.txt');
     }
 
-    public function getLocalPath(string $location): string
-    {
-        return $this->copyToLocal(Str::after($location, "s3://$this->bucket/"));
-    }
-
     public function getStorageType(): SongStorageType
     {
         return SongStorageType::S3;
+    }
+
+    protected function getLocationPrefix(): string
+    {
+        return "s3://$this->bucket/";
     }
 }

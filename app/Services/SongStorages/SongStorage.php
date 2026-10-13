@@ -36,4 +36,9 @@ abstract class SongStorage
 
         return sprintf('%s__%s__%s', $uploader->public_id, Ulid::generate(), $name);
     }
+
+    protected function generateTemporaryLocalPath(string $remotePath): string
+    {
+        return artifact_path(sprintf('tmp/%s_%s', Ulid::generate(), basename($remotePath)));
+    }
 }

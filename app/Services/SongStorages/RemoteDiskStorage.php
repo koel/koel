@@ -2,7 +2,6 @@
 
 namespace App\Services\SongStorages;
 
-use App\Helpers\Ulid;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
@@ -63,7 +62,7 @@ abstract class RemoteDiskStorage extends SongStorage implements MustDeleteTempor
 
     public function copyToLocal(string $path): string
     {
-        $localPath = artifact_path(sprintf('tmp/%s_%s', Ulid::generate(), basename($path)));
+        $localPath = $this->generateTemporaryLocalPath($path);
         $stream = $this->disk->readStream($path);
 
         throw_unless($stream, new RuntimeException("Failed to open remote stream for $path."));
