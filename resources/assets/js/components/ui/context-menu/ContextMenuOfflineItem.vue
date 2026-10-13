@@ -1,5 +1,5 @@
 <template>
-  <template v-if="swReady">
+  <template v-if="swReady && hasOfflineCapablePlayables(playables)">
     <Separator />
     <MenuItem @click="toggleOffline">{{ allCached ? 'Remove Offline Versions' : 'Make Available Offline' }}</MenuItem>
   </template>
@@ -16,7 +16,7 @@ const props = defineProps<{
 }>()
 
 const { MenuItem, Separator, trigger } = useContextMenu()
-const { swReady, allPlayablesCached, togglePlayablesOffline } = useOfflinePlayback()
+const { swReady, allPlayablesCached, hasOfflineCapablePlayables, togglePlayablesOffline } = useOfflinePlayback()
 
 const allCached = computed(() => allPlayablesCached(props.playables))
 

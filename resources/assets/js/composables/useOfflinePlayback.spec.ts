@@ -59,6 +59,7 @@ describe('useOfflinePlayback', () => {
     cachingProgress,
     manifestEntries,
     togglePlayablesOffline,
+    hasOfflineCapablePlayables,
   } = useOfflinePlayback()
 
   beforeEach(() => {
@@ -257,5 +258,17 @@ describe('useOfflinePlayback', () => {
     })
 
     expect(toastSuccessMock).toHaveBeenCalledWith('Making 2 songs available offline…')
+  })
+
+  it('does nothing when no playable is a song', () => {
+    togglePlayablesOffline(h.factory('episode').make(2), 'favorites')
+
+    expect(postMessageMock).not.toHaveBeenCalled()
+    expect(toastSuccessMock).not.toHaveBeenCalled()
+  })
+
+  it('tells whether any playable can be made available offline', () => {
+    expect(hasOfflineCapablePlayables(h.factory('episode').make(2))).toBe(false)
+    expect(hasOfflineCapablePlayables([h.factory('episode').make(), h.factory('song').make()])).toBe(true)
   })
 })

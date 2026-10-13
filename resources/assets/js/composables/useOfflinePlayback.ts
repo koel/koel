@@ -343,17 +343,21 @@ export const useOfflinePlayback = () => {
     return songs.length > 0 && songs.every(p => isCached(p))
   }
 
+  const hasOfflineCapablePlayables = (playables: Playable[]) => playables.some(p => isSong(p))
+
   const togglePlayablesOffline = (playables: Playable[], collectionLabel: string) => {
-    if (!playables.length) return
+    const songs = playables.filter(p => isSong(p))
+
+    if (!songs.length) return
 
     const { toastSuccess } = useMessageToaster()
 
-    if (allPlayablesCached(playables)) {
-      removePlayablesOfflineCache(playables)
+    if (allPlayablesCached(songs)) {
+      removePlayablesOfflineCache(songs)
       toastSuccess(`Removed offline versions for ${collectionLabel}.`)
     } else {
-      makePlayablesAvailableOffline(playables)
-      toastSuccess(`Making ${pluralize(playables, 'song')} available offline…`)
+      makePlayablesAvailableOffline(songs)
+      toastSuccess(`Making ${pluralize(songs, 'song')} available offline…`)
     }
   }
 
@@ -371,6 +375,7 @@ export const useOfflinePlayback = () => {
     makePlayablesAvailableOffline,
     removePlayablesOfflineCache,
     allPlayablesCached,
+    hasOfflineCapablePlayables,
     togglePlayablesOffline,
     isCached,
     isCaching,
