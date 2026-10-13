@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\API\Radio;
 
+use App\Http\Requests\API\Concerns\ValidatesOptionalImage;
 use App\Http\Requests\API\Radio\Concerns\ValidatesRadioStationUrl;
 use App\Http\Requests\API\Request;
 use App\Models\RadioStation;
-use App\Rules\ValidImageData;
 use App\Values\Radio\RadioStationUpdateData;
 
 /**
@@ -19,6 +19,7 @@ use App\Values\Radio\RadioStationUpdateData;
 class RadioStationUpdateRequest extends Request
 {
     use ValidatesRadioStationUrl;
+    use ValidatesOptionalImage;
 
     /** @inheritdoc */
     public function rules(): array
@@ -29,7 +30,7 @@ class RadioStationUpdateRequest extends Request
         return [
             'url' => $this->radioStationUrlRules($station),
             'name' => ['required', 'string', 'max:191'],
-            'logo' => ['nullable', 'sometimes', new ValidImageData()],
+            'logo' => self::optionalImageRules(),
             'description' => ['string', 'sometimes', 'nullable'],
             'is_public' => ['boolean'],
             'homepage_url' => ['sometimes', 'nullable', 'url'],
@@ -42,7 +43,7 @@ class RadioStationUpdateRequest extends Request
             name: $this->name,
             url: $this->url,
             description: $this->string('description'),
-            logo: $this->has('logo') ? $this->string('logo') : null,
+            logo: $this->optionalImageInput('logo'),
             isPublic: $this->boolean('is_public'),
             homepageUrl: $this->homepage_url,
         );

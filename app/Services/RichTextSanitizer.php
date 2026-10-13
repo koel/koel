@@ -4,6 +4,7 @@ namespace App\Services;
 
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use Illuminate\Support\Arr;
 
 class RichTextSanitizer
 {
@@ -22,5 +23,20 @@ class RichTextSanitizer
         $sanitized = trim((new HTMLPurifier($config))->purify($html));
 
         return trim(strip_tags($sanitized)) === '' ? null : $sanitized;
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     * @param ?string $html null leaves the attribute unchanged
+     *
+     * @return array<string, mixed>
+     */
+    public function applySanitizedToAttributes(array $attributes, string $attribute, ?string $html): array
+    {
+        if ($html === null) {
+            return Arr::except($attributes, $attribute);
+        }
+
+        return [...$attributes, $attribute => $this->sanitize($html)];
     }
 }
