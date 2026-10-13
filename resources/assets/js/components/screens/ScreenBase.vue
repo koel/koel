@@ -17,7 +17,7 @@
 
     <main
       ref="main"
-      :class="scrollsItself ? 'scrolls-itself' : 'scroll-mask-y'"
+      :class="{ 'scrolls-itself': scrollsItself, 'scroll-mask-y': contentScrollsInMain }"
       class="flex flex-col b-16 md:b-6 flex-1 place-content-start"
     >
       <ScreenHeaderSpace v-if="contentScrollsInMain" />
