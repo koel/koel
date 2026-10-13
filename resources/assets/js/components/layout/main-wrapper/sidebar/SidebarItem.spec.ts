@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
@@ -7,11 +7,12 @@ import Component from './SidebarItem.vue'
 describe('sidebarItem', () => {
   const h = createHarness()
 
-  const renderComponent = (disabledReason: string | null = null) => {
+  const renderComponent = (disabledReason: string | null = null, onDblclick?: () => void) => {
     return h.render(Component, {
       props: {
         href: '#',
         disabledReason,
+        onDblclick,
       },
       slots: {
         default: 'Home',
@@ -19,11 +20,22 @@ describe('sidebarItem', () => {
     })
   }
 
-  it('navigates and toggles sidebar on single click', async () => {
+  it('navigates and toggles sidebar right away on single click', async () => {
     const mock = h.mock(eventBus, 'emit')
     renderComponent()
 
     await h.user.click(screen.getByText('Home'))
+
+    expect(mock).toHaveBeenCalledWith('TOGGLE_SIDEBAR')
+  })
+
+  it('navigates after a short wait on single click when double click is handled', async () => {
+    const mock = h.mock(eventBus, 'emit')
+    renderComponent(null, () => {})
+
+    await h.user.click(screen.getByText('Home'))
+
+    expect(mock).not.toHaveBeenCalledWith('TOGGLE_SIDEBAR')
 
     await waitFor(
       () => {
@@ -31,6 +43,17 @@ describe('sidebarItem', () => {
       },
       { timeout: 500 },
     )
+  })
+
+  it.each(['metaKey', 'ctrlKey', 'shiftKey'])('leaves a click with %s to the browser', async modifier => {
+    const mock = h.mock(eventBus, 'emit')
+    renderComponent()
+
+    const click = new MouseEvent('click', { bubbles: true, cancelable: true, [modifier]: true })
+    screen.getByRole('link').dispatchEvent(click)
+
+    expect(click.defaultPrevented).toBe(false)
+    expect(mock).not.toHaveBeenCalledWith('TOGGLE_SIDEBAR')
   })
 
   it('stays in place and explains why when disabled', async () => {
@@ -46,13 +69,15 @@ describe('sidebarItem', () => {
     expect(mock).not.toHaveBeenCalledWith('TOGGLE_SIDEBAR')
   })
 
-  it('emits dblclick on double click', async () => {
-    const { emitted } = renderComponent()
+  it('calls the double click handler and skips navigation on double click', async () => {
+    const mock = h.mock(eventBus, 'emit')
+    const onDblclick = vi.fn()
+    renderComponent(null, onDblclick)
 
     await h.user.dblClick(screen.getByText('Home'))
+    await new Promise(resolve => setTimeout(resolve, 200))
 
-    await waitFor(() => {
-      expect(emitted().dblclick).toBeTruthy()
-    })
+    expect(onDblclick).toHaveBeenCalled()
+    expect(mock).not.toHaveBeenCalledWith('TOGGLE_SIDEBAR')
   })
 })

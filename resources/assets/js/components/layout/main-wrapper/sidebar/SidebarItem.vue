@@ -10,7 +10,7 @@
       :href="disabledReason ? undefined : props.href"
       :title="disabledReason ?? undefined"
       class="flex items-center overflow-x-hidden gap-3 h-11 relative active:pt-0.5 active:pr-0 active:pb-0 active:pl-0.5 text-k-fg-70"
-      @click.prevent="onClick"
+      @click="onClick"
       @dblclick.prevent="onDblClick"
     >
       <span>
@@ -44,14 +44,13 @@ const props = withDefaults(
     href?: string | undefined
     active?: boolean
     disabledReason?: string | null
+    onDblclick?: () => void
   }>(),
   {
     active: false,
     disabledReason: null,
   },
 )
-
-const emit = defineEmits<{ dblclick: [] }>()
 
 const { go } = useRouter()
 
@@ -64,14 +63,28 @@ const navigate = () => {
   }
 }
 
-const onClick = () => {
+const opensInNewTabOrWindow = (event: MouseEvent) =>
+  event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0
+
+const onClick = (event: MouseEvent) => {
+  if (opensInNewTabOrWindow(event)) {
+    return
+  }
+
+  event.preventDefault()
+
+  if (!props.onDblclick) {
+    navigate()
+    return
+  }
+
   clearTimeout(clickTimer)
   clickTimer = window.setTimeout(navigate, 150)
 }
 
 const onDblClick = () => {
   clearTimeout(clickTimer)
-  emit('dblclick')
+  props.onDblclick?.()
 }
 </script>
 
