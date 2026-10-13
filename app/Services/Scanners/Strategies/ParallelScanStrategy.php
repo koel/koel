@@ -45,6 +45,7 @@ class ParallelScanStrategy
         ?callable $onProgress,
     ): ScanResultCollection {
         $results = ScanResultCollection::create();
+        $timeout = config('koel.scan.timeout');
         $manifests = [];
 
         try {
@@ -59,15 +60,17 @@ class ParallelScanStrategy
                     $manifest,
                     $config,
                 ), $manifests),
-                timeout: config('koel.scan.timeout'),
+                timeout: $timeout,
                 onOutputLine: fn (string $line) => $this->addResult(
                     $this->deserializer->deserialize($line),
                     $results,
                     $onProgress,
                 ),
-                onWorkerFailure: static function (?int $exitCode, string $errorOutput): void {
-                    $stderr = trim($errorOutput);
-                    $msg = $stderr ?: 'Process exited with code ' . ($exitCode ?? 'unknown');
+                onWorkerFailure: static function (?int $exitCode, string $errorOutput, bool $timedOut) use (
+                    $timeout,
+                ): void {
+                    $exitReason = trim($errorOutput) ?: 'Process exited with code ' . ($exitCode ?? 'unknown');
+                    $msg = $timedOut ? sprintf('Process timed out after %d seconds', $timeout) : $exitReason;
 
                     throw new RuntimeException("Parallel scan worker failed: $msg");
                 },

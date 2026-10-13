@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Closure;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 use Throwable;
 
@@ -16,7 +17,8 @@ class WorkerProcessPool
      *
      * @param array<array<string>> $commands
      * @param Closure(string): void $onOutputLine
-     * @param Closure(?int, string): void $onWorkerFailure receives the exit code and the whole error output
+     * @param Closure(?int, string, bool): void $onWorkerFailure receives the exit code, the whole error output,
+     *                                             and whether the worker was stopped for exceeding the timeout
      * @param (Closure(string): void)|null $onErrorLine
      */
     public function run(
@@ -44,15 +46,17 @@ class WorkerProcessPool
                     $this->emitCompleteLines($process->getIncrementalOutput(), $outputBuffers[$i], $onOutputLine);
                     $this->emitCompleteLines($process->getIncrementalErrorOutput(), $errorBuffers[$i], $onErrorLine);
 
-                    if ($process->isRunning()) {
+                    $timedOut = $this->stopIfTimedOut($process);
+
+                    if (!$timedOut && $process->isRunning()) {
                         continue;
                     }
 
                     $this->emitLine(trim($outputBuffers[$i]), $onOutputLine);
                     $this->emitLine(trim($errorBuffers[$i]), $onErrorLine);
 
-                    if (!$process->isSuccessful()) {
-                        $onWorkerFailure($process->getExitCode(), $process->getErrorOutput());
+                    if ($timedOut || !$process->isSuccessful()) {
+                        $onWorkerFailure($process->getExitCode(), $process->getErrorOutput(), $timedOut);
                     }
 
                     unset($processes[$i], $outputBuffers[$i], $errorBuffers[$i]);
@@ -68,6 +72,17 @@ class WorkerProcessPool
             }
 
             throw $e;
+        }
+    }
+
+    private function stopIfTimedOut(Process $process): bool
+    {
+        try {
+            $process->checkTimeout();
+
+            return false;
+        } catch (ProcessTimedOutException) {
+            return true;
         }
     }
 

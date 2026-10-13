@@ -38,10 +38,15 @@ class ParallelPodcastSync
                     $onResult($data);
                 }
             },
-            onWorkerFailure: static fn (?int $exitCode) => $onResult(self::makeErrorResult(sprintf(
-                'Worker exited with code %d',
-                $exitCode,
-            ))),
+            onWorkerFailure: static fn (
+                ?int $exitCode,
+                string $errorOutput,
+                bool $timedOut,
+            ) => $onResult(self::makeErrorResult(
+                $timedOut
+                    ? sprintf('Worker timed out after %d seconds', self::WORKER_TIMEOUT_SECONDS)
+                    : sprintf('Worker exited with code %d', $exitCode),
+            )),
             onErrorLine: static fn (string $line) => $onResult(self::makeErrorResult($line)),
         );
     }

@@ -76,12 +76,40 @@ class WorkerProcessPoolTest extends TestCase
             onOutputLine: static function (string $line) use (&$outputLines): void {
                 $outputLines[] = $line;
             },
-            onWorkerFailure: static function (?int $exitCode, string $errorOutput) use (&$failures): void {
-                $failures[] = [$exitCode, $errorOutput];
+            onWorkerFailure: static function (?int $exitCode, string $errorOutput, bool $timedOut) use (
+                &$failures,
+            ): void {
+                $failures[] = [$exitCode, $errorOutput, $timedOut];
             },
         );
 
-        self::assertSame([[3, "boom\n"]], $failures);
+        self::assertSame([[3, "boom\n", false]], $failures);
+        self::assertSame(['done'], $outputLines);
+    }
+
+    #[Test]
+    public function reportsATimedOutWorkerAsFailedAndKeepsCollectingFromTheOthers(): void
+    {
+        $outputLines = [];
+        $timedOutFlags = [];
+
+        $this->pool->run(
+            commands: [
+                self::php('sleep(30);'),
+                self::php('echo "done\n";'),
+            ],
+            timeout: 1,
+            onOutputLine: static function (string $line) use (&$outputLines): void {
+                $outputLines[] = $line;
+            },
+            onWorkerFailure: static function (?int $exitCode, string $errorOutput, bool $timedOut) use (
+                &$timedOutFlags,
+            ): void {
+                $timedOutFlags[] = $timedOut;
+            },
+        );
+
+        self::assertSame([true], $timedOutFlags);
         self::assertSame(['done'], $outputLines);
     }
 
