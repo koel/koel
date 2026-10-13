@@ -7,7 +7,7 @@
             <SortableColumnHeader :active="field === 'name'" :order class="name" @sort="onSort('name')">
               Name
             </SortableColumnHeader>
-            <span v-if="shouldShowColumn('description')" class="description">Description</span>
+            <span v-if="shouldShowColumn('description')" class="description max-md:hidden">Description</span>
             <SortableColumnHeader
               v-if="shouldShowColumn('created_at')"
               :active="field === 'created_at'"
