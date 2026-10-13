@@ -14,7 +14,14 @@
       <span class="flex flex-col gap-1 min-w-0">
         <a :href="url('albums.show', { id: album.id })" class="truncate">{{ album.name }}</a>
         <span v-if="shouldShowColumn('artist')" class="md:hidden truncate text-[0.9rem] text-k-fg-50">
-          {{ album.artist_name }}
+          <a
+            v-if="artistStore.isStandard(album.artist_name)"
+            :href="url('artists.show', { id: album.artist_id })"
+            class="text-k-fg-50 hover:text-k-fg"
+          >
+            {{ album.artist_name }}
+          </a>
+          <template v-else>{{ album.artist_name }}</template>
         </span>
       </span>
     </span>

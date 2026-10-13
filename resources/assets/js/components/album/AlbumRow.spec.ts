@@ -41,10 +41,10 @@ describe('albumRow.vue', () => {
     renderComponent()
 
     screen.getByText('IV')
-    expect(screen.getByRole('link', { name: 'Led Zeppelin' })).toHaveProperty(
-      'href',
-      expect.stringContaining('/artists/led-zeppelin'),
-    )
+    const artistLinks = screen.getAllByRole('link', { name: 'Led Zeppelin' })
+
+    expect(artistLinks).toHaveLength(2)
+    artistLinks.forEach(link => expect(link).toHaveProperty('href', expect.stringContaining('/artists/led-zeppelin')))
   })
 
   it('emits toggle-favorite when the favorite button is clicked', async () => {
