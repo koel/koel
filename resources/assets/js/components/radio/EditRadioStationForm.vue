@@ -46,7 +46,6 @@
 import { pick } from 'lodash-es'
 import { toRaw } from 'vue'
 
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import type { RadioStationData } from '@/stores/radioStationStore'
 import { radioStationStore } from '@/stores/radioStationStore'
@@ -68,9 +67,8 @@ const { station } = props
 const close = () => emit('close')
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
-const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
+const { data, handleSubmit, maybeClose } = useForm<RadioStationData>({
   initialValues: { ...pick(station, 'name', 'url', 'homepage_url', 'description', 'is_public', 'logo') },
   onSubmit: async data => {
     const formData = structuredClone(toRaw(data))
@@ -92,11 +90,6 @@ const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
     close()
     toastSuccess('Station updated.')
   },
+  onClose: close,
 })
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
-    close()
-  }
-}
 </script>

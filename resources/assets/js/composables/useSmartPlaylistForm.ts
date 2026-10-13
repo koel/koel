@@ -1,3 +1,4 @@
+import type { Ref } from 'vue'
 import { nextTick, ref } from 'vue'
 import { playlistStore } from '@/stores/playlistStore'
 
@@ -7,7 +8,7 @@ import SoundBars from '@/components/ui/SoundBars.vue'
 
 type SmartPlaylistFormTab = 'details' | 'rules'
 
-export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[] = []) => {
+export const useSmartPlaylistForm = (collectedRuleGroups: Ref<SmartPlaylistRuleGroup[]> = ref([])) => {
   const currentTab = ref<SmartPlaylistFormTab>('details')
   const activateTab = (tab: SmartPlaylistFormTab) => (currentTab.value = tab)
   const isTabActive = (tab: SmartPlaylistFormTab) => currentTab.value === tab
@@ -24,8 +25,6 @@ export const useSmartPlaylistForm = (initialRuleGroups: SmartPlaylistRuleGroup[]
     await nextTick()
     field.reportValidity()
   }
-
-  const collectedRuleGroups = ref<SmartPlaylistRuleGroup[]>(initialRuleGroups)
 
   const addGroup = () => collectedRuleGroups.value.push(playlistStore.createEmptySmartPlaylistRuleGroup())
 

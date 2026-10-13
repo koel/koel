@@ -23,7 +23,6 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { invitationService } from '@/services/invitationService'
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
@@ -35,7 +34,6 @@ import RolePicker from '@/components/user/RolePicker.vue'
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
 const emailsEl = ref<InstanceType<typeof TextArea>>()
 
@@ -56,7 +54,7 @@ const collectValidEmails = () => {
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<{ raw_emails: string; role: Role }>({
+const { data, handleSubmit, maybeClose } = useForm<{ raw_emails: string; role: Role }>({
   initialValues: {
     raw_emails: '',
     role: 'user',
@@ -83,6 +81,7 @@ const { data, isPristine, handleSubmit } = useForm<{ raw_emails: string; role: R
     toastSuccess('Invitation(s) sent.')
     close()
   },
+  onClose: close,
 })
 
 watch(
@@ -96,10 +95,4 @@ watch(
     emailEntries = [...new Set(emailEntries)]
   },
 )
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
-    close()
-  }
-}
 </script>

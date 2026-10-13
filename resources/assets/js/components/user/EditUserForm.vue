@@ -41,7 +41,6 @@
 import { pick } from 'lodash-es'
 import type { UpdateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
@@ -58,11 +57,10 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { user } = props
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<UpdateUserData>({
+const { data, handleSubmit, maybeClose } = useForm<UpdateUserData>({
   initialValues: {
     ...pick(user, 'name', 'email', 'role'),
     password: '',
@@ -80,11 +78,6 @@ const { data, isPristine, handleSubmit } = useForm<UpdateUserData>({
     toastSuccess('User profile updated.')
     close()
   },
+  onClose: close,
 })
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
-    close()
-  }
-}
 </script>

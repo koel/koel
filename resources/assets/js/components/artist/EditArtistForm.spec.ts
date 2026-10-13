@@ -129,6 +129,20 @@ describe('editArtistForm.vue', () => {
     )
   })
 
+  it('closes without asking when the pre-filled online text is left unchanged', async () => {
+    mockShowConfirmDialog.mockClear()
+    h.mock(encyclopediaService, 'fetchForArtist').mockResolvedValue({
+      bio: { summary: '', full: '<p>Found online</p>' },
+    })
+    const { emitted } = renderComponent(h.factory('artist').make({ description: null }))
+    await h.tick(2)
+
+    await h.user.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(mockShowConfirmDialog).not.toHaveBeenCalled()
+    expect(emitted().close).toBeTruthy()
+  })
+
   it('asks before discarding a cleared description', async () => {
     renderComponent(h.factory('artist').make({ description: '<p>My own words</p>' }))
     await h.tick(2)

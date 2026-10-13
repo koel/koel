@@ -1,6 +1,7 @@
 import type { Reactive } from 'vue'
 import { reactive, ref, toRaw } from 'vue'
 import { isEqual } from 'lodash-es'
+import { useDialogBox } from '@/composables/useDialogBox'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useOverlay as useOverlayComposable } from '@/composables/useOverlay'
 
@@ -15,6 +16,8 @@ interface UseFormConfig<T extends Record<string, any>> {
   validator?: (data: Reactive<T>) => MaybePromise<boolean>
   isPristine?: (originalData: T, currentData: Reactive<T>) => MaybePromise<boolean>
   useOverlay?: boolean
+  onClose?: () => void
+  discardConfirmation?: string
 }
 
 export const useForm = <T extends Record<string, any>>(config: UseFormConfig<T>) => {
@@ -27,6 +30,14 @@ export const useForm = <T extends Record<string, any>>(config: UseFormConfig<T>)
 
   const isPristine = () =>
     config.isPristine ? config.isPristine(rawOriginalData, toRaw(data)) : isEqual(rawOriginalData, toRaw(data))
+
+  const confirmDiscard = config.onClose ? useDialogBox().showConfirmDialog : undefined
+
+  const maybeClose = async () => {
+    if ((await isPristine()) || (await confirmDiscard?.(config.discardConfirmation ?? 'Discard all changes?'))) {
+      config.onClose?.()
+    }
+  }
 
   const onError = async (error: unknown) => {
     config.onError ? await config.onError(error) : useErrorHandler('dialog').handleHttpError(error)
@@ -63,5 +74,6 @@ export const useForm = <T extends Record<string, any>>(config: UseFormConfig<T>)
     isPristine,
     isDirty: () => !isPristine(),
     handleSubmit,
+    maybeClose,
   }
 }
