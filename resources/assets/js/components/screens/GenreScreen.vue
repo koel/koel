@@ -146,10 +146,18 @@ const refetchSongsFromStart = async () => {
 }
 
 const fetchGenre = async () => {
+  const requestedId = id.value!
+
   try {
-    genre.value = await genreStore.fetchOne(id.value!)
+    const fetchedGenre = await genreStore.fetchOne(requestedId)
+
+    if (id.value === requestedId) {
+      genre.value = fetchedGenre
+    }
   } catch (error: unknown) {
-    useErrorHandler('dialog').handleHttpError(error)
+    if (id.value === requestedId) {
+      useErrorHandler('dialog').handleHttpError(error)
+    }
   }
 }
 
