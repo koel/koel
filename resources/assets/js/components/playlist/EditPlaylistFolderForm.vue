@@ -37,7 +37,6 @@
 import { orderBy, pick } from 'lodash-es'
 import { computed } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
@@ -52,7 +51,6 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { folder } = props
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
 const parentFolders = computed(() => {
   const unavailableParentIds = new Set([
@@ -68,18 +66,13 @@ const parentFolders = computed(() => {
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<Pick<PlaylistFolder, 'name' | 'parent_id'>>({
+const { data, handleSubmit, maybeClose } = useForm<Pick<PlaylistFolder, 'name' | 'parent_id'>>({
   initialValues: pick(folder, 'name', 'parent_id'),
   onSubmit: async changes => await playlistFolderStore.update(folder, changes),
   onSuccess: () => {
     toastSuccess('Playlist folder updated.')
     close()
   },
+  onClose: close,
 })
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
-    close()
-  }
-}
 </script>

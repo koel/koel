@@ -28,7 +28,6 @@
 </template>
 
 <script setup lang="ts">
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { podcastStore } from '@/stores/podcastStore'
@@ -41,11 +40,10 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
 
-const { loading, handleSubmit, data, isPristine } = useForm<Pick<Podcast, 'url'>>({
+const { loading, handleSubmit, data, maybeClose } = useForm<Pick<Podcast, 'url'>>({
   initialValues: {
     url: '',
   },
@@ -58,11 +56,6 @@ const { loading, handleSubmit, data, isPristine } = useForm<Pick<Podcast, 'url'>
     useErrorHandler('dialog').handleHttpError(error, {
       409: 'You have already subscribed to this podcast.',
     }),
+  onClose: close,
 })
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
-    close()
-  }
-}
 </script>

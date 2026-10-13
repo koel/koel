@@ -31,7 +31,6 @@
 <script lang="ts" setup>
 import type { CreateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
@@ -44,11 +43,10 @@ import PasswordField from '@/components/ui/form/PasswordField.vue'
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
 
-const { data, isPristine, loading, handleSubmit } = useForm<CreateUserData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<CreateUserData>({
   initialValues: {
     name: '',
     email: '',
@@ -60,11 +58,6 @@ const { data, isPristine, loading, handleSubmit } = useForm<CreateUserData>({
     toastSuccess(`New user "${user.name}" created.`)
     close()
   },
+  onClose: close,
 })
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
-    close()
-  }
-}
 </script>

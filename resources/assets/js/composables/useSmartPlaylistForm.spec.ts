@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
+import { ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { useSmartPlaylistForm } from './useSmartPlaylistForm'
 import { playlistStore } from '@/stores/playlistStore'
@@ -22,7 +23,7 @@ describe('useSmartPlaylistForm', () => {
 
   it('initializes with provided rule groups', () => {
     const groups = [{ id: 1, rules: [] }] as unknown as SmartPlaylistRuleGroup[]
-    const { collectedRuleGroups } = useSmartPlaylistForm(groups)
+    const { collectedRuleGroups } = useSmartPlaylistForm(ref(groups))
     expect(collectedRuleGroups.value).toHaveLength(1)
   })
 
@@ -42,7 +43,7 @@ describe('useSmartPlaylistForm', () => {
       { id: 2, rules: [{ id: 'r2' }] },
     ] as unknown as SmartPlaylistRuleGroup[]
 
-    const { collectedRuleGroups, onGroupChanged } = useSmartPlaylistForm(groups)
+    const { collectedRuleGroups, onGroupChanged } = useSmartPlaylistForm(ref(groups))
     expect(collectedRuleGroups.value).toHaveLength(2)
 
     onGroupChanged({ id: 1, rules: [] } as unknown as SmartPlaylistRuleGroup)
@@ -53,7 +54,7 @@ describe('useSmartPlaylistForm', () => {
   it('updates a group when rules are changed', () => {
     const groups = [{ id: 1, rules: [{ id: 'r1', value: 'old' }] }] as unknown as SmartPlaylistRuleGroup[]
 
-    const { collectedRuleGroups, onGroupChanged } = useSmartPlaylistForm(groups)
+    const { collectedRuleGroups, onGroupChanged } = useSmartPlaylistForm(ref(groups))
 
     onGroupChanged({ id: 1, rules: [{ id: 'r1', value: 'new' }] } as unknown as SmartPlaylistRuleGroup)
     expect((collectedRuleGroups.value[0].rules[0] as any).value).toBe('new')

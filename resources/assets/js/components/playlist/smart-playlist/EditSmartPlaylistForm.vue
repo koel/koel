@@ -1,115 +1,41 @@
 <template>
-  <form
-    class="md:w-[560px]"
-    @invalid.capture="showTabOfInvalidField"
-    @submit.prevent="handleSubmit"
-    @keydown.esc="maybeClose"
-  >
+  <form class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>Edit Smart Playlist</h1>
     </header>
 
     <main class="space-y-5">
-      <Tabs class="mt-1 -m-6">
-        <TabList>
-          <TabButton
-            id="createSmartPlaylistTabDetails"
-            :selected="isTabActive('details')"
-            aria-controls="createSmartPlaylistDetails"
-            @click="activateTab('details')"
-          >
-            Details
-          </TabButton>
-          <TabButton
-            id="createSmartPlaylistTabRules"
-            :selected="isTabActive('rules')"
-            aria-controls="createSmartPlaylistRules"
-            @click="activateTab('rules')"
-          >
-            Rules
-          </TabButton>
-        </TabList>
-
-        <TabPanelContainer>
-          <TabPanel
-            v-show="isTabActive('details')"
-            data-tab="details"
-            id="createSmartPlaylistDetails"
-            aria-labelledby="createSmartPlaylistTabDetails"
-            class="space-y-5"
-          >
-            <div class="grid grid-cols-2 gap-4">
-              <FormRow>
-                <template #label>Name *</template>
-                <TextInput v-model="data.name" v-koel-focus name="name" placeholder="Playlist name" required />
-              </FormRow>
-              <FormRow>
-                <template #label>Folder</template>
-                <FolderSelect v-model:folder-id="data.folder_id" v-model:folder-name="data.folder_name" />
-              </FormRow>
-              <FormRow class="col-span-2">
-                <template #label>Description</template>
-                <TextArea v-model="data.description" class="h-28" name="description" />
-              </FormRow>
-              <ArtworkField v-model="data.cover">Pick or paste a cover (optional)</ArtworkField>
-            </div>
-          </TabPanel>
-
-          <TabPanel
-            v-show="isTabActive('rules')"
-            data-tab="rules"
-            id="createSmartPlaylistRules"
-            aria-labelledby="createSmartPlaylistTabRules"
-            class="space-y-5"
-          >
-            <div class="scroll-mask-y group-container space-y-5 overflow-auto max-h-[480px]">
-              <RuleGroup
-                v-for="(group, index) in collectedRuleGroups"
-                :key="group.id"
-                :group="group"
-                :is-first-group="index === 0"
-                @input="onGroupChanged"
-              />
-              <Btn size="small" variant="success" class="btn-add-group" uppercase @click.prevent="addGroup">
-                <Icon :icon="faPlus" />
-                Group
-              </Btn>
-            </div>
-          </TabPanel>
-        </TabPanelContainer>
-      </Tabs>
+      <SmartPlaylistFormTabs v-model:rule-groups="ruleGroups">
+        <PlaylistDetailsFields
+          v-model:name="data.name"
+          v-model:folder-id="data.folder_id"
+          v-model:folder-name="data.folder_name"
+          v-model:description="data.description"
+          v-model:cover="data.cover"
+        />
+      </SmartPlaylistFormTabs>
     </main>
 
     <footer>
-      <Btn :disabled="!collectedRuleGroups.length" type="submit">Save</Btn>
+      <Btn :disabled="!ruleGroups.length" type="submit">Save</Btn>
       <Btn variant="ghost" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>
 
 <script lang="ts" setup>
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { isEqual, pick } from 'lodash-es'
-import { toRaw } from 'vue'
+import { ref, toRaw } from 'vue'
 
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { eventBus } from '@/utils/eventBus'
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
-import { useSmartPlaylistForm } from '@/composables/useSmartPlaylistForm'
 import { useForm } from '@/composables/useForm'
 
-import TextInput from '@/components/ui/form/TextInput.vue'
-import FormRow from '@/components/ui/form/FormRow.vue'
-import FolderSelect from '@/components/ui/form/FolderSelect.vue'
-import TextArea from '@/components/ui/form/TextArea.vue'
-import TabButton from '@/components/ui/tabs/TabButton.vue'
-import Tabs from '@/components/ui/tabs/Tabs.vue'
-import TabPanelContainer from '@/components/ui/tabs/TabPanelContainer.vue'
-import TabList from '@/components/ui/tabs/TabList.vue'
-import TabPanel from '@/components/ui/tabs/TabPanel.vue'
-import ArtworkField from '@/components/ui/form/ArtworkField.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+import PlaylistDetailsFields from '@/components/playlist/PlaylistDetailsFields.vue'
+import SmartPlaylistFormTabs from '@/components/playlist/smart-playlist/SmartPlaylistFormTabs.vue'
 
 const props = defineProps<{ playlist: Playlist }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
@@ -117,28 +43,18 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 const { playlist } = props
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
-const {
-  Btn,
-  RuleGroup,
-  activateTab,
-  isTabActive,
-  showTabOfInvalidField,
-  collectedRuleGroups,
-  addGroup,
-  onGroupChanged,
-} = useSmartPlaylistForm(structuredClone(toRaw(playlist.rules)))
+const ruleGroups = ref<SmartPlaylistRuleGroup[]>(structuredClone(toRaw(playlist.rules)))
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
+const { data, handleSubmit, maybeClose } = useForm<UpdatePlaylistData>({
   initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
-  isPristine: (original, current) => isEqual(original, current) && isEqual(collectedRuleGroups.value, playlist.rules),
+  isPristine: (original, current) => isEqual(original, current) && isEqual(ruleGroups.value, playlist.rules),
   onSubmit: async data => {
     const formData = {
       ...structuredClone(toRaw(data)),
-      rules: collectedRuleGroups.value,
+      rules: ruleGroups.value,
     }
 
     if (formData.cover === playlist.cover) {
@@ -152,20 +68,11 @@ const { data, isPristine, handleSubmit } = useForm<UpdatePlaylistData>({
     eventBus.emit('PLAYLIST_UPDATED', playlist)
     close()
   },
+  onClose: close,
 })
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
-    close()
-  }
-}
 </script>
 
 <style lang="postcss" scoped>
-.group-container {
-  scrollbar-gutter: stable;
-}
-
 form {
   max-height: calc(100vh - 4rem);
 }

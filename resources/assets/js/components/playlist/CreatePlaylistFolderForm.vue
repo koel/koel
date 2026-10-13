@@ -19,7 +19,6 @@
 
 <script lang="ts" setup>
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
@@ -33,11 +32,10 @@ const props = withDefaults(defineProps<{ parent?: PlaylistFolder | null }>(), {
 })
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<Pick<PlaylistFolder, 'name'>>({
+const { data, handleSubmit, maybeClose } = useForm<Pick<PlaylistFolder, 'name'>>({
   initialValues: {
     name: '',
   },
@@ -47,11 +45,6 @@ const { data, isPristine, handleSubmit } = useForm<Pick<PlaylistFolder, 'name'>>
     close()
     toastSuccess(`Playlist folder "${folder.name}" created.`)
   },
+  onClose: close,
 })
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
-    close()
-  }
-}
 </script>

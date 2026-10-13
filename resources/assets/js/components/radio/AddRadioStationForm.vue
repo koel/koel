@@ -43,7 +43,6 @@
 </template>
 
 <script setup lang="ts">
-import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import type { RadioStationData } from '@/stores/radioStationStore'
 import { radioStationStore } from '@/stores/radioStationStore'
@@ -59,11 +58,10 @@ import ArtworkField from '@/components/ui/form/ArtworkField.vue'
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { toastSuccess } = useMessageToaster()
-const { showConfirmDialog } = useDialogBox()
 
 const close = () => emit('close')
 
-const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
+const { data, handleSubmit, maybeClose } = useForm<RadioStationData>({
   initialValues: {
     name: '',
     logo: null,
@@ -77,11 +75,6 @@ const { data, isPristine, handleSubmit } = useForm<RadioStationData>({
     close()
     toastSuccess(`Station "${station.name}" added.`)
   },
+  onClose: close,
 })
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard all changes?'))) {
-    close()
-  }
-}
 </script>

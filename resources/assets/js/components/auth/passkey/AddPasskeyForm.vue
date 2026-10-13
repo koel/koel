@@ -88,7 +88,7 @@ const canUsePassword = !currentUser.sso_provider
 const confirmsWithPasskey = ref(props.hasPasskeys)
 const confirmsWithPassword = computed(() => !confirmsWithPasskey.value && canUsePassword)
 
-const { showConfirmDialog, showErrorDialog } = useDialogBox()
+const { showErrorDialog } = useDialogBox()
 const { handleHttpError } = useErrorHandler('dialog')
 const { toastSuccess } = useMessageToaster()
 
@@ -102,7 +102,7 @@ const proveIdentity = async ({ password, code }: { password: string; code: strin
   return confirmsWithPassword.value ? { password, code } : {}
 }
 
-const { data, isPristine, handleSubmit } = useForm<{ name: string; password: string; code: string }>({
+const { data, handleSubmit, maybeClose } = useForm<{ name: string; password: string; code: string }>({
   initialValues: { name: '', password: '', code: '' },
   useOverlay: false,
   validator: ({ name }) => name.trim().length > 0,
@@ -129,11 +129,7 @@ const { data, isPristine, handleSubmit } = useForm<{ name: string; password: str
 
     handleHttpError(error)
   },
+  onClose: close,
+  discardConfirmation: 'Discard this passkey?',
 })
-
-const maybeClose = async () => {
-  if (isPristine() || (await showConfirmDialog('Discard this passkey?'))) {
-    close()
-  }
-}
 </script>
