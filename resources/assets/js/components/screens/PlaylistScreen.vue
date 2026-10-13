@@ -90,7 +90,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
-import { useLocalStorage } from '@/composables/useLocalStorage'
+import { usePersistedSort } from '@/composables/usePersistedSort'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useModal } from '@/composables/useModal'
 
@@ -122,21 +122,25 @@ interface PlaylistScreenState {
 const { triggerNotFound, getRouteParam, onScreenActivated, go, url } = useRouter()
 const { openContextMenu } = useContextMenu()
 const { openModal } = useModal()
-const { get: lsGet, set: lsSet } = useLocalStorage()
 
 const states = new Map<Playlist['id'], PlaylistScreenState>()
 
-const blankState = (id?: Playlist['id']): PlaylistScreenState => {
+const playlistId = ref<Playlist['id']>()
+const { getSavedSort, saveSort } = usePersistedSort(() => `playlist-${playlistId.value}`, null)
+
+const blankState = (): PlaylistScreenState => {
   return {
     filterKeywords: '',
-    sortField: id ? (lsGet<PlayableListSortField>(`playlist-${id}-sort-field`) ?? null) : null,
-    sortOrder: id ? lsGet<SortOrder>(`playlist-${id}-sort-order`, 'asc')! : 'asc',
+    sortField: null,
+    sortOrder: 'asc',
   }
 }
 
-const getState = (id: Playlist['id']) => {
+const getCurrentPlaylistState = () => {
+  const id = playlistId.value!
+
   if (!states.has(id)) {
-    states.set(id, blankState(id))
+    states.set(id, { filterKeywords: '', ...getSavedSort() })
   }
 
   return states.get(id)!
@@ -146,7 +150,6 @@ let currentState = blankState()
 const allPlayables = ref<Playable[]>([])
 const collaborators = ref<PlaylistCollaborator[]>([])
 
-const playlistId = ref<Playlist['id']>()
 const playlist = ref<Playlist>()
 const loading = ref(false)
 
@@ -190,8 +193,7 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
   currentState.sortOrder = order
 
   if (playlistId.value) {
-    lsSet(`playlist-${playlistId.value}-sort-field`, field)
-    lsSet(`playlist-${playlistId.value}-sort-order`, order)
+    saveSort(field, order)
   }
 
   // We always call the base sort function, which will handle the actual sorting logic.
@@ -258,7 +260,7 @@ watch(playlistId, async id => {
   // Make sure this value isn't shared among different playlists.
   selectedPlayables.value = []
 
-  currentState = getState(id)
+  currentState = getCurrentPlaylistState()
 
   // (re)apply the filter based on the current state's keywords
   filterKeywords.value = currentState.filterKeywords

@@ -64,7 +64,7 @@ import { usePageTitle } from '@/composables/usePageTitle'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
-import { useLocalStorage } from '@/composables/useLocalStorage'
+import { usePersistedSort } from '@/composables/usePersistedSort'
 import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -91,10 +91,9 @@ const {
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Genre')
 const { getRouteParam, isCurrentScreen, go, onRouteChanged, url } = useRouter()
 const { openContextMenu } = useContextMenu()
-const { get: lsGet, set: lsSet } = useLocalStorage()
+const { getSavedSort, saveSort } = usePersistedSort('genre', 'title')
 
-let sortField: MaybeArray<PlayableListSortField> = lsGet<PlayableListSortField>('genre-sort-field', 'title')!
-let sortOrder: SortOrder = lsGet<SortOrder>('genre-sort-order', 'asc')!
+let { sortField, sortOrder } = getSavedSort()
 
 const id = ref<Genre['id'] | null>(null)
 const genre = ref<Genre | null>(null)
@@ -162,8 +161,7 @@ const fetchWithSort = async (field: MaybeArray<PlayableListSortField>, order: So
   sortField = field
   sortOrder = order
 
-  lsSet('genre-sort-field', field)
-  lsSet('genre-sort-order', order)
+  saveSort(field, order)
 
   await refetchSongsFromStart()
 }
