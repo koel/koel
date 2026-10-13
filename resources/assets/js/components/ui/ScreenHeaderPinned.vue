@@ -16,7 +16,10 @@ const screenHeader = inject(ScrollAwayHeaderKey, null)
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
+
 .screen-header-pinned {
-  background-color: color-mix(in srgb, var(--color-fg) 3%, var(--color-bg));
+  @apply backdrop-blur-2xl backdrop-saturate-150;
+  background-color: color-mix(in srgb, color-mix(in srgb, var(--color-fg) 3%, var(--color-bg)) 75%, transparent);
 }
 </style>

@@ -1,7 +1,10 @@
 <template>
   <div
     ref="scroller"
-    :class="carriesScreenHeader || $slots.before ? 'scroll-mask-b scroll-mask-t-from-100%' : 'scroll-mask-y'"
+    :class="{
+      'scroll-mask-b scroll-mask-t-from-100%': carriesScreenHeader && !$slots.before,
+      'scroll-mask-y': !carriesScreenHeader && !$slots.before,
+    }"
     class="virtual-scroller will-change-transform overflow-scroll"
     @scroll.passive="onScroll"
   >
