@@ -5,6 +5,7 @@ import { updateFloatingUi } from '@/utils/floatingUi'
 
 type ElementWithTooltip = HTMLElement & {
   $tooltip?: HTMLDivElement
+  $tooltipText?: string | null
   $cleanup?: Closure
   $tooltipListenersAttached?: boolean
 }
@@ -31,19 +32,28 @@ const getOrCreateTooltip = (el: ElementWithTooltip): HTMLElement => {
   return el.$tooltip
 }
 
-const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
-  const $tooltip = getOrCreateTooltip(el)
+const renderTooltipText = ($tooltip: HTMLElement, text?: string | null) => {
+  $tooltip.querySelector<HTMLDivElement>('.tooltip-content')!.textContent = text ?? null
+}
 
+const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
   // make sure the actual title is removed from the element, but keep a backup for the updated() hook calls
-  $tooltip.querySelector<HTMLDivElement>('.tooltip-content')!.textContent =
-    binding.value || el.title || el.getAttribute('data-title') || el.textContent
+  el.$tooltipText = binding.value || el.title || el.getAttribute('data-title') || el.textContent
+
+  if (el.$tooltip) {
+    renderTooltipText(el.$tooltip, el.$tooltipText)
+  }
 
   if (el.title) {
     el.setAttribute('data-title', el.title)
     el.removeAttribute('title')
   }
 
-  const $arrow = $tooltip.querySelector<HTMLDivElement>('.tooltip-arrow')!
+  if (el.$tooltipListenersAttached) {
+    return
+  }
+
+  el.$tooltipListenersAttached = true
 
   let placement: Placement = 'top'
 
@@ -53,7 +63,10 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
     }
   })
 
-  const update = async () =>
+  const update = async () => {
+    const $tooltip = getOrCreateTooltip(el)
+    const $arrow = $tooltip.querySelector<HTMLDivElement>('.tooltip-arrow')!
+
     await updateFloatingUi(
       el,
       $tooltip,
@@ -63,21 +76,19 @@ const init = (el: ElementWithTooltip, binding: DirectiveBinding) => {
       },
       $arrow,
     )
-
-  if (el.$tooltipListenersAttached) {
-    return
   }
 
-  el.$tooltipListenersAttached = true
-
   const showTooltip = async () => {
+    const $tooltip = getOrCreateTooltip(el)
+
+    renderTooltipText($tooltip, el.$tooltipText)
     $tooltip.classList.add('show')
     el.$cleanup = el.$cleanup || autoUpdate(el, $tooltip, update)
     await update()
   }
 
   const hideTooltip = () => {
-    $tooltip.classList.remove('show')
+    el.$tooltip?.classList.remove('show')
     el.$cleanup?.()
     el.$cleanup = undefined
   }
@@ -101,6 +112,6 @@ export const tooltip: Directive = {
 
   beforeUnmount: (el: ElementWithTooltip) => {
     el.$cleanup && el.$cleanup()
-    el.$tooltip && document.body.removeChild(el.$tooltip)
+    el.$tooltip?.remove()
   },
 }
