@@ -11,8 +11,10 @@ const baseGet = <T>(key: string): T | null => {
 }
 
 const baseSet = (key: string, value: unknown) => {
+  const serialized = JSON.stringify(value)
+
   try {
-    localStorage.setItem(key, JSON.stringify(value))
+    localStorage.setItem(key, serialized)
   } catch {}
 }
 
