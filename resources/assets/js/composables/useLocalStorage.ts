@@ -1,21 +1,28 @@
 import { useAuthorization } from '@/composables/useAuthorization'
 
 const baseGet = <T>(key: string): T | null => {
-  const raw = localStorage.getItem(key)
-
-  if (raw === null) {
-    return null
-  }
-
   try {
-    return JSON.parse(raw) as T
+    const raw = localStorage.getItem(key)
+
+    return raw === null ? null : (JSON.parse(raw) as T)
   } catch {
     return null
   }
 }
 
-const baseSet = (key: string, value: unknown) => localStorage.setItem(key, JSON.stringify(value))
-const baseRemove = (key: string) => localStorage.removeItem(key)
+const baseSet = (key: string, value: unknown) => {
+  const serialized = JSON.stringify(value)
+
+  try {
+    localStorage.setItem(key, serialized)
+  } catch {}
+}
+
+const baseRemove = (key: string) => {
+  try {
+    localStorage.removeItem(key)
+  } catch {}
+}
 
 export const useLocalStorage = (namespaced = true, user?: User) => {
   let namespace = ''
