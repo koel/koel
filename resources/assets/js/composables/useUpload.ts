@@ -32,16 +32,14 @@ export const useUpload = () => {
   const queueFilesForUpload = (files: Array<File>) => {
     const entries = applyFilters<UploadFile[]>(
       Filter.SELECTED_UPLOADS,
-      files.map(
-        (file): UploadFile => ({
-          file,
-          id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
-          status: acceptsFile(file) ? 'Ready' : 'Skipped',
-          message: acceptsFile(file) ? undefined : 'Unsupported format',
-          name: file.name,
-          progress: 0,
-        }),
-      ),
+      files.map((file): UploadFile => ({
+        file,
+        id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
+        status: acceptsFile(file) ? 'Ready' : 'Skipped',
+        message: acceptsFile(file) ? undefined : 'Unsupported format',
+        name: file.name,
+        progress: 0,
+      })),
     )
 
     const acceptedEntries = entries.filter(({ status }) => status === 'Ready')
