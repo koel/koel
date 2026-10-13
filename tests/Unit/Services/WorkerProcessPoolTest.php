@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services;
 
 use App\Services\WorkerProcessPool;
+use PHPUnit\Framework\Attributes\RequiresFunction;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
@@ -114,6 +115,7 @@ class WorkerProcessPoolTest extends TestCase
     }
 
     #[Test]
+    #[RequiresFunction('posix_kill')]
     public function stopsTheRemainingWorkersWhenTheFailurePolicyThrows(): void
     {
         $runningWorkerPid = null;
