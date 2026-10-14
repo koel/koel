@@ -91,4 +91,26 @@ describe('useLyrics', () => {
     expect(lrcLyrics.value[1].text).toBe('Second line without timestamp')
     expect(lrcLyrics.value[1].time).toBe(14)
   })
+
+  it('keeps the parsed LRC lines when an unrelated song property changes', async () => {
+    const song = ref(h.factory('song').make({ lyrics: '[00:05.00]First line\n[00:12.00]Second line' }))
+    const { lrcLyrics } = useLyrics(song)
+    const parsedLines = lrcLyrics.value
+
+    song.value.play_count++
+    song.value.playback_state = 'Paused'
+    await h.tick()
+
+    expect(lrcLyrics.value).toBe(parsedLines)
+  })
+
+  it('parses the lyrics again when they change', async () => {
+    const song = ref(h.factory('song').make({ lyrics: '[00:05.00]First line' }))
+    const { lrcLyrics } = useLyrics(song)
+
+    song.value.lyrics = '[00:07.00]Changed line'
+    await h.tick()
+
+    expect(lrcLyrics.value).toEqual([{ text: 'Changed line', time: 7 }])
+  })
 })
