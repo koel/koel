@@ -9,6 +9,7 @@ use App\Values\SmartPlaylist\SmartPlaylistRule as Rule;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 final class SmartPlaylistQueryModifier
 {
@@ -21,6 +22,7 @@ final class SmartPlaylistQueryModifier
     {
         $operator = $rule->operator;
         $value = $rule->value;
+        $collationIgnoresCase = in_array(DB::getDriverName(), ['mysql', 'mariadb'], true);
 
         // Dates are stored as timestamps, so a day-based rule becomes a range that runs to the end of its last day.
         // For instance, "IS 2023-10-01" becomes "IS BETWEEN 2023-10-01 AND 2023-10-02."
@@ -53,20 +55,28 @@ final class SmartPlaylistQueryModifier
                 $rule,
                 $operator,
                 $value,
+                $collationIgnoresCase,
             ): void {
                 $subQuery->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
                     $rule->model,
                     $operator,
                     $value,
+                    $collationIgnoresCase,
                 ));
             });
         } elseif (self::matchesUnsetValues($rule, $operator)) {
-            $query->where(static function (SongBuilder $unsetOrMatchingQuery) use ($rule, $operator, $value): void {
+            $query->where(static function (SongBuilder $unsetOrMatchingQuery) use (
+                $rule,
+                $operator,
+                $value,
+                $collationIgnoresCase,
+            ): void {
                 $unsetOrMatchingQuery
                     ->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
                         $rule->model,
                         $operator,
                         $value,
+                        $collationIgnoresCase,
                     ))
                     ->orWhereNull($rule->model->toColumnName());
             });
@@ -75,6 +85,7 @@ final class SmartPlaylistQueryModifier
                 $rule->model,
                 $operator,
                 $value,
+                $collationIgnoresCase,
             ));
         }
     }
@@ -85,15 +96,20 @@ final class SmartPlaylistQueryModifier
     }
 
     /** @inheritdoc */
-    private static function generateParameters(Model $model, Operator $operator, array $value): array
-    {
+    private static function generateParameters(
+        Model $model,
+        Operator $operator,
+        array $value,
+        bool $collationIgnoresCase,
+    ): array {
         $column = $model->toColumnName();
 
         $parameters = match (true) {
-            $model->isText() => self::generateRawParameters("LOWER($column)", $operator, array_map(
-                static fn (mixed $text): string => mb_strtolower((string) $text),
-                $value,
-            )),
+            $model->isText() => self::generateRawParameters(
+                $collationIgnoresCase ? $column : "LOWER($column)",
+                $operator,
+                array_map(static fn (mixed $text): string => mb_strtolower((string) $text), $value),
+            ),
             $model->requiresRawQuery() => self::generateRawParameters($column, $operator, $value),
             default => self::generateEloquentParameters($column, $operator, $value),
         };
