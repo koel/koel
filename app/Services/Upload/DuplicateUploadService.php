@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\Concerns\ScansAndStoresSong;
+use App\Services\LibrarySummaryService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
@@ -37,6 +38,7 @@ class DuplicateUploadService
         private readonly SongStorage $storage,
         private readonly TranscodeOnScan $transcodeOnScan,
         private readonly AnalyzeAudioOnScan $analyzeAudioOnScan,
+        private readonly LibrarySummaryService $librarySummaryService,
     ) {}
 
     /**
@@ -95,6 +97,7 @@ class DuplicateUploadService
                 }
             }
 
+            $this->librarySummaryService->invalidateSummaries();
             $upload->delete();
         }
 

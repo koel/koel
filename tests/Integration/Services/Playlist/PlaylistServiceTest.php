@@ -6,6 +6,7 @@ use App\Enums\Placement;
 use App\Models\PlaylistFolder;
 use App\Models\Podcast;
 use App\Models\Song;
+use App\Services\LibrarySummaryService;
 use App\Services\Playlist\PlaylistService;
 use App\Services\Podcast\PodcastService;
 use App\Values\Playlist\PlaylistCreateData;
@@ -265,6 +266,15 @@ class PlaylistServiceTest extends TestCase
         $this->service->makePlaylistContentPublic($playlist);
 
         $playlist->playables->each(static fn (Song $song) => self::assertTrue($song->is_public));
+    }
+
+    #[Test]
+    public function makePlaylistSongsPublicInvalidatesLibrarySummaries(): void
+    {
+        $playlist = create_playlist();
+        $this->mock(LibrarySummaryService::class)->expects('invalidateSummaries');
+
+        app(PlaylistService::class)->makePlaylistContentPublic($playlist);
     }
 
     #[Test]

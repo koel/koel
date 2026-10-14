@@ -11,6 +11,7 @@ use App\Models\Song as Playable;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use App\Services\Image\ImageStorage;
+use App\Services\LibrarySummaryService;
 use App\Values\Playlist\PlaylistCreateData;
 use App\Values\Playlist\PlaylistUpdateData;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,6 +26,7 @@ class PlaylistService
         private readonly ImageStorage $imageStorage,
         private readonly SongRepository $songRepository,
         private readonly PlaylistFolderService $folderService,
+        private readonly LibrarySummaryService $librarySummaryService,
     ) {}
 
     public function createPlaylist(PlaylistCreateData $data, User $user): Playlist
@@ -150,6 +152,8 @@ class PlaylistService
     public function makePlaylistContentPublic(Playlist $playlist): void
     {
         $playlist->playables()->where('is_public', false)->update(['is_public' => true]);
+
+        $this->librarySummaryService->invalidateSummaries();
     }
 
     /** @param array<string> $movingIds */

@@ -10,10 +10,12 @@ use App\Jobs\ExtractSongFolderStructureJob;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Folder;
+use App\Models\Genre;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\Transcode;
 use App\Services\AlbumService;
+use App\Services\LibrarySummaryService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
@@ -211,6 +213,35 @@ class SongServiceTest extends TestCase
 
         self::assertSame(0, Song::query()->count());
         Event::assertDispatchedTimes(LibraryChanged::class, 1);
+    }
+
+    #[Test]
+    public function deleteSongsRefreshesTheSongCount(): void
+    {
+        $user = create_user();
+        $songs = Song::factory()->createMany(2);
+        $librarySummaryService = app(LibrarySummaryService::class);
+        Dispatcher::shouldReceive('dispatch');
+
+        self::assertSame(2, $librarySummaryService->getSongCount($user));
+
+        $this->service->deleteSongs($songs->modelKeys());
+
+        self::assertSame(0, $librarySummaryService->getSongCount($user));
+    }
+
+    #[Test]
+    public function updatingGenreRefreshesTheGenreSummaries(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->createOne();
+        $librarySummaryService = app(LibrarySummaryService::class);
+
+        self::assertSame(Genre::NO_GENRE_NAME, $librarySummaryService->getGenreSummaries($user)->sole()->name);
+
+        $this->service->updateSongs([$song->id], SongUpdateData::make(genre: 'Rock'));
+
+        self::assertSame('Rock', $librarySummaryService->getGenreSummaries($user)->sole()->name);
     }
 
     #[Test]

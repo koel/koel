@@ -8,6 +8,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\Concerns\ScansAndStoresSong;
+use App\Services\LibrarySummaryService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
@@ -28,6 +29,7 @@ class UploadService
         private readonly DuplicateUploadService $duplicateUploadService,
         private readonly TranscodeOnScan $transcodeOnScan,
         private readonly AnalyzeAudioOnScan $analyzeAudioOnScan,
+        private readonly LibrarySummaryService $librarySummaryService,
     ) {}
 
     public function handleUpload(string $filePath, User $uploader): Song
@@ -40,7 +42,7 @@ class UploadService
         try {
             $this->duplicateUploadService->detectDuplicate($uploadReference->localPath, $uploadReference, $uploader);
 
-            return $this->scanAndStore(
+            $song = $this->scanAndStore(
                 $uploadReference->localPath,
                 $uploadReference->location,
                 $uploader,
@@ -50,6 +52,10 @@ class UploadService
                 $this->transcodeOnScan,
                 $this->analyzeAudioOnScan,
             );
+
+            $this->librarySummaryService->invalidateSummaries();
+
+            return $song;
         } catch (DuplicateSongUploadException $e) {
             throw $e;
         } catch (Throwable $error) {

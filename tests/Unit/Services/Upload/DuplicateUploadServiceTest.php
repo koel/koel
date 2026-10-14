@@ -9,6 +9,7 @@ use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\AudioAnalysis\AudioAnalyzer;
+use App\Services\LibrarySummaryService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\LocalStorage;
@@ -50,6 +51,7 @@ class DuplicateUploadServiceTest extends TestCase
             $this->storage,
             new TranscodeOnScan(app(LocalStorage::class)),
             new AnalyzeAudioOnScan(app(LocalStorage::class), new AudioAnalyzer()),
+            Mockery::mock(LibrarySummaryService::class),
         );
     }
 

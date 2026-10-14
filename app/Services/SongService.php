@@ -39,6 +39,7 @@ class SongService
         private readonly AlbumService $albumService,
         private readonly ImageStorage $imageStorage,
         private readonly CacheStrategy $cache,
+        private readonly LibrarySummaryService $librarySummaryService,
     ) {}
 
     public function updateSongs(array $ids, SongUpdateData $data): SongUpdateResult
@@ -156,6 +157,7 @@ class SongService
 
         if (!$song->genreEqualsTo($data->genre)) {
             $song->syncGenres($data->genre);
+            $this->librarySummaryService->invalidateSummaries();
         }
 
         return $this->songRepository->getOne($song->id);
@@ -164,6 +166,8 @@ class SongService
     public function markSongsAsPublic(EloquentCollection $songs): void
     {
         $songs->toQuery()->update(['is_public' => true]);
+
+        $this->librarySummaryService->invalidateSummaries();
     }
 
     /** @return array<string> IDs of songs that are marked as private */
@@ -187,6 +191,8 @@ class SongService
         $applicableSongIds = $songs->whereNotIn('id', $collaborativeSongs)->modelKeys();
 
         Song::query()->whereKey($applicableSongIds)->update(['is_public' => false]);
+
+        $this->librarySummaryService->invalidateSummaries();
 
         return $applicableSongIds;
     }
