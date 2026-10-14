@@ -107,12 +107,17 @@ final class SmartPlaylistQueryModifier
     {
         return match (DB::getDriverName()) {
             'mysql', 'mariadb' => $column,
-            // SQLite's LIKE already ignores ASCII case, and a COLLATE on its column would keep it off the NOCASE index.
-            'sqlite' => in_array($operator, [Operator::IS, Operator::IS_NOT], true)
-                ? "$column COLLATE NOCASE"
-                : $column,
+            'sqlite' => self::resolveSqliteCaseInsensitiveTextColumn($column, $operator),
             default => "LOWER($column)",
         };
+    }
+
+    private static function resolveSqliteCaseInsensitiveTextColumn(string $column, Operator $operator): string
+    {
+        $isExactMatch = in_array($operator, [Operator::IS, Operator::IS_NOT], true);
+        $bareIndexFriendlyColumnForCaseInsensitiveLike = $column;
+
+        return $isExactMatch ? "$column COLLATE NOCASE" : $bareIndexFriendlyColumnForCaseInsensitiveLike;
     }
 
     /** @inheritdoc */
