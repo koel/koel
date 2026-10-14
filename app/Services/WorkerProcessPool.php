@@ -18,7 +18,7 @@ class WorkerProcessPool
      * @param array<array<string>> $commands
      * @param Closure(string): void $onOutputLine
      * @param Closure(?int, string, bool): void $onWorkerFailure receives the exit code, the whole error output,
-     *                                             and whether the worker was stopped for exceeding the timeout
+     *                                             and whether the worker was stopped for exceeding a timeout
      * @param (Closure(string): void)|null $onErrorLine
      */
     public function run(
@@ -27,12 +27,14 @@ class WorkerProcessPool
         Closure $onOutputLine,
         Closure $onWorkerFailure,
         ?Closure $onErrorLine = null,
+        ?float $idleTimeout = null,
     ): void {
         $processes = [];
 
         foreach ($commands as $command) {
             $process = new Process($command, base_path());
             $process->setTimeout($timeout);
+            $process->setIdleTimeout($idleTimeout);
             $process->start();
             $processes[] = $process;
         }
