@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Exceptions\UserProspectUpdateDeniedException;
+use App\Facades\Dispatcher;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\UserStoreRequest;
 use App\Http\Requests\API\UserUpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Jobs\DeleteUserJob;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
@@ -47,7 +49,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $this->authorize('destroy', $user);
-        $this->userService->deleteUser($user);
+        Dispatcher::dispatch(new DeleteUserJob($user));
 
         return response()->noContent();
     }

@@ -1,6 +1,6 @@
 <?php
 
-use OwenIt\Auditing\Models\Audit;
+use App\Models\Audit;
 use OwenIt\Auditing\Resolvers\IpAddressResolver;
 use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Resolvers\UserAgentResolver;
@@ -19,6 +19,8 @@ return [
      */
 
     'implementation' => Audit::class,
+
+    'retention_days' => (int) env('AUDIT_RETENTION_DAYS', 90),
 
     /*
      |--------------------------------------------------------------------------
