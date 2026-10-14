@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from 'vue'
 import DOMPurify from 'dompurify'
-import { formatTimeAgo, useElementVisibility } from '@vueuse/core'
+import { formatTimeAgo, useIntersectionObserver } from '@vueuse/core'
 import { textToHsl } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
@@ -78,7 +78,18 @@ const lastPlayedAt = computed(() =>
 
 const coverBackgroundColor = ref<string>()
 const itemEl = useTemplateRef<HTMLElement>('itemEl')
-const hasNearedViewport = useElementVisibility(itemEl, { once: true, rootMargin: '200px' })
+const hasNearedViewport = ref(false)
+
+const { stop: stopObservingViewport } = useIntersectionObserver(
+  itemEl,
+  entries => {
+    if (entries.some(entry => entry.isIntersecting)) {
+      hasNearedViewport.value = true
+      stopObservingViewport()
+    }
+  },
+  { rootMargin: '200px' },
+)
 
 watch(
   [() => podcast.image, hasNearedViewport],

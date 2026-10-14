@@ -1,4 +1,5 @@
 import { fireEvent, screen, waitFor } from '@testing-library/vue'
+import { nextTick } from 'vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { podcastStore } from '@/stores/podcastStore'
@@ -60,7 +61,7 @@ describe('podcastItem.vue', () => {
     expect(toggleFavoriteMock).toHaveBeenCalledWith(podcast)
   })
 
-  it('extracts the cover color only once the item nears the viewport', async () => {
+  it('extracts the cover color only once the item nears the viewport and keeps it after scrolling away', async () => {
     const intersectionCallbacks: IntersectionObserverCallback[] = []
     const defaultObserverImplementation = vi.mocked(window.IntersectionObserver).getMockImplementation()
 
@@ -77,11 +78,20 @@ describe('podcastItem.vue', () => {
     await waitFor(() => expect(intersectionCallbacks).toHaveLength(2))
     expect(getCoverBackgroundColor).not.toHaveBeenCalled()
 
-    intersectionCallbacks.forEach(callback =>
-      callback([{ isIntersecting: true, time: 1 } as IntersectionObserverEntry], {} as IntersectionObserver),
-    )
+    const reportIntersection = (isIntersecting: boolean, time: number) =>
+      intersectionCallbacks.forEach(callback =>
+        callback([{ isIntersecting, time } as IntersectionObserverEntry], {} as IntersectionObserver),
+      )
+
+    reportIntersection(true, 1)
 
     await waitFor(() => expect(getCoverBackgroundColor).toHaveBeenCalledWith(podcast.image))
+    await waitFor(() => expect(screen.getByTestId('podcast-item').classList.contains('tinted')).toBe(true))
+
+    reportIntersection(false, 2)
+    await nextTick()
+
+    expect(screen.getByTestId('podcast-item').classList.contains('tinted')).toBe(true)
 
     vi.mocked(window.IntersectionObserver).mockImplementation(defaultObserverImplementation!)
   })
