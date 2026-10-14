@@ -11,6 +11,7 @@ use App\Models\Song;
 use App\Models\User;
 use App\Services\Playlist\SmartPlaylistService;
 use Illuminate\Database\Eloquent\Collection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -607,6 +608,25 @@ class SmartPlaylistServiceTest extends TestCase
         Song::factory()->createOne(['title' => 'Bar Something']);
 
         $this->assertMatchesAgainstRules($matches, self::makeSingleRuleGroups('title', 'is', ['foo something']));
+    }
+
+    /** @return array<string, array{string, string}> */
+    public static function provideCaseInsensitiveTextOperators(): array
+    {
+        return [
+            'is' => ['is', 'bJÖRK'],
+            'begins with' => ['beginsWith', 'bJÖ'],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideCaseInsensitiveTextOperators')]
+    public function matchNonAsciiTextRegardlessOfAsciiCase(string $operator, string $value): void
+    {
+        $matches = Song::factory()->createMany([['artist_name' => 'Björk']]);
+        Song::factory()->createOne(['artist_name' => 'Beck']);
+
+        $this->assertMatchesAgainstRules($matches, self::makeSingleRuleGroups('artist.name', $operator, [$value]));
     }
 
     #[Test]
