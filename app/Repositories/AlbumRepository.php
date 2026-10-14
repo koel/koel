@@ -239,21 +239,28 @@ class AlbumRepository extends Repository implements ScoutableRepository
     {
         $user ??= $this->auth->user();
 
-        $albumIdsOfRandomSongs = self::pluckFromRandomHash(
-            Album::query()
-                ->select('albums.id')
-                ->onlyStandard()
-                ->setScopedUser($user)
-                ->accessible()
-                ->join('songs as random_songs', 'random_songs.album_id', 'albums.id'),
-            hashColumn: 'random_songs.path_hash',
-            idColumn: 'albums.id',
-            limit: $limit * self::RANDOM_SONGS_SAMPLED_PER_ALBUM,
-        );
+        $ids = collect();
 
-        $ids = $albumIdsOfRandomSongs->unique()->take($limit)->shuffle();
+        do {
+            $missingCount = $limit - $ids->count();
 
-        return $this->getMany($ids->all(), preserveOrder: true, user: $user);
+            $newIdsOfRandomSongs = self::pluckFromRandomHash(
+                Album::query()
+                    ->select('albums.id')
+                    ->onlyStandard()
+                    ->setScopedUser($user)
+                    ->accessible()
+                    ->whereNotIn('albums.id', $ids->all())
+                    ->join('songs as random_songs', 'random_songs.album_id', 'albums.id'),
+                hashColumn: 'random_songs.path_hash',
+                idColumn: 'albums.id',
+                limit: $missingCount * self::RANDOM_SONGS_SAMPLED_PER_ALBUM,
+            );
+
+            $ids = $ids->merge($newIdsOfRandomSongs->unique()->take($missingCount));
+        } while ($newIdsOfRandomSongs->isNotEmpty() && $ids->count() < $limit);
+
+        return $this->getMany($ids->shuffle()->all(), preserveOrder: true, user: $user);
     }
 
     /** @return Collection<int, Album> */

@@ -71,6 +71,21 @@ class AlbumRepositoryTest extends PlusTestCase
         self::assertEqualsCanonicalizing($ownAlbums->pluck('id')->all(), $albums->pluck('id')->all());
     }
 
+    #[Test]
+    public function getRandomReturnsTheRequestedNumberOfAlbumsWhenOneAlbumHasManySongs(): void
+    {
+        $user = create_user();
+        $albumWithManySongs = Album::factory()->for($user)->has(Song::factory()->count(60))->createOne();
+        $albumsWithOneSong = Album::factory()->for($user)->has(Song::factory())->createMany(2);
+
+        $albums = $this->albumRepository->getRandom(3, $user);
+
+        self::assertEqualsCanonicalizing(
+            [$albumWithManySongs->id, ...$albumsWithOneSong->pluck('id')->all()],
+            $albums->pluck('id')->all(),
+        );
+    }
+
     private static function createPlayedAlbum(User $owner, User $listener, int $playCount): Album
     {
         $album = Album::factory()->for($owner)->createOne();
