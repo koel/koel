@@ -21,7 +21,11 @@ class PlayController extends Controller
      */
     public function __invoke(Authenticatable $user, SongPlayRequest $request, string $songId, ?bool $transcode = null)
     {
-        $song = $this->songRepository->getOneForStreaming($songId);
+        $song = $this->songRepository->getOneWithoutRelations($songId);
+
+        if ($song->isEpisode()) {
+            $song->load('podcast');
+        }
 
         $this->authorize('access', $song);
 
