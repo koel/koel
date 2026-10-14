@@ -59,6 +59,7 @@
         <AlbumTable
           v-if="preferences.albums_view_mode === 'table'"
           :albums="displayedAlbums"
+          :loading-more
           :field="preferences.albums_sort_field"
           :order="preferences.albums_sort_order"
           @sort="sort"
@@ -69,6 +70,7 @@
           v-else
           ref="grid"
           :albums="displayedAlbums"
+          :loading-more
           :show-release-year="preferences.albums_sort_field === 'year'"
           @scrolled-to-end="fetchAlbums"
         />
@@ -105,6 +107,7 @@ const {
   displayedItems: displayedAlbums,
   noFavorites: noFavoriteAlbums,
   showSkeletons,
+  loadingMore,
   fetchMore: fetchAlbums,
   sort,
   toggleFavoritesOnly,

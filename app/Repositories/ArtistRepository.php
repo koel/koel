@@ -153,7 +153,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
                 ->onlyAlbumArtists()
                 ->sort($sortColumn, $sortDirection),
             idColumn: 'artists.id',
-            perPage: 21,
+            perPage: 60,
         );
     }
 

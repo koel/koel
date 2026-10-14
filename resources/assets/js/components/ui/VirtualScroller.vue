@@ -13,6 +13,7 @@
     <div ref="itemsBox" :style="{ height: `${totalHeight}px` }" class="will-change-transform overflow-hidden">
       <div :style="{ transform: `translateY(${offsetY}px)` }" class="will-change-transform items-wrapper">
         <slot v-for="item in renderedItems" :item="item" />
+        <slot v-for="i in renderedPlaceholderCount" name="placeholder" />
       </div>
     </div>
   </div>
@@ -21,6 +22,7 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
 import { useScreenHeaderScroller } from '@/composables/useScreenHeaderScroller'
+import { isNearScrollEnd } from '@/utils/infiniteScroll'
 
 import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
 
@@ -30,15 +32,16 @@ const props = withDefaults(
     itemHeight: number
     /** Scrolls the screen header away with the items and leaves room for it at the top. */
     carriesScreenHeader?: boolean
+    loadingMore?: boolean
   }>(),
-  { carriesScreenHeader: false },
+  { carriesScreenHeader: false, loadingMore: false },
 )
 const emit = defineEmits<{
   (e: 'scrolled-to-end'): void
   (e: 'scroll', event: Event): void
 }>()
 
-const { items, itemHeight } = toRefs(props)
+const { items, itemHeight, loadingMore } = toRefs(props)
 
 const scroller = ref<HTMLElement>()
 
@@ -47,19 +50,27 @@ const itemsBox = ref<HTMLElement>()
 const itemsTop = ref(0)
 const scrollerHeight = ref(0)
 const renderAhead = 5
+const placeholderRowCount = 3
 const scrollTop = ref(0)
 
-const totalHeight = computed(() => items.value.length * itemHeight.value)
+const placeholderCount = computed(() => (loadingMore.value && items.value.length ? placeholderRowCount : 0))
+const totalHeight = computed(() => (items.value.length + placeholderCount.value) * itemHeight.value)
 const startPosition = computed(() =>
   Math.max(0, Math.floor((scrollTop.value - itemsTop.value) / itemHeight.value) - renderAhead),
 )
 const offsetY = computed(() => startPosition.value * itemHeight.value)
 
-const renderedItems = computed(() => {
-  let count = Math.ceil(scrollerHeight.value / itemHeight.value) + 2 * renderAhead
-  count = Math.min(items.value.length - startPosition.value, count)
-  return items.value.slice(startPosition.value, startPosition.value + count)
+const renderedEnd = computed(() => {
+  const count = Math.ceil(scrollerHeight.value / itemHeight.value) + 2 * renderAhead
+
+  return Math.min(items.value.length + placeholderCount.value, startPosition.value + count)
 })
+
+const renderedItems = computed(() => items.value.slice(startPosition.value, renderedEnd.value))
+
+const renderedPlaceholderCount = computed(() =>
+  Math.max(0, renderedEnd.value - Math.max(startPosition.value, items.value.length)),
+)
 
 const onScroll = (e: Event) =>
   requestAnimationFrame(() => {
@@ -72,7 +83,7 @@ const onScroll = (e: Event) =>
 
     emit('scroll', e)
 
-    if (scroller.value.scrollTop + scroller.value.clientHeight + itemHeight.value >= scroller.value.scrollHeight) {
+    if (isNearScrollEnd(scroller.value)) {
       emit('scrolled-to-end')
     }
   })

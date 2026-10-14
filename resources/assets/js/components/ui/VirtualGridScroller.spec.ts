@@ -117,4 +117,54 @@ describe('virtualGridScroller', () => {
 
     expect(emitted('scrolled-to-end')).toHaveLength(1)
   })
+
+  it('asks for more items with two screens of content left', async () => {
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(100)
+
+    const { container, emitted } = h.render(Component, {
+      props: { items: createItems(3), minItemWidth: 200 },
+      slots: { default: '<div data-testid="grid-item" />' },
+    })
+
+    await h.tick(3)
+
+    const scroller = container.querySelector<HTMLElement>('.virtual-grid-scroller')!
+    vi.spyOn(scroller, 'scrollHeight', 'get').mockReturnValue(5000)
+    vi.spyOn(scroller, 'clientHeight', 'get').mockReturnValue(1000)
+
+    scroller.scrollTop = 1900
+    await h.trigger(scroller, 'scroll')
+    await new Promise(resolve => requestAnimationFrame(resolve))
+
+    expect(emitted('scrolled-to-end')).toBeUndefined()
+
+    scroller.scrollTop = 2000
+    await h.trigger(scroller, 'scroll')
+    await new Promise(resolve => requestAnimationFrame(resolve))
+
+    expect(emitted('scrolled-to-end')).toHaveLength(1)
+  })
+
+  it('shows placeholders after the items while loading more', async () => {
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(100)
+
+    const { rerender } = h.render(Component, {
+      props: { items: createItems(3), minItemWidth: 200, loadingMore: true },
+      slots: {
+        default: '<div data-testid="grid-item" />',
+        placeholder: '<div data-testid="grid-placeholder" />',
+      },
+    })
+
+    await h.tick(3)
+
+    expect(screen.getAllByTestId('grid-item')).toHaveLength(3)
+    expect(screen.getAllByTestId('grid-placeholder').length).toBeGreaterThan(0)
+
+    await rerender({ items: createItems(6), loadingMore: false })
+    await h.tick(2)
+
+    expect(screen.getAllByTestId('grid-item')).toHaveLength(6)
+    expect(screen.queryByTestId('grid-placeholder')).toBeNull()
+  })
 })

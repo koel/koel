@@ -268,7 +268,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
                 ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
                 ->sort($sortColumn, $sortDirection),
             idColumn: 'albums.id',
-            perPage: 21,
+            perPage: 60,
         );
     }
 

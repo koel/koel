@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
+import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './VirtualScroller.vue'
 
@@ -24,5 +25,25 @@ describe('virtualScroller.vue', () => {
     instance?.exposed?.scrollToIndex(50)
 
     expect(scrollToMock).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'smooth' }))
+  })
+
+  it('shows placeholders after the items while loading more', async () => {
+    const { rerender } = h.render(Component, {
+      props: { items: [{ id: 1 }, { id: 2 }], itemHeight: 64, loadingMore: true },
+      slots: {
+        default: '<div data-testid="row" />',
+        placeholder: '<div data-testid="row-placeholder" />',
+      },
+    })
+
+    await h.tick()
+
+    expect(screen.getAllByTestId('row')).toHaveLength(2)
+    expect(screen.getAllByTestId('row-placeholder')).toHaveLength(3)
+
+    await rerender({ items: [{ id: 1 }, { id: 2 }, { id: 3 }], loadingMore: false })
+
+    expect(screen.getAllByTestId('row')).toHaveLength(3)
+    expect(screen.queryByTestId('row-placeholder')).toBeNull()
   })
 })
