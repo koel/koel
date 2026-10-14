@@ -56,18 +56,40 @@ class ArtistBuilder extends FavoriteableBuilder
             ->when($user, static fn (QueryBuilder $query) => AlbumBuilder::limitToAlbumsAccessibleByUser($query, $user))
             ->whereColumn('albums.artist_id', 'artists.id');
 
-        $appearedOnAlbums = DB::query()
+        $appearedOnAlbums = DB::getDriverName() === 'pgsql'
+            ? self::countAlbumsAppearedOnByAlbumIdLookup($user)
+            : self::countAlbumsAppearedOnByJoiningSongs($user);
+
+        return $this->selectRaw(
+            sprintf('(%s) + (%s) as albums_count', $ownAlbums->toSql(), $appearedOnAlbums->toSql()),
+            [...$ownAlbums->getBindings(), ...$appearedOnAlbums->getBindings()],
+        );
+    }
+
+    private static function countAlbumsAppearedOnByJoiningSongs(?User $user): QueryBuilder
+    {
+        return DB::query()
             ->selectRaw('COUNT(DISTINCT albums.id)')
             ->from('songs as appearance_songs')
             ->join('albums', 'albums.id', 'appearance_songs.album_id')
             ->when($user, static fn (QueryBuilder $query) => AlbumBuilder::limitToAlbumsAccessibleByUser($query, $user))
             ->whereColumn('appearance_songs.artist_id', 'artists.id')
             ->whereColumn('albums.artist_id', '<>', 'artists.id');
+    }
 
-        return $this->selectRaw(
-            sprintf('(%s) + (%s) as albums_count', $ownAlbums->toSql(), $appearedOnAlbums->toSql()),
-            [...$ownAlbums->getBindings(), ...$appearedOnAlbums->getBindings()],
-        );
+    private static function countAlbumsAppearedOnByAlbumIdLookup(?User $user): QueryBuilder
+    {
+        return DB::query()
+            ->selectRaw('COUNT(*)')
+            ->from('albums')
+            ->when($user, static fn (QueryBuilder $query) => AlbumBuilder::limitToAlbumsAccessibleByUser($query, $user))
+            ->whereIn('albums.id', static function (QueryBuilder $appearanceSongs): void {
+                $appearanceSongs
+                    ->select('appearance_songs.album_id')
+                    ->from('songs as appearance_songs')
+                    ->whereColumn('appearance_songs.artist_id', 'artists.id');
+            })
+            ->whereColumn('albums.artist_id', '<>', 'artists.id');
     }
 
     public function whereAccessibleByUser(User $user): self
