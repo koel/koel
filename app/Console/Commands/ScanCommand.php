@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Finder\Finder;
 
 class ScanCommand extends Command
 {
@@ -91,8 +90,8 @@ class ScanCommand extends Command
      */
     private function scanMediaPath(ScanConfiguration $config): void
     {
-        $this->directoryScanner->on(ScanEvent::PATHS_GATHERED, function (Finder $files): void {
-            $this->progressBar = new ProgressBar($this->output, $files->count());
+        $this->directoryScanner->on(ScanEvent::PATHS_GATHERED, function (array $paths): void {
+            $this->progressBar = new ProgressBar($this->output, count($paths));
         });
 
         $this->directoryScanner->on(ScanEvent::SCAN_PROGRESS, [$this, 'onScanProgress']);

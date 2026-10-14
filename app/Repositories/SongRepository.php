@@ -53,6 +53,16 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query()->wherePath($path)->first();
     }
 
+    public function findMtimeByPath(string $path): ?int
+    {
+        return Song::query()
+            ->withoutEagerLoads()
+            ->wherePath($path)
+            ->select('songs.mtime')
+            ->first()
+            ?->mtime;
+    }
+
     /** @return LazyCollection<int, string> */
     public function lazyGetIdsByOwner(User $owner): LazyCollection
     {

@@ -193,10 +193,7 @@ class SongService
 
     public function deleteSongsByUser(User $user): void
     {
-        $this->songRepository
-            ->lazyGetIdsByOwner($user)
-            ->chunk(self::DELETION_BATCH_SIZE)
-            ->each(fn (LazyCollection $ids) => $this->deleteSongs($ids->all()));
+        $this->deleteSongsInBatches($this->songRepository->lazyGetIdsByOwner($user));
     }
 
     /**
@@ -204,34 +201,53 @@ class SongService
      */
     public function deleteSongs(array|string $ids): void
     {
-        $ids = Arr::wrap($ids);
+        $this->deleteSongsInBatches(LazyCollection::make(Arr::wrap($ids)));
+    }
 
+    /**
+     * @param LazyCollection<int, string> $ids
+     */
+    private function deleteSongsInBatches(LazyCollection $ids): void
+    {
+        $deletedCount = $ids->chunk(self::DELETION_BATCH_SIZE)->sum(
+            fn (LazyCollection $batchIds): int => $this->deleteSongsAndQueueFileRemoval($batchIds->all()),
+        );
+
+        if ($deletedCount > 0) {
+            // Instruct the system to prune the library, i.e., remove empty albums and artists.
+            event(new LibraryChanged());
+        }
+    }
+
+    /**
+     * @param array<string> $ids
+     */
+    private function deleteSongsAndQueueFileRemoval(array $ids): int
+    {
         // Since song (and cascadingly, transcode) records will be deleted, we query them first and, if there are any,
         // dispatch a job to delete their associated files.
         $songFiles = Song::query()->findMany($ids)->map(SongFileInfo::fromSong(...)); // @phpstan-ignore-line
 
         $transcodeFiles = $this->transcodeRepository->findBySongIds($ids)->map(TranscodeFileInfo::fromTranscode(...)); // @phpstan-ignore-line
 
-        if (Song::destroy($ids) === 0) {
-            return;
+        $deletedCount = Song::destroy($ids);
+
+        if ($deletedCount === 0) {
+            return 0;
         }
 
         Dispatcher::dispatch(new DeleteSongFilesJob($songFiles));
 
-        if ($transcodeFiles->isNotEmpty()) {
-            Dispatcher::dispatch(new DeleteTranscodeFilesJob($transcodeFiles));
-        }
+        $transcodeFiles->whenNotEmpty(static function (Collection $files): void {
+            Dispatcher::dispatch(new DeleteTranscodeFilesJob($files));
+        });
 
-        // Instruct the system to prune the library, i.e., remove empty albums and artists.
-        event(new LibraryChanged());
+        return $deletedCount;
     }
 
-    public function createOrUpdateSongFromScan(
-        ScanInformation $info,
-        ScanConfiguration $config,
-        ?Song $song = null,
-    ): ?Song {
-        $song ??= $this->songRepository->findOneByPath($info->path);
+    public function createOrUpdateSongFromScan(ScanInformation $info, ScanConfiguration $config): ?Song
+    {
+        $song = $this->songRepository->findOneByPath($info->path);
 
         $isFileNew = !$song;
         $isFileModified = $song && $song->isFileModified($info->mTime);
@@ -308,7 +324,7 @@ class SongService
             $album->update(['year' => $song->year]);
         }
 
-        if ($config->extractFolderStructure) {
+        if ($config->extractFolderStructure && !$song->folder_id) {
             Dispatcher::dispatch(new ExtractSongFolderStructureJob($song));
         }
 
