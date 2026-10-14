@@ -115,6 +115,35 @@ describe('songWaveform.vue', () => {
     })
   })
 
+  it('redraws when the display scale changes', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(100)
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(40)
+    const pixelRatioMock = vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(1)
+
+    await h.withPlusEdition(async () => {
+      h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
+
+      renderComponent(
+        h
+          .factory('song')
+          .make({ loudness: -9, true_peak: 1, length: 3600, playback_state: 'Playing', album_cover: '' }),
+      )
+
+      await waitFor(
+        async () => {
+          vi.mocked(drawWaveform).mockClear()
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+          expect(drawWaveform).not.toHaveBeenCalled()
+        },
+        { timeout: 3000 },
+      )
+
+      pixelRatioMock.mockReturnValue(2)
+
+      await waitFor(() => expect(drawWaveform).toHaveBeenCalled())
+    })
+  })
+
   it('draws the waveform of a new song', async () => {
     await h.withPlusEdition(async () => {
       const firstSong = h.factory('song').make({ loudness: -9, true_peak: 1 })

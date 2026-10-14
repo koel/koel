@@ -51,7 +51,20 @@ const hasOfflineCopy = async (unsignedUrl: string) => 'caches' in window && Bool
 const getPlayUrlEndpoint = (playable: Playable) =>
   shouldTranscode() ? `songs/${playable.id}/play-url?transcode=1` : `songs/${playable.id}/play-url`
 
-const schedulePlayStatsRefresh = () => nextTick(() => overviewStore.refreshPlayStats())
+let isPlayStatsRefreshScheduled = false
+
+const schedulePlayStatsRefresh = () => {
+  if (isPlayStatsRefreshScheduled) {
+    return
+  }
+
+  isPlayStatsRefreshScheduled = true
+
+  nextTick(() => {
+    isPlayStatsRefreshScheduled = false
+    overviewStore.refreshPlayStats()
+  })
+}
 
 export const playableStore = {
   ...useVault<Playable>({

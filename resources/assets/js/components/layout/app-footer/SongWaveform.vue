@@ -44,6 +44,7 @@ interface DrawnFrame {
   colors: { accent: Rgb; line: Rgb }
   width: number
   height: number
+  pixelRatio: number
   dotX: number
   playedOpacity: number
 }
@@ -143,6 +144,7 @@ const looksLikeLastDrawnFrame = (frame: DrawnFrame) =>
   frame.colors === lastDrawnFrame.colors &&
   frame.width === lastDrawnFrame.width &&
   frame.height === lastDrawnFrame.height &&
+  frame.pixelRatio === lastDrawnFrame.pixelRatio &&
   Math.abs(frame.dotX - lastDrawnFrame.dotX) < 0.5 &&
   Math.abs(frame.playedOpacity - lastDrawnFrame.playedOpacity) < 0.002
 
@@ -164,13 +166,15 @@ const render = (now: number, seconds: number) => {
   }
 
   const width = canvas.value.clientWidth
+  const pixelRatio = window.devicePixelRatio || 1
 
   const frame: DrawnFrame = {
     levels: levelsForWidth(width),
     colors: refreshColors(canvas.value, now),
     width,
     height: canvas.value.clientHeight,
-    dotX: shownProgress * width * (window.devicePixelRatio || 1),
+    pixelRatio,
+    dotX: shownProgress * width * pixelRatio,
     playedOpacity: 0.8 * (1 - pausedness * 0.55),
   }
 

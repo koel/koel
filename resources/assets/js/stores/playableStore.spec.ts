@@ -235,6 +235,16 @@ describe('playableStore', () => {
     expect(refreshMock).toHaveBeenCalledTimes(1)
   })
 
+  it('refreshes play stats once when syncing changes many play counts at once', async () => {
+    const refreshMock = h.mock(overviewStore, 'refreshPlayStats')
+    const synced = playableStore.syncWithVault(h.factory('song').make({ play_count: 1 }, 3))
+
+    playableStore.syncWithVault(synced.map(song => ({ ...song, play_count: 2 }) as Song))
+    await h.tick()
+
+    expect(refreshMock).toHaveBeenCalledOnce()
+  })
+
   it('fetches for album', async () => {
     const songs = h.factory('song').make(3)
     const album = h.factory('album').make()
