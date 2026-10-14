@@ -8,28 +8,23 @@ use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
-use SplFileInfo;
 
 class ParallelScanStrategy
 {
+    private const int WORKER_IDLE_TIMEOUT_SECONDS = 600;
+
     public function __construct(
         private readonly ScanResultDeserializer $deserializer,
         private readonly WorkerProcessPool $workerPool,
     ) {}
 
-    /** @param iterable<SplFileInfo> $files */
+    /** @param array<string> $paths */
     public function scan(
-        iterable $files,
+        array $paths,
         ScanConfiguration $config,
         int $jobs,
         ?callable $onProgress = null,
     ): ScanResultCollection {
-        $paths = [];
-
-        foreach ($files as $file) {
-            $paths[] = $file->getRealPath();
-        }
-
         if (!$paths) {
             return ScanResultCollection::create();
         }
@@ -45,7 +40,6 @@ class ParallelScanStrategy
         ?callable $onProgress,
     ): ScanResultCollection {
         $results = ScanResultCollection::create();
-        $timeout = config('koel.scan.timeout');
         $manifests = [];
 
         try {
@@ -60,20 +54,21 @@ class ParallelScanStrategy
                     $manifest,
                     $config,
                 ), $manifests),
-                timeout: $timeout,
+                timeout: null,
                 onOutputLine: fn (string $line) => $this->addResult(
                     $this->deserializer->deserialize($line),
                     $results,
                     $onProgress,
                 ),
-                onWorkerFailure: static function (?int $exitCode, string $errorOutput, bool $timedOut) use (
-                    $timeout,
-                ): void {
+                onWorkerFailure: static function (?int $exitCode, string $errorOutput, bool $timedOut): void {
                     $exitReason = trim($errorOutput) ?: 'Process exited with code ' . ($exitCode ?? 'unknown');
-                    $msg = $timedOut ? sprintf('Process timed out after %d seconds', $timeout) : $exitReason;
+                    $msg = $timedOut
+                        ? sprintf('Process produced no output for %d seconds', self::WORKER_IDLE_TIMEOUT_SECONDS)
+                        : $exitReason;
 
                     throw new RuntimeException("Parallel scan worker failed: $msg");
                 },
+                idleTimeout: self::WORKER_IDLE_TIMEOUT_SECONDS,
             );
 
             return $results;

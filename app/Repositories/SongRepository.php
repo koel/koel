@@ -53,6 +53,16 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query()->wherePath($path)->first();
     }
 
+    public function findMtimeByPath(string $path): ?int
+    {
+        return Song::query()
+            ->withoutEagerLoads()
+            ->wherePath($path)
+            ->select('songs.mtime')
+            ->first()
+            ?->mtime;
+    }
+
     /** @return LazyCollection<int, string> */
     public function lazyGetIdsByOwner(User $owner): LazyCollection
     {
@@ -99,9 +109,9 @@ class SongRepository extends Repository implements ScoutableRepository
             ->first();
     }
 
-    public function getAllStoredOnCloud(): Collection
+    public function hasLocallyStoredSongs(): bool
     {
-        return Song::query()->storedOnCloud()->get();
+        return Song::query()->storedLocally()->exists();
     }
 
     public function getRecentlyAdded(int $count = 8, ?User $scopedUser = null): Collection
@@ -263,12 +273,19 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         $artist = $this->artistRepository->resolveOne($artist);
 
+        $songsOnArtistAlbums = DB::table('songs')
+            ->select('songs.id')
+            ->join('albums', 'albums.id', 'songs.album_id')
+            ->where('albums.artist_id', $artist->id);
+
+        $songIds = DB::table('songs')
+            ->select('songs.id')
+            ->where('songs.artist_id', $artist->id)
+            ->union($songsOnArtistAlbums);
+
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
-            ->leftJoin('albums as albums_by_artist', 'songs.album_id', 'albums_by_artist.id')
-            ->where(static function (SongBuilder $query) use ($artist): void {
-                $query->where('songs.artist_id', $artist->id)->orWhere('albums_by_artist.artist_id', $artist->id);
-            })
+            ->whereIn('songs.id', $songIds)
             ->orderBy('songs.album_name')
             ->orderBy('songs.disc')
             ->orderBy('songs.track')
@@ -431,6 +448,11 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query(user: $user ?? $this->auth->user())
             ->withUserContext()
             ->findOrFail($id);
+    }
+
+    public function getOneWithoutRelations(string $id): Song
+    {
+        return Song::query()->withoutEagerLoads()->findOrFail($id);
     }
 
     public function getOneAccessibleWithoutRelations(string $id, ?User $user = null): Song

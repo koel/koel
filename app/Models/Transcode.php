@@ -53,7 +53,7 @@ class Transcode extends Model
             return true;
         }
 
-        return File::isReadable($this->location) && File::hash($this->location) === $this->hash;
+        return File::isReadable($this->location) && File::size($this->location) === $this->file_size;
     }
 
     protected function storage(): Attribute

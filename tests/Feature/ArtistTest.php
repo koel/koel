@@ -46,7 +46,7 @@ class ArtistTest extends TestCase
     public function indexWithCursorReturnsCursorPagination(): void
     {
         Artist::factory()
-            ->createMany(22)
+            ->createMany(61)
             ->each(static function (Artist $artist): void {
                 Album::factory()->for($artist)->createOne();
             });
@@ -55,7 +55,7 @@ class ArtistTest extends TestCase
             'api/artists?cursor=',
         )->assertJsonStructure(ArtistResource::CURSOR_PAGINATION_JSON_STRUCTURE);
 
-        self::assertCount(21, $response->json('data'));
+        self::assertCount(60, $response->json('data'));
         self::assertNotNull($response->json('meta.next_cursor'));
         self::assertNull($response->json('meta.prev_cursor'));
 
@@ -72,7 +72,7 @@ class ArtistTest extends TestCase
     public function indexWithCursorTraversesAllSupportedSortsWithoutDuplicates(): void
     {
         Artist::factory()
-            ->createMany(30)
+            ->createMany(70)
             ->each(static function (Artist $artist): void {
                 Album::factory()->for($artist)->createOne();
             });
@@ -93,8 +93,8 @@ class ArtistTest extends TestCase
                 $cursor = $r->json('meta.next_cursor');
             }
 
-            self::assertCount(30, $allIds, "sort={$sort} returned wrong total");
-            self::assertCount(30, array_unique($allIds), "sort={$sort} returned duplicates");
+            self::assertCount(70, $allIds, "sort={$sort} returned wrong total");
+            self::assertCount(70, array_unique($allIds), "sort={$sort} returned duplicates");
         }
     }
 

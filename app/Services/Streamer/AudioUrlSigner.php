@@ -13,7 +13,7 @@ class AudioUrlSigner
 
     public function signSongPlayUrl(Song $song, User $user, bool $transcode): string
     {
-        $parameters = ['song' => $song->id, 'user' => $user->public_id];
+        $parameters = ['songId' => $song->id, 'user' => $user->public_id];
 
         if ($transcode) {
             $parameters['transcode'] = 1;

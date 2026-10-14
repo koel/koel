@@ -36,6 +36,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property ?string $image The artist's image file name
  * @property ?string $description Description written by the user, as sanitized HTML
  * @property ?string $album_cover For an artist without an image, the cover of the scoped user's most played album
+ * @property ?bool $has_album_cover Whether the artist would get an album_cover, selected where the cover itself isn't
  * @property Carbon $created_at
  * @property Collection<array-key, Album> $albums
  * @property Collection<array-key, Song> $songs

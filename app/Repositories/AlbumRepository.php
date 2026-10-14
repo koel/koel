@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
 
 /**
@@ -195,15 +196,16 @@ class AlbumRepository extends Repository implements ScoutableRepository
     /** @return Collection<int, Album> */
     public function getByArtist(Artist $artist, ?User $user = null): Collection
     {
+        $albumIdsOfArtistSongs = DB::table('songs')->select('songs.album_id')->where('songs.artist_id', $artist->id);
+
+        $albumIds = DB::table('albums')
+            ->select('albums.id')
+            ->where('albums.artist_id', $artist->id)
+            ->union($albumIdsOfArtistSongs);
+
         return Album::query()
             ->withUserContext(user: $user ?? $this->auth->user())
-            ->where(static function (Builder $query) use ($artist): void {
-                $query->whereBelongsTo($artist)->orWhereHas('songs', static function (Builder $songQuery) use (
-                    $artist,
-                ): void {
-                    $songQuery->whereBelongsTo($artist);
-                });
-            })
+            ->whereIn('albums.id', $albumIds)
             ->orderBy('albums.name')
             ->get();
     }
@@ -268,7 +270,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
                 ->withUserContext(user: $user ?? $this->auth->user(), favoritesOnly: $favoritesOnly)
                 ->sort($sortColumn, $sortDirection),
             idColumn: 'albums.id',
-            perPage: 21,
+            perPage: 60,
         );
     }
 

@@ -15,11 +15,16 @@ use App\Http\Controllers\SSO\OpenIDConnectCallbackController;
 use App\Http\Controllers\StreamEmbedController;
 use App\Http\Controllers\StreamRadioController;
 use App\Http\Controllers\ViewSongOnITunesController;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Response;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Laravel\Socialite\Facades\Socialite;
 
-Route::middleware('web')->group(static function (): void {
+$sessionMiddleware = [StartSession::class, ShareErrorsFromSession::class, PreventRequestForgery::class];
+
+Route::middleware('web')->group(static function () use ($sessionMiddleware): void {
     // Using a closure to determine the controller instead of static configuration to allow for testing.
     $showApp = static fn () => app()->call(
         config('koel.misc.demo') ? DemoIndexController::class : IndexController::class,
@@ -54,23 +59,26 @@ Route::middleware('web')->group(static function (): void {
 
     Route::get('dropbox/authorize/{key}', AuthorizeDropboxController::class)->name('dropbox.authorize');
 
-    Route::middleware('audio.auth')->group(static function (): void {
-        Route::get('play/{song}/{transcode?}', PlayController::class)->name('song.play');
+    Route::middleware('audio.auth')
+        ->withoutMiddleware($sessionMiddleware)
+        ->group(static function (): void {
+            Route::get('play/{songId}/{transcode?}', PlayController::class)->name('song.play');
 
-        Route::get('radio/stream/{radioStation}', StreamRadioController::class)->name('radio.stream')->middleware(
-            'radio.enabled',
-        );
+            Route::get('radio/stream/{radioStation}', StreamRadioController::class)->name('radio.stream')->middleware(
+                'radio.enabled',
+            );
 
-        if (config('koel.download.allow')) {
-            Route::prefix('download')->group(static function (): void {
-                Route::get('songs', DownloadSongController::class)->name('songs.download');
-            });
-        }
-    });
+            if (config('koel.download.allow')) {
+                Route::prefix('download')->group(static function (): void {
+                    Route::get('songs', DownloadSongController::class)->name('songs.download');
+                });
+            }
+        });
 
-    Route::get('embeds/{embed}/stream/{song}/{options}', StreamEmbedController::class)->name(
-        'embeds.stream',
-    )->middleware('embeds.enabled', 'signed', 'throttle:60,1');
+    Route::get('embeds/{embed}/stream/{song}/{options}', StreamEmbedController::class)
+        ->name('embeds.stream')
+        ->middleware('embeds.enabled', 'signed', 'throttle:60,1')
+        ->withoutMiddleware($sessionMiddleware);
 });
 
 Route::middleware('web')

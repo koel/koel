@@ -56,33 +56,14 @@ class ScanChunkCommandTest extends TestCase
     }
 
     #[Test]
-    public function scanChunkLeavesTheTntSearchIndexToTheParentProcess(): void
-    {
-        $engine = $this->scanOneFileWithSearchDriver('tntsearch');
-
-        self::assertSame([], $engine->updated);
-    }
-
-    #[Test]
-    public function scanChunkIndexesAsUsualWithOtherSearchDrivers(): void
-    {
-        $engine = $this->scanOneFileWithSearchDriver('meilisearch');
-
-        $songId = Song::query()
-            ->where('path', realpath($this->mediaPath . '/full.mp3'))
-            ->value('id');
-
-        self::assertSame([(string) $songId], $engine->updatedKeysOf(Song::class));
-    }
-
-    private function scanOneFileWithSearchDriver(string $driver): RecordingSearchEngine
+    public function scanChunkLeavesSearchIndexingToTheParentProcess(): void
     {
         $engine = new RecordingSearchEngine();
         $manager = $this->app->make(EngineManager::class);
         // @mago-ignore lint:prefer-static-closure
-        $manager->extend($driver, fn () => $engine);
+        $manager->extend('meilisearch', fn () => $engine);
         $manager->forgetDrivers();
-        config(['scout.driver' => $driver]);
+        config(['scout.driver' => 'meilisearch']);
 
         $owner = create_admin();
         $manifest = tempnam(sys_get_temp_dir(), 'koel_test_') . '.json';
@@ -94,7 +75,7 @@ class ScanChunkCommandTest extends TestCase
             File::delete($manifest);
         }
 
-        return $engine;
+        self::assertSame([], $engine->updated);
     }
 
     #[Test]

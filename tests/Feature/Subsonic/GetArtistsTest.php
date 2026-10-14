@@ -61,6 +61,26 @@ class GetArtistsTest extends TestCase
         self::assertSame(2, $listedArtist['albumCount']);
     }
 
+    #[Test]
+    public function coverArtFallsBackToAlbumCoversForArtistsWithoutAnImage(): void
+    {
+        $user = create_user();
+        $artistWithAlbumCover = Artist::factory()->for($user)->createOne(['image' => '']);
+        $artistWithoutAnyCover = Artist::factory()->for($user)->createOne(['image' => '']);
+
+        Album::factory()->for($artistWithAlbumCover)->for($user)->createOne();
+        Album::factory()->for($artistWithoutAnyCover)->for($user)->createOne(['cover' => '']);
+
+        $response = $this->getJson("/rest/getArtists.view?apiKey={$user->subsonic_api_key}&f=json")->assertOk();
+
+        $listedArtists = collect($response->json('subsonic-response.artists.index'))
+            ->flatMap(static fn (array $index) => $index['artist'])
+            ->keyBy('id');
+
+        self::assertSame($artistWithAlbumCover->id, $listedArtists[$artistWithAlbumCover->id]['coverArt']);
+        self::assertArrayNotHasKey('coverArt', $listedArtists[$artistWithoutAnyCover->id]);
+    }
+
     private static function createArtistWithOwnAlbumAndACompilationAppearance(): Artist
     {
         $artist = Artist::factory()->createOne(['name' => 'Tool']);

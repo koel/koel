@@ -199,11 +199,6 @@ class SongBuilder extends FavoriteableBuilder
         return $this;
     }
 
-    public function storedOnCloud(): self
-    {
-        return $this->whereNotNull('storage')->where('storage', '!=', '')->whereNull('podcast_id');
-    }
-
     public function storedLocally(): self
     {
         return $this->where(static function (self $query): void {

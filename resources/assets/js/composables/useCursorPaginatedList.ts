@@ -41,6 +41,7 @@ export const useCursorPaginatedList = <Item extends { favorite: boolean }, SortF
   )
 
   const showSkeletons = computed(() => loading.value && items.value.length === 0)
+  const loadingMore = computed(() => loading.value && items.value.length > 0)
 
   let listVersion = 0
 
@@ -98,6 +99,7 @@ export const useCursorPaginatedList = <Item extends { favorite: boolean }, SortF
     displayedItems,
     noFavorites,
     showSkeletons,
+    loadingMore,
     fetchMore,
     sort,
     toggleFavoritesOnly,

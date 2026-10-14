@@ -39,6 +39,39 @@ describe('useCursorPaginatedList', () => {
     })
   })
 
+  it('ignores requests for more while a page is loading', async () => {
+    const { list, store } = setup(['page-2', null])
+
+    await Promise.all([list.fetchMore(), list.fetchMore()])
+
+    expect(store.paginate).toHaveBeenCalledOnce()
+  })
+
+  it('is loading more only while fetching a page after the first', async () => {
+    const { list, store, items } = setup(['page-2', null])
+    let resolveNextPage: (cursor: string | null) => void = () => {}
+
+    await list.fetchMore()
+    items.value = [{ id: 'a', favorite: false }]
+
+    store.paginate.mockImplementationOnce(
+      () =>
+        new Promise<string | null>(resolve => {
+          resolveNextPage = resolve
+        }),
+    )
+
+    const nextPageFetch = list.fetchMore()
+
+    expect(list.loadingMore.value).toBe(true)
+    expect(list.showSkeletons.value).toBe(false)
+
+    resolveNextPage(null)
+    await nextPageFetch
+
+    expect(list.loadingMore.value).toBe(false)
+  })
+
   it('starts over with the new order when sorting', async () => {
     const { list, store, onReset, sortField, sortOrder } = setup()
 

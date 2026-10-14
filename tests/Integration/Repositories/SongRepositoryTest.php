@@ -32,6 +32,15 @@ class SongRepositoryTest extends TestCase
     }
 
     #[Test]
+    public function findMtimeByPath(): void
+    {
+        Song::factory()->createOne(['path' => 'foo', 'mtime' => 1_700_000_000]);
+
+        self::assertSame(1_700_000_000, $this->songRepository->findMtimeByPath('foo'));
+        self::assertNull($this->songRepository->findMtimeByPath('bar'));
+    }
+
+    #[Test]
     public function getOneAccessibleWithoutRelations(): void
     {
         $song = Song::factory()->createOne();

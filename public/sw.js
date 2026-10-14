@@ -1,14 +1,22 @@
 //#region resources/assets/js/service-worker.ts
 var AUDIO_CACHE_NAME = "koel-audio-v1";
-var STATIC_CACHE_NAME = "koel-static-v1";
+var STATIC_CACHE_NAME = "koel-static-v2";
+var IMAGE_CACHE_NAME = "koel-images-v1";
+var MAX_CACHED_IMAGES = 500;
+var AUTH_QUERY_PARAMS = [
+	"t",
+	"expires",
+	"user",
+	"signature"
+];
 /**
-* Normalize a play URL to a stable cache key by stripping the auth token query param.
+* Normalize a play URL to a stable cache key by stripping the auth query params.
 * e.g. "https://example.com/play/abc123?t=token" -> "https://example.com/play/abc123"
-*      "https://example.com/play/abc123/1?t=token" -> "https://example.com/play/abc123/1"
+*      "https://example.com/play/abc123/1?expires=1&user=u&signature=s" -> "https://example.com/play/abc123/1"
 */
 var normalizeCacheKey = (url) => {
 	const u = new URL(url);
-	u.searchParams.delete("t");
+	AUTH_QUERY_PARAMS.forEach((param) => u.searchParams.delete(param));
 	return u.toString();
 };
 /**
@@ -101,15 +109,24 @@ var handleJsAsset = async (request) => {
 		return await caches.open(STATIC_CACHE_NAME).then((c) => c.match(request)) || new Response("Service Unavailable", { status: 503 });
 	}
 };
+var isImage = (url) => /\.(png|jpg|jpeg|svg|gif|ico)(\?.*)?$/.test(new URL(url).pathname);
+var evictOldestImages = async (cache) => {
+	const keys = await cache.keys();
+	const overflow = keys.slice(0, Math.max(0, keys.length - MAX_CACHED_IMAGES));
+	await Promise.all(overflow.map((key) => cache.delete(key)));
+};
 /**
 * Non-JS static assets (images, fonts, CSS): cache-first strategy.
 */
 var handleOtherStaticAsset = async (request) => {
-	const cache = await caches.open(STATIC_CACHE_NAME);
+	const cachingImage = isImage(request.url);
+	const cache = await caches.open(cachingImage ? IMAGE_CACHE_NAME : STATIC_CACHE_NAME);
 	const cached = await cache.match(request);
 	if (cached) return cached;
 	const response = await fetch(request);
-	if (response.ok) cache.put(request, response.clone());
+	if (response.ok) cache.put(request, response.clone()).then(async () => {
+		if (cachingImage) await evictOldestImages(cache);
+	});
 	return response;
 };
 self.addEventListener("message", (event) => {
@@ -121,9 +138,7 @@ self.addEventListener("message", (event) => {
 		case "DELETE_AUDIO_CACHE":
 			event.waitUntil(deleteAudioCache(data, event.source));
 			break;
-		case "GET_CACHE_STATUS":
-			event.waitUntil(getCacheStatus(data, event.source));
-			break;
+		case "GET_CACHE_STATUS": event.waitUntil(getCacheStatus(data, event.source));
 	}
 });
 var cacheAudio = async (data, client) => {
@@ -207,6 +222,10 @@ self.addEventListener("install", () => {
 	self.skipWaiting();
 });
 self.addEventListener("activate", (event) => {
-	event.waitUntil(caches.keys().then((names) => Promise.all(names.filter((name) => name !== AUDIO_CACHE_NAME && name !== STATIC_CACHE_NAME).map((name) => caches.delete(name)))).then(() => self.clients.claim()));
+	event.waitUntil(caches.keys().then((names) => Promise.all(names.filter((name) => ![
+		AUDIO_CACHE_NAME,
+		STATIC_CACHE_NAME,
+		IMAGE_CACHE_NAME
+	].includes(name)).map((name) => caches.delete(name)))).then(() => self.clients.claim()));
 });
 //#endregion

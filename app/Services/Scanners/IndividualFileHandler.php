@@ -25,14 +25,12 @@ class IndividualFileHandler
     public function handle(string $path, ScanConfiguration $config): ScanResult
     {
         try {
-            $song = $this->songRepository->findOneByPath($path);
-
-            if (!$config->force && $song && !$song->isFileModified(File::lastModified($path))) {
+            if (!$config->force && $this->songRepository->findMtimeByPath($path) === File::lastModified($path)) {
                 return ScanResult::skipped($path);
             }
 
             $info = $this->fileScanner->scan($path);
-            $song = $this->songService->createOrUpdateSongFromScan($info, $config, $song);
+            $song = $this->songService->createOrUpdateSongFromScan($info, $config);
 
             if ($song) {
                 $this->transcodeAndAnalyzeSong($song, $path);
