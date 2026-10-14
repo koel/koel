@@ -160,6 +160,9 @@ disown -h
 You can now verify that it works by `tail -f storage/logs/laravel.log` while making changes to your media directory, for
 example by adding or removing applicable files via FTP.
 
+If you run a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker), Koel removes empty albums and
+artists once your changes settle (about 10 seconds after the last one), instead of after every single file.
+
 ## Integration with AWS Lambda
 
 :::warning Deprecated
