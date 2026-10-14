@@ -1,42 +1,41 @@
+import { defineComponent, nextTick } from 'vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
-
-const onRouteChangedMock = vi.fn()
-const resolveMock = vi.fn()
-const triggerNotFoundMock = vi.fn()
-
-const currentRoute = {
-  value: {
-    screen: 'Home' as ScreenName,
-    path: '/',
-    params: { id: '42' },
-  },
-}
-
-vi.mock('@/utils/helpers', async importOriginal => ({
-  ...(await importOriginal<typeof import('@/utils/helpers')>()),
-  requireInjection: () => ({
-    $currentRoute: currentRoute,
-    onRouteChanged: onRouteChangedMock,
-    resolve: resolveMock,
-    triggerNotFound: triggerNotFoundMock,
-  }),
-}))
-
-vi.mock('@/router', () => {
-  const goMock = vi.fn()
-  const urlMock = vi.fn((name: string) => `/#/${name}`)
-
-  return {
-    default: Object.assign(function () {}, { go: goMock, url: urlMock }),
-  }
-})
-
+import { createHarness } from '@/__tests__/TestHarness'
 import { useRouter } from './useRouter'
 
 describe('useRouter', () => {
+  const h = createHarness()
+
+  const renderComponent = (setup: () => void) => h.render(defineComponent({ setup, render: () => null }))
+
   it('checks current screen', () => {
-    const { isCurrentScreen } = useRouter()
-    expect(isCurrentScreen('Home' as ScreenName)).toBe(true)
-    expect(isCurrentScreen('Queue' as ScreenName)).toBe(false)
+    h.visit('/home')
+
+    let isCurrentScreen: ReturnType<typeof useRouter>['isCurrentScreen'] | undefined
+
+    renderComponent(() => {
+      isCurrentScreen = useRouter().isCurrentScreen
+    })
+
+    expect(isCurrentScreen!('Home')).toBe(true)
+    expect(isCurrentScreen!('Queue')).toBe(false)
+  })
+
+  it('runs a screen handler only for the mounted component', async () => {
+    h.visit('/home')
+    await nextTick()
+
+    const handler = vi.fn()
+
+    for (let i = 0; i < 5; i++) {
+      renderComponent(() => useRouter().onScreenActivated('Queue', handler)).unmount()
+    }
+
+    renderComponent(() => useRouter().onScreenActivated('Queue', handler))
+
+    h.visit('/queue')
+    await nextTick()
+
+    expect(handler).toHaveBeenCalledOnce()
   })
 })

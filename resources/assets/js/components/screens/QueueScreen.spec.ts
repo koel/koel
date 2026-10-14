@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import { queueStore } from '@/stores/queueStore'
+import { playableStore } from '@/stores/playableStore'
 import { playbackService } from '@/services/QueuePlaybackService'
 import Component from './QueueScreen.vue'
 
@@ -60,5 +61,19 @@ describe('queueScreen.vue', () => {
 
     await h.user.click(screen.getByRole('button', { name: 'Shuffle All' }))
     await waitFor(() => expect(playMock).toHaveBeenCalledWith(songs, true))
+  })
+
+  it('queues the playable from a queue link', async () => {
+    const song = h.factory('song').make()
+    const resolveMock = h.mock(playableStore, 'resolve').mockResolvedValue(song)
+    const queueMock = h.mock(queueStore, 'queue')
+
+    renderComponent()
+    h.visit(`/songs/${song.id}`)
+
+    await waitFor(() => {
+      expect(resolveMock).toHaveBeenCalledWith(song.id)
+      expect(queueMock).toHaveBeenCalledWith(song)
+    })
   })
 })

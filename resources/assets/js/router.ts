@@ -46,7 +46,7 @@ interface MatchedRoute {
   params: RouteParams
 }
 
-type RouteChangedHandler = (newRoute: Route, oldRoute: Route | undefined) => any
+export type RouteChangedHandler = (newRoute: Route, oldRoute: Route | undefined) => any
 
 export default class Router {
   public $currentRoute: Ref<Route>
@@ -203,7 +203,7 @@ export default class Router {
       return null
     }
 
-    route.meta?.onResolve?.(params)
+    route.meta?.onResolved?.(params)
 
     if (route.meta?.redirect) {
       const to = route.meta.redirect(params)
@@ -216,7 +216,14 @@ export default class Router {
   }
 
   public triggerNotFound = () => this.activateRoute(this.notFoundRoute)
-  public onRouteChanged = (handler: RouteChangedHandler) => this.routeChangedHandlers.push(handler)
+
+  public onRouteChanged = (handler: RouteChangedHandler) => {
+    this.routeChangedHandlers.push(handler)
+
+    return () => {
+      this.routeChangedHandlers = this.routeChangedHandlers.filter(registered => registered !== handler)
+    }
+  }
 
   public activateRoute(route: Route, params: RouteParams = {}) {
     this.$currentRoute.value = route
