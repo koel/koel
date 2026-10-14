@@ -3,8 +3,7 @@
 namespace Tests\Integration\Events;
 
 use App\Events\MediaScanCompleted;
-use App\Values\Scanning\ScanResult;
-use App\Values\Scanning\ScanResultCollection;
+use App\Values\Scanning\ScanSummary;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -16,7 +15,7 @@ class MediaScanCompletedTest extends TestCase
     {
         Queue::fake();
 
-        event(new MediaScanCompleted(ScanResultCollection::create()->add(ScanResult::success('/media/foo.mp3'))));
+        event(new MediaScanCompleted(ScanSummary::make('scan-id', 1, 0, 0)));
 
         Queue::assertNothingPushed();
     }

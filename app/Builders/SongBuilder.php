@@ -3,9 +3,11 @@
 namespace App\Builders;
 
 use App\Builders\Concerns\CanScopeByUser;
+use App\Enums\ScanResultType;
 use App\Facades\License;
 use App\Models\Song;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -58,6 +60,21 @@ class SongBuilder extends FavoriteableBuilder
     public function wherePathIn(array $paths): self
     {
         return $this->whereIn('songs.path_hash', array_map(simple_hash(...), $paths))->whereIn('songs.path', $paths);
+    }
+
+    public function missingFromScan(string $scanId): self
+    {
+        $validFilesOfScan = static fn (QueryBuilder $query): QueryBuilder => $query
+            ->from('scanned_files')
+            ->where('scanned_files.scan_id', $scanId)
+            ->whereIn('scanned_files.type', [ScanResultType::SUCCESS->value, ScanResultType::SKIPPED->value]);
+
+        return $this->whereExists($validFilesOfScan)->whereNotExists(
+            static fn (QueryBuilder $query): QueryBuilder => $validFilesOfScan($query)->whereColumn(
+                'scanned_files.path_hash',
+                'songs.path_hash',
+            ),
+        );
     }
 
     public function inDirectory(string $path): self

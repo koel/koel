@@ -8,8 +8,8 @@ use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Models\Album;
 use App\Models\Song;
 use App\Services\LibrarySummaryService;
+use App\Services\Scanners\ScannedFileService;
 use App\Values\Scanning\ScanResult;
-use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Laravel\Scout\EngineManager;
@@ -38,7 +38,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
             ->filter(static fn ($type) => $type !== SongStorageType::LOCAL)
             ->each(function ($type): void {
                 $song = Song::factory()->createOne(['storage' => $type]);
-                $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+                $this->listener->handle(self::recordScan(ScanResult::success('/media/other.mp3')));
 
                 $this->assertModelExists($song);
             });
@@ -48,7 +48,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     public function handleDoesNotDeleteEpisodes(): void
     {
         $episode = Song::factory()->asEpisode()->createOne();
-        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+        $this->listener->handle(self::recordScan(ScanResult::success('/media/other.mp3')));
         $this->assertModelExists($episode);
     }
 
@@ -60,11 +60,10 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
 
         self::assertCount(4, Song::all());
 
-        $syncResult = ScanResultCollection::create();
-        $syncResult->add(ScanResult::success($songs[0]->path));
-        $syncResult->add(ScanResult::skipped($songs[3]->path));
-
-        $this->listener->handle(new MediaScanCompleted($syncResult));
+        $this->listener->handle(self::recordScan(
+            ScanResult::success($songs[0]->path),
+            ScanResult::skipped($songs[3]->path),
+        ));
 
         $this->assertModelExists($songs[0]);
         $this->assertModelExists($songs[3]);
@@ -81,10 +80,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
 
         self::assertSame(2, $librarySummaryService->getSongCount($user));
 
-        $syncResult = ScanResultCollection::create();
-        $syncResult->add(ScanResult::success($songs[0]->path));
-
-        $this->listener->handle(new MediaScanCompleted($syncResult));
+        $this->listener->handle(self::recordScan(ScanResult::success($songs[0]->path)));
 
         self::assertSame(1, $librarySummaryService->getSongCount($user));
     }
@@ -99,10 +95,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $unaffectedAlbum = Album::factory()->createOne();
         Song::factory()->for($unaffectedAlbum)->for($unaffectedAlbum->artist)->createOne();
 
-        $syncResult = ScanResultCollection::create();
-        $syncResult->add(ScanResult::success($unaffectedAlbum->songs->first()->path));
-
-        $this->listener->handle(new MediaScanCompleted($syncResult));
+        $this->listener->handle(self::recordScan(ScanResult::success($unaffectedAlbum->songs->first()->path)));
 
         self::assertModelMissing($song);
         self::assertModelMissing($album);
@@ -116,9 +109,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $album = Album::factory()->createOne();
         $artist = $album->artist;
 
-        $syncResult = ScanResultCollection::create();
-
-        $this->listener->handle(new MediaScanCompleted($syncResult));
+        $this->listener->handle(self::recordScan());
 
         self::assertModelMissing($album);
         self::assertModelMissing($artist);
@@ -133,7 +124,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
 
         // What a mount point whose backing filesystem went away produces: a scan that completes
         // successfully over a readable directory and reports no valid files at all.
-        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()));
+        $this->listener->handle(self::recordScan());
 
         $songs->each($this->assertModelExists(...));
 
@@ -152,10 +143,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         /** @var Collection|array<array-key, Song> $songs */
         $songs = Song::factory()->createMany(3);
 
-        $syncResult = ScanResultCollection::create();
-        $syncResult->add(ScanResult::success($songs[0]->path));
-
-        $this->listener->handle(new MediaScanCompleted($syncResult));
+        $this->listener->handle(self::recordScan(ScanResult::success($songs[0]->path)));
 
         Log::shouldHaveReceived('info') // @phpstan-ignore-line
             ->once()
@@ -169,10 +157,7 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
 
         $song = Song::factory()->createOne();
 
-        $syncResult = ScanResultCollection::create();
-        $syncResult->add(ScanResult::success($song->path));
-
-        $this->listener->handle(new MediaScanCompleted($syncResult));
+        $this->listener->handle(self::recordScan(ScanResult::success($song->path)));
 
         Log::shouldNotHaveReceived('info'); // @phpstan-ignore-line
     }
@@ -188,12 +173,32 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $kept = Song::factory()->createOne();
         $orphan = Song::factory()->createOne();
 
-        $syncResult = ScanResultCollection::create();
-        $syncResult->add(ScanResult::success($kept->path));
-
-        $this->listener->handle(new MediaScanCompleted($syncResult));
+        $this->listener->handle(self::recordScan(ScanResult::success($kept->path)));
 
         self::assertModelMissing($orphan);
         $engine->shouldHaveReceived('delete')->atLeast()->once(); // @phpstan-ignore-line
+    }
+
+    #[Test]
+    public function deletesNothingOnceTheScannedFilesAreCleared(): void
+    {
+        $songs = Song::factory()->createMany(2);
+        $event = self::recordScan(ScanResult::success($songs[0]->path));
+
+        app(ScannedFileService::class)->deleteScannedFiles($event->summary->scanId);
+        $this->listener->handle($event);
+
+        $songs->each($this->assertModelExists(...));
+    }
+
+    private static function recordScan(ScanResult ...$results): MediaScanCompleted
+    {
+        $recorder = app(ScannedFileService::class)->startScan();
+
+        foreach ($results as $result) {
+            $recorder->record($result);
+        }
+
+        return new MediaScanCompleted($recorder->finish());
     }
 }

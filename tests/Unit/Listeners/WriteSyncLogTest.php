@@ -4,8 +4,8 @@ namespace Tests\Unit\Listeners;
 
 use App\Events\MediaScanCompleted;
 use App\Listeners\WriteScanLog;
+use App\Services\Scanners\ScannedFileService;
 use App\Values\Scanning\ScanResult;
-use App\Values\Scanning\ScanResultCollection;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -25,7 +25,7 @@ class WriteSyncLogTest extends TestCase
     {
         parent::setUp();
 
-        $this->listener = new WriteScanLog();
+        $this->listener = app(WriteScanLog::class);
         $this->originalLogLevel = config('koel.sync_log_level');
         Carbon::setTestNow(Carbon::create(2021, 1, 2, 12, 34, 56));
 
@@ -49,9 +49,10 @@ class WriteSyncLogTest extends TestCase
     {
         config(['koel.sync_log_level' => 'error']);
 
-        $this->listener->handle(new MediaScanCompleted(ScanResultCollection::create()->add(ScanResult::success(
-            '/media/foo.mp3',
-        ))->add(ScanResult::skipped('/media/bar.mp3'))));
+        $this->listener->handle(self::recordScan(
+            ScanResult::success('/media/foo.mp3'),
+            ScanResult::skipped('/media/bar.mp3'),
+        ));
 
         self::assertFileDoesNotExist(storage_path('logs/sync-20210102-123456.log'));
     }
@@ -138,12 +139,22 @@ class WriteSyncLogTest extends TestCase
 
     private static function createSyncCompleteEvent(): MediaScanCompleted
     {
-        $resultCollection = ScanResultCollection::create()
-            ->add(ScanResult::success('/media/foo.mp3'))
-            ->add(ScanResult::error('/media/baz.mp3', 'Something went wrong'))
-            ->add(ScanResult::error('/media/qux.mp3', 'Something went horribly wrong'))
-            ->add(ScanResult::skipped('/media/bar.mp3'));
+        return self::recordScan(
+            ScanResult::success('/media/foo.mp3'),
+            ScanResult::error('/media/baz.mp3', 'Something went wrong'),
+            ScanResult::error('/media/qux.mp3', 'Something went horribly wrong'),
+            ScanResult::skipped('/media/bar.mp3'),
+        );
+    }
 
-        return new MediaScanCompleted($resultCollection);
+    private static function recordScan(ScanResult ...$results): MediaScanCompleted
+    {
+        $recorder = app(ScannedFileService::class)->startScan();
+
+        foreach ($results as $result) {
+            $recorder->record($result);
+        }
+
+        return new MediaScanCompleted($recorder->finish());
     }
 }
