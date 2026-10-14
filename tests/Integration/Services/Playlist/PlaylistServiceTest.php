@@ -3,9 +3,11 @@
 namespace Tests\Integration\Services\Playlist;
 
 use App\Enums\Placement;
+use App\Models\Album;
 use App\Models\PlaylistFolder;
 use App\Models\Podcast;
 use App\Models\Song;
+use App\Repositories\PlaylistRepository;
 use App\Services\LibrarySummaryService;
 use App\Services\Playlist\PlaylistService;
 use App\Services\Podcast\PodcastService;
@@ -201,6 +203,40 @@ class PlaylistServiceTest extends TestCase
         self::assertCount(4, $playlist->playables);
         self::assertEqualsCanonicalizing($addedSongs->modelKeys(), $songs->modelKeys());
         $songs->each(static fn (Song $song) => self::assertTrue($playlist->playables->contains($song)));
+    }
+
+    #[Test]
+    public function addMoreSongsThanOneBatchToPlaylist(): void
+    {
+        $playlist = create_playlist();
+        $existingSongs = Song::factory()->createMany(2);
+        $playlist->addPlayables($existingSongs);
+        $songs = Song::factory()->for(Album::factory()->createOne())->createMany(1001);
+
+        $this->service->addPlayablesToPlaylist($playlist, $songs, $playlist->owner);
+
+        $positions = app(PlaylistRepository::class)->getPlayablePositionsInPlaylist(
+            $playlist,
+            $existingSongs->merge($songs)->modelKeys(),
+        );
+
+        self::assertSame(range(1, 1003), $positions->sort()->values()->all());
+        self::assertSame($existingSongs->merge($songs)->modelKeys(), $positions->sort()->keys()->all());
+    }
+
+    #[Test]
+    public function addSongsAlreadyInPlaylistSkipsThem(): void
+    {
+        $playlist = create_playlist();
+        $songs = Song::factory()->createMany(3);
+        $playlist->addPlayables($songs->take(2));
+
+        $addedSongs = $this->service->addPlayablesToPlaylist($playlist, $songs->skip(1), $playlist->owner);
+        $playlist->refresh();
+
+        self::assertCount(2, $addedSongs);
+        self::assertSame($songs->modelKeys(), $playlist->playables->modelKeys());
+        self::assertSame([1, 2, 3], $playlist->playables->pluck('pivot.position')->all());
     }
 
     #[Test]

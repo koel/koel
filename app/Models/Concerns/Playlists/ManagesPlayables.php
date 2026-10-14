@@ -5,6 +5,7 @@ namespace App\Models\Concerns\Playlists;
 use App\Models\Song as Playable;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 trait ManagesPlayables
 {
@@ -14,22 +15,27 @@ trait ManagesPlayables
     public function addPlayables(Collection|Playable|array $playables, ?User $collaborator = null): void
     {
         $collaborator ??= $this->owner;
-        $maxPosition = $this->playables()->getQuery()->max('position') ?? 0;
 
         if (!is_array($playables)) {
             $playables = Collection::wrap($playables)->pluck('id')->all();
         }
 
-        $data = [];
+        DB::transaction(function () use ($playables, $collaborator): void {
+            $maxPosition = $this->playables()->newPivotQuery()->max('position') ?? 0;
 
-        foreach ($playables as $playable) {
-            $data[$playable] = [
-                'position' => ++$maxPosition,
-                'user_id' => $collaborator->id,
-            ];
-        }
+            foreach (array_chunk($playables, 1000) as $chunk) {
+                $data = [];
 
-        $this->playables()->attach($data);
+                foreach ($chunk as $playable) {
+                    $data[$playable] = [
+                        'position' => ++$maxPosition,
+                        'user_id' => $collaborator->id,
+                    ];
+                }
+
+                $this->playables()->attach($data);
+            }
+        });
     }
 
     /**
