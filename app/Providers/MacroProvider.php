@@ -16,7 +16,7 @@ use Illuminate\Testing\TestResponse;
 
 class MacroProvider extends ServiceProvider
 {
-    public const int WHERE_IN_CHUNK_SIZE = 1000;
+    public const int WHERE_IN_CHUNK_SIZE = 500;
 
     public function boot(): void
     {
