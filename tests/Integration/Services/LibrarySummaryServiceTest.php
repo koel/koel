@@ -2,8 +2,6 @@
 
 namespace Tests\Integration\Services;
 
-use App\Models\Album;
-use App\Models\Artist;
 use App\Models\Genre;
 use App\Models\Song;
 use App\Services\LibrarySummaryService;
@@ -45,22 +43,5 @@ class LibrarySummaryServiceTest extends TestCase
         self::assertSame(2, $this->service->getSongCount($user));
         self::assertEqualsWithDelta(150.0, $this->service->getTotalSongLength($user), 0.01);
         self::assertSame(2, $this->service->getGenreSummaries($user)->sole()->songCount);
-    }
-
-    #[Test]
-    public function albumArtistsAreCachedUntilLibraryChanges(): void
-    {
-        $user = create_user();
-        Album::factory()->for(Artist::factory()->createOne())->createOne();
-
-        self::assertCount(1, $this->service->getAlbumArtistsWithoutFavoritesOrRatings($user));
-
-        Album::factory()->for(Artist::factory()->createOne())->createOne();
-
-        self::assertCount(1, $this->service->getAlbumArtistsWithoutFavoritesOrRatings($user));
-
-        $this->service->markLibraryChanged();
-
-        self::assertCount(2, $this->service->getAlbumArtistsWithoutFavoritesOrRatings($user));
     }
 }

@@ -2,14 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\Artist;
 use App\Models\User;
-use App\Repositories\ArtistRepository;
 use App\Repositories\GenreRepository;
 use App\Repositories\SongRepository;
 use App\Values\GenreSummary;
 use Closure;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -20,7 +17,6 @@ class LibrarySummaryService
     public function __construct(
         private readonly SongRepository $songRepository,
         private readonly GenreRepository $genreRepository,
-        private readonly ArtistRepository $artistRepository,
     ) {}
 
     public function getSongCount(User $user): int
@@ -41,17 +37,6 @@ class LibrarySummaryService
         return $this->rememberSummaryForUser($user, 'genre summaries', fn () => $this->genreRepository->getAllSummaries(
             $user,
         ));
-    }
-
-    /** @return EloquentCollection<int, Artist> */
-    public function getAlbumArtistsWithoutFavoritesOrRatings(User $user): EloquentCollection
-    {
-        $attributesOfArtists = $this->rememberSummaryForUser($user, 'album artists', fn () => $this->artistRepository
-            ->getAllAlbumArtistsWithoutFavoritesOrRatings($user)
-            ->map(static fn (Artist $artist) => $artist->getAttributes())
-            ->all());
-
-        return Artist::hydrate($attributesOfArtists);
     }
 
     public function markLibraryChanged(): void

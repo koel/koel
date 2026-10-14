@@ -70,25 +70,6 @@ class ArtistBuilder extends FavoriteableBuilder
         );
     }
 
-    public function whereFavoritedOrRatedByScopedUser(): self
-    {
-        throw_unless($this->user, new LogicException('User must be set to query favorites and ratings.'));
-
-        $favoritedArtistIds = DB::table('favorites')
-            ->select('favoriteable_id')
-            ->where('favoriteable_type', $this->model->getMorphClass())
-            ->where('user_id', $this->user->id);
-
-        $ratedArtistIds = DB::table('ratings')
-            ->select('rateable_id')
-            ->where('rateable_type', $this->model->getMorphClass())
-            ->where('user_id', $this->user->id);
-
-        return $this->where(static function (Builder $query) use ($favoritedArtistIds, $ratedArtistIds): void {
-            $query->whereIn('artists.id', $favoritedArtistIds)->orWhereIn('artists.id', $ratedArtistIds);
-        });
-    }
-
     public function whereAccessibleByUser(User $user): self
     {
         $this->user = $user;

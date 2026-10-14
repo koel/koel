@@ -16,7 +16,6 @@ use Illuminate\Support\LazyCollection;
  * @extends Repository<Artist>
  * @implements ScoutableRepository<Artist>
  */
-// @mago-ignore lint:too-many-methods
 class ArtistRepository extends Repository implements ScoutableRepository
 {
     public function isAccessibleByUser(Artist $artist, User $user): bool
@@ -129,27 +128,15 @@ class ArtistRepository extends Repository implements ScoutableRepository
         return Artist::query()->onlyStandard()->whereNull('mbid')->count();
     }
 
-    /** @return Collection<int, Artist> */
-    public function getAllAlbumArtistsWithoutFavoritesOrRatings(User $user): Collection
+    public function getAll(?User $user = null): Collection
     {
         return Artist::query()
-            ->select(['artists.id', 'artists.name', 'artists.image', 'artists.mbid', 'artists.updated_at'])
-            ->setScopedUser($user)
-            ->accessible()
+            ->withUserContext(user: $user ?? $this->auth->user(), includeAlbumCover: false)
             ->withAlbumCoverPresence()
             ->onlyStandard()
             ->onlyAlbumArtists()
             ->withAlbumCountIncludingAppearances()
             ->orderBy('name')
-            ->get();
-    }
-
-    /** @return Collection<int, Artist> */
-    public function getFavoritedOrRatedByUser(User $user): Collection
-    {
-        return Artist::query()
-            ->withUserContext(user: $user, includeAlbumCover: false)
-            ->whereFavoritedOrRatedByScopedUser()
             ->get();
     }
 
