@@ -25,12 +25,13 @@ class ArtistRepositoryTest extends PlusTestCase
     }
 
     #[Test]
-    public function getMostPlayedReturnsOnlyAccessibleArtistsInPlayCountOrder(): void
+    public function getMostPlayedReturnsOnlyPlayedAccessibleArtistsInPlayCountOrder(): void
     {
         $user = create_user();
         $leastPlayed = self::createPlayedArtist(owner: $user, listener: $user, playCount: 1);
         $mostPlayed = self::createPlayedArtist(owner: $user, listener: $user, playCount: 3);
         $secondMostPlayed = self::createPlayedArtist(owner: $user, listener: $user, playCount: 2);
+        self::createArtistWithAlbum($user);
 
         $someoneElse = create_user();
 
@@ -38,7 +39,7 @@ class ArtistRepositoryTest extends PlusTestCase
             self::createPlayedArtist(owner: $someoneElse, listener: $user, playCount: 10);
         }
 
-        $artists = $this->artistRepository->getMostPlayed(3, $user);
+        $artists = $this->artistRepository->getMostPlayed(4, $user);
 
         self::assertSame([$mostPlayed->id, $secondMostPlayed->id, $leastPlayed->id], $artists->pluck('id')->all());
     }

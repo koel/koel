@@ -9,7 +9,6 @@ use App\Models\Artist;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use LogicException;
 use Webmozart\Assert\Assert;
@@ -102,24 +101,26 @@ class AlbumBuilder extends FavoriteableBuilder
         });
     }
 
-    public function withPlayCount($includingFavoriteStatus = false): self
+    public function withPlayCount(bool $playedOnly = false): self
     {
         throw_unless($this->user, new LogicException('User must be set to query play counts.'));
 
-        $groupColumns = $includingFavoriteStatus ? ['albums.id', 'favorites.created_at'] : ['albums.id'];
+        $playCountsByAlbum = DB::table('interactions')
+            ->join('songs as songs_for_playcount', 'songs_for_playcount.id', 'interactions.song_id')
+            ->where('interactions.user_id', $this->user->id)
+            ->where('interactions.play_count', '>', 0)
+            ->groupBy('songs_for_playcount.album_id')
+            ->select('songs_for_playcount.album_id')
+            ->selectRaw('SUM(interactions.play_count) as play_count');
 
-        // As we might have joined the `songs` table already, use an alias for the `songs` table
-        // in this join to avoid conflicts.
-        return $this
-            ->leftJoin('songs as songs_for_playcount', 'albums.id', 'songs_for_playcount.album_id')
-            ->leftJoin('interactions', function (JoinClause $join): void {
-                $join->on('songs_for_playcount.id', 'interactions.song_id')->where(
-                    'interactions.user_id',
-                    $this->user->id,
-                );
-            })
-            ->groupBy($groupColumns)
-            ->addSelect(DB::raw('COALESCE(SUM(interactions.play_count), 0) as play_count'));
+        return $this->joinSub(
+            $playCountsByAlbum,
+            'album_play_counts',
+            'album_play_counts.album_id',
+            '=',
+            'albums.id',
+            $playedOnly ? 'inner' : 'left',
+        )->addSelect(DB::raw('COALESCE(album_play_counts.play_count, 0) as play_count'));
     }
 
     private function withLengthSubquery(): self
@@ -155,7 +156,7 @@ class AlbumBuilder extends FavoriteableBuilder
         return $this
             ->accessible()
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
-            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus))
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount())
             ->withLengthSubquery()
             ->withLastPlayedSubquery()
             ->withRatingJoin();

@@ -68,7 +68,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->onlyAlbumArtists()
             ->setScopedUser($user)
             ->accessible()
-            ->withPlayCount()
+            ->withPlayCount(playedOnly: true)
             ->orderByDesc('play_count')
             ->limit($count)
             ->pluck('artists.id');

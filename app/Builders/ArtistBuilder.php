@@ -119,24 +119,26 @@ class ArtistBuilder extends FavoriteableBuilder
             ->where('songs.owner_id', '<>', $this->user->id);
     }
 
-    public function withPlayCount(bool $includingFavoriteStatus = false): self
+    public function withPlayCount(bool $playedOnly = false): self
     {
         throw_unless($this->user, new LogicException('User must be set to query play counts.'));
 
-        $groupColumns = $includingFavoriteStatus ? ['artists.id', 'favorites.created_at'] : ['artists.id'];
+        $playCountsByArtist = DB::table('interactions')
+            ->join('songs as songs_for_playcount', 'songs_for_playcount.id', 'interactions.song_id')
+            ->where('interactions.user_id', $this->user->id)
+            ->where('interactions.play_count', '>', 0)
+            ->groupBy('songs_for_playcount.artist_id')
+            ->select('songs_for_playcount.artist_id')
+            ->selectRaw('SUM(interactions.play_count) as play_count');
 
-        // As we might have joined the `songs` table already, use an alias for the `songs` table
-        // in this join to avoid conflicts.
-        return $this
-            ->leftJoin('songs as songs_for_playcount', 'artists.id', 'songs_for_playcount.artist_id')
-            ->leftJoin('interactions', function (JoinClause $join): void {
-                $join->on('interactions.song_id', 'songs_for_playcount.id')->where(
-                    'interactions.user_id',
-                    $this->user->id,
-                );
-            })
-            ->groupBy($groupColumns)
-            ->addSelect(DB::raw('COALESCE(SUM(interactions.play_count), 0) as play_count'));
+        return $this->joinSub(
+            $playCountsByArtist,
+            'artist_play_counts',
+            'artist_play_counts.artist_id',
+            '=',
+            'artists.id',
+            $playedOnly ? 'inner' : 'left',
+        )->addSelect(DB::raw('COALESCE(artist_play_counts.play_count, 0) as play_count'));
     }
 
     public function sort(string $column, string $direction): self
@@ -216,7 +218,7 @@ class ArtistBuilder extends FavoriteableBuilder
         return $this
             ->accessible()
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
-            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus))
+            ->when($includePlayCount, static fn (self $query) => $query->withPlayCount())
             ->withRatingJoin()
             ->when($includeAlbumCover, static fn (self $query) => $query->withAlbumCover());
     }
