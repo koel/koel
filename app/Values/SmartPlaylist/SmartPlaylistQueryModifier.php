@@ -22,7 +22,6 @@ final class SmartPlaylistQueryModifier
     {
         $operator = $rule->operator;
         $value = $rule->value;
-        $collationIgnoresCase = in_array(DB::getDriverName(), ['mysql', 'mariadb'], true);
 
         // Dates are stored as timestamps, so a day-based rule becomes a range that runs to the end of its last day.
         // For instance, "IS 2023-10-01" becomes "IS BETWEEN 2023-10-01 AND 2023-10-02."
@@ -55,28 +54,20 @@ final class SmartPlaylistQueryModifier
                 $rule,
                 $operator,
                 $value,
-                $collationIgnoresCase,
             ): void {
                 $subQuery->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
                     $rule->model,
                     $operator,
                     $value,
-                    $collationIgnoresCase,
                 ));
             });
         } elseif (self::matchesUnsetValues($rule, $operator)) {
-            $query->where(static function (SongBuilder $unsetOrMatchingQuery) use (
-                $rule,
-                $operator,
-                $value,
-                $collationIgnoresCase,
-            ): void {
+            $query->where(static function (SongBuilder $unsetOrMatchingQuery) use ($rule, $operator, $value): void {
                 $unsetOrMatchingQuery
                     ->{self::resolveWhereMethod($rule, $operator)}(...self::generateParameters(
                         $rule->model,
                         $operator,
                         $value,
-                        $collationIgnoresCase,
                     ))
                     ->orWhereNull($rule->model->toColumnName());
             });
@@ -85,7 +76,6 @@ final class SmartPlaylistQueryModifier
                 $rule->model,
                 $operator,
                 $value,
-                $collationIgnoresCase,
             ));
         }
     }
@@ -96,17 +86,13 @@ final class SmartPlaylistQueryModifier
     }
 
     /** @inheritdoc */
-    private static function generateParameters(
-        Model $model,
-        Operator $operator,
-        array $value,
-        bool $collationIgnoresCase,
-    ): array {
+    private static function generateParameters(Model $model, Operator $operator, array $value): array
+    {
         $column = $model->toColumnName();
 
         $parameters = match (true) {
             $model->isText() => self::generateRawParameters(
-                $collationIgnoresCase ? $column : "LOWER($column)",
+                self::resolveCaseInsensitiveTextColumn($column, $operator),
                 $operator,
                 array_map(static fn (mixed $text): string => mb_strtolower((string) $text), $value),
             ),
@@ -115,6 +101,18 @@ final class SmartPlaylistQueryModifier
         };
 
         return $parameters instanceof Closure ? $parameters() : $parameters;
+    }
+
+    private static function resolveCaseInsensitiveTextColumn(string $column, Operator $operator): string
+    {
+        return match (DB::getDriverName()) {
+            'mysql', 'mariadb' => $column,
+            // SQLite's LIKE already ignores ASCII case, and a COLLATE on its column would keep it off the NOCASE index.
+            'sqlite' => in_array($operator, [Operator::IS, Operator::IS_NOT], true)
+                ? "$column COLLATE NOCASE"
+                : $column,
+            default => "LOWER($column)",
+        };
     }
 
     /** @inheritdoc */
