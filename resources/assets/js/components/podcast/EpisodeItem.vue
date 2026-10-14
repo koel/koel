@@ -18,6 +18,7 @@
         alt="Episode thumbnail"
         class="w-[128px] aspect-square object-cover"
         loading="lazy"
+        decoding="async"
       />
       <span class="absolute top-0 left-0 w-full h-full group-hover:bg-black/40 z-10" />
       <span
@@ -54,8 +55,29 @@
   </a>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import DOMPurify from 'dompurify'
+import { toRaw } from 'vue'
+
+const sanitizedDescriptions = new WeakMap<Episode, { source: string; sanitized: string }>()
+
+const getSanitizedDescription = (episode: Episode) => {
+  const rawEpisode = toRaw(episode)
+  const source = episode.episode_description
+  const cached = sanitizedDescriptions.get(rawEpisode)
+
+  if (cached?.source === source) {
+    return cached.sanitized
+  }
+
+  const sanitized = DOMPurify.sanitize(source)
+  sanitizedDescriptions.set(rawEpisode, { source, sanitized })
+
+  return sanitized
+}
+</script>
+
+<script setup lang="ts">
 import { orderBy } from 'lodash-es'
 import { faBookmark, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
@@ -107,7 +129,7 @@ const timeLeft = computed(() => {
 
 const shouldShowProgress = computed(() => timeLeft.value !== 0 && episode.value.length && currentPosition.value)
 const isCurrentEpisode = computed(() => podcast.value.state.current_episode === episode.value.id)
-const description = computed(() => DOMPurify.sanitize(episode.value.episode_description))
+const description = computed(() => getSanitizedDescription(episode.value))
 
 const onDragStart = (event: DragEvent) => startDragging(event, episode.value)
 

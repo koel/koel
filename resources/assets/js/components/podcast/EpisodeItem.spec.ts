@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify'
 import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -118,5 +119,27 @@ describe('episodeItem.vue', () => {
   it('does not show progress bar if no progress', async () => {
     renderComponent()
     expect(screen.queryByTestId('episode-progress-stub')).toBeNull()
+  })
+
+  it('sanitizes the description once when the row remounts for the same episode', () => {
+    const sanitizeMock = h.mock(DOMPurify, 'sanitize', (html: string) => html)
+    const { episode, podcast, unmount } = renderComponent()
+
+    unmount()
+    renderComponent(episode, podcast)
+
+    expect(sanitizeMock).toHaveBeenCalledOnce()
+  })
+
+  it('sanitizes the description again after it changes', () => {
+    const sanitizeMock = h.mock(DOMPurify, 'sanitize', (html: string) => html)
+    const { episode, podcast, unmount } = renderComponent()
+
+    unmount()
+    episode.episode_description = '<p>Updated</p>'
+    renderComponent(episode, podcast)
+
+    expect(sanitizeMock).toHaveBeenCalledTimes(2)
+    expect(sanitizeMock).toHaveBeenLastCalledWith('<p>Updated</p>')
   })
 })

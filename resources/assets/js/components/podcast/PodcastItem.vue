@@ -14,7 +14,13 @@
       @contextmenu.prevent="onContextMenu"
     >
       <aside class="hidden md:block md:flex-[0_0_14rem] relative self-stretch">
-        <img :src="podcast.image" alt="Podcast image" class="cover-art absolute inset-0 w-full h-full object-cover" />
+        <img
+          :src="podcast.image"
+          alt="Podcast image"
+          class="cover-art absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
       </aside>
       <main class="relative flex-1 p-5 md:-ml-8">
         <header>
