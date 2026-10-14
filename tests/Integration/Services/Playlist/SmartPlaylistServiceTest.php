@@ -624,7 +624,7 @@ class SmartPlaylistServiceTest extends TestCase
     public function matchNonAsciiTextRegardlessOfAsciiCase(string $operator, string $value): void
     {
         $matches = Song::factory()->createMany([['artist_name' => 'Björk']]);
-        Song::factory()->createOne(['artist_name' => 'Bjork']);
+        Song::factory()->createOne(['artist_name' => 'Beck']);
 
         $this->assertMatchesAgainstRules($matches, self::makeSingleRuleGroups('artist.name', $operator, [$value]));
     }
