@@ -30,20 +30,26 @@
     </div>
 
     <template v-if="durationSeconds && hoveredTrackRect">
-      <span class="time-tip centered" :style="tipPosition(progress)" data-testid="playhead-time">
-        {{ secondsToHis(positionSeconds) }}
-      </span>
-      <span class="time-tip centered" :style="tipPosition(hoverProgress)" data-testid="cursor-time">
-        {{ secondsToHis(hoverSeconds) }}
-      </span>
-      <span
+      <ProgressTimeTip
+        :track-rect="hoveredTrackRect"
+        :percent="progress"
+        :seconds="positionSeconds"
+        data-testid="playhead-time"
+      />
+      <ProgressTimeTip
+        :track-rect="hoveredTrackRect"
+        :percent="hoverProgress"
+        :seconds="hoverSeconds"
+        data-testid="cursor-time"
+      />
+      <ProgressTimeTip
         v-if="!nearsTotalTip(progress) && !nearsTotalTip(hoverProgress)"
-        class="time-tip end"
-        :style="tipPosition(100)"
+        :track-rect="hoveredTrackRect"
+        :percent="100"
+        :seconds="durationSeconds"
+        align="end"
         data-testid="total-time"
-      >
-        {{ secondsToHis(durationSeconds) }}
-      </span>
+      />
     </template>
   </div>
 </template>
@@ -53,6 +59,8 @@ import { computed, onBeforeUnmount, ref } from 'vue'
 import { playback } from '@/services/playbackManager'
 import { crossfadeService } from '@/services/crossfadeService'
 import { secondsToHis } from '@/utils/formatters'
+
+import ProgressTimeTip from '@/components/layout/app-footer/ProgressTimeTip.vue'
 
 const progress = ref(0)
 const bufferProgress = ref(0)
@@ -69,11 +77,6 @@ const TOTAL_TIP_CLEARANCE_PX = 100
 
 const nearsTotalTip = (percent: number) =>
   (hoveredTrackRect.value!.width * (100 - percent)) / 100 < TOTAL_TIP_CLEARANCE_PX
-
-const tipPosition = (percent: number) => ({
-  left: `${hoveredTrackRect.value!.left + (hoveredTrackRect.value!.width * percent) / 100}px`,
-  top: `${hoveredTrackRect.value!.top}px`,
-})
 
 const positionText = computed(() => `${secondsToHis(positionSeconds.value)} of ${secondsToHis(durationSeconds.value)}`)
 
@@ -261,31 +264,6 @@ onBeforeUnmount(() => {
 
 .progress-played {
   @apply no-hover:bg-k-highlight;
-}
-
-.time-tip {
-  @apply fixed z-9999 -mt-3 w-max px-3 py-2 rounded-md border border-white/15 bg-black text-white/80 tabular-nums
-  drop-shadow-lg pointer-events-none -translate-y-full no-hover:hidden;
-
-  &::after {
-    @apply absolute -bottom-[5px] size-2 rotate-45 border-r border-b border-white/15 bg-black content-[''];
-  }
-
-  &.centered {
-    @apply -translate-x-1/2;
-
-    &::after {
-      @apply left-[calc(50%-4px)];
-    }
-  }
-
-  &.end {
-    @apply -translate-x-full;
-
-    &::after {
-      @apply right-0.5;
-    }
-  }
 }
 
 /* Loading animation: diagonal stripes */
