@@ -6,6 +6,7 @@
     class="rounded-lg"
   >
     <a
+      ref="itemEl"
       :href="url('podcasts.show', { id: podcast.id })"
       :class="{ tinted: coverBackgroundColor }"
       :style="{ backgroundColor: coverBackgroundColor }"
@@ -49,9 +50,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useTemplateRef, watch } from 'vue'
 import DOMPurify from 'dompurify'
-import { formatTimeAgo } from '@vueuse/core'
+import { formatTimeAgo, useElementVisibility } from '@vueuse/core'
 import { textToHsl } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
@@ -76,13 +77,15 @@ const lastPlayedAt = computed(() =>
 )
 
 const coverBackgroundColor = ref<string>()
+const itemEl = useTemplateRef<HTMLElement>('itemEl')
+const hasNearedViewport = useElementVisibility(itemEl, { once: true, rootMargin: '200px' })
 
 watch(
-  () => podcast.image,
-  async image => {
+  [() => podcast.image, hasNearedViewport],
+  async ([image, nearedViewport]) => {
     coverBackgroundColor.value = undefined
 
-    if (!image) {
+    if (!image || !nearedViewport) {
       return
     }
 
