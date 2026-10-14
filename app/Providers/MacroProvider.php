@@ -24,7 +24,7 @@ class MacroProvider extends ServiceProvider
             /** @var Collection $this */
             $positions = array_flip(array_unique($orderBy));
 
-            return $this->sortBy(static fn ($item) => $positions[$item->$key] ?? null)->values();
+            return $this->sortBy(static fn ($item): ?int => $positions[$item->$key] ?? null)->values();
         });
 
         Builder::macro('getWhereInChunks', function (
