@@ -21,6 +21,8 @@ export interface ExcerptSearchResult {
   radio_stations: RadioStation[]
 }
 
+let latestExcerptSearchId = 0
+
 export const searchStore = {
   state: reactive({
     excerpt: {
@@ -34,7 +36,12 @@ export const searchStore = {
   }),
 
   async excerptSearch(q: string) {
+    const searchId = ++latestExcerptSearchId
     const result = await http.get<ExcerptSearchResult>(`search?${new URLSearchParams({ q })}`)
+
+    if (searchId !== latestExcerptSearchId) {
+      return
+    }
 
     this.state.excerpt.playables = playableStore.syncWithVault(result.songs)
     this.state.excerpt.albums = albumStore.syncWithVault(result.albums)

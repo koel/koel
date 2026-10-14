@@ -53,6 +53,42 @@ describe('searchStore', () => {
     expect(searchStore.state.excerpt.artists).toEqual(result.artists)
   })
 
+  it('keeps the latest excerpt search results when an earlier search resolves last', async () => {
+    const earlierResult: ExcerptSearchResult = {
+      songs: h.factory('song').make(1),
+      albums: h.factory('album').make(1),
+      artists: h.factory('artist').make(1),
+      podcasts: h.factory('podcast').make(1),
+      radio_stations: h.factory('radio-station').make(1),
+    }
+
+    const latestResult: ExcerptSearchResult = {
+      songs: h.factory('song').make(2),
+      albums: h.factory('album').make(2),
+      artists: h.factory('artist').make(2),
+      podcasts: h.factory('podcast').make(2),
+      radio_stations: h.factory('radio-station').make(2),
+    }
+
+    let resolveEarlierSearch: (result: ExcerptSearchResult) => void = () => {}
+
+    h.mock(http, 'get')
+      .mockReturnValueOnce(new Promise(resolve => (resolveEarlierSearch = resolve)))
+      .mockResolvedValueOnce(latestResult)
+
+    const earlierSearch = searchStore.excerptSearch('foo')
+    await searchStore.excerptSearch('foobar')
+
+    resolveEarlierSearch(earlierResult)
+    await earlierSearch
+
+    expect(searchStore.state.excerpt.playables).toEqual(latestResult.songs)
+    expect(searchStore.state.excerpt.albums).toEqual(latestResult.albums)
+    expect(searchStore.state.excerpt.artists).toEqual(latestResult.artists)
+    expect(searchStore.state.excerpt.podcasts).toEqual(latestResult.podcasts)
+    expect(searchStore.state.excerpt.radio_stations).toEqual(latestResult.radio_stations)
+  })
+
   it('performs a song search', async () => {
     const songs = h.factory('song').make(3)
 
