@@ -24,7 +24,7 @@ class PlaylistPlayableMover
             ]);
 
             $targetPosition = $positionsById->get($target);
-            $movingIds = array_values(array_filter($movingIds, $positionsById->has(...)));
+            $movingIds = array_values(array_unique(array_filter($movingIds, $positionsById->has(...))));
 
             if ($targetPosition === null || !$movingIds) {
                 return;

@@ -67,6 +67,20 @@ class PlaylistPlayableMoverTest extends TestCase
         self::assertSame([$ids[2], $ids[0], $ids[1]], $playlist->refresh()->playables->modelKeys());
     }
 
+    #[Test]
+    public function moveDuplicatedSongIdsOnce(): void
+    {
+        $playlist = create_playlist();
+        $ids = Song::factory()->createMany(4)->modelKeys();
+        $playlist->addPlayables($ids);
+
+        $this->mover->movePlayables($playlist, [$ids[0], $ids[0]], $ids[3], Placement::BEFORE);
+
+        self::assertSame([$ids[1], $ids[2], $ids[0], $ids[3]], self::getOrderedIds($playlist, $ids));
+
+        self::assertSame(range(1, 4), self::getSortedPositions($playlist, $ids));
+    }
+
     /**
      * @param array<string> $ids
      *
