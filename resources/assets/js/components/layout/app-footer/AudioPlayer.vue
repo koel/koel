@@ -20,7 +20,7 @@
       @pointerdown="onPointerDown"
       @click="onClickSeek"
       @mousemove="onHover"
-      @mouseleave="hoverProgress = 0"
+      @mouseleave="onHoverEnd"
     >
       <div class="track">
         <div class="progress-buffer" :style="{ width: `${bufferProgress}%` }" />
@@ -28,6 +28,29 @@
         <div class="progress-played" :style="{ width: `${progress}%` }" />
       </div>
     </div>
+
+    <template v-if="durationSeconds && hoveredTrackRect">
+      <ProgressTimeTip
+        :track-rect="hoveredTrackRect"
+        :percent="progress"
+        :seconds="positionSeconds"
+        data-testid="playhead-time"
+      />
+      <ProgressTimeTip
+        :track-rect="hoveredTrackRect"
+        :percent="hoverProgress"
+        :seconds="hoverSeconds"
+        data-testid="cursor-time"
+      />
+      <ProgressTimeTip
+        v-if="!nearsTotalTip(progress) && !nearsTotalTip(hoverProgress)"
+        :track-rect="hoveredTrackRect"
+        :percent="100"
+        :seconds="durationSeconds"
+        align="end"
+        data-testid="total-time"
+      />
+    </template>
   </div>
 </template>
 
@@ -37,6 +60,8 @@ import { playback } from '@/services/playbackManager'
 import { crossfadeService } from '@/services/crossfadeService'
 import { secondsToHis } from '@/utils/formatters'
 
+import ProgressTimeTip from '@/components/layout/app-footer/ProgressTimeTip.vue'
+
 const progress = ref(0)
 const bufferProgress = ref(0)
 const hoverProgress = ref(0)
@@ -44,6 +69,14 @@ const isLoading = ref(false)
 const isDragging = ref(false)
 const positionSeconds = ref(0)
 const durationSeconds = ref(0)
+
+const hoverSeconds = computed(() => Math.round((hoverProgress.value / 100) * durationSeconds.value))
+const hoveredTrackRect = ref<DOMRect | null>(null)
+
+const TOTAL_TIP_CLEARANCE_PX = 100
+
+const nearsTotalTip = (percent: number) =>
+  (hoveredTrackRect.value!.width * (100 - percent)) / 100 < TOTAL_TIP_CLEARANCE_PX
 
 const positionText = computed(() => `${secondsToHis(positionSeconds.value)} of ${secondsToHis(durationSeconds.value)}`)
 
@@ -170,7 +203,13 @@ const onHover = (e: MouseEvent) => {
   }
 
   const track = (e.currentTarget as HTMLElement).querySelector<HTMLElement>('.track')!
+  hoveredTrackRect.value = track.getBoundingClientRect()
   hoverProgress.value = computeRatio(e.clientX, track) * 100
+}
+
+const onHoverEnd = () => {
+  hoverProgress.value = 0
+  hoveredTrackRect.value = null
 }
 
 const progressInterval = setInterval(updateProgress, 250)
