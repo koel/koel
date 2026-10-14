@@ -690,6 +690,7 @@ interface PlayableListConfig {
   collaborative: boolean
   hasCustomOrderSort: boolean
   hasHeader: boolean
+  sortedOnServer: boolean
 }
 
 interface PlayableListContext {

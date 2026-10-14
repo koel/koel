@@ -72,7 +72,11 @@ const {
   onPressEnter,
   playSelected,
   sort: composableSort,
-} = usePlayableList(toRef(playableStore.state, 'playables'), { type: 'Songs' }, { filterable: false, sortable: true })
+} = usePlayableList(
+  toRef(playableStore.state, 'playables'),
+  { type: 'Songs' },
+  { filterable: false, sortable: true, sortedOnServer: true },
+)
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Songs')
 const { go, url } = useRouter()

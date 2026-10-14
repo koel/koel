@@ -86,7 +86,7 @@ const {
   onPressEnter,
   playSelected,
   sort: composableSort,
-} = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false })
+} = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false, sortedOnServer: true })
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Genre')
 const { getRouteParam, isCurrentScreen, onRouteChanged } = useRouter()
