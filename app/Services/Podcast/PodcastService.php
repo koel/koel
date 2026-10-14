@@ -157,19 +157,26 @@ class PodcastService
 
     private function synchronizeEpisodes(Podcast $podcast, EpisodeCollection $episodeCollection): void
     {
-        $existingEpisodeGuids = $this->songRepository->getEpisodeGuidsByPodcast($podcast);
+        $existingEpisodeGuids = array_flip(array_filter(
+            $this->songRepository->getEpisodeGuidsByPodcast($podcast),
+            static fn (?string $guid): bool => $guid !== null,
+        ));
+        $enclosureSafetyByOrigin = [];
         $records = [];
-        $ids = [];
 
         /** @var EpisodeValue $episodeValue */
         foreach ($episodeCollection as $episodeValue) {
-            if (in_array($episodeValue->guid->value, $existingEpisodeGuids, true)) {
+            if (isset($existingEpisodeGuids[$episodeValue->guid->value])) {
                 continue;
             }
 
             $enclosureUrl = (string) $episodeValue->enclosure->url;
+            $enclosureUri = rescue(static fn (): Uri => Uri::of($enclosureUrl), report: false);
+            $enclosureOrigin = $enclosureUri ? $enclosureUri->scheme() . '://' . $enclosureUri->host() : $enclosureUrl;
 
-            if (!$this->network->isSafeUrl($enclosureUrl)) {
+            $enclosureSafetyByOrigin[$enclosureOrigin] ??= $this->network->isSafeUrl($enclosureUrl);
+
+            if (!$enclosureSafetyByOrigin[$enclosureOrigin]) {
                 Log::warning(sprintf(
                     'Skipping podcast episode "%s" with unsafe enclosure URL: %s',
                     $episodeValue->title,
@@ -179,10 +186,8 @@ class PodcastService
                 continue;
             }
 
-            $id = Uuid::generate();
-            $ids[] = $id;
             $records[] = [
-                'id' => $id,
+                'id' => Uuid::generate(),
                 'podcast_id' => $podcast->id,
                 'title' => $episodeValue->title,
                 'lyrics' => '',
@@ -197,13 +202,19 @@ class PodcastService
             ];
         }
 
-        // We use insert() instead of $podcast->episodes()->createMany() for better performance,
-        // as the latter would trigger a separate query for each episode.
-        Episode::query()->insert($records);
+        DB::transaction(static function () use ($records): void {
+            foreach (array_chunk($records, 500) as $recordChunk) {
+                // We use insert() instead of $podcast->episodes()->createMany() for better performance,
+                // as the latter would trigger a separate query for each episode.
+                Episode::query()->insert($recordChunk);
 
-        // Since insert() doesn't trigger model events, Scout operations will not be called.
-        // We have to manually update the search index.
-        Episode::query()->whereIn('id', $ids)->searchable(); // @phpstan-ignore-line
+                // Since insert() doesn't trigger model events, Scout operations will not be called.
+                // We have to manually update the search index, once the episodes are committed.
+                DB::afterCommit(
+                    static fn () => Episode::query()->whereIn('id', array_column($recordChunk, 'id'))->searchable(), // @phpstan-ignore-line
+                );
+            }
+        });
     }
 
     public function subscribeUserToPodcast(User $user, Podcast $podcast): void
