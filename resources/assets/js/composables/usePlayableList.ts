@@ -37,6 +37,7 @@ export const usePlayableList = (
     collaborative: false,
     hasCustomOrderSort: false,
     hasHeader: true,
+    sortedOnServer: false,
   }
 
   config = reactive({ ...defaultConfig, ...config })
@@ -143,7 +144,7 @@ export const usePlayableList = (
     const filtered = fuzzy && filterKeywords.value ? fuzzy.search(filterKeywords.value) : items
 
     const collectSortFields = () => {
-      if (!sortField.value) {
+      if (!sortField.value || config.sortedOnServer) {
         return null
       }
 
