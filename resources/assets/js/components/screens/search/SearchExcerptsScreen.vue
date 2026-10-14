@@ -59,10 +59,17 @@ const searching = ref(false)
 
 usePageTitle().useScreenTitle('Search.Excerpt', () => q.value)
 
+let latestSearchId = 0
+
 const doSearch = async () => {
+  const searchId = ++latestSearchId
+
   searching.value = true
   await searchStore.excerptSearch(q.value)
-  searching.value = false
+
+  if (searchId === latestSearchId) {
+    searching.value = false
+  }
 }
 
 eventBus
