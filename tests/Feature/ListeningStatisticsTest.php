@@ -172,6 +172,36 @@ class ListeningStatisticsTest extends TestCase
     }
 
     #[Test]
+    public function countTheStreakFromPlaysBeforeThePeriod(): void
+    {
+        $user = create_user();
+
+        foreach ([20, 19, 18, 1] as $daysAgo) {
+            Play::factory()->for($user)->createOne(['played_at' => now()->subDays($daysAgo)]);
+        }
+
+        $this
+            ->getAs('api/me/listening-statistics?period=week', $user)
+            ->assertJsonPath('streak.longest_days', 3)
+            ->assertJsonPath('streak.current_days', 1);
+    }
+
+    #[Test]
+    public function countTheAllTimeStreak(): void
+    {
+        $user = create_user();
+
+        foreach ([30, 29, 28, 27, 2, 1, 0] as $daysAgo) {
+            Play::factory()->for($user)->createOne(['played_at' => now()->subDays($daysAgo)]);
+        }
+
+        $this
+            ->getAs('api/me/listening-statistics?period=all', $user)
+            ->assertJsonPath('streak.longest_days', 4)
+            ->assertJsonPath('streak.current_days', 3);
+    }
+
+    #[Test]
     public function rankArtistsByListeningTime(): void
     {
         $user = create_user();

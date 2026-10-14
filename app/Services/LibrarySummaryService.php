@@ -44,6 +44,11 @@ class LibrarySummaryService
         Cache::forever(cache_key(self::LIBRARY_CHANGED_AT_CACHE_KEY), now()->getPreciseTimestamp());
     }
 
+    public function getLibraryChangedAt(): mixed
+    {
+        return Cache::get(cache_key(self::LIBRARY_CHANGED_AT_CACHE_KEY));
+    }
+
     /**
      * @template T
      * @param Closure(): T $compute
@@ -51,7 +56,7 @@ class LibrarySummaryService
      */
     private function rememberSummaryForUser(User $user, string $summaryName, Closure $compute): mixed
     {
-        $libraryChangedAt = Cache::get(cache_key(self::LIBRARY_CHANGED_AT_CACHE_KEY));
+        $libraryChangedAt = $this->getLibraryChangedAt();
 
         $key = cache_key(
             'library summary',

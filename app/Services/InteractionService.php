@@ -9,6 +9,10 @@ use App\Models\User;
 
 class InteractionService
 {
+    public function __construct(
+        private readonly ListeningStatisticsService $listeningStatisticsService,
+    ) {}
+
     public function increasePlayCount(Playable $playable, User $user): Interaction
     {
         if (!$playable->isEpisode()) {
@@ -17,6 +21,8 @@ class InteractionService
                 'song_id' => $playable->id,
                 'played_at' => now(),
             ]);
+
+            $this->listeningStatisticsService->markPlaysChanged($user);
         }
 
         return tap(

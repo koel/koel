@@ -90,14 +90,20 @@ class PlayRepository extends Repository
     /** @return list<array{id: string, name: string, listening_time: float}> longest listened first */
     public function getTopGenres(User $user, ?Carbon $since): array
     {
-        return $this
+        $playCountsPerSong = $this
             ->queryForUser($user, $since)
-            ->join('songs', 'songs.id', '=', 'plays.song_id')
-            ->join('genre_song', 'genre_song.song_id', '=', 'plays.song_id')
+            ->groupBy('plays.song_id')
+            ->select('plays.song_id')
+            ->selectRaw('COUNT(*) AS play_count');
+
+        return Play::query()
+            ->fromSub($playCountsPerSong, 'song_plays')
+            ->join('songs', 'songs.id', '=', 'song_plays.song_id')
+            ->join('genre_song', 'genre_song.song_id', '=', 'song_plays.song_id')
             ->join('genres', 'genres.id', '=', 'genre_song.genre_id')
             ->groupBy('genres.public_id', 'genres.name')
             ->select('genres.public_id', 'genres.name')
-            ->selectRaw('SUM(songs.length) AS listening_time')
+            ->selectRaw('SUM(songs.length * song_plays.play_count) AS listening_time')
             ->orderByDesc('listening_time')
             ->limit(self::TOP_LIST_LIMIT)
             ->toBase()
@@ -134,6 +140,21 @@ class PlayRepository extends Repository
                     'listening_time' => (float) $row->listening_time,
                 ],
             ])
+            ->all();
+    }
+
+    /** @return list<string> the UTC hours with at least one play, as ISO 8601 strings */
+    public function getPlayedHours(User $user): array
+    {
+        $hour = self::utcHourExpression('plays.played_at');
+
+        return $this
+            ->queryForUser($user, null)
+            ->selectRaw("$hour AS played_hour")
+            ->distinct()
+            ->toBase()
+            ->pluck('played_hour')
+            ->map(static fn (string $playedHour): string => Carbon::parse($playedHour, 'UTC')->toIso8601ZuluString())
             ->all();
     }
 
