@@ -115,6 +115,20 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function deletingWhereValueNotInKeepsRowsWithListedValuesWhenDeletingInChunks(): void
+    {
+        $kept = Song::factory()->createOne();
+        $deleted = Song::factory()->createOne();
+
+        $values = array_map(static fn (int $i) => "/missing/$i.mp3", range(1, 1_000));
+        $values[] = $kept->path;
+
+        self::assertSame(1, Song::deleteWhereValueNotIn($values, 'path'));
+        self::assertModelExists($kept);
+        self::assertModelMissing($deleted);
+    }
+
+    #[Test]
     public function loadTheAnalysisWithoutWaveform(): void
     {
         $song = Song::factory()->createOne();

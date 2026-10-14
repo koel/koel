@@ -33,14 +33,18 @@ trait SupportsDeleteWhereValueNotIn
             return self::deleteAndUnsearch($queryModifier(static::query())->whereNotIn($field, $values));
         }
 
-        $allIds = $queryModifier(static::query())->select($field)->get()->pluck($field)->all();
-        $deletableIds = array_diff($allIds, $values);
+        $keyName = (new static())->getKeyName();
+        $keptValues = array_flip($values);
 
-        if (count($deletableIds) < $maxChunkSize) {
-            return self::deleteAndUnsearch($queryModifier(static::query())->whereIn($field, $deletableIds));
-        }
+        $deletableKeys = $queryModifier(static::query())
+            ->toBase()
+            ->select(array_unique([$keyName, $field]))
+            ->lazyById(10_000, $keyName)
+            ->reject(static fn (object $row): bool => isset($keptValues[$row->{$field}]))
+            ->pluck($keyName)
+            ->all();
 
-        return static::deleteByChunk($deletableIds, $maxChunkSize, $field);
+        return static::deleteByChunk($deletableKeys, $maxChunkSize);
     }
 
     public static function deleteByChunk(array $values, int $chunkSize = 65_535, ?string $field = null): int
