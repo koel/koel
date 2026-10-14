@@ -123,6 +123,30 @@ class FavoriteServiceTest extends TestCase
     }
 
     #[Test]
+    public function batchFavoriteStoresAllItemsAcrossChunks(): void
+    {
+        Event::fake(MultipleSongsLiked::class);
+
+        /** @var Collection<int, Model> $songs */
+        $songs = Song::factory()->createMany(3);
+        $user = create_user();
+
+        (new FavoriteService(upsertChunkSize: 2))->batchFavorite($songs, $user);
+
+        self::assertEqualsCanonicalizing(
+            $songs->modelKeys(),
+            Favorite::query()->whereBelongsTo($user)->pluck('favoriteable_id')->all(),
+        );
+
+        self::assertSame(
+            [0, 1, 2],
+            Favorite::query()->whereBelongsTo($user)->orderBy('position')->pluck('position')->all(),
+        );
+
+        Event::assertDispatchedTimes(MultipleSongsLiked::class, 1);
+    }
+
+    #[Test]
     public function batchUndoFavorite(): void
     {
         Event::fake(MultipleSongsUnliked::class);
