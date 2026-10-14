@@ -10,6 +10,7 @@ use App\Http\Integrations\iTunes\Requests\LookupPodcastRequest;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
 use App\Models\Song;
+use App\Services\Network\Network;
 use App\Services\Podcast\PodcastService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -19,6 +20,7 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Client\ClientInterface;
@@ -425,6 +427,50 @@ class PodcastServiceTest extends TestCase
         $service->refreshPodcast($podcast);
 
         self::assertSame('Podcast Feed Parser', $podcast->fresh()->title);
+        self::assertCount(8, $podcast->episodes);
+    }
+
+    #[Test]
+    public function addPodcastStoresEveryEpisodeOfAFeedLargerThanOneInsertBatch(): void
+    {
+        $items = collect(range(1, 501))
+            ->map(
+                static fn (int $number): string => sprintf(
+                    '<item><title>Episode %1$d</title><guid>episode-%1$d</guid>'
+                    . '<enclosure url="https://example.com/%1$d.mp3" length="1" type="audio/mpeg"/></item>',
+                    $number,
+                ),
+            )
+            ->implode('');
+
+        $feed = sprintf(
+            '<?xml version="1.0"?><rss version="2.0"><channel><title>Big</title>%s</channel></rss>',
+            $items,
+        );
+        $mock = new MockHandler([new Response(200, [], $feed)]);
+
+        $this->instance(ClientInterface::class, new Client(['handler' => HandlerStack::create($mock)]));
+
+        $podcast = app(PodcastService::class)->addPodcast('https://example.com/feed.xml', create_user());
+
+        self::assertSame(501, $podcast->episodes()->count());
+    }
+
+    #[Test]
+    public function addPodcastChecksEachEnclosureHostOnce(): void
+    {
+        $network = Mockery::mock(Network::class);
+
+        $network
+            ->shouldReceive('isSafeUrl')
+            ->once()
+            ->with('http://example.com/podcasts/everything/AllAboutEverythingEpisode4.mp3')
+            ->andReturnTrue();
+
+        $this->instance(Network::class, $network);
+
+        $podcast = app(PodcastService::class)->addPodcast('https://example.com/feed.xml', create_user());
+
         self::assertCount(8, $podcast->episodes);
     }
 }
