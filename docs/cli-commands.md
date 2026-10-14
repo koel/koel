@@ -155,6 +155,18 @@ identifier your files already supplied.
 php artisan koel:fetch-mbids
 ```
 
+### `koel:generate-small-covers`
+
+Create the small album covers that Koel shows in song lists, the queue, and the footer. Koel makes these by itself
+whenever an album gets a new cover. Run this command once after upgrading to make them for the covers you already
+have. Until then, Koel shows the full covers, so nothing looks broken.
+
+#### Usage
+
+```bash
+php artisan koel:generate-small-covers
+```
+
 ### `koel:init`
 
 Install or upgrade Koel.

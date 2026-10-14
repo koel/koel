@@ -51,6 +51,7 @@ describe('encyclopediaService', () => {
     expect(hasCacheMock).toHaveBeenCalledWith(['album.info', album.id, album.name])
     expect(setCacheMock).toHaveBeenCalledWith(['album.info', album.id, album.name], albumInfo)
     expect(album.cover).toBe(albumInfo.cover)
+    expect(album.small_cover).toBe(albumInfo.cover)
   })
 
   it('leaves a partial album out of the store', async () => {

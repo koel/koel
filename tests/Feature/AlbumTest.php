@@ -99,6 +99,22 @@ class AlbumTest extends TestCase
     }
 
     #[Test]
+    public function showIncludesTheSmallCover(): void
+    {
+        $album = Album::factory()->createOne(['cover' => 'cover.webp', 'small_cover' => 'small.webp']);
+
+        $this->getAs("api/albums/{$album->id}")->assertJsonPath('small_cover', image_storage_url('small.webp'));
+    }
+
+    #[Test]
+    public function showFallsBackToTheFullCoverWithoutASmallCover(): void
+    {
+        $album = Album::factory()->createOne(['cover' => 'cover.webp', 'small_cover' => null]);
+
+        $this->getAs("api/albums/{$album->id}")->assertJsonPath('small_cover', image_storage_url('cover.webp'));
+    }
+
+    #[Test]
     public function showIncludesTheMusicBrainzIdentifier(): void
     {
         $album = Album::factory()->createOne(['mbid' => '4d1f7b6e-1d6e-4b3f-9a0d-8c2f1a5b6c7d']);

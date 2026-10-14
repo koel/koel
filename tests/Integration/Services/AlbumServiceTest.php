@@ -11,6 +11,8 @@ use App\Services\AlbumService;
 use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
 use App\Values\ImageChange;
+use App\Values\ImageWritingConfig;
+use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -127,5 +129,22 @@ class AlbumServiceTest extends TestCase
         $this->service->storeAlbumCover($album, 'dummy-src');
 
         self::assertSame('foo.webp', $album->refresh()->cover);
+    }
+
+    #[Test]
+    public function generateAlbumSmallCover(): void
+    {
+        $album = Album::factory()->createOne(['cover' => 'cover.webp', 'small_cover' => null]);
+
+        $this->imageStorage->expects('get')->with('cover.webp')->andReturn('cover-bytes');
+
+        $this->imageStorage
+            ->expects('storeImage')
+            ->with('cover-bytes', Mockery::on(static fn (ImageWritingConfig $config) => $config->maxWidth === 144))
+            ->andReturn('small.webp');
+
+        $this->service->generateAlbumSmallCover($album);
+
+        self::assertSame('small.webp', $album->refresh()->small_cover);
     }
 }

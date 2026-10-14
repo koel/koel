@@ -52,6 +52,22 @@ describe('albumOrArtistThumbnail.vue', () => {
     expect(screen.getByRole('img').getAttribute('src')).toBe(album.cover)
   })
 
+  it('shows the small album cover in the small size', () => {
+    const album = h.factory('album').make({
+      cover: 'https://test/album.jpg',
+      small_cover: 'https://test/album-small.jpg',
+    })
+
+    h.render(Component, {
+      props: {
+        entity: album,
+        size: 'sm',
+      },
+    })
+
+    expect(screen.getByRole('img').getAttribute('src')).toBe(album.small_cover)
+  })
+
   it('shows the artist image', () => {
     const { artist } = renderForArtist()
 

@@ -83,6 +83,16 @@ class AlbumService
         return $album->thumbnail;
     }
 
+    public function generateAlbumSmallCover(Album $album): void
+    {
+        $album->small_cover = $this->imageStorage->storeImage(
+            source: $this->imageStorage->get($album->cover),
+            config: ImageWritingConfig::make(maxWidth: 144),
+        );
+
+        $album->saveQuietly();
+    }
+
     public function getOrCreateAlbumThumbnail(Album $album): ?string
     {
         if ($album->thumbnail && !$this->imageStorage->exists($album->thumbnail)) {

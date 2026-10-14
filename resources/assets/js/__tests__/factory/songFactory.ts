@@ -15,6 +15,7 @@ const generate = (partOfCompilation = false): Song => {
     album_artist_id: partOfCompilation ? faker.string.ulid() : artistId,
     album_artist_name: partOfCompilation ? 'Various Artists' : artistName,
     album_cover: faker.image.url(),
+    album_small_cover: faker.image.url(),
     id: faker.string.uuid(),
     title: faker.lorem.sentence(),
     length: faker.number.int(),

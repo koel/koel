@@ -41,6 +41,22 @@ class AlbumRepository extends Repository implements ScoutableRepository
         return self::queryWithIncompleteMbids()->count();
     }
 
+    /** @return LazyCollection<array-key, Album> */
+    public function lazyGetWithoutSmallCover(): LazyCollection
+    {
+        return self::queryWithoutSmallCover()->lazyById();
+    }
+
+    public function countWithoutSmallCover(): int
+    {
+        return self::queryWithoutSmallCover()->count();
+    }
+
+    private static function queryWithoutSmallCover(): AlbumBuilder
+    {
+        return Album::query()->where('albums.cover', '<>', '')->whereNull('albums.small_cover');
+    }
+
     /**
      * An album is incomplete while it lacks an identifier of its own or any of its songs lacks one. A
      * tagged file commonly names the release without naming the recording, so the two run out separately.

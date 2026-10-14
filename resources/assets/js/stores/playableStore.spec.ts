@@ -519,12 +519,14 @@ describe('playableStore', () => {
 
     album.name = 'New Album Name'
     album.cover = 'https://test/new-album-cover.jpg'
+    album.small_cover = 'https://test/new-album-small-cover.jpg'
 
     playableStore.syncAlbumProperties(album)
 
     playableStore.byIds<Song>(songs.map(song => song.id)).forEach(song => {
       expect(song.album_name).toBe('New Album Name')
       expect(song.album_cover).toBe('https://test/new-album-cover.jpg')
+      expect(song.album_small_cover).toBe('https://test/new-album-small-cover.jpg')
     })
   })
 
