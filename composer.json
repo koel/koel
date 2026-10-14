@@ -68,7 +68,8 @@
     "laravel/boost": "^2.0",
     "opcodesio/log-viewer": "^3.19",
     "carthage-software/mago": "^1.8.0",
-    "brianium/paratest": "^7.0"
+    "brianium/paratest": "^7.0",
+    "psalm/plugin-laravel": "^3"
   },
   "autoload": {
     "classmap": [
@@ -143,7 +144,7 @@
       "carthage-software/mago": true
     },
     "platform": {
-      "php": "8.3.0"
+      "php": "8.3.16"
     }
   },
   "minimum-stability": "stable",
