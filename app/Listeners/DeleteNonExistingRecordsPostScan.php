@@ -45,7 +45,7 @@ readonly class DeleteNonExistingRecordsPostScan
 
         if ($deleted > 0) {
             Log::info(sprintf('Removed %d song(s) no longer found in the media directory.', $deleted));
-            $this->librarySummaryService->invalidateSummaries();
+            $this->librarySummaryService->markLibraryChanged();
         }
 
         $this->libraryManager->prune();

@@ -9,11 +9,10 @@ use App\Values\GenreSummary;
 use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 
 class LibrarySummaryService
 {
-    private const string VERSION_CACHE_KEY = 'library summary version';
+    private const string LIBRARY_CHANGED_AT_CACHE_KEY = 'library changed at';
 
     public function __construct(
         private readonly SongRepository $songRepository,
@@ -40,9 +39,9 @@ class LibrarySummaryService
         ));
     }
 
-    public function invalidateSummaries(): void
+    public function markLibraryChanged(): void
     {
-        Cache::forever(cache_key(self::VERSION_CACHE_KEY), Str::random());
+        Cache::forever(cache_key(self::LIBRARY_CHANGED_AT_CACHE_KEY), now()->getPreciseTimestamp());
     }
 
     /**
@@ -52,16 +51,25 @@ class LibrarySummaryService
      */
     private function rememberSummaryForUser(User $user, string $summaryName, Closure $compute): mixed
     {
-        $version = Cache::rememberForever(cache_key(self::VERSION_CACHE_KEY), Str::random(...));
+        $libraryChangedAt = Cache::get(cache_key(self::LIBRARY_CHANGED_AT_CACHE_KEY));
 
         $key = cache_key(
             'library summary',
-            $version,
             $user->id,
             $user->preferences->includePublicMedia ? 'with public media' : 'own media only',
             $summaryName,
         );
 
-        return Cache::remember($key, now()->addDay(), $compute);
+        $cached = Cache::get($key);
+
+        if (is_array($cached) && $cached['library_changed_at'] === $libraryChangedAt) {
+            return $cached['value'];
+        }
+
+        $value = $compute();
+
+        Cache::put($key, ['library_changed_at' => $libraryChangedAt, 'value' => $value], now()->addDay());
+
+        return $value;
     }
 }

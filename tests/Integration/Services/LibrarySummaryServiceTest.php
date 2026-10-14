@@ -22,7 +22,7 @@ class LibrarySummaryServiceTest extends TestCase
     }
 
     #[Test]
-    public function summariesAreCachedUntilInvalidated(): void
+    public function summariesAreCachedUntilLibraryChanges(): void
     {
         $user = create_user();
         $rock = Genre::factory()->createOne(['name' => 'Rock']);
@@ -38,7 +38,7 @@ class LibrarySummaryServiceTest extends TestCase
         self::assertEqualsWithDelta(100.0, $this->service->getTotalSongLength($user), 0.01);
         self::assertSame(1, $this->service->getGenreSummaries($user)->sole()->songCount);
 
-        $this->service->invalidateSummaries();
+        $this->service->markLibraryChanged();
 
         self::assertSame(2, $this->service->getSongCount($user));
         self::assertEqualsWithDelta(150.0, $this->service->getTotalSongLength($user), 0.01);

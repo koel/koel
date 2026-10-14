@@ -53,7 +53,7 @@ class UploadService
                 $this->analyzeAudioOnScan,
             );
 
-            $this->librarySummaryService->invalidateSummaries();
+            $this->librarySummaryService->markLibraryChanged();
 
             return $song;
         } catch (DuplicateSongUploadException $e) {

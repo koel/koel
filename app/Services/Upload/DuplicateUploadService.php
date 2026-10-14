@@ -97,7 +97,7 @@ class DuplicateUploadService
                 }
             }
 
-            $this->librarySummaryService->invalidateSummaries();
+            $this->librarySummaryService->markLibraryChanged();
             $upload->delete();
         }
 

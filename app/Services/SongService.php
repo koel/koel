@@ -157,7 +157,7 @@ class SongService
 
         if (!$song->genreEqualsTo($data->genre)) {
             $song->syncGenres($data->genre);
-            $this->librarySummaryService->invalidateSummaries();
+            $this->librarySummaryService->markLibraryChanged();
         }
 
         return $this->songRepository->getOne($song->id);
@@ -167,7 +167,7 @@ class SongService
     {
         $songs->toQuery()->update(['is_public' => true]);
 
-        $this->librarySummaryService->invalidateSummaries();
+        $this->librarySummaryService->markLibraryChanged();
     }
 
     /** @return array<string> IDs of songs that are marked as private */
@@ -192,7 +192,7 @@ class SongService
 
         Song::query()->whereKey($applicableSongIds)->update(['is_public' => false]);
 
-        $this->librarySummaryService->invalidateSummaries();
+        $this->librarySummaryService->markLibraryChanged();
 
         return $applicableSongIds;
     }

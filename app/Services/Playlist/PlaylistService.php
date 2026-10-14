@@ -153,7 +153,7 @@ class PlaylistService
     {
         $playlist->playables()->where('is_public', false)->update(['is_public' => true]);
 
-        $this->librarySummaryService->invalidateSummaries();
+        $this->librarySummaryService->markLibraryChanged();
     }
 
     /** @param array<string> $movingIds */

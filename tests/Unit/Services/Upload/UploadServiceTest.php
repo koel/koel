@@ -87,7 +87,7 @@ class UploadServiceTest extends TestCase
         $result = $this->makeService($storage)->handleUpload($file, $uploader);
 
         self::assertTrue($song->is($result));
-        $this->librarySummaryService->shouldHaveReceived('invalidateSummaries');
+        $this->librarySummaryService->shouldHaveReceived('markLibraryChanged');
     }
 
     #[Test]

@@ -12,6 +12,6 @@ readonly class InvalidateLibrarySummaries
 
     public function handle(): void
     {
-        $this->librarySummaryService->invalidateSummaries();
+        $this->librarySummaryService->markLibraryChanged();
     }
 }

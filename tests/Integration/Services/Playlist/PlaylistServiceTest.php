@@ -272,7 +272,7 @@ class PlaylistServiceTest extends TestCase
     public function makePlaylistSongsPublicInvalidatesLibrarySummaries(): void
     {
         $playlist = create_playlist();
-        $this->mock(LibrarySummaryService::class)->expects('invalidateSummaries');
+        $this->mock(LibrarySummaryService::class)->expects('markLibraryChanged');
 
         app(PlaylistService::class)->makePlaylistContentPublic($playlist);
     }
