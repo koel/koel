@@ -6,13 +6,11 @@ use App\Enums\SongStorageType;
 use App\Models\Artist;
 use App\Models\Genre;
 use App\Models\Song;
-use App\Models\SongAnalysis;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 use App\Values\SongStorageMetadata\S3LambdaMetadata;
 use Illuminate\Database\Eloquent\Builder;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\PlusTestCase;
 use Tests\TestCase;
 
 class SongTest extends TestCase
@@ -116,29 +114,12 @@ class SongTest extends TestCase
     }
 
     #[Test]
-    public function loadTheAnalysisWithoutWaveform(): void
-    {
-        PlusTestCase::enablePlusLicense();
-
-        $song = Song::factory()->createOne();
-        SongAnalysis::factory()->for($song)->createOne(['loudness' => -9.5, 'true_peak' => 0.8]);
-
-        $analysis = Song::query()->findOrFail($song->id)->analysis;
-
-        self::assertSame(-9.5, $analysis->loudness);
-        self::assertSame(0.8, $analysis->true_peak);
-        self::assertArrayNotHasKey('waveform', $analysis->getAttributes());
-    }
-
-    #[Test]
-    public function skipTheAnalysisAndOwnerRolesWithoutPlus(): void
+    public function skipTheOwnerRoles(): void
     {
         $song = Song::factory()->createOne();
-        SongAnalysis::factory()->for($song)->createOne();
 
         $loadedSong = Song::query()->findOrFail($song->id);
 
-        self::assertFalse($loadedSong->relationLoaded('analysis'));
         self::assertFalse($loadedSong->owner->relationLoaded('roles'));
         self::assertFalse($loadedSong->owner->relationLoaded('permissions'));
     }

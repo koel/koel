@@ -5,6 +5,7 @@ namespace Tests\Feature\KoelPlus;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Song;
+use App\Models\SongAnalysis;
 use Tests\Feature\QueryCountTest as CommunityQueryCountTest;
 use Tests\PlusTestCase;
 
@@ -27,7 +28,10 @@ class QueryCountTest extends CommunityQueryCountTest
         Song::factory()
             ->public()
             ->createMany($count)
-            ->each(fn (Song $song) => Interaction::factory()->for($this->user)->for($song)->createOne());
+            ->each(function (Song $song): void {
+                Interaction::factory()->for($this->user)->for($song)->createOne();
+                SongAnalysis::factory()->for($song)->createOne();
+            });
     }
 
     protected function createPlaylists(int $count): void
