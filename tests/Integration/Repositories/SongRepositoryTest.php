@@ -7,11 +7,13 @@ use App\Models\Playlist;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
+use function Tests\sandbox_path;
 
 class SongRepositoryTest extends TestCase
 {
@@ -110,6 +112,32 @@ class SongRepositoryTest extends TestCase
             ['count' => 500, 'length' => 500.0],
             $this->songRepository->getSmartPlaylistStats($playlist, $user),
         );
+    }
+
+    #[Test]
+    public function searchHydratesOnlyTheReturnedSongsInRankedOrder(): void
+    {
+        File::ensureDirectoryExists(sandbox_path('search-indexes'));
+
+        config([
+            'scout.driver' => 'tntsearch',
+            'scout.tntsearch.storage' => sandbox_path('search-indexes'),
+        ]);
+
+        $user = create_user();
+        Song::factory()->for($user, 'owner')->state(['title' => 'Love Song'])->createMany(10);
+
+        $expectedIds = Song::search('love')->keys()->take(3)->all();
+
+        $hydratedSongCount = 0;
+        Song::retrieved(static function () use (&$hydratedSongCount): void {
+            $hydratedSongCount++;
+        });
+
+        $results = $this->songRepository->search('love', 3, $user);
+
+        self::assertSame($expectedIds, $results->pluck('id')->all());
+        self::assertSame(3, $hydratedSongCount);
     }
 
     /** @param array<array<string, mixed>> $rules */
