@@ -37,7 +37,7 @@ var isStaticAsset = (url) => {
 	try {
 		const u = new URL(url);
 		if (u.protocol !== "http:" && u.protocol !== "https:") return false;
-		return /\.(js|css|png|jpg|jpeg|svg|gif|ico|woff2?|ttf|eot|otf)(\?.*)?$/.test(u.pathname);
+		return /\.(js|css|png|jpg|jpeg|svg|gif|ico|webp|avif|woff2?|ttf|eot|otf)(\?.*)?$/.test(u.pathname);
 	} catch {
 		return false;
 	}
@@ -109,7 +109,7 @@ var handleJsAsset = async (request) => {
 		return await caches.open(STATIC_CACHE_NAME).then((c) => c.match(request)) || new Response("Service Unavailable", { status: 503 });
 	}
 };
-var isImage = (url) => /\.(png|jpg|jpeg|svg|gif|ico)(\?.*)?$/.test(new URL(url).pathname);
+var isImage = (url) => /\.(png|jpg|jpeg|svg|gif|ico|webp|avif)(\?.*)?$/.test(new URL(url).pathname);
 var evictOldestImages = async (cache) => {
 	const keys = await cache.keys();
 	const overflow = keys.slice(0, Math.max(0, keys.length - MAX_CACHED_IMAGES));

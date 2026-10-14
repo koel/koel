@@ -65,6 +65,26 @@ describe('service worker', () => {
     expect(staticCache.put).not.toHaveBeenCalled()
   })
 
+  it.each(['avif', 'webp'])('caches %s covers in the image cache', async extension => {
+    const imageCache = createFakeCache([])
+    const staticCache = createFakeCache([])
+
+    vi.stubGlobal('caches', {
+      open: vi.fn(async (name: string) => (name === 'koel-images-v1' ? imageCache : staticCache)),
+    })
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('image')),
+    )
+
+    const coverUrl = `https://koel.test/img/covers/cover.${extension}`
+    const fetchListener = await loadFetchListener()
+    await fetchThroughWorker(fetchListener, coverUrl)
+
+    await vi.waitFor(() => expect(imageCache.entries.has(coverUrl)).toBe(true))
+    expect(staticCache.put).not.toHaveBeenCalled()
+  })
+
   it('does not evict fonts or stylesheets', async () => {
     const imageCache = createFakeCache([])
     const staticCache = createFakeCache([])
