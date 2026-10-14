@@ -23,7 +23,7 @@ class OverviewTest extends TestCase
         $artist = Artist::factory()->createOne();
 
         // Create songs by the same artist so that similar_songs has results
-        $songs = Song::factory()->for($artist)->createMany(10);
+        $songs = Song::factory()->for($artist)->for(Album::factory()->for($artist))->createMany(10);
 
         foreach ($songs as $song) {
             Interaction::factory()->for($user)->for($song)->createOne();
@@ -49,7 +49,7 @@ class OverviewTest extends TestCase
     public function fetchRandomAlbums(): void
     {
         $user = create_user();
-        Album::factory()->createMany(3);
+        Album::factory()->has(Song::factory())->createMany(3);
 
         $this
             ->getAs('api/albums/random', $user)

@@ -4,8 +4,10 @@ namespace App\Repositories;
 
 use App\Repositories\Contracts\Repository as RepositoryContract;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection as SupportCollection;
 
 /**
  * @template T of Model
@@ -28,6 +30,35 @@ abstract class Repository implements RepositoryContract
         // This instantiation may fail during a console command if e.g. APP_KEY is empty,
         // rendering the whole installation failing.
         rescue(fn () => $this->auth = app(Guard::class));
+    }
+
+    /**
+     * Pluck ids from a random point of an indexed, uniformly distributed hash column, wrapping around to the
+     * start when the end is reached. This avoids randomly sorting every row the query matches.
+     *
+     * @return SupportCollection<int, string>
+     */
+    protected static function pluckFromRandomHash(
+        Builder $query,
+        string $hashColumn,
+        string $idColumn,
+        int $limit,
+    ): SupportCollection {
+        $randomHash = bin2hex(random_bytes(16));
+
+        $idsFromRandomHash = (clone $query)
+            ->where($hashColumn, '>=', $randomHash)
+            ->orderBy($hashColumn)
+            ->limit($limit)
+            ->pluck($idColumn);
+
+        $idsBeforeRandomHash = $query
+            ->where($hashColumn, '<', $randomHash)
+            ->orderBy($hashColumn)
+            ->limit($limit)
+            ->pluck($idColumn);
+
+        return $idsFromRandomHash->merge($idsBeforeRandomHash)->take($limit);
     }
 
     /** @return class-string<T> */

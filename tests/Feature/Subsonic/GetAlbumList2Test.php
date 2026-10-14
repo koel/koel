@@ -81,7 +81,7 @@ class GetAlbumList2Test extends TestCase
     {
         $user = create_user();
 
-        Album::factory()->count(5)->create(['user_id' => $user->id]);
+        Album::factory()->count(5)->has(Song::factory())->create(['user_id' => $user->id]);
 
         $response = $this->getJson(
             "/rest/getAlbumList2.view?apiKey={$user->subsonic_api_key}&f=json&type=random&size=3",

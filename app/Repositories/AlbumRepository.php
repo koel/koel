@@ -12,7 +12,6 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
@@ -24,6 +23,8 @@ use Illuminate\Support\LazyCollection;
 // @mago-ignore lint:too-many-methods
 class AlbumRepository extends Repository implements ScoutableRepository
 {
+    private const int RANDOM_SONGS_SAMPLED_PER_ALBUM = 4;
+
     public function isAccessibleByUser(Album $album, User $user): bool
     {
         return Album::query()->whereAccessibleByUser($user)->whereKey($album->id)->exists();
@@ -97,7 +98,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->onlyStandard()
             ->setScopedUser($user)
             ->accessible()
-            ->withPlayCount()
+            ->withPlayCount(playedOnly: true)
             ->orderByDesc('play_count')
             ->offset($offset)
             ->limit($count)
@@ -110,22 +111,26 @@ class AlbumRepository extends Repository implements ScoutableRepository
     {
         $user ??= $this->auth->user();
 
-        return Album::query()
+        $lastPlayedAtByAlbum = DB::table('interactions')
+            ->join('songs as recently_played_songs', 'recently_played_songs.id', 'interactions.song_id')
+            ->where('interactions.user_id', $user->id)
+            ->whereNotNull('interactions.last_played_at')
+            ->groupBy('recently_played_songs.album_id')
+            ->select('recently_played_songs.album_id')
+            ->selectRaw('MAX(interactions.last_played_at) as last_played_at');
+
+        $ids = Album::query()
+            ->select('albums.id')
             ->onlyStandard()
-            ->withUserContext(user: $user)
-            ->whereExists(static function (QueryBuilder $query) use ($user): void {
-                $query
-                    ->selectRaw('1')
-                    ->from('interactions')
-                    ->join('songs as recently_played_songs', 'recently_played_songs.id', 'interactions.song_id')
-                    ->whereColumn('recently_played_songs.album_id', 'albums.id')
-                    ->where('interactions.user_id', $user->id)
-                    ->whereNotNull('interactions.last_played_at');
-            })
-            ->orderByDesc('last_played_at')
+            ->setScopedUser($user)
+            ->accessible()
+            ->joinSub($lastPlayedAtByAlbum, 'album_last_played', 'album_last_played.album_id', 'albums.id')
+            ->orderByDesc('album_last_played.last_played_at')
             ->offset($offset)
             ->limit($count)
-            ->get();
+            ->pluck('albums.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, user: $user);
     }
 
     public function getByYearRange(
@@ -155,7 +160,14 @@ class AlbumRepository extends Repository implements ScoutableRepository
         return Album::query()
             ->onlyStandard()
             ->withUserContext(user: $user ?? $this->auth->user())
-            ->whereHas('songs.genres', static fn (Builder $query) => $query->where('genres.name', $genreName))
+            ->whereIn(
+                'albums.id',
+                DB::table('songs')
+                    ->join('genre_song', 'genre_song.song_id', 'songs.id')
+                    ->join('genres', 'genres.id', 'genre_song.genre_id')
+                    ->where('genres.name', $genreName)
+                    ->select('songs.album_id'),
+            )
             ->orderBy('albums.name')
             ->offset($offset)
             ->limit($size)
@@ -227,16 +239,28 @@ class AlbumRepository extends Repository implements ScoutableRepository
     {
         $user ??= $this->auth->user();
 
-        $ids = Album::query()
-            ->select('albums.id')
-            ->onlyStandard()
-            ->setScopedUser($user)
-            ->accessible()
-            ->inRandomOrder()
-            ->limit($limit)
-            ->pluck('albums.id');
+        $ids = collect();
 
-        return $this->getMany($ids->all(), preserveOrder: true, user: $user);
+        do {
+            $missingCount = $limit - $ids->count();
+
+            $newIdsOfRandomSongs = self::pluckFromRandomHash(
+                Album::query()
+                    ->select('albums.id')
+                    ->onlyStandard()
+                    ->setScopedUser($user)
+                    ->accessible()
+                    ->whereNotIn('albums.id', $ids->all())
+                    ->join('songs as random_songs', 'random_songs.album_id', 'albums.id'),
+                hashColumn: 'random_songs.path_hash',
+                idColumn: 'albums.id',
+                limit: $missingCount * self::RANDOM_SONGS_SAMPLED_PER_ALBUM,
+            );
+
+            $ids = $ids->merge($newIdsOfRandomSongs->unique()->take($missingCount));
+        } while ($newIdsOfRandomSongs->isNotEmpty() && $ids->count() < $limit);
+
+        return $this->getMany($ids->shuffle()->all(), preserveOrder: true, user: $user);
     }
 
     /** @return Collection<int, Album> */

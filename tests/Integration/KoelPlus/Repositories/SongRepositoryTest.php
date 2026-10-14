@@ -86,6 +86,20 @@ class SongRepositoryTest extends PlusTestCase
     }
 
     #[Test]
+    public function getLeastPlayedListsUnplayedSongsBeforePlayedOnes(): void
+    {
+        $user = create_user();
+        $played = Song::factory()->for($user, 'owner')->private()->createOne();
+        $unplayed = Song::factory()->for($user, 'owner')->private()->createOne();
+
+        Interaction::factory()->for($user)->for($played)->createOne(['play_count' => 1]);
+
+        $songs = app(SongRepository::class)->getLeastPlayed(2, $user, PlayableType::SONG);
+
+        self::assertSame([$unplayed->id, $played->id], $songs->pluck('id')->all());
+    }
+
+    #[Test]
     public function getSimilarToManyReturnsOnlyAccessibleSongs(): void
     {
         $user = create_user();

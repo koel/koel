@@ -24,12 +24,13 @@ class AlbumRepositoryTest extends PlusTestCase
     }
 
     #[Test]
-    public function getMostPlayedReturnsOnlyAccessibleAlbumsInPlayCountOrder(): void
+    public function getMostPlayedReturnsOnlyPlayedAccessibleAlbumsInPlayCountOrder(): void
     {
         $user = create_user();
         $leastPlayed = self::createPlayedAlbum(owner: $user, listener: $user, playCount: 1);
         $mostPlayed = self::createPlayedAlbum(owner: $user, listener: $user, playCount: 3);
         $secondMostPlayed = self::createPlayedAlbum(owner: $user, listener: $user, playCount: 2);
+        Album::factory()->for($user)->has(Song::factory()->private())->createOne();
 
         $someoneElse = create_user();
 
@@ -37,7 +38,7 @@ class AlbumRepositoryTest extends PlusTestCase
             self::createPlayedAlbum(owner: $someoneElse, listener: $user, playCount: 10);
         }
 
-        $albums = $this->albumRepository->getMostPlayed(3, user: $user);
+        $albums = $this->albumRepository->getMostPlayed(4, user: $user);
 
         self::assertSame([$mostPlayed->id, $secondMostPlayed->id, $leastPlayed->id], $albums->pluck('id')->all());
     }
@@ -61,13 +62,28 @@ class AlbumRepositoryTest extends PlusTestCase
     public function getRandomReturnsOnlyAccessibleAlbums(): void
     {
         $user = create_user();
-        $ownAlbums = Album::factory()->for($user)->createMany(3);
+        $ownAlbums = Album::factory()->for($user)->has(Song::factory())->createMany(3);
 
-        Album::factory()->for(create_user())->createMany(10);
+        Album::factory()->for(create_user())->has(Song::factory()->private())->createMany(10);
 
         $albums = $this->albumRepository->getRandom(3, $user);
 
         self::assertEqualsCanonicalizing($ownAlbums->pluck('id')->all(), $albums->pluck('id')->all());
+    }
+
+    #[Test]
+    public function getRandomReturnsTheRequestedNumberOfAlbumsWhenOneAlbumHasManySongs(): void
+    {
+        $user = create_user();
+        $albumWithManySongs = Album::factory()->for($user)->has(Song::factory()->count(60))->createOne();
+        $albumsWithOneSong = Album::factory()->for($user)->has(Song::factory())->createMany(2);
+
+        $albums = $this->albumRepository->getRandom(3, $user);
+
+        self::assertEqualsCanonicalizing(
+            [$albumWithManySongs->id, ...$albumsWithOneSong->pluck('id')->all()],
+            $albums->pluck('id')->all(),
+        );
     }
 
     private static function createPlayedAlbum(User $owner, User $listener, int $playCount): Album

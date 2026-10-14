@@ -26,6 +26,8 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
 use LogicException;
@@ -142,15 +144,40 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         $scopedUser ??= $this->auth->user();
 
-        $ids = Song::query(type: $type, user: $scopedUser)
+        $unplayedIds = Song::query(type: $type, user: $scopedUser)
             ->select('songs.id')
             ->accessible()
-            ->withPlayCount()
-            ->orderBy('play_count')
+            ->whereNotExists(static function (QueryBuilder $query) use ($scopedUser): void {
+                $query
+                    ->select(DB::raw(1))
+                    ->from('interactions')
+                    ->whereColumn('interactions.song_id', 'songs.id')
+                    ->where('interactions.user_id', $scopedUser->id)
+                    ->where('interactions.play_count', '>', 0);
+            })
             ->limit($count)
             ->pluck('songs.id');
 
-        return $this->getMany($ids->all(), preserveOrder: true, scopedUser: $scopedUser);
+        $remainingCount = $count - $unplayedIds->count();
+
+        $leastPlayedIds = $remainingCount > 0
+            ? Song::query(type: $type, user: $scopedUser)
+                ->select('songs.id')
+                ->accessible()
+                ->join('interactions', static function (JoinClause $join) use ($scopedUser): void {
+                    $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $scopedUser->id);
+                })
+                ->where('interactions.play_count', '>', 0)
+                ->orderBy('interactions.play_count')
+                ->limit($remainingCount)
+                ->pluck('songs.id')
+            : collect();
+
+        return $this->getMany(
+            [...$unplayedIds->all(), ...$leastPlayedIds->all()],
+            preserveOrder: true,
+            scopedUser: $scopedUser,
+        );
     }
 
     public function getRecentlyPlayed(int $count = 8, ?User $scopedUser = null, ?PlayableType $type = null): Collection
@@ -390,14 +417,14 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         $scopedUser ??= $this->auth->user();
 
-        $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
-            ->select('songs.id')
-            ->accessible()
-            ->inRandomOrder()
-            ->limit($limit)
-            ->pluck('songs.id');
+        $ids = self::pluckFromRandomHash(
+            Song::query(type: PlayableType::SONG, user: $scopedUser)->select('songs.id')->accessible(),
+            hashColumn: 'songs.path_hash',
+            idColumn: 'songs.id',
+            limit: $limit,
+        );
 
-        return $this->getMany($ids->all(), preserveOrder: true, scopedUser: $scopedUser);
+        return $this->getMany($ids->shuffle()->all(), preserveOrder: true, scopedUser: $scopedUser);
     }
 
     public function getMany(array $ids, bool $preserveOrder = false, ?User $scopedUser = null): Collection
@@ -619,7 +646,7 @@ class SongRepository extends Repository implements ScoutableRepository
 
         $user ??= $this->auth->user();
 
-        $similarSongIds = Song::query(type: PlayableType::SONG, user: $user)
+        $similarSongsQuery = Song::query(type: PlayableType::SONG, user: $user)
             ->select('songs.id')
             ->accessible()
             ->whereNotIn('songs.id', $songIds)
@@ -631,12 +658,16 @@ class SongRepository extends Repository implements ScoutableRepository
                     'genres.id',
                     $genreIds,
                 )));
-            })
-            ->inRandomOrder()
-            ->limit($limit)
-            ->pluck('songs.id');
+            });
 
-        return $this->getMany($similarSongIds->all(), preserveOrder: true, scopedUser: $user);
+        $similarSongIds = self::pluckFromRandomHash(
+            $similarSongsQuery,
+            hashColumn: 'songs.path_hash',
+            idColumn: 'songs.id',
+            limit: $limit,
+        );
+
+        return $this->getMany($similarSongIds->shuffle()->all(), preserveOrder: true, scopedUser: $user);
     }
 
     public function search(string $keywords, int $limit, ?User $user = null): Collection
