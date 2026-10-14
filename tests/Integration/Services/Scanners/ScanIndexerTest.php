@@ -89,6 +89,17 @@ class ScanIndexerTest extends TestCase
     }
 
     #[Test]
+    public function leavesOutArtistsThatShouldNotBeSearchable(): void
+    {
+        $song = Song::factory()->for(Artist::factory()->state(['name' => Artist::UNKNOWN_NAME]), 'artist')->createOne();
+        $this->engine->updated = [];
+
+        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+
+        self::assertNotContains((string) $song->artist_id, $this->engine->updatedKeysOf(Artist::class));
+    }
+
+    #[Test]
     public function indexesAWholeChunkWithoutAQueryPerSong(): void
     {
         [$queriesForOne] = $this->indexNewSongs(1);
@@ -145,10 +156,23 @@ class ScanIndexerTest extends TestCase
     }
 
     #[Test]
-    public function indexesNothingWithOtherSearchDrivers(): void
+    public function indexesWithOtherSearchDrivers(): void
     {
         $engine = new RecordingSearchEngine();
         $this->useSearchEngine('meilisearch', $engine);
+        $song = Song::factory()->createOne();
+        $engine->updated = [];
+
+        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+
+        self::assertSame([(string) $song->id], $engine->updatedKeysOf(Song::class));
+    }
+
+    #[Test]
+    public function indexesNothingWithDriversThatKeepNoIndex(): void
+    {
+        $engine = new RecordingSearchEngine();
+        $this->useSearchEngine('database', $engine);
         $song = Song::factory()->createOne();
         $engine->updated = [];
 

@@ -2,6 +2,10 @@
 
 namespace App\Services\Scanners;
 
+use App\Models\Album;
+use App\Models\Artist;
+use App\Models\Genre;
+use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
@@ -15,15 +19,34 @@ class ScanIndexer
 {
     private const int CHUNK_SIZE = 500;
 
+    private const array SCANNED_SEARCHABLE_MODELS = [Song::class, Album::class, Artist::class, Genre::class];
+
+    private const array DRIVERS_WITHOUT_AN_INDEX = [null, 'null', 'database', 'collection'];
+
     public function __construct(
         private readonly SongRepository $songRepository,
         #[Config('scout.driver')]
         private readonly ?string $searchDriver,
     ) {}
 
+    public function withoutSyncingToSearch(callable $scan): ScanResultCollection
+    {
+        foreach (self::SCANNED_SEARCHABLE_MODELS as $model) {
+            $model::disableSearchSyncing();
+        }
+
+        try {
+            return $scan();
+        } finally {
+            foreach (self::SCANNED_SEARCHABLE_MODELS as $model) {
+                $model::enableSearchSyncing();
+            }
+        }
+    }
+
     public function reindex(ScanResultCollection $results): void
     {
-        if ($this->searchDriver !== 'tntsearch') {
+        if (in_array($this->searchDriver, self::DRIVERS_WITHOUT_AN_INDEX, true)) {
             return;
         }
 
@@ -61,7 +84,7 @@ class ScanIndexer
 
         $songs->searchable(); // @phpstan-ignore-line
         $albums->searchable(); // @phpstan-ignore-line
-        $artists->searchable(); // @phpstan-ignore-line
+        $artists->filter->shouldBeSearchable()->searchable(); // @phpstan-ignore-line
         $genres->searchable(); // @phpstan-ignore-line
     }
 }
