@@ -3,7 +3,9 @@
 declare const self: ServiceWorkerGlobalScope
 
 const AUDIO_CACHE_NAME = 'koel-audio-v1'
-const STATIC_CACHE_NAME = 'koel-static-v1'
+const STATIC_CACHE_NAME = 'koel-static-v2'
+const IMAGE_CACHE_NAME = 'koel-images-v1'
+const MAX_CACHED_IMAGES = 500
 
 const AUTH_QUERY_PARAMS = ['t', 'expires', 'user', 'signature']
 
@@ -141,11 +143,21 @@ const handleJsAsset = async (request: Request): Promise<Response> => {
   }
 }
 
+const isImage = (url: string) => /\.(png|jpg|jpeg|svg|gif|ico)(\?.*)?$/.test(new URL(url).pathname)
+
+const evictOldestImages = async (cache: Cache) => {
+  const keys = await cache.keys()
+  const overflow = keys.slice(0, Math.max(0, keys.length - MAX_CACHED_IMAGES))
+
+  await Promise.all(overflow.map(key => cache.delete(key)))
+}
+
 /**
  * Non-JS static assets (images, fonts, CSS): cache-first strategy.
  */
 const handleOtherStaticAsset = async (request: Request): Promise<Response> => {
-  const cache = await caches.open(STATIC_CACHE_NAME)
+  const cachingImage = isImage(request.url)
+  const cache = await caches.open(cachingImage ? IMAGE_CACHE_NAME : STATIC_CACHE_NAME)
   const cached = await cache.match(request)
 
   if (cached) {
@@ -155,7 +167,11 @@ const handleOtherStaticAsset = async (request: Request): Promise<Response> => {
   const response = await fetch(request)
 
   if (response.ok) {
-    cache.put(request, response.clone())
+    cache.put(request, response.clone()).then(async () => {
+      if (cachingImage) {
+        await evictOldestImages(cache)
+      }
+    })
   }
 
   return response
@@ -310,7 +326,7 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
       .then(names =>
         Promise.all(
           names
-            .filter(name => name !== AUDIO_CACHE_NAME && name !== STATIC_CACHE_NAME)
+            .filter(name => ![AUDIO_CACHE_NAME, STATIC_CACHE_NAME, IMAGE_CACHE_NAME].includes(name))
             .map(name => caches.delete(name)),
         ),
       )
