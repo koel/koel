@@ -2,8 +2,9 @@
   <dialog
     ref="dialog"
     class="m-auto text-k-fg min-w-full md:min-w-[480px] border-0 p-0 md:rounded-md overflow-visible bg-k-bg backdrop:bg-black/70"
-    @close.prevent
-    @keydown.esc.prevent
+    @cancel.prevent="forwardEscapeToModalContent"
+    @close="closeIfDismissedNatively"
+    @keydown.esc="handleDialogEscape"
   >
     <component :is="options.component" v-if="options.component" v-bind="props" @close="close" />
   </dialog>
@@ -30,6 +31,23 @@ const props = computed(() => ({
 const close = () => {
   options.value = {
     component: null,
+  }
+}
+
+const forwardEscapeToModalContent = () =>
+  dialog.value?.firstElementChild?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+
+const handleDialogEscape = (event: KeyboardEvent) => {
+  event.preventDefault()
+
+  if (event.target === dialog.value) {
+    forwardEscapeToModalContent()
+  }
+}
+
+const closeIfDismissedNatively = () => {
+  if (!dialog.value?.open) {
+    close()
   }
 }
 
