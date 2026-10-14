@@ -94,6 +94,8 @@ class Search3Test extends TestCase
     {
         $user = create_user();
 
+        $songIds = [];
+
         foreach (['A', 'B', 'C'] as $letter) {
             $artist = Artist::factory()->createOne(['name' => "Artist $letter", 'user_id' => $user->id]);
             $album = Album::factory()->createOne([
@@ -102,8 +104,10 @@ class Search3Test extends TestCase
                 'artist_name' => $artist->name,
                 'user_id' => $user->id,
             ]);
-            Song::factory()->createOne(['title' => "Song $letter", 'album_id' => $album->id, 'owner_id' => $user->id]);
+            $songIds[] = Song::factory()->createOne(['album_id' => $album->id, 'owner_id' => $user->id])->id;
         }
+
+        sort($songIds);
 
         $result = $this
             ->getJson(
@@ -115,7 +119,58 @@ class Search3Test extends TestCase
 
         self::assertSame(['Artist B'], array_column($result['artist'], 'name'));
         self::assertSame(['Album B'], array_column($result['album'], 'name'));
-        self::assertSame(['Song B'], array_column($result['song'], 'title'));
+        self::assertSame([$songIds[1]], array_column($result['song'], 'id'));
+    }
+
+    #[Test]
+    public function searchHonorsOffset(): void
+    {
+        $user = create_user();
+
+        foreach (['A', 'B', 'C'] as $letter) {
+            $artist = Artist::factory()->createOne(['name' => "Pearl Artist $letter", 'user_id' => $user->id]);
+            $album = Album::factory()->createOne([
+                'name' => "Pearl Album $letter",
+                'artist_id' => $artist->id,
+                'artist_name' => $artist->name,
+                'user_id' => $user->id,
+            ]);
+            Song::factory()->createOne([
+                'title' => "Pearl Song $letter",
+                'album_id' => $album->id,
+                'owner_id' => $user->id,
+            ]);
+        }
+
+        $pages = [];
+
+        foreach ([0, 1, 2] as $offset) {
+            $pages[] = $this
+                ->getJson(
+                    "/rest/search3.view?apiKey={$user->subsonic_api_key}&f=json&query=Pearl"
+                    . "&artistCount=1&artistOffset=$offset&albumCount=1&albumOffset=$offset"
+                    . "&songCount=1&songOffset=$offset",
+                )
+                ->assertOk()
+                ->json('subsonic-response.searchResult3');
+        }
+
+        $artistNames = array_merge(...array_map(static fn (array $page) => array_column(
+            $page['artist'],
+            'name',
+        ), $pages));
+        $albumNames = array_merge(...array_map(static fn (array $page) => array_column(
+            $page['album'],
+            'name',
+        ), $pages));
+        $songTitles = array_merge(...array_map(static fn (array $page) => array_column(
+            $page['song'],
+            'title',
+        ), $pages));
+
+        self::assertEqualsCanonicalizing(['Pearl Artist A', 'Pearl Artist B', 'Pearl Artist C'], $artistNames);
+        self::assertEqualsCanonicalizing(['Pearl Album A', 'Pearl Album B', 'Pearl Album C'], $albumNames);
+        self::assertEqualsCanonicalizing(['Pearl Song A', 'Pearl Song B', 'Pearl Song C'], $songTitles);
     }
 
     #[Test]
