@@ -108,6 +108,8 @@ class SongService
                 }
             });
 
+            $this->librarySummaryService->markLibraryChanged();
+
             return $result;
         });
     }
@@ -157,7 +159,6 @@ class SongService
 
         if (!$song->genreEqualsTo($data->genre)) {
             $song->syncGenres($data->genre);
-            $this->librarySummaryService->markLibraryChanged();
         }
 
         return $this->songRepository->getOne($song->id);

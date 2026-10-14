@@ -15,6 +15,7 @@ use App\Models\Setting;
 use App\Models\Song;
 use App\Models\Transcode;
 use App\Services\AlbumService;
+use App\Services\ArtistService;
 use App\Services\LibrarySummaryService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
@@ -242,6 +243,20 @@ class SongServiceTest extends TestCase
         $this->service->updateSongs([$song->id], SongUpdateData::make(genre: 'Rock'));
 
         self::assertSame('Rock', $librarySummaryService->getGenreSummaries($user)->sole()->name);
+    }
+
+    #[Test]
+    public function changingTheArtistRefreshesTheAlbumArtists(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->createOne();
+        $artistService = app(ArtistService::class);
+
+        self::assertSame($song->album_artist->name, $artistService->getAllAlbumArtists($user)->sole()->name);
+
+        $this->service->updateSongs([$song->id], SongUpdateData::make(artistName: 'New Artist Name'));
+
+        self::assertSame('New Artist Name', $artistService->getAllAlbumArtists($user)->sole()->name);
     }
 
     #[Test]

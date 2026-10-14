@@ -7,6 +7,7 @@ use App\Jobs\GenerateAlbumThumbnailJob;
 use App\Models\Album;
 use App\Services\Image\ImageStorage;
 use App\Services\Image\ModelImageObserver;
+use App\Services\LibrarySummaryService;
 
 class AlbumObserver
 {
@@ -14,6 +15,7 @@ class AlbumObserver
 
     public function __construct(
         private readonly ImageStorage $imageStorage,
+        private readonly LibrarySummaryService $librarySummaryService,
     ) {
         $this->coverObserver = ModelImageObserver::make(fieldName: 'cover', hasThumbnail: true);
     }
@@ -37,6 +39,10 @@ class AlbumObserver
         if (array_key_exists('name', $changes)) {
             // Keep the artist name in sync across songs and albums, but only if it actually changed.
             $album->songs()->update(['album_name' => $changes['name']]);
+        }
+
+        if ($album->wasChanged('cover')) {
+            $this->librarySummaryService->markLibraryChanged();
         }
     }
 

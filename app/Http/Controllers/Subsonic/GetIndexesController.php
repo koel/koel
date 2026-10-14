@@ -6,19 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Responses\Subsonic\Resources\IndexesResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Models\User;
-use App\Repositories\ArtistRepository;
+use App\Services\ArtistService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetIndexesController extends Controller
 {
     public function __construct(
-        private readonly ArtistRepository $artistRepository,
+        private readonly ArtistService $artistService,
     ) {}
 
     /** @param User $user */
     public function __invoke(Authenticatable $user)
     {
-        $artists = $this->artistRepository->getAll();
+        $artists = $this->artistService->getAllAlbumArtists($user);
 
         return SubsonicResponse::ok([
             'indexes' => IndexesResource::toArray($artists, $user)

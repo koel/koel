@@ -8,10 +8,13 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 use App\Services\ArtistService;
+use App\Services\FavoriteService;
+use App\Services\RatingService;
 use App\Values\Artist\ArtistUpdateData;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_user;
 use function Tests\minimal_base64_encoded_image;
 use function Tests\stored_image_name;
 
@@ -84,5 +87,37 @@ class ArtistServiceTest extends TestCase
         $this->expectException(ArtistNameConflictException::class);
 
         $this->service->updateArtist($artist, $data);
+    }
+
+    #[Test]
+    public function albumArtistsShowNewFavoritesAndRatingsWhileCached(): void
+    {
+        $user = create_user();
+        $artist = Artist::factory()->createOne();
+        Album::factory()->for($artist)->createOne();
+
+        self::assertNull($this->service->getAllAlbumArtists($user)->sole()->favorited_at);
+
+        app(FavoriteService::class)->toggleFavorite($artist, $user);
+        app(RatingService::class)->setRating($artist, $user, 4);
+
+        $listedArtist = $this->service->getAllAlbumArtists($user)->sole();
+
+        self::assertNotNull($listedArtist->favorited_at);
+        self::assertSame(4, (int) $listedArtist->getAttribute('rating'));
+    }
+
+    #[Test]
+    public function renamingAnArtistRefreshesTheAlbumArtists(): void
+    {
+        $user = create_user();
+        $artist = Artist::factory()->createOne(['name' => 'Old Artist Name']);
+        Album::factory()->for($artist)->createOne();
+
+        self::assertSame('Old Artist Name', $this->service->getAllAlbumArtists($user)->sole()->name);
+
+        $this->service->updateArtist($artist, ArtistUpdateData::make(name: 'New Artist Name'));
+
+        self::assertSame('New Artist Name', $this->service->getAllAlbumArtists($user)->sole()->name);
     }
 }

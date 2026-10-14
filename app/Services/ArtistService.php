@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Exceptions\ArtistNameConflictException;
 use App\Models\Artist;
+use App\Models\User;
 use App\Repositories\ArtistRepository;
 use App\Services\Image\ImageStorage;
 use App\Values\Artist\ArtistUpdateData;
+use Illuminate\Database\Eloquent\Collection;
 use Webmozart\Assert\Assert;
 
 class ArtistService
@@ -15,6 +17,7 @@ class ArtistService
         private readonly RichTextSanitizer $richTextSanitizer,
         private readonly ArtistRepository $artistRepository,
         private readonly ImageStorage $imageStorage,
+        private readonly LibrarySummaryService $librarySummaryService,
     ) {}
 
     public function updateArtist(Artist $artist, ArtistUpdateData $dto): Artist
@@ -36,5 +39,20 @@ class ArtistService
         $artist->update($data);
 
         return $artist->refresh();
+    }
+
+    /** @return Collection<int, Artist> */
+    public function getAllAlbumArtists(User $user): Collection
+    {
+        $favoritedOrRatedArtistsById = $this->artistRepository->getFavoritedOrRatedByUser($user)->keyBy('id');
+
+        return $this->librarySummaryService
+            ->getAlbumArtistsWithoutFavoritesOrRatings($user)
+            ->each(static function (Artist $artist) use ($favoritedOrRatedArtistsById): void {
+                $favoritedOrRatedArtist = $favoritedOrRatedArtistsById->get($artist->id);
+
+                $artist->setAttribute('favorited_at', $favoritedOrRatedArtist?->favorited_at);
+                $artist->setAttribute('rating', $favoritedOrRatedArtist?->getAttribute('rating'));
+            });
     }
 }

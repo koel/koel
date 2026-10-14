@@ -9,6 +9,7 @@ use App\Models\Album;
 use App\Observers\AlbumObserver;
 use App\Services\Image\ImageStorage;
 use App\Services\Integrations\MusicBrainzRateLimiter;
+use App\Services\LibrarySummaryService;
 use App\Services\License\CommunityLicenseService;
 use App\Services\MediaBrowser;
 use App\Services\Network\Network;
@@ -49,7 +50,10 @@ abstract class TestCase extends BaseTestCase
         // Tests that verify the `saved` behavior can re-bind the real observer.
         $observerStorage = $this->app->make(ImageStorage::class);
 
-        $this->app->instance(AlbumObserver::class, new class($observerStorage) extends AlbumObserver {
+        $this->app->instance(AlbumObserver::class, new class(
+            $observerStorage,
+            $this->app->make(LibrarySummaryService::class),
+        ) extends AlbumObserver {
             public function saved(Album $album): void
             {
                 // no-op: prevent thumbnail job dispatch noise in tests
