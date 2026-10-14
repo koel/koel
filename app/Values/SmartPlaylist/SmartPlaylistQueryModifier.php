@@ -107,17 +107,16 @@ final class SmartPlaylistQueryModifier
     {
         return match (DB::getDriverName()) {
             'mysql', 'mariadb' => $column,
-            'sqlite' => self::resolveSqliteCaseInsensitiveTextColumn($column, $operator),
+            'sqlite' => self::resolveSqliteIndexableCaseInsensitiveColumn($column, $operator),
             default => "LOWER($column)",
         };
     }
 
-    private static function resolveSqliteCaseInsensitiveTextColumn(string $column, Operator $operator): string
+    private static function resolveSqliteIndexableCaseInsensitiveColumn(string $column, Operator $operator): string
     {
-        $isExactMatch = in_array($operator, [Operator::IS, Operator::IS_NOT], true);
-        $bareIndexFriendlyColumnForCaseInsensitiveLike = $column;
+        $likeIsAlreadyCaseInsensitive = !in_array($operator, [Operator::IS, Operator::IS_NOT], true);
 
-        return $isExactMatch ? "$column COLLATE NOCASE" : $bareIndexFriendlyColumnForCaseInsensitiveLike;
+        return $likeIsAlreadyCaseInsensitive ? $column : "$column COLLATE NOCASE";
     }
 
     /** @inheritdoc */
