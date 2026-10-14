@@ -40,7 +40,7 @@ const isStaticAsset = (url: string): boolean => {
   try {
     const u = new URL(url)
     if (u.protocol !== 'http:' && u.protocol !== 'https:') return false
-    return /\.(js|css|png|jpg|jpeg|svg|gif|ico|woff2?|ttf|eot|otf)(\?.*)?$/.test(u.pathname)
+    return /\.(js|css|png|jpg|jpeg|svg|gif|ico|webp|avif|woff2?|ttf|eot|otf)(\?.*)?$/.test(u.pathname)
   } catch {
     return false
   }
@@ -143,7 +143,7 @@ const handleJsAsset = async (request: Request): Promise<Response> => {
   }
 }
 
-const isImage = (url: string) => /\.(png|jpg|jpeg|svg|gif|ico)(\?.*)?$/.test(new URL(url).pathname)
+const isImage = (url: string) => /\.(png|jpg|jpeg|svg|gif|ico|webp|avif)(\?.*)?$/.test(new URL(url).pathname)
 
 const evictOldestImages = async (cache: Cache) => {
   const keys = await cache.keys()
