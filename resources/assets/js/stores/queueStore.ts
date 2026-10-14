@@ -11,20 +11,23 @@ const saveQueueState = lastWriteWins((songs: Playable['id'][]) =>
 )
 
 export const queueStore = {
-  state: reactive<{ playables: Playable[] }>({
+  state: reactive<{ playables: Playable[]; currentOutsideQueue: Playable | null }>({
     playables: [],
+    currentOutsideQueue: null,
   }),
 
   init(savedState: QueueState) {
     // don't set this.all here, as it would trigger saving state
-    this.state.playables = playableStore.syncWithVault(savedState.songs)
+    this.replacePlayables(playableStore.syncWithVault(savedState.songs))
 
     if (!this.state.playables.length) {
       return
     }
 
     if (savedState.current_song) {
-      playableStore.syncWithVault(savedState.current_song)[0].playback_state = 'Paused'
+      const [currentPlayable] = playableStore.syncWithVault(savedState.current_song)
+      currentPlayable.playback_state = 'Paused'
+      this.state.currentOutsideQueue = this.contains(currentPlayable) ? null : currentPlayable
     } else {
       this.all[0].playback_state = 'Paused'
     }
@@ -35,7 +38,7 @@ export const queueStore = {
   },
 
   set all(playables: Playable[]) {
-    this.state.playables = playables
+    this.replacePlayables(playables)
     playableStore.syncWithVault(playables.filter(isSong))
     this.saveState()
   },
@@ -122,7 +125,17 @@ export const queueStore = {
    * Clear the queue without saving the state.
    */
   clearSilently() {
-    this.state.playables = []
+    this.replacePlayables([])
+  },
+
+  /**
+   * Swap the queued playables while still tracking the current playable if it's no longer queued.
+   */
+  replacePlayables(playables: Playable[]) {
+    const current = this.current
+
+    this.state.currentOutsideQueue = current && !playables.some(({ id }) => id === current.id) ? current : null
+    this.state.playables = playables
   },
 
   indexOf(playable: Playable) {
@@ -150,9 +163,15 @@ export const queueStore = {
   },
 
   get current() {
-    // Search the queue first (reactive array — triggers Vue computed re-evaluation).
-    // Fall back to the vault for songs removed from the queue (e.g. after replaceQueueWith).
-    return this.all.find(({ playback_state }) => playback_state !== 'Stopped') || playableStore.findPlaying()
+    const currentInQueue = this.all.find(({ playback_state }) => playback_state !== 'Stopped')
+
+    if (currentInQueue) {
+      return currentInQueue
+    }
+
+    const { currentOutsideQueue } = this.state
+
+    return currentOutsideQueue && currentOutsideQueue.playback_state !== 'Stopped' ? currentOutsideQueue : undefined
   },
 
   async fetchRandom(limit = 500) {

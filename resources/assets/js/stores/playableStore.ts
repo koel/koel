@@ -73,16 +73,6 @@ export const playableStore = {
   getFormattedLength: (playables: MaybeArray<Playable>) =>
     secondsToHumanReadable(arrayify(playables).reduce((total, p) => total + p.length, 0)),
 
-  findPlaying() {
-    for (const playable of this.vault.values()) {
-      if (playable.playback_state !== 'Stopped') {
-        return playable
-      }
-    }
-
-    return undefined
-  },
-
   byId(id: Playable['id']) {
     const playable = this.vault.get(id)
 
