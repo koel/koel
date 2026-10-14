@@ -3,12 +3,16 @@
     ref="scroller"
     :items="albums"
     :min-item-width="240"
+    :loading-more
     class="p-6 gap-x-5 gap-y-5"
     data-testid="album-grid"
     @scrolled-to-end="emit('scrolled-to-end')"
   >
     <template #default="{ item }: { item: Album }">
       <AlbumCard :album="item" :show-release-year />
+    </template>
+    <template #placeholder>
+      <CardSkeleton />
     </template>
   </VirtualGridScroller>
 </template>
@@ -18,9 +22,11 @@ import { ref } from 'vue'
 
 import VirtualGridScroller from '@/components/ui/VirtualGridScroller.vue'
 import AlbumCard from '@/components/album/AlbumCard.vue'
+import CardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 
-withDefaults(defineProps<{ albums: Album[]; showReleaseYear?: boolean }>(), {
+withDefaults(defineProps<{ albums: Album[]; showReleaseYear?: boolean; loadingMore?: boolean }>(), {
   showReleaseYear: false,
+  loadingMore: false,
 })
 
 const emit = defineEmits<{ (e: 'scrolled-to-end'): void }>()

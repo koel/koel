@@ -4,6 +4,7 @@
       carries-screen-header
       :items="artists"
       :item-height="64"
+      :loading-more
       @scrolled-to-end="$emit('scrolled-to-end')"
     >
       <template #before>
@@ -45,6 +46,9 @@
       <template #default="{ item }: { item: Artist }">
         <ArtistRow :artist="item" @toggle-favorite="emit('toggle-favorite', $event)" />
       </template>
+      <template #placeholder>
+        <ArtistTableRowSkeleton />
+      </template>
     </VirtualScroller>
   </div>
 </template>
@@ -60,11 +64,13 @@ import TableHeaderActionMenu from '@/components/ui/TableHeaderActionMenu.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import ScreenHeaderPinned from '@/components/ui/ScreenHeaderPinned.vue'
 import ArtistRow from '@/components/artist/ArtistRow.vue'
+import ArtistTableRowSkeleton from '@/components/artist/ArtistTableRowSkeleton.vue'
 
 const props = defineProps<{
   artists: Artist[]
   field: ArtistListSortField
   order: SortOrder
+  loadingMore?: boolean
 }>()
 
 const emit = defineEmits<{

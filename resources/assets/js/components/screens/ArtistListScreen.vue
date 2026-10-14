@@ -59,13 +59,14 @@
         <ArtistTable
           v-if="preferences.artists_view_mode === 'table'"
           :artists="displayedArtists"
+          :loading-more
           :field="preferences.artists_sort_field"
           :order="preferences.artists_sort_order"
           @sort="sort"
           @toggle-favorite="toggleFavorite"
           @scrolled-to-end="fetchArtists"
         />
-        <ArtistGrid v-else ref="grid" :artists="displayedArtists" @scrolled-to-end="fetchArtists" />
+        <ArtistGrid v-else ref="grid" :artists="displayedArtists" :loading-more @scrolled-to-end="fetchArtists" />
       </div>
     </template>
   </ScreenBase>
@@ -99,6 +100,7 @@ const {
   displayedItems: displayedArtists,
   noFavorites: noFavoriteArtists,
   showSkeletons,
+  loadingMore,
   fetchMore: fetchArtists,
   sort,
   toggleFavoritesOnly,

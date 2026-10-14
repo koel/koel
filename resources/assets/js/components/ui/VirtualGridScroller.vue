@@ -21,6 +21,7 @@
       >
         <div ref="gridContainer" v-bind="$attrs" class="grid-container grid-columns will-change-transform grid">
           <slot v-for="item in renderedItems" :item />
+          <slot v-for="i in renderedPlaceholderCount" name="placeholder" />
         </div>
       </div>
     </template>
@@ -30,18 +31,23 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue'
 import { useScreenHeaderScroller } from '@/composables/useScreenHeaderScroller'
+import { isNearScrollEnd } from '@/utils/infiniteScroll'
 
 import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
-  items: any[]
-  minItemWidth: number
-}>()
+const props = withDefaults(
+  defineProps<{
+    items: any[]
+    minItemWidth: number
+    loadingMore?: boolean
+  }>(),
+  { loadingMore: false },
+)
 
 const emit = defineEmits<{ (e: 'scrolled-to-end'): void }>()
-const { items, minItemWidth } = toRefs(props)
+const { items, minItemWidth, loadingMore } = toRefs(props)
 
 const scroller = ref<HTMLElement>()
 const itemsBox = ref<HTMLElement>()
@@ -68,7 +74,17 @@ const columnCount = computed(() => {
   return Math.max(1, Math.floor((contentWidth + g) / (minItemWidth.value + g)))
 })
 
-const rowCount = computed(() => Math.ceil(items.value.length / columnCount.value))
+const placeholderCount = computed(() => {
+  if (!loadingMore.value || !items.value.length) {
+    return 0
+  }
+
+  const emptyCellsInLastRow = (columnCount.value - (items.value.length % columnCount.value)) % columnCount.value
+
+  return emptyCellsInLastRow + columnCount.value
+})
+
+const rowCount = computed(() => Math.ceil((items.value.length + placeholderCount.value) / columnCount.value))
 const rowHeight = computed(() => measuredItemHeight.value + measuredRowGap.value)
 
 const totalHeight = computed(() =>
@@ -80,14 +96,24 @@ const startRow = computed(() =>
 )
 const offsetY = computed(() => startRow.value * rowHeight.value)
 
-const renderedItems = computed(() => {
+const renderedRange = computed(() => {
   if (measuring.value || !measuredItemHeight.value) {
-    return []
+    return { start: 0, end: 0 }
   }
 
   const visibleRows = Math.ceil(scrollerHeight.value / rowHeight.value) + 2 * renderAhead
   const endRow = Math.min(rowCount.value, startRow.value + visibleRows)
-  return items.value.slice(startRow.value * columnCount.value, endRow * columnCount.value)
+
+  return { start: startRow.value * columnCount.value, end: endRow * columnCount.value }
+})
+
+const renderedItems = computed(() => items.value.slice(renderedRange.value.start, renderedRange.value.end))
+
+const renderedPlaceholderCount = computed(() => {
+  const placeholdersEnd = items.value.length + placeholderCount.value
+  const end = Math.min(renderedRange.value.end, placeholdersEnd)
+
+  return Math.max(0, end - Math.max(renderedRange.value.start, items.value.length))
 })
 
 const cssHeight = computed(() => `${totalHeight.value}px`)
@@ -138,7 +164,7 @@ const onScroll = (e: Event) => {
     scrollTop.value = (e.target as HTMLElement).scrollTop
     itemsTop.value = itemsBox.value?.offsetTop ?? 0
 
-    if (el.scrollTop + el.clientHeight + rowHeight.value >= el.scrollHeight) {
+    if (isNearScrollEnd(el)) {
       emit('scrolled-to-end')
     }
   })

@@ -4,6 +4,7 @@
       carries-screen-header
       :items="albums"
       :item-height="64"
+      :loading-more
       @scrolled-to-end="$emit('scrolled-to-end')"
     >
       <template #before>
@@ -69,6 +70,9 @@
       <template #default="{ item }: { item: Album }">
         <AlbumRow :album="item" @toggle-favorite="emit('toggle-favorite', $event)" />
       </template>
+      <template #placeholder>
+        <AlbumTableRowSkeleton />
+      </template>
     </VirtualScroller>
   </div>
 </template>
@@ -84,11 +88,13 @@ import TableHeaderActionMenu from '@/components/ui/TableHeaderActionMenu.vue'
 import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import ScreenHeaderPinned from '@/components/ui/ScreenHeaderPinned.vue'
 import AlbumRow from '@/components/album/AlbumRow.vue'
+import AlbumTableRowSkeleton from '@/components/album/AlbumTableRowSkeleton.vue'
 
 const props = defineProps<{
   albums: Album[]
   field: AlbumListSortField
   order: SortOrder
+  loadingMore?: boolean
 }>()
 
 const emit = defineEmits<{
