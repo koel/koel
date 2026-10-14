@@ -8,7 +8,6 @@ use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
-use SplFileInfo;
 
 class ParallelScanStrategy
 {
@@ -19,19 +18,13 @@ class ParallelScanStrategy
         private readonly WorkerProcessPool $workerPool,
     ) {}
 
-    /** @param iterable<SplFileInfo> $files */
+    /** @param array<string> $paths */
     public function scan(
-        iterable $files,
+        array $paths,
         ScanConfiguration $config,
         int $jobs,
         ?callable $onProgress = null,
     ): ScanResultCollection {
-        $paths = [];
-
-        foreach ($files as $file) {
-            $paths[] = $file->getRealPath();
-        }
-
         if (!$paths) {
             return ScanResultCollection::create();
         }

@@ -10,7 +10,6 @@ use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use SplFileInfo;
 
 class ScanChunkCommand extends Command
 {
@@ -46,10 +45,8 @@ class ScanChunkCommand extends Command
             force: (bool) $this->option('force'),
         );
 
-        $files = array_map(static fn (string $path) => new SplFileInfo($path), $paths);
-
         $this->indexer->withoutSyncingToSearch(fn (): ScanResultCollection => $this->scanner->scan(
-            $files,
+            $paths,
             $config,
             function (ScanResult $result): void {
                 $this->output->writeln(json_encode([

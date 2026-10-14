@@ -2,12 +2,14 @@
 
 namespace Tests\Integration\Services;
 
+use App\Events\LibraryChanged;
 use App\Facades\Dispatcher;
 use App\Jobs\DeleteSongFilesJob;
 use App\Jobs\DeleteTranscodeFilesJob;
 use App\Jobs\ExtractSongFolderStructureJob;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Folder;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\Transcode;
@@ -17,6 +19,7 @@ use App\Services\SongService;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanInformation;
 use App\Values\Song\SongUpdateData;
+use Illuminate\Support\Facades\Event;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
@@ -196,6 +199,21 @@ class SongServiceTest extends TestCase
     }
 
     #[Test]
+    public function deleteSongsByUserPrunesTheLibraryOnce(): void
+    {
+        Event::fake(LibraryChanged::class);
+        Dispatcher::shouldReceive('dispatch');
+
+        $album = Album::factory()->createOne();
+        Song::factory()->for($album)->createMany(501);
+
+        $this->service->deleteSongsByUser($album->user);
+
+        self::assertSame(0, Song::query()->count());
+        Event::assertDispatchedTimes(LibraryChanged::class, 1);
+    }
+
+    #[Test]
     public function deleteSongsWithTranscodes(): void
     {
         $transcodes = Transcode::factory()->createMany(2);
@@ -225,6 +243,17 @@ class SongServiceTest extends TestCase
             $this->assertDatabaseMissing(Song::class, ['id' => $transcode->song_id]);
             $this->assertDatabaseMissing(Transcode::class, ['id' => $transcode->id]);
         });
+    }
+
+    #[Test]
+    public function rescanDoesNotExtractFolderStructureForSongAlreadyInFolder(): void
+    {
+        Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class)->never();
+
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = Song::factory()->for(Folder::factory())->createOne(['path' => $info->path]);
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $song->owner, force: true));
     }
 
     #[Test]

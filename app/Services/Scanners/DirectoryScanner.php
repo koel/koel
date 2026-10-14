@@ -30,10 +30,10 @@ class DirectoryScanner extends Scanner
     {
         self::setSystemRequirements();
 
-        $files = $this->gatherFiles($directory);
+        $paths = $this->gatherFilePaths($directory);
 
         if (isset($this->events[ScanEvent::PATHS_GATHERED->name])) {
-            $this->events[ScanEvent::PATHS_GATHERED->name]($files);
+            $this->events[ScanEvent::PATHS_GATHERED->name]($paths);
         }
 
         $onProgress = isset($this->events[ScanEvent::SCAN_PROGRESS->name])
@@ -41,8 +41,8 @@ class DirectoryScanner extends Scanner
             : null;
 
         $results = $this->indexer->withoutSyncingToSearch(fn (): ScanResultCollection => $jobs > 1
-            ? $this->parallelStrategy->scan($files, $config, $jobs, $onProgress)
-            : $this->sequentialStrategy->scan($files, $config, $onProgress));
+            ? $this->parallelStrategy->scan($paths, $config, $jobs, $onProgress)
+            : $this->sequentialStrategy->scan($paths, $config, $onProgress));
 
         $this->indexer->reindex($results);
 
@@ -54,5 +54,17 @@ class DirectoryScanner extends Scanner
     public function on(ScanEvent $event, callable $callback): void
     {
         $this->events[$event->name] = $callback;
+    }
+
+    /** @return array<string> */
+    private function gatherFilePaths(string $directory): array
+    {
+        $paths = [];
+
+        foreach ($this->gatherFiles($directory) as $file) {
+            $paths[] = $file->getRealPath();
+        }
+
+        return $paths;
     }
 }

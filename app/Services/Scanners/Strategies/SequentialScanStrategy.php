@@ -12,13 +12,13 @@ class SequentialScanStrategy
         private readonly IndividualFileHandler $fileHandler,
     ) {}
 
-    /** @param iterable<\SplFileInfo> $files */
-    public function scan(iterable $files, ScanConfiguration $config, ?callable $onProgress = null): ScanResultCollection
+    /** @param array<string> $paths */
+    public function scan(array $paths, ScanConfiguration $config, ?callable $onProgress = null): ScanResultCollection
     {
         $results = ScanResultCollection::create();
 
-        foreach ($files as $file) {
-            $result = $this->fileHandler->handle($file->getRealPath(), $config);
+        foreach ($paths as $path) {
+            $result = $this->fileHandler->handle($path, $config);
             $results->add($result);
 
             if ($onProgress) {
