@@ -523,15 +523,41 @@ class SongRepository extends Repository implements ScoutableRepository
         ?User $scopedUser = null,
         int $offset = 0,
     ): Collection {
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+        $scopedUser ??= $this->auth->user();
+
+        if ($random) {
+            return $this->getRandomByGenre($genre, $limit, $scopedUser);
+        }
+
+        return Song::query(type: PlayableType::SONG, user: $scopedUser)
             ->withUserContext()
             ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
             ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
-            ->when($random, static fn (Builder $builder) => $builder->inRandomOrder())
-            ->when(!$random, static fn (Builder $builder) => $builder->orderBy('songs.title'))
+            ->orderBy('songs.title')
             ->when($offset > 0, static fn (Builder $builder) => $builder->offset($offset))
             ->limit($limit)
             ->get();
+    }
+
+    /**
+     * @param Genre|null $genre If null, pick from songs that have no genre.
+     * @return Collection<int, Song>
+     */
+    private function getRandomByGenre(?Genre $genre, int $limit, User $scopedUser): Collection
+    {
+        $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
+            ->select('songs.id')
+            ->accessible()
+            ->when($genre, static fn (SongBuilder $query) => $query->whereIn(
+                'songs.id',
+                $genre->songs()->newPivotQuery()->select('song_id'),
+            ))
+            ->when(!$genre, static fn (SongBuilder $query) => $query->whereDoesntHave('genres'))
+            ->inRandomOrder()
+            ->limit($limit)
+            ->pluck('songs.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, scopedUser: $scopedUser);
     }
 
     /** @return array<string> */
