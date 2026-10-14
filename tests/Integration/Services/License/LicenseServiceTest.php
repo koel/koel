@@ -12,6 +12,7 @@ use App\Services\License\LicenseService;
 use App\Values\License\LicenseStatus;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -256,9 +257,52 @@ class LicenseServiceTest extends TestCase
         Saloon::assertSentCount(1);
 
         $this->travel(16)->minutes();
-        $this->service->getStatus();
+        app(LicenseService::class)->getStatus();
 
         Saloon::assertSentCount(2);
+    }
+
+    #[Test]
+    public function getLicenseStatusResolvesOnlyOnce(): void
+    {
+        $this->service->getStatus();
+
+        DB::enableQueryLog();
+        $this->service->getStatus();
+
+        self::assertEmpty(DB::getQueryLog());
+    }
+
+    #[Test]
+    public function activatingRefreshesTheResolvedStatus(): void
+    {
+        config(['lemonsqueezy.store_id' => 42]);
+
+        Saloon::fake([
+            ActivateLicenseRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/lemonsqueezy/license-activated-successful.json',
+            ))),
+        ]);
+
+        self::assertFalse($this->service->isPlus());
+
+        $this->service->activate('38b1460a-5104-4067-a91d-77b872934d51');
+
+        self::assertTrue($this->service->isPlus());
+    }
+
+    #[Test]
+    public function deactivatingRefreshesTheResolvedStatus(): void
+    {
+        $license = License::factory()->createOne();
+        Cache::put('license_status', LicenseStatus::valid($license));
+        Saloon::fake([DeactivateLicenseRequest::class => MockResponse::make(status: Response::HTTP_NOT_FOUND)]);
+
+        self::assertTrue($this->service->isPlus());
+
+        $this->service->deactivate($license);
+
+        self::assertFalse($this->service->isPlus());
     }
 
     #[Test]

@@ -9,6 +9,7 @@ use App\Casts\SongStorageCast;
 use App\Casts\SongTitleCast;
 use App\Enums\PlayableType;
 use App\Enums\SongStorageType;
+use App\Facades\License;
 use App\Models\Concerns\HasMbid;
 use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
@@ -27,6 +28,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -136,8 +138,16 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
         'podcast',
         'genres',
         'owner',
-        'analysis:song_id,loudness,true_peak',
     ];
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('analysis', static function (Builder $query): void {
+            if (License::isPlus()) {
+                $query->with('analysis:song_id,loudness,true_peak');
+            }
+        });
+    }
 
     public static function query(?PlayableType $type = null, ?User $user = null): SongBuilder
     {

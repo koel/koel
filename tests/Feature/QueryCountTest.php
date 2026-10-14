@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Interaction;
@@ -10,6 +11,7 @@ use App\Models\Podcast;
 use App\Models\RadioStation;
 use App\Models\Song;
 use App\Models\User;
+use App\Services\License\LicenseService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Concerns\AssertsFlatQueryCount;
 use Tests\TestCase;
@@ -46,6 +48,17 @@ class QueryCountTest extends TestCase
     #[Test]
     public function listSongs(): void
     {
+        $this->assertQueryCountStaysFlat(
+            $this->createPlayedSongs(...),
+            fn () => $this->getAs('api/songs?sort=title&order=asc', $this->user),
+        );
+    }
+
+    #[Test]
+    public function listSongsWithoutALicense(): void
+    {
+        License::swap(app(LicenseService::class));
+
         $this->assertQueryCountStaysFlat(
             $this->createPlayedSongs(...),
             fn () => $this->getAs('api/songs?sort=title&order=asc', $this->user),
