@@ -1,5 +1,8 @@
 <template>
-  <span :class="align" :style="position" class="time-tip">{{ secondsToHis(seconds) }}</span>
+  <span :class="align" :style="position" class="tooltip show time-tip">
+    {{ secondsToHis(seconds) }}
+    <span class="tooltip-arrow" />
+  </span>
 </template>
 
 <script lang="ts" setup>
@@ -26,17 +29,16 @@ const position = computed(() => ({
 @reference '@css/app.pcss';
 
 .time-tip {
-  @apply fixed z-9999 -mt-3 w-max px-3 py-2 rounded-md border border-white/15 bg-black text-white/80 tabular-nums
-  drop-shadow-lg pointer-events-none -translate-y-full no-hover:hidden;
+  @apply fixed -mt-3 -translate-y-full border border-white/15 drop-shadow-lg;
 
-  &::after {
-    @apply absolute -bottom-[5px] size-2 rotate-45 border-r border-b border-white/15 bg-black content-[''];
+  .tooltip-arrow {
+    @apply -bottom-[5px] border-r border-b border-white/15;
   }
 
   &.center {
     @apply -translate-x-1/2;
 
-    &::after {
+    .tooltip-arrow {
       @apply left-[calc(50%-4px)];
     }
   }
@@ -44,7 +46,7 @@ const position = computed(() => ({
   &.end {
     @apply -translate-x-full;
 
-    &::after {
+    .tooltip-arrow {
       @apply right-0.5;
     }
   }
