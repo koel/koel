@@ -16,7 +16,13 @@
     </template>
 
     <template #thumbnail>
-      <img :src="podcast.image" alt="Podcast image" class="cover-art w-full h-full object-cover" />
+      <img
+        :src="podcast.image"
+        alt="Podcast image"
+        class="cover-art w-full h-full object-cover"
+        loading="lazy"
+        decoding="async"
+      />
     </template>
   </BaseCard>
 </template>

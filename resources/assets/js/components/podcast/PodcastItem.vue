@@ -6,6 +6,7 @@
     class="rounded-lg"
   >
     <a
+      ref="itemEl"
       :href="url('podcasts.show', { id: podcast.id })"
       :class="{ tinted: coverBackgroundColor }"
       :style="{ backgroundColor: coverBackgroundColor }"
@@ -14,7 +15,13 @@
       @contextmenu.prevent="onContextMenu"
     >
       <aside class="hidden md:block md:flex-[0_0_14rem] relative self-stretch">
-        <img :src="podcast.image" alt="Podcast image" class="cover-art absolute inset-0 w-full h-full object-cover" />
+        <img
+          :src="podcast.image"
+          alt="Podcast image"
+          class="cover-art absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
       </aside>
       <main class="relative flex-1 p-5 md:-ml-8">
         <header>
@@ -43,9 +50,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useTemplateRef, watch } from 'vue'
 import DOMPurify from 'dompurify'
-import { formatTimeAgo } from '@vueuse/core'
+import { formatTimeAgo, useIntersectionObserver } from '@vueuse/core'
 import { textToHsl } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
@@ -70,13 +77,26 @@ const lastPlayedAt = computed(() =>
 )
 
 const coverBackgroundColor = ref<string>()
+const itemEl = useTemplateRef<HTMLElement>('itemEl')
+const hasNearedViewport = ref(false)
+
+const { stop: stopObservingViewport } = useIntersectionObserver(
+  itemEl,
+  entries => {
+    if (entries.some(entry => entry.isIntersecting)) {
+      hasNearedViewport.value = true
+      stopObservingViewport()
+    }
+  },
+  { rootMargin: '200px' },
+)
 
 watch(
-  () => podcast.image,
-  async image => {
+  [() => podcast.image, hasNearedViewport],
+  async ([image, nearedViewport]) => {
     coverBackgroundColor.value = undefined
 
-    if (!image) {
+    if (!image || !nearedViewport) {
       return
     }
 
