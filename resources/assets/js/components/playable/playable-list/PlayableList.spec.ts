@@ -12,12 +12,14 @@ import {
 } from '@/config/symbols'
 
 const reapplySelectionSpy = vi.fn()
+const listedRows = vi.hoisted(() => ({ current: null as Ref<PlayableRow[]> | null }))
 
 vi.mock('@/composables/useListSelection', async importOriginal => {
   const original = await importOriginal<typeof import('@/composables/useListSelection')>()
 
   return {
     useListSelection: (...args: Parameters<typeof original.useListSelection>) => {
+      listedRows.current = args[0] as Ref<PlayableRow[]>
       const selection = original.useListSelection(...args)
 
       return {
@@ -67,6 +69,18 @@ describe('playableList.vue', () => {
   }
 
   const selectedIds = (selectedPlayables: Ref<Playable[]>) => selectedPlayables.value.map(({ id }) => id).sort()
+
+  it('reuses the rows of songs that stay in the list', async () => {
+    const songs = h.factory('song').make(3)
+    const { playables } = renderComponent(songs)
+    const [firstRow, secondRow] = listedRows.current!.value
+
+    playables.value = [...songs.slice(0, 2), h.factory('song').make()]
+    await h.tick()
+
+    expect(listedRows.current!.value[0]).toBe(firstRow)
+    expect(listedRows.current!.value[1]).toBe(secondRow)
+  })
 
   it('keeps the selection when songs are removed', async () => {
     const songs = h.factory('song').make(5)
