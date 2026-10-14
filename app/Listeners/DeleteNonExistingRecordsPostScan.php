@@ -2,16 +2,15 @@
 
 namespace App\Listeners;
 
+use App\Builders\SongBuilder;
 use App\Events\MediaScanCompleted;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Services\LibraryManager;
 use App\Values\Scanning\ScanResult;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
 
-readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
+readonly class DeleteNonExistingRecordsPostScan
 {
     public function __construct(
         private SongRepository $songRepository,
@@ -24,10 +23,9 @@ readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
             ->results
             ->valid()
             ->map(static fn (ScanResult $result) => $result->path)
-            ->merge($this->songRepository->getAllStoredOnCloud()->pluck('path'))
-            ->toArray();
+            ->all();
 
-        if ($this->wouldDeleteEverythingOnAnEmptyScan($event, $paths)) {
+        if ($this->wouldDeleteEverythingOnAnEmptyScan($event)) {
             Log::warning(
                 'Scan reported no valid files while the library still holds songs. Refusing to '
                 . 'delete them, because a media directory that has become empty, for example a '
@@ -39,8 +37,8 @@ readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
             return;
         }
 
-        $deleted = Song::deleteWhereValueNotIn($paths, 'path', static function (Builder $builder): Builder {
-            return $builder->whereNull('podcast_id');
+        $deleted = Song::deleteWhereValueNotIn($paths, 'path', static function (SongBuilder $builder): SongBuilder {
+            return $builder->storedLocally();
         });
 
         if ($deleted > 0) {
@@ -61,17 +59,13 @@ readonly class DeleteNonExistingRecordsPostScan implements ShouldQueue
      * A media path that is missing, or unreadable at the root, is NOT one of these cases:
      * Finder::in() throws for the first and the iterator throws for the second, so no
      * MediaScanCompleted is ever dispatched and this listener never runs.
-     *
-     * The predicate deliberately mirrors the delete below rather than testing storage type
-     * directly: SongStorageType::LOCAL is the empty string while the column is frequently null,
-     * so asking "would this delete anything" is both simpler and harder to get wrong.
      */
-    private function wouldDeleteEverythingOnAnEmptyScan(MediaScanCompleted $event, array $paths): bool
+    private function wouldDeleteEverythingOnAnEmptyScan(MediaScanCompleted $event): bool
     {
         if ($event->results->valid()->isNotEmpty()) {
             return false;
         }
 
-        return Song::query()->whereNull('podcast_id')->whereNotIn('path', $paths)->exists();
+        return $this->songRepository->hasLocallyStoredSongs();
     }
 }

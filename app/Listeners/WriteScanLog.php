@@ -4,12 +4,11 @@ namespace App\Listeners;
 
 use App\Events\MediaScanCompleted;
 use App\Values\Scanning\ScanResult;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
-readonly class WriteScanLog implements ShouldQueue
+readonly class WriteScanLog
 {
     private const DEFAULT_MAX_FILES = 30;
 

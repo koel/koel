@@ -99,9 +99,9 @@ class SongRepository extends Repository implements ScoutableRepository
             ->first();
     }
 
-    public function getAllStoredOnCloud(): Collection
+    public function hasLocallyStoredSongs(): bool
     {
-        return Song::query()->storedOnCloud()->get();
+        return Song::query()->storedLocally()->exists();
     }
 
     public function getRecentlyAdded(int $count = 8, ?User $scopedUser = null): Collection
