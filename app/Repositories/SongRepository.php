@@ -672,11 +672,18 @@ class SongRepository extends Repository implements ScoutableRepository
 
     public function search(string $keywords, int $limit, ?User $user = null): Collection
     {
-        return $this->getMany(
-            ids: Song::search($keywords)->take(self::SEARCH_CANDIDATE_LIMIT)->keys()->all(),
-            preserveOrder: true,
-            scopedUser: $user,
-        )->take($limit);
+        $user ??= $this->auth->user();
+        $candidateIds = Song::search($keywords)->take(self::SEARCH_CANDIDATE_LIMIT)->keys();
+
+        $accessibleCandidateIds = Song::query(user: $user)
+            ->select('songs.id')
+            ->accessible()
+            ->whereIn('songs.id', $candidateIds)
+            ->pluck('songs.id');
+
+        $resultIds = $candidateIds->intersect($accessibleCandidateIds)->take($limit)->values()->all();
+
+        return $this->getMany(ids: $resultIds, preserveOrder: true, scopedUser: $user);
     }
 
     public function getForEmbed(Embed $embed): Collection
