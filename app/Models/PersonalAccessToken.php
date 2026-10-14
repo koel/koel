@@ -7,8 +7,6 @@ use Laravel\Sanctum\PersonalAccessToken as BasePersonalAccessToken;
 
 class PersonalAccessToken extends BasePersonalAccessToken
 {
-    private const int LAST_USED_AT_UPDATE_INTERVAL_IN_SECONDS = 60;
-
     /** @inheritdoc */
     public function save(array $options = []): bool
     {
@@ -27,7 +25,7 @@ class PersonalAccessToken extends BasePersonalAccessToken
         return (
             $this->exists
             && array_keys($this->getDirty()) === ['last_used_at']
-            && $storedLastUsedAt?->isAfter(now()->subSeconds(self::LAST_USED_AT_UPDATE_INTERVAL_IN_SECONDS))
+            && $storedLastUsedAt?->isAfter(now()->subMinute())
         );
     }
 }
