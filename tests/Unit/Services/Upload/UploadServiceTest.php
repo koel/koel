@@ -9,6 +9,7 @@ use App\Models\DuplicateUpload;
 use App\Models\Song;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\AudioAnalysis\AudioAnalyzer;
+use App\Services\LibrarySummaryService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
@@ -34,6 +35,7 @@ class UploadServiceTest extends TestCase
     private SongService|MockInterface $songService;
     private FileScanner|MockInterface $scanner;
     private DuplicateUploadService|MockInterface $duplicateUploadService;
+    private LibrarySummaryService|MockInterface $librarySummaryService;
 
     public function setUp(): void
     {
@@ -42,6 +44,7 @@ class UploadServiceTest extends TestCase
         $this->songService = Mockery::mock(SongService::class);
         $this->scanner = Mockery::mock(FileScanner::class);
         $this->duplicateUploadService = Mockery::mock(DuplicateUploadService::class);
+        $this->librarySummaryService = Mockery::spy(LibrarySummaryService::class);
     }
 
     private function makeService(SongStorage $storage): UploadService
@@ -53,6 +56,7 @@ class UploadServiceTest extends TestCase
             $this->duplicateUploadService,
             new TranscodeOnScan(app(LocalStorage::class)),
             new AnalyzeAudioOnScan(app(LocalStorage::class), new AudioAnalyzer()),
+            $this->librarySummaryService,
         );
     }
 
@@ -83,6 +87,7 @@ class UploadServiceTest extends TestCase
         $result = $this->makeService($storage)->handleUpload($file, $uploader);
 
         self::assertTrue($song->is($result));
+        $this->librarySummaryService->shouldHaveReceived('markLibraryChanged');
     }
 
     #[Test]
@@ -139,6 +144,7 @@ class UploadServiceTest extends TestCase
             $this->duplicateUploadService,
             $transcodeOnScan,
             $analyzeAudioOnScan,
+            $this->librarySummaryService,
         );
 
         $service->handleUpload('/tmp/song.flac', create_user());

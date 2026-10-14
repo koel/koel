@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\DuplicateUpload;
 use App\Models\Setting;
+use App\Services\LibrarySummaryService;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -104,6 +105,24 @@ class DuplicateUploadActionTest extends TestCase
         $this->postAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertJsonStructure(['song', 'album']);
 
         $this->assertDatabaseMissing('duplicate_uploads', ['id' => $upload->id]);
+    }
+
+    #[Test]
+    public function keepingADuplicateRefreshesTheSongCount(): void
+    {
+        Setting::set('media_path', sandbox_path('media'));
+
+        $user = create_user();
+        $songPath = sandbox_path('media/keep-count-test.mp3');
+        File::copy(test_path('songs/full.mp3'), $songPath);
+        $upload = DuplicateUpload::factory()->for($user)->createOne(['location' => $songPath]);
+        $librarySummaryService = app(LibrarySummaryService::class);
+
+        $songCountBeforeKeeping = $librarySummaryService->getSongCount($user);
+
+        $this->postAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertSuccessful();
+
+        self::assertSame($songCountBeforeKeeping + 1, $librarySummaryService->getSongCount($user));
     }
 
     #[Test]

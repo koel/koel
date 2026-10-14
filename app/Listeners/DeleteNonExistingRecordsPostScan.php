@@ -7,6 +7,7 @@ use App\Events\MediaScanCompleted;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Services\LibraryManager;
+use App\Services\LibrarySummaryService;
 use App\Values\Scanning\ScanResult;
 use Illuminate\Support\Facades\Log;
 
@@ -15,6 +16,7 @@ readonly class DeleteNonExistingRecordsPostScan
     public function __construct(
         private SongRepository $songRepository,
         private LibraryManager $libraryManager,
+        private LibrarySummaryService $librarySummaryService,
     ) {}
 
     public function handle(MediaScanCompleted $event): void
@@ -43,6 +45,7 @@ readonly class DeleteNonExistingRecordsPostScan
 
         if ($deleted > 0) {
             Log::info(sprintf('Removed %d song(s) no longer found in the media directory.', $deleted));
+            $this->librarySummaryService->markLibraryChanged();
         }
 
         $this->libraryManager->prune();

@@ -16,7 +16,6 @@ use App\Models\User;
 use App\Providers\SongStorageServiceProvider;
 use App\Repositories\PlaylistRepository;
 use App\Repositories\SettingRepository;
-use App\Repositories\SongRepository;
 use App\Repositories\ThemeRepository;
 use App\Services\ApplicationInformationService;
 use App\Services\Integrations\ITunesService;
@@ -25,6 +24,7 @@ use App\Services\Integrations\MusicBrainzService;
 use App\Services\Integrations\SpotifyService;
 use App\Services\Integrations\TicketmasterService;
 use App\Services\Integrations\YouTubeService;
+use App\Services\LibrarySummaryService;
 use App\Services\License\Contracts\LicenseServiceInterface;
 use App\Services\MediaBrowser;
 use App\Services\QueueService;
@@ -38,7 +38,7 @@ class FetchInitialDataController extends Controller
     public function __invoke(
         ITunesService $iTunesService,
         SettingRepository $settingRepository,
-        SongRepository $songRepository,
+        LibrarySummaryService $librarySummaryService,
         PlaylistRepository $playlistRepository,
         ApplicationInformationService $applicationInformationService,
         QueueService $queueService,
@@ -88,8 +88,8 @@ class FetchInitialDataController extends Controller
             'latest_version' => $managesSettings
                 ? $applicationInformationService->getLatestVersionNumber()
                 : koel_version(),
-            'song_count' => $songRepository->countSongs(),
-            'song_length' => $songRepository->getTotalSongLength(),
+            'song_count' => $librarySummaryService->getSongCount($user),
+            'song_length' => $librarySummaryService->getTotalSongLength($user),
             'queue_state' => QueueStateResource::make($queueService->getQueueState($user)),
             'koel_plus' => [
                 'active' => $licenseStatus->isValid(),

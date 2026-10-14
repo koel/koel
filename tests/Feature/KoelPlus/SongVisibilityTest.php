@@ -3,6 +3,8 @@
 namespace Tests\Feature\KoelPlus;
 
 use App\Models\Song;
+use App\Models\User;
+use App\Services\LibrarySummaryService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -46,5 +48,44 @@ class SongVisibilityTest extends PlusTestCase
         $this->putAs('api/songs/privatize', ['songs' => $ownSongs->modelKeys()], $currentUser)->assertSuccessful();
 
         $ownSongs->each(static fn (Song $song) => self::assertFalse($song->refresh()->is_public));
+    }
+
+    #[Test]
+    public function makingSongsPublicRefreshesTheSongCountOfOtherUsers(): void
+    {
+        $owner = create_user();
+        $viewer = self::createUserIncludingPublicMedia();
+        $songs = Song::factory()->for($owner, 'owner')->private()->createMany(2);
+        $librarySummaryService = app(LibrarySummaryService::class);
+
+        self::assertSame(0, $librarySummaryService->getSongCount($viewer));
+
+        $this->putAs('api/songs/publicize', ['songs' => $songs->modelKeys()], $owner)->assertSuccessful();
+
+        self::assertSame(2, $librarySummaryService->getSongCount($viewer));
+    }
+
+    #[Test]
+    public function makingSongsPrivateRefreshesTheSongCountOfOtherUsers(): void
+    {
+        $owner = create_user();
+        $viewer = self::createUserIncludingPublicMedia();
+        $songs = Song::factory()->for($owner, 'owner')->public()->createMany(2);
+        $librarySummaryService = app(LibrarySummaryService::class);
+
+        self::assertSame(2, $librarySummaryService->getSongCount($viewer));
+
+        $this->putAs('api/songs/privatize', ['songs' => $songs->modelKeys()], $owner)->assertSuccessful();
+
+        self::assertSame(0, $librarySummaryService->getSongCount($viewer));
+    }
+
+    private static function createUserIncludingPublicMedia(): User
+    {
+        $user = create_user();
+        $user->preferences->includePublicMedia = true;
+        $user->save();
+
+        return $user;
     }
 }

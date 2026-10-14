@@ -7,6 +7,7 @@ use App\Events\MediaScanCompleted;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Models\Album;
 use App\Models\Song;
+use App\Services\LibrarySummaryService;
 use App\Values\Scanning\ScanResult;
 use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,6 +17,8 @@ use Laravel\Scout\Engines\Engine;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class DeleteNonExistingRecordsPostSyncTest extends TestCase
 {
@@ -67,6 +70,23 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
         $this->assertModelExists($songs[3]);
         $this->assertModelMissing($songs[1]);
         $this->assertModelMissing($songs[2]);
+    }
+
+    #[Test]
+    public function removingSongsRefreshesTheSongCount(): void
+    {
+        $user = create_user();
+        $songs = Song::factory()->createMany(2);
+        $librarySummaryService = app(LibrarySummaryService::class);
+
+        self::assertSame(2, $librarySummaryService->getSongCount($user));
+
+        $syncResult = ScanResultCollection::create();
+        $syncResult->add(ScanResult::success($songs[0]->path));
+
+        $this->listener->handle(new MediaScanCompleted($syncResult));
+
+        self::assertSame(1, $librarySummaryService->getSongCount($user));
     }
 
     #[Test]

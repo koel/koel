@@ -12,6 +12,7 @@ use App\Events\SongFavoriteToggled;
 use App\Events\UserUnsubscribedFromPodcast;
 use App\Listeners\DeleteNonExistingRecordsPostScan;
 use App\Listeners\DeletePodcastIfNoSubscribers;
+use App\Listeners\InvalidateLibrarySummaries;
 use App\Listeners\LoveMultipleTracksOnLastfm;
 use App\Listeners\LoveTrackOnLastfm;
 use App\Listeners\MakePlaylistSongsPublic;
@@ -42,11 +43,13 @@ class EventServiceProvider extends BaseServiceProvider
 
         LibraryChanged::class => [
             PruneLibrary::class,
+            InvalidateLibrarySummaries::class,
         ],
 
         MediaScanCompleted::class => [
             DeleteNonExistingRecordsPostScan::class,
             WriteScanLog::class,
+            InvalidateLibrarySummaries::class,
         ],
 
         NewPlaylistCollaboratorJoined::class => [

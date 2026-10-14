@@ -5,18 +5,21 @@ namespace App\Http\Controllers\Subsonic;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\Subsonic\Resources\GenreResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
-use App\Repositories\GenreRepository;
+use App\Models\User;
+use App\Services\LibrarySummaryService;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetGenresController extends Controller
 {
     public function __construct(
-        private readonly GenreRepository $genreRepository,
+        private readonly LibrarySummaryService $librarySummaryService,
     ) {}
 
-    public function __invoke()
+    /** @param User $user */
+    public function __invoke(Authenticatable $user)
     {
-        $genres = $this->genreRepository
-            ->getAllSummaries()
+        $genres = $this->librarySummaryService
+            ->getGenreSummaries($user)
             ->map(GenreResource::toArray(...))
             ->all();
 
