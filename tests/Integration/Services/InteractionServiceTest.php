@@ -19,7 +19,7 @@ class InteractionServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->interactionService = new InteractionService();
+        $this->interactionService = app(InteractionService::class);
     }
 
     #[Test]
