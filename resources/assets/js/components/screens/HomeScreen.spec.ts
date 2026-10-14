@@ -1,3 +1,4 @@
+import { nextTick } from 'vue'
 import { fireEvent, screen } from '@testing-library/vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -53,7 +54,7 @@ describe('homeScreen.vue', () => {
     expect(screen.queryByTestId('screen-empty-state')).toBeNull()
   })
 
-  it.each<[keyof Events]>([['SONGS_UPDATED'], ['SONGS_DELETED'], ['SONG_UPLOADED']])(
+  it.each<[keyof Events]>([['SONGS_UPDATED'], ['SONGS_DELETED']])(
     'refreshes the overviews on %s event',
     async eventName => {
       const fetchOverviewMock = h.mock(overviewStore, 'fetch')
@@ -64,6 +65,25 @@ describe('homeScreen.vue', () => {
       expect(fetchOverviewMock).toHaveBeenCalled()
     },
   )
+
+  it('refreshes the overviews once when shown again after songs are uploaded', async () => {
+    const fetchOverviewMock = h.mock(overviewStore, 'fetch')
+    await renderComponent()
+    fetchOverviewMock.mockClear()
+
+    eventBus.emit('SONG_UPLOADED', h.factory('song').make())
+    eventBus.emit('SONG_UPLOADED', h.factory('song').make())
+    eventBus.emit('SONG_UPLOADED', h.factory('song').make())
+
+    expect(fetchOverviewMock).not.toHaveBeenCalled()
+
+    h.visit('/songs')
+    await nextTick()
+    h.visit('/home')
+    await nextTick()
+
+    expect(fetchOverviewMock).toHaveBeenCalledOnce()
+  })
 
   it('hides the reorder trigger button on the empty state', () => {
     commonStore.state.song_length = 0

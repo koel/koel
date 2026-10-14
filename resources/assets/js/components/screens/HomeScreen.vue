@@ -174,6 +174,7 @@ const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
 const loading = ref(false)
 let initialized = false
+let overviewOutdated = false
 
 // Sort `blocks` so they appear in the order saved in the preference. Blocks
 // whose id isn't in the saved list fall to the end (Infinity), keeping their
@@ -196,10 +197,13 @@ const openReorderModal = () =>
 eventBus
   .on('SONGS_DELETED', () => overviewStore.fetch())
   .on('SONGS_UPDATED', () => overviewStore.fetch())
-  .on('SONG_UPLOADED', () => overviewStore.fetch())
+  .on('SONG_UPLOADED', () => {
+    overviewOutdated = true
+  })
 
 useRouter().onScreenActivated('Home', async () => {
   if (!initialized) {
+    overviewOutdated = false
     loading.value = true
     try {
       await overviewStore.fetch()
@@ -209,6 +213,9 @@ useRouter().onScreenActivated('Home', async () => {
     } finally {
       loading.value = false
     }
+  } else if (overviewOutdated) {
+    overviewOutdated = false
+    await overviewStore.fetch()
   }
 })
 </script>

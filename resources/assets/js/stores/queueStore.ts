@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { differenceBy, unionBy } from 'lodash-es'
+import { debounce, differenceBy, unionBy } from 'lodash-es'
 import { arrayify, moveItemsInList } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { http } from '@/services/http'
@@ -59,8 +59,8 @@ export const queueStore = {
    * Add playable(s) to the end of the current queue.
    */
   queue(playables: MaybeArray<Playable>) {
-    this.unqueue(playables)
-    this.all = unionBy(this.all, arrayify(playables), 'id')
+    playables = arrayify(playables)
+    this.all = unionBy(this.stopAndOmitPlayables(playables), playables, 'id')
   },
 
   queueIfNotQueued(playable: Playable, position: 'top' | 'bottom' | 'after-current' = 'after-current') {
@@ -96,17 +96,19 @@ export const queueStore = {
       return this.queue(playables)
     }
 
-    // First we unqueue the songs to make sure there are no duplicates.
-    this.unqueue(playables)
-
-    const head = this.all.splice(0, this.indexOf(this.current) + 1)
-    this.all = head.concat(reactive(playables), this.all)
+    const remaining = this.stopAndOmitPlayables(playables)
+    const head = remaining.splice(0, remaining.indexOf(reactive(this.current)) + 1)
+    this.all = head.concat(reactive(playables), remaining)
   },
 
   unqueue(playables: MaybeArray<Playable>) {
-    playables = arrayify(playables)
-    playables.forEach(song => (song.playback_state = 'Stopped'))
-    this.all = differenceBy(this.all, playables, 'id')
+    this.all = this.stopAndOmitPlayables(arrayify(playables))
+  },
+
+  stopAndOmitPlayables(playables: Playable[]) {
+    playables.forEach(playable => (playable.playback_state = 'Stopped'))
+
+    return differenceBy(this.all, playables, 'id')
   },
 
   /**
@@ -185,6 +187,14 @@ export const queueStore = {
   },
 
   saveState() {
-    return saveQueueState(this.state.playables.map(({ id }) => id))
+    saveQueueStateSoon()
   },
 }
+
+const saveQueueStateSoon = debounce(() => saveQueueState(queueStore.state.playables.map(({ id }) => id)), 1_000)
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    saveQueueStateSoon.flush()
+  }
+})

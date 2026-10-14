@@ -345,6 +345,26 @@ describe('playableStore', () => {
     expect(songs).toEqual([sharedSong, firstSong, secondSong, thirdSong])
   })
 
+  it('fetches songs for all playlists at once and keeps the playlist order', async () => {
+    const playlists = h.factory('playlist').make(2)
+    const firstSong = h.factory('song').make()
+    const secondSong = h.factory('song').make()
+    const pendingFetches: Array<(songs: Song[]) => void> = []
+
+    const fetchMock = h
+      .mock(playableStore, 'fetchForPlaylist')
+      .mockImplementation(() => new Promise<Song[]>(resolve => pendingFetches.push(resolve)))
+
+    const result = playableStore.fetchForPlaylists(playlists)
+
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+
+    pendingFetches[1]([secondSong])
+    pendingFetches[0]([firstSong])
+
+    expect(await result).toEqual([firstSong, secondSong])
+  })
+
   it('paginates', async () => {
     const songs = h.factory('song').make(3)
 
