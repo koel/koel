@@ -131,7 +131,8 @@ class ArtistRepository extends Repository implements ScoutableRepository
     public function getAll(?User $user = null): Collection
     {
         return Artist::query()
-            ->withUserContext(user: $user ?? $this->auth->user())
+            ->withUserContext(user: $user ?? $this->auth->user(), includeAlbumCover: false)
+            ->withAlbumCoverPresence()
             ->onlyStandard()
             ->onlyAlbumArtists()
             ->withAlbumCountIncludingAppearances()

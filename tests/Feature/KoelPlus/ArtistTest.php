@@ -96,6 +96,26 @@ class ArtistTest extends PlusTestCase
     }
 
     #[Test]
+    public function performerOfAnotherUsersPublicSongIsAccessible(): void
+    {
+        $owner = create_user();
+        $performer = Artist::factory()->for($owner)->createOne();
+
+        Song::factory()
+            ->for(Album::factory()->for($owner)->createOne())
+            ->for($performer)
+            ->for($owner, 'owner')
+            ->public()
+            ->createOne();
+
+        $viewer = create_user();
+        $viewer->preferences->includePublicMedia = true;
+        $viewer->save();
+
+        $this->getAs("api/artists/{$performer->id}", $viewer)->assertOk();
+    }
+
+    #[Test]
     public function showLeavesOutTheCoverOfAnotherUsersPrivateAlbum(): void
     {
         $owner = create_user();

@@ -96,19 +96,27 @@ class ArtistBuilder extends FavoriteableBuilder
                     $sub
                         ->select(DB::raw(1))
                         ->from('songs')
-                        ->join('users', 'songs.owner_id', 'users.id')
-                        ->leftJoin('albums', 'songs.album_id', 'albums.id')
-                        ->where(static function (QueryBuilder $performedOrReleased): void {
-                            $performedOrReleased->whereColumn('songs.artist_id', 'artists.id')->orWhereColumn(
-                                'albums.artist_id',
-                                'artists.id',
-                            );
-                        })
-                        ->where('songs.is_public', true)
-                        ->where('users.organization_id', $this->user->organization_id)
-                        ->where('songs.owner_id', '<>', $this->user->id);
+                        ->whereColumn('songs.artist_id', 'artists.id')
+                        ->tap($this->limitToSongsSharedWithUser(...));
+                })
+                ->orWhereExists(function (QueryBuilder $sub): void {
+                    $sub
+                        ->select(DB::raw(1))
+                        ->from('albums')
+                        ->join('songs', 'songs.album_id', 'albums.id')
+                        ->whereColumn('albums.artist_id', 'artists.id')
+                        ->tap($this->limitToSongsSharedWithUser(...));
                 });
         });
+    }
+
+    private function limitToSongsSharedWithUser(QueryBuilder $query): void
+    {
+        $query
+            ->join('users', 'songs.owner_id', 'users.id')
+            ->where('songs.is_public', true)
+            ->where('users.organization_id', $this->user->organization_id)
+            ->where('songs.owner_id', '<>', $this->user->id);
     }
 
     public function withPlayCount(bool $includingFavoriteStatus = false): self
@@ -152,8 +160,7 @@ class ArtistBuilder extends FavoriteableBuilder
         return $this->addSelect(['album_cover' => static function (QueryBuilder $query) use ($user): void {
             $query
                 ->select('albums.cover')
-                ->from('albums')
-                ->tap(static fn (QueryBuilder $albums) => AlbumBuilder::limitToAlbumsAccessibleByUser($albums, $user))
+                ->tap(static fn (QueryBuilder $albums) => self::fromAlbumCoversOfArtistWithoutImage($albums, $user))
                 ->leftJoin('songs as album_cover_songs', 'album_cover_songs.album_id', 'albums.id')
                 ->leftJoin('interactions as album_cover_interactions', static function (JoinClause $join) use (
                     $user,
@@ -163,11 +170,6 @@ class ArtistBuilder extends FavoriteableBuilder
                         $user->id,
                     );
                 })
-                ->whereColumn('albums.artist_id', 'artists.id')
-                ->where('albums.cover', '<>', '')
-                ->where(static function (QueryBuilder $withoutImage): void {
-                    $withoutImage->whereNull('artists.image')->orWhere('artists.image', '');
-                })
                 ->groupBy('albums.id', 'albums.cover', 'albums.created_at')
                 ->orderByRaw('COALESCE(SUM(album_cover_interactions.play_count), 0) DESC')
                 ->orderByDesc('albums.created_at')
@@ -175,11 +177,39 @@ class ArtistBuilder extends FavoriteableBuilder
         }]);
     }
 
+    /**
+     * Select whether the artist would get an `album_cover`, as `has_album_cover`, without ranking albums to pick one.
+     */
+    public function withAlbumCoverPresence(): self
+    {
+        $user = $this->user;
+
+        return $this->addSelect(['has_album_cover' => static function (QueryBuilder $query) use ($user): void {
+            $query
+                ->selectRaw('1')
+                ->tap(static fn (QueryBuilder $albums) => self::fromAlbumCoversOfArtistWithoutImage($albums, $user))
+                ->limit(1);
+        }]);
+    }
+
+    private static function fromAlbumCoversOfArtistWithoutImage(QueryBuilder $query, User $user): void
+    {
+        $query
+            ->from('albums')
+            ->tap(static fn (QueryBuilder $albums) => AlbumBuilder::limitToAlbumsAccessibleByUser($albums, $user))
+            ->whereColumn('albums.artist_id', 'artists.id')
+            ->where('albums.cover', '<>', '')
+            ->where(static function (QueryBuilder $withoutImage): void {
+                $withoutImage->whereNull('artists.image')->orWhere('artists.image', '');
+            });
+    }
+
     public function withUserContext(
         User $user,
         bool $includeFavoriteStatus = true,
         bool $favoritesOnly = false,
         bool $includePlayCount = false,
+        bool $includeAlbumCover = true,
     ): self {
         $this->user = $user;
 
@@ -188,6 +218,6 @@ class ArtistBuilder extends FavoriteableBuilder
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
             ->when($includePlayCount, static fn (self $query) => $query->withPlayCount($includeFavoriteStatus))
             ->withRatingJoin()
-            ->withAlbumCover();
+            ->when($includeAlbumCover, static fn (self $query) => $query->withAlbumCover());
     }
 }
