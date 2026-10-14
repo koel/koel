@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vite-plus/test'
+import Fuse from 'fuse.js'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { useFuzzySearch } from './useFuzzySearch'
@@ -71,5 +72,24 @@ describe('useFuzzySearch', () => {
     const results = search('Zara')
     expect(results).toHaveLength(1)
     expect(results[0].name).toBe('Zara')
+  })
+
+  it('builds the search index only once a search needs it', async () => {
+    const refItems = ref([...items])
+    const { search } = useFuzzySearch(refItems, ['name'])
+    const setCollectionSpy = vi.spyOn(Fuse.prototype, 'setCollection')
+
+    refItems.value.push({ name: 'Diana', role: 'editor' })
+    await h.tick()
+    search('')
+
+    expect(setCollectionSpy).not.toHaveBeenCalled()
+
+    search('Diana')
+    search('Bob')
+
+    expect(setCollectionSpy).toHaveBeenCalledOnce()
+
+    setCollectionSpy.mockRestore()
   })
 })

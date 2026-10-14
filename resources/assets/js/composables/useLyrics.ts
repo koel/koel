@@ -8,21 +8,20 @@ export const useLyrics = (songRef: Ref<Song>) => {
 
   const plainTextLyrics = ref('')
   const lrcLyrics = ref<LrcLine[]>([])
-  const userCanUpdateLyrics = ref(false)
+  const userCanUpdateLyrics = computed(() => currentUserCan.editSong(songRef.value))
 
   const isLrc = computed(() => lrcLyrics.value.length > 0)
   const hasLyrics = computed(() => Boolean(plainTextLyrics.value))
 
   watch(
-    songRef,
-    song => {
-      userCanUpdateLyrics.value = currentUserCan.editSong(song)
+    () => songRef.value.lyrics,
+    lyrics => {
       plainTextLyrics.value = ''
       lrcLyrics.value = []
 
       const allPlainLines: string[] = []
 
-      const allLines = cr2lf(song.lyrics).trim().split('\n')
+      const allLines = cr2lf(lyrics).trim().split('\n')
       const linesWithTimestamps: Array<{ time: number; text: string; originalIndex: number }> = []
       const lrcRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/
 
@@ -92,7 +91,7 @@ export const useLyrics = (songRef: Ref<Song>) => {
 
       lrcLyrics.value = result.sort((a, b) => a.time - b.time)
     },
-    { immediate: true, deep: true },
+    { immediate: true },
   )
 
   return {

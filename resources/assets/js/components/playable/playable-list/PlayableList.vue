@@ -45,7 +45,7 @@
 import { useThrottleFn } from '@vueuse/core'
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, toRaw, watch } from 'vue'
 import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
@@ -92,12 +92,23 @@ const wrapper = ref<HTMLElement>()
 const virtualScroller = ref<InstanceType<typeof VirtualScroller>>()
 const sortFields = ref<PlayableListSortField[]>([])
 
+let rowsByPlayableId = new Map<Playable['id'], PlayableRow>()
+
 const rows = computed(() => {
+  const previousRowsByPlayableId = rowsByPlayableId
+  rowsByPlayableId = new Map()
+
   return playables.value.map<PlayableRow>(playable => {
-    return reactive({
-      playable,
-      selected: false,
-    })
+    const previousRow = previousRowsByPlayableId.get(playable.id)
+
+    const row =
+      previousRow && toRaw(previousRow.playable) === toRaw(playable) && !rowsByPlayableId.has(playable.id)
+        ? previousRow
+        : reactive({ playable, selected: false })
+
+    rowsByPlayableId.set(playable.id, row)
+
+    return row
   })
 })
 

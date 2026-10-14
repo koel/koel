@@ -80,6 +80,18 @@ describe('queueStore', () => {
     expect(queueStore.current).toEqual(queueStore.state.playables[1])
   })
 
+  it('keeps the current song after it is replaced out of the queue', () => {
+    h.mock(http, 'put')
+    songs[1].playback_state = 'Playing'
+    queueStore.replaceQueueWith(h.factory('song').make(2))
+
+    expect(queueStore.current).toBe(songs[1])
+
+    songs[1].playback_state = 'Stopped'
+
+    expect(queueStore.current).toBeUndefined()
+  })
+
   it('gets the next song in queue', () => {
     queueStore.state.playables[1].playback_state = 'Playing'
     expect(queueStore.next).toEqual(queueStore.state.playables[2])

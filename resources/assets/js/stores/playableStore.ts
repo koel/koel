@@ -1,6 +1,6 @@
 import isMobile from 'ismobilejs'
 import { differenceBy, orderBy, unionBy, uniqBy } from 'lodash-es'
-import { Reactive, reactive, watch } from 'vue'
+import { nextTick, Reactive, reactive } from 'vue'
 import { arrayify, flattenParams, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
@@ -51,18 +51,30 @@ const hasOfflineCopy = async (unsignedUrl: string) => 'caches' in window && Bool
 const getPlayUrlEndpoint = (playable: Playable) =>
   shouldTranscode() ? `songs/${playable.id}/play-url?transcode=1` : `songs/${playable.id}/play-url`
 
-const watchPlayCount = (playable: Playable) => {
-  watch(
-    () => playable.play_count,
-    () => overviewStore.refreshPlayStats(),
-  )
+let isPlayStatsRefreshScheduled = false
+
+const schedulePlayStatsRefresh = () => {
+  if (isPlayStatsRefreshScheduled) {
+    return
+  }
+
+  isPlayStatsRefreshScheduled = true
+
+  nextTick(() => {
+    isPlayStatsRefreshScheduled = false
+    overviewStore.refreshPlayStats()
+  })
 }
 
 export const playableStore = {
   ...useVault<Playable>({
     onItemAdded: playable => {
       playable.playback_state = 'Stopped'
-      watchPlayCount(playable)
+    },
+    beforeItemMerged: (existing, incoming) => {
+      if (incoming.play_count !== undefined && incoming.play_count !== existing.play_count) {
+        schedulePlayStatsRefresh()
+      }
     },
   }),
 
@@ -73,16 +85,6 @@ export const playableStore = {
 
   getFormattedLength: (playables: MaybeArray<Playable>) =>
     secondsToHumanReadable(arrayify(playables).reduce((total, p) => total + p.length, 0)),
-
-  findPlaying() {
-    for (const playable of this.vault.values()) {
-      if (playable.playback_state !== 'Stopped') {
-        return playable
-      }
-    }
-
-    return undefined
-  },
 
   byId(id: Playable['id']) {
     const playable = this.vault.get(id)
@@ -167,7 +169,10 @@ export const playableStore = {
     })
 
     // Use the data from the server to make sure we don't miss a play from another device.
-    playable.play_count = interaction.play_count
+    if (playable.play_count !== interaction.play_count) {
+      playable.play_count = interaction.play_count
+      schedulePlayStatsRefresh()
+    }
   },
 
   scrobble: async (song: Song) => {

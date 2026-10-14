@@ -11,11 +11,19 @@ type Path<T> = T extends object
 export const useFuzzySearch = <T>(items: T[] | Ref<T[]>, keys: Path<T>[] | string[]) => {
   const fuse = new Fuse<T>([], { keys })
   const documents = shallowRef<T[]>([])
+  let isIndexStale = true
 
   const setDocuments = (newDocuments: T[]) => {
-    fuse.setCollection(newDocuments)
     documents.value = newDocuments
+    isIndexStale = true
     triggerRef(documents)
+  }
+
+  const ensureIndexIsFresh = (currentDocuments: T[]) => {
+    if (isIndexStale) {
+      fuse.setCollection(currentDocuments)
+      isIndexStale = false
+    }
   }
 
   if (isRef<T[]>(items)) {
@@ -29,7 +37,13 @@ export const useFuzzySearch = <T>(items: T[] | Ref<T[]>, keys: Path<T>[] | strin
     query = query?.trim() ?? null
     const currentDocuments = documents.value
 
-    return query ? fuse.search(query).map(result => result.item) : currentDocuments
+    if (!query) {
+      return currentDocuments
+    }
+
+    ensureIndexIsFresh(currentDocuments)
+
+    return fuse.search(query).map(result => result.item)
   }
 
   return {
