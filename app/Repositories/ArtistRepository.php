@@ -99,8 +99,7 @@ class ArtistRepository extends Repository implements ScoutableRepository
         $artists = Artist::query()
             ->onlyStandard()
             ->withUserContext(user: $user ?? $this->auth->user())
-            ->whereIn('artists.id', $ids)
-            ->get();
+            ->getWhereInChunks('artists.id', $ids);
 
         return $preserveOrder ? $artists->orderByArray($ids) : $artists;
     }

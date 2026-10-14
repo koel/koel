@@ -54,9 +54,8 @@ class PodcastRepository extends Repository implements ScoutableRepository
             ->setScopedUser($user)
             ->withUserContext($user)
             ->subscribed()
-            ->whereIn('podcasts.id', $ids)
             ->distinct()
-            ->get();
+            ->getWhereInChunks('podcasts.id', $ids);
 
         return $preserveOrder ? $podcasts->orderByArray($ids) : $podcasts;
     }
