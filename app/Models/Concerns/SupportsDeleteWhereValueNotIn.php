@@ -5,6 +5,7 @@ namespace App\Models\Concerns;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 use Laravel\Scout\Searchable;
 
 /**
@@ -36,15 +37,16 @@ trait SupportsDeleteWhereValueNotIn
         $keyName = (new static())->getKeyName();
         $keptValues = array_flip($values);
 
-        $deletableKeys = $queryModifier(static::query())
+        return DB::transaction(static fn (): int => $queryModifier(static::query())
             ->toBase()
             ->select(array_unique([$keyName, $field]))
             ->lazyById(10_000, $keyName)
             ->reject(static fn (object $row): bool => isset($keptValues[$row->{$field}]))
             ->pluck($keyName)
-            ->all();
-
-        return static::deleteByChunk($deletableKeys, $maxChunkSize);
+            ->chunk($maxChunkSize)
+            ->sum(static fn (LazyCollection $keys): int => self::deleteAndUnsearch(
+                static::query()->whereIn($keyName, $keys->all()),
+            )));
     }
 
     public static function deleteByChunk(array $values, int $chunkSize = 65_535, ?string $field = null): int
