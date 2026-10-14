@@ -91,9 +91,14 @@ describe('playableStore', () => {
       }),
     )
 
+    const refreshMock = h.mock(overviewStore, 'refreshPlayStats')
+
     await playableStore.registerPlay(song)
+    await h.tick()
+
     expect(postMock).toHaveBeenCalledWith('interaction/play', { song: song.id })
     expect(song.play_count).toBe(50)
+    expect(refreshMock).toHaveBeenCalledOnce()
   })
 
   it('scrobbles', async () => {
@@ -217,21 +222,17 @@ describe('playableStore', () => {
     expect(resynced).toBe(synced)
   })
 
-  it('refreshes play stats when a vaulted song play count changes', async () => {
+  it('refreshes play stats when syncing changes a vaulted song play count', async () => {
     const refreshMock = h.mock(overviewStore, 'refreshPlayStats')
-
     const [synced] = playableStore.syncWithVault(h.factory('song').make({ play_count: 98 }))
-    synced.play_count = 100
 
+    playableStore.syncWithVault({ ...synced, play_count: 98 } as Song)
+    await h.tick()
+    expect(refreshMock).not.toHaveBeenCalled()
+
+    playableStore.syncWithVault({ ...synced, play_count: 100 } as Song)
     await h.tick()
     expect(refreshMock).toHaveBeenCalledTimes(1)
-
-    // re-syncing the same song does not double up the watcher
-    playableStore.syncWithVault({ ...synced, play_count: 101 } as Song)
-    synced.play_count = 102
-
-    await h.tick()
-    expect(refreshMock).toHaveBeenCalledTimes(2)
   })
 
   it('fetches for album', async () => {

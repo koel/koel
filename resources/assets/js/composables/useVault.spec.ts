@@ -73,4 +73,18 @@ describe('useVault', () => {
     expect(onItemAdded.mock.calls[0][0].id).toBe('a')
     expect(onItemAdded.mock.calls[1][0].id).toBe('b')
   })
+
+  it('runs beforeItemMerged with the existing entry and incoming data only for updates', () => {
+    const beforeItemMerged = vi.fn()
+    const vault = useVault<Item>({ beforeItemMerged })
+
+    const [existing] = vault.syncWithVault({ id: 'a', name: 'Alpha' })
+    expect(beforeItemMerged).not.toHaveBeenCalled()
+
+    vault.syncWithVault({ id: 'a', name: 'Alpha v2' })
+
+    expect(beforeItemMerged).toHaveBeenCalledOnce()
+    expect(beforeItemMerged.mock.calls[0][0]).toBe(existing)
+    expect(beforeItemMerged.mock.calls[0][1]).toEqual({ id: 'a', name: 'Alpha v2' })
+  })
 })
