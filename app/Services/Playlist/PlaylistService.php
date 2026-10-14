@@ -138,6 +138,7 @@ class PlaylistService
 
             // we want a fresh copy of the songs with the possibly updated visibility
             return $this->songRepository->getManyInCollaborativeContext(
+                playlist: $playlist,
                 ids: $playables->pluck('id')->all(),
                 scopedUser: $user,
             );

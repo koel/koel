@@ -449,19 +449,25 @@ class SongRepository extends Repository implements ScoutableRepository
     /**
      * Gets several songs, but also includes collaborative information.
      */
-    public function getManyInCollaborativeContext(array $ids, ?User $scopedUser = null): Collection
+    public function getManyInCollaborativeContext(Playlist $playlist, array $ids, ?User $scopedUser = null): Collection
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
-            ->when(License::isPlus(), static function (SongBuilder $query): SongBuilder {
+            ->when(License::isPlus(), static function (SongBuilder $query) use ($playlist): SongBuilder {
                 return $query
-                    ->leftJoin('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
+                    ->leftJoin('playlist_song', static function (JoinClause $join) use ($playlist): void {
+                        $join->on('songs.id', '=', 'playlist_song.song_id')->where(
+                            'playlist_song.playlist_id',
+                            $playlist->id,
+                        );
+                    })
                     ->leftJoin('playlists', 'playlists.id', '=', 'playlist_song.playlist_id')
                     ->join('users as collaborators', 'playlist_song.user_id', '=', 'collaborators.id')
                     ->addSelect(
                         'collaborators.public_id as collaborator_public_id',
                         'collaborators.name as collaborator_name',
                         'collaborators.email as collaborator_email',
+                        'collaborators.avatar as collaborator_avatar',
                         'playlist_song.created_at as added_at',
                     );
             })

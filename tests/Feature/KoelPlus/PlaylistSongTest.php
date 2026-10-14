@@ -66,6 +66,25 @@ class PlaylistSongTest extends PlusTestCase
     }
 
     #[Test]
+    public function addedSongInAnotherPlaylistIsReturnedOnceWithThisPlaylistCollaboration(): void
+    {
+        $song = Song::factory()->public()->createOne();
+
+        $otherPlaylist = create_playlist();
+        $otherPlaylist->addPlayables($song);
+
+        $playlist = create_playlist();
+        $collaborator = create_user();
+        $playlist->addCollaborator($collaborator);
+
+        $this
+            ->postAs("api/playlists/{$playlist->id}/songs", ['songs' => [$song->id]], $collaborator)
+            ->assertSuccessful()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.collaboration.user.id', $collaborator->public_id);
+    }
+
+    #[Test]
     public function collaboratorCanRemoveSongs(): void
     {
         $playlist = create_playlist();
