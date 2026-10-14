@@ -112,6 +112,7 @@ export const init = (container: HTMLElement) => {
     stopFrameLoop()
     renderer.domElement.remove()
     renderer.dispose()
+    renderer.forceContextLoss()
     window.removeEventListener('resize', windowResizeHandler)
     document.removeEventListener('wheel', wheelHandler)
   }
