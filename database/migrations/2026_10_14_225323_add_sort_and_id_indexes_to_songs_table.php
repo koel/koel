@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     /**
-     * InnoDB already appends the primary key to every index, and can't index the long title column.
+     * InnoDB already appends the primary key to every index. Neither InnoDB nor PostgreSQL can index long titles.
      */
     public function up(): void
     {
@@ -15,8 +15,12 @@ return new class extends Migration {
             return;
         }
 
-        Schema::table('songs', static function (Blueprint $table): void {
-            foreach (['title', 'year', 'length', 'created_at'] as $column) {
+        $columns = DB::getDriverName() === 'pgsql'
+            ? ['year', 'length', 'created_at']
+            : ['title', 'year', 'length', 'created_at'];
+
+        Schema::table('songs', static function (Blueprint $table) use ($columns): void {
+            foreach ($columns as $column) {
                 if (Schema::hasIndex('songs', "songs_{$column}_index")) {
                     $table->dropIndex("songs_{$column}_index");
                 }
