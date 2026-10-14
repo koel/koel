@@ -94,6 +94,8 @@ class Search3Test extends TestCase
     {
         $user = create_user();
 
+        $songIds = [];
+
         foreach (['A', 'B', 'C'] as $letter) {
             $artist = Artist::factory()->createOne(['name' => "Artist $letter", 'user_id' => $user->id]);
             $album = Album::factory()->createOne([
@@ -102,8 +104,10 @@ class Search3Test extends TestCase
                 'artist_name' => $artist->name,
                 'user_id' => $user->id,
             ]);
-            Song::factory()->createOne(['title' => "Song $letter", 'album_id' => $album->id, 'owner_id' => $user->id]);
+            $songIds[] = Song::factory()->createOne(['album_id' => $album->id, 'owner_id' => $user->id])->id;
         }
+
+        sort($songIds);
 
         $result = $this
             ->getJson(
@@ -115,7 +119,7 @@ class Search3Test extends TestCase
 
         self::assertSame(['Artist B'], array_column($result['artist'], 'name'));
         self::assertSame(['Album B'], array_column($result['album'], 'name'));
-        self::assertSame(['Song B'], array_column($result['song'], 'title'));
+        self::assertSame([$songIds[1]], array_column($result['song'], 'id'));
     }
 
     #[Test]

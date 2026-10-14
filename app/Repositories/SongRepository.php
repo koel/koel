@@ -208,20 +208,19 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection<int, Song> */
-    public function getOrdered(
-        array $sortColumns,
-        string $sortDirection,
-        int $limit,
-        int $offset = 0,
-        ?User $scopedUser = null,
-    ): Collection {
-        return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
-            ->withUserContext()
-            ->sort($sortColumns, $sortDirection)
+    public function getOrderedById(int $limit, int $offset = 0, ?User $scopedUser = null): Collection
+    {
+        $scopedUser ??= $this->auth->user();
+
+        $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
+            ->accessible()
             ->orderBy('songs.id')
             ->offset($offset)
             ->limit($limit)
-            ->get();
+            ->pluck('songs.id')
+            ->all();
+
+        return $this->getMany(ids: $ids, preserveOrder: true, scopedUser: $scopedUser);
     }
 
     /** @return Collection<int, Song> */

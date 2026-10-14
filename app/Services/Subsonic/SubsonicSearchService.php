@@ -49,14 +49,12 @@ class SubsonicSearchService
     /** @return Collection<int, Song> */
     public function searchSongs(string $query, int $count, int $offset, User $user): Collection
     {
-        return (
-            self::isBrowseAll($query)
-                ? $this->songRepository->getOrdered(['songs.title'], 'asc', $count, $offset, $user)
-                : $this->songRepository
-                    ->search($query, $offset + $count, $user)
-                    ->skip($offset)
-                    ->values()
-        );
+        return self::isBrowseAll($query)
+            ? $this->songRepository->getOrderedById($count, $offset, $user)
+            : $this->songRepository
+                ->search($query, $offset + $count, $user)
+                ->skip($offset)
+                ->values();
     }
 
     private static function isBrowseAll(string $query): bool
