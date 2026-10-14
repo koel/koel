@@ -213,6 +213,7 @@ class SongRepository extends Repository implements ScoutableRepository
         $scopedUser ??= $this->auth->user();
 
         $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
+            ->select('songs.id')
             ->accessible()
             ->orderBy('songs.id')
             ->offset($offset)
