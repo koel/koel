@@ -40,12 +40,11 @@ class DirectoryScanner extends Scanner
             ? fn (ScanResult $result) => $this->events[ScanEvent::SCAN_PROGRESS->name]($result)
             : null;
 
-        if ($jobs > 1) {
-            $results = $this->parallelStrategy->scan($files, $config, $jobs, $onProgress);
-            $this->indexer->reindex($results);
-        } else {
-            $results = $this->sequentialStrategy->scan($files, $config, $onProgress);
-        }
+        $results = $this->indexer->withoutSyncingToSearch(fn (): ScanResultCollection => $jobs > 1
+            ? $this->parallelStrategy->scan($files, $config, $jobs, $onProgress)
+            : $this->sequentialStrategy->scan($files, $config, $onProgress));
+
+        $this->indexer->reindex($results);
 
         event(new MediaScanCompleted($results));
 

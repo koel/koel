@@ -14,7 +14,9 @@ use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Laravel\Scout\EngineManager;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Fakes\RecordingSearchEngine;
 use Tests\TestCase;
 
 use function Tests\create_admin;
@@ -289,5 +291,29 @@ class DirectoryScannerTest extends TestCase
             $name = pathinfo($manifest, PATHINFO_DIRNAME) . '/' . pathinfo($manifest, PATHINFO_FILENAME);
             self::assertSame([], glob($name . '*'));
         }
+    }
+
+    #[Test]
+    public function sequentialScanIndexesEachSavedSongOnceAfterScanning(): void
+    {
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
+
+        $engine = new RecordingSearchEngine();
+        $manager = $this->app->make(EngineManager::class);
+        // @mago-ignore lint:prefer-static-closure
+        $manager->extend('meilisearch', fn () => $engine);
+        $manager->forgetDrivers();
+        config(['scout.driver' => 'meilisearch']);
+
+        app(DirectoryScanner::class)->scan($this->mediaPath, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertEqualsCanonicalizing(
+            Song::query()
+                ->pluck('id')
+                ->map(strval(...))
+                ->all(),
+            $engine->updated[Song::class],
+        );
     }
 }

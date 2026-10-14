@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Services\Scanners\ScanIndexer;
 use App\Services\Scanners\Strategies\SequentialScanStrategy;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanResult;
+use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use SplFileInfo;
@@ -25,6 +27,7 @@ class ScanChunkCommand extends Command
 
     public function __construct(
         private readonly SequentialScanStrategy $scanner,
+        private readonly ScanIndexer $indexer,
     ) {
         parent::__construct();
     }
@@ -45,17 +48,17 @@ class ScanChunkCommand extends Command
 
         $files = array_map(static fn (string $path) => new SplFileInfo($path), $paths);
 
-        if (config('scout.driver') === 'tntsearch') {
-            config(['scout.driver' => 'null']);
-        }
-
-        $this->scanner->scan($files, $config, function (ScanResult $result): void {
-            $this->output->writeln(json_encode([
-                'path' => $result->path,
-                'type' => $result->type->value,
-                'error' => $result->error,
-            ]));
-        });
+        $this->indexer->withoutSyncingToSearch(fn (): ScanResultCollection => $this->scanner->scan(
+            $files,
+            $config,
+            function (ScanResult $result): void {
+                $this->output->writeln(json_encode([
+                    'path' => $result->path,
+                    'type' => $result->type->value,
+                    'error' => $result->error,
+                ]));
+            },
+        ));
 
         return self::SUCCESS;
     }
