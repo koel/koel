@@ -57,7 +57,8 @@ current list or the selected songs.
 To play in order instead of shuffling, hold down <kbd>Alt/Option</kbd> while clicking the button.
 
 When a song is playing, you can control playback using the buttons at the bottom of the screen as well as
-rewind/fast-forward the song by clicking and dragging the progress bar.
+rewind/fast-forward the song by clicking and dragging the progress bar. Hover over the progress bar to see the current
+position, the time under your cursor, and the song's total length.
 
 ![Footer controls](../assets/img/interface/footer.avif)
 
