@@ -17,6 +17,10 @@ use InvalidArgumentException;
 
 class FavoriteService
 {
+    public function __construct(
+        private readonly int $upsertChunkSize = 1_000,
+    ) {}
+
     public function toggleFavorite(Favoriteable|Model $favoriteable, User $user): ?Favorite
     {
         $favorite = $favoriteable->favorites()->where('user_id', $user->id)->delete() === 0
@@ -59,7 +63,11 @@ class FavoriteService
             ];
         }
 
-        Favorite::query()->upsert($favorites, ['favoriteable_type', 'favoriteable_id', 'user_id']);
+        DB::transaction(function () use ($favorites): void {
+            foreach (array_chunk($favorites, $this->upsertChunkSize) as $chunk) {
+                Favorite::query()->upsert($chunk, ['favoriteable_type', 'favoriteable_id', 'user_id']);
+            }
+        });
 
         $songs = $entities->filter(static fn (Model $entity) => $entity instanceof Song);
 
