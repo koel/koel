@@ -4,9 +4,12 @@ namespace App\Services;
 
 use App\Enums\Acl\Role;
 use App\Exceptions\UserProspectUpdateDeniedException;
+use App\Facades\Dispatcher;
+use App\Jobs\DeleteUserJob;
 use App\Models\Organization;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use App\Services\Auth\TokenManager;
 use App\Services\Image\ImageStorage;
 use App\Values\ImageWritingConfig;
 use App\Values\User\SsoUser;
@@ -25,6 +28,7 @@ class UserService
         private readonly OrganizationService $organizationService,
         private readonly EmailChangeService $emailChangeService,
         private readonly SecurityNoticeService $securityNoticeService,
+        private readonly TokenManager $tokenManager,
         #[Config('koel.sso.default_role')]
         private readonly Role $defaultSsoRole = Role::USER,
     ) {}
@@ -143,6 +147,16 @@ class UserService
         }
 
         return basename($this->imageStorage->storeImage($avatar, ImageWritingConfig::make(maxWidth: 480)));
+    }
+
+    public function scheduleUserDeletion(User $user): void
+    {
+        $user->deletion_requested_at = now();
+        $user->save();
+
+        $this->tokenManager->destroyTokens($user);
+
+        Dispatcher::dispatch(new DeleteUserJob($user));
     }
 
     public function deleteUser(User $user): void

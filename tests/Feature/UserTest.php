@@ -3,11 +3,15 @@
 namespace Tests\Feature;
 
 use App\Enums\Acl\Role;
+use App\Facades\Dispatcher;
 use App\Helpers\Ulid;
+use App\Jobs\DeleteUserJob;
 use App\Models\Interaction;
 use App\Models\User;
+use App\Services\Auth\TokenManager;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -190,6 +194,23 @@ class UserTest extends TestCase
 
         $this->deleteAs("api/users/{$user->public_id}", [], create_admin());
         $this->assertModelMissing($user);
+    }
+
+    #[Test]
+    public function deletedUserIsLockedOutBeforeTheDeletionJobRuns(): void
+    {
+        Dispatcher::expects('dispatch')->with(Mockery::type(DeleteUserJob::class));
+
+        $user = create_user();
+        $token = app(TokenManager::class)->createCompositeToken($user);
+
+        $this->deleteAs("api/users/{$user->public_id}", [], create_admin())->assertNoContent();
+
+        $this->app['auth']->forgetGuards();
+
+        $this->withToken($token->apiToken)->getJson('api/data')->assertUnauthorized();
+        $this->get("download/songs?api_token={$token->audioToken}")->assertUnauthorized();
+        $this->assertModelExists($user);
     }
 
     #[Test]

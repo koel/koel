@@ -32,6 +32,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
+ * @property ?Carbon $deletion_requested_at
  * @property ?Carbon $invitation_accepted_at
  * @property ?Carbon $invited_at
  * @property ?Carbon $two_factor_confirmed_at
@@ -123,12 +124,18 @@ class User extends Authenticatable implements AuditableContract, PasskeyUser
             'two_factor_secret' => 'encrypted',
             'two_factor_recovery_codes' => 'encrypted:array',
             'two_factor_confirmed_at' => 'datetime',
+            'deletion_requested_at' => 'datetime',
         ];
     }
 
     public function hasTwoFactorEnabled(): bool
     {
         return (bool) $this->two_factor_confirmed_at;
+    }
+
+    public function isPendingDeletion(): bool
+    {
+        return (bool) $this->deletion_requested_at;
     }
 
     // @mago-ignore lint:no-redundant-method-override

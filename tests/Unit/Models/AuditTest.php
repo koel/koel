@@ -11,15 +11,15 @@ use Tests\TestCase;
 class AuditTest extends TestCase
 {
     #[Test]
-    public function pruneAuditsOlderThanTheRetentionPeriod(): void
+    public function pruneAuditsOlderThanNinetyDays(): void
     {
-        config(['audit.console' => true, 'audit.retention_days' => 30]);
+        config(['audit.console' => true]);
 
-        $this->travelTo(now()->subDays(31));
+        $this->travelTo(now()->subDays(91));
         $oldSong = Song::factory()->createOne();
         $this->travelBack();
 
-        $this->travelTo(now()->subDays(29));
+        $this->travelTo(now()->subDays(89));
         $recentSong = Song::factory()->createOne();
         $this->travelBack();
 

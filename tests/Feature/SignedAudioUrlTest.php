@@ -44,6 +44,15 @@ class SignedAudioUrlTest extends TestCase
     }
 
     #[Test]
+    public function rejectSignedUrlOfUserPendingDeletion(): void
+    {
+        $song = Song::factory()->createOne(['path' => test_path('songs/blank.mp3')]);
+        $user = create_user(['deletion_requested_at' => now()]);
+
+        $this->get($this->signer->signSongPlayUrl($song, $user, transcode: false))->assertUnauthorized();
+    }
+
+    #[Test]
     public function rejectSignedUrlEditedToAnotherSong(): void
     {
         $song = Song::factory()->createOne();

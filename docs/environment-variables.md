@@ -180,7 +180,6 @@ The AI assistant is no longer set up here. An admin turns it on and adds the pro
 | `FORCE_HTTPS` | Force Koel to use HTTPS URLs. Set to `true` if automatic detection fails. | `false` |
 | `SENTRY_LARAVEL_DSN` | Report unhandled exceptions to [Sentry](https://sentry.io). Leave empty to disable reporting entirely. Events are tagged with `APP_ENV`. | _(empty)_ |
 | `BACKUP_ON_DELETE` | Whether to create a backup of a song when deleting it from the filesystem. | `true` |
-| `AUDIT_RETENTION_DAYS` | How many days to keep the audit log, which records changes to the library, playlists, users, and settings. Older entries are removed daily. | `90` |
 | `CDN_URL` | A CDN URL mapped to Koel's home URL, used to serve media files. No trailing slash. | _(empty)_ |
 | `IMAGE_STORAGE_DRIVER` | The filesystem driver for artwork — album covers, artist images and avatars. Use `s3` to keep them on S3 or an S3-compatible service such as Cloudflare R2, reusing the `AWS_*` settings. | `local` |
 | `IMAGE_STORAGE_DIR` | Where artwork is stored: a path under Koel's `public` directory for the `local` driver, or a key prefix inside the bucket otherwise. | `storage/images` |

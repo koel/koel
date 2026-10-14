@@ -20,8 +20,6 @@ return [
 
     'implementation' => Audit::class,
 
-    'retention_days' => (int) env('AUDIT_RETENTION_DAYS', 90),
-
     /*
      |--------------------------------------------------------------------------
      | User Morph prefix & Guards

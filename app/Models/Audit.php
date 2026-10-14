@@ -12,6 +12,6 @@ class Audit extends BaseAudit
 
     public function prunable(): Builder
     {
-        return static::query()->where('created_at', '<', now()->subDays(config('audit.retention_days')));
+        return static::query()->where('created_at', '<', now()->subDays(90));
     }
 }

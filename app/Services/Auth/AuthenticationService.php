@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\SecurityNoticeService;
 use App\Values\CompositeToken;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Cache;
@@ -87,6 +88,8 @@ class AuthenticationService
 
     public function logUserIn(User $user): CompositeToken
     {
+        throw_if($user->isPendingDeletion(), AuthenticationException::class);
+
         return $this->tokenManager->createCompositeToken($user);
     }
 
