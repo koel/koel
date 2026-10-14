@@ -115,6 +115,33 @@ class WorkerProcessPoolTest extends TestCase
     }
 
     #[Test]
+    public function stopsOnlyTheWorkersThatStayIdleLongerThanTheIdleTimeout(): void
+    {
+        $outputLines = [];
+        $timedOutFlags = [];
+
+        $this->pool->run(
+            commands: [
+                self::php('sleep(30);'),
+                self::php('for ($i = 0; $i < 4; $i++) { usleep(500000); echo "$i\n"; flush(); }'),
+            ],
+            timeout: null,
+            onOutputLine: static function (string $line) use (&$outputLines): void {
+                $outputLines[] = $line;
+            },
+            onWorkerFailure: static function (?int $exitCode, string $errorOutput, bool $timedOut) use (
+                &$timedOutFlags,
+            ): void {
+                $timedOutFlags[] = $timedOut;
+            },
+            idleTimeout: 1,
+        );
+
+        self::assertSame([true], $timedOutFlags);
+        self::assertSame(['0', '1', '2', '3'], $outputLines);
+    }
+
+    #[Test]
     #[RequiresFunction('posix_kill')]
     public function stopsTheRemainingWorkersWhenTheFailurePolicyThrows(): void
     {
