@@ -69,11 +69,12 @@ class RemoteDiskTranscodingStrategyTest extends TestCase
             'location' => '/path/to/transcode.m4a',
             'bit_rate' => 128,
             'hash' => 'mocked-checksum',
+            'file_size' => 1_024,
         ]);
 
         File::expects('isReadable')->with('/path/to/transcode.m4a')->andReturn(true);
-
-        File::expects('hash')->with('/path/to/transcode.m4a')->andReturn('mocked-checksum');
+        File::expects('size')->with('/path/to/transcode.m4a')->andReturn(1_024);
+        File::expects('hash')->never();
 
         $transcodedPath = $this->strategy->getTranscodeLocation($transcode->song, $transcode->bit_rate);
 

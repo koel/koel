@@ -162,7 +162,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
 
     public function ownedBy(User $user): bool
     {
-        return $this->owner->id === $user->id;
+        return $this->owner_id === $user->id;
     }
 
     public static function getPathFromS3BucketAndKey(string $bucket, string $key): string

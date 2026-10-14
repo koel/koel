@@ -34,7 +34,10 @@ class GetCoverArtController extends Controller
         $fileName = $album ? $album->cover : ($artist?->image ?: $artist?->album_cover);
 
         if ($this->imageStorage->exists($fileName)) {
-            return ImageStorage::disk()->response($fileName);
+            $response = ImageStorage::disk()->response($fileName)->setEtag($fileName);
+            $response->isNotModified($request);
+
+            return $response;
         }
 
         return response()->file(resource_path('assets/img/covers/default.png'));
