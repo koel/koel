@@ -157,7 +157,10 @@ class PodcastService
 
     private function synchronizeEpisodes(Podcast $podcast, EpisodeCollection $episodeCollection): void
     {
-        $existingEpisodeGuids = array_flip(array_filter($this->songRepository->getEpisodeGuidsByPodcast($podcast)));
+        $existingEpisodeGuids = array_flip(array_filter(
+            $this->songRepository->getEpisodeGuidsByPodcast($podcast),
+            static fn (?string $guid): bool => $guid !== null,
+        ));
         $enclosureSafetyByOrigin = [];
         $records = [];
 
@@ -206,8 +209,10 @@ class PodcastService
                 Episode::query()->insert($recordChunk);
 
                 // Since insert() doesn't trigger model events, Scout operations will not be called.
-                // We have to manually update the search index.
-                Episode::query()->whereIn('id', array_column($recordChunk, 'id'))->searchable(); // @phpstan-ignore-line
+                // We have to manually update the search index, once the episodes are committed.
+                DB::afterCommit(
+                    static fn () => Episode::query()->whereIn('id', array_column($recordChunk, 'id'))->searchable(), // @phpstan-ignore-line
+                );
             }
         });
     }

@@ -433,7 +433,7 @@ class PodcastServiceTest extends TestCase
     #[Test]
     public function addPodcastStoresEveryEpisodeOfAFeedLargerThanOneInsertBatch(): void
     {
-        $items = collect(range(1, 501))
+        $items = collect(range(1, 3000))
             ->map(
                 static fn (int $number): string => sprintf(
                     '<item><title>Episode %1$d</title><guid>episode-%1$d</guid>'
@@ -453,7 +453,7 @@ class PodcastServiceTest extends TestCase
 
         $podcast = app(PodcastService::class)->addPodcast('https://example.com/feed.xml', create_user());
 
-        self::assertSame(501, $podcast->episodes()->count());
+        self::assertSame(3000, $podcast->episodes()->count());
     }
 
     #[Test]
