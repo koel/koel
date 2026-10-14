@@ -450,6 +450,11 @@ class SongRepository extends Repository implements ScoutableRepository
             ->findOrFail($id);
     }
 
+    public function getOneWithoutRelations(string $id): Song
+    {
+        return Song::query()->withoutEagerLoads()->findOrFail($id);
+    }
+
     public function getOneAccessibleWithoutRelations(string $id, ?User $user = null): Song
     {
         return Song::query(user: $user ?? $this->auth->user())

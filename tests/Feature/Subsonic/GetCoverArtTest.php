@@ -40,6 +40,21 @@ class GetCoverArtTest extends TestCase
     }
 
     #[Test]
+    public function answersNotModifiedWhenTheClientHasTheSameCover(): void
+    {
+        $user = create_user();
+        $filename = $this->stageCover('sub_album_cover_etag_test.png');
+        $album = Album::factory()->createOne(['cover' => $filename, 'user_id' => $user->id]);
+        $url = "/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&id={$album->id}";
+
+        $etag = $this->get($url)->assertOk()->headers->get('ETag');
+
+        $response = $this->get($url, ['If-None-Match' => $etag])->assertNotModified();
+
+        self::assertSame('', $response->streamedContent());
+    }
+
+    #[Test]
     public function returnsArtistImageBytes(): void
     {
         $user = create_user();

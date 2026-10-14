@@ -8,6 +8,8 @@ use App\Services\Auth\TokenManager;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Values\CompositeToken;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -142,6 +144,27 @@ class SongPlayTest extends TestCase
             ->assertOk()
             ->assertHeader('content-length', (string) filesize($path))
             ->assertHeader('accept-ranges', 'bytes');
+    }
+
+    #[Test]
+    public function keepARangeRequestCheapOnQueries(): void
+    {
+        $user = create_user();
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $song = Song::factory()->createOne(['path' => test_path('songs/blank.mp3')]);
+
+        $this->get("play/{$song->id}?t=$token->audioToken", ['Range' => 'bytes=0-99']);
+        Auth::forgetGuards();
+
+        DB::enableQueryLog();
+
+        $this->get("play/{$song->id}?t=$token->audioToken", [
+            'Range' => 'bytes=100-199',
+        ])->assertStatus(Response::HTTP_PARTIAL_CONTENT);
+
+        self::assertCount(5, DB::getQueryLog());
     }
 
     #[Test]
