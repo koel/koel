@@ -32,6 +32,7 @@ describe('songWaveform.vue', () => {
       motion.preference = 'no-preference'
       vi.mocked(drawWaveform).mockClear()
     },
+    afterEach: () => vi.restoreAllMocks(),
   })
 
   const renderComponent = (song: Song, progress = 0) => h.render(Component, { props: { song, progress } })
@@ -84,6 +85,33 @@ describe('songWaveform.vue', () => {
 
       await rerender({ song, progress: 50 })
       await waitFor(() => drawnWith({ progress: 0.5 }))
+    })
+  })
+
+  it('skips redrawing while playing until the dot moves far enough to show', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(100)
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(40)
+
+    await h.withPlusEdition(async () => {
+      h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
+
+      renderComponent(
+        h
+          .factory('song')
+          .make({ loudness: -9, true_peak: 1, length: 3600, playback_state: 'Playing', album_cover: '' }),
+        25,
+      )
+
+      await waitFor(() => drawnWith({ progress: expect.closeTo(0.25) }))
+
+      await waitFor(
+        async () => {
+          vi.mocked(drawWaveform).mockClear()
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+          expect(drawWaveform).not.toHaveBeenCalled()
+        },
+        { timeout: 3000 },
+      )
     })
   })
 

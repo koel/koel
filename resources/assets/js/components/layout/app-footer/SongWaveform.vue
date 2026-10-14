@@ -6,6 +6,7 @@
 
 <script lang="ts" setup>
 import { usePreferredReducedMotion, useRafFn, useResizeObserver } from '@vueuse/core'
+import { isEqual } from 'lodash-es'
 import { ref, watch } from 'vue'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { waveformService } from '@/services/waveformService'
@@ -37,6 +38,17 @@ let pausedness = 0
 let sinkStartedAt: number | null = null
 let riseStartedAt: number | null = null
 const BLACK: Rgb = [0, 0, 0]
+
+interface DrawnFrame {
+  levels: number[]
+  colors: { accent: Rgb; line: Rgb }
+  width: number
+  height: number
+  dotX: number
+  playedOpacity: number
+}
+
+let lastDrawnFrame: DrawnFrame | null = null
 
 let colors: { accent: Rgb; line: Rgb } | null = null
 let coverColor: string | null = null
@@ -104,7 +116,12 @@ const refreshColors = (element: HTMLCanvasElement, now: number) => {
   const accent = coverColor ?? style.getPropertyValue('--color-highlight').trim()
   const line = coverColor ?? style.getPropertyValue('--color-fg').trim()
 
-  colors = { accent: cssColorToRgb(accent) ?? BLACK, line: cssColorToRgb(line) ?? BLACK }
+  const readColors = { accent: cssColorToRgb(accent) ?? BLACK, line: cssColorToRgb(line) ?? BLACK }
+
+  if (!colors || !isEqual(colors, readColors)) {
+    colors = readColors
+  }
+
   colorsReadAt = now
 
   return colors
@@ -119,6 +136,15 @@ const isAnimatingLevels = (now: number) =>
 
 const isSettled = (now: number, target: number) =>
   !isPlaying() && pausedness > 0.999 && Math.abs(shownProgress - target) < 0.0001 && !isAnimatingLevels(now)
+
+const looksLikeLastDrawnFrame = (frame: DrawnFrame) =>
+  lastDrawnFrame !== null &&
+  frame.levels === lastDrawnFrame.levels &&
+  frame.colors === lastDrawnFrame.colors &&
+  frame.width === lastDrawnFrame.width &&
+  frame.height === lastDrawnFrame.height &&
+  Math.abs(frame.dotX - lastDrawnFrame.dotX) < 0.5 &&
+  Math.abs(frame.playedOpacity - lastDrawnFrame.playedOpacity) < 0.002
 
 const render = (now: number, seconds: number) => {
   if (!canvas.value) {
@@ -137,17 +163,32 @@ const render = (now: number, seconds: number) => {
     pausedness = isPlaying() ? 0 : 1
   }
 
-  const levels = levelsForWidth(canvas.value.clientWidth)
+  const width = canvas.value.clientWidth
 
-  drawWaveform(canvas.value, {
-    levels: shapeLevels({
-      levels,
-      growth: animated ? growthAt(now, levels.length) : () => 1,
-    }),
-    progress: shownProgress,
-    playedOpacity: 0.8 * (1 - pausedness * 0.55),
+  const frame: DrawnFrame = {
+    levels: levelsForWidth(width),
     colors: refreshColors(canvas.value, now),
-  })
+    width,
+    height: canvas.value.clientHeight,
+    dotX: shownProgress * width * (window.devicePixelRatio || 1),
+    playedOpacity: 0.8 * (1 - pausedness * 0.55),
+  }
+
+  const levelsMoving = animated && isAnimatingLevels(now)
+
+  if (!animated || levelsMoving || !looksLikeLastDrawnFrame(frame)) {
+    drawWaveform(canvas.value, {
+      levels: shapeLevels({
+        levels: frame.levels,
+        growth: animated ? growthAt(now, frame.levels.length) : () => 1,
+      }),
+      progress: shownProgress,
+      playedOpacity: frame.playedOpacity,
+      colors: frame.colors,
+    })
+
+    lastDrawnFrame = levelsMoving ? null : frame
+  }
 
   if (!animated || isSettled(now, target)) {
     pause()
@@ -158,7 +199,15 @@ const { pause, resume } = useRafFn(({ delta, timestamp }) => render(timestamp, M
   immediate: false,
 })
 
-watch(canvas, element => (element ? resume() : pause()))
+watch(canvas, element => {
+  lastDrawnFrame = null
+
+  if (element) {
+    resume()
+  } else {
+    pause()
+  }
+})
 
 useResizeObserver(canvas, resume)
 
