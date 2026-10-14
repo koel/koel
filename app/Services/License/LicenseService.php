@@ -26,6 +26,8 @@ class LicenseService implements LicenseServiceInterface
 {
     private const UNKNOWN_STATUS_CACHE_TTL_IN_MINUTES = 15;
 
+    private ?LicenseStatus $resolvedStatus = null;
+
     public function __construct(
         private readonly LemonSqueezyConnector $connector,
         #[Config('app.key')]
@@ -42,7 +44,7 @@ class LicenseService implements LicenseServiceInterface
             }
 
             $license = $this->updateOrCreateLicenseFromApiResponseBody($result);
-            self::cacheStatus(LicenseStatus::valid($license));
+            $this->resolvedStatus = self::cacheStatus(LicenseStatus::valid($license));
 
             return $license;
         } catch (RequestException $e) {
@@ -59,12 +61,12 @@ class LicenseService implements LicenseServiceInterface
             $result = $this->connector->send(new DeactivateLicenseRequest($license))->object();
 
             if ($result->deactivated) {
-                self::deleteLicense($license);
+                $this->deleteLicense($license);
             }
         } catch (RequestException $e) {
             if ($e->getStatus() === Response::HTTP_NOT_FOUND) {
                 // The instance ID was not found. The license record must be a leftover from an erroneous attempt.
-                self::deleteLicense($license);
+                $this->deleteLicense($license);
 
                 return;
             }
@@ -77,6 +79,15 @@ class LicenseService implements LicenseServiceInterface
     }
 
     public function getStatus(bool $checkCache = true): LicenseStatus
+    {
+        if (!$checkCache || !$this->resolvedStatus) {
+            $this->resolvedStatus = $this->resolveStatus($checkCache);
+        }
+
+        return $this->resolvedStatus;
+    }
+
+    private function resolveStatus(bool $checkCache): LicenseStatus
     {
         if ($checkCache && Cache::has('license_status')) {
             return Cache::get('license_status');
@@ -130,10 +141,11 @@ class LicenseService implements LicenseServiceInterface
         ]);
     }
 
-    private static function deleteLicense(License $license): void
+    private function deleteLicense(License $license): void
     {
         $license->delete();
         Cache::delete('license_status');
+        $this->resolvedStatus = null;
     }
 
     private static function cacheStatus(LicenseStatus $status): LicenseStatus

@@ -9,6 +9,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
 use App\Models\Passkey;
+use App\Models\PersonalAccessToken;
 use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\RadioStation;
@@ -37,6 +38,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passkeys\Passkeys;
+use Laravel\Sanctum\Sanctum;
 use SpotifyWebAPI\Session as SpotifySession;
 
 class AppServiceProvider extends ServiceProvider
@@ -52,6 +54,8 @@ class AppServiceProvider extends ServiceProvider
 
         // disable wrapping JSON resource in a `data` key
         JsonResource::withoutWrapping();
+
+        Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
 
         self::grantAllPermissionsToSuperAdminRole();
 

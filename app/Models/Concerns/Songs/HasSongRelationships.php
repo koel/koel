@@ -20,7 +20,7 @@ trait HasSongRelationships
 {
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->without(['roles', 'permissions']);
     }
 
     public function artist(): BelongsTo

@@ -130,6 +130,7 @@ class SongBuilder extends FavoriteableBuilder
             ->accessible()
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
             ->when($includePlayCount, static fn (self $query) => $query->withPlayCount())
+            ->when(License::isPlus(), static fn (self $query) => $query->with('analysis:song_id,loudness,true_peak'))
             ->withRatingSubquery();
     }
 
