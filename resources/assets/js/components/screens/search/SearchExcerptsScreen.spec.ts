@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { waitFor } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { defineComponent } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
@@ -17,6 +17,25 @@ describe('searchExcerptsScreen.vue', () => {
     eventBus.emit('SEARCH_KEYWORDS_CHANGED', 'search me')
 
     await waitFor(() => expect(mock).toHaveBeenCalledWith('search me'))
+  })
+
+  it('keeps showing the loading state while the latest search is pending', async () => {
+    let resolveEarlierSearch: () => void = () => {}
+
+    h.mock(searchStore, 'excerptSearch')
+      .mockReturnValueOnce(new Promise<void>(resolve => (resolveEarlierSearch = resolve)))
+      .mockReturnValueOnce(new Promise<void>(() => {}))
+
+    h.render(Component)
+
+    eventBus.emit('SEARCH_KEYWORDS_CHANGED', 'foo')
+    eventBus.emit('SEARCH_KEYWORDS_CHANGED', 'foobar')
+    await waitFor(() => screen.getByRole('status'))
+
+    resolveEarlierSearch()
+    await h.tick()
+
+    screen.getByRole('status')
   })
 
   it('puts the search terms in the page title', async () => {
