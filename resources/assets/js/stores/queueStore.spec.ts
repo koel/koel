@@ -20,6 +20,7 @@ describe('queueStore', () => {
   afterEach(() => {
     vi.runOnlyPendingTimers()
     vi.useRealTimers()
+    vi.restoreAllMocks()
   })
 
   it('returns the first queued song', () => expect(queueStore.first).toEqual(songs[0]))
