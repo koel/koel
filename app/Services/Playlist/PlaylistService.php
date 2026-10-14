@@ -9,6 +9,7 @@ use App\Models\Playlist;
 use App\Models\PlaylistFolder;
 use App\Models\Song as Playable;
 use App\Models\User;
+use App\Repositories\PlaylistRepository;
 use App\Repositories\SongRepository;
 use App\Services\Image\ImageStorage;
 use App\Services\LibrarySummaryService;
@@ -25,6 +26,8 @@ class PlaylistService
     public function __construct(
         private readonly ImageStorage $imageStorage,
         private readonly SongRepository $songRepository,
+        private readonly PlaylistRepository $playlistRepository,
+        private readonly PlaylistPlayableMover $playableMover,
         private readonly PlaylistFolderService $folderService,
         private readonly LibrarySummaryService $librarySummaryService,
     ) {}
@@ -125,11 +128,14 @@ class PlaylistService
     ): EloquentCollection {
         return DB::transaction(function () use ($playlist, $playables, $user) {
             $playables = Collection::wrap($playables);
+            $playableIds = $playables->pluck('id')->all();
 
-            $playlist->addPlayables(
-                $playables->filter(static fn ($song): bool => !$playlist->playables->contains($song)),
-                $user,
-            );
+            $existingIds = $this->playlistRepository
+                ->getPlayablePositionsInPlaylist($playlist, $playableIds)
+                ->keys()
+                ->all();
+
+            $playlist->addPlayables(array_values(array_diff($playableIds, $existingIds)), $user);
 
             // if the playlist is collaborative, make the songs public
             if ($this->isPlaylistCollaborative($playlist)) {
@@ -139,7 +145,7 @@ class PlaylistService
             // we want a fresh copy of the songs with the possibly updated visibility
             return $this->songRepository->getManyInCollaborativeContext(
                 playlist: $playlist,
-                ids: $playables->pluck('id')->all(),
+                ids: $playableIds,
                 scopedUser: $user,
             );
         });
@@ -166,26 +172,7 @@ class PlaylistService
     ): void {
         throw_if($playlist->is_smart, OperationNotApplicableForSmartPlaylistException::class);
 
-        DB::transaction(static function () use ($playlist, $movingIds, $target, $placement): void {
-            $targetPosition = $playlist->playables()->wherePivot('song_id', $target)->value('position');
-            $insertPosition = $placement === Placement::BEFORE ? $targetPosition : $targetPosition + 1;
-
-            // create a "gap" for the moving songs by incrementing the position of the songs after the target
-            $playlist
-                ->playables()
-                ->newPivotQuery()
-                ->where('position', $placement === Placement::BEFORE ? '>=' : '>', $targetPosition)
-                ->whereNotIn('song_id', $movingIds)
-                ->increment('position', count($movingIds));
-
-            $values = [];
-
-            foreach ($movingIds as $id) {
-                $values[$id] = ['position' => $insertPosition++];
-            }
-
-            $playlist->playables()->syncWithoutDetaching($values);
-        });
+        $this->playableMover->movePlayables($playlist, $movingIds, $target, $placement);
     }
 
     public function isPlaylistCollaborative(Playlist $playlist): bool
