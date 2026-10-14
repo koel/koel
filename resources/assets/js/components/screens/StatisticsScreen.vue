@@ -130,7 +130,7 @@ const topSongs = computed(() =>
     title: song.title,
     subtitle: `${song.artist_name} · ${pluralize(plays, 'play')}`,
     href: url('albums.show', { id: song.album_id }),
-    image: song.album_cover || defaultCover,
+    image: song.album_small_cover || defaultCover,
   })),
 )
 

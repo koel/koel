@@ -32,4 +32,10 @@ describe('playableThumbnail.vue', () => {
 
     expect(emitted().clicked).toBeTruthy()
   })
+
+  it('shows the small album cover', () => {
+    const { container, playable } = renderComponent()
+
+    expect(container.querySelector('img')?.getAttribute('src')).toBe(playable.album_small_cover)
+  })
 })

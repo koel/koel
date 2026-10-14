@@ -8,6 +8,7 @@ export default (): Album => {
     id: faker.string.ulid(),
     name: faker.lorem.sentence(),
     cover: faker.image.url(),
+    small_cover: faker.image.url(),
     created_at: faker.date.past().toISOString(),
     mbid: faker.string.uuid(),
     year: faker.date.past().getFullYear(),

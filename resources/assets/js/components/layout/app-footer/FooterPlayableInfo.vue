@@ -45,7 +45,7 @@ const { cover: defaultCover } = useBranding()
 const playable = requireInjection<Ref<Playable | undefined>>(CurrentStreamableKey, ref())
 
 const cover = computed(() =>
-  playable.value ? getPlayableProp(playable.value, 'album_cover', 'episode_image') : defaultCover,
+  playable.value ? getPlayableProp(playable.value, 'album_small_cover', 'episode_image') : defaultCover,
 )
 
 const artistOrPodcastUri = computed(() => {

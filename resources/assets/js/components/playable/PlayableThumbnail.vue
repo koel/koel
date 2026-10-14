@@ -29,7 +29,7 @@ const { playable } = toRefs(props)
 
 const { cover: defaultCover } = useBranding()
 
-const src = computed(() => getPlayableProp(playable.value, 'album_cover', 'episode_image'))
+const src = computed(() => getPlayableProp(playable.value, 'album_small_cover', 'episode_image'))
 
 const actionLabel = computed(() => {
   if (playable.value.playback_state === 'Playing') {

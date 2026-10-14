@@ -48,6 +48,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property string $artist_id
  * @property string $artist_name
  * @property string $cover The album cover's file name
+ * @property ?string $small_cover The file name of a sharp, downsized copy of the cover, for small renders
  * @property string $id
  * @property ?string $mbid The MusicBrainz release ID
  * @property string $name Name of the album

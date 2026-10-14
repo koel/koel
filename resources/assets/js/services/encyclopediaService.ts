@@ -33,7 +33,12 @@ export const encyclopediaService = {
 
     if (info?.cover) {
       album.cover = info.cover
-      playableStore.byAlbum(album).forEach(song => (song.album_cover = info.cover!))
+      album.small_cover = info.cover
+
+      playableStore.byAlbum(album).forEach(song => {
+        song.album_cover = info.cover!
+        song.album_small_cover = info.cover!
+      })
     }
 
     return info

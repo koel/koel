@@ -115,6 +115,7 @@ export const playableStore = {
   syncAlbumProperties(album: Album) {
     this.byAlbum(album).forEach(a => {
       a.album_cover = album.cover
+      a.album_small_cover = album.small_cover
       a.album_name = album.name
     })
   },

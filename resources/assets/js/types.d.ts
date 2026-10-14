@@ -192,6 +192,7 @@ interface Album {
   artist_name: Artist['name']
   name: string
   cover: string // empty string = no cover
+  small_cover: string | null
   thumbnail?: string | null
   created_at: string
   mbid?: string | null
@@ -235,6 +236,7 @@ interface Song extends BasePlayable {
   album_id: Album['id']
   album_name: Album['name']
   album_cover: Album['cover']
+  album_small_cover: Album['small_cover']
   artist_id: Artist['id']
   artist_name: Artist['name']
   album_artist_id: Artist['id']

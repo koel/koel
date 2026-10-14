@@ -35,9 +35,15 @@ const { cover: defaultCover } = useBranding()
 const forAlbum = computed(() => entity.value.type === 'albums')
 const sortFields = computed(() => (forAlbum.value ? ['disc', 'track'] : ['album_id', 'disc', 'track']))
 
+const albumCover = computed(() => {
+  const album = entity.value as Album
+
+  return props.size === 'sm' ? album.small_cover : album.cover
+})
+
 const image = computed(() => {
   return forAlbum.value
-    ? (entity.value as Album).cover || defaultCover
+    ? albumCover.value || defaultCover
     : (entity.value as Artist).image || (entity.value as Artist).album_cover || defaultCover
 })
 
