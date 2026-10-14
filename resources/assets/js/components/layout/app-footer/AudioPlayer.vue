@@ -20,7 +20,7 @@
       @pointerdown="onPointerDown"
       @click="onClickSeek"
       @mousemove="onHover"
-      @mouseleave="hoverProgress = 0"
+      @mouseleave="onHoverEnd"
     >
       <div class="track">
         <div class="progress-buffer" :style="{ width: `${bufferProgress}%` }" />
@@ -28,6 +28,23 @@
         <div class="progress-played" :style="{ width: `${progress}%` }" />
       </div>
     </div>
+
+    <template v-if="durationSeconds && hoveredTrackRect">
+      <span class="time-tip centered" :style="tipPosition(progress)" data-testid="playhead-time">
+        {{ secondsToHis(positionSeconds) }}
+      </span>
+      <span class="time-tip centered" :style="tipPosition(hoverProgress)" data-testid="cursor-time">
+        {{ secondsToHis(hoverSeconds) }}
+      </span>
+      <span
+        v-if="!nearsTotalTip(progress) && !nearsTotalTip(hoverProgress)"
+        class="time-tip end"
+        :style="tipPosition(100)"
+        data-testid="total-time"
+      >
+        {{ secondsToHis(durationSeconds) }}
+      </span>
+    </template>
   </div>
 </template>
 
@@ -44,6 +61,19 @@ const isLoading = ref(false)
 const isDragging = ref(false)
 const positionSeconds = ref(0)
 const durationSeconds = ref(0)
+
+const hoverSeconds = computed(() => Math.round((hoverProgress.value / 100) * durationSeconds.value))
+const hoveredTrackRect = ref<DOMRect | null>(null)
+
+const TOTAL_TIP_CLEARANCE_PX = 100
+
+const nearsTotalTip = (percent: number) =>
+  (hoveredTrackRect.value!.width * (100 - percent)) / 100 < TOTAL_TIP_CLEARANCE_PX
+
+const tipPosition = (percent: number) => ({
+  left: `${hoveredTrackRect.value!.left + (hoveredTrackRect.value!.width * percent) / 100}px`,
+  top: `${hoveredTrackRect.value!.top}px`,
+})
 
 const positionText = computed(() => `${secondsToHis(positionSeconds.value)} of ${secondsToHis(durationSeconds.value)}`)
 
@@ -170,7 +200,13 @@ const onHover = (e: MouseEvent) => {
   }
 
   const track = (e.currentTarget as HTMLElement).querySelector<HTMLElement>('.track')!
+  hoveredTrackRect.value = track.getBoundingClientRect()
   hoverProgress.value = computeRatio(e.clientX, track) * 100
+}
+
+const onHoverEnd = () => {
+  hoverProgress.value = 0
+  hoveredTrackRect.value = null
 }
 
 const progressInterval = setInterval(updateProgress, 250)
@@ -225,6 +261,31 @@ onBeforeUnmount(() => {
 
 .progress-played {
   @apply no-hover:bg-k-highlight;
+}
+
+.time-tip {
+  @apply fixed z-9999 -mt-3 w-max px-3 py-2 rounded-md border border-white/15 bg-black text-white/80 tabular-nums
+  drop-shadow-lg pointer-events-none -translate-y-full no-hover:hidden;
+
+  &::after {
+    @apply absolute -bottom-[5px] size-2 rotate-45 border-r border-b border-white/15 bg-black content-[''];
+  }
+
+  &.centered {
+    @apply -translate-x-1/2;
+
+    &::after {
+      @apply left-[calc(50%-4px)];
+    }
+  }
+
+  &.end {
+    @apply -translate-x-full;
+
+    &::after {
+      @apply right-0.5;
+    }
+  }
 }
 
 /* Loading animation: diagonal stripes */

@@ -52,6 +52,60 @@ describe('audioPlayer.vue', () => {
     expect(slider.getAttribute('aria-valuenow')).toBe('0')
   })
 
+  it('places the playhead, cursor and total time tips along the bar', async () => {
+    h.render(Component)
+    await vi.advanceTimersByTimeAsync(250)
+
+    const track = document.querySelector<HTMLElement>('.track')!
+    vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({ left: 0, top: 500, width: 1000 } as DOMRect)
+
+    screen.getByRole('slider', { name: 'Seek' }).dispatchEvent(new MouseEvent('mousemove', { clientX: 250 }))
+    await h.tick()
+
+    expect(screen.getByTestId('playhead-time').style.left).toBe(`${(83.4 / 296) * 1000}px`)
+    expect(screen.getByTestId('cursor-time').style.left).toBe('250px')
+    expect(screen.getByTestId('total-time').style.left).toBe('1000px')
+    expect(screen.getByTestId('total-time').style.top).toBe('500px')
+  })
+
+  it('shows no time tips for a stream without a known length', async () => {
+    media.duration = Infinity
+    h.render(Component)
+
+    await vi.advanceTimersByTimeAsync(250)
+    screen.getByRole('slider', { name: 'Seek' }).dispatchEvent(new MouseEvent('mousemove', { clientX: 250 }))
+    await h.tick()
+
+    expect(screen.queryByTestId('total-time')).toBeNull()
+  })
+
+  it('hides the total time tip when the cursor gets close to it', async () => {
+    h.render(Component)
+    await vi.advanceTimersByTimeAsync(250)
+
+    const track = document.querySelector<HTMLElement>('.track')!
+    vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({ left: 0, top: 500, width: 1000 } as DOMRect)
+
+    screen.getByRole('slider', { name: 'Seek' }).dispatchEvent(new MouseEvent('mousemove', { clientX: 950 }))
+    await h.tick()
+
+    screen.getByTestId('cursor-time')
+    expect(screen.queryByTestId('total-time')).toBeNull()
+  })
+
+  it('hides the time tips when the pointer leaves the bar', async () => {
+    h.render(Component)
+    await vi.advanceTimersByTimeAsync(250)
+    const slider = screen.getByRole('slider', { name: 'Seek' })
+
+    slider.dispatchEvent(new MouseEvent('mousemove', { clientX: 250 }))
+    await h.tick()
+    slider.dispatchEvent(new MouseEvent('mouseleave'))
+    await h.tick()
+
+    expect(screen.queryByTestId('total-time')).toBeNull()
+  })
+
   it('seeks to the start with Home', async () => {
     h.render(Component)
 
