@@ -132,7 +132,7 @@ const onReorder = (target: Playable, placement: Placement) =>
   queueStore.move(selectedPlayables.value, target, placement)
 
 onScreenActivated('Queue', async () => {
-  if (!cache.get('song-to-queue')) {
+  if (!cache.get('playable-to-queue')) {
     return
   }
 
@@ -140,7 +140,7 @@ onScreenActivated('Queue', async () => {
 
   try {
     loading.value = true
-    playable = await playableStore.resolve(cache.get('song-to-queue')!)
+    playable = await playableStore.resolve(cache.get('playable-to-queue')!)
 
     if (!playable) {
       throw new Error('Song not found')

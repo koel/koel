@@ -203,7 +203,7 @@ export default class Router {
       return null
     }
 
-    route.meta?.onResolve?.(params)
+    route.meta?.onResolved?.(params)
 
     if (route.meta?.redirect) {
       const to = route.meta.redirect(params)
