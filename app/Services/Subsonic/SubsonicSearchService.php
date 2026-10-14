@@ -29,7 +29,10 @@ class SubsonicSearchService
     {
         return self::isBrowseAll($query)
             ? $this->artistRepository->getOrdered('artists.name', 'asc', $count, $offset, $user)
-            : $this->artistRepository->search($query, $count, $user);
+            : $this->artistRepository
+                ->search($query, $offset + $count, $user)
+                ->skip($offset)
+                ->values();
     }
 
     /** @return Collection<int, Album> */
@@ -37,7 +40,10 @@ class SubsonicSearchService
     {
         return self::isBrowseAll($query)
             ? $this->albumRepository->getOrdered('albums.name', 'asc', $count, $offset, $user)
-            : $this->albumRepository->search($query, $count, $user);
+            : $this->albumRepository
+                ->search($query, $offset + $count, $user)
+                ->skip($offset)
+                ->values();
     }
 
     /** @return Collection<int, Song> */
@@ -46,7 +52,10 @@ class SubsonicSearchService
         return (
             self::isBrowseAll($query)
                 ? $this->songRepository->getOrdered(['songs.title'], 'asc', $count, $offset, $user)
-                : $this->songRepository->search($query, $count, $user)
+                : $this->songRepository
+                    ->search($query, $offset + $count, $user)
+                    ->skip($offset)
+                    ->values()
         );
     }
 
