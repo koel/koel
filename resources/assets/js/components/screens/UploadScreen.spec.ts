@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
+import { UploadTracker } from '@/services/uploadTracker'
 import Component from './UploadScreen.vue'
 
 const queueFilesForUploadMock = vi.fn()
@@ -27,20 +29,20 @@ describe('uploadScreen.vue', () => {
     Element.prototype.scrollTo = vi.fn()
     vi.spyOn(uploadService, 'fetchDuplicates').mockResolvedValue(undefined)
     uploadService.state.duplicatedSongs = []
+    uploadService.tracker = new UploadTracker()
   })
 
   it('shows empty state when no files are queued', () => {
-    uploadService.state.files = []
     h.render(Component)
     screen.getByText(/Drop files.*to upload/)
     screen.getByText('or click here to select songs')
   })
 
   it('renders upload items when files are queued', async () => {
-    uploadService.state.files = [
+    uploadService.tracker.add([
       { id: '1', file: new File([], 'song.mp3'), status: 'Uploading', name: 'song.mp3', progress: 50 },
       { id: '2', file: new File([], 'track.flac'), status: 'Ready', name: 'track.flac', progress: 0 },
-    ]
+    ])
 
     h.render(Component)
 
@@ -49,9 +51,9 @@ describe('uploadScreen.vue', () => {
   })
 
   it('does not show retry and remove buttons when there are no failures', () => {
-    uploadService.state.files = [
+    uploadService.tracker.add([
       { id: '1', file: new File([], 'good.mp3'), status: 'Uploaded', name: 'good.mp3', progress: 100 },
-    ]
+    ])
 
     h.render(Component)
 
@@ -62,9 +64,9 @@ describe('uploadScreen.vue', () => {
   it('retries all failed uploads', async () => {
     const retryAllMock = h.mock(uploadService, 'retryAll')
 
-    uploadService.state.files = [
+    uploadService.tracker.add([
       { id: '1', file: new File([], 'bad.mp3'), status: 'Errored', name: 'bad.mp3', progress: 0 },
-    ]
+    ])
 
     h.render(Component)
     await h.user.click(await screen.findByTestId('upload-filter-errored'))
@@ -77,9 +79,9 @@ describe('uploadScreen.vue', () => {
   it('removes failed entries', async () => {
     const removeFailedMock = h.mock(uploadService, 'removeFailed')
 
-    uploadService.state.files = [
+    uploadService.tracker.add([
       { id: '1', file: new File([], 'bad.mp3'), status: 'Errored', name: 'bad.mp3', progress: 0 },
-    ]
+    ])
 
     h.render(Component)
     await h.user.click(await screen.findByTestId('upload-filter-errored'))
@@ -90,13 +92,13 @@ describe('uploadScreen.vue', () => {
   })
 
   it('sorts the files into tabs by state', async () => {
-    uploadService.state.files = [
+    uploadService.tracker.add([
       { id: '1', file: new File([], 'done.mp3'), status: 'Uploaded', name: 'done.mp3', progress: 100 },
       { id: '2', file: new File([], 'going.mp3'), status: 'Uploading', name: 'going.mp3', progress: 30 },
       { id: '3', file: new File([], 'queued.mp3'), status: 'Ready', name: 'queued.mp3', progress: 0 },
       { id: '4', file: new File([], 'notes.txt'), status: 'Skipped', name: 'notes.txt', progress: 0 },
       { id: '5', file: new File([], 'bad.mp3'), status: 'Canceled', name: 'bad.mp3', progress: 0 },
-    ]
+    ])
 
     h.render(Component)
 
@@ -113,13 +115,15 @@ describe('uploadScreen.vue', () => {
   })
 
   it('renders only the rows in view for a long list', async () => {
-    uploadService.state.files = Array.from({ length: 100 }, (_, i) => ({
-      id: `${i}`,
-      file: new File([], `song-${i}.mp3`),
-      status: 'Ready' as const,
-      name: `song-${i}.mp3`,
-      progress: 0,
-    }))
+    uploadService.tracker.add(
+      Array.from({ length: 100 }, (_, i) => ({
+        id: `${i}`,
+        file: new File([], `song-${i}.mp3`),
+        status: 'Ready' as const,
+        name: `song-${i}.mp3`,
+        progress: 0,
+      })),
+    )
 
     h.render(Component)
 
@@ -128,24 +132,61 @@ describe('uploadScreen.vue', () => {
   })
 
   it('switches to In Progress once nothing is left in Errored', async () => {
-    uploadService.state.files = [
-      { id: '1', file: new File([], 'bad.mp3'), status: 'Errored', name: 'bad.mp3', progress: 0 },
-    ]
+    const file: UploadFile = { id: '1', file: new File([], 'bad.mp3'), status: 'Errored', name: 'bad.mp3', progress: 0 }
+    uploadService.tracker.add([file])
 
     h.render(Component)
 
     await h.user.click(await screen.findByTestId('upload-filter-errored'))
-    uploadService.state.files[0].status = 'Ready'
+    uploadService.tracker.update(file, { status: 'Ready' })
 
     await waitFor(() =>
       expect(screen.getByTestId('upload-filter-in-progress').querySelector('input')?.checked).toBe(true),
     )
   })
 
+  it('moves a file to Done once it is uploaded', async () => {
+    const file: UploadFile = {
+      id: '1',
+      file: new File([], 'song.mp3'),
+      status: 'Uploading',
+      name: 'song.mp3',
+      progress: 0,
+    }
+    uploadService.tracker.add([file])
+
+    h.render(Component)
+
+    await h.user.click(await screen.findByTestId('upload-filter-done'))
+    uploadService.tracker.update(file, { status: 'Uploaded' })
+
+    await screen.findByTestId('upload-item-uploaded')
+    expect(screen.getByTestId('upload-filter-count-done').dataset.count).toBe('1')
+    expect(screen.getByTestId('upload-filter-count-in-progress').dataset.count).toBe('0')
+  })
+
+  it('updates a row as its file changes', async () => {
+    const file: UploadFile = {
+      id: '1',
+      file: new File([], 'song.mp3'),
+      status: 'Uploading',
+      name: 'song.mp3',
+      progress: 0,
+    }
+    uploadService.tracker.add([file])
+
+    h.render(Component)
+
+    await screen.findByTestId('upload-item')
+    uploadService.tracker.update(file, { status: 'Processing' })
+
+    await screen.findByTestId('upload-item-processing')
+  })
+
   it('offers no bulk duplicate actions when there are no duplicates', async () => {
-    uploadService.state.files = [
+    uploadService.tracker.add([
       { id: '1', file: new File([], 'song.mp3'), status: 'Uploading', name: 'song.mp3', progress: 0 },
-    ]
+    ])
 
     h.render(Component)
 
@@ -155,9 +196,9 @@ describe('uploadScreen.vue', () => {
   })
 
   it('offers the drop prompt while nothing is in progress', async () => {
-    uploadService.state.files = [
+    uploadService.tracker.add([
       { id: '1', file: new File([], 'done.mp3'), status: 'Uploaded', name: 'done.mp3', progress: 100 },
-    ]
+    ])
 
     h.render(Component)
 

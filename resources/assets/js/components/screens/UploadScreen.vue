@@ -14,7 +14,7 @@
       @dragover.prevent
     >
       <div v-if="showsFilters" :class="{ 'flex-1': !showsDropPrompt }" class="min-h-0 flex flex-col gap-4">
-        <UploadSummary v-if="files.length" class="mb-4" />
+        <UploadSummary v-if="hasFiles" class="mb-4" />
 
         <SegmentedControl v-model="currentFilter" :options="filterOptions" class="self-center" name="upload-filter">
           <template #default="{ option }">
@@ -39,9 +39,9 @@
           />
 
           <VirtualScroller
-            v-else-if="currentFilter !== 'duplicated' && filesByFilter[currentFilter].length"
+            v-else-if="visibleFiles.length"
             :item-height="ROW_HEIGHT"
-            :items="filesByFilter[currentFilter]"
+            :items="visibleFiles"
             class="flex-1 -mr-6 pr-6"
           >
             <template #default="{ item }: { item: UploadFile }">
@@ -51,7 +51,7 @@
             </template>
           </VirtualScroller>
 
-          <footer v-if="currentFilter === 'errored' && filesByFilter.errored.length" class="flex justify-end gap-2">
+          <footer v-if="currentFilter === 'errored' && filterCounts.errored" class="flex justify-end gap-2">
             <Btn variant="success" data-testid="upload-retry-all-btn" @click="retryAll">Retry All</Btn>
             <Btn variant="destructive" data-testid="upload-remove-all-btn" @click="removeFailedEntries">
               Remove Failed
@@ -141,17 +141,14 @@ const { allowsUpload, mediaPathSetUp, queueFilesForUpload, handleDropEvent } = u
 
 const duplicatedSongs = toRef(uploadService.state, 'duplicatedSongs')
 
-const files = toRef(uploadService.state, 'files')
 const currentFilter = ref<UploadFilter>('in-progress')
 
-const filesByFilter = computed(
-  () =>
-    Object.fromEntries(
-      Object.entries(FILTER_STATUSES).map(([filter, statuses]) => [
-        filter,
-        files.value.filter(({ status }) => statuses.includes(status)),
-      ]),
-    ) as Record<FileFilter, UploadFile[]>,
+const hasFiles = computed(() => uploadService.tracker.size > 0)
+
+const visibleFiles = computed(() =>
+  currentFilter.value === 'duplicated'
+    ? []
+    : uploadService.tracker.getFilesWithStatus(FILTER_STATUSES[currentFilter.value]),
 )
 
 const filterOptions = computed(() =>
@@ -163,17 +160,17 @@ const filterOptions = computed(() =>
 )
 
 const filterCounts = computed<Record<UploadFilter, number>>(() => ({
-  'in-progress': filesByFilter.value['in-progress'].length,
-  done: filesByFilter.value.done.length,
-  skipped: filesByFilter.value.skipped.length,
-  errored: filesByFilter.value.errored.length,
+  'in-progress': uploadService.tracker.count(FILTER_STATUSES['in-progress']),
+  done: uploadService.tracker.count(FILTER_STATUSES.done),
+  skipped: uploadService.tracker.count(FILTER_STATUSES.skipped),
+  errored: uploadService.tracker.count(FILTER_STATUSES.errored),
   duplicated: duplicatedSongs.value.length,
 }))
 
-const showsFilters = computed(() => files.value.length > 0 || duplicatedSongs.value.length > 0)
+const showsFilters = computed(() => hasFiles.value || duplicatedSongs.value.length > 0)
 
 const showsDropPrompt = computed(
-  () => !showsFilters.value || (currentFilter.value === 'in-progress' && !filesByFilter.value['in-progress'].length),
+  () => !showsFilters.value || (currentFilter.value === 'in-progress' && !filterCounts.value['in-progress']),
 )
 
 const droppable = ref(false)
@@ -205,7 +202,7 @@ const retryAll = () => uploadService.retryAll()
 const removeFailedEntries = () => uploadService.removeFailed()
 
 watch(
-  () => filesByFilter.value.errored.length,
+  () => filterCounts.value.errored,
   erroredCount => {
     if (!erroredCount && currentFilter.value === 'errored') {
       currentFilter.value = 'in-progress'
@@ -216,7 +213,7 @@ watch(
 onMounted(async () => {
   await uploadService.fetchDuplicates()
 
-  if (!files.value.length && duplicatedSongs.value.length) {
+  if (!hasFiles.value && duplicatedSongs.value.length) {
     currentFilter.value = 'duplicated'
   }
 })

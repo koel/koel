@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { commonStore } from '@/stores/commonStore'
 import { uploadService } from '@/services/uploadService'
+import { UploadTracker } from '@/services/uploadTracker'
 import { addFilter, removeFilter } from '@/hooks'
 import { Filter } from '@/config/hooks'
 import type { UploadFile, UploadStatus } from '@/services/uploadService'
@@ -42,6 +43,7 @@ import { useUpload } from './useUpload'
 describe('useUpload', () => {
   afterEach(() => {
     device.any = false
+    uploadService.tracker = new UploadTracker()
   })
 
   it('allows uploading on a desktop device', () => {
@@ -85,7 +87,9 @@ describe('useUpload', () => {
     const result = queueFilesForUpload([new File(['content'], 'notes.txt', { type: 'text/plain' })])
 
     expect(result).toEqual([])
-    expect(uploadService.state.files.map(({ name, status }) => [name, status])).toContainEqual(['notes.txt', 'Skipped'])
+    expect(
+      uploadService.tracker.getFilesWithStatus(['Skipped']).map(({ name, status }) => [name, status]),
+    ).toContainEqual(['notes.txt', 'Skipped'])
   })
 
   it('never sends the selected uploads a filter skips', () => {
@@ -96,10 +100,9 @@ describe('useUpload', () => {
     const result = useUpload().queueFilesForUpload([new File(['content'], 'blocked.mp3', { type: 'audio/mpeg' })])
 
     expect(result).toEqual([])
-    expect(uploadService.state.files.map(({ name, status }) => [name, status])).toContainEqual([
-      'blocked.mp3',
-      'Skipped',
-    ])
+    expect(
+      uploadService.tracker.getFilesWithStatus(['Skipped']).map(({ name, status }) => [name, status]),
+    ).toContainEqual(['blocked.mp3', 'Skipped'])
 
     removeFilter(handle)
   })
@@ -115,7 +118,7 @@ describe('useUpload', () => {
       'Errored',
       'Skipped',
     ]
-    uploadService.state.files = statuses.map(status => ({ status }) as UploadFile)
+    uploadService.tracker.add(statuses.map(status => ({ status, file: new File([], 'song.mp3') }) as UploadFile))
 
     expect(useUpload().unfinishedUploadCount.value).toBe(3)
   })

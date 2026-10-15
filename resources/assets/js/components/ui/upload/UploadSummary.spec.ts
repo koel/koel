@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import type { UploadFile, UploadStatus } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
+import { UploadTracker } from '@/services/uploadTracker'
 import Component from './UploadSummary.vue'
 
 const makeFile = (status: UploadStatus, progress = 0): UploadFile => ({
@@ -16,16 +17,19 @@ const makeFile = (status: UploadStatus, progress = 0): UploadFile => ({
 describe('uploadSummary.vue', () => {
   const h = createHarness()
 
-  beforeEach(() => vi.useFakeTimers())
+  beforeEach(() => {
+    vi.useFakeTimers()
+    uploadService.tracker = new UploadTracker()
+  })
   afterEach(() => vi.useRealTimers())
 
   it('shows how much of the batch is sent', () => {
-    uploadService.state.files = [
+    uploadService.tracker.add([
       makeFile('Uploaded'),
       makeFile('Uploading', 50),
       makeFile('Errored'),
       makeFile('Skipped'),
-    ]
+    ])
 
     h.render(Component)
 
@@ -34,11 +38,12 @@ describe('uploadSummary.vue', () => {
   })
 
   it('estimates the time left from the upload speed', async () => {
-    uploadService.state.files = [makeFile('Uploading', 0)]
+    const file = makeFile('Uploading', 0)
+    uploadService.tracker.add([file])
 
     h.render(Component)
 
-    uploadService.state.files[0].progress = 10
+    uploadService.tracker.update(file, { progress: 10 })
     await vi.advanceTimersByTimeAsync(1000)
 
     expect(screen.getByTestId('time-left').dataset.seconds).toBe('9')
