@@ -3,8 +3,12 @@
 namespace Tests\Unit\Services\Network;
 
 use App\Exceptions\UnsafeUrlException;
+use App\Services\Network\Network;
 use App\Services\Network\SafeHttp;
+use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -57,6 +61,25 @@ class SafeHttpTest extends TestCase
         ]);
 
         self::assertTrue($this->safeHttp->head('https://8.8.8.8/feed')->successful());
+    }
+
+    #[Test]
+    public function pinsEveryValidatedIpOfAHostInASingleResolveEntry(): void
+    {
+        $network = Mockery::mock(Network::class);
+        $network->expects('resolveToPublicIps')->with('podcast.test')->andReturn(['23.32.242.163', '2a02:26f0::1']);
+
+        $resolveEntries = null;
+
+        Http::fake(static function (Request $request, array $options) use (&$resolveEntries): PromiseInterface {
+            $resolveEntries = $options['curl'][CURLOPT_RESOLVE];
+
+            return Http::response();
+        });
+
+        (new SafeHttp($network))->get('https://podcast.test/feed');
+
+        self::assertSame(['podcast.test:443:23.32.242.163,[2a02:26f0::1]'], $resolveEntries);
     }
 
     #[Test]
