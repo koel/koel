@@ -274,7 +274,7 @@ class DirectoryScannerTest extends TestCase
             jobs: 2,
         ), report: false);
 
-        self::assertSame($temporaryFilesBefore, glob(sys_get_temp_dir() . '/koel_scan_*'));
+        self::assertSame([], array_diff(glob(sys_get_temp_dir() . '/koel_scan_*'), $temporaryFilesBefore));
         $this->assertDatabaseEmpty(ScannedFile::class);
     }
 
