@@ -1,5 +1,9 @@
 <template>
-  <article class="w-[650px]" :class="(loading || encryptingOptions) && 'pointer-events-none opacity-70'">
+  <article
+    class="w-[650px]"
+    :class="(loading || encryptingOptions) && 'pointer-events-none opacity-70'"
+    @keydown.esc="emit('close')"
+  >
     <header>
       <h1>Embed {{ typeLabel }}</h1>
     </header>

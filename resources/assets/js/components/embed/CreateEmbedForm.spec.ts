@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { embedService } from '@/stores/embedService'
-import { screen, waitFor } from '@testing-library/vue'
+import { fireEvent, screen, waitFor } from '@testing-library/vue'
 import Component from './CreateEmbedForm.vue'
 import { themeStore } from '@/stores/themeStore'
 
@@ -114,5 +114,13 @@ describe('createEmbedForm.vue', () => {
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       expect.stringContaining(`<iframe src="http://test/#/embed/${embed.id}/encrypted-1"`),
     )
+  })
+
+  it('closes on Escape', async () => {
+    const { emitted } = await renderComponent()
+
+    await fireEvent.keyDown(screen.getByRole('combobox', { name: 'Layout' }), { key: 'Escape' })
+
+    expect(emitted().close).toHaveLength(1)
   })
 })

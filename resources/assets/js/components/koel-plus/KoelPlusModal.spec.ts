@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/vue'
+import { fireEvent, screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { DialogBoxStub } from '@/__tests__/stubs'
@@ -91,5 +91,13 @@ describe('koelPlusModal.vue', () => {
     h.render(Component)
     await h.user.click(screen.getByText('I have a license key'))
     screen.getByTestId('activateForm')
+  })
+
+  it('closes on Escape', async () => {
+    const { emitted } = h.render(Component)
+
+    await fireEvent.keyDown(screen.getByTestId('koel-plus'), { key: 'Escape' })
+
+    expect(emitted().close).toHaveLength(1)
   })
 })
