@@ -36,6 +36,7 @@ describe('artistEvent.vue', () => {
           name: 'Backstage',
           url: 'https://www.metalfest.com/venue/backstage',
           city: 'Munich',
+          country: 'Germany',
         },
       }),
     )

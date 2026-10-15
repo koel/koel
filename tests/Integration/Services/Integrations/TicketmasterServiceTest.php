@@ -81,8 +81,35 @@ class TicketmasterServiceTest extends TestCase
             'name' => 'Slayer',
         ]);
 
-        $events = $this->service->searchEventForArtist($artist, '84.124.22.13');
-        self::assertCount(2, $events);
+        $result = $this->service->searchEventForArtist($artist, '84.124.22.13');
+
+        self::assertCount(2, $result->events);
+        self::assertTrue($result->nearby);
+    }
+
+    #[Test]
+    public function searchEventsWorldwideWhenThereAreNoneNearby(): void
+    {
+        Saloon::fake([
+            AttractionSearchRequest::class => MockResponse::make(body: File::json(test_path(
+                'fixtures/ticketmaster/attraction-search.json',
+            ))),
+            EventSearchRequest::class => static fn (PendingRequest $request) => (
+                $request->query()->get('countryCode')
+                    ? MockResponse::make(body: ['page' => ['totalElements' => 0]])
+                    : MockResponse::make(body: File::json(test_path('fixtures/ticketmaster/event-search.json')))
+            ),
+            GetLiteDataRequest::class => MockResponse::make(body: File::json(test_path(
+                'fixtures/ipinfo/lite-data.json',
+            ))),
+        ]);
+
+        $artist = Artist::factory()->createOne(['name' => 'Slayer']);
+
+        $result = $this->service->searchEventForArtist($artist, '84.124.22.13');
+
+        self::assertCount(2, $result->events);
+        self::assertFalse($result->nearby);
     }
 
     #[Test]
@@ -111,7 +138,7 @@ class TicketmasterServiceTest extends TestCase
 
         $artist = Artist::factory()->createOne(['name' => 'Coolio']);
 
-        self::assertSame($events, $this->service->searchEventForArtist($artist, '84.124.22.13'));
+        self::assertSame($events, $this->service->searchEventForArtist($artist, '84.124.22.13')->events);
         Saloon::assertNothingSent();
     }
 
@@ -132,7 +159,7 @@ class TicketmasterServiceTest extends TestCase
 
         $artist = Artist::factory()->createOne(['name' => $name]);
 
-        self::assertEmpty($this->service->searchEventForArtist($artist, '84.124.22.13'));
+        self::assertEmpty($this->service->searchEventForArtist($artist, '84.124.22.13')->events);
         Saloon::assertNothingSent();
     }
 }

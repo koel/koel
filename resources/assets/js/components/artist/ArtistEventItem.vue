@@ -20,8 +20,7 @@
         </dd>
         <dt class="sr-only">Venue</dt>
         <dd>
-          <template v-if="event.venue.name">{{ event.venue.name }},</template>
-          {{ event.venue.city }}
+          {{ [event.venue.name, event.venue.city, event.venue.country].filter(Boolean).join(', ') }}
         </dd>
       </dl>
 

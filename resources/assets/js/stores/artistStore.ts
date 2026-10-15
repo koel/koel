@@ -121,6 +121,6 @@ export const artistStore = {
   },
 
   async fetchEvents(artist: Artist) {
-    return await http.get<LiveEvent[]>(`artists/${artist.id}/events`)
+    return await http.get<{ events: LiveEvent[]; nearby: boolean }>(`artists/${artist.id}/events`)
   },
 }

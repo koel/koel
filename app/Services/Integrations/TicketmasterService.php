@@ -8,6 +8,7 @@ use App\Http\Integrations\Ticketmaster\Requests\EventSearchRequest;
 use App\Http\Integrations\Ticketmaster\TicketmasterConnector;
 use App\Models\Artist;
 use App\Services\Geolocation\Contracts\GeolocationService;
+use App\Values\Ticketmaster\ArtistEventSearchResult;
 use App\Values\Ticketmaster\TicketmasterAttraction;
 use App\Values\Ticketmaster\TicketmasterEvent;
 use Illuminate\Container\Attributes\Config;
@@ -29,19 +30,33 @@ class TicketmasterService
         return License::isPlus() && config('koel.services.ticketmaster.key');
     }
 
-    /** @return Collection<TicketmasterEvent>|array<array-key, TicketmasterEvent> */
-    public function searchEventForArtist(Artist $artist, string $ip): Collection
+    public function searchEventForArtist(Artist $artist, string $ip): ArtistEventSearchResult
     {
         if (!$artist->is_standard) {
-            return collect();
+            return ArtistEventSearchResult::make(collect(), nearby: true);
         }
 
-        $artistName = $artist->name;
         $countryCode = $this->geolocator->getCountryCodeFromIp($ip) ?: $this->defaultCountryCode;
 
+        if (!$countryCode) {
+            return ArtistEventSearchResult::make($this->searchEvents($artist->name, null), nearby: true);
+        }
+
+        $nearbyEvents = $this->searchEvents($artist->name, $countryCode);
+
+        if ($nearbyEvents->isNotEmpty()) {
+            return ArtistEventSearchResult::make($nearbyEvents, nearby: true);
+        }
+
+        return ArtistEventSearchResult::make($this->searchEvents($artist->name, null), nearby: false);
+    }
+
+    /** @return Collection<int, TicketmasterEvent> */
+    private function searchEvents(string $artistName, ?string $countryCode): Collection
+    {
         return rescue(function () use ($artistName, $countryCode) {
             return Cache::remember(
-                cache_key('Ticketmaster events', $artistName, $countryCode),
+                cache_key('Ticketmaster events', $artistName, $countryCode ?? 'any country'),
                 now()->addDay(),
                 function () use ($artistName, $countryCode): Collection {
                     $attractionId = $this->getAttractionIdForArtist($artistName);

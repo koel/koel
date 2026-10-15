@@ -14,7 +14,7 @@ class EventSearchRequest extends Request
 
     public function __construct(
         private readonly string $attractionId,
-        private readonly string $countryCode,
+        private readonly ?string $countryCode,
     ) {}
 
     public function resolveEndpoint(): string
@@ -25,11 +25,11 @@ class EventSearchRequest extends Request
     /** @inheritdoc */
     protected function defaultQuery(): array
     {
-        return [
+        return array_filter([
             'attractionId' => $this->attractionId,
             'countryCode' => $this->countryCode,
             'classificationName' => ['Music'],
-        ];
+        ]);
     }
 
     /** @return Collection<TicketmasterEvent>|array<array-key, TicketmasterEvent> */

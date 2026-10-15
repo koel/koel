@@ -870,6 +870,7 @@ interface LiveEvent {
     name: string
     url: string
     city: string
+    country: string
   }
 }
 

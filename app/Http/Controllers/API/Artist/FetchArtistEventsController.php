@@ -14,9 +14,11 @@ class FetchArtistEventsController extends Controller
 {
     public function __invoke(Artist $artist, TicketmasterService $ticketmasterService, Request $request)
     {
-        return LiveEventResource::collection($ticketmasterService->searchEventForArtist(
-            $artist,
-            $request->getClientIp(),
-        ));
+        $result = $ticketmasterService->searchEventForArtist($artist, $request->getClientIp());
+
+        return response()->json([
+            'events' => LiveEventResource::collection($result->events),
+            'nearby' => $result->nearby,
+        ]);
     }
 }
