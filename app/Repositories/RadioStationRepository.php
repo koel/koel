@@ -17,8 +17,7 @@ class RadioStationRepository extends Repository implements ScoutableRepository
     {
         $stations = RadioStation::query()
             ->withUserContext(user: $user ?? $this->auth->user())
-            ->whereIn('radio_stations.id', $ids)
-            ->get();
+            ->getWhereInChunks('radio_stations.id', $ids);
 
         return $preserveOrder ? $stations->orderByArray($ids) : $stations;
     }

@@ -100,7 +100,8 @@ abstract class Repository implements RepositoryContract
     /** @inheritDoc */
     public function getMany(array $ids, bool $preserveOrder = false): Collection
     {
-        $models = $this->modelClass::query()->find($ids);
+        $query = $this->modelClass::query();
+        $models = $query->getWhereInChunks($query->getModel()->getQualifiedKeyName(), $ids);
 
         return $preserveOrder ? $models->orderByArray($ids) : $models;
     }

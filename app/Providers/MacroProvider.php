@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -15,11 +16,39 @@ use Illuminate\Testing\TestResponse;
 
 class MacroProvider extends ServiceProvider
 {
+    public const int WHERE_IN_CHUNK_SIZE = 500;
+
     public function boot(): void
     {
         Collection::macro('orderByArray', function (array $orderBy, string $key = 'id') {
             /** @var Collection $this */
-            return $this->sortBy(static fn ($item) => array_search($item->$key, $orderBy, true))->values();
+            $positions = array_flip(array_values(array_unique($orderBy)));
+
+            return $this->sortBy(static fn ($item): ?int => $positions[$item->$key] ?? null)->values();
+        });
+
+        Builder::macro('getWhereInChunks', function (
+            string $column,
+            array $values,
+            int $chunkSize = MacroProvider::WHERE_IN_CHUNK_SIZE,
+        ): EloquentCollection {
+            /** @var Builder $this */
+            $models = collect(array_unique($values))
+                ->chunk($chunkSize)
+                ->flatMap(fn (Collection $chunk): EloquentCollection => (clone $this)->whereIn($column, $chunk)->get());
+
+            return $this->getModel()->newCollection($models->all());
+        });
+
+        Builder::macro('countWhereInChunks', function (
+            string $column,
+            array $values,
+            int $chunkSize = MacroProvider::WHERE_IN_CHUNK_SIZE,
+        ): int {
+            /** @var Builder $this */
+            return collect(array_unique($values))
+                ->chunk($chunkSize)
+                ->sum(fn (Collection $chunk): int => (clone $this)->whereIn($column, $chunk)->count());
         });
 
         Builder::macro('logSql', function (): Builder {

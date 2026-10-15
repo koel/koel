@@ -431,8 +431,7 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         $songs = Song::query(user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
-            ->whereIn('songs.id', $ids)
-            ->get();
+            ->getWhereInChunks('songs.id', $ids);
 
         return $preserveOrder ? $songs->orderByArray($ids) : $songs; // @phpstan-ignore-line
     }
@@ -442,8 +441,7 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         return Song::query(user: $scopedUser ?? $this->auth->user())
             ->accessible()
-            ->whereIn('songs.id', $ids)
-            ->count();
+            ->countWhereInChunks('songs.id', $ids);
     }
 
     /**
@@ -471,8 +469,7 @@ class SongRepository extends Repository implements ScoutableRepository
                         'playlist_song.created_at as added_at',
                     );
             })
-            ->whereIn('songs.id', $ids)
-            ->get();
+            ->getWhereInChunks('songs.id', $ids);
     }
 
     /** @param string $id */

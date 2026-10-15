@@ -215,8 +215,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
         $albums = Album::query()
             ->onlyStandard()
             ->withUserContext(user: $user ?? $this->auth->user())
-            ->whereIn('albums.id', $ids)
-            ->get();
+            ->getWhereInChunks('albums.id', $ids);
 
         return $preserveOrder ? $albums->orderByArray($ids) : $albums;
     }
