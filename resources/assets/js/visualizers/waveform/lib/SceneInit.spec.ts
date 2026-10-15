@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 
-const renderers = vi.hoisted(() => [] as { forceContextLoss: () => void }[])
+const renderers = vi.hoisted<{ forceContextLoss: () => void }[]>(() => [])
 
 vi.mock('three', async importOriginal => ({
   ...(await importOriginal<typeof import('three')>()),
