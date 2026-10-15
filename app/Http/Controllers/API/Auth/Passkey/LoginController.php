@@ -19,11 +19,7 @@ class LoginController extends Controller
     public function __invoke(PasskeyLoginRequest $request)
     {
         try {
-            $user = $this->passkeyService->verifyLogin(
-                $request->login_token,
-                $request->credential(),
-                $request->getSchemeAndHttpHost(),
-            );
+            $user = $this->passkeyService->verifyLogin($request->login_token, $request->credential());
         } catch (InvalidLoginTokenException) {
             abort(Response::HTTP_UNAUTHORIZED, 'Invalid credentials');
         }

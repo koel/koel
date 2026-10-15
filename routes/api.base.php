@@ -110,6 +110,7 @@ use App\Http\Controllers\API\Upload\PresignUploadController;
 use App\Http\Controllers\API\Upload\UploadSongController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\UserInvitationController;
+use App\Http\Middleware\AllowPasskeysFromRequestOrigin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -124,8 +125,10 @@ Route::prefix('api')
             Route::post('me', LoginWithCredentialsController::class)->name('auth.login');
             Route::post('me/otp', LoginWithOneTimeTokenController::class);
             Route::post('me/two-factor-challenge', TwoFactorChallengeController::class);
-            Route::get('me/passkey-login-options', PasskeyLoginOptionsController::class);
-            Route::post('me/passkey-login', PasskeyLoginController::class);
+            Route::middleware(AllowPasskeysFromRequestOrigin::class)->group(static function (): void {
+                Route::get('me/passkey-login-options', PasskeyLoginOptionsController::class);
+                Route::post('me/passkey-login', PasskeyLoginController::class);
+            });
 
             Route::delete('me', LogoutController::class);
 
@@ -277,9 +280,11 @@ Route::prefix('api')
             Route::post('me/two-factor/recovery-codes', RegenerateRecoveryCodesController::class);
             Route::delete('me/two-factor', DisableTwoFactorController::class);
 
-            Route::get('me/passkeys/confirmation-options', PasskeyConfirmationOptionsController::class);
-            Route::post('me/passkeys/registration-options', PasskeyRegistrationOptionsController::class);
-            Route::apiResource('me/passkeys', PasskeyController::class)->only(['index', 'store', 'destroy']);
+            Route::middleware(AllowPasskeysFromRequestOrigin::class)->group(static function (): void {
+                Route::get('me/passkeys/confirmation-options', PasskeyConfirmationOptionsController::class);
+                Route::post('me/passkeys/registration-options', PasskeyRegistrationOptionsController::class);
+                Route::apiResource('me/passkeys', PasskeyController::class)->only(['index', 'store', 'destroy']);
+            });
 
             // Last.fm-related routes
             Route::get('lastfm/authorization-url', GetLastfmAuthorizationUrlController::class);

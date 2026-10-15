@@ -18,11 +18,7 @@ class RegistrationOptionsController extends Controller
     public function __invoke(PasskeyRegistrationOptionsRequest $request, Authenticatable $user)
     {
         if ($request->has('credential')) {
-            $this->passkeyService->confirmIdentityWithPasskey(
-                $user,
-                $request->credential(),
-                $request->getSchemeAndHttpHost(),
-            );
+            $this->passkeyService->confirmIdentityWithPasskey($user, $request->credential());
         } else {
             $this->passkeyService->confirmIdentityWithPassword($user, $request->password, $request->code);
         }
