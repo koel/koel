@@ -26,7 +26,7 @@ const countSentBytes = (file: UploadFile) => {
 
 export class UploadTracker {
   private readonly reactiveFiles = new Map<UploadFile, UploadFile>()
-  private readonly filesInQueueOrder: UploadFile[] = []
+  private readonly filesInQueueOrder: Array<UploadFile | undefined> = []
   private readonly queuePositions = new WeakMap<UploadFile, number>()
   private readonly filesByUploadKey = new Map<string, UploadFile>()
   private readonly statusGroups = new Map<string, StatusGroup>()
@@ -81,6 +81,7 @@ export class UploadTracker {
       return
     }
 
+    this.filesInQueueOrder[this.queuePositions.get(rawFile)!] = undefined
     this.unindexUploadKey(rawFile)
     this.adjustTotals(rawFile, -1)
     this.counts[rawFile.status] -= 1
@@ -145,7 +146,7 @@ export class UploadTracker {
     for (; this.firstReadyPosition < this.filesInQueueOrder.length; ++this.firstReadyPosition) {
       const file = this.filesInQueueOrder[this.firstReadyPosition]
 
-      if (file.status === 'Ready' && this.reactiveFiles.has(file)) {
+      if (file?.status === 'Ready') {
         return this.reactiveFiles.get(file)
       }
     }

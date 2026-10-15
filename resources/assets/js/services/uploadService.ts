@@ -92,7 +92,7 @@ export const uploadService = {
 
   queue(file: UploadFile | UploadFile[]) {
     this.ensureLeavingIsGuarded()
-    this.tracker.add(([] as UploadFile[]).concat(file))
+    this.tracker.add(Array<UploadFile>().concat(file))
     this.proceed()
   },
 
