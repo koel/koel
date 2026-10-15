@@ -11,6 +11,7 @@ use App\Services\Auth\TokenManager;
 use App\Services\Auth\TwoFactorAuthenticator;
 use App\Services\SecurityNoticeService;
 use App\Values\CompositeToken;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Passwords\PasswordBroker;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Password;
@@ -85,6 +86,17 @@ class AuthenticationServiceTest extends TestCase
         $cached = Cache::pull(cache_key('two-factor login token', $token));
         self::assertNotNull($cached);
         self::assertSame($user->id, decrypt($cached));
+    }
+
+    #[Test]
+    public function logUserInRejectsUserPendingDeletion(): void
+    {
+        $user = create_user(['deletion_requested_at' => now()]);
+        $this->tokenManager->expects('createCompositeToken')->never();
+
+        $this->expectException(AuthenticationException::class);
+
+        $this->service->logUserIn($user);
     }
 
     #[Test]

@@ -77,6 +77,20 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /**
+     * @param array<string> $ids
+     *
+     * @return Collection<int, Song>
+     */
+    public function getManyForFileRemoval(array $ids): Collection
+    {
+        return Song::query()
+            ->withoutEagerLoads()
+            ->whereKey($ids)
+            ->select('songs.id', 'songs.path', 'songs.storage')
+            ->get();
+    }
+
+    /**
      * @param array<string> $paths
      *
      * @return Collection<int, Song>

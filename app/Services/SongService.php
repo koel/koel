@@ -232,17 +232,19 @@ class SongService
     {
         // Since song (and cascadingly, transcode) records will be deleted, we query them first and, if there are any,
         // dispatch a job to delete their associated files.
-        $songFiles = Song::query()->findMany($ids)->map(SongFileInfo::fromSong(...)); // @phpstan-ignore-line
+        $songs = $this->songRepository->getManyForFileRemoval($ids);
 
         $transcodeFiles = $this->transcodeRepository->findBySongIds($ids)->map(TranscodeFileInfo::fromTranscode(...)); // @phpstan-ignore-line
 
-        $deletedCount = Song::destroy($ids);
+        $deletedCount = Song::query()->whereKey($songs->modelKeys())->delete();
 
         if ($deletedCount === 0) {
             return 0;
         }
 
-        Dispatcher::dispatch(new DeleteSongFilesJob($songFiles));
+        (new Song())->queueRemoveFromSearch($songs);
+
+        Dispatcher::dispatch(new DeleteSongFilesJob($songs->map(SongFileInfo::fromSong(...))));
 
         $transcodeFiles->whenNotEmpty(static function (Collection $files): void {
             Dispatcher::dispatch(new DeleteTranscodeFilesJob($files));

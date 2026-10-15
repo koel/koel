@@ -22,6 +22,7 @@ use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanInformation;
 use App\Values\Song\SongUpdateData;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
@@ -29,6 +30,7 @@ use Tests\TestCase;
 
 use function Tests\create_admin;
 use function Tests\create_user;
+use function Tests\sandbox_path;
 use function Tests\test_path;
 
 class SongServiceTest extends TestCase
@@ -198,6 +200,26 @@ class SongServiceTest extends TestCase
 
         $this->service->deleteSongs($songs->pluck('id')->toArray());
         $songs->each(fn (Song $song) => $this->assertDatabaseMissing(Song::class, ['id' => $song->id]));
+    }
+
+    #[Test]
+    public function deleteSongsRemovesThemFromTheSearchIndex(): void
+    {
+        File::ensureDirectoryExists(sandbox_path('search-indexes'));
+
+        config([
+            'scout.driver' => 'tntsearch',
+            'scout.tntsearch.storage' => sandbox_path('search-indexes'),
+        ]);
+
+        Dispatcher::shouldReceive('dispatch');
+        $songs = Song::factory()->state(['title' => 'Bohemian Rhapsody'])->createMany(2);
+
+        self::assertEqualsCanonicalizing($songs->modelKeys(), Song::search('Bohemian')->keys()->all());
+
+        $this->service->deleteSongs($songs->modelKeys());
+
+        self::assertEmpty(Song::search('Bohemian')->keys());
     }
 
     #[Test]

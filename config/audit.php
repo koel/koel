@@ -1,6 +1,6 @@
 <?php
 
-use OwenIt\Auditing\Models\Audit;
+use App\Models\Audit;
 use OwenIt\Auditing\Resolvers\IpAddressResolver;
 use OwenIt\Auditing\Resolvers\UrlResolver;
 use OwenIt\Auditing\Resolvers\UserAgentResolver;

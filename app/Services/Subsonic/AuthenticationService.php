@@ -2,6 +2,7 @@
 
 namespace App\Services\Subsonic;
 
+use App\Exceptions\Subsonic\InvalidCredentialsException;
 use App\Exceptions\Subsonic\RequiredParameterMissingException;
 use App\Helpers\Uuid;
 use App\Models\User;
@@ -33,6 +34,8 @@ class AuthenticationService
             $user = $authenticator->attempt($credentials);
 
             if ($user) {
+                throw_if($user->isPendingDeletion(), InvalidCredentialsException::class);
+
                 return $user;
             }
         }
