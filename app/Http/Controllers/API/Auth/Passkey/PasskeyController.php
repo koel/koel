@@ -26,7 +26,12 @@ class PasskeyController extends Controller
     /** @param User $user */
     public function store(StorePasskeyRequest $request, Authenticatable $user)
     {
-        $passkey = $this->passkeyService->registerPasskey($user, $request->name, $request->credential());
+        $passkey = $this->passkeyService->registerPasskey(
+            $user,
+            $request->name,
+            $request->credential(),
+            $request->getSchemeAndHttpHost(),
+        );
 
         return PasskeyResource::make($passkey)->response()->setStatusCode(Response::HTTP_CREATED);
     }
