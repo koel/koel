@@ -69,7 +69,7 @@ const items = computed(() =>
       route: 'upload',
       screens: ['Upload'],
       visible: () => allowsUpload.value,
-      isBusy: () => uploadService.getUnfinishedFiles().length > 0,
+      isBusy: () => uploadService.countUnfinishedFiles() > 0,
     },
   ]),
 )

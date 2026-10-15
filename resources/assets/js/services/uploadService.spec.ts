@@ -5,6 +5,7 @@ import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
+import { UploadTracker } from '@/services/uploadTracker'
 
 const postWithProgressMock = vi.fn()
 const putToStorageMock = vi.fn()
@@ -34,7 +35,7 @@ vi.mock('@/utils/logger', () => ({
 describe('uploadService', () => {
   const h = createHarness({
     beforeEach: () => {
-      uploadService.state.files = []
+      uploadService.tracker = new UploadTracker()
       uploadService.abortHandles.clear()
       uploadService.parallelUploadLimit = 5
       commonStore.state.supports_presigned_uploads = false
@@ -73,8 +74,8 @@ describe('uploadService', () => {
 
     uploadService.queue(file)
 
-    expect(uploadService.state.files).toHaveLength(1)
-    expect(uploadService.state.files[0].id).toBe(file.id)
+    expect(uploadService.tracker.size).toBe(1)
+    expect(uploadService.tracker.getFilesWithStatus(['Ready'])[0].id).toBe(file.id)
     expect(proceedMock).toHaveBeenCalled()
   })
 
@@ -84,42 +85,40 @@ describe('uploadService', () => {
 
     uploadService.queue(files)
 
-    expect(uploadService.state.files).toHaveLength(2)
+    expect(uploadService.tracker.size).toBe(2)
   })
 
-  it('removes a file by filtering', () => {
+  it('removes a file', () => {
     const proceedMock = h.mock(uploadService, 'proceed')
     const file = createUploadFile()
-    uploadService.state.files = [file]
+    uploadService.tracker.add([file])
 
-    // `remove` uses lodash `without` which needs reference equality.
-    // Since state is reactive, we need to pass the reactive reference.
-    uploadService.remove(uploadService.state.files[0])
+    uploadService.remove(file)
 
-    expect(uploadService.state.files).toHaveLength(0)
+    expect(uploadService.tracker.size).toBe(0)
     expect(proceedMock).toHaveBeenCalled()
   })
 
-  it('gets uploading files', () => {
-    uploadService.state.files = [
+  it('counts uploading files', () => {
+    uploadService.tracker.add([
       createUploadFile({ status: 'Uploading' }),
       createUploadFile({ status: 'Ready' }),
       createUploadFile({ status: 'Uploading' }),
-    ]
+    ])
 
-    expect(uploadService.getUploadingFiles()).toHaveLength(2)
+    expect(uploadService.countUploadingFiles()).toBe(2)
   })
 
   it('gets next upload candidate', () => {
     const readyFile = createUploadFile({ status: 'Ready', name: 'first.mp3' })
-    uploadService.state.files = [createUploadFile({ status: 'Uploading' }), readyFile]
+    uploadService.tracker.add([createUploadFile({ status: 'Uploading' }), readyFile])
 
     const candidate = uploadService.getUploadCandidate()
     expect(candidate?.name).toBe('first.mp3')
   })
 
   it('returns undefined when no candidates', () => {
-    uploadService.state.files = [createUploadFile({ status: 'Uploading' })]
+    uploadService.tracker.add([createUploadFile({ status: 'Uploading' })])
 
     expect(uploadService.getUploadCandidate()).toBeUndefined()
   })
@@ -127,10 +126,10 @@ describe('uploadService', () => {
   it('respects simultaneous upload limit', () => {
     const uploadMock = h.mock(uploadService, 'upload')
 
-    uploadService.state.files = [
+    uploadService.tracker.add([
       ...Array.from({ length: 5 }, () => createUploadFile({ status: 'Uploading' })),
       createUploadFile({ status: 'Ready' }),
-    ]
+    ])
 
     uploadService.proceed()
 
@@ -166,14 +165,13 @@ describe('uploadService', () => {
   })
 
   it('keeps an uploaded file in the list with its song', () => {
-    const file = createUploadFile()
-    file.status = 'Uploading'
-    uploadService.state.files = [file]
+    const file = createUploadFile({ status: 'Uploading' })
+    uploadService.tracker.add([file])
     const song = h.factory('song').make()
 
     uploadService.handleUploadResult({ song, album: h.factory('album').make() }, file)
 
-    expect(uploadService.state.files).toEqual([file])
+    expect(uploadService.tracker.getFilesWithStatus(['Uploaded'])).toEqual([file])
     expect(file.status).toBe('Uploaded')
     expect(file.song).toBe(song)
   })
@@ -238,7 +236,7 @@ describe('uploadService', () => {
     h.mock(uploadService, 'proceed')
 
     const file = createUploadFile({ uploadKey: '1__abc__song.mp3' })
-    uploadService.state.files = [file]
+    uploadService.tracker.add([file])
 
     const uploading = uploadService.upload(file)
     uploadService.handleUploadFailure({ upload_key: '1__abc__song.mp3', message: 'Empty file' })
@@ -248,14 +246,14 @@ describe('uploadService', () => {
   })
 
   it('does not count a processing file against the upload slots', () => {
-    uploadService.state.files = [createUploadFile({ status: 'Processing' }), createUploadFile({ status: 'Uploading' })]
+    uploadService.tracker.add([createUploadFile({ status: 'Processing' }), createUploadFile({ status: 'Uploading' })])
 
-    expect(uploadService.getUploadingFiles()).toHaveLength(1)
+    expect(uploadService.countUploadingFiles()).toBe(1)
   })
 
   it('completes a processing file when its broadcast arrives', () => {
     const file = createUploadFile({ status: 'Processing', uploadKey: '1__abc__song.mp3' })
-    uploadService.state.files = [file]
+    uploadService.tracker.add([file])
 
     uploadService.handleUploadResult({
       song: h.factory('song').make(),
@@ -268,7 +266,7 @@ describe('uploadService', () => {
 
   it('errors a processing file when its upload fails server-side', () => {
     const file = createUploadFile({ status: 'Processing', uploadKey: '1__abc__song.mp3' })
-    uploadService.state.files = [file]
+    uploadService.tracker.add([file])
     h.mock(uploadService, 'proceed')
 
     uploadService.handleUploadFailure({ upload_key: '1__abc__song.mp3', message: 'Empty file' })
@@ -278,8 +276,6 @@ describe('uploadService', () => {
   })
 
   it('ignores a broadcast for a file it no longer has', () => {
-    uploadService.state.files = []
-
     expect(() => uploadService.handleUploadFailure({ upload_key: 'gone', message: 'Empty file' })).not.toThrow()
   })
 
@@ -395,7 +391,7 @@ describe('uploadService', () => {
     const errored = createUploadFile({ status: 'Errored' })
     const processing = createUploadFile({ status: 'Processing' })
     const uploading = createUploadFile({ status: 'Uploading' })
-    uploadService.state.files = [errored, processing, uploading]
+    uploadService.tracker.add([errored, processing, uploading])
     h.mock(uploadService, 'proceed')
 
     uploadService.retryAll()
@@ -470,10 +466,10 @@ describe('uploadService', () => {
   it('cleans up abort handle on remove', () => {
     h.mock(uploadService, 'proceed')
     const file = createUploadFile()
-    uploadService.state.files = [file]
+    uploadService.tracker.add([file])
     uploadService.abortHandles.set(file.id, vi.fn())
 
-    uploadService.remove(uploadService.state.files[0])
+    uploadService.remove(file)
 
     expect(uploadService.abortHandles.has(file.id)).toBe(false)
   })
@@ -492,7 +488,7 @@ describe('uploadService', () => {
   it('retries all files', () => {
     const proceedMock = h.mock(uploadService, 'proceed')
     const files = [createUploadFile({ status: 'Errored' }), createUploadFile({ status: 'Errored' })]
-    uploadService.state.files = files
+    uploadService.tracker.add(files)
 
     uploadService.retryAll()
 
@@ -501,16 +497,16 @@ describe('uploadService', () => {
   })
 
   it('removes failed and canceled files', () => {
-    uploadService.state.files = [
+    uploadService.tracker.add([
       createUploadFile({ status: 'Errored' }),
       createUploadFile({ status: 'Ready' }),
       createUploadFile({ status: 'Canceled' }),
-    ]
+    ])
 
     uploadService.removeFailed()
 
-    expect(uploadService.state.files).toHaveLength(1)
-    expect(uploadService.state.files[0].status).toBe('Ready')
+    expect(uploadService.tracker.size).toBe(1)
+    expect(uploadService.tracker.count(['Ready'])).toBe(1)
   })
 
   it('invalidates album and artist song caches when handling an upload result', () => {

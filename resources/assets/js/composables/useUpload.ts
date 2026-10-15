@@ -3,15 +3,13 @@ import { Filter } from '@/config/hooks'
 import { applyFilters } from '@/hooks'
 import { commonStore } from '@/stores/commonStore'
 import { acceptsFile } from '@/utils/mediaHelper'
-import type { UploadFile, UploadStatus } from '@/services/uploadService'
+import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import { getAllFileEntries } from '@/utils/directoryReader'
 import { pluralize } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { canUploadFromThisDevice } from '@/utils/uploadAccess'
-
-const UNFINISHED_UPLOAD_STATUSES: UploadStatus[] = ['Ready', 'Uploading', 'Retrying']
 
 export const useUpload = () => {
   const { toastSuccess, toastWarning } = useMessageToaster()
@@ -23,9 +21,7 @@ export const useUpload = () => {
 
   const allowsUpload = computed(canUploadFromThisDevice)
 
-  const unfinishedUploadCount = computed(
-    () => uploadService.state.files.filter(({ status }) => UNFINISHED_UPLOAD_STATUSES.includes(status)).length,
-  )
+  const unfinishedUploadCount = computed(() => uploadService.countUnfinishedFiles())
 
   const fileEntryToFile = async (entry: FileSystemFileEntry) => new Promise<File>(resolve => entry.file(resolve))
 

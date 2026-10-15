@@ -1,33 +1,16 @@
-import { computed, onBeforeUnmount, ref, toRef } from 'vue'
-import type { UploadFile, UploadStatus } from '@/services/uploadService'
+import { computed, onBeforeUnmount, ref } from 'vue'
+import type { UploadStatus } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 
 const SAMPLE_INTERVAL_MS = 1000
 const SPEED_SMOOTHING = 0.3
 
-const FULLY_SENT_STATUSES: UploadStatus[] = ['Processing', 'Uploaded']
 const IN_PROGRESS_STATUSES: UploadStatus[] = ['Ready', 'Uploading', 'Retrying', 'Processing']
-const OUTSIDE_BATCH_STATUSES: UploadStatus[] = ['Skipped', 'Canceled', 'Errored']
-
-const countWithStatus = (files: UploadFile[], statuses: UploadStatus[]) =>
-  files.filter(({ status }) => statuses.includes(status)).length
-
-const getSentBytes = (file: UploadFile) => {
-  if (FULLY_SENT_STATUSES.includes(file.status)) {
-    return file.file.size
-  }
-
-  return file.status === 'Uploading' ? (file.file.size * file.progress) / 100 : 0
-}
 
 export const useUploadProgress = () => {
-  const files = toRef(uploadService.state, 'files')
-
-  const batch = computed(() => files.value.filter(({ status }) => !OUTSIDE_BATCH_STATUSES.includes(status)))
-  const totalBytes = computed(() => batch.value.reduce((total, file) => total + file.file.size, 0))
-  const sentBytes = computed(() => batch.value.reduce((total, file) => total + getSentBytes(file), 0))
-
-  const hasFilesInProgress = computed(() => countWithStatus(files.value, IN_PROGRESS_STATUSES) > 0)
+  const totalBytes = computed(() => uploadService.tracker.totalBatchBytes)
+  const sentBytes = computed(() => uploadService.tracker.totalSentBytes)
+  const hasFilesInProgress = computed(() => uploadService.tracker.count(IN_PROGRESS_STATUSES) > 0)
 
   const bytesPerSecond = ref(0)
   let lastSample = { bytes: sentBytes.value, at: Date.now() }
