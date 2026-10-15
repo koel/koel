@@ -22,7 +22,7 @@ class MacroProvider extends ServiceProvider
     {
         Collection::macro('orderByArray', function (array $orderBy, string $key = 'id') {
             /** @var Collection $this */
-            $positions = array_flip(array_unique($orderBy));
+            $positions = array_flip(array_values(array_unique($orderBy)));
 
             return $this->sortBy(static fn ($item): ?int => $positions[$item->$key] ?? null)->values();
         });
