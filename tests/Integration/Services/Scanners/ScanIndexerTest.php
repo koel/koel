@@ -8,8 +8,8 @@ use App\Models\Genre;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Services\Scanners\ScanIndexer;
+use App\Services\Scanners\ScannedFileService;
 use App\Values\Scanning\ScanResult;
-use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -41,10 +41,11 @@ class ScanIndexerTest extends TestCase
 
         $this->engine->updated = [];
 
-        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($saved->path))->add(ScanResult::error(
-            '/media/unreadable.mp3',
-            'Unsupported file',
-        ))->add(ScanResult::skipped('/media/untouched.mp3')));
+        app(ScanIndexer::class)->reindex(self::recordScan(
+            ScanResult::success($saved->path),
+            ScanResult::error('/media/unreadable.mp3', 'Unsupported file'),
+            ScanResult::skipped('/media/untouched.mp3'),
+        ));
 
         self::assertSame([(string) $saved->id], $this->engine->updatedKeysOf(Song::class));
         self::assertSame([(string) $saved->album_id], $this->engine->updatedKeysOf(Album::class));
@@ -65,10 +66,7 @@ class ScanIndexerTest extends TestCase
         $song = Song::factory()->createOne();
         $this->engine->updated = [];
 
-        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::error(
-            $song->path,
-            'Genre sync failed',
-        )));
+        app(ScanIndexer::class)->reindex(self::recordScan(ScanResult::error($song->path, 'Genre sync failed')));
 
         self::assertSame([(string) $song->id], $this->engine->updatedKeysOf(Song::class));
     }
@@ -82,7 +80,7 @@ class ScanIndexerTest extends TestCase
         $song = Song::factory()->for($album)->for($trackArtist, 'artist')->createOne();
         $this->engine->updated = [];
 
-        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+        app(ScanIndexer::class)->reindex(self::recordScan(ScanResult::success($song->path)));
 
         self::assertContains((string) $albumArtist->id, $this->engine->updatedKeysOf(Artist::class));
         self::assertContains((string) $trackArtist->id, $this->engine->updatedKeysOf(Artist::class));
@@ -94,7 +92,7 @@ class ScanIndexerTest extends TestCase
         $song = Song::factory()->for(Artist::factory()->state(['name' => Artist::UNKNOWN_NAME]), 'artist')->createOne();
         $this->engine->updated = [];
 
-        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+        app(ScanIndexer::class)->reindex(self::recordScan(ScanResult::success($song->path)));
 
         self::assertNotContains((string) $song->artist_id, $this->engine->updatedKeysOf(Artist::class));
     }
@@ -108,7 +106,7 @@ class ScanIndexerTest extends TestCase
         self::assertSame($queriesForOne, $queriesForFive);
         self::assertSame($this->countQueries(static fn () => app(SongRepository::class)->getManyByPaths(
             $songs->pluck('path')->all(),
-        )), $queriesForFive);
+        )) + 1, $queriesForFive);
         self::assertEqualsCanonicalizing(
             $songs
                 ->pluck('artist_id')
@@ -134,7 +132,7 @@ class ScanIndexerTest extends TestCase
             }
         });
 
-        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+        app(ScanIndexer::class)->reindex(self::recordScan(ScanResult::success($song->path)));
 
         Log::shouldHaveReceived('warning') // @phpstan-ignore-line
             ->once()
@@ -150,7 +148,7 @@ class ScanIndexerTest extends TestCase
     {
         $this->engine->updated = [];
 
-        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::skipped('/media/foo.mp3')));
+        app(ScanIndexer::class)->reindex(self::recordScan(ScanResult::skipped('/media/foo.mp3')));
 
         self::assertSame([], $this->engine->updated);
     }
@@ -163,7 +161,7 @@ class ScanIndexerTest extends TestCase
         $song = Song::factory()->createOne();
         $engine->updated = [];
 
-        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+        app(ScanIndexer::class)->reindex(self::recordScan(ScanResult::success($song->path)));
 
         self::assertSame([(string) $song->id], $engine->updatedKeysOf(Song::class));
     }
@@ -176,7 +174,7 @@ class ScanIndexerTest extends TestCase
         $song = Song::factory()->createOne();
         $engine->updated = [];
 
-        app(ScanIndexer::class)->reindex(ScanResultCollection::create()->add(ScanResult::success($song->path)));
+        app(ScanIndexer::class)->reindex(self::recordScan(ScanResult::success($song->path)));
 
         self::assertSame([], $engine->updated);
     }
@@ -187,13 +185,23 @@ class ScanIndexerTest extends TestCase
         $songs = Song::factory()->createMany($count);
         $songs->each(static fn (Song $song) => $song->syncGenres('Rock'));
 
-        $results = ScanResultCollection::create();
-        $songs->each(static fn (Song $song) => $results->add(ScanResult::success($song->path)));
+        $scanId = self::recordScan(...$songs->map(static fn (Song $song): ScanResult => ScanResult::success($song->path)));
 
         $indexer = app(ScanIndexer::class);
         $this->engine->updated = [];
 
-        return [$this->countQueries(static fn () => $indexer->reindex($results)), $songs];
+        return [$this->countQueries(static fn () => $indexer->reindex($scanId)), $songs];
+    }
+
+    private static function recordScan(ScanResult ...$results): string
+    {
+        $recorder = app(ScannedFileService::class)->startScan();
+
+        foreach ($results as $result) {
+            $recorder->record($result);
+        }
+
+        return $recorder->finish()->scanId;
     }
 
     private function countQueries(callable $callback): int

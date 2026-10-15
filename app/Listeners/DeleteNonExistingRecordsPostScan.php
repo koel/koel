@@ -2,13 +2,10 @@
 
 namespace App\Listeners;
 
-use App\Builders\SongBuilder;
 use App\Events\MediaScanCompleted;
-use App\Models\Song;
 use App\Repositories\SongRepository;
 use App\Services\LibraryManager;
 use App\Services\LibrarySummaryService;
-use App\Values\Scanning\ScanResult;
 use Illuminate\Support\Facades\Log;
 
 readonly class DeleteNonExistingRecordsPostScan
@@ -21,12 +18,6 @@ readonly class DeleteNonExistingRecordsPostScan
 
     public function handle(MediaScanCompleted $event): void
     {
-        $paths = $event
-            ->results
-            ->valid()
-            ->map(static fn (ScanResult $result) => $result->path)
-            ->all();
-
         if ($this->wouldDeleteEverythingOnAnEmptyScan($event)) {
             Log::warning(
                 'Scan reported no valid files while the library still holds songs. Refusing to '
@@ -39,9 +30,7 @@ readonly class DeleteNonExistingRecordsPostScan
             return;
         }
 
-        $deleted = Song::deleteWhereValueNotIn($paths, 'path', static function (SongBuilder $builder): SongBuilder {
-            return $builder->storedLocally();
-        });
+        $deleted = $this->libraryManager->deleteLocalSongsMissingFromScan($event->summary->scanId);
 
         if ($deleted > 0) {
             Log::info(sprintf('Removed %d song(s) no longer found in the media directory.', $deleted));
@@ -65,7 +54,7 @@ readonly class DeleteNonExistingRecordsPostScan
      */
     private function wouldDeleteEverythingOnAnEmptyScan(MediaScanCompleted $event): bool
     {
-        if ($event->results->valid()->isNotEmpty()) {
+        if ($event->summary->hasValidFiles()) {
             return false;
         }
 

@@ -7,13 +7,13 @@ use App\Facades\Dispatcher;
 use App\Jobs\ExtractSongFolderStructureJob;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\ScannedFile;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Services\Scanners\DirectoryScanner;
 use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\File;
 use Laravel\Scout\EngineManager;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Fakes\RecordingSearchEngine;
@@ -266,18 +266,7 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function parallelScanLeavesNoTemporaryFilesBehind(): void
     {
-        $manifests = [];
-
-        File::partialMock()
-            ->shouldReceive('put')
-            ->withArgs(static function (string $path) use (&$manifests): bool {
-                if (str_starts_with(basename($path), 'koel_scan_')) {
-                    $manifests[] = $path;
-                }
-
-                return true;
-            })
-            ->passthru();
+        $temporaryFilesBefore = glob(sys_get_temp_dir() . '/koel_scan_*');
 
         rescue(fn () => $this->scanner->scan(
             $this->mediaPath,
@@ -285,12 +274,26 @@ class DirectoryScannerTest extends TestCase
             jobs: 2,
         ), report: false);
 
-        self::assertCount(2, $manifests);
+        self::assertSame($temporaryFilesBefore, glob(sys_get_temp_dir() . '/koel_scan_*'));
+        $this->assertDatabaseEmpty(ScannedFile::class);
+    }
 
-        foreach ($manifests as $manifest) {
-            $name = pathinfo($manifest, PATHINFO_DIRNAME) . '/' . pathinfo($manifest, PATHINFO_FILENAME);
-            self::assertSame([], glob($name . '*'));
-        }
+    #[Test]
+    public function scanReportsWhatItFoundAndLeavesNoScannedFilesBehind(): void
+    {
+        Event::fake([MediaScanCompleted::class]);
+        Dispatcher::shouldReceive('dispatch')->with(ExtractSongFolderStructureJob::class)->atLeast();
+
+        $summary = $this->scanner->scan($this->mediaPath, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertSame(Song::query()->count(), $summary->successCount);
+        self::assertSame(0, $summary->skippedCount);
+        self::assertGreaterThan(0, $summary->errorCount);
+        $this->assertDatabaseEmpty(ScannedFile::class);
+        Event::assertDispatched(
+            MediaScanCompleted::class,
+            static fn (MediaScanCompleted $event): bool => $event->summary === $summary,
+        );
     }
 
     #[Test]

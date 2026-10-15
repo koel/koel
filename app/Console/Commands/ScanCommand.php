@@ -90,8 +90,8 @@ class ScanCommand extends Command
      */
     private function scanMediaPath(ScanConfiguration $config): void
     {
-        $this->directoryScanner->on(ScanEvent::PATHS_GATHERED, function (array $paths): void {
-            $this->progressBar = new ProgressBar($this->output, count($paths));
+        $this->directoryScanner->on(ScanEvent::PATHS_GATHERED, function (int $pathCount): void {
+            $this->progressBar = new ProgressBar($this->output, $pathCount);
         });
 
         $this->directoryScanner->on(ScanEvent::SCAN_PROGRESS, [$this, 'onScanProgress']);
@@ -107,15 +107,15 @@ class ScanCommand extends Command
             $this->components->info('Ignoring tag(s): ' . implode(', ', $config->ignores));
         }
 
-        $results = $this->directoryScanner->scan((string) Setting::get('media_path'), $config, $jobs);
+        $summary = $this->directoryScanner->scan((string) Setting::get('media_path'), $config, $jobs);
 
         $this->newLine(2);
         $this->components->info('Scanning completed!');
 
         $this->components->bulletList([
-            "<fg=green>{$results->success()->count()}</> new or updated song(s)",
-            "<fg=yellow>{$results->skipped()->count()}</> unchanged song(s)",
-            "<fg=red>{$results->error()->count()}</> invalid file(s)",
+            "<fg=green>{$summary->successCount}</> new or updated song(s)",
+            "<fg=yellow>{$summary->skippedCount}</> unchanged song(s)",
+            "<fg=red>{$summary->errorCount}</> invalid file(s)",
         ]);
     }
 

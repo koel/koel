@@ -31,8 +31,8 @@ class ScanChunkCommandTest extends TestCase
             realpath($this->mediaPath . '/subdir/back-in-black.ogg'),
         ];
 
-        $manifest = tempnam(sys_get_temp_dir(), 'koel_test_') . '.json';
-        File::put($manifest, json_encode($paths));
+        $manifest = tempnam(sys_get_temp_dir(), 'koel_test_');
+        File::put($manifest, implode(PHP_EOL, $paths) . PHP_EOL);
 
         try {
             $this->artisan('koel:scan:chunk', [
@@ -66,8 +66,8 @@ class ScanChunkCommandTest extends TestCase
         config(['scout.driver' => 'meilisearch']);
 
         $owner = create_admin();
-        $manifest = tempnam(sys_get_temp_dir(), 'koel_test_') . '.json';
-        File::put($manifest, json_encode([realpath($this->mediaPath . '/full.mp3')]));
+        $manifest = tempnam(sys_get_temp_dir(), 'koel_test_');
+        File::put($manifest, realpath($this->mediaPath . '/full.mp3') . PHP_EOL);
 
         try {
             $this->artisan('koel:scan:chunk', ['manifest' => $manifest, '--owner' => $owner->id])->assertSuccessful();
@@ -85,8 +85,8 @@ class ScanChunkCommandTest extends TestCase
 
         $paths = [realpath($this->mediaPath . '/full.mp3')];
 
-        $manifest = tempnam(sys_get_temp_dir(), 'koel_test_') . '.json';
-        File::put($manifest, json_encode($paths));
+        $manifest = tempnam(sys_get_temp_dir(), 'koel_test_');
+        File::put($manifest, implode(PHP_EOL, $paths) . PHP_EOL);
 
         try {
             $this
@@ -100,5 +100,33 @@ class ScanChunkCommandTest extends TestCase
         } finally {
             File::delete($manifest);
         }
+    }
+
+    #[Test]
+    public function scanChunkScansOnlyItsSliceOfTheList(): void
+    {
+        $owner = create_admin();
+
+        $paths = [
+            realpath($this->mediaPath . '/full.mp3'),
+            realpath($this->mediaPath . '/subdir/back-in-black.ogg'),
+            realpath($this->mediaPath . '/lorem.mp3'),
+        ];
+
+        $manifest = tempnam(sys_get_temp_dir(), 'koel_test_');
+        File::put($manifest, implode(PHP_EOL, $paths) . PHP_EOL);
+
+        try {
+            $this->artisan('koel:scan:chunk', [
+                'manifest' => $manifest,
+                '--owner' => $owner->id,
+                '--offset' => 1,
+                '--limit' => 1,
+            ])->assertSuccessful();
+        } finally {
+            File::delete($manifest);
+        }
+
+        self::assertSame([$paths[1]], Song::query()->pluck('path')->all());
     }
 }

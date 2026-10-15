@@ -4,10 +4,26 @@ namespace App\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Song;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class LibraryManager
 {
+    public function deleteLocalSongsMissingFromScan(string $scanId): int
+    {
+        $songsToDelete = Song::query()->storedLocally()->missingFromScan($scanId);
+
+        $songsToDelete->chunkById(
+            500,
+            static fn (Collection $songs) => $songsToDelete->getModel()->queueRemoveFromSearch($songs),
+            'songs.id',
+            'id',
+        );
+
+        return $songsToDelete->delete();
+    }
+
     /**
      * Delete albums and artists that have no songs.
      *

@@ -4,7 +4,6 @@ namespace App\Services\Scanners\Strategies;
 
 use App\Services\Scanners\IndividualFileHandler;
 use App\Values\Scanning\ScanConfiguration;
-use App\Values\Scanning\ScanResultCollection;
 
 class SequentialScanStrategy
 {
@@ -12,20 +11,11 @@ class SequentialScanStrategy
         private readonly IndividualFileHandler $fileHandler,
     ) {}
 
-    /** @param array<string> $paths */
-    public function scan(array $paths, ScanConfiguration $config, ?callable $onProgress = null): ScanResultCollection
+    /** @param iterable<string> $paths */
+    public function scan(iterable $paths, ScanConfiguration $config, callable $onResult): void
     {
-        $results = ScanResultCollection::create();
-
         foreach ($paths as $path) {
-            $result = $this->fileHandler->handle($path, $config);
-            $results->add($result);
-
-            if ($onProgress) {
-                $onProgress($result);
-            }
+            $onResult($this->fileHandler->handle($path, $config));
         }
-
-        return $results;
     }
 }

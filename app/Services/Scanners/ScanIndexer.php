@@ -6,13 +6,12 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Genre;
 use App\Models\Song;
+use App\Repositories\ScannedFileRepository;
 use App\Repositories\SongRepository;
-use App\Values\Scanning\ScanResult;
-use App\Values\Scanning\ScanResultCollection;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\LazyCollection;
 use Throwable;
 
 class ScanIndexer
@@ -25,18 +24,19 @@ class ScanIndexer
 
     public function __construct(
         private readonly SongRepository $songRepository,
+        private readonly ScannedFileRepository $scannedFileRepository,
         #[Config('scout.driver')]
         private readonly ?string $searchDriver,
     ) {}
 
-    public function withoutSyncingToSearch(callable $scan): ScanResultCollection
+    public function withoutSyncingToSearch(callable $scan): void
     {
         foreach (self::SCANNED_SEARCHABLE_MODELS as $model) {
             $model::disableSearchSyncing();
         }
 
         try {
-            return $scan();
+            $scan();
         } finally {
             foreach (self::SCANNED_SEARCHABLE_MODELS as $model) {
                 $model::enableSearchSyncing();
@@ -44,17 +44,16 @@ class ScanIndexer
         }
     }
 
-    public function reindex(ScanResultCollection $results): void
+    public function reindex(string $scanId): void
     {
         if (in_array($this->searchDriver, self::DRIVERS_WITHOUT_AN_INDEX, true)) {
             return;
         }
 
-        $results
-            ->reject(static fn (ScanResult $result): bool => $result->isSkipped())
-            ->map(static fn (ScanResult $result): string => $result->path)
+        $this->scannedFileRepository
+            ->lazyGetUnskippedPathsByScanId($scanId)
             ->chunk(self::CHUNK_SIZE)
-            ->each(function (Collection $paths): void {
+            ->each(function (LazyCollection $paths): void {
                 try {
                     $this->index($paths);
                 } catch (Throwable $e) {
@@ -68,7 +67,7 @@ class ScanIndexer
             });
     }
 
-    private function index(Collection $paths): void
+    private function index(LazyCollection $paths): void
     {
         $songs = $this->songRepository->getManyByPaths($paths->all());
 
