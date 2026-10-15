@@ -412,6 +412,38 @@ describe('playbackService', () => {
     endCrossfadeTest(outgoingMedia)
   })
 
+  it('keeps fading during a crossfade into the last song in the queue', () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+    h.setReadOnlyProperty(queueStore, 'next', undefined)
+
+    h.setReadOnlyProperty(outgoingMedia, 'currentTime', 299.5)
+    outgoingMedia.dispatchEvent(new Event('timeupdate'))
+
+    expect(outgoingMedia.volume).toBeCloseTo(0.08)
+    expect(incomingMedia.volume).toBeCloseTo(0.72)
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
+  it('does not save the outgoing song time as the incoming song position during a crossfade', async () => {
+    const { outgoingMedia } = startCrossfadeAtFiveSeconds()
+    const incomingSong = crossfadeService.state!.playable
+    const putMock = h.mock(http, 'put')
+
+    h.setReadOnlyProperty(outgoingMedia, 'currentTime', 299)
+    outgoingMedia.dispatchEvent(new Event('timeupdate'))
+    h.setReadOnlyProperty(outgoingMedia, 'currentTime', 300)
+    outgoingMedia.dispatchEvent(new Event('timeupdate'))
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(putMock).not.toHaveBeenCalledWith(
+      'queue/playback-status',
+      expect.objectContaining({ song: incomingSong.id }),
+    )
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
   it('restores the volume when seeking cancels a crossfade', () => {
     const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
     const pauseMock = h.mock(incomingMedia, 'pause')
