@@ -37,6 +37,7 @@ import { artistStore } from '@/stores/artistStore'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { audioService } from '@/services/audioService'
 import { volumeNormalizer } from '@/services/volumeNormalizer'
+import { crossfadeService } from '@/services/crossfadeService'
 import { playback } from '@/services/playbackManager'
 import { useContextMenu } from '@/composables/useContextMenu'
 
@@ -130,9 +131,13 @@ const initPlaybackRelatedServices = async () => {
   }
 }
 
-watch([currentStreamable, () => preferenceStore.normalize_volume], ([streamable]) =>
-  volumeNormalizer.applyToStreamable(streamable),
-)
+watch([currentStreamable, () => preferenceStore.normalize_volume], ([streamable]) => {
+  if (crossfadeService.active) {
+    return
+  }
+
+  volumeNormalizer.applyToStreamable(streamable)
+})
 
 watch(
   preferenceStore.initialized,

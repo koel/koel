@@ -20,6 +20,7 @@ import { socketService } from '@/services/socketService'
 import { useEpisodeProgressTracking } from '@/composables/useEpisodeProgressTracking'
 import { BasePlaybackService } from '@/services/BasePlaybackService'
 import { crossfadeService } from '@/services/crossfadeService'
+import { volumeNormalizer } from '@/services/volumeNormalizer'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import { volumeManager } from '@/services/volumeManager'
 import { useBranding } from '@/composables/useBranding'
@@ -152,6 +153,7 @@ export class QueuePlaybackService extends BasePlaybackService {
 
       // Reconnect the audio graph to the new element
       if (isAudioContextSupported && audioService.context) {
+        volumeNormalizer.applyToStreamable(playable)
         audioService.reconnectSource(incomingAudio)
       }
 
@@ -506,6 +508,12 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   protected onTimeUpdate(): void {
+    if (crossfadeService.active) {
+      this.fadeCrossfadingTracks()
+
+      return
+    }
+
     const currentPlayable = queueStore.current
 
     if (!currentPlayable) {
@@ -566,16 +574,17 @@ export class QueuePlaybackService extends BasePlaybackService {
         this.setNowPlayingMeta(nextPlayable)
         this.showNotification(nextPlayable)
         this.registerPlay(nextPlayable)
+        this.fadeCrossfadingTracks()
       }
     }
+  }
 
-    // Fade out the primary player during an active crossfade
-    if (crossfadeService.active && crossfadeService.state) {
-      const remaining = media.duration - media.currentTime
-      const progress = Math.max(0, 1 - remaining / crossfadeDuration)
-      this.setVolume(volumeManager.get() * (1 - progress))
-      crossfadeService.fadeInIncomingTrack(progress, volumeManager.get())
-    }
+  private fadeCrossfadingTracks() {
+    const remaining = this.media.duration - this.media.currentTime
+    const progress = Math.max(0, 1 - remaining / preferences.crossfade_duration)
+
+    this.setVolume(volumeManager.get() * (1 - progress))
+    crossfadeService.fadeInIncomingTrack(progress, volumeManager.get())
   }
 
   public rewind(seconds: number): void {

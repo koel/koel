@@ -1,11 +1,13 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { playbackManager } from '@/services/playbackManager'
 import { waveformService } from '@/services/waveformService'
+import { volumeNormalizer } from '@/services/volumeNormalizer'
+import { crossfadeService } from '@/services/crossfadeService'
 import { CurrentStreamableKey } from '@/config/symbols'
 import Component from './index.vue'
 
@@ -45,5 +47,16 @@ describe('index.vue', () => {
 
       await waitFor(() => screen.getByTestId('song-waveform'))
     })
+  })
+
+  it('leaves the playing song loudness alone while a crossfade brings in the next song', async () => {
+    const applyMock = h.mock(volumeNormalizer, 'applyToStreamable')
+    const currentStreamable = renderWithStreamable(h.factory('song').make())
+    h.setReadOnlyProperty(crossfadeService, 'active', true)
+
+    currentStreamable.value = h.factory('song').make()
+    await nextTick()
+
+    expect(applyMock).not.toHaveBeenCalled()
   })
 })
