@@ -118,7 +118,7 @@ class SafeHttp
     /**
      * Middleware that, for every outbound request: resolves the host's public
      * IPs, throws UnsafeUrlException if any are private/reserved or DNS fails,
-     * and appends CURLOPT_RESOLVE entries to the transfer options so curl uses
+     * and appends a CURLOPT_RESOLVE entry to the transfer options so curl uses
      * the validated IPs instead of doing a fresh (rebindable) DNS lookup.
      */
     private function pinAndValidateMiddleware(): Closure
@@ -137,16 +137,26 @@ class SafeHttp
                 // IP literals don't trigger a DNS lookup, so nothing to pin.
                 if (!filter_var(Network::unwrapIpv6Literal($host), FILTER_VALIDATE_IP)) {
                     $port = $uri->getPort() ?? ($uri->getScheme() === 'https' ? 443 : 80);
+                    $pinnedAddresses = implode(',', array_map(self::formatIpForCurlResolve(...), $ips));
 
                     $options['curl'] ??= [];
                     $options['curl'][CURLOPT_RESOLVE] = [
                         ...($options['curl'][CURLOPT_RESOLVE] ?? []),
-                        ...array_map(static fn (string $ip): string => "{$host}:{$port}:{$ip}", $ips),
+                        "{$host}:{$port}:{$pinnedAddresses}",
                     ];
                 }
 
                 return $next($request, $options);
             };
         };
+    }
+
+    /**
+     * libcurl keeps only the last CURLOPT_RESOLVE entry for a host:port, so every
+     * validated IP must go into a single comma-separated entry, IPv6 in brackets.
+     */
+    private static function formatIpForCurlResolve(string $ip): string
+    {
+        return str_contains($ip, ':') ? "[$ip]" : $ip;
     }
 }
