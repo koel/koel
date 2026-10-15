@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
@@ -13,7 +13,14 @@ describe('queueStore', () => {
       playableStore.vault.clear()
       songs = playableStore.syncWithVault(h.factory('song').make(3)) as Song[]
       queueStore.state.playables = reactive(songs)
+      vi.useFakeTimers()
     },
+  })
+
+  afterEach(() => {
+    vi.runOnlyPendingTimers()
+    vi.useRealTimers()
+    vi.restoreAllMocks()
   })
 
   it('returns the first queued song', () => expect(queueStore.first).toEqual(songs[0]))
@@ -27,9 +34,9 @@ describe('queueStore', () => {
 
     expect(queueStore.all).toHaveLength(4)
     expect(queueStore.last).toEqual(song)
-    await vi.waitFor(() =>
-      expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) }),
-    )
+    vi.runAllTimers()
+
+    expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
   })
 
   it('queues to top', () => {
@@ -39,6 +46,8 @@ describe('queueStore', () => {
 
     expect(queueStore.all).toHaveLength(4)
     expect(queueStore.first).toEqual(song)
+    vi.runAllTimers()
+
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
   })
 
@@ -48,6 +57,8 @@ describe('queueStore', () => {
     queueStore.replaceQueueWith(newSongs)
 
     expect(queueStore.all).toEqual(newSongs)
+    vi.runAllTimers()
+
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: newSongs.map(song => song.id) })
   })
 
@@ -56,6 +67,8 @@ describe('queueStore', () => {
     queueStore.unqueue(songs[1])
 
     expect(queueStore.all).toEqual([songs[0], songs[2]])
+    vi.runAllTimers()
+
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
   })
 
@@ -64,6 +77,8 @@ describe('queueStore', () => {
     queueStore.unqueue([songs[1], songs[0]])
 
     expect(queueStore.all).toEqual([songs[2]])
+    vi.runAllTimers()
+
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
   })
 
@@ -72,7 +87,51 @@ describe('queueStore', () => {
     queueStore.clear()
 
     expect(queueStore.state.playables).toHaveLength(0)
+    vi.runAllTimers()
+
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: [] })
+  })
+
+  it('saves the queue once when queueing to bottom', () => {
+    const saveStateMock = h.mock(queueStore, 'saveState')
+
+    queueStore.queue(h.factory('song').make())
+
+    expect(saveStateMock).toHaveBeenCalledOnce()
+  })
+
+  it('saves the queue once when queueing after the current song', () => {
+    songs[0].playback_state = 'Playing'
+    const saveStateMock = h.mock(queueStore, 'saveState')
+
+    queueStore.queueAfterCurrent(h.factory('song').make())
+
+    expect(saveStateMock).toHaveBeenCalledOnce()
+  })
+
+  it('saves rapid queue changes in one request with the final state', () => {
+    const putMock = h.mock(http, 'put')
+
+    queueStore.queue(h.factory('song').make())
+    queueStore.unqueue(songs[0])
+    queueStore.queueToTop(h.factory('song').make())
+
+    expect(putMock).not.toHaveBeenCalled()
+
+    vi.runAllTimers()
+
+    expect(putMock).toHaveBeenCalledOnce()
+    expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
+  })
+
+  it('saves a pending queue change right away when the page gets hidden', () => {
+    const putMock = h.mock(http, 'put')
+    vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden')
+
+    queueStore.unqueue(songs[0])
+    document.dispatchEvent(new Event('visibilitychange'))
+
+    expect(putMock).toHaveBeenCalledWith('queue/state', { songs: [songs[1].id, songs[2].id] })
   })
 
   it.each<[PlaybackState]>([['Playing'], ['Paused']])('identifies the current song by %s state', state => {
@@ -123,6 +182,9 @@ describe('queueStore', () => {
     expect(getMock).toHaveBeenCalledWith('queue/fetch?order=rand&limit=3')
     expect(syncMock).toHaveBeenCalledWith(songs)
     expect(queueStore.all).toEqual(songs)
+
+    vi.runAllTimers()
+
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: songs.map(song => song.id) })
   })
 
@@ -137,6 +199,9 @@ describe('queueStore', () => {
     expect(getMock).toHaveBeenCalledWith('queue/fetch?order=desc&sort=title&limit=3')
     expect(syncMock).toHaveBeenCalledWith(songs)
     expect(queueStore.all).toEqual(songs)
+
+    vi.runAllTimers()
+
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: songs.map(song => song.id) })
   })
 })

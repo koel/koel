@@ -279,13 +279,9 @@ export const playableStore = {
   },
 
   async fetchForPlaylists(playlists: Playlist[]) {
-    const playables: Playable[] = []
+    const playablesPerPlaylist = await Promise.all(playlists.map(playlist => this.fetchForPlaylist(playlist)))
 
-    for await (const playlist of playlists) {
-      playables.push(...(await this.fetchForPlaylist(playlist)))
-    }
-
-    return uniqBy(playables, 'id')
+    return uniqBy(playablesPerPlaylist.flat(), 'id')
   },
 
   async fetchEpisodesInPodcast(podcast: Podcast | Podcast['id'], refresh = false) {
