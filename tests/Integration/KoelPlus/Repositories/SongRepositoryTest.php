@@ -4,6 +4,7 @@ namespace Tests\Integration\KoelPlus\Repositories;
 
 use App\Enums\PlayableType;
 use App\Models\Artist;
+use App\Models\Genre;
 use App\Models\Interaction;
 use App\Models\Song;
 use App\Repositories\SongRepository;
@@ -41,6 +42,20 @@ class SongRepositoryTest extends PlusTestCase
         Song::factory()->for(create_user(), 'owner')->private()->createMany(10);
 
         $songs = app(SongRepository::class)->getRandom(3, $user);
+
+        self::assertEqualsCanonicalizing($ownSongs->pluck('id')->all(), $songs->pluck('id')->all());
+    }
+
+    #[Test]
+    public function getByGenreRandomlyReturnsOnlyAccessibleSongs(): void
+    {
+        $user = create_user();
+        $rock = Genre::factory()->createOne();
+        $ownSongs = Song::factory()->for($user, 'owner')->private()->hasAttached($rock)->createMany(3);
+
+        Song::factory()->for(create_user(), 'owner')->private()->hasAttached($rock)->createMany(10);
+
+        $songs = app(SongRepository::class)->getByGenre($rock, 3, random: true, scopedUser: $user);
 
         self::assertEqualsCanonicalizing($ownSongs->pluck('id')->all(), $songs->pluck('id')->all());
     }

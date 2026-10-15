@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Repositories;
 
+use App\Models\Genre;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Song;
@@ -138,6 +139,30 @@ class SongRepositoryTest extends TestCase
 
         self::assertSame($expectedIds, $results->pluck('id')->all());
         self::assertSame(3, $hydratedSongCount);
+    }
+
+    #[Test]
+    public function getByGenreRandomlyReturnsDistinctSongsFromTheGenreOnly(): void
+    {
+        $rock = Genre::factory()->has(Song::factory()->count(5))->createOne();
+        Genre::factory()->has(Song::factory()->count(5))->createOne();
+        Song::factory()->createMany(5);
+
+        $songIds = $this->songRepository->getByGenre($rock, 3, random: true, scopedUser: create_user())->pluck('id');
+
+        self::assertCount(3, $songIds->unique());
+        self::assertEmpty($songIds->diff($rock->songs->pluck('id')));
+    }
+
+    #[Test]
+    public function getByGenreRandomlyReturnsSongsWithoutGenreWhenNoGenreIsGiven(): void
+    {
+        Genre::factory()->has(Song::factory()->count(5))->createOne();
+        $songsWithoutGenre = Song::factory()->createMany(3);
+
+        $songs = $this->songRepository->getByGenre(null, 10, random: true, scopedUser: create_user());
+
+        self::assertEqualsCanonicalizing($songsWithoutGenre->pluck('id')->all(), $songs->pluck('id')->all());
     }
 
     /** @param array<array<string, mixed>> $rules */
