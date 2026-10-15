@@ -17,6 +17,7 @@ use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\Song;
 use App\Models\User;
+use App\Providers\MacroProvider;
 use App\Repositories\Contracts\PaginationStrategy;
 use App\Repositories\Contracts\ScoutableRepository;
 use App\Values\SmartPlaylist\SmartPlaylistQueryModifier as QueryModifier;
@@ -601,14 +602,19 @@ class SongRepository extends Repository implements ScoutableRepository
             limit: $limit * 20,
         );
 
-        return Song::query()
-            ->select('songs.id')
-            ->withoutEagerLoads()
-            ->genreless()
-            ->getWhereInChunks('songs.id', $candidateIds->all())
-            ->pluck('id')
-            ->shuffle()
-            ->take($limit);
+        $genrelessSongs = Song::query()->select('songs.id')->genreless();
+
+        return $candidateIds
+            ->lazy()
+            ->chunk(MacroProvider::WHERE_IN_CHUNK_SIZE)
+            ->flatMap(
+                static fn (LazyCollection $chunk): SupportCollection => (clone $genrelessSongs)
+                    ->whereIn('songs.id', $chunk)
+                    ->pluck('songs.id'),
+            )
+            ->take($limit)
+            ->collect()
+            ->shuffle();
     }
 
     /** @return array<string> */
