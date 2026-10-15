@@ -99,6 +99,15 @@ This is not an official Koel offering — please report template issues to the m
 [osbytes/template-koel](https://github.com/osbytes/template-koel). After the first deploy, change the default admin
 password immediately (`admin@koel.dev` / `KoelIsCool`).
 
+### Using Pethost (community)
+
+To deploy Koel with PostgreSQL on [Pethost](https://pethost.dev), use this community-maintained template:
+
+[![Deploy on Pethost](https://pethost.dev/button.svg)](https://pethost.dev/templates/koel/)
+
+This is not an official Koel offering. The template asks for the admin's email and password and sets them in place
+of the default ones on the first start. Music goes into the `music` volume, mounted at `/music`.
+
 ## Configuration
 
 Koel’s configuration is stored in the `.env` file at the root of the project, which is created during the installation
