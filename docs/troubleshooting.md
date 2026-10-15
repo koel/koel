@@ -111,9 +111,10 @@ This typically comes from the fact that Koel Plus supports only one installation
 you can either disable the current activation via the Lemon Squeezy dashboard or email me for support.
 :::
 
-::: details Passkeys fail with "Unrecognized passkey" or "Passkeys don't work at this address"
-Passkeys are tied to the address in your `APP_URL`. Set it to exactly the address people open Koel at, including
-`https` and the port if there is one (e.g. `APP_URL=https://music.example.com`), then run `php artisan config:clear`.
+::: details Passkeys fail with "can't be added from this address" or "can't be used from this address"
+Passkeys are tied to the domain in your `APP_URL`. They work at that domain and its subdomains, on any port. Set
+`APP_URL` to the domain people open Koel at (e.g. `APP_URL=https://music.example.com`), then run
+`php artisan config:clear`. Behind a reverse proxy, make sure [`TRUSTED_PROXIES`](environment-variables.md) covers the proxy.
 Passkeys also don't work when Koel is opened by IP address (like `192.168.1.10`). Use a host name instead.
 :::
 

@@ -29,6 +29,7 @@ use Webauthn\PublicKeyCredentialRequestOptions;
 class PasskeyService
 {
     private const int CEREMONY_TTL_SECONDS = 300;
+    private const string PASSKEY_USE_REJECTED_MESSAGE = "Passkeys can't be used from this address.";
 
     public function __construct(
         private readonly GenerateVerificationOptions $generateVerificationOptions,
@@ -66,7 +67,7 @@ class PasskeyService
         $serializedOptions = Cache::pull(cache_key('passkey login options', $loginToken));
         throw_unless($serializedOptions, InvalidLoginTokenException::create());
 
-        self::ensureOriginIsAllowed($credential);
+        self::ensureOriginIsAllowed($credential, self::PASSKEY_USE_REJECTED_MESSAGE);
 
         try {
             $passkey = ($this->verifyPasskey)($credential, WebAuthn::fromJson(
@@ -101,7 +102,7 @@ class PasskeyService
         $serializedOptions = Cache::pull(cache_key('passkey confirmation options', $user->id));
         throw_unless($serializedOptions, InvalidPasskeyException::make('Passkey check timed out. Please try again.'));
 
-        self::ensureOriginIsAllowed($credential);
+        self::ensureOriginIsAllowed($credential, self::PASSKEY_USE_REJECTED_MESSAGE);
 
         try {
             ($this->verifyPasskey)(
@@ -156,7 +157,7 @@ class PasskeyService
         $serializedOptions = Cache::pull(cache_key('passkey registration options', $user->id));
         throw_unless($serializedOptions, InvalidPasskeyException::make('Passkey setup timed out. Please try again.'));
 
-        self::ensureOriginIsAllowed($credential);
+        self::ensureOriginIsAllowed($credential, "Passkeys can't be added from this address.");
 
         try {
             return ($this->storePasskey)(
@@ -180,13 +181,13 @@ class PasskeyService
         return $user->sso_provider && !$user->hasPasskeysEnabled();
     }
 
-    private static function ensureOriginIsAllowed(PublicKeyCredential $credential): void
+    private static function ensureOriginIsAllowed(PublicKeyCredential $credential, string $rejectionMessage): void
     {
         $allowedOrigins = array_map(self::originOf(...), Passkeys::allowedOrigins());
 
         throw_unless(
             in_array(self::originOf($credential->response->clientDataJSON->origin), $allowedOrigins, true),
-            InvalidPasskeyException::make('Unrecognized passkey.'),
+            InvalidPasskeyException::make($rejectionMessage),
         );
     }
 

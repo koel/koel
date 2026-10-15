@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Services\Auth\TwoFactorAuthenticator;
 use Laravel\Passkeys\Actions\StorePasskey;
 use Laravel\Passkeys\Actions\VerifyPasskey;
+use Laravel\Passkeys\Passkeys;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use Webauthn\Exception\AuthenticatorResponseVerificationException;
@@ -184,24 +186,113 @@ class PasskeyTest extends TestCase
         ])->assertUnprocessable();
     }
 
+    /** @return array<string, array<string>> */
+    public static function addressesUnderRelyingPartyIdDataProvider(): array
+    {
+        return [
+            'another port' => ['http://localhost:8001'],
+            'subdomain' => ['http://music.localhost'],
+        ];
+    }
+
     #[Test]
-    public function registerPasskeyFromAnotherAddress(): void
+    #[DataProvider('addressesUnderRelyingPartyIdDataProvider')]
+    public function registerPasskeyFromAddressUnderRelyingPartyId(string $address): void
+    {
+        $user = create_user();
+        $passkey = Passkey::factory()->for($user)->createOne();
+
+        $this
+            ->mock(StorePasskey::class)
+            ->expects('__invoke')
+            ->withArgs(static fn (): bool => in_array($address, Passkeys::allowedOrigins(), true))
+            ->andReturn($passkey);
+
+        $this->postAs("$address/api/me/passkeys/registration-options", ['password' => 'secret'], $user)->assertOk();
+
+        $this->postAs(
+            "$address/api/me/passkeys",
+            ['name' => 'MacBook', 'credential' => self::attestationCredential($address)],
+            $user,
+        )->assertCreated();
+    }
+
+    #[Test]
+    public function registerPasskeyWithConfiguredOriginFromAnotherAddress(): void
+    {
+        $user = create_user();
+        $passkey = Passkey::factory()->for($user)->createOne();
+        $this->mock(StorePasskey::class)->expects('__invoke')->andReturn($passkey);
+
+        $this->postAs('api/me/passkeys/registration-options', ['password' => 'secret'], $user)->assertOk();
+
+        $this->postAs(
+            'http://localhost:8001/api/me/passkeys',
+            ['name' => 'MacBook', 'credential' => self::attestationCredential('http://localhost')],
+            $user,
+        )->assertCreated();
+    }
+
+    /** @return array<string, array<string>> */
+    public static function mismatchedAddressesDataProvider(): array
+    {
+        return [
+            'another port than the request' => ['http://localhost', 'http://localhost:8001'],
+            'another subdomain than the request' => ['http://music.localhost', 'http://admin.localhost'],
+            'another scheme than the request' => ['http://localhost:8001', 'https://localhost:8001'],
+            'a host outside the relying party ID' => ['http://example.com', 'http://example.com'],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('mismatchedAddressesDataProvider')]
+    public function registerPasskeyFromMismatchedAddress(string $requestAddress, string $credentialOrigin): void
     {
         $user = create_user();
         $this->mock(StorePasskey::class)->shouldNotReceive('__invoke');
 
         $this->postAs('api/me/passkeys/registration-options', ['password' => 'secret'], $user)->assertOk();
 
-        $response = $this
+        $this
             ->postAs(
-                'api/me/passkeys',
-                ['name' => 'MacBook', 'credential' => self::attestationCredential('http://localhost:8001')],
+                "$requestAddress/api/me/passkeys",
+                ['name' => 'MacBook', 'credential' => self::attestationCredential($credentialOrigin)],
                 $user,
             )
             ->assertUnprocessable()
-            ->assertJsonValidationErrors('credential');
+            ->assertJsonValidationErrors(['credential' => "Passkeys can't be added from this address."]);
+    }
 
-        self::assertStringNotContainsString(rtrim(config('app.url'), '/'), $response->json('errors.credential.0'));
+    #[Test]
+    public function logInWithPasskeyFromMismatchedAddress(): void
+    {
+        $this->mock(VerifyPasskey::class)->shouldNotReceive('__invoke');
+
+        $this
+            ->postJson('api/me/passkey-login', [
+                'login_token' => $this->getJson('api/me/passkey-login-options')->json('login_token'),
+                'credential' => self::assertionCredential('http://localhost:8001'),
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['credential' => "Passkeys can't be used from this address."]);
+    }
+
+    #[Test]
+    public function confirmIdentityWithPasskeyFromMismatchedAddress(): void
+    {
+        $user = create_user();
+        $this->mock(VerifyPasskey::class)->shouldNotReceive('__invoke');
+
+        $this->getAs('api/me/passkeys/confirmation-options', $user)->assertOk();
+
+        $this
+            ->postAs(
+                'api/me/passkeys/registration-options',
+                ['credential' => self::assertionCredential('http://localhost:8001')],
+                $user,
+            )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['credential' => "Passkeys can't be used from this address."]);
     }
 
     #[Test]
@@ -226,14 +317,14 @@ class PasskeyTest extends TestCase
     }
 
     /** @return array<string, mixed> */
-    private static function assertionCredential(): array
+    private static function assertionCredential(string $origin = 'http://localhost'): array
     {
         return [
             'id' => self::base64Url('credential'),
             'rawId' => self::base64Url('credential'),
             'type' => 'public-key',
             'response' => [
-                'clientDataJSON' => self::clientDataJson('webauthn.get'),
+                'clientDataJSON' => self::clientDataJson('webauthn.get', $origin),
                 'authenticatorData' => self::base64Url(self::authenticatorData()),
                 'signature' => self::base64Url('signature'),
                 'userHandle' => null,
