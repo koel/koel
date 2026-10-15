@@ -49,7 +49,7 @@
     "fakerphp/faker": "^1.24",
     "spatie/laravel-permission": "^6.21",
     "enshrined/svg-sanitize": "^1.0.0",
-    "phanan/poddle": "^1.2.4",
+    "phanan/poddle": "^1.2.6",
     "laravel/ai": "^0.7.0",
     "league/flysystem-webdav": "^3.0",
     "mlocati/ip-lib": "^1.22",

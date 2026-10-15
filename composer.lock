@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9045422fe1b97a7e88a31602c9fea15",
+    "content-hash": "b841ad60e0b2d753cafd9c7f61365fed",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -5069,16 +5069,16 @@
         },
         {
             "name": "phanan/poddle",
-            "version": "v1.2.4",
+            "version": "v1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phanan/poddle.git",
-                "reference": "7f3bc865d63d7dfe123b1bc455d61d908d271e3e"
+                "reference": "288f50ddf2aa447540acc2d7e2475ca4e364b765"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phanan/poddle/zipball/7f3bc865d63d7dfe123b1bc455d61d908d271e3e",
-                "reference": "7f3bc865d63d7dfe123b1bc455d61d908d271e3e",
+                "url": "https://api.github.com/repos/phanan/poddle/zipball/288f50ddf2aa447540acc2d7e2475ca4e364b765",
+                "reference": "288f50ddf2aa447540acc2d7e2475ca4e364b765",
                 "shasum": ""
             },
             "require": {
@@ -5125,7 +5125,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phanan/poddle/issues",
-                "source": "https://github.com/phanan/poddle/tree/v1.2.4"
+                "source": "https://github.com/phanan/poddle/tree/v1.2.6"
             },
             "funding": [
                 {
@@ -5133,7 +5133,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-24T15:33:29+00:00"
+            "time": "2026-10-15T04:17:37+00:00"
         },
         {
             "name": "php-di/invoker",
