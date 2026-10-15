@@ -240,7 +240,7 @@ class SongRepository extends Repository implements ScoutableRepository
                     'genres.id',
                     $genre->id,
                 ))
-                ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
+                ->when(!$genre, static fn (SongBuilder $builder) => $builder->genreless())
                 ->sort($sortColumns, $sortDirection),
             idColumn: 'songs.id',
             perPage: 50,
@@ -553,7 +553,7 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query(type: PlayableType::SONG, user: $scopedUser)
             ->withUserContext()
             ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
-            ->when(!$genre, static fn (Builder $builder) => $builder->whereDoesntHave('genres'))
+            ->when(!$genre, static fn (SongBuilder $builder) => $builder->genreless())
             ->orderBy('songs.title')
             ->when($offset > 0, static fn (Builder $builder) => $builder->offset($offset))
             ->limit($limit)
