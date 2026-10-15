@@ -51,6 +51,8 @@ Reload the server, and Koel will attempt to look up the user's country by sendin
 to IPinfo's API. If successful, Koel will use the detected country code to search for events. If not, it will fall
 back to the default country code, which in turn defaults to `US` as described above.
 
+If the artist has no upcoming events in that country, the Events tab shows their events elsewhere instead, and says so.
+
 <script lang="ts" setup>
 import ticketmasterApp from '../assets/img/plus/ticketmaster-app.avif'
 import ipinfoToken from '../assets/img/plus/ipinfo-token.avif'

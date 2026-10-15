@@ -4,12 +4,16 @@
       <ArtistEventSkeleton v-for="key in 3" :key />
     </div>
 
-    <template v-else>
-      <ul v-if="events?.length" class="space-y-4">
+    <template v-else-if="events.length">
+      <p v-if="!nearby" class="mb-4 text-k-fg-70" data-testid="events-elsewhere">
+        No events near you. Showing events elsewhere.
+      </p>
+      <ul class="space-y-4">
         <ArtistEventItem v-for="event in events" :key="event.id" :event />
       </ul>
-      <p>No upcoming events.</p>
     </template>
+
+    <p v-else data-testid="no-events">No upcoming events.</p>
   </section>
 </template>
 
@@ -29,12 +33,16 @@ const { artist } = props
 
 const loading = ref(false)
 const events = ref<LiveEvent[]>([])
+const nearby = ref(true)
 
 const fetchEvents = async () => {
   loading.value = true
 
   try {
-    events.value = await artistStore.fetchEvents(artist)
+    const result = await artistStore.fetchEvents(artist)
+
+    events.value = result.events
+    nearby.value = result.nearby
   } catch (e: unknown) {
     useErrorHandler('toast').handleHttpError(e)
   } finally {

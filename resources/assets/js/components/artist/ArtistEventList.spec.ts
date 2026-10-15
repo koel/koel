@@ -7,11 +7,11 @@ import Component from './ArtistEventList.vue'
 describe('artistEventList.vue', () => {
   const h = createHarness()
 
-  const renderComponent = async (artist?: Artist, events?: LiveEvent[]) => {
+  const renderComponent = async (artist?: Artist, events?: LiveEvent[], nearby = true) => {
     events = events ?? h.factory('live-event').make(5)
     artist = artist ?? h.factory('artist').make()
 
-    const fetchEventsMock = h.mock(artistStore, 'fetchEvents').mockResolvedValueOnce(events)
+    const fetchEventsMock = h.mock(artistStore, 'fetchEvents').mockResolvedValueOnce({ events, nearby })
 
     const rendered = h.render(Component, {
       props: {
@@ -39,5 +39,26 @@ describe('artistEventList.vue', () => {
   it('renders the events', async () => {
     const { events } = await renderComponent()
     await waitFor(() => expect(screen.queryAllByTestId('event-item').length).toBe(events.length))
+  })
+
+  it('says the events are elsewhere when there are none nearby', async () => {
+    await renderComponent(undefined, undefined, false)
+
+    await waitFor(() => screen.getByTestId('events-elsewhere'))
+    expect(screen.queryByTestId('no-events')).toBeNull()
+  })
+
+  it('shows no empty state alongside nearby events', async () => {
+    await renderComponent()
+
+    await waitFor(() => expect(screen.queryAllByTestId('event-item').length).toBe(5))
+    expect(screen.queryByTestId('no-events')).toBeNull()
+    expect(screen.queryByTestId('events-elsewhere')).toBeNull()
+  })
+
+  it('shows the empty state when there are no events anywhere', async () => {
+    await renderComponent(undefined, [], false)
+
+    await waitFor(() => screen.getByTestId('no-events'))
   })
 })

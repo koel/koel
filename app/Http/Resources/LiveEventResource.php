@@ -20,6 +20,7 @@ class LiveEventResource extends JsonResource
             'name',
             'url',
             'city',
+            'country',
         ],
         'url',
         'image',

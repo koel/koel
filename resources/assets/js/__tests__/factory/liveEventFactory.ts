@@ -15,6 +15,7 @@ export default (): LiveEvent => {
       name: faker.word.words(),
       url: faker.internet.url(),
       city: faker.location.city(),
+      country: faker.location.country(),
     },
   }
 }

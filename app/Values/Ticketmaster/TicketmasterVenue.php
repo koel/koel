@@ -11,6 +11,7 @@ readonly class TicketmasterVenue implements Arrayable
         public string $name,
         public string $url,
         public string $city,
+        public string $country,
     ) {}
 
     public static function fromArray(array $data): self
@@ -19,12 +20,13 @@ readonly class TicketmasterVenue implements Arrayable
             name: Arr::get($data, 'name', ''),
             url: Arr::get($data, 'url', ''),
             city: Arr::get($data, 'city.name', ''),
+            country: Arr::get($data, 'country.name', ''),
         );
     }
 
-    public static function make(string $name, string $url, string $city): self
+    public static function make(string $name, string $url, string $city, string $country = ''): self
     {
-        return new static(name: $name, url: $url, city: $city);
+        return new static(name: $name, url: $url, city: $city, country: $country);
     }
 
     /** @inheritdoc */
@@ -34,6 +36,7 @@ readonly class TicketmasterVenue implements Arrayable
             'name' => $this->name,
             'url' => $this->url,
             'city' => $this->city,
+            'country' => $this->country,
         ];
     }
 }
