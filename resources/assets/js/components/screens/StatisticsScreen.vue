@@ -53,7 +53,15 @@
 
       <ShelfSection v-if="statistics.top_albums.length">
         <template #header>Your Top Albums</template>
-        <TopAlbums :entries="statistics.top_albums" />
+        <Carousel>
+          <TopAlbumCard
+            v-for="(entry, i) in statistics.top_albums"
+            :key="entry.album.id"
+            :album="entry.album"
+            :listening-time="entry.listening_time"
+            :rank="i + 1"
+          />
+        </Carousel>
       </ShelfSection>
 
       <ShelfSection v-if="topGenres.length">
@@ -89,7 +97,7 @@ import ShelfSection from '@/components/ui/ShelfSection.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
 import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
 import RankedColumns from '@/components/screens/statistics/RankedColumns.vue'
-import TopAlbums from '@/components/screens/statistics/TopAlbums.vue'
+import TopAlbumCard from '@/components/screens/statistics/TopAlbumCard.vue'
 import TopArtistCard from '@/components/screens/statistics/TopArtistCard.vue'
 
 const PERIOD_LABELS: Record<ListeningPeriod, string> = {
