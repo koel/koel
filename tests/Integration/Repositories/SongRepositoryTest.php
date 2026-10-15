@@ -165,6 +165,18 @@ class SongRepositoryTest extends TestCase
         self::assertEqualsCanonicalizing($songsWithoutGenre->pluck('id')->all(), $songs->pluck('id')->all());
     }
 
+    #[Test]
+    public function getByGenreRandomlyReturnsDistinctSongsWithoutGenreUpToTheLimit(): void
+    {
+        Genre::factory()->has(Song::factory()->count(5))->createOne();
+        $songsWithoutGenre = Song::factory()->createMany(5);
+
+        $songIds = $this->songRepository->getByGenre(null, 3, random: true, scopedUser: create_user())->pluck('id');
+
+        self::assertCount(3, $songIds->unique());
+        self::assertEmpty($songIds->diff($songsWithoutGenre->pluck('id')));
+    }
+
     /** @param array<array<string, mixed>> $rules */
     private static function smartPlaylistWithRules(array $rules): Playlist
     {

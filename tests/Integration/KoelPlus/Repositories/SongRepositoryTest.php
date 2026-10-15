@@ -9,6 +9,7 @@ use App\Models\Interaction;
 use App\Models\Song;
 use App\Repositories\SongRepository;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\TestWith;
 use Tests\PlusTestCase;
 
 use function Tests\create_user;
@@ -56,6 +57,21 @@ class SongRepositoryTest extends PlusTestCase
         Song::factory()->for(create_user(), 'owner')->private()->hasAttached($rock)->createMany(10);
 
         $songs = app(SongRepository::class)->getByGenre($rock, 3, random: true, scopedUser: $user);
+
+        self::assertEqualsCanonicalizing($ownSongs->pluck('id')->all(), $songs->pluck('id')->all());
+    }
+
+    #[Test]
+    #[TestWith([3])]
+    #[TestWith([10])]
+    public function getByGenreRandomlyReturnsOnlyAccessibleSongsWithoutGenre(int $limit): void
+    {
+        $user = create_user();
+        $ownSongs = Song::factory()->for($user, 'owner')->private()->createMany(3);
+
+        Song::factory()->for(create_user(), 'owner')->private()->createMany(10);
+
+        $songs = app(SongRepository::class)->getByGenre(null, $limit, random: true, scopedUser: $user);
 
         self::assertEqualsCanonicalizing($ownSongs->pluck('id')->all(), $songs->pluck('id')->all());
     }

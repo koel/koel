@@ -216,6 +216,11 @@ class SongBuilder extends FavoriteableBuilder
         return $this;
     }
 
+    public function genreless(): self
+    {
+        return $this->leftJoin('genre_song', 'genre_song.song_id', 'songs.id')->whereNull('genre_song.song_id');
+    }
+
     public function storedLocally(): self
     {
         return $this->where(static function (self $query): void {
