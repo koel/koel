@@ -17,6 +17,7 @@ use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\Song;
 use App\Models\User;
+use App\Providers\MacroProvider;
 use App\Repositories\Contracts\PaginationStrategy;
 use App\Repositories\Contracts\ScoutableRepository;
 use App\Values\SmartPlaylist\SmartPlaylistQueryModifier as QueryModifier;
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
 use LogicException;
@@ -543,7 +545,9 @@ class SongRepository extends Repository implements ScoutableRepository
         $scopedUser ??= $this->auth->user();
 
         if ($random) {
-            return $this->getRandomByGenre($genre, $limit, $scopedUser);
+            return $genre
+                ? $this->getRandomByGenre($genre, $limit, $scopedUser)
+                : $this->getRandomGenreless($limit, $scopedUser);
         }
 
         return Song::query(type: PlayableType::SONG, user: $scopedUser)
@@ -556,25 +560,61 @@ class SongRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
-    /**
-     * @param Genre|null $genre If null, pick from songs that have no genre.
-     * @return Collection<int, Song>
-     */
-    private function getRandomByGenre(?Genre $genre, int $limit, User $scopedUser): Collection
+    /** @return Collection<int, Song> */
+    private function getRandomByGenre(Genre $genre, int $limit, User $scopedUser): Collection
     {
         $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
             ->select('songs.id')
             ->accessible()
-            ->when($genre, static fn (SongBuilder $query) => $query->whereIn(
-                'songs.id',
-                $genre->songs()->newPivotQuery()->select('song_id'),
-            ))
-            ->when(!$genre, static fn (SongBuilder $query) => $query->whereDoesntHave('genres'))
+            ->whereIn('songs.id', $genre->songs()->newPivotQuery()->select('song_id'))
             ->inRandomOrder()
             ->limit($limit)
             ->pluck('songs.id');
 
         return $this->getMany($ids->all(), preserveOrder: true, scopedUser: $scopedUser);
+    }
+
+    /** @return Collection<int, Song> */
+    private function getRandomGenreless(int $limit, User $scopedUser): Collection
+    {
+        $ids = $this->pickGenrelessIdsFromRandomWindow($limit, $scopedUser);
+
+        if ($ids->count() < $limit) {
+            $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
+                ->select('songs.id')
+                ->accessible()
+                ->genreless()
+                ->inRandomOrder()
+                ->limit($limit)
+                ->pluck('songs.id');
+        }
+
+        return $this->getMany($ids->all(), preserveOrder: true, scopedUser: $scopedUser);
+    }
+
+    /** @return SupportCollection<int, string> */
+    private function pickGenrelessIdsFromRandomWindow(int $limit, User $scopedUser): SupportCollection
+    {
+        $candidateIds = self::pluckFromRandomHash(
+            Song::query(type: PlayableType::SONG, user: $scopedUser)->select('songs.id')->accessible(),
+            hashColumn: 'songs.path_hash',
+            idColumn: 'songs.id',
+            limit: $limit * 20,
+        );
+
+        $genrelessSongs = Song::query()->select('songs.id')->genreless();
+
+        return $candidateIds
+            ->lazy()
+            ->chunk(MacroProvider::WHERE_IN_CHUNK_SIZE)
+            ->flatMap(
+                static fn (LazyCollection $chunk): SupportCollection => (clone $genrelessSongs)
+                    ->whereIn('songs.id', $chunk)
+                    ->pluck('songs.id'),
+            )
+            ->take($limit)
+            ->collect()
+            ->shuffle();
     }
 
     /** @return array<string> */
