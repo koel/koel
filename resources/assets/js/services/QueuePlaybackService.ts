@@ -559,7 +559,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     ) {
       if (!playableStore.getResolvedSourceUrl(nextPlayable)) {
         playableStore.resolveSourceUrl(nextPlayable).catch(logger.warn)
-      } else if (crossfadeService.start(nextPlayable, crossfadeDuration, volumeManager.get())) {
+      } else if (crossfadeService.start(nextPlayable, media.duration - media.currentTime, volumeManager.get())) {
         // Show the incoming track as "now playing" immediately
         queueStore.current!.playback_state = 'Stopped'
         nextPlayable.playback_state = 'Playing'
@@ -574,6 +574,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       const remaining = media.duration - media.currentTime
       const progress = Math.max(0, 1 - remaining / crossfadeDuration)
       this.setVolume(volumeManager.get() * (1 - progress))
+      crossfadeService.fadeInIncomingTrack(progress, volumeManager.get())
     }
   }
 

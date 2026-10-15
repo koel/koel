@@ -18,6 +18,7 @@ import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import { logger } from '@/utils/logger'
 import { playbackService } from '@/services/QueuePlaybackService'
 import { crossfadeService } from '@/services/crossfadeService'
+import { volumeManager } from '@/services/volumeManager'
 import { useBranding } from '@/composables/useBranding'
 import { usePageTitle } from '@/composables/usePageTitle'
 
@@ -348,6 +349,80 @@ describe('playbackService', () => {
     expect(startMock).not.toHaveBeenCalled()
 
     preferences.temporary.crossfade_duration = 0
+  })
+
+  const startCrossfadeAtFiveSeconds = () => {
+    const [current, next] = playableStore.syncWithVault(h.factory('song').make(2))
+    current.playback_state = 'Playing'
+    queueStore.state.playables = reactive([current, next])
+    h.setReadOnlyProperty(queueStore, 'next', next)
+
+    h.mock(playbackService, 'registerPlay')
+    h.mock(playbackService, 'showNotification')
+    h.mock(http, 'put')
+    h.mock(window.HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined)
+    h.mock(playableStore, 'getResolvedSourceUrl').mockReturnValue('http://test/play/next')
+    h.mock(playbackService, 'preload')
+    preferences.temporary.crossfade_duration = 5
+    volumeManager.volume.value = 8
+
+    const outgoingMedia = playbackService.media
+    h.setReadOnlyProperty(outgoingMedia, 'currentTime', 297.5)
+    h.setReadOnlyProperty(outgoingMedia, 'duration', 300)
+    outgoingMedia.dispatchEvent(new Event('timeupdate'))
+
+    return { outgoingMedia, incomingMedia: crossfadeService.state!.incomingAudio }
+  }
+
+  const endCrossfadeTest = (outgoingMedia: HTMLMediaElement) => {
+    crossfadeService.cancel()
+    playbackService.swapMediaElement(outgoingMedia)
+    preferences.temporary.crossfade_duration = 0
+    volumeManager.volume.value = 0
+  }
+
+  it('fades the next song in on time updates alone during a crossfade', () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+
+    expect(outgoingMedia.volume).toBeCloseTo(0.4)
+    expect(incomingMedia.volume).toBeCloseTo(0.4)
+
+    h.setReadOnlyProperty(outgoingMedia, 'currentTime', 299.5)
+    outgoingMedia.dispatchEvent(new Event('timeupdate'))
+
+    expect(outgoingMedia.volume).toBeCloseTo(0.08)
+    expect(incomingMedia.volume).toBeCloseTo(0.72)
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
+  it('takes over the faded-in song without a volume jump', async () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+
+    h.setReadOnlyProperty(outgoingMedia, 'currentTime', 299.9)
+    outgoingMedia.dispatchEvent(new Event('timeupdate'))
+    const fadedInVolume = incomingMedia.volume
+
+    outgoingMedia.dispatchEvent(new Event('ended'))
+    await vi.waitFor(() => expect(playbackService.media).toBe(incomingMedia))
+
+    expect(incomingMedia.volume - fadedInVolume).toBeLessThan(0.02)
+    expect(crossfadeService.active).toBe(false)
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
+  it('restores the volume when seeking cancels a crossfade', () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+    const pauseMock = h.mock(incomingMedia, 'pause')
+
+    playbackService.seekTo(100)
+
+    expect(crossfadeService.active).toBe(false)
+    expect(pauseMock).toHaveBeenCalled()
+    expect(outgoingMedia.volume).toBeCloseTo(0.8)
+
+    endCrossfadeTest(outgoingMedia)
   })
 
   it('registers play', () => {

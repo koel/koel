@@ -8,8 +8,8 @@ interface CrossfadeState {
   incomingAudio: HTMLAudioElement
   /** The playable being faded in */
   playable: Playable
-  /** The requestAnimationFrame handle for the volume ramp */
-  rafId: number
+  /** Whether the audio graph fades the incoming track in, instead of its element volume */
+  fadesThroughAudioGraph: boolean
   /** The original volume of the primary player (0-10 scale) */
   originalVolume: number
 }
@@ -23,8 +23,8 @@ export const crossfadeService = {
   },
 
   /**
-   * Start crossfading. The incoming track plays through a secondary audio element
-   * with volume controlled directly. The outgoing track is faded out by the caller.
+   * Start crossfading. The incoming track plays through a secondary audio element and fades in over `duration`
+   * seconds. The outgoing track is faded out by the caller.
    */
   start(nextPlayable: Playable, duration: number, currentVolume: number): boolean {
     this.cancel()
@@ -41,47 +41,23 @@ export const crossfadeService = {
       incomingAudio.src = sourceUrl
       incomingAudio.volume = 0
 
-      if (audioService.context) {
-        audioService.connectCrossfadeElement(incomingAudio, volumeNormalizer.computeGainDb(nextPlayable))
+      const fadesThroughAudioGraph = Boolean(audioService.context)
+
+      if (fadesThroughAudioGraph) {
+        audioService.connectCrossfadeElement(incomingAudio, volumeNormalizer.computeGainDb(nextPlayable), duration)
       }
 
-      const state: CrossfadeState = {
+      this.state = {
         incomingAudio,
         playable: nextPlayable,
-        rafId: 0,
+        fadesThroughAudioGraph,
         originalVolume: currentVolume,
       }
 
-      this.state = state
-
-      incomingAudio
-        .play()
-        .then(() => {
-          const startTime = performance.now()
-          const durationMs = duration * 1000
-          const normalizedVolume = currentVolume / 10
-
-          const step = () => {
-            if (this.state !== state) {
-              return
-            }
-
-            const elapsed = performance.now() - startTime
-            const progress = Math.min(elapsed / durationMs, 1)
-
-            incomingAudio.volume = progress * normalizedVolume
-
-            if (progress < 1) {
-              state.rafId = requestAnimationFrame(step)
-            }
-          }
-
-          state.rafId = requestAnimationFrame(step)
-        })
-        .catch(e => {
-          logger.warn('Crossfade play failed:', e)
-          this.cancel()
-        })
+      incomingAudio.play().catch(e => {
+        logger.warn('Crossfade play failed:', e)
+        this.cancel()
+      })
 
       return true
     } catch (e) {
@@ -92,6 +68,19 @@ export const crossfadeService = {
   },
 
   /**
+   * Set the incoming track's volume for the crossfade's progress (0 to 1), unless the audio graph fades it in.
+   */
+  fadeInIncomingTrack(progress: number, volume: number) {
+    if (!this.state) {
+      return
+    }
+
+    const elementVolume = Math.max(0, Math.min(1, volume / 10))
+
+    this.state.incomingAudio.volume = this.state.fadesThroughAudioGraph ? elementVolume : elementVolume * progress
+  },
+
+  /**
    * Cancel an active crossfade. Stops the incoming audio and cleans up.
    */
   cancel() {
@@ -99,9 +88,7 @@ export const crossfadeService = {
       return
     }
 
-    const { incomingAudio, rafId } = this.state
-
-    cancelAnimationFrame(rafId)
+    const { incomingAudio } = this.state
 
     incomingAudio.pause()
     incomingAudio.removeAttribute('src')
