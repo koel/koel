@@ -6,8 +6,10 @@ use App\Models\Genre;
 use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Song;
+use App\Repositories\Pagination\CursorStrategy;
 use App\Repositories\SongRepository;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
@@ -175,6 +177,44 @@ class SongRepositoryTest extends TestCase
 
         self::assertCount(3, $songIds->unique());
         self::assertEmpty($songIds->diff($songsWithoutGenre->pluck('id')));
+    }
+
+    #[Test]
+    public function getByGenreReturnsSongsWithoutGenreByTitleWhenNoGenreIsGiven(): void
+    {
+        Genre::factory()->has(Song::factory()->count(2))->createOne();
+        $bravo = Song::factory()->createOne(['title' => 'Bravo']);
+        $alpha = Song::factory()->createOne(['title' => 'Alpha']);
+
+        $songs = $this->songRepository->getByGenre(null, 10, scopedUser: create_user());
+
+        self::assertSame([$alpha->id, $bravo->id], $songs->pluck('id')->all());
+    }
+
+    #[Test]
+    public function paginateByGenreWalksSongsWithoutGenreByCursorWhenNoGenreIsGiven(): void
+    {
+        Genre::factory()->has(Song::factory()->count(2))->createOne();
+        $songsWithoutGenre = Song::factory()
+            ->sequence(static fn (Sequence $sequence): array => ['title' => sprintf('Song %02d', $sequence->index)])
+            ->createMany(51);
+
+        $user = create_user();
+
+        $firstPage = $this->songRepository->paginateByGenre(null, ['title'], 'asc', new CursorStrategy(null), $user);
+
+        $secondPage = $this->songRepository->paginateByGenre(
+            null,
+            ['title'],
+            'asc',
+            new CursorStrategy($firstPage->nextCursor()->encode()),
+            $user,
+        );
+
+        self::assertSame(
+            $songsWithoutGenre->pluck('id')->all(),
+            collect($firstPage->items())->concat($secondPage->items())->pluck('id')->all(),
+        );
     }
 
     /** @param array<array<string, mixed>> $rules */
