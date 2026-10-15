@@ -11,11 +11,13 @@ use App\Models\ScannedFile;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Services\Scanners\DirectoryScanner;
+use App\Services\Scanners\Strategies\ParallelScanStrategy;
 use App\Values\Scanning\ScanConfiguration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Laravel\Scout\EngineManager;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\Fakes\RecordingSearchEngine;
 use Tests\TestCase;
 
@@ -266,15 +268,25 @@ class DirectoryScannerTest extends TestCase
     #[Test]
     public function parallelScanLeavesNoTemporaryFilesBehind(): void
     {
-        $temporaryFilesBefore = glob(sys_get_temp_dir() . '/koel_scan_*');
+        $pathList = null;
 
-        rescue(fn () => $this->scanner->scan(
+        $this
+            ->mock(ParallelScanStrategy::class)
+            ->expects('scan')
+            ->andReturnUsing(static function (string $scannedPathList) use (&$pathList): never {
+                $pathList = $scannedPathList;
+
+                throw new RuntimeException('Parallel scan worker failed');
+            });
+
+        rescue(fn () => app(DirectoryScanner::class)->scan(
             $this->mediaPath,
             ScanConfiguration::make(owner: create_admin()),
             jobs: 2,
         ), report: false);
 
-        self::assertSame($temporaryFilesBefore, glob(sys_get_temp_dir() . '/koel_scan_*'));
+        self::assertNotNull($pathList);
+        self::assertFileDoesNotExist($pathList);
         $this->assertDatabaseEmpty(ScannedFile::class);
     }
 
