@@ -87,5 +87,6 @@ export class ThreeSharedRenderer {
   destroy () {
     window.removeEventListener('resize', this.resizeHandler, false)
     this.renderer.dispose()
+    this.renderer.forceContextLoss()
   }
 }

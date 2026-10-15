@@ -141,6 +141,7 @@ export const init = async (container: HTMLElement) => {
     stopWatchingSelection()
     stopWatchingNames()
     destroy()
+    canvas.getContext('webgl2')?.getExtension('WEBGL_lose_context')?.loseContext()
     projectM._free(samplesPointer)
     canvas.remove()
     hint.remove()

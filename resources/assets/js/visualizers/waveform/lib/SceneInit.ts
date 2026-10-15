@@ -77,5 +77,6 @@ export default class SceneInit {
     document.removeEventListener('wheel', this.onDocumentWheel, false)
     this.renderer.domElement.remove()
     this.renderer.dispose()
+    this.renderer.forceContextLoss()
   }
 }
