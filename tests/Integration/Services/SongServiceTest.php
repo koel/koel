@@ -215,6 +215,8 @@ class SongServiceTest extends TestCase
         Dispatcher::shouldReceive('dispatch');
         $songs = Song::factory()->state(['title' => 'Bohemian Rhapsody'])->createMany(2);
 
+        self::assertEqualsCanonicalizing($songs->modelKeys(), Song::search('Bohemian')->keys()->all());
+
         $this->service->deleteSongs($songs->modelKeys());
 
         self::assertEmpty(Song::search('Bohemian')->keys());
