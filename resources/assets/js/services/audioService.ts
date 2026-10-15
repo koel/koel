@@ -97,13 +97,17 @@ export const audioService = {
   },
 
   /**
-   * Route a crossfade's incoming element through the equalizer, with its own normalization gain until it takes over.
+   * Route a crossfade's incoming element through the equalizer, fading it in on the audio clock to its own
+   * normalization gain until it takes over.
    */
-  connectCrossfadeElement(element: HTMLMediaElement, normalizationGainDb: number) {
+  connectCrossfadeElement(element: HTMLMediaElement, normalizationGainDb: number, fadeInDuration: number) {
     this.disconnectCrossfadeElement()
 
+    const now = this.context.currentTime
+
     this.crossfadeGainNode = this.context.createGain()
-    this.crossfadeGainNode.gain.value = dbToGain(normalizationGainDb)
+    this.crossfadeGainNode.gain.setValueAtTime(0, now)
+    this.crossfadeGainNode.gain.linearRampToValueAtTime(dbToGain(normalizationGainDb), now + fadeInDuration)
     this.crossfadeGainNode.connect(this.preampGainNode)
 
     this.crossfadeSource = this.context.createMediaElementSource(element)

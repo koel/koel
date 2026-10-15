@@ -24,12 +24,17 @@ describe('audioService', () => {
   })
 
   describe('crossfade routing', () => {
-    const makeNode = () => ({ connect: vi.fn(), disconnect: vi.fn(), gain: { value: 1 } })
+    const makeNode = () => ({
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+      gain: { value: 1, setValueAtTime: vi.fn(), linearRampToValueAtTime: vi.fn() },
+    })
 
     const fakeAudioGraph = () => {
       const sourceNodes: Array<ReturnType<typeof makeNode> & { mediaElement: HTMLMediaElement }> = []
 
       audioService.context = {
+        currentTime: 12,
         createGain: () => makeNode(),
         createMediaElementSource: (mediaElement: HTMLMediaElement) => {
           const sourceNode = { ...makeNode(), mediaElement }
@@ -46,13 +51,16 @@ describe('audioService', () => {
       return sourceNodes
     }
 
-    it('plays the incoming element through the equalizer at its own normalization gain', () => {
+    it('fades the incoming element in through the equalizer to its own normalization gain', () => {
       fakeAudioGraph()
       const incomingAudio = document.createElement('audio')
 
-      audioService.connectCrossfadeElement(incomingAudio, -20)
+      audioService.connectCrossfadeElement(incomingAudio, -20, 5)
 
-      expect(audioService.crossfadeGainNode!.gain.value).toBeCloseTo(0.1)
+      const { gain } = audioService.crossfadeGainNode!
+      expect(gain.setValueAtTime).toHaveBeenCalledWith(0, 12)
+      expect(vi.mocked(gain.linearRampToValueAtTime).mock.calls[0][0]).toBeCloseTo(0.1)
+      expect(vi.mocked(gain.linearRampToValueAtTime).mock.calls[0][1]).toBe(17)
       expect(audioService.crossfadeGainNode!.connect).toHaveBeenCalledWith(audioService.preampGainNode)
       expect(audioService.crossfadeSource!.connect).toHaveBeenCalledWith(audioService.crossfadeGainNode)
     })
@@ -60,7 +68,7 @@ describe('audioService', () => {
     it('reuses the incoming element source when it takes over', () => {
       const sourceNodes = fakeAudioGraph()
       const incomingAudio = document.createElement('audio')
-      audioService.connectCrossfadeElement(incomingAudio, 0)
+      audioService.connectCrossfadeElement(incomingAudio, 0, 5)
 
       audioService.reconnectSource(incomingAudio)
 
