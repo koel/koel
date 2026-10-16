@@ -157,4 +157,17 @@ describe('albumListScreen.vue', () => {
       expect(emptyState.textContent).toContain('No favorite albums')
     })
   })
+
+  it('shows the server matches while filtering', async () => {
+    preferences.temporary.albums_favorites_only = false
+    const matches = h.factory('album').make(2)
+    const searchMock = h.mock(albumStore, 'search').mockResolvedValue(matches)
+    await renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'Filter' }))
+    await h.user.type(screen.getByPlaceholderText('Keywords'), 'foo')
+
+    await waitFor(() => expect(searchMock).toHaveBeenCalledWith('foo'))
+    await waitFor(() => expect(screen.getAllByTestId('album-card')).toHaveLength(2))
+  })
 })

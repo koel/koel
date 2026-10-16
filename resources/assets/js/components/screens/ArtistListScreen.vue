@@ -5,6 +5,7 @@
         Artists
         <template #controls>
           <div class="flex gap-2">
+            <ListFilter />
             <FavoritesOnlyToggle :active="preferences.artists_favorites_only" @toggle="toggleFavoritesOnly" />
 
             <ArtistListSorter
@@ -35,6 +36,13 @@
       No favorite artists.
     </ScreenEmptyState>
 
+    <ScreenEmptyState v-else-if="filtering && !searching && !shownArtists.length">
+      <template #icon>
+        <Icon :icon="faMicrophoneSlash" />
+      </template>
+      No matching artists.
+    </ScreenEmptyState>
+
     <template v-else>
       <div
         v-if="showSkeletons && preferences.artists_view_mode === 'table'"
@@ -58,15 +66,21 @@
       <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
         <ArtistTable
           v-if="preferences.artists_view_mode === 'table'"
-          :artists="displayedArtists"
-          :loading-more
+          :artists="shownArtists"
+          :loading-more="loadingMore && !filtering"
           :field="preferences.artists_sort_field"
           :order="preferences.artists_sort_order"
           @sort="sort"
           @toggle-favorite="toggleFavorite"
-          @scrolled-to-end="fetchArtists"
+          @scrolled-to-end="fetchMoreUnlessFiltering"
         />
-        <ArtistGrid v-else ref="grid" :artists="displayedArtists" :loading-more @scrolled-to-end="fetchArtists" />
+        <ArtistGrid
+          v-else
+          ref="grid"
+          :artists="shownArtists"
+          :loading-more="loadingMore && !filtering"
+          @scrolled-to-end="fetchMoreUnlessFiltering"
+        />
       </div>
     </template>
   </ScreenBase>
@@ -79,12 +93,14 @@ import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useCursorPaginatedList } from '@/composables/useCursorPaginatedList'
+import { useServerListFilter } from '@/composables/useServerListFilter'
 
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import ArtistGrid from '@/components/artist/ArtistGrid.vue'
 import ArtistTable from '@/components/artist/ArtistTable.vue'
 import ArtistTableRowSkeleton from '@/components/artist/ArtistTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ListFilter from '@/components/ui/ListFilter.vue'
 import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -114,6 +130,24 @@ const {
 })
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
+
+const { filtering, results: matchingArtists, searching } = useServerListFilter(keywords => artistStore.search(keywords))
+
+const shownArtists = computed(() => {
+  if (!filtering.value) {
+    return displayedArtists.value
+  }
+
+  return preferences.artists_favorites_only
+    ? matchingArtists.value.filter(artist => artist.favorite)
+    : matchingArtists.value
+})
+
+const fetchMoreUnlessFiltering = () => {
+  if (!filtering.value) {
+    fetchArtists()
+  }
+}
 
 const toggleFavorite = (artist: Artist) => artistStore.toggleFavorite(artist)
 

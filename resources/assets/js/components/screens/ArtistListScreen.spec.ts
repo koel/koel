@@ -160,4 +160,17 @@ describe('artistListScreen.vue', () => {
       expect(emptyState.textContent).toContain('No favorite artists')
     })
   })
+
+  it('shows the server matches while filtering', async () => {
+    preferenceStore.temporary.artists_favorites_only = false
+    const matches = h.factory('artist').make(2)
+    const searchMock = h.mock(artistStore, 'search').mockResolvedValue(matches)
+    await renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'Filter' }))
+    await h.user.type(screen.getByPlaceholderText('Keywords'), 'foo')
+
+    await waitFor(() => expect(searchMock).toHaveBeenCalledWith('foo'))
+    await waitFor(() => expect(screen.getAllByTestId('artist-card')).toHaveLength(2))
+  })
 })

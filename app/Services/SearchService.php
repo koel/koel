@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
@@ -18,6 +20,7 @@ class SearchService
 {
     public const int DEFAULT_EXCERPT_RESULT_LIMIT = 6;
     public const int DEFAULT_SONG_RESULT_LIMIT = 500;
+    public const int DEFAULT_LIST_FILTER_RESULT_LIMIT = 100;
 
     public function __construct(
         private readonly SongRepository $songRepository,
@@ -61,5 +64,23 @@ class SearchService
         int $limit = self::DEFAULT_SONG_RESULT_LIMIT,
     ): Collection {
         return $this->songRepository->search($keywords, $limit, $scopedUser);
+    }
+
+    /** @return Collection<int, Album> */
+    public function searchAlbums(
+        string $keywords,
+        ?User $scopedUser = null,
+        int $limit = self::DEFAULT_LIST_FILTER_RESULT_LIMIT,
+    ): Collection {
+        return $this->albumRepository->search($keywords, $limit, $scopedUser);
+    }
+
+    /** @return Collection<int, Artist> */
+    public function searchArtists(
+        string $keywords,
+        ?User $scopedUser = null,
+        int $limit = self::DEFAULT_LIST_FILTER_RESULT_LIMIT,
+    ): Collection {
+        return $this->artistRepository->search($keywords, $limit, $scopedUser);
     }
 }

@@ -28,6 +28,9 @@ or genres:
 
 ![Genres screen](../assets/img/interface/genres.avif)
 
+To find an artist or album quickly, type in the filter box (<InterfaceIcon :src="filterIcon" alt="Filter" />) on the
+Artists or Albums screen. The list then shows the best matches across your whole library.
+
 You can click on any artist, album, or genre name to see all the songs that belong to it.
 On the artist and album screens, you can also find other albums and songs by the same artist as well as extra metadata
 like the artist or album's information when [configured](../service-integrations).

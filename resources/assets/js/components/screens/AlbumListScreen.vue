@@ -5,6 +5,7 @@
         Albums
         <template #controls>
           <div class="flex gap-2">
+            <ListFilter />
             <FavoritesOnlyToggle :active="preferences.albums_favorites_only" @toggle="toggleFavoritesOnly" />
 
             <AlbumListSorter
@@ -35,6 +36,13 @@
       No favorite albums.
     </ScreenEmptyState>
 
+    <ScreenEmptyState v-else-if="filtering && !searching && !shownAlbums.length">
+      <template #icon>
+        <Icon :icon="faCompactDisc" />
+      </template>
+      No matching albums.
+    </ScreenEmptyState>
+
     <template v-else>
       <div
         v-if="showSkeletons && preferences.albums_view_mode === 'table'"
@@ -58,21 +66,21 @@
       <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
         <AlbumTable
           v-if="preferences.albums_view_mode === 'table'"
-          :albums="displayedAlbums"
-          :loading-more
+          :albums="shownAlbums"
+          :loading-more="loadingMore && !filtering"
           :field="preferences.albums_sort_field"
           :order="preferences.albums_sort_order"
           @sort="sort"
           @toggle-favorite="toggleFavorite"
-          @scrolled-to-end="fetchAlbums"
+          @scrolled-to-end="fetchMoreUnlessFiltering"
         />
         <AlbumGrid
           v-else
           ref="grid"
-          :albums="displayedAlbums"
-          :loading-more
+          :albums="shownAlbums"
+          :loading-more="loadingMore && !filtering"
           :show-release-year="preferences.albums_sort_field === 'year'"
-          @scrolled-to-end="fetchAlbums"
+          @scrolled-to-end="fetchMoreUnlessFiltering"
         />
       </div>
     </template>
@@ -86,12 +94,14 @@ import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useCursorPaginatedList } from '@/composables/useCursorPaginatedList'
+import { useServerListFilter } from '@/composables/useServerListFilter'
 
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import AlbumGrid from '@/components/album/AlbumGrid.vue'
 import AlbumTable from '@/components/album/AlbumTable.vue'
 import AlbumTableRowSkeleton from '@/components/album/AlbumTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ListFilter from '@/components/ui/ListFilter.vue'
 import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -121,6 +131,22 @@ const {
 })
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
+
+const { filtering, results: matchingAlbums, searching } = useServerListFilter(keywords => albumStore.search(keywords))
+
+const shownAlbums = computed(() => {
+  if (!filtering.value) {
+    return displayedAlbums.value
+  }
+
+  return preferences.albums_favorites_only ? matchingAlbums.value.filter(album => album.favorite) : matchingAlbums.value
+})
+
+const fetchMoreUnlessFiltering = () => {
+  if (!filtering.value) {
+    fetchAlbums()
+  }
+}
 
 const toggleFavorite = (album: Album) => albumStore.toggleFavorite(album)
 

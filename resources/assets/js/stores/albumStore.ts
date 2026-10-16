@@ -79,6 +79,10 @@ export const albumStore = {
     return album
   },
 
+  async search(keywords: string) {
+    return this.syncWithVault(await http.get<Album[]>(`search/albums?q=${encodeURIComponent(keywords)}`))
+  },
+
   async paginate(params: AlbumListPaginateParams) {
     const query = new URLSearchParams(flattenParams(params))
     query.set('cursor', params.cursor ?? '')
