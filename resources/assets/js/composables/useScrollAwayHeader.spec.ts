@@ -83,6 +83,22 @@ describe('useScrollAwayHeader', () => {
     expect(header.api.columnHeaderTop.value).toBe(90)
   })
 
+  it('keeps the header showing on scrolling down while it is kept revealed', async () => {
+    const { header, scrollTo } = await setUp()
+
+    header.api.keepRevealed(true)
+    scrollTo(500)
+    scrollTo(900)
+
+    expect(header.api.revealed.value).toBe(true)
+    expect(header.hiddenHeight.value).toBe(0)
+
+    header.api.keepRevealed(false)
+    scrollTo(950)
+
+    expect(header.api.revealed.value).toBe(false)
+  })
+
   it('hides the slid-in header again on scrolling down', async () => {
     const { header, scrollTo } = await setUp()
 
