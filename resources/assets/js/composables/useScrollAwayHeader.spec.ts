@@ -54,7 +54,7 @@ describe('useScrollAwayHeader', () => {
       scroller.dispatchEvent(new Event('scroll'))
     }
 
-    return { header, scroller, scrollTo }
+    return { header, host: host.value, scroller, scrollTo }
   }
 
   it('moves the header up with the content until it is out of sight', async () => {
@@ -83,20 +83,25 @@ describe('useScrollAwayHeader', () => {
     expect(header.api.columnHeaderTop.value).toBe(90)
   })
 
-  it('keeps the header showing on scrolling down while it is kept revealed', async () => {
-    const { header, scrollTo } = await setUp()
+  it('keeps the header showing on scrolling down while focus is inside it', async () => {
+    const { header, host, scrollTo } = await setUp()
+    const searchBox = document.createElement('input')
+    host.appendChild(searchBox)
+    document.body.appendChild(host)
 
-    header.api.keepRevealed(true)
+    searchBox.focus()
     scrollTo(500)
     scrollTo(900)
 
     expect(header.api.revealed.value).toBe(true)
     expect(header.hiddenHeight.value).toBe(0)
 
-    header.api.keepRevealed(false)
+    searchBox.blur()
     scrollTo(950)
 
     expect(header.api.revealed.value).toBe(false)
+
+    host.remove()
   })
 
   it('hides the slid-in header again on scrolling down', async () => {

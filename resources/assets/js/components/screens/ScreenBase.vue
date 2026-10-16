@@ -11,8 +11,6 @@
       :class="{ 'scroll-away': attached, revealed: api.revealed.value, sliding }"
       :style="attached ? { transform: `translateY(-${hiddenHeight}px)` } : undefined"
       class="header-host shrink-0"
-      @focusin="api.keepRevealed(true)"
-      @focusout="keepHeaderRevealedWhileFocusStaysInside"
     >
       <slot name="header" />
     </div>
@@ -55,9 +53,6 @@ const { getCurrentScreen } = useRouter()
 const headerHost = ref<HTMLElement>()
 const main = ref<HTMLElement>()
 const { attached, hiddenHeight, scrollerCount, api } = useScrollAwayHeader(headerHost)
-
-const keepHeaderRevealedWhileFocusStaysInside = (event: FocusEvent) =>
-  api.keepRevealed(Boolean(headerHost.value?.contains(event.relatedTarget as Node | null)))
 const sliding = api.sliding
 const contentScrollsInMain = computed(() => !props.scrollsItself && scrollerCount.value === 1)
 

@@ -15,7 +15,6 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
 
   let activeScroller: HTMLElement | null = null
   let upwardDistance = 0
-  let keptRevealed = false
   let slideTimer: ReturnType<typeof setTimeout> | undefined
 
   const setRevealed = (value: boolean) => {
@@ -56,7 +55,7 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
     lastScrollTops.set(scroller, top)
     scrollTop.value = top
 
-    if (keptRevealed) {
+    if (host.value?.contains(document.activeElement)) {
       setRevealed(top > 0)
       return
     }
@@ -108,14 +107,6 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
     }
   }
 
-  const keepRevealed = (value: boolean) => {
-    keptRevealed = value
-
-    if (value && scrollTop.value > 0) {
-      setRevealed(true)
-    }
-  }
-
   const hiddenHeight = computed(() => (revealed.value ? 0 : Math.min(scrollTop.value, expandedHeight.value)))
 
   const columnHeaderTop = computed(() =>
@@ -136,7 +127,6 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
       attachScroller,
       detachScroller,
       activateScroller,
-      keepRevealed,
       expandedHeight: readonly(expandedHeight),
       columnHeaderTop,
       revealed: readonly(revealed),
