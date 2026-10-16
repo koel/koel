@@ -46,7 +46,7 @@
 
     <template v-else>
       <div
-        v-if="showSkeletons && preferences.artists_view_mode === 'table'"
+        v-if="showingSkeletons && preferences.artists_view_mode === 'table'"
         class="-m-6 flex flex-col"
         role="status"
         aria-busy="true"
@@ -55,7 +55,7 @@
         <ArtistTableRowSkeleton v-for="i in 12" :key="i" />
       </div>
       <div
-        v-else-if="showSkeletons"
+        v-else-if="showingSkeletons"
         class="grid gap-5 p-6"
         :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }"
         role="status"
@@ -143,6 +143,8 @@ const shownArtists = computed(() => {
     ? matchingArtists.value.filter(artist => artist.favorite)
     : matchingArtists.value
 })
+
+const showingSkeletons = computed(() => showSkeletons.value || searching.value)
 
 const fetchMoreUnlessFiltering = () => {
   if (!filtering.value) {

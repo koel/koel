@@ -170,4 +170,15 @@ describe('albumListScreen.vue', () => {
     await waitFor(() => expect(searchMock).toHaveBeenCalledWith('foo'))
     await waitFor(() => expect(screen.getAllByTestId('album-card')).toHaveLength(2))
   })
+
+  it('shows loading skeletons while a search runs', async () => {
+    preferences.temporary.albums_favorites_only = false
+    h.mock(albumStore, 'search').mockReturnValue(new Promise(() => {}))
+    await renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'Search' }))
+    await h.user.type(screen.getByPlaceholderText('Keywords'), 'foo')
+
+    await waitFor(() => screen.getByRole('status', { name: 'Loading' }))
+  })
 })

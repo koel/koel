@@ -173,4 +173,15 @@ describe('artistListScreen.vue', () => {
     await waitFor(() => expect(searchMock).toHaveBeenCalledWith('foo'))
     await waitFor(() => expect(screen.getAllByTestId('artist-card')).toHaveLength(2))
   })
+
+  it('shows loading skeletons while a search runs', async () => {
+    preferenceStore.temporary.artists_favorites_only = false
+    h.mock(artistStore, 'search').mockReturnValue(new Promise(() => {}))
+    await renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'Search' }))
+    await h.user.type(screen.getByPlaceholderText('Keywords'), 'foo')
+
+    await waitFor(() => screen.getByRole('status', { name: 'Loading' }))
+  })
 })

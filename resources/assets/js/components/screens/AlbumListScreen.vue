@@ -46,7 +46,7 @@
 
     <template v-else>
       <div
-        v-if="showSkeletons && preferences.albums_view_mode === 'table'"
+        v-if="showingSkeletons && preferences.albums_view_mode === 'table'"
         class="-m-6 flex flex-col"
         role="status"
         aria-busy="true"
@@ -55,7 +55,7 @@
         <AlbumTableRowSkeleton v-for="i in 12" :key="i" />
       </div>
       <div
-        v-else-if="showSkeletons"
+        v-else-if="showingSkeletons"
         class="grid gap-5 p-6"
         :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }"
         role="status"
@@ -142,6 +142,8 @@ const shownAlbums = computed(() => {
 
   return preferences.albums_favorites_only ? matchingAlbums.value.filter(album => album.favorite) : matchingAlbums.value
 })
+
+const showingSkeletons = computed(() => showSkeletons.value || searching.value)
 
 const fetchMoreUnlessFiltering = () => {
   if (!filtering.value) {
