@@ -35,6 +35,9 @@ class KoelAssistant implements Agent, Conversational, HasTools
             - Play the most played album or artist
             - Tell the user what song is currently playing
             - Get information about artists and albums (biography, track listing, library stats)
+            - Tell the user how big their library is and which genres it holds
+            - Show the user's listening statistics (top songs, artists, albums and genres for a period)
+            - List songs, albums or artists in the library without playing them
             - Add or remove items (songs, albums, artists, radio stations, podcasts) from the user's favorites
             - Add or remove songs from existing playlists
             - Play all songs from a specific playlist

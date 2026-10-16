@@ -67,6 +67,11 @@ The assistant understands a wide range of requests. Here are some examples to ge
 - "Tell me about the album Dark Side of the Moon"
 - "Show me the lyrics of this song"
 - "Find the lyrics for this song if there are none"
+- "How many songs do I have?"
+- "What did I listen to most in the last 30 days?"
+- "Who were my top artists over the past year?"
+- "Do I have anything by Björk?"
+- "Which albums do I have from 1997?"
 
 ### Managing Playlists
 
