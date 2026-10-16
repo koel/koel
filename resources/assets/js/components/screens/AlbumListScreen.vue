@@ -5,7 +5,6 @@
         Albums
         <template #controls>
           <div class="flex gap-2">
-            <ListFilter />
             <FavoritesOnlyToggle :active="preferences.albums_favorites_only" @toggle="toggleFavoritesOnly" />
 
             <AlbumListSorter
@@ -14,6 +13,8 @@
               :order="preferences.albums_sort_order"
               @sort="sort"
             />
+
+            <ListFilter />
 
             <ViewModeSwitch v-model="preferences.albums_view_mode" secondary="table" />
           </div>

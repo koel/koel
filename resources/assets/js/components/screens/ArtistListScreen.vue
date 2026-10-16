@@ -5,7 +5,6 @@
         Artists
         <template #controls>
           <div class="flex gap-2">
-            <ListFilter />
             <FavoritesOnlyToggle :active="preferences.artists_favorites_only" @toggle="toggleFavoritesOnly" />
 
             <ArtistListSorter
@@ -14,6 +13,8 @@
               :order="preferences.artists_sort_order"
               @sort="sort"
             />
+
+            <ListFilter />
 
             <ViewModeSwitch v-model="preferences.artists_view_mode" secondary="table" />
           </div>
