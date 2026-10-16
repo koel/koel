@@ -149,6 +149,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
         return $this->getMany($ids->all(), preserveOrder: true, user: $user);
     }
 
+    /** @return Collection<int, Album> */
     public function getByYearRange(
         int $fromYear,
         int $toYear,
