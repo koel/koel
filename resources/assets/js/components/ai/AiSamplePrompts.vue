@@ -57,8 +57,8 @@ const allExamples = [
   'Play songs I rarely listen to',
   "Play something I've never heard before",
   'How many songs do I have?',
-  'What did I listen to most this month?',
-  'Who were my top artists this year?',
+  'What did I listen to most in the last 30 days?',
+  'Who were my top artists over the past year?',
   'Do I have anything by Björk?',
   'Which albums do I have from 1997?',
 ]

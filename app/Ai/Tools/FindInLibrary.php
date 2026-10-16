@@ -31,7 +31,7 @@ class FindInLibrary implements Tool
             'List songs, albums or artists in the user\'s library without playing anything. '
             . 'Use this when the user asks whether they have something (e.g. "do I have anything by Björk?") '
             . 'or wants to see what matches (e.g. "which albums are from 1997?"). '
-            . 'To find albums by release year, set from_year and to_year and leave the query out.'
+            . 'To find albums by release year, set from_year and to_year; add a query to narrow them down further.'
         );
     }
 
@@ -60,11 +60,17 @@ class FindInLibrary implements Tool
             return 'Nothing in the library matches.';
         }
 
-        return sprintf(
+        $response = sprintf(
             "Found %d result(s):\n%s",
             count($lines),
             implode("\n", array_map(static fn (string $line) => "- $line", $lines)),
         );
+
+        if (count($lines) === self::RESULT_LIMIT) {
+            $response .= sprintf("\n\nOnly the first %d are listed; there may be more.", self::RESULT_LIMIT);
+        }
+
+        return $response;
     }
 
     /** @return list<string> */
@@ -89,20 +95,34 @@ class FindInLibrary implements Tool
     /** @return list<string> */
     private function findAlbums(Request $request): array
     {
+        $query = $request['query'] ?? null;
         $hasYearRange = isset($request['from_year']) || isset($request['to_year']);
 
-        if (!$hasYearRange && !isset($request['query'])) {
+        if (!$hasYearRange && !$query) {
             return [];
         }
 
-        $albums = $hasYearRange
-            ? $this->albumRepository->getByYearRange(
-                fromYear: (int) ($request['from_year'] ?? $request['to_year']),
-                toYear: (int) ($request['to_year'] ?? $request['from_year']),
+        $fromYear = (int) ($request['from_year'] ?? $request['to_year']);
+        $toYear = (int) ($request['to_year'] ?? $request['from_year']);
+
+        $albums = match (true) {
+            !$hasYearRange => $this->albumRepository->search($query, self::RESULT_LIMIT, $this->context->user),
+            !$query => $this->albumRepository->getByYearRange(
+                fromYear: $fromYear,
+                toYear: $toYear,
                 size: self::RESULT_LIMIT,
                 user: $this->context->user,
-            )
-            : $this->albumRepository->search($request['query'], self::RESULT_LIMIT, $this->context->user);
+            ),
+            default => $this->albumRepository
+                ->search($query, PHP_INT_MAX, $this->context->user)
+                ->filter(
+                    static fn (Album $album) => (
+                        $album->year >= min($fromYear, $toYear)
+                        && $album->year <= max($fromYear, $toYear)
+                    ),
+                )
+                ->take(self::RESULT_LIMIT),
+        };
 
         return $albums
             ->map(static fn (Album $album) => sprintf(
