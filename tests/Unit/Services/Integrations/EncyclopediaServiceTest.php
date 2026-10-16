@@ -82,8 +82,27 @@ class EncyclopediaServiceTest extends TestCase
 
         $this->encyclopedia->expects('getAlbumInformation')->with($album)->andReturn($info);
 
-        self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
+        self::assertEquals(
+            $info->withCover(image_storage_url($album->cover)),
+            $this->encyclopediaService->getAlbumInformation($album),
+        );
         self::assertNotNull(cache()->get(cache_key('album information', $album->name, $album->artist->name)));
+    }
+
+    #[Test]
+    public function getAlbumInformationKeepsTheAlbumsOwnCover(): void
+    {
+        $album = Album::factory()->createOne(['cover' => 'own-cover.jpg']);
+
+        $this->encyclopedia
+            ->expects('getAlbumInformation')
+            ->with($album)
+            ->andReturn(AlbumInformation::make(cover: 'https://wiki.example.com/album-cover.jpg'));
+
+        self::assertSame(
+            image_storage_url('own-cover.jpg'),
+            $this->encyclopediaService->getAlbumInformation($album)->cover,
+        );
     }
 
     #[Test]
@@ -155,8 +174,27 @@ class EncyclopediaServiceTest extends TestCase
 
         $this->encyclopedia->expects('getArtistInformation')->with($artist)->andReturn($info);
 
-        self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
+        self::assertEquals(
+            $info->withImage(image_storage_url($artist->image)),
+            $this->encyclopediaService->getArtistInformation($artist),
+        );
         self::assertNotNull(cache()->get(cache_key('artist information', $artist->name)));
+    }
+
+    #[Test]
+    public function getArtistInformationKeepsTheArtistsOwnImage(): void
+    {
+        $artist = Artist::factory()->createOne(['image' => 'own-image.jpg']);
+
+        $this->encyclopedia
+            ->expects('getArtistInformation')
+            ->with($artist)
+            ->andReturn(ArtistInformation::make(image: 'https://wiki.example.com/artist-image.jpg'));
+
+        self::assertSame(
+            image_storage_url('own-image.jpg'),
+            $this->encyclopediaService->getArtistInformation($artist)->image,
+        );
     }
 
     #[Test]
@@ -205,7 +243,10 @@ class EncyclopediaServiceTest extends TestCase
 
         $this->encyclopedia->expects('getAlbumInformation')->with($album)->andReturn($info);
 
-        self::assertSame($info, $this->encyclopediaService->getAlbumInformation($album));
+        self::assertEquals(
+            $info->withCover(image_storage_url($album->cover)),
+            $this->encyclopediaService->getAlbumInformation($album),
+        );
     }
 
     #[Test]
@@ -218,7 +259,10 @@ class EncyclopediaServiceTest extends TestCase
 
         $this->encyclopedia->expects('getArtistInformation')->with($artist)->andReturn($info);
 
-        self::assertSame($info, $this->encyclopediaService->getArtistInformation($artist));
+        self::assertEquals(
+            $info->withImage(image_storage_url($artist->image)),
+            $this->encyclopediaService->getArtistInformation($artist),
+        );
     }
 
     #[Test]
@@ -301,7 +345,10 @@ class EncyclopediaServiceTest extends TestCase
         $album = Album::factory()->createOne();
         $this->encyclopedia->expects('getAlbumInformation')->twice()->andThrow(MusicBrainzBusyException::create());
 
-        self::assertEquals(AlbumInformation::make(), $this->encyclopediaService->getAlbumInformation($album));
+        self::assertEquals(
+            AlbumInformation::make(cover: image_storage_url($album->cover)),
+            $this->encyclopediaService->getAlbumInformation($album),
+        );
         $this->encyclopediaService->getAlbumInformation($album);
 
         Bus::assertDispatched(FetchAlbumInformationJob::class);
@@ -314,7 +361,10 @@ class EncyclopediaServiceTest extends TestCase
         $artist = Artist::factory()->createOne();
         $this->encyclopedia->expects('getArtistInformation')->twice()->andThrow(MusicBrainzBusyException::create());
 
-        self::assertEquals(ArtistInformation::make(), $this->encyclopediaService->getArtistInformation($artist));
+        self::assertEquals(
+            ArtistInformation::make(image: image_storage_url($artist->image)),
+            $this->encyclopediaService->getArtistInformation($artist),
+        );
         $this->encyclopediaService->getArtistInformation($artist);
 
         Bus::assertDispatched(FetchArtistInformationJob::class);
