@@ -905,6 +905,8 @@ interface AiResponse {
     | 'create_smart_playlist'
     | 'add_radio_station'
     | 'play_radio_station'
+    | 'add_podcast'
+    | 'play_episode'
     | 'add_to_favorites'
     | 'remove_from_favorites'
     | 'add_to_playlist'
@@ -925,6 +927,9 @@ interface AiResponse {
     podcasts?: Podcast[]
     playlist?: Playlist
     station?: RadioStation
+    podcast?: Podcast
+    episode?: Episode
+    position?: number
     song?: Song
     album?: Album
     artist?: Artist

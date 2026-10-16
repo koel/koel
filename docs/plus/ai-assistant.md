@@ -92,6 +92,14 @@ The assistant understands a wide range of requests. Here are some examples to ge
 
 - "Stream some classical music" (if you have a matching radio station)
 
+### Podcasts
+
+- "Subscribe to https://www.deutschlandfunk.de/marktplatz-102.xml"
+- "Play the latest episode of Marktplatz"
+- "Continue Marktplatz where I left off"
+
+To subscribe, give the assistant the podcast's feed URL or its Apple Podcasts link. It can't find a podcast by name.
+
 :::tip
 The assistant is context-aware. If a song is currently playing, you can refer to it with "this song" or "this"
 without having to specify the exact title.

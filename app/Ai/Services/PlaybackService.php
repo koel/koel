@@ -5,6 +5,7 @@ namespace App\Ai\Services;
 use App\Ai\AiAssistantResult;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Song;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -55,6 +56,12 @@ class PlaybackService
         $this->result->data = ['songs' => $songs, 'queue' => $queue];
 
         return $queue;
+    }
+
+    public function playEpisode(Song $episode, int $position = 0): void
+    {
+        $this->result->action = 'play_episode';
+        $this->result->data = ['episode' => $episode, 'position' => $position];
     }
 
     public function playAlbum(Album $album, User $user, Request $request): string

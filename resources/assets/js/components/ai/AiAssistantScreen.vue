@@ -81,6 +81,10 @@ const handleSubmit = async (text: string) => {
       toastSuccess(`Playlist "${result.resource.name}" created.`)
     } else if (result.action === 'add_radio_station') {
       toastSuccess(`Station "${result.resource.name}" added.`)
+    } else if (result.action === 'add_podcast') {
+      toastSuccess(`Podcast "${result.resource.title}" added.`)
+    } else if (result.action === 'play_episode') {
+      await playback().play(result.resource.episode, result.resource.position)
     } else if (result.action === 'play_radio_station') {
       await playback('radio').play(result.resource)
     } else if (result.action === 'play_songs') {

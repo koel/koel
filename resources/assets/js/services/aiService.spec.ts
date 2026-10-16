@@ -3,6 +3,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { http } from '@/services/http'
 import { playlistStore } from '@/stores/playlistStore'
 import { playableStore } from '@/stores/playableStore'
+import { podcastStore } from '@/stores/podcastStore'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { aiService } from './aiService'
 
@@ -117,6 +118,36 @@ describe('aiService', () => {
 
       expect(result.action).toBe('add_radio_station')
       expect(radioStationStore.sync).toHaveBeenCalledWith(station)
+    })
+
+    it('handles add_podcast action', () => {
+      const podcast = h.factory('podcast').make()
+      podcastStore.state.podcasts = []
+
+      const result = aiService.handleResponse({
+        message: 'Subscribed.',
+        action: 'add_podcast',
+        conversation_id: null,
+        data: { podcast },
+      })
+
+      expect(result).toMatchObject({ action: 'add_podcast', resource: podcast })
+      expect(podcastStore.state.podcasts).toEqual([podcast])
+    })
+
+    it('handles play_episode action', () => {
+      const episode = h.factory('episode').make()
+      h.mock(playableStore, 'syncWithVault').mockReturnValue([episode])
+
+      const result = aiService.handleResponse({
+        message: 'Continuing.',
+        action: 'play_episode',
+        conversation_id: null,
+        data: { episode, position: 600 },
+      })
+
+      expect(result).toMatchObject({ action: 'play_episode', resource: { episode, position: 600 } })
+      expect(playableStore.syncWithVault).toHaveBeenCalledWith(episode)
     })
 
     it('handles add_to_favorites action', () => {
