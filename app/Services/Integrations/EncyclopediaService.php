@@ -37,7 +37,9 @@ class EncyclopediaService
             $info = AlbumInformation::make();
         }
 
-        return $album->description ? ($info ?? AlbumInformation::make())->withDescription($album->description) : $info;
+        $info = $album->description ? ($info ?? AlbumInformation::make())->withDescription($album->description) : $info;
+
+        return $album->cover ? $info?->withCover(image_storage_url($album->cover)) : $info;
     }
 
     /**
@@ -73,9 +75,11 @@ class EncyclopediaService
             $info = ArtistInformation::make();
         }
 
-        return $artist->description
+        $info = $artist->description
             ? ($info ?? ArtistInformation::make())->withDescription($artist->description)
             : $info;
+
+        return $artist->image ? $info?->withImage(image_storage_url($artist->image)) : $info;
     }
 
     /**
