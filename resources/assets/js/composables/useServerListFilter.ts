@@ -1,6 +1,6 @@
 import { watchDebounced } from '@vueuse/core'
 import type { Ref } from 'vue'
-import { computed, provide, ref } from 'vue'
+import { computed, provide, ref, watch } from 'vue'
 import { FilterKeywordsKey } from '@/config/symbols'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
@@ -13,6 +13,10 @@ export const useServerListFilter = <T>(search: (keywords: string) => Promise<T[]
   let latestSearch = 0
 
   provide(FilterKeywordsKey, keywords)
+
+  watch(keywords, value => {
+    searching.value = value.trim().length > 0
+  })
 
   watchDebounced(
     keywords,

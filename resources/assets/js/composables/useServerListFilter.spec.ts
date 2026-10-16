@@ -72,4 +72,17 @@ describe('useServerListFilter', () => {
     expect(filter.filtering.value).toBe(false)
     expect(filter.results.value).toEqual([])
   })
+
+  it('counts as searching from the first keystroke until the results arrive', async () => {
+    const filter = renderWithSearch(vi.fn().mockResolvedValue([]))
+
+    filter.keywords.value = 'm'
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(filter.searching.value).toBe(true)
+
+    await vi.advanceTimersByTimeAsync(300)
+
+    expect(filter.searching.value).toBe(false)
+  })
 })
