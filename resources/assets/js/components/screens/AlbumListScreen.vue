@@ -14,7 +14,7 @@
               @sort="sort"
             />
 
-            <ListFilter />
+            <ListFilter :icon="faSearch" label="Search" />
 
             <ViewModeSwitch v-model="preferences.albums_view_mode" secondary="table" />
           </div>
@@ -89,13 +89,13 @@
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useCursorPaginatedList } from '@/composables/useCursorPaginatedList'
-import { useServerListFilter } from '@/composables/useServerListFilter'
+import { useServerListSearch } from '@/composables/useServerListSearch'
 
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import AlbumGrid from '@/components/album/AlbumGrid.vue'
@@ -133,7 +133,7 @@ const {
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
-const { filtering, results: matchingAlbums, searching } = useServerListFilter(keywords => albumStore.search(keywords))
+const { filtering, results: matchingAlbums, searching } = useServerListSearch(keywords => albumStore.search(keywords))
 
 const shownAlbums = computed(() => {
   if (!filtering.value) {

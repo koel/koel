@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { useServerListFilter } from './useServerListFilter'
+import { useServerListSearch } from './useServerListSearch'
 
-describe('useServerListFilter', () => {
+describe('useServerListSearch', () => {
   const h = createHarness()
 
   beforeEach(() => vi.useFakeTimers())
@@ -11,12 +11,12 @@ describe('useServerListFilter', () => {
   afterEach(() => vi.useRealTimers())
 
   const renderWithSearch = (search: (keywords: string) => Promise<string[]>) => {
-    let filter!: ReturnType<typeof useServerListFilter<string>>
+    let filter!: ReturnType<typeof useServerListSearch<string>>
 
     h.render(
       defineComponent({
         setup: () => {
-          filter = useServerListFilter(search)
+          filter = useServerListSearch(search)
         },
         template: '<div />',
       }),

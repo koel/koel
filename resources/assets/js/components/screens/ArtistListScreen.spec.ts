@@ -167,7 +167,7 @@ describe('artistListScreen.vue', () => {
     const searchMock = h.mock(artistStore, 'search').mockResolvedValue(matches)
     await renderComponent()
 
-    await h.user.click(screen.getByRole('button', { name: 'Filter' }))
+    await h.user.click(screen.getByRole('button', { name: 'Search' }))
     await h.user.type(screen.getByPlaceholderText('Keywords'), 'foo')
 
     await waitFor(() => expect(searchMock).toHaveBeenCalledWith('foo'))

@@ -2,8 +2,8 @@
   <OnClickOutside @trigger="maybeHideInput">
     <form class="flex border rounded-md border-k-fg-10 focus-within:border-k-highlight" @submit.prevent>
       <button v-koel-tooltip class="px-3.5 py-2" type="button" @click.prevent="showInput">
-        <Icon :icon="faFilter" fixed-width />
-        <span class="sr-only">Filter</span>
+        <Icon :icon fixed-width />
+        <span class="sr-only">{{ label }}</span>
       </button>
       <TextInput
         v-if="showingInput"
@@ -21,12 +21,15 @@
 
 <script lang="ts" setup>
 import { OnClickOutside } from '@vueuse/components'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { faFilter } from '@fortawesome/free-solid-svg-icons'
 import { computed, nextTick, ref } from 'vue'
 import { requireInjection } from '@/utils/helpers'
 import { FilterKeywordsKey } from '@/config/symbols'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
+
+const { label = 'Filter', icon = faFilter } = defineProps<{ label?: string; icon?: IconDefinition }>()
 
 const input = ref<InstanceType<typeof TextInput>>()
 const inputting = ref(false)

@@ -4,7 +4,7 @@ import { computed, provide, ref, watch } from 'vue'
 import { FilterKeywordsKey } from '@/config/symbols'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 
-export const useServerListFilter = <T>(search: (keywords: string) => Promise<T[]>) => {
+export const useServerListSearch = <T>(search: (keywords: string) => Promise<T[]>) => {
   const keywords = ref('')
   const results = ref([]) as Ref<T[]>
   const searching = ref(false)
