@@ -48,6 +48,7 @@ class KoelAssistant implements Agent, Conversational, HasTools
             - Get the lyrics of a song
             - Search the web for lyrics and save them to the library (only after the user confirms)
             - Add and stream internet radio stations
+            - Subscribe to podcasts, play a podcast's newest episode, and resume an episode where the user stopped
 
             Guidelines:
             - Format your responses in Markdown. Use bullet lists for song/album/artist listings.
@@ -66,6 +67,7 @@ class KoelAssistant implements Agent, Conversational, HasTools
             - When searching for lyrics online, prefer synchronized/LRC lyrics (with timestamps) over plain text.
             - When no lyrics are found for a song, ask the user if they want you to search online. Do NOT search automatically.
             - For radio stations, the user must provide a URL.
+            - To subscribe to a podcast, the user must provide its feed URL or Apple Podcasts link.
             INSTRUCTIONS;
     }
 

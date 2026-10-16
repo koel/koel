@@ -16,6 +16,8 @@ type AiHandledResult = {
   | { action: 'add_radio_station'; resource: Reactive<RadioStation> }
   | { action: 'play_radio_station'; resource: Reactive<RadioStation> }
   | { action: 'play_songs'; resource: Song[]; queue: boolean }
+  | { action: 'add_podcast'; resource: Podcast }
+  | { action: 'play_episode'; resource: { episode: Playable; position: number } }
   | { action: 'suggest_songs'; resource: undefined }
   | { action: 'add_to_favorites'; resource: undefined }
   | { action: 'remove_from_favorites'; resource: undefined }
@@ -57,6 +59,16 @@ export const aiService = {
 
     if (response.action === 'play_radio_station' && response.data.station) {
       return { message, action: 'play_radio_station', resource: radioStationStore.sync(response.data.station)[0] }
+    }
+
+    if (response.action === 'add_podcast' && response.data.podcast) {
+      podcastStore.state.podcasts.push(response.data.podcast)
+      return { message, action: 'add_podcast', resource: response.data.podcast }
+    }
+
+    if (response.action === 'play_episode' && response.data.episode) {
+      const [episode] = playableStore.syncWithVault(response.data.episode)
+      return { message, action: 'play_episode', resource: { episode, position: response.data.position ?? 0 } }
     }
 
     if (response.action === 'play_songs' && response.data.songs) {

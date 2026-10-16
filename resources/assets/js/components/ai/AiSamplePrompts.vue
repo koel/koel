@@ -61,6 +61,8 @@ const allExamples = [
   'Who were my top artists over the past year?',
   'Do I have anything by Björk?',
   'Which albums do I have from 1997?',
+  'Play the latest episode of The Daily',
+  'Continue The Daily where I left off',
 ]
 
 const DURATION = 500
