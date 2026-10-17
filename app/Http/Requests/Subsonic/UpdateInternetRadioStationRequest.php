@@ -5,6 +5,7 @@ namespace App\Http\Requests\Subsonic;
 use App\Http\Requests\Request;
 use App\Rules\HasAudioContentType;
 use App\Rules\SafeUrl;
+use Illuminate\Validation\Rule;
 
 /**
  * @property string $id
@@ -18,10 +19,10 @@ class UpdateInternetRadioStationRequest extends Request
     public function rules(): array
     {
         return [
-            'id' => ['required', 'string'],
-            'streamUrl' => ['bail', 'required', 'url', new SafeUrl(), new HasAudioContentType()],
-            'name' => ['required', 'string'],
-            'homepageUrl' => ['nullable', 'string'],
+            'id' => [Rule::required(), Rule::string()],
+            'streamUrl' => [Rule::bail(), Rule::required(), Rule::url(), new SafeUrl(), new HasAudioContentType()],
+            'name' => [Rule::required(), Rule::string()],
+            'homepageUrl' => [Rule::nullable(), Rule::string()],
         ];
     }
 }

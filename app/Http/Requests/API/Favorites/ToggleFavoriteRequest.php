@@ -4,6 +4,7 @@ namespace App\Http\Requests\API\Favorites;
 
 use App\Http\Requests\API\Favorites\Concerns\ValidatesFavoriteableType;
 use App\Http\Requests\API\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $type
@@ -18,7 +19,7 @@ class ToggleFavoriteRequest extends Request
     {
         return [
             'type' => self::favoriteableTypeRule(),
-            'id' => ['required', 'string'],
+            'id' => [Rule::required(), Rule::string()],
         ];
     }
 }

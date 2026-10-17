@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Subsonic;
 
+use Illuminate\Validation\Rule;
+
 class StreamRequest extends IdRequest
 {
     /** @inheritdoc */
@@ -9,8 +11,8 @@ class StreamRequest extends IdRequest
     {
         return parent::rules()
         + [
-            'maxBitRate' => ['integer', 'min:0'],
-            'timeOffset' => ['numeric', 'min:0'],
+            'maxBitRate' => [Rule::numeric()->integer()->min(0)],
+            'timeOffset' => [Rule::numeric()->min(0)],
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
+
 /**
  * @property-read string $order
  * @property-read string $sort
@@ -13,9 +15,9 @@ class CursorPaginatedListRequest extends Request
     public function rules(): array
     {
         return [
-            'sort' => ['sometimes', 'string'],
-            'order' => ['sometimes', 'in:asc,desc'],
-            'cursor' => ['sometimes', 'nullable', 'string'],
+            'sort' => [Rule::sometimes(), Rule::string()],
+            'order' => [Rule::sometimes(), Rule::in(['asc', 'desc'])],
+            'cursor' => [Rule::sometimes(), Rule::nullable(), Rule::string()],
         ];
     }
 }

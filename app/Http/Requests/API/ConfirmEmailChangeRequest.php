@@ -2,15 +2,17 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
+
 class ConfirmEmailChangeRequest extends Request
 {
     /** @inheritdoc */
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
-            'current' => ['required', 'string'],
-            'token' => ['required', 'string'],
+            'email' => [Rule::required(), Rule::email()],
+            'current' => [Rule::required(), Rule::string()],
+            'token' => [Rule::required(), Rule::string()],
         ];
     }
 

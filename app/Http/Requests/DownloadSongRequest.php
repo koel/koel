@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
+
 /**
  * @property array $songs
  */
@@ -16,7 +18,7 @@ class DownloadSongRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => ['required', 'array', 'size:1'],
+            'songs' => [Rule::required(), Rule::array(), 'size:1'],
         ];
     }
 }

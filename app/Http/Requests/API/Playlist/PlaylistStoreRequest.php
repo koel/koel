@@ -10,6 +10,7 @@ use App\Rules\ValidSmartPlaylistRulePayload;
 use App\Values\Playlist\PlaylistCreateData;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
 /**
  * @property array<string> $songs
@@ -28,12 +29,12 @@ class PlaylistStoreRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'songs' => ['array', new AllPlayablesAreAccessibleBy($this->user())],
-            'description' => ['string', 'sometimes', 'nullable'], // backward compatibility for mobile apps
-            'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
+            'name' => [Rule::required()],
+            'songs' => [Rule::array(), new AllPlayablesAreAccessibleBy($this->user())],
+            'description' => [Rule::string(), Rule::sometimes(), Rule::nullable()], // backward compatibility for mobile apps
+            'rules' => [Rule::array(), Rule::nullable(), new ValidSmartPlaylistRulePayload()],
             ...$this->playlistFolderRules(),
-            'cover' => ['sometimes', 'nullable', new ValidImageData()],
+            'cover' => [Rule::sometimes(), Rule::nullable(), new ValidImageData()],
         ];
     }
 

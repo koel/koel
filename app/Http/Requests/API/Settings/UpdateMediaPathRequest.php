@@ -4,6 +4,7 @@ namespace App\Http\Requests\API\Settings;
 
 use App\Http\Requests\API\Request;
 use App\Rules\MediaPath;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $path
@@ -14,7 +15,7 @@ class UpdateMediaPathRequest extends Request
     public function rules(): array
     {
         return [
-            'path' => ['string', new MediaPath()],
+            'path' => [Rule::string(), new MediaPath()],
         ];
     }
 }

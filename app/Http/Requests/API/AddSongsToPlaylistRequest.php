@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Rules\AllPlayablesAreAccessibleBy;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read array<string> $songs
@@ -13,7 +14,7 @@ class AddSongsToPlaylistRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => ['required', 'array', new AllPlayablesAreAccessibleBy($this->user())],
+            'songs' => [Rule::required(), Rule::array(), new AllPlayablesAreAccessibleBy($this->user())],
         ];
     }
 }

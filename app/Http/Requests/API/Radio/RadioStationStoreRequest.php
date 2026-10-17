@@ -6,6 +6,7 @@ use App\Http\Requests\API\Radio\Concerns\ValidatesRadioStationUrl;
 use App\Http\Requests\API\Request;
 use App\Rules\ValidImageData;
 use App\Values\Radio\RadioStationCreateData;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $name
@@ -24,11 +25,11 @@ class RadioStationStoreRequest extends Request
     {
         return [
             'url' => $this->radioStationUrlRules(),
-            'name' => ['required', 'string', 'max:191'],
-            'logo' => ['nullable', new ValidImageData()],
-            'description' => ['sometimes', 'nullable', 'string'],
-            'is_public' => ['boolean', 'nullable'],
-            'homepage_url' => ['sometimes', 'nullable', 'url'],
+            'name' => [Rule::required(), Rule::string()->max(191)],
+            'logo' => [Rule::nullable(), new ValidImageData()],
+            'description' => [Rule::sometimes(), Rule::nullable(), Rule::string()],
+            'is_public' => [Rule::boolean(), Rule::nullable()],
+            'homepage_url' => [Rule::sometimes(), Rule::nullable(), Rule::url()],
         ];
     }
 

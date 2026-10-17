@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property ?string $artist
@@ -14,8 +15,8 @@ class GetLyricsRequest extends Request
     public function rules(): array
     {
         return [
-            'artist' => ['nullable', 'string'],
-            'title' => ['nullable', 'string'],
+            'artist' => [Rule::nullable(), Rule::string()],
+            'title' => [Rule::nullable(), Rule::string()],
         ];
     }
 }

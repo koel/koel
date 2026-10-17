@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\MediaBrowser;
 
 use App\Http\Requests\API\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read ?string $cursor
@@ -14,8 +15,8 @@ class PaginateFolderSongsRequest extends Request
     public function rules(): array
     {
         return [
-            'cursor' => ['sometimes', 'nullable', 'string'],
-            'folder' => ['sometimes', 'nullable', 'string'],
+            'cursor' => [Rule::sometimes(), Rule::nullable(), Rule::string()],
+            'folder' => [Rule::sometimes(), Rule::nullable(), Rule::string()],
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Rules\ValidImageData;
+use Illuminate\Validation\Rule;
 
 abstract class MediaImageUpdateRequest extends Request
 {
@@ -10,7 +11,7 @@ abstract class MediaImageUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            $this->getImageFieldName() => ['string', 'required', new ValidImageData()],
+            $this->getImageFieldName() => [Rule::string(), Rule::required(), new ValidImageData()],
         ];
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Requests\API;
 use App\Enums\Acl\Role;
 use App\Http\Requests\API\Concerns\ValidatesRole;
 use App\Values\User\UserCreateData;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -20,9 +21,9 @@ class UserStoreRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'email' => ['required', 'email', 'unique:users'],
-            'password' => ['required', Password::defaults()],
+            'name' => [Rule::required()],
+            'email' => [Rule::required(), Rule::email(), Rule::unique('users')],
+            'password' => [Rule::required(), Password::defaults()],
             'role' => $this->roleRule(),
         ];
     }

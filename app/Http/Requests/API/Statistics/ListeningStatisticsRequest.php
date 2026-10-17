@@ -12,8 +12,8 @@ class ListeningStatisticsRequest extends Request
     public function rules(): array
     {
         return [
-            'period' => ['required', Rule::enum(ListeningPeriod::class)],
-            'timezone' => ['nullable', 'timezone:all'],
+            'period' => [Rule::required(), Rule::enum(ListeningPeriod::class)],
+            'timezone' => [Rule::nullable(), Rule::timezone(['all'])],
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Models\Song;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 
 /**
@@ -15,8 +16,8 @@ class UpdatePlaybackStatusRequest extends Request
     public function rules(): array
     {
         return [
-            'song' => ['required', 'string', new Exists(Song::class, 'id')],
-            'position' => ['required', 'integer'],
+            'song' => [Rule::required(), Rule::string(), new Exists(Song::class, 'id')],
+            'position' => [Rule::required(), Rule::numeric()->integer()],
         ];
     }
 }

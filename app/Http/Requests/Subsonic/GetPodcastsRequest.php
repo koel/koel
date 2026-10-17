@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property ?string $id
@@ -14,8 +15,8 @@ class GetPodcastsRequest extends Request
     public function rules(): array
     {
         return [
-            'id' => ['nullable', 'string'],
-            'includeEpisodes' => ['nullable', 'boolean'],
+            'id' => [Rule::nullable(), Rule::string()],
+            'includeEpisodes' => [Rule::nullable(), Rule::boolean()],
         ];
     }
 

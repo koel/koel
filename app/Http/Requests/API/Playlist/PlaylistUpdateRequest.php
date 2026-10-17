@@ -9,6 +9,7 @@ use App\Rules\ValidSmartPlaylistRulePayload;
 use App\Values\Playlist\PlaylistUpdateData;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $name
@@ -27,9 +28,9 @@ class PlaylistUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'description' => ['string', 'sometimes', 'nullable'],
-            'rules' => ['array', 'nullable', new ValidSmartPlaylistRulePayload()],
+            'name' => [Rule::required()],
+            'description' => [Rule::string(), Rule::sometimes(), Rule::nullable()],
+            'rules' => [Rule::array(), Rule::nullable(), new ValidSmartPlaylistRulePayload()],
             ...$this->playlistFolderRules(),
             'cover' => self::optionalImageRules(),
         ];

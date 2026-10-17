@@ -17,8 +17,8 @@ class PlaylistFolderPlaylistRequest extends Request
     {
         return [
             'playlists' => [
-                'required',
-                'array',
+                Rule::required(),
+                Rule::array(),
                 new AllPlaylistsAreAccessibleBy($this->user()),
                 Rule::exists(Playlist::class, 'id'),
             ],

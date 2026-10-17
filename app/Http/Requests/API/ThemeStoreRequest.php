@@ -5,6 +5,7 @@ namespace App\Http\Requests\API;
 use App\Rules\ValidImageData;
 use App\Values\Theme\ThemeCreateData;
 use HTMLPurifier;
+use Illuminate\Validation\Rule;
 
 class ThemeStoreRequest extends Request
 {
@@ -12,13 +13,13 @@ class ThemeStoreRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:191'],
-            'fg_color' => ['string', 'sometimes', 'nullable'],
-            'bg_color' => ['string', 'sometimes', 'nullable'],
-            'font_family' => ['string', 'sometimes', 'nullable'],
-            'font_size' => ['numeric', 'sometimes', 'nullable'],
-            'bg_image' => ['string', 'sometimes', 'nullable', new ValidImageData()],
-            'highlight_color' => ['string', 'sometimes', 'nullable'],
+            'name' => [Rule::required(), Rule::string()->max(191)],
+            'fg_color' => [Rule::string(), Rule::sometimes(), Rule::nullable()],
+            'bg_color' => [Rule::string(), Rule::sometimes(), Rule::nullable()],
+            'font_family' => [Rule::string(), Rule::sometimes(), Rule::nullable()],
+            'font_size' => [Rule::numeric(), Rule::sometimes(), Rule::nullable()],
+            'bg_image' => [Rule::string(), Rule::sometimes(), Rule::nullable(), new ValidImageData()],
+            'highlight_color' => [Rule::string(), Rule::sometimes(), Rule::nullable()],
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Upload;
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 /** @property string $key */
 class CompletePresignedUploadRequest extends Request
@@ -11,7 +12,7 @@ class CompletePresignedUploadRequest extends Request
     public function rules(): array
     {
         return [
-            'key' => ['required', 'string'],
+            'key' => [Rule::required(), Rule::string()],
         ];
     }
 }

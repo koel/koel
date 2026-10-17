@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
+
 /** @property-read string $song */
 class ToggleLikeSongRequest extends Request
 {
@@ -9,7 +11,7 @@ class ToggleLikeSongRequest extends Request
     public function rules(): array
     {
         return [
-            'song' => ['required', 'exists:songs,id'],
+            'song' => [Rule::required(), Rule::exists('songs', 'id')],
         ];
     }
 }

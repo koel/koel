@@ -16,11 +16,11 @@ class PlaylistFolderStoreRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:191'],
+            'name' => [Rule::required(), Rule::string()->max(191)],
             'parent_id' => [
-                'sometimes',
-                'nullable',
-                'uuid',
+                Rule::sometimes(),
+                Rule::nullable(),
+                Rule::uuid(),
                 Rule::exists(PlaylistFolder::class, 'id')->where('user_id', $this->user()->id),
             ],
         ];

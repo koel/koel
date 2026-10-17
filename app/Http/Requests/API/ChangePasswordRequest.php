@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -14,8 +15,8 @@ class ChangePasswordRequest extends Request
     public function rules(): array
     {
         return [
-            'current_password' => ['required', 'string'],
-            'new_password' => ['required', Password::defaults()],
+            'current_password' => [Rule::required(), Rule::string()],
+            'new_password' => [Rule::required(), Password::defaults()],
         ];
     }
 }

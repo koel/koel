@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property string $id
@@ -14,8 +15,8 @@ class SetRatingRequest extends Request
     public function rules(): array
     {
         return [
-            'id' => ['required', 'string'],
-            'rating' => ['required', 'integer', 'between:0,5'],
+            'id' => [Rule::required(), Rule::string()],
+            'rating' => [Rule::required(), Rule::numeric()->integer()->between(0, 5)],
         ];
     }
 

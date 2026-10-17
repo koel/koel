@@ -6,6 +6,7 @@ use App\Enums\Acl\Role;
 use App\Http\Requests\API\Concerns\ValidatesRole;
 use App\Models\User;
 use App\Values\User\UserUpdateData;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -24,9 +25,9 @@ class UserUpdateRequest extends Request
         $target = $this->route('user');
 
         return [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $target->id,
-            'password' => ['sometimes', Password::defaults()],
+            'name' => [Rule::required()],
+            'email' => [Rule::required(), Rule::email(), Rule::unique('users', 'email')->ignore($target->id)],
+            'password' => [Rule::sometimes(), Password::defaults()],
             'role' => $this->roleRule(),
         ];
     }

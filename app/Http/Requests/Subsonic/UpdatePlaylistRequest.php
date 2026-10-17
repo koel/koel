@@ -4,6 +4,7 @@ namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
 /**
  * @property string $playlistId
@@ -26,13 +27,13 @@ class UpdatePlaylistRequest extends Request
     public function rules(): array
     {
         return [
-            'playlistId' => ['required', 'string'],
-            'name' => ['nullable', 'string'],
-            'comment' => ['nullable', 'string'],
-            'songIdToAdd' => ['array'],
-            'songIdToAdd.*' => ['string'],
-            'songIndexToRemove' => ['array'],
-            'songIndexToRemove.*' => ['integer', 'min:0'],
+            'playlistId' => [Rule::required(), Rule::string()],
+            'name' => [Rule::nullable(), Rule::string()],
+            'comment' => [Rule::nullable(), Rule::string()],
+            'songIdToAdd' => [Rule::array()],
+            'songIdToAdd.*' => [Rule::string()],
+            'songIndexToRemove' => [Rule::array()],
+            'songIndexToRemove.*' => [Rule::numeric()->integer()->min(0)],
         ];
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Requests\API\Artist;
 use App\Http\Requests\API\Concerns\ValidatesOptionalImage;
 use App\Http\Requests\API\Request;
 use App\Values\Artist\ArtistUpdateData;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $name
@@ -19,9 +20,9 @@ class ArtistUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => ['string', 'required'],
+            'name' => [Rule::string(), Rule::required()],
             'image' => self::optionalImageRules(),
-            'description' => ['string', 'sometimes', 'nullable', 'max:16000'],
+            'description' => [Rule::string()->max(16_000), Rule::sometimes(), Rule::nullable()],
         ];
     }
 

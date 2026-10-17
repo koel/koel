@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
+
 /**
  * @property int $timestamp
  */
@@ -10,6 +12,6 @@ class ScrobbleRequest extends Request
     /** @inheritdoc */
     public function rules(): array
     {
-        return ['timestamp' => ['required', 'numeric']];
+        return ['timestamp' => [Rule::required(), Rule::numeric()]];
     }
 }

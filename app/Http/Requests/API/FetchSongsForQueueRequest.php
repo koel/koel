@@ -16,8 +16,8 @@ class FetchSongsForQueueRequest extends Request
     public function rules(): array
     {
         return [
-            'order' => ['required', Rule::in('asc', 'desc', 'rand')],
-            'limit' => ['required', 'integer', 'min:1'],
+            'order' => [Rule::required(), Rule::in('asc', 'desc', 'rand')],
+            'limit' => [Rule::required(), Rule::numeric()->integer()->min(1)],
             'sort' => [
                 'required_unless:order,rand',
                 Rule::in(array_keys(SongBuilder::SORT_COLUMNS_NORMALIZE_MAP)),

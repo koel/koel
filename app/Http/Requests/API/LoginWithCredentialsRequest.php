@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
+
 /**
  * @property string $email
  * @property string $password
@@ -12,8 +14,8 @@ class LoginWithCredentialsRequest extends Request
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
-            'password' => 'required',
+            'email' => [Rule::required(), Rule::email()],
+            'password' => [Rule::required()],
         ];
     }
 }
