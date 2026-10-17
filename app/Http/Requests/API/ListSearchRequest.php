@@ -11,7 +11,7 @@ class ListSearchRequest extends Request
     public function rules(): array
     {
         return [
-            'q' => ['required'],
+            'q' => ['required', 'string'],
             'favorites_only' => ['sometimes', 'boolean'],
         ];
     }
