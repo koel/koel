@@ -19,7 +19,7 @@ class EmbedOptionsEncryptRequest extends Request
             // we can't really validate the theme id, but we'll make sure it's not too long
             'theme' => [Rule::required(), Rule::string()->max(32)],
             'layout' => [Rule::required(), Rule::string(), Rule::in(['full', 'compact'])],
-            'preview' => [Rule::sometimes(), 'bool'],
+            'preview' => [Rule::sometimes(), Rule::boolean()],
         ];
     }
 }
