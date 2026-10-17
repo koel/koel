@@ -4,6 +4,7 @@ namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
 /**
  * @property list<string> $id
@@ -25,12 +26,12 @@ class FavoriteRequest extends Request
     public function rules(): array
     {
         return [
-            'id' => ['array'],
-            'id.*' => ['string'],
-            'albumId' => ['array'],
-            'albumId.*' => ['string'],
-            'artistId' => ['array'],
-            'artistId.*' => ['string'],
+            'id' => [Rule::array()],
+            'id.*' => [Rule::string()],
+            'albumId' => [Rule::array()],
+            'albumId.*' => [Rule::string()],
+            'artistId' => [Rule::array()],
+            'artistId.*' => [Rule::string()],
         ];
     }
 }

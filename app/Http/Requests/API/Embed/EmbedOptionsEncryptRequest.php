@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Embed;
 
 use App\Http\Requests\API\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $theme
@@ -16,9 +17,9 @@ class EmbedOptionsEncryptRequest extends Request
     {
         return [
             // we can't really validate the theme id, but we'll make sure it's not too long
-            'theme' => ['required', 'string', 'max:32'],
-            'layout' => ['required', 'string', 'in:full,compact'],
-            'preview' => ['sometimes', 'bool'],
+            'theme' => [Rule::required(), Rule::string()->max(32)],
+            'layout' => [Rule::required(), Rule::string(), Rule::in(['full', 'compact'])],
+            'preview' => [Rule::sometimes(), Rule::boolean()],
         ];
     }
 }

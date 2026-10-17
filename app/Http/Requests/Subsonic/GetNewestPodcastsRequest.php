@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property int $count
@@ -13,7 +14,7 @@ class GetNewestPodcastsRequest extends Request
     public function rules(): array
     {
         return [
-            'count' => ['integer', 'min:1'],
+            'count' => [Rule::numeric()->integer()->min(1)],
         ];
     }
 

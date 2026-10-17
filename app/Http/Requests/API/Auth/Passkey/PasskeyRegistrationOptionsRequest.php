@@ -4,6 +4,7 @@ namespace App\Http\Requests\API\Auth\Passkey;
 
 use App\Http\Requests\API\Auth\Passkey\Concerns\CarriesPasskeyCredential;
 use App\Http\Requests\API\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string|null $password
@@ -21,8 +22,8 @@ class PasskeyRegistrationOptionsRequest extends Request
         }
 
         return [
-            'password' => ['nullable', 'string'],
-            'code' => ['nullable', 'string'],
+            'password' => [Rule::nullable(), Rule::string()],
+            'code' => [Rule::nullable(), Rule::string()],
         ];
     }
 }

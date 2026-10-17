@@ -16,8 +16,8 @@ class SongUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            'data' => ['required', 'array'],
-            'songs' => ['required', 'array', Rule::exists(Song::class, 'id')->whereNull('podcast_id')],
+            'data' => [Rule::required(), Rule::array()],
+            'songs' => [Rule::required(), Rule::array(), Rule::exists(Song::class, 'id')->whereNull('podcast_id')],
         ];
     }
 

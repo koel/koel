@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
+
 /**
  * @property-read string $email
  */
@@ -11,7 +13,7 @@ class ForgotPasswordRequest extends Request
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
+            'email' => [Rule::required(), Rule::email()],
         ];
     }
 }

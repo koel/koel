@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Rules\AllPlayablesAreAccessibleBy;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read array<string> $songs
@@ -13,7 +14,7 @@ class UpdateQueueStateRequest extends Request
     public function rules(): array
     {
         return [
-            'songs' => ['present', 'array', new AllPlayablesAreAccessibleBy($this->user())],
+            'songs' => [Rule::present(), Rule::array(), new AllPlayablesAreAccessibleBy($this->user())],
         ];
     }
 }

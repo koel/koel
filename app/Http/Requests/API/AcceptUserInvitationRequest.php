@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -15,9 +16,9 @@ class AcceptUserInvitationRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'token' => 'required',
-            'password' => ['required', Password::defaults()],
+            'name' => [Rule::required()],
+            'token' => [Rule::required()],
+            'password' => [Rule::required(), Password::defaults()],
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
+
 /**
  * @property string $key
  */
@@ -11,7 +13,7 @@ class SetLastfmSessionKeyRequest extends Request
     public function rules(): array
     {
         return [
-            'key' => 'required',
+            'key' => [Rule::required()],
         ];
     }
 }

@@ -9,6 +9,7 @@ use App\Services\SettingService;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Fluent;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $name
@@ -21,9 +22,9 @@ class UpdateBrandingRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string'],
-            'logo' => ['sometimes', 'nullable', 'string'],
-            'cover' => ['sometimes', 'nullable', 'string'],
+            'name' => [Rule::required(), Rule::string()],
+            'logo' => [Rule::sometimes(), Rule::nullable(), Rule::string()],
+            'cover' => [Rule::sometimes(), Rule::nullable(), Rule::string()],
         ];
     }
 

@@ -23,9 +23,9 @@ class UpdateAiSettingsRequest extends Request
     public function rules(): array
     {
         return [
-            'enabled' => ['required', 'boolean'],
-            'provider' => ['required', Rule::enum(Lab::class)->only(AiSettings::PROVIDERS)],
-            'api_key' => ['nullable', 'string', 'max:500'],
+            'enabled' => [Rule::required(), Rule::boolean()],
+            'provider' => [Rule::required(), Rule::enum(Lab::class)->only(AiSettings::PROVIDERS)],
+            'api_key' => [Rule::nullable(), Rule::string()->max(500)],
         ];
     }
 

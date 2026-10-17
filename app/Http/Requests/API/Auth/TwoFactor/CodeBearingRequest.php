@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Auth\TwoFactor;
 
 use App\Http\Requests\API\Request;
+use Illuminate\Validation\Rule;
 
 /** @property-read string $code */
 class CodeBearingRequest extends Request
@@ -11,7 +12,7 @@ class CodeBearingRequest extends Request
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string'],
+            'code' => [Rule::required(), Rule::string()],
         ];
     }
 }

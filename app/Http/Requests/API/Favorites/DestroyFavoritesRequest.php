@@ -4,6 +4,7 @@ namespace App\Http\Requests\API\Favorites;
 
 use App\Http\Requests\API\Favorites\Concerns\ValidatesFavoriteableType;
 use App\Http\Requests\API\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $type
@@ -18,8 +19,8 @@ class DestroyFavoritesRequest extends Request
     {
         return [
             'type' => self::favoriteableTypeRule(),
-            'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['string'],
+            'ids' => [Rule::required(), Rule::array(), 'min:1'],
+            'ids.*' => [Rule::string()],
         ];
     }
 }

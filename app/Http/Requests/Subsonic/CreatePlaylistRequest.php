@@ -4,6 +4,7 @@ namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
 /**
  * @property string $name
@@ -20,7 +21,7 @@ class CreatePlaylistRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string'],
+            'name' => [Rule::required(), Rule::string()],
         ];
     }
 }

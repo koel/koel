@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -15,9 +16,9 @@ class ResetPasswordRequest extends Request
     public function rules(): array
     {
         return [
-            'token' => 'required',
-            'email' => ['required', 'email'],
-            'password' => ['sometimes', Password::defaults()],
+            'token' => [Rule::required()],
+            'email' => [Rule::required(), Rule::email()],
+            'password' => [Rule::sometimes(), Password::defaults()],
         ];
     }
 }

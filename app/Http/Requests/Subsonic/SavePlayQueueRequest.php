@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property array<string> $id
@@ -16,11 +17,11 @@ class SavePlayQueueRequest extends Request
     public function rules(): array
     {
         return [
-            'id' => ['array'],
-            'id.*' => ['string'],
-            'current' => ['nullable', 'string'],
-            'position' => ['nullable', 'integer', 'min:0'],
-            'c' => ['nullable', 'string', 'max:255'],
+            'id' => [Rule::array()],
+            'id.*' => [Rule::string()],
+            'current' => [Rule::nullable(), Rule::string()],
+            'position' => [Rule::nullable(), Rule::numeric()->integer()->min(0)],
+            'c' => [Rule::nullable(), Rule::string()->max(255)],
         ];
     }
 

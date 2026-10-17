@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API;
 
 use App\Rules\CustomizableUserPreference;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $key
@@ -14,8 +15,8 @@ class UpdateUserPreferencesRequest extends Request
     public function rules(): array
     {
         return [
-            'key' => ['required', 'string', new CustomizableUserPreference()],
-            'value' => 'sometimes',
+            'key' => [Rule::required(), Rule::string(), new CustomizableUserPreference()],
+            'value' => [Rule::sometimes()],
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\Auth;
 
 use App\Http\Requests\API\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $login_token
@@ -14,8 +15,8 @@ class TwoFactorChallengeRequest extends Request
     public function rules(): array
     {
         return [
-            'login_token' => ['required', 'string'],
-            'code' => ['required', 'string'],
+            'login_token' => [Rule::required(), Rule::string()],
+            'code' => [Rule::required(), Rule::string()],
         ];
     }
 }

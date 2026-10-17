@@ -7,6 +7,7 @@ use App\Http\Requests\API\Radio\Concerns\ValidatesRadioStationUrl;
 use App\Http\Requests\API\Request;
 use App\Models\RadioStation;
 use App\Values\Radio\RadioStationUpdateData;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $url
@@ -29,11 +30,11 @@ class RadioStationUpdateRequest extends Request
 
         return [
             'url' => $this->radioStationUrlRules($station),
-            'name' => ['required', 'string', 'max:191'],
+            'name' => [Rule::required(), Rule::string()->max(191)],
             'logo' => self::optionalImageRules(),
-            'description' => ['string', 'sometimes', 'nullable'],
-            'is_public' => ['boolean'],
-            'homepage_url' => ['sometimes', 'nullable', 'url'],
+            'description' => [Rule::string(), Rule::sometimes(), Rule::nullable()],
+            'is_public' => [Rule::boolean()],
+            'homepage_url' => [Rule::sometimes(), Rule::nullable(), Rule::url()],
         ];
     }
 

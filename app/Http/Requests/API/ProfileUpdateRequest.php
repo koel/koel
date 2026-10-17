@@ -4,6 +4,7 @@ namespace App\Http\Requests\API;
 
 use App\Values\User\AvatarUpdateData;
 use App\Values\User\UserUpdateData;
+use Illuminate\Validation\Rule;
 
 /**
  * @property-read string $name
@@ -16,9 +17,13 @@ class ProfileUpdateRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . auth()->user()->getAuthIdentifier(),
-            'avatar' => ['sometimes', 'nullable', 'string', 'starts_with:data:image/'],
+            'name' => [Rule::required()],
+            'email' => [
+                Rule::required(),
+                Rule::email(),
+                Rule::unique('users', 'email')->ignore(auth()->user()->getAuthIdentifier()),
+            ],
+            'avatar' => [Rule::sometimes(), Rule::nullable(), Rule::string(), 'starts_with:data:image/'],
         ];
     }
 

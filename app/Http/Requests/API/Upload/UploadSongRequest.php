@@ -5,6 +5,7 @@ namespace App\Http\Requests\API\Upload;
 use App\Http\Requests\Request;
 use App\Rules\SupportedAudioFile;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\Rule;
 
 /** @property UploadedFile $file */
 class UploadSongRequest extends Request
@@ -13,7 +14,7 @@ class UploadSongRequest extends Request
     public function rules(): array
     {
         return [
-            'file' => ['required', 'file', new SupportedAudioFile()],
+            'file' => [Rule::required(), Rule::file(), new SupportedAudioFile()],
         ];
     }
 }

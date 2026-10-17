@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property string $username
@@ -13,7 +14,7 @@ class GetUserRequest extends Request
     public function rules(): array
     {
         return [
-            'username' => ['required', 'string'],
+            'username' => [Rule::required(), Rule::string()],
         ];
     }
 }

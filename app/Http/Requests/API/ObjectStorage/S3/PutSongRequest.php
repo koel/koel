@@ -3,6 +3,7 @@
 namespace App\Http\Requests\API\ObjectStorage\S3;
 
 use App\Http\Requests\API\ObjectStorage\S3\Request as BaseRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * @property string $bucket
@@ -15,9 +16,9 @@ class PutSongRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'bucket' => 'required',
-            'key' => 'required',
-            'tags.duration' => ['required', 'numeric'],
+            'bucket' => [Rule::required()],
+            'key' => [Rule::required()],
+            'tags.duration' => [Rule::required(), Rule::numeric()],
         ];
     }
 }

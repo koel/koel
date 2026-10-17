@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Validation\Rule;
+
 /**
  * @property-read string $key
  */
@@ -11,7 +13,7 @@ class ActivateLicenseRequest extends Request
     public function rules(): array
     {
         return [
-            'key' => ['required', 'string'],
+            'key' => [Rule::required(), Rule::string()],
         ];
     }
 }

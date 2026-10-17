@@ -18,8 +18,8 @@ class MoveFavoriteSongsRequest extends Request
     {
         return [
             'songs' => [
-                'required',
-                'array',
+                Rule::required(),
+                Rule::array(),
             ],
             'songs.*' => [
                 Rule::exists('favorites', 'favoriteable_id')
@@ -27,13 +27,13 @@ class MoveFavoriteSongsRequest extends Request
                     ->where('favoriteable_type', 'playable'),
             ],
             'target' => [
-                'required',
+                Rule::required(),
                 Rule::exists('favorites', 'favoriteable_id')
                     ->where('user_id', $this->user()->id)
                     ->where('favoriteable_type', 'playable'),
                 Rule::notIn($this->input('songs', [])),
             ],
-            'placement' => ['required', new Enum(Placement::class)],
+            'placement' => [Rule::required(), new Enum(Placement::class)],
         ];
     }
 }

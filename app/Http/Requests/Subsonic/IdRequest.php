@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @property string $id
@@ -13,7 +14,7 @@ class IdRequest extends Request
     public function rules(): array
     {
         return [
-            'id' => ['required', 'string'],
+            'id' => [Rule::required(), Rule::string()],
         ];
     }
 }
