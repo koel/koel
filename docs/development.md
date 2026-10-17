@@ -37,6 +37,8 @@ composer dev
 A development version of Koel should now be available at `http://localhost:8000` with full HMR support.
 Every change you make to the client application will be reflected in the browser immediately.
 
+`composer dev` runs `php artisan dev`, which starts the web server, a queue worker, and Vite, each in its own tab of one terminal window. Node.js 22.13 or later is needed for the tabs.
+
 ### Testing, Linting, Static Analysis, etc.
 
 ```bash

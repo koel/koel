@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\SQLiteConnection;
+use Illuminate\Foundation\DevCommands;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,8 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping();
 
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+        DevCommands::register('vp dev', 'vite');
 
         self::grantAllPermissionsToSuperAdminRole();
 
