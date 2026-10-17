@@ -14,6 +14,8 @@
               @sort="sort"
             />
 
+            <ListFilter :icon="faSearch" label="Search" />
+
             <ViewModeSwitch v-model="preferences.albums_view_mode" secondary="table" />
           </div>
         </template>
@@ -35,9 +37,16 @@
       No favorite albums.
     </ScreenEmptyState>
 
+    <ScreenEmptyState v-else-if="filtering && !searching && !shownAlbums.length">
+      <template #icon>
+        <Icon :icon="faCompactDisc" />
+      </template>
+      No matching albums.
+    </ScreenEmptyState>
+
     <template v-else>
       <div
-        v-if="showSkeletons && preferences.albums_view_mode === 'table'"
+        v-if="showingSkeletons && preferences.albums_view_mode === 'table'"
         class="-m-6 flex flex-col"
         role="status"
         aria-busy="true"
@@ -46,7 +55,7 @@
         <AlbumTableRowSkeleton v-for="i in 12" :key="i" />
       </div>
       <div
-        v-else-if="showSkeletons"
+        v-else-if="showingSkeletons"
         class="grid gap-5 p-6"
         :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }"
         role="status"
@@ -58,21 +67,21 @@
       <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
         <AlbumTable
           v-if="preferences.albums_view_mode === 'table'"
-          :albums="displayedAlbums"
-          :loading-more
+          :albums="shownAlbums"
+          :loading-more="loadingMore && !filtering"
           :field="preferences.albums_sort_field"
           :order="preferences.albums_sort_order"
           @sort="sort"
           @toggle-favorite="toggleFavorite"
-          @scrolled-to-end="fetchAlbums"
+          @scrolled-to-end="fetchMoreUnlessFiltering"
         />
         <AlbumGrid
           v-else
           ref="grid"
-          :albums="displayedAlbums"
-          :loading-more
+          :albums="shownAlbums"
+          :loading-more="loadingMore && !filtering"
           :show-release-year="preferences.albums_sort_field === 'year'"
-          @scrolled-to-end="fetchAlbums"
+          @scrolled-to-end="fetchMoreUnlessFiltering"
         />
       </div>
     </template>
@@ -80,18 +89,20 @@
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useCursorPaginatedList } from '@/composables/useCursorPaginatedList'
+import { useServerListSearch } from '@/composables/useServerListSearch'
 
 import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import AlbumGrid from '@/components/album/AlbumGrid.vue'
 import AlbumTable from '@/components/album/AlbumTable.vue'
 import AlbumTableRowSkeleton from '@/components/album/AlbumTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ListFilter from '@/components/ui/ListFilter.vue'
 import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -121,6 +132,25 @@ const {
 })
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
+
+const {
+  filtering,
+  results: matchingAlbums,
+  searching,
+} = useServerListSearch(
+  keywords => albumStore.search(keywords, preferences.albums_favorites_only),
+  () => preferences.albums_favorites_only,
+)
+
+const shownAlbums = computed(() => (filtering.value ? matchingAlbums.value : displayedAlbums.value))
+
+const showingSkeletons = computed(() => showSkeletons.value || searching.value)
+
+const fetchMoreUnlessFiltering = () => {
+  if (!filtering.value) {
+    fetchAlbums()
+  }
+}
 
 const toggleFavorite = (album: Album) => albumStore.toggleFavorite(album)
 

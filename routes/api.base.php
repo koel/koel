@@ -5,12 +5,14 @@ use App\Helpers\Uuid;
 use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AiController;
 use App\Http\Controllers\API\AlbumController;
+use App\Http\Controllers\API\AlbumSearchController;
 use App\Http\Controllers\API\AlbumSongController;
 use App\Http\Controllers\API\Artist\ArtistAlbumController;
 use App\Http\Controllers\API\Artist\ArtistController;
 use App\Http\Controllers\API\Artist\ArtistSongController;
 use App\Http\Controllers\API\Artist\FetchArtistEventsController;
 use App\Http\Controllers\API\Artist\FetchArtistInformationController;
+use App\Http\Controllers\API\ArtistSearchController;
 use App\Http\Controllers\API\Auth\LoginWithCredentialsController;
 use App\Http\Controllers\API\Auth\LoginWithOneTimeTokenController;
 use App\Http\Controllers\API\Auth\LogoutController;
@@ -315,6 +317,8 @@ Route::prefix('api')
 
             Route::get('search', ExcerptSearchController::class);
             Route::get('search/songs', SongSearchController::class);
+            Route::get('search/albums', AlbumSearchController::class);
+            Route::get('search/artists', ArtistSearchController::class);
 
             Route::post('invitations', [UserInvitationController::class, 'invite']);
             Route::delete('invitations', [UserInvitationController::class, 'revoke']);

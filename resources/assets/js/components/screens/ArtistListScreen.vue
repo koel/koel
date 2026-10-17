@@ -14,6 +14,8 @@
               @sort="sort"
             />
 
+            <ListFilter :icon="faSearch" label="Search" />
+
             <ViewModeSwitch v-model="preferences.artists_view_mode" secondary="table" />
           </div>
         </template>
@@ -35,9 +37,16 @@
       No favorite artists.
     </ScreenEmptyState>
 
+    <ScreenEmptyState v-else-if="filtering && !searching && !shownArtists.length">
+      <template #icon>
+        <Icon :icon="faMicrophoneSlash" />
+      </template>
+      No matching artists.
+    </ScreenEmptyState>
+
     <template v-else>
       <div
-        v-if="showSkeletons && preferences.artists_view_mode === 'table'"
+        v-if="showingSkeletons && preferences.artists_view_mode === 'table'"
         class="-m-6 flex flex-col"
         role="status"
         aria-busy="true"
@@ -46,7 +55,7 @@
         <ArtistTableRowSkeleton v-for="i in 12" :key="i" />
       </div>
       <div
-        v-else-if="showSkeletons"
+        v-else-if="showingSkeletons"
         class="grid gap-5 p-6"
         :style="{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }"
         role="status"
@@ -58,33 +67,41 @@
       <div class="-m-6 flex-1 flex flex-col min-h-0" v-else>
         <ArtistTable
           v-if="preferences.artists_view_mode === 'table'"
-          :artists="displayedArtists"
-          :loading-more
+          :artists="shownArtists"
+          :loading-more="loadingMore && !filtering"
           :field="preferences.artists_sort_field"
           :order="preferences.artists_sort_order"
           @sort="sort"
           @toggle-favorite="toggleFavorite"
-          @scrolled-to-end="fetchArtists"
+          @scrolled-to-end="fetchMoreUnlessFiltering"
         />
-        <ArtistGrid v-else ref="grid" :artists="displayedArtists" :loading-more @scrolled-to-end="fetchArtists" />
+        <ArtistGrid
+          v-else
+          ref="grid"
+          :artists="shownArtists"
+          :loading-more="loadingMore && !filtering"
+          @scrolled-to-end="fetchMoreUnlessFiltering"
+        />
       </div>
     </template>
   </ScreenBase>
 </template>
 
 <script lang="ts" setup>
-import { faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons'
+import { faMicrophoneSlash, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, toRef } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useCursorPaginatedList } from '@/composables/useCursorPaginatedList'
+import { useServerListSearch } from '@/composables/useServerListSearch'
 
 import ArtistCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
 import ArtistGrid from '@/components/artist/ArtistGrid.vue'
 import ArtistTable from '@/components/artist/ArtistTable.vue'
 import ArtistTableRowSkeleton from '@/components/artist/ArtistTableRowSkeleton.vue'
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import ListFilter from '@/components/ui/ListFilter.vue'
 import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 import ViewModeSwitch from '@/components/ui/ViewModeSwitch.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -114,6 +131,25 @@ const {
 })
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
+
+const {
+  filtering,
+  results: matchingArtists,
+  searching,
+} = useServerListSearch(
+  keywords => artistStore.search(keywords, preferences.artists_favorites_only),
+  () => preferences.artists_favorites_only,
+)
+
+const shownArtists = computed(() => (filtering.value ? matchingArtists.value : displayedArtists.value))
+
+const showingSkeletons = computed(() => showSkeletons.value || searching.value)
+
+const fetchMoreUnlessFiltering = () => {
+  if (!filtering.value) {
+    fetchArtists()
+  }
+}
 
 const toggleFavorite = (artist: Artist) => artistStore.toggleFavorite(artist)
 

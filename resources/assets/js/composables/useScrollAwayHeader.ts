@@ -55,6 +55,11 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
     lastScrollTops.set(scroller, top)
     scrollTop.value = top
 
+    if (host.value?.contains(document.activeElement)) {
+      setRevealed(top > 0)
+      return
+    }
+
     if (top <= 0 || delta > 0) {
       upwardDistance = 0
       setRevealed(false)
