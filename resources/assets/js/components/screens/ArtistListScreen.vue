@@ -132,17 +132,16 @@ const {
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
-const { filtering, results: matchingArtists, searching } = useServerListSearch(keywords => artistStore.search(keywords))
+const {
+  filtering,
+  results: matchingArtists,
+  searching,
+} = useServerListSearch(
+  keywords => artistStore.search(keywords, preferences.artists_favorites_only),
+  () => preferences.artists_favorites_only,
+)
 
-const shownArtists = computed(() => {
-  if (!filtering.value) {
-    return displayedArtists.value
-  }
-
-  return preferences.artists_favorites_only
-    ? matchingArtists.value.filter(artist => artist.favorite)
-    : matchingArtists.value
-})
+const shownArtists = computed(() => (filtering.value ? matchingArtists.value : displayedArtists.value))
 
 const showingSkeletons = computed(() => showSkeletons.value || searching.value)
 

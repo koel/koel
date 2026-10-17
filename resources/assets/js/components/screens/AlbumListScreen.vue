@@ -133,15 +133,16 @@ const {
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
-const { filtering, results: matchingAlbums, searching } = useServerListSearch(keywords => albumStore.search(keywords))
+const {
+  filtering,
+  results: matchingAlbums,
+  searching,
+} = useServerListSearch(
+  keywords => albumStore.search(keywords, preferences.albums_favorites_only),
+  () => preferences.albums_favorites_only,
+)
 
-const shownAlbums = computed(() => {
-  if (!filtering.value) {
-    return displayedAlbums.value
-  }
-
-  return preferences.albums_favorites_only ? matchingAlbums.value.filter(album => album.favorite) : matchingAlbums.value
-})
+const shownAlbums = computed(() => (filtering.value ? matchingAlbums.value : displayedAlbums.value))
 
 const showingSkeletons = computed(() => showSkeletons.value || searching.value)
 

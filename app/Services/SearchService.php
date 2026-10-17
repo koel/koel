@@ -70,17 +70,35 @@ class SearchService
     public function searchAlbums(
         string $keywords,
         ?User $scopedUser = null,
+        bool $favoritesOnly = false,
         int $limit = self::DEFAULT_LIST_FILTER_RESULT_LIMIT,
     ): Collection {
-        return $this->albumRepository->search($keywords, $limit, $scopedUser);
+        if (!$favoritesOnly) {
+            return $this->albumRepository->search($keywords, $limit, $scopedUser);
+        }
+
+        return $this->albumRepository
+            ->search($keywords, PHP_INT_MAX, $scopedUser)
+            ->filter(static fn (Album $album) => $album->favorite)
+            ->take($limit)
+            ->values();
     }
 
     /** @return Collection<int, Artist> */
     public function searchArtists(
         string $keywords,
         ?User $scopedUser = null,
+        bool $favoritesOnly = false,
         int $limit = self::DEFAULT_LIST_FILTER_RESULT_LIMIT,
     ): Collection {
-        return $this->artistRepository->search($keywords, $limit, $scopedUser);
+        if (!$favoritesOnly) {
+            return $this->artistRepository->search($keywords, $limit, $scopedUser);
+        }
+
+        return $this->artistRepository
+            ->search($keywords, PHP_INT_MAX, $scopedUser)
+            ->filter(static fn (Artist $artist) => $artist->favorite)
+            ->take($limit)
+            ->values();
     }
 }

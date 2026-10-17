@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
+use App\Models\Favorite;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -37,5 +38,19 @@ class ArtistSearchTest extends TestCase
             ->assertJsonStructure([0 => ArtistResource::JSON_STRUCTURE])
             ->assertJsonCount(1)
             ->assertJsonPath('0.id', $match->id);
+    }
+
+    #[Test]
+    public function searchOnlyFavorites(): void
+    {
+        $user = create_user();
+        $favorite = Artist::factory()->for($user)->createOne(['name' => 'Foo Bar']);
+        Artist::factory()->for($user)->createOne(['name' => 'Foo Baz']);
+        Favorite::factory()->for($user)->for($favorite, 'favoriteable')->createOne();
+
+        $this
+            ->getAs('api/search/artists?q=foo&favorites_only=1', $user)
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', $favorite->id);
     }
 }

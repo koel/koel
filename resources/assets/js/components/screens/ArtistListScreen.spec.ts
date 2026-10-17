@@ -170,7 +170,7 @@ describe('artistListScreen.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Search' }))
     await h.user.type(screen.getByPlaceholderText('Keywords'), 'foo')
 
-    await waitFor(() => expect(searchMock).toHaveBeenCalledWith('foo'))
+    await waitFor(() => expect(searchMock).toHaveBeenCalledWith('foo', false))
     await waitFor(() => expect(screen.getAllByTestId('artist-card')).toHaveLength(2))
   })
 

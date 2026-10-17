@@ -73,8 +73,9 @@ export const artistStore = {
     return artist
   },
 
-  async search(keywords: string) {
-    return this.syncWithVault(await http.get<Artist[]>(`search/artists?q=${encodeURIComponent(keywords)}`))
+  async search(keywords: string, favoritesOnly = false) {
+    const query = new URLSearchParams({ q: keywords, favorites_only: favoritesOnly ? '1' : '0' })
+    return this.syncWithVault(await http.get<Artist[]>(`search/artists?${query}`))
   },
 
   async paginate(params: ArtistListPaginateParams) {
