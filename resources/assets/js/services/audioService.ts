@@ -56,7 +56,7 @@ export const audioService = {
 
       filter.Q.setTargetAtTime(1, this.context.currentTime, 0.01)
       filter.frequency.setTargetAtTime(frequency, this.context.currentTime, 0.01)
-      filter.gain.value = dbToGain(config.gains[i])
+      filter.gain.value = config.gains[i]
 
       prevFilter ? prevFilter.connect(filter) : this.preampGainNode.connect(filter)
       prevFilter = filter
@@ -130,8 +130,9 @@ export const audioService = {
     this.normalizationGainNode.gain.value = dbToGain(db)
   },
 
+  /** A BiquadFilterNode's gain is already in dB, unlike a GainNode's. */
   changeFilterGain(node: BiquadFilterNode, db: number) {
-    node.gain.value = dbToGain(db)
+    node.gain.value = db
   },
 
   /**
