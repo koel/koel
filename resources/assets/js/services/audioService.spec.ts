@@ -47,6 +47,7 @@ describe('audioService', () => {
       const gains = [9, -6, 0, 3, 0, 0, 0, 0, 0, -12]
       h.mock(equalizerStore, 'getConfig').mockReturnValue({ name: null, preamp: 0, gains })
       audioService.bands = []
+      h.mock(audioService, 'unlockAudioContext')
 
       audioService.init(document.createElement('audio'))
 
