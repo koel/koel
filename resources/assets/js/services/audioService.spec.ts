@@ -23,6 +23,16 @@ describe('audioService', () => {
     })
   })
 
+  describe('changeFilterGain', () => {
+    it('sets a band in dB, since that is what a BiquadFilterNode expects', () => {
+      const band = { gain: { value: 0 } } as unknown as BiquadFilterNode
+
+      audioService.changeFilterGain(band, 9)
+
+      expect(band.gain.value).toBe(9)
+    })
+  })
+
   describe('crossfade routing', () => {
     const makeNode = () => ({
       connect: vi.fn(),
