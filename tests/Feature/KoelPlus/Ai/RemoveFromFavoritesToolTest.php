@@ -110,4 +110,17 @@ class RemoveFromFavoritesToolTest extends PlusTestCase
         self::assertStringContainsString('Queen', (string) $response);
         self::assertFalse($artist->favorites()->where('user_id', $this->user->id)->exists());
     }
+
+    #[Test]
+    public function refusePodcastsWhenTheyAreTurnedOff(): void
+    {
+        config()->set('koel.podcasts.enabled', false);
+
+        $response = (string) app()
+            ->make(RemoveFromFavorites::class)
+            ->handle(new Request(['type' => FavoriteableType::PODCAST->value, 'query' => 'marktplatz']));
+
+        self::assertSame('The podcast feature is turned off on this server.', $response);
+        self::assertNull($this->result->action);
+    }
 }
