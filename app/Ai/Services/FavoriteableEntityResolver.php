@@ -9,6 +9,7 @@ use App\Repositories\ArtistRepository;
 use App\Repositories\PodcastRepository;
 use App\Repositories\RadioStationRepository;
 use App\Repositories\SongRepository;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Laravel\Ai\Tools\Request;
@@ -21,7 +22,20 @@ class FavoriteableEntityResolver
         private readonly ArtistRepository $artistRepository,
         private readonly RadioStationRepository $radioStationRepository,
         private readonly PodcastRepository $podcastRepository,
+        #[Config('koel.radio.enabled')]
+        private readonly bool $radioEnabled = true,
+        #[Config('koel.podcasts.enabled')]
+        private readonly bool $podcastsEnabled = true,
     ) {}
+
+    public function isTypeEnabled(FavoriteableType $type): bool
+    {
+        return match ($type) {
+            FavoriteableType::RADIO_STATION => $this->radioEnabled,
+            FavoriteableType::PODCAST => $this->podcastsEnabled,
+            default => true,
+        };
+    }
 
     public function resolve(FavoriteableType $type, Request $request, AiRequestContext $context): Collection
     {

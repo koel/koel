@@ -51,6 +51,11 @@ class RemoveFromFavorites implements Tool
     public function handle(Request $request): Stringable|string
     {
         $type = FavoriteableType::tryFrom($request['type'] ?? '') ?? FavoriteableType::PLAYABLE;
+
+        if (!$this->entityResolver->isTypeEnabled($type)) {
+            return sprintf('The %s feature is turned off on this server.', $type->value);
+        }
+
         $entities = $this->entityResolver->resolve($type, $request, $this->context);
 
         if ($entities->isEmpty()) {
