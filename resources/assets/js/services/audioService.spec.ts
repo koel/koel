@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { equalizerStore } from '@/stores/equalizerStore'
 import { audioService, dbToGain } from './audioService'
 
 describe('audioService', () => {
-  createHarness()
+  const h = createHarness()
 
   describe('dbToGain', () => {
     it('converts 0 dB to gain of 1', () => {
@@ -20,6 +21,37 @@ describe('audioService', () => {
 
     it('handles -Infinity as 0 gain', () => {
       expect(dbToGain(-Infinity)).toBe(0)
+    })
+  })
+
+  describe('init', () => {
+    it('sets each band to its configured gain in dB', () => {
+      const audioNode = () => ({
+        connect: vi.fn(),
+        gain: { value: 0 },
+        Q: { setTargetAtTime: vi.fn() },
+        frequency: { setTargetAtTime: vi.fn() },
+      })
+
+      vi.stubGlobal(
+        'AudioContext',
+        class {
+          currentTime = 0
+          createGain = audioNode
+          createBiquadFilter = audioNode
+          createAnalyser = audioNode
+          createMediaElementSource = audioNode
+        },
+      )
+
+      const gains = [9, -6, 0, 3, 0, 0, 0, 0, 0, -12]
+      h.mock(equalizerStore, 'getConfig').mockReturnValue({ name: null, preamp: 0, gains })
+      audioService.bands = []
+
+      audioService.init(document.createElement('audio'))
+
+      expect(audioService.bands.map(band => band.node.gain.value)).toEqual(gains)
+      vi.unstubAllGlobals()
     })
   })
 
