@@ -113,6 +113,9 @@ correspondingly, or uploading may fail with a `Payload too large` error.
 This applies even if you’re using a cloud storage, as the files will be uploaded to your server first before being sent
 to the cloud.
 
+A proxy in front of Koel can limit upload sizes too. Cloudflare’s free plan, for example, rejects requests larger than
+100 MB, so bigger files won’t go through its proxy or tunnel.
+
 ## Watch the Media Directory
 
 You can also watch your media directory and trigger _selective_ synchronization every time there's a change to it with
