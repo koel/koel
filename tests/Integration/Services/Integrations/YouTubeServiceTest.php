@@ -59,4 +59,30 @@ class YouTubeServiceTest extends TestCase
             return true;
         });
     }
+
+    #[Test]
+    public function retryAFailedSearchInsteadOfCachingTheFailure(): void
+    {
+        $song = Song::factory()->for(Artist::factory()->createOne(['name' => 'Slipknot']))->createOne([
+            'title' => 'Snuff',
+        ]);
+
+        Saloon::fake([
+            SearchVideosRequest::class => MockResponse::make(body: ['error' => 'quotaExceeded'], status: 403),
+        ]);
+
+        $failedResponse = $this->service->searchVideosRelatedToSong($song);
+
+        self::assertNull($failedResponse);
+
+        Saloon::fake([
+            SearchVideosRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/youtube/search.json',
+            ))),
+        ]);
+
+        $response = $this->service->searchVideosRelatedToSong($song);
+
+        self::assertSame('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
+    }
 }
