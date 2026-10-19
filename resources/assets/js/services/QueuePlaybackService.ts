@@ -543,6 +543,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     const nextPlayable = this.next
 
     if (!nextPlayable || nextPlayable.id === currentPlayable.id) {
+      this.announceUpNext(null)
       return
     }
 

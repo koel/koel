@@ -177,6 +177,25 @@ describe('playbackService', () => {
     preferences.temporary.repeat_mode = 'NO_REPEAT'
   })
 
+  it('clears up next when no song follows anymore', () => {
+    preferences.temporary.repeat_mode = 'REPEAT_ALL'
+    const [first, last] = playableStore.syncWithVault(h.factory('song').make(2))
+    last.playback_state = 'Playing'
+    last.play_count_registered = true
+    queueStore.state.playables = reactive([first, last])
+    h.mock(playbackService, 'preload')
+    const emitMock = h.mock(eventBus, 'emit')
+
+    h.setReadOnlyProperty(playbackService.media, 'duration', 300)
+    h.setReadOnlyProperty(playbackService.media, 'currentTime', 290)
+    playbackService.media.dispatchEvent(new Event('timeupdate'))
+
+    preferences.temporary.repeat_mode = 'NO_REPEAT'
+    playbackService.media.dispatchEvent(new Event('timeupdate'))
+
+    expect(emitMock).toHaveBeenLastCalledWith('UP_NEXT', null)
+  })
+
   it('reloads an expired source and resumes where it stopped', async () => {
     const song = h.factory('song').make({ playback_state: 'Playing' })
     queueStore.state.playables = reactive([song])
