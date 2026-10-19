@@ -1,5 +1,3 @@
-import type { Ref } from 'vue'
-import { ref } from 'vue'
 import { shuffle } from 'lodash-es'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
@@ -43,7 +41,7 @@ const savePlaybackStatus = lastWriteWins((status: { song: Playable['id']; positi
 
 export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
-  private upNext: Ref<Playable | null> = ref(null)
+  private upNext: Playable | null = null
   private latestPlayRequest = 0
   private lastExpiredSourceReload: { playableId: Playable['id']; at: number } | null = null
   private lastSavedPosition: { playableId: Playable['id']; second: number } | null = null
@@ -165,6 +163,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       audioService.routeElement(this.media)
 
       if (playable.playback_state !== 'Playing') {
+        this.recordStartTime(playable)
         this.seekTo(position)
         return
       }
@@ -226,7 +225,7 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     // Reset the "up next" value to let subscribers know that the next item is cleared
     // (because another playable, likely the "next" one, is being played)
-    this.upNext.value = null
+    this.announceUpNext(null)
 
     this.recordStartTime(playable)
     socketService.broadcast('SOCKET_STREAMABLE', playable)
@@ -541,14 +540,13 @@ export class QueuePlaybackService extends BasePlaybackService {
       }
     }
 
-    const nextPlayable = queueStore.next
+    const nextPlayable = this.next
 
-    if (!nextPlayable) {
+    if (!nextPlayable || nextPlayable.id === currentPlayable.id) {
       return
     }
 
-    // Set the "up next" value to the next playable if we're near the end of the current playback.
-    this.upNext.value = media.currentTime + 15 > media.duration ? nextPlayable : null
+    this.announceUpNext(media.currentTime + 15 > media.duration ? nextPlayable : null)
 
     // Preload the next playable if we're near the end of the current playback.
     if (media.currentTime + PRELOAD_BUFFER > media.duration && !nextPlayable.preloaded) {
@@ -578,6 +576,15 @@ export class QueuePlaybackService extends BasePlaybackService {
         this.fadeCrossfadingTracks()
       }
     }
+  }
+
+  private announceUpNext(playable: Playable | null) {
+    if (this.upNext?.id === playable?.id) {
+      return
+    }
+
+    this.upNext = playable
+    eventBus.emit('UP_NEXT', playable)
   }
 
   private fadeCrossfadingTracks() {

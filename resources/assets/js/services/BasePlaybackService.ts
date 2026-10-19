@@ -11,8 +11,9 @@ export abstract class BasePlaybackService {
     if (!this.media) {
       this.media = mediaElement
       watch(volumeManager.volume, volume => this.setVolume(volume), { immediate: true })
-      this.setMediaSessionActionHandlers()
     }
+
+    this.setMediaSessionActionHandlers()
 
     if (!this.boundMediaEvents.size) {
       this.addMediaEventListeners()

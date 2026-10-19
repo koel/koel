@@ -45,6 +45,36 @@ describe('playbackService', () => {
     expect(startPollingMock).toHaveBeenCalledWith(toBePlayedStation)
   })
 
+  it('does not start a station that was stopped while it was loading', async () => {
+    const station = h.factory('radio-station').make({ playback_state: 'Stopped' })
+    radioStationStore.state.stations = [station]
+    let resolveSourceUrl: (url: string) => void = () => {}
+    h.mock(radioStationStore, 'resolveSourceUrl').mockReturnValue(new Promise(resolve => (resolveSourceUrl = resolve)))
+    const playMock = h.mock(playbackService.media, 'play')
+    h.mock(radioStationStore, 'stopPolling')
+
+    const playing = playbackService.play(station)
+    await playbackService.stop()
+    resolveSourceUrl('https://station.com/stream.mp3')
+    await playing
+
+    expect(playMock).not.toHaveBeenCalled()
+    expect(station.playback_state).toBe('Paused')
+  })
+
+  it('takes over the media keys whenever it becomes active', async () => {
+    const handlers = new Map<string, () => void>()
+    h.setReadOnlyProperty(navigator, 'mediaSession', {
+      setActionHandler: (action: string, handler: () => void) => handlers.set(action, handler),
+    })
+    const pauseMock = h.mock(playbackService, 'pause')
+
+    playbackService.activate(playbackService.media)
+    handlers.get('pause')!()
+
+    expect(pauseMock).toHaveBeenCalled()
+  })
+
   it('pauses a radio station playback', async () => {
     const currentStation = h.factory('radio-station').make()
     currentStation.playback_state = 'Playing'

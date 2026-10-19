@@ -2,6 +2,7 @@ import { nextTick, reactive } from 'vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import * as lodash from 'lodash-es'
 import { createHarness } from '@/__tests__/TestHarness'
+import { eventBus } from '@/utils/eventBus'
 import { audioService } from '@/services/audioService'
 
 vi.mock('lodash-es', async importOriginal => {
@@ -143,6 +144,37 @@ describe('playbackService', () => {
 
     expect(routeElementMock).toHaveBeenCalledWith(playbackService.media)
     playbackService.media.removeAttribute('src')
+  })
+
+  it('counts a song again when it was paused while loading', async () => {
+    const song = h.factory('song').make({ play_count_registered: true })
+    let resolveSourceUrl: (url: string) => void = () => {}
+    h.mock(playableStore, 'resolveSourceUrl').mockReturnValue(new Promise(resolve => (resolveSourceUrl = resolve)))
+
+    const playing = playbackService.play(song)
+    song.playback_state = 'Paused'
+    resolveSourceUrl('http://test/play/song')
+    await playing
+
+    expect(song.play_count_registered).toBe(false)
+    playbackService.media.removeAttribute('src')
+  })
+
+  it('announces the first song as up next near the end of the last one with Repeat All', () => {
+    preferences.temporary.repeat_mode = 'REPEAT_ALL'
+    const [first, last] = playableStore.syncWithVault(h.factory('song').make(2))
+    last.playback_state = 'Playing'
+    last.play_count_registered = true
+    queueStore.state.playables = reactive([first, last])
+    h.mock(playbackService, 'preload')
+    const emitMock = h.mock(eventBus, 'emit')
+
+    h.setReadOnlyProperty(playbackService.media, 'duration', 300)
+    h.setReadOnlyProperty(playbackService.media, 'currentTime', 290)
+    playbackService.media.dispatchEvent(new Event('timeupdate'))
+
+    expect(emitMock).toHaveBeenCalledWith('UP_NEXT', first)
+    preferences.temporary.repeat_mode = 'NO_REPEAT'
   })
 
   it('reloads an expired source and resumes where it stopped', async () => {
