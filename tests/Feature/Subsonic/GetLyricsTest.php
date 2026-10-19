@@ -60,7 +60,7 @@ class GetLyricsTest extends TestCase
             ->assertOk()
             ->assertJsonPath('subsonic-response.status', 'ok');
 
-        self::assertSame([], $response->json('subsonic-response.lyrics'));
+        self::assertStringContainsString('"lyrics":{}', $response->getContent());
     }
 
     #[Test]

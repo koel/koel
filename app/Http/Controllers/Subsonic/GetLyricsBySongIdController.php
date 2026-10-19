@@ -21,7 +21,7 @@ class GetLyricsBySongIdController extends Controller
         $lyrics = ParsedLyrics::fromRawLyrics((string) $song->lyrics);
 
         if (!$lyrics->lines) {
-            return SubsonicResponse::ok(['lyricsList' => []]);
+            return SubsonicResponse::ok(['lyricsList' => ['structuredLyrics' => []]]);
         }
 
         return SubsonicResponse::ok([

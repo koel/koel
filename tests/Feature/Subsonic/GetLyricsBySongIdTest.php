@@ -71,6 +71,6 @@ class GetLyricsBySongIdTest extends TestCase
         $this
             ->getJson("/rest/getLyricsBySongId.view?apiKey={$user->subsonic_api_key}&f=json&id={$song->id}")
             ->assertOk()
-            ->assertJsonPath('subsonic-response.lyricsList', []);
+            ->assertJsonPath('subsonic-response.lyricsList.structuredLyrics', []);
     }
 }

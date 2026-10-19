@@ -9,6 +9,7 @@ use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Models\User;
 use App\Repositories\SongRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
+use stdClass;
 
 class GetLyricsController extends Controller
 {
@@ -23,7 +24,7 @@ class GetLyricsController extends Controller
         $lyrics = $song ? trim((string) $song->lyrics) : '';
 
         if ($song === null || $lyrics === '') {
-            return SubsonicResponse::ok(['lyrics' => []]);
+            return SubsonicResponse::ok(['lyrics' => new stdClass()]);
         }
 
         return SubsonicResponse::ok(['lyrics' => LyricsResource::toArray($song, $lyrics)]);
