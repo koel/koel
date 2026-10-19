@@ -29,6 +29,7 @@ class GetPlaylistsTest extends TestCase
 
         self::assertContains($a->id, $ids);
         self::assertContains($b->id, $ids);
+        self::assertSame($user->email, $response->json('subsonic-response.playlists.playlist.0.owner'));
     }
 
     #[Test]

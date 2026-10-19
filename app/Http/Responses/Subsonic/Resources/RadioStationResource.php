@@ -6,7 +6,7 @@ use App\Models\RadioStation;
 
 final class RadioStationResource
 {
-    /** Keys always present after stripNulls. Nullable `homepageUrl` is not listed. */
+    /** Keys always present after stripNulls. Nullable `homePageUrl` is not listed. */
     public const array JSON_STRUCTURE = [
         'id',
         'name',
@@ -18,7 +18,7 @@ final class RadioStationResource
      *     id: string,
      *     name: string,
      *     streamUrl: string,
-     *     homepageUrl: ?string,
+     *     homePageUrl: ?string,
      * }
      */
     public static function toArray(RadioStation $station): array
@@ -27,7 +27,7 @@ final class RadioStationResource
             'id' => $station->id,
             'name' => $station->name,
             'streamUrl' => $station->url,
-            'homepageUrl' => $station->homepage_url,
+            'homePageUrl' => $station->homepage_url,
         ];
     }
 }

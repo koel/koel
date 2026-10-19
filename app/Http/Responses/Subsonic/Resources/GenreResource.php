@@ -19,11 +19,11 @@ final class GenreResource
      *     value: string,
      * }
      */
-    public static function toArray(GenreSummary $genre): array
+    public static function toArray(GenreSummary $genre, int $albumCount): array
     {
         return [
             'songCount' => $genre->songCount,
-            'albumCount' => 0,
+            'albumCount' => $albumCount,
             'value' => $genre->name,
         ];
     }
