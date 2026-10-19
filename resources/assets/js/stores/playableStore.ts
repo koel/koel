@@ -196,6 +196,9 @@ export const playableStore = {
       songs: songsToUpdate.map(song => song.id),
     })
 
+    songsToUpdate.forEach(song => this.invalidateAlbumAndArtistSongCaches(song))
+    result.songs.forEach(song => this.invalidateAlbumAndArtistSongCaches(song))
+
     this.syncWithVault(result.songs)
 
     albumStore.syncWithVault(result.albums)
