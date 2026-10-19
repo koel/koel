@@ -33,6 +33,7 @@ export const searchStore = {
       radio_stations: [],
     } as ExcerptState,
     playables: [] as Playable[],
+    keywords: '',
   }),
 
   async excerptSearch(q: string) {

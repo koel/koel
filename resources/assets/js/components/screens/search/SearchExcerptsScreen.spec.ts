@@ -8,7 +8,11 @@ import { usePageTitle } from '@/composables/usePageTitle'
 import Component from './SearchExcerptsScreen.vue'
 
 describe('searchExcerptsScreen.vue', () => {
-  const h = createHarness()
+  const h = createHarness({
+    beforeEach: () => {
+      searchStore.state.keywords = ''
+    },
+  })
 
   it('executes searching when the search keyword is changed', async () => {
     const mock = h.mock(searchStore, 'excerptSearch')
@@ -17,6 +21,15 @@ describe('searchExcerptsScreen.vue', () => {
     eventBus.emit('SEARCH_KEYWORDS_CHANGED', 'search me')
 
     await waitFor(() => expect(mock).toHaveBeenCalledWith('search me'))
+  })
+
+  it('searches for keywords typed before the screen was first opened', async () => {
+    const mock = h.mock(searchStore, 'excerptSearch')
+    searchStore.state.keywords = 'beatles'
+
+    h.render(Component)
+
+    await waitFor(() => expect(mock).toHaveBeenCalledWith('beatles'))
   })
 
   it('keeps showing the loading state while the latest search is pending', async () => {
