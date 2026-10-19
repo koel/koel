@@ -165,4 +165,28 @@ describe('genreScreen', () => {
       expect(paginateMock).toHaveBeenLastCalledWith(genre.id, { sort: 'artist_name', order: 'desc', cursor: '' })
     })
   })
+
+  it('loads the songs of a genre opened while another one is still loading', async () => {
+    const first = h.factory('genre').make()
+    const second = h.factory('genre').make()
+    let resolveFirst: ((page: { nextCursor: string | null; songs: Song[] }) => void) | undefined
+
+    h.mock(genreStore, 'fetchOne').mockImplementation(async id => (id === first.id ? first : second))
+
+    const paginateMock = h
+      .mock(playableStore, 'paginateSongsByGenre')
+      .mockImplementation(async id =>
+        id === first.id
+          ? new Promise(resolve => (resolveFirst = resolve))
+          : { nextCursor: null, songs: h.factory('song').make(2) },
+      )
+
+    h.visit(`genres/${first.id}`).render(Component, { global: { stubs: { SongList: h.stub('song-list') } } })
+    await waitFor(() => expect(resolveFirst).toBeDefined())
+
+    h.visit(`genres/${second.id}`)
+    resolveFirst!({ nextCursor: 'next-token', songs: h.factory('song').make(3) })
+
+    await waitFor(() => expect(paginateMock).toHaveBeenLastCalledWith(second.id, expect.anything()))
+  })
 })

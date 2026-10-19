@@ -63,6 +63,36 @@ describe('playlistScreen.vue', () => {
     screen.getByTestId('smart-playlist-limit-notice')
   })
 
+  it('shows the songs of a playlist opened while another one is still loading', async () => {
+    const first = h.factory('playlist').make()
+    const second = h.factory('playlist').make({ owner_id: first.owner_id })
+    h.actingAsUser(h.factory('user').state('current').make({ id: first.owner_id }) as CurrentUser)
+    playlistStore.state.playlists = []
+    playlistStore.init([first, second])
+    first.playables = h.factory('song').make(3)
+    second.playables = h.factory('song').make(2)
+
+    let resolveFirst: ((playables: Playable[]) => void) | undefined
+
+    h.mock(playableStore, 'fetchForPlaylist').mockImplementation(async playlist =>
+      (playlist as Playlist).id === first.id
+        ? new Promise<Playable[]>(resolve => (resolveFirst = resolve))
+        : second.playables!,
+    )
+
+    h.render(Component, { global: { stubs: { FavoriteButton: h.stub('favorite-button', true) } } })
+    h.visit(`playlists/${first.id}`)
+    await waitFor(() => expect(resolveFirst).toBeDefined())
+
+    h.visit(`playlists/${second.id}`)
+    await waitFor(() => expect(screen.getAllByTestId('song-item')).toHaveLength(2))
+
+    resolveFirst!(first.playables)
+    await new Promise(resolve => setTimeout(resolve))
+
+    expect(screen.getAllByTestId('song-item')).toHaveLength(2)
+  })
+
   it('renders the playlist', async () => {
     await renderComponent(h.factory('song').make(10))
 
