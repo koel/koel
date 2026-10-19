@@ -54,6 +54,25 @@ class UpdatePlaylistTest extends PlusTestCase
     }
 
     #[Test]
+    public function removeByThePositionTheCollaboratorSees(): void
+    {
+        $playlist = create_playlist();
+        $hiddenSong = Song::factory()->for($playlist->owner, 'owner')->private()->createOne();
+        $playlist->addPlayables($hiddenSong);
+        $collaborator = create_user();
+        $playlist->addCollaborator($collaborator);
+        $visibleSong = Song::factory()->for($collaborator, 'owner')->createOne();
+        $playlist->addPlayables($visibleSong, $collaborator);
+
+        $this->getJson(
+            "/rest/updatePlaylist.view?apiKey={$collaborator->subsonic_api_key}"
+            . "&f=json&playlistId={$playlist->id}&songIndexToRemove=0",
+        );
+
+        self::assertSame([$hiddenSong->id], $playlist->refresh()->playables->modelKeys());
+    }
+
+    #[Test]
     public function collaboratorCannotRenamePlaylist(): void
     {
         $playlist = create_playlist(['name' => 'Original']);

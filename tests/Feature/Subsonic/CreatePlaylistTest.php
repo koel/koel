@@ -7,6 +7,7 @@ use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class CreatePlaylistTest extends TestCase
@@ -49,6 +50,35 @@ class CreatePlaylistTest extends TestCase
 
         self::assertNotNull($response->json('subsonic-response.playlist.entry.0.starred'));
         self::assertNull($response->json('subsonic-response.playlist.entry.1.starred'));
+    }
+
+    #[Test]
+    public function replaceTheSongsOfAnExistingPlaylist(): void
+    {
+        $playlist = create_playlist();
+        $user = $playlist->owner;
+        $playlist->addPlayables(Song::factory()->for($user, 'owner')->createMany(2));
+        [$first, $second] = Song::factory()->for($user, 'owner')->createMany(2)->all();
+
+        $this
+            ->getJson(
+                "/rest/createPlaylist.view?apiKey={$user->subsonic_api_key}"
+                . "&f=json&playlistId={$playlist->id}&songId={$second->id}&songId={$first->id}",
+            )
+            ->assertJsonPath('subsonic-response.playlist.entry.0.id', $second->id)
+            ->assertJsonPath('subsonic-response.playlist.entry.1.id', $first->id)
+            ->assertJsonPath('subsonic-response.playlist.songCount', 2);
+    }
+
+    #[Test]
+    public function refuseToReplaceTheSongsOfSomeoneElsesPlaylist(): void
+    {
+        $playlist = create_playlist();
+        $user = create_user();
+
+        $this->getJson(
+            "/rest/createPlaylist.view?apiKey={$user->subsonic_api_key}&f=json&playlistId={$playlist->id}",
+        )->assertJsonPath('subsonic-response.error.code', 50);
     }
 
     #[Test]

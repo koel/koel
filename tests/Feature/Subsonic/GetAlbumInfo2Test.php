@@ -36,6 +36,27 @@ class GetAlbumInfo2Test extends TestCase
     }
 
     #[Test]
+    public function writesNotesAsChildElementsInXml(): void
+    {
+        $user = create_user();
+        $album = Album::factory()->for($user)->createOne();
+
+        $this
+            ->mock(EncyclopediaService::class)
+            ->expects('getAlbumInformation')
+            ->andReturn(AlbumInformation::make(url: 'https://www.last.fm/album/Foo', wiki: [
+                'summary' => 'About the album',
+                'full' => 'Full text',
+            ]));
+
+        $response = $this->get("/rest/getAlbumInfo2.view?apiKey={$user->subsonic_api_key}&id={$album->id}");
+        $xml = simplexml_load_string($response->getContent());
+
+        self::assertSame('About the album', (string) $xml->albumInfo->notes);
+        self::assertSame('https://www.last.fm/album/Foo', (string) $xml->albumInfo->lastFmUrl);
+    }
+
+    #[Test]
     public function returnsEmptyWhenEncyclopediaReturnsNull(): void
     {
         $user = create_user();

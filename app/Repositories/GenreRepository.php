@@ -51,6 +51,35 @@ class GenreRepository extends Repository
         return $genres;
     }
 
+    /**
+     * @return array<string, int> album counts keyed by genre public ID, including the "No Genre" entry
+     */
+    public function getAlbumCountsByGenre(?User $scopedUser = null): array
+    {
+        $scopedUser ??= $this->auth->user();
+
+        $counts = Song::query(type: PlayableType::SONG, user: $scopedUser)
+            ->accessible()
+            ->join('genre_song', 'songs.id', '=', 'genre_song.song_id')
+            ->join('genres', 'genre_song.genre_id', '=', 'genres.id')
+            ->groupBy('genres.public_id')
+            ->select('genres.public_id', DB::raw('COUNT(DISTINCT songs.album_id) AS album_count'))
+            ->toBase()
+            ->pluck('album_count', 'public_id')
+            ->map(static fn (mixed $count) => (int) $count)
+            ->all();
+
+        $genrelessAlbumCount = Song::query(type: PlayableType::SONG, user: $scopedUser)
+            ->accessible()
+            ->leftJoin('genre_song', 'songs.id', '=', 'genre_song.song_id')
+            ->whereNull('genre_song.genre_id')
+            ->toBase()
+            ->distinct()
+            ->count('songs.album_id');
+
+        return [...$counts, Genre::NO_GENRE_PUBLIC_ID => $genrelessAlbumCount];
+    }
+
     public function getSummaryForGenre(Genre $genre, ?User $scopedUser = null): GenreSummary
     {
         /** @var object $result */

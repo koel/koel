@@ -9,6 +9,7 @@ use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Favorite;
+use App\Models\Podcast;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -114,6 +115,20 @@ class GetStarred2Test extends TestCase
         self::assertSame($expected, collect($payload['song'])->firstWhere('id', $song->id)['starred']);
         self::assertSame($expected, collect($payload['album'])->firstWhere('id', $album->id)['starred']);
         self::assertSame($expected, collect($payload['artist'])->firstWhere('id', $artist->id)['starred']);
+    }
+
+    #[Test]
+    public function leaveOutFavoritedPodcastEpisodes(): void
+    {
+        $user = create_user();
+        $podcast = Podcast::factory()->createOne();
+        $podcast->subscribers()->attach($user);
+        $episode = Song::factory()->asEpisode()->createOne(['podcast_id' => $podcast->id]);
+        Favorite::factory()->for($user)->for($episode, 'favoriteable')->createOne();
+
+        $response = $this->getJson("/rest/getStarred2.view?apiKey={$user->subsonic_api_key}&f=json");
+
+        self::assertSame([], $response->json('subsonic-response.starred2.song') ?? []);
     }
 
     #[Test]

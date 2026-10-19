@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Tests\TestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 use function Tests\test_path;
 
@@ -119,6 +120,30 @@ class GetCoverArtTest extends TestCase
         $base = $response->baseResponse;
         self::assertInstanceOf(BinaryFileResponse::class, $base);
         self::assertSame(resource_path('assets/img/covers/default.png'), $base->getFile()->getRealPath());
+    }
+
+    #[Test]
+    public function returnsPlaylistCoverBytes(): void
+    {
+        $filename = $this->stageCover('sub_playlist_cover_test.png');
+        $playlist = create_playlist(['cover' => $filename]);
+
+        $response = $this->get(
+            "/rest/getCoverArt.view?apiKey={$playlist->owner->subsonic_api_key}&id={$playlist->id}",
+        )->assertOk();
+
+        self::assertSame(File::get(image_storage_path($filename)), $response->streamedContent());
+    }
+
+    #[Test]
+    public function refusesTheCoverOfSomeoneElsesPlaylist(): void
+    {
+        $playlist = create_playlist(['cover' => $this->stageCover('sub_other_playlist_cover_test.png')]);
+        $user = create_user();
+
+        $this->getJson(
+            "/rest/getCoverArt.view?apiKey={$user->subsonic_api_key}&f=json&id={$playlist->id}",
+        )->assertJsonPath('subsonic-response.error.code', 50);
     }
 
     private function stageCover(string $filename): string

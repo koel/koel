@@ -31,7 +31,7 @@ final class PlayQueueResource
             'username' => $user->email,
             'changed' => $state->changedAt?->toIso8601String() ?? '',
             'changedBy' => $state->changedBy ?: 'koel',
-            'current' => $state->currentPlayable?->id,
+            'current' => $state->currentPlayable->id ?? $state->playables->first()?->id,
             'position' => $state->playbackPosition !== null ? $state->playbackPosition * 1000 : null,
         ];
 

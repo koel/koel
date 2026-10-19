@@ -35,5 +35,6 @@ class GetGenresTest extends TestCase
 
         self::assertNotNull($rockEntry);
         self::assertSame(1, $rockEntry['songCount']);
+        self::assertSame(1, $rockEntry['albumCount']);
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 /**
  * @property list<string> $id
  * @property bool $submission
+ * @property-read int|null $time
  */
 class ScrobbleRequest extends Request
 {
@@ -26,6 +27,7 @@ class ScrobbleRequest extends Request
         return [
             'id' => [Rule::required(), Rule::array(), 'min:1'],
             'id.*' => [Rule::string()],
+            'time' => [Rule::sometimes(), Rule::numeric()->integer()],
         ];
     }
 }

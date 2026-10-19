@@ -8,7 +8,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 /**
- * @property string $name
+ * @property string|null $name
+ * @property string|null $playlistId
  * @property list<string> $songId
  */
 class CreatePlaylistRequest extends Request
@@ -22,7 +23,8 @@ class CreatePlaylistRequest extends Request
     public function rules(): array
     {
         return [
-            'name' => [Rule::required(), Rule::string()],
+            'playlistId' => [Rule::sometimes(), Rule::string()],
+            'name' => [Rule::requiredWithout('playlistId'), Rule::string()],
             'songId' => [Rule::array(), new AllPlayablesAreAccessibleBy($this->user())],
         ];
     }
