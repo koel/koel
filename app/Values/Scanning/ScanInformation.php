@@ -51,7 +51,7 @@ class ScanInformation implements Arrayable
 
         $comments = Arr::get($info, 'comments', []);
 
-        $albumArtistName = TagFixer::fix(self::getTag($tags, ['albumartist', 'album_artist', 'band']));
+        $albumArtistName = TagFixer::fix(self::getTag($tags, ['albumartist', 'album_artist', 'album artist', 'band']));
 
         // If the song is explicitly marked as a compilation but there's no album artist name, use the umbrella
         // "Various Artists" artist.
@@ -89,7 +89,7 @@ class ScanInformation implements Arrayable
             artistMbid: MbidReader::getArtistMbid($tags),
             albumArtistMbid: MbidReader::getAlbumArtistMbid($tags),
             track: (int) self::getTag($tags, ['track', 'tracknumber', 'track_number']),
-            disc: (int) self::getTag($tags, ['discnumber', 'part_of_a_set'], 1),
+            disc: (int) self::getTag($tags, ['discnumber', 'disc_number', 'part_of_a_set'], 1),
             year: (int) self::getTag($tags, ['year', 'date']) ?: null,
             genre: TagFixer::fix(self::getTag($tags, 'genre')),
             lyrics: $lyrics,
