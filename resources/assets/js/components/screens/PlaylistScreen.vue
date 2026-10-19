@@ -76,7 +76,6 @@
 <script lang="ts" setup>
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { differenceBy } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
@@ -295,9 +294,9 @@ const requestContextMenu = (event: MouseEvent) =>
 eventBus
   .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && (await fetchDetails()))
   .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && (await fetchDetails()))
-  .on('PLAYLIST_CONTENT_REMOVED', async ({ id }, removed) => {
+  .on('PLAYLIST_CONTENT_REMOVED', async ({ id }) => {
     if (id === playlistId.value) {
-      allPlayables.value = differenceBy(allPlayables.value, removed, 'id')
+      allPlayables.value = playlist.value!.playables!
     }
   })
   .on('PLAYLIST_DELETED', async ({ id }) => id === playlistId.value && go(url('home')))

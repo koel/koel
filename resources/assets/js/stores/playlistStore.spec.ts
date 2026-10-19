@@ -152,6 +152,16 @@ describe('playlistStore', () => {
     expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
   })
 
+  it('drops removed songs from the playlist it holds', async () => {
+    const songs = h.factory('song').make(3)
+    const playlist = h.factory('playlist').make({ playables: songs })
+    h.mock(http, 'delete')
+
+    await playlistStore.removeContent(playlist, [songs[1]])
+
+    expect(playlist.playables).toEqual([songs[0], songs[2]])
+  })
+
   it('does not modify a smart playlist content', async () => {
     const playlist = factory('playlist').state('smart').make()
     const postMock = h.mock(http, 'post')

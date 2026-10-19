@@ -132,6 +132,10 @@ export const playlistStore = {
     await http.delete(`playlists/${playlist.id}/songs`, { songs: playables.map(song => song.id) })
     cache.remove(['playlist.songs', playlist.id])
 
+    if (playlist.playables) {
+      playlist.playables = differenceBy(playlist.playables, playables, 'id')
+    }
+
     return playlist
   },
 
