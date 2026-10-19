@@ -581,6 +581,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
             ->when(!$genre, static fn (SongBuilder $builder) => $builder->genreless())
             ->orderBy('songs.title')
+            ->orderBy('songs.id')
             ->when($offset > 0, static fn (Builder $builder) => $builder->offset($offset))
             ->limit($limit)
             ->get();
@@ -691,7 +692,10 @@ class SongRepository extends Repository implements ScoutableRepository
             // if the root path is included, we don't need to filter by folder
             ->when(!$hasRootPath, function (SongBuilder $query) use ($paths, $scopedUser): void {
                 $folders = $this->folderRepository->getByPaths($paths, $scopedUser);
-                $query->whereIn('songs.folder_id', $folders->pluck('id'));
+                $query->whereIn(
+                    'songs.folder_id',
+                    $this->folderRepository->getIdsIncludingDescendants($folders->modelKeys()),
+                );
             })
             ->when(!$random, static fn (SongBuilder $query): SongBuilder => $query->orderBy('songs.path'))
             ->when($random, static fn (SongBuilder $query): SongBuilder => $query->inRandomOrder())

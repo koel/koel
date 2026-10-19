@@ -98,6 +98,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->setScopedUser($user)
             ->accessible()
             ->orderByDesc('albums.created_at')
+            ->orderBy('albums.id')
             ->offset($offset)
             ->limit($count)
             ->pluck('albums.id');
@@ -116,6 +117,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->accessible()
             ->withPlayCount(playedOnly: true)
             ->orderByDesc('play_count')
+            ->orderBy('albums.id')
             ->offset($offset)
             ->limit($count)
             ->pluck('albums.id');
@@ -186,6 +188,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
                     ->select('songs.album_id'),
             )
             ->orderBy('albums.name')
+            ->orderBy('albums.id')
             ->offset($offset)
             ->limit($size)
             ->get();
@@ -206,6 +209,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
             })
             ->orderByDesc('ratings.rating')
             ->orderBy('albums.name')
+            ->orderBy('albums.id')
             ->offset($offset)
             ->limit($size)
             ->get();

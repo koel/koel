@@ -36,6 +36,22 @@ class FetchRecursiveFolderSongsTest extends PlusTestCase
     }
 
     #[Test]
+    public function includeSongsInSubfoldersOfTheChosenFolder(): void
+    {
+        $artistFolder = Folder::factory()->createOne(['path' => 'Rock']);
+        $albumFolder = Folder::factory()->for($artistFolder, 'parent')->createOne(['path' => 'Rock/Album']);
+        $discFolder = Folder::factory()->for($albumFolder, 'parent')->createOne(['path' => 'Rock/Album/CD1']);
+        $songs = Song::factory()
+            ->for($albumFolder)
+            ->createMany(2)
+            ->push(Song::factory()->for($discFolder)->createOne());
+
+        $response = $this->postAs('/api/songs/by-folders', ['folders' => [$artistFolder->id]]);
+
+        self::assertEqualsCanonicalizing($songs->pluck('id')->all(), $response->json('*.id'));
+    }
+
+    #[Test]
     public function fetchSongsForASingleFolder(): void
     {
         $folder = Folder::factory()->createOne(['path' => 'foo']);

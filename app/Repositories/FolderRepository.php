@@ -73,6 +73,31 @@ class FolderRepository extends Repository
         );
     }
 
+    /**
+     * The IDs of the given folders and every folder nested below them.
+     *
+     * @param array<string> $folderIds
+     *
+     * @return array<string>
+     */
+    public function getIdsIncludingDescendants(array $folderIds): array
+    {
+        $allIds = $folderIds;
+        $currentLevelIds = $folderIds;
+
+        while ($currentLevelIds) {
+            $currentLevelIds = Folder::query()
+                ->whereIn('parent_id', $currentLevelIds)
+                ->whereNotIn('id', $allIds)
+                ->pluck('id')
+                ->all();
+
+            $allIds = [...$allIds, ...$currentLevelIds];
+        }
+
+        return $allIds;
+    }
+
     public function getByPaths(array $paths, ?User $scopedUser = null): Collection
     {
         $hashes = array_map(self::pathToHash(...), $paths);
