@@ -10,7 +10,11 @@ class RadioStationPolicy
 {
     public function access(User $user, RadioStation $station): bool
     {
-        return $station->user_id === $user->id || $station->is_public;
+        if ($station->user_id === $user->id) {
+            return true;
+        }
+
+        return $station->is_public && $station->user->organization_id === $user->organization_id;
     }
 
     public function edit(User $user, RadioStation $station): bool

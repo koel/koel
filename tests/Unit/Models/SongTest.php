@@ -5,6 +5,7 @@ namespace Tests\Unit\Models;
 use App\Enums\SongStorageType;
 use App\Models\Artist;
 use App\Models\Genre;
+use App\Models\Organization;
 use App\Models\Song;
 use App\Values\SongStorageMetadata\S3CompatibleMetadata;
 use App\Values\SongStorageMetadata\S3LambdaMetadata;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Builder;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+
+use function Tests\create_user;
 
 class SongTest extends TestCase
 {
@@ -156,5 +159,19 @@ class SongTest extends TestCase
         $artist = Artist::factory()->createOne(['name' => Artist::UNKNOWN_NAME]);
 
         self::assertFalse(Song::factory()->for($artist)->createOne()->isScrobbleable());
+    }
+
+    #[Test]
+    public function grantAccessToPublicSongsOfTheSameOrganizationOnly(): void
+    {
+        $user = create_user();
+        $songOfSameOrganization = Song::factory()->for(create_user(), 'owner')->public()->createOne();
+        $songOfOtherOrganization = Song::factory()
+            ->for(create_user(['organization_id' => Organization::factory()]), 'owner')
+            ->public()
+            ->createOne();
+
+        self::assertTrue($songOfSameOrganization->accessibleBy($user));
+        self::assertFalse($songOfOtherOrganization->accessibleBy($user));
     }
 }

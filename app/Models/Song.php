@@ -156,7 +156,11 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
             return $user->subscribedToPodcast($this->podcast);
         }
 
-        return $this->is_public || $this->ownedBy($user);
+        if ($this->ownedBy($user)) {
+            return true;
+        }
+
+        return $this->is_public && $this->owner->organization_id === $user->organization_id;
     }
 
     public function ownedBy(User $user): bool
