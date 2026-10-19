@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 class StoredValueCursorPaginator extends CursorPaginator
 {
     /** @inheritdoc */
-    public function getParametersForItem($item)
+    public function getParametersForItem(mixed $item): array
     {
         if (!$item instanceof Model) {
             return parent::getParametersForItem($item);
