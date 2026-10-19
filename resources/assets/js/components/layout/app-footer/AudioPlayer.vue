@@ -133,25 +133,27 @@ const computeRatio = (clientX: number, track: HTMLElement) => {
 
 const seekFromEvent = (e: MouseEvent | PointerEvent) => {
   const service = playback('current')
+  const media = getActiveMedia()
   const targetTrack = trackEl ?? (e.currentTarget as HTMLElement)?.querySelector<HTMLElement>('.track')
 
-  if (!service?.media?.duration || !targetTrack) {
+  if (!service || !media?.duration || !targetTrack) {
     return
   }
 
-  service.seekTo(computeRatio(e.clientX, targetTrack) * service.media.duration)
+  service.seekTo(computeRatio(e.clientX, targetTrack) * media.duration)
 }
 
 const seekToStart = () => playback('current')?.seekTo(0)
 
 const seekToEnd = () => {
   const service = playback('current')
+  const media = getActiveMedia()
 
-  if (!service?.media?.duration) {
+  if (!service || !media?.duration) {
     return
   }
 
-  service.seekTo(service.media.duration)
+  service.seekTo(media.duration)
 }
 
 const onClickSeek = (e: MouseEvent) => {

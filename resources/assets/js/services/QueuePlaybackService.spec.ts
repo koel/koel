@@ -463,15 +463,41 @@ describe('playbackService', () => {
     endCrossfadeTest(outgoingMedia)
   })
 
-  it('restores the volume when seeking cancels a crossfade', () => {
+  it('seeks within the song shown as playing when seeking during a crossfade', () => {
     const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
-    const pauseMock = h.mock(incomingMedia, 'pause')
 
     playbackService.seekTo(100)
 
     expect(crossfadeService.active).toBe(false)
+    expect(playbackService.media).toBe(incomingMedia)
+    expect(incomingMedia.currentTime).toBe(100)
+    expect(incomingMedia.volume).toBeCloseTo(0.8)
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
+  it('pauses the song shown as playing when pausing during a crossfade', async () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+    const incomingSong = crossfadeService.state!.playable
+    const pauseMock = h.mock(incomingMedia, 'pause')
+
+    await playbackService.pause()
+
+    expect(playbackService.media).toBe(incomingMedia)
     expect(pauseMock).toHaveBeenCalled()
-    expect(outgoingMedia.volume).toBeCloseTo(0.8)
+    expect(queueStore.current?.id).toBe(incomingSong.id)
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
+  it('ends the crossfade when going back during one', async () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+    h.mock(playbackService, 'play')
+
+    await playbackService.playPrev()
+
+    expect(crossfadeService.active).toBe(false)
+    expect(playbackService.media).toBe(incomingMedia)
 
     endCrossfadeTest(outgoingMedia)
   })

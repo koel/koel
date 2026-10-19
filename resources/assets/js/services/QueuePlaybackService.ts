@@ -137,28 +137,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     await this.setNowPlayingMeta(playable)
 
     if (isCrossfadeFinalization) {
-      // The incoming track is already playing via the crossfade audio element.
-      // Simply swap it in as the new primary — no src change, no seeking, no interruption.
-      const { incomingAudio } = crossfadeService.state!
-
-      // Stop and fully discard the old element
-      this.media.pause()
-      this.media.removeAttribute('src')
-      this.media.load()
-
-      // The incoming audio is already playing at the right position.
-      // Just make it the new primary media element.
-      this.swapMediaElement(incomingAudio)
-      this.setVolume(volumeManager.get())
-
-      // Reconnect the audio graph to the new element
-      if (isAudioContextSupported && audioService.context) {
-        volumeNormalizer.applyToStreamable(playable)
-        audioService.reconnectSource(incomingAudio)
-      }
-
-      crossfadeService.state = null
-
+      this.takeOverCrossfadingTrack()
       this.showNotification(playable)
     } else {
       const playRequest = ++this.latestPlayRequest
@@ -280,6 +259,8 @@ export class QueuePlaybackService extends BasePlaybackService {
    * If there's no prev item and the current mode is NO_REPEAT, we stop completely.
    */
   public async playPrev() {
+    this.settleCrossfade()
+
     // If the item's duration is greater than 5 seconds, and we've passed 5 seconds into it,
     // restart playing instead.
     if (this.media.currentTime > 5 && queueStore.current!.length > 5) {
@@ -344,7 +325,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   public async pause() {
-    this.cancelCrossfade()
+    this.settleCrossfade()
     this.media.pause()
 
     this.savePosition(queueStore.current!, Math.ceil(this.media.currentTime))
@@ -607,6 +588,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   public rewind(seconds: number): void {
+    this.settleCrossfade()
     this.media.currentTime -= seconds
   }
 
@@ -615,8 +597,37 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   public seekTo(position: number): void {
-    this.cancelCrossfade()
+    this.settleCrossfade()
     this.media.currentTime = position || 0
+  }
+
+  /**
+   * The incoming track is already playing through the crossfade element: make it the primary one
+   * without a src change, a seek, or an interruption, and discard the outgoing element.
+   */
+  private takeOverCrossfadingTrack() {
+    const { incomingAudio, playable } = crossfadeService.state!
+
+    this.media.pause()
+    this.media.removeAttribute('src')
+    this.media.load()
+
+    this.swapMediaElement(incomingAudio)
+    this.setVolume(volumeManager.get())
+
+    if (isAudioContextSupported && audioService.context) {
+      volumeNormalizer.applyToStreamable(playable)
+      audioService.reconnectSource(incomingAudio)
+    }
+
+    crossfadeService.state = null
+  }
+
+  /** Finish an active crossfade at once, so pausing or seeking acts on the song shown as playing. */
+  private settleCrossfade() {
+    if (crossfadeService.active) {
+      this.takeOverCrossfadingTrack()
+    }
   }
 
   /** Cancel any active crossfade and restore volume */
