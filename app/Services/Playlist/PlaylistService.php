@@ -151,6 +151,21 @@ class PlaylistService
         });
     }
 
+    /**
+     * @param array<string> $playableIds
+     */
+    public function replacePlayablesInPlaylist(Playlist $playlist, array $playableIds, User $user): void
+    {
+        DB::transaction(function () use ($playlist, $playableIds, $user): void {
+            $playlist->playables()->detach();
+            $playlist->addPlayables(array_values(array_unique($playableIds)), $user);
+
+            if ($this->isPlaylistCollaborative($playlist)) {
+                $this->makePlaylistContentPublic($playlist);
+            }
+        });
+    }
+
     public function removePlayablesFromPlaylist(Playlist $playlist, Collection|Playable|array $playables): void
     {
         $playlist->removePlayables($playables);
