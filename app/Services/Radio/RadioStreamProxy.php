@@ -85,16 +85,33 @@ class RadioStreamProxy
             return;
         }
 
-        $metadataBlock = fread($stream, $metadataLength);
-
-        if ($metadataBlock === false) {
-            return;
-        }
-
+        $metadataBlock = self::readExactly($stream, $metadataLength);
         $parsed = RadioStreamMetadata::parseIcyBlock($metadataBlock);
 
         if ($parsed['stream_title'] !== null) {
             RadioStreamMetadata::cache($station, $parsed['stream_title']);
         }
+    }
+
+    /**
+     * Network streams can return fewer bytes than asked for, so keep reading until the length is met.
+     *
+     * @param resource $stream
+     */
+    private static function readExactly($stream, int $length): string
+    {
+        $data = '';
+
+        while (strlen($data) < $length && !feof($stream)) {
+            $chunk = fread($stream, $length - strlen($data));
+
+            if ($chunk === false) {
+                break;
+            }
+
+            $data .= $chunk;
+        }
+
+        return $data;
     }
 }
