@@ -12,12 +12,14 @@ use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
 use App\Values\ImageChange;
 use App\Values\ImageWritingConfig;
+use Illuminate\Support\Facades\File;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\minimal_base64_encoded_image;
+use function Tests\test_path;
 
 class AlbumServiceTest extends TestCase
 {
@@ -30,6 +32,40 @@ class AlbumServiceTest extends TestCase
 
         $this->imageStorage = $this->mock(ImageStorage::class);
         $this->service = app(AlbumService::class);
+    }
+
+    #[Test]
+    public function giveEveryAlbumInAFolderTheFolderCover(): void
+    {
+        $directory = sys_get_temp_dir() . '/koel-cover-' . uniqid();
+        File::ensureDirectoryExists($directory);
+        File::copy(test_path('fixtures/cover.png'), "$directory/cover.png");
+        [$firstAlbum, $secondAlbum] = Album::factory()->createMany(2)->all();
+        $this->imageStorage->expects('storeImage')->twice()->with("$directory/cover.png")->andReturn('cover.webp');
+
+        $this->service->trySetAlbumCoverFromDirectory($firstAlbum, $directory);
+        $this->service->trySetAlbumCoverFromDirectory($secondAlbum, $directory);
+
+        self::assertSame('cover.webp', $secondAlbum->refresh()->getRawOriginal('cover'));
+        File::deleteDirectory($directory);
+    }
+
+    #[Test]
+    public function findTheFolderCoverAgainAfterItIsRenamed(): void
+    {
+        $directory = sys_get_temp_dir() . '/koel-cover-' . uniqid();
+        File::ensureDirectoryExists($directory);
+        File::copy(test_path('fixtures/cover.png'), "$directory/cover.png");
+        [$firstAlbum, $secondAlbum] = Album::factory()->createMany(2)->all();
+        $this->imageStorage->expects('storeImage')->with("$directory/cover.png")->andReturn('cover.webp');
+        $this->imageStorage->expects('storeImage')->with("$directory/folder.png")->andReturn('folder.webp');
+
+        $this->service->trySetAlbumCoverFromDirectory($firstAlbum, $directory);
+        File::move("$directory/cover.png", "$directory/folder.png");
+        $this->service->trySetAlbumCoverFromDirectory($secondAlbum, $directory);
+
+        self::assertSame('folder.webp', $secondAlbum->refresh()->getRawOriginal('cover'));
+        File::deleteDirectory($directory);
     }
 
     #[Test]

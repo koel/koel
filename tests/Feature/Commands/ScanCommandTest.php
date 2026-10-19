@@ -4,6 +4,7 @@ namespace Tests\Feature\Commands;
 
 use App\Models\Setting;
 use App\Services\Scanners\DirectoryScanner;
+use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanSummary;
 use Illuminate\Console\Command;
 use Mockery;
@@ -32,6 +33,36 @@ class ScanCommandTest extends TestCase
             ->assertSuccessful();
 
         self::assertSame(realpath($this->mediaPath), Setting::get('media_path'));
+    }
+
+    #[Test]
+    public function ignoreCommaSeparatedTags(): void
+    {
+        config(['koel.storage_driver' => 'local']);
+        Setting::set('media_path', $this->mediaPath);
+        create_admin();
+
+        $scanner = Mockery::mock(DirectoryScanner::class);
+        $scanner->allows('on');
+        $scanner
+            ->expects('scan')
+            ->with(
+                Mockery::any(),
+                Mockery::on(
+                    static fn (ScanConfiguration $config) => (
+                        $config->ignores === [
+                            'album',
+                            'genre',
+                            'title',
+                        ]
+                    ),
+                ),
+                Mockery::any(),
+            )
+            ->andReturn(ScanSummary::make('scan-id', 0, 0, 0));
+        $this->instance(DirectoryScanner::class, $scanner);
+
+        $this->artisan('koel:scan', ['--ignore' => ['title, album', 'genre']])->assertSuccessful();
     }
 
     #[Test]

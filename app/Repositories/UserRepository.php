@@ -36,6 +36,16 @@ class UserRepository extends Repository
             });
     }
 
+    public function findOldestAdminOtherThan(User $user): ?User
+    {
+        return User::query()
+            ->whereRole(RoleEnum::ADMIN)
+            ->where('organization_id', $user->organization_id)
+            ->whereKeyNot($user->id)
+            ->oldest()
+            ->first();
+    }
+
     public function findOneByEmail(string $email): ?User
     {
         return User::query()->firstWhere('email', $email);

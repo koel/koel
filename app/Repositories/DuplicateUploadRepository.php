@@ -14,6 +14,11 @@ class DuplicateUploadRepository extends Repository
         return DuplicateUpload::query()->whereBelongsTo($user)->with('existingSong:id,title,artist_name')->get();
     }
 
+    public function existsAtLocation(string $location): bool
+    {
+        return DuplicateUpload::query()->where('location', $location)->exists();
+    }
+
     public function getStaleUploads(int $days): Collection
     {
         return DuplicateUpload::query()->where('created_at', '<', now()->subDays($days))->get();

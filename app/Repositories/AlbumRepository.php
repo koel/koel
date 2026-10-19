@@ -215,6 +215,19 @@ class AlbumRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    /**
+     * The user's albums that songs owned by others still use.
+     *
+     * @return Collection<int, Album>
+     */
+    public function getOwnedByUserButUsedByOthers(User $user): Collection
+    {
+        return Album::query()
+            ->where('user_id', $user->id)
+            ->whereHas('songs', static fn (Builder $songs) => $songs->where('owner_id', '<>', $user->id))
+            ->get();
+    }
+
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $albums = Album::query()

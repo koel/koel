@@ -53,6 +53,26 @@ class ScanInformationTest extends TestCase
     }
 
     #[Test]
+    public function readTheDiscNumberOfAnM4aFile(): void
+    {
+        $info = ScanInformation::fromGetId3Info([
+            'comments' => ['title' => ['Track'], 'disc_number' => ['2/2']],
+        ], test_path('songs/full.mp3'));
+
+        self::assertSame(2, $info->disc);
+    }
+
+    #[Test]
+    public function readAnAlbumArtistTaggedWithASpace(): void
+    {
+        $info = ScanInformation::fromGetId3Info([
+            'comments' => ['title' => ['Track'], 'album artist' => ['Various Artists']],
+        ], test_path('songs/full-vorbis-comments.flac'));
+
+        self::assertSame('Various Artists', $info->albumArtistName);
+    }
+
+    #[Test]
     public function hashTheFileWithXxh128(): void
     {
         $path = test_path('songs/full-vorbis-comments.flac');
