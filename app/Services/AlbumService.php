@@ -51,7 +51,9 @@ class AlbumService
     public function trySetAlbumCoverFromDirectory(Album $album, string $directory): void
     {
         // As directory scanning can be expensive, we cache and reuse the result.
-        Cache::remember(cache_key($directory, 'cover'), now()->addDay(), function () use ($album, $directory): ?string {
+        $cover = Cache::remember(cache_key($directory, 'cover'), now()->addDay(), function () use (
+            $directory,
+        ): ?string {
             $matches = array_keys(iterator_to_array(
                 $this->finder::create()
                     ->depth(0)
@@ -62,14 +64,12 @@ class AlbumService
                     ->in($directory),
             ));
 
-            $cover = $matches[0] ?? null;
-
-            if ($cover && is_image($cover)) {
-                $this->storeAlbumCover($album, $cover);
-            }
-
-            return $cover;
+            return $matches[0] ?? null;
         });
+
+        if ($cover && is_image($cover)) {
+            $this->storeAlbumCover($album, $cover);
+        }
     }
 
     public function generateAlbumThumbnail(Album $album): string
