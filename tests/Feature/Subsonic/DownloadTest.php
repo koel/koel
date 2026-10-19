@@ -52,4 +52,17 @@ class DownloadTest extends TestCase
             ->assertOk()
             ->assertJsonPath('subsonic-response.error.code', 70);
     }
+
+    #[Test]
+    public function refuseWhenDownloadsAreTurnedOff(): void
+    {
+        config()->set('koel.download.allow', false);
+        $user = create_user();
+        $song = Song::factory()->for($user, 'owner')->createOne(['path' => test_path('songs/blank.mp3')]);
+
+        $this->getJson("/rest/download.view?id={$song->id}&apiKey={$user->subsonic_api_key}&f=json")->assertJsonPath(
+            'subsonic-response.error.code',
+            50,
+        );
+    }
 }
