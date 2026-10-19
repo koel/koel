@@ -12,8 +12,8 @@ class GetOpenSubsonicExtensionsController extends Controller
      * @see https://opensubsonic.netlify.app/docs/extensions/
      */
     private const array EXTENSIONS = [
+        ['name' => 'apiKeyAuthentication', 'versions' => [1]],
         ['name' => 'songLyrics', 'versions' => [1]],
-        ['name' => 'transcodeOffset', 'versions' => [1]],
     ];
 
     public function __invoke()

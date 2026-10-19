@@ -20,7 +20,6 @@ class GetOpenSubsonicExtensionsTest extends TestCase
             ->assertJsonPath('subsonic-response.status', 'ok');
 
         $names = array_column($response->json('subsonic-response.openSubsonicExtensions'), 'name');
-        self::assertContains('songLyrics', $names);
-        self::assertContains('transcodeOffset', $names);
+        self::assertSame(['apiKeyAuthentication', 'songLyrics'], $names);
     }
 }
