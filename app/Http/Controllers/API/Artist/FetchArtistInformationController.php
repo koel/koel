@@ -10,6 +10,8 @@ class FetchArtistInformationController extends Controller
 {
     public function __invoke(Artist $artist, EncyclopediaService $encyclopediaService)
     {
+        $this->authorize('access', $artist);
+
         return response()->json($encyclopediaService->getArtistInformation($artist));
     }
 }

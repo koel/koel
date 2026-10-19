@@ -10,6 +10,8 @@ class FetchAlbumInformationController extends Controller
 {
     public function __invoke(Album $album, EncyclopediaService $encyclopediaService)
     {
+        $this->authorize('access', $album);
+
         return response()->json($encyclopediaService->getAlbumInformation($album));
     }
 }
