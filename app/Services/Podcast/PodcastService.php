@@ -186,6 +186,8 @@ class PodcastService
                 continue;
             }
 
+            $existingEpisodeGuids[$episodeValue->guid->value] = true;
+
             $records[] = [
                 'id' => Uuid::generate(),
                 'podcast_id' => $podcast->id,
