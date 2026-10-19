@@ -14,10 +14,10 @@ class GetNowPlayingTest extends TestCase
     {
         $user = create_user();
 
-        $response = $this->getJson("/rest/getNowPlaying.view?apiKey={$user->subsonic_api_key}&f=json")->assertJsonPath(
-            'subsonic-response.status',
-            'ok',
-        );
+        $response = $this
+            ->getJson("/rest/getNowPlaying.view?apiKey={$user->subsonic_api_key}&f=json")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.status', 'ok');
 
         self::assertStringContainsString('"nowPlaying":{}', $response->getContent());
     }
