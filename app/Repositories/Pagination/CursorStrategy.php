@@ -38,7 +38,7 @@ final readonly class CursorStrategy implements PaginationStrategy
             CursorCondition::wherePastCursor($builder, self::makeSortKeys($builder, $orders, $cursor));
         }
 
-        return new CursorPaginator($builder->limit($perPage + 1)->get(), $perPage, $cursor, [
+        return new StoredValueCursorPaginator($builder->limit($perPage + 1)->get(), $perPage, $cursor, [
             'path' => Paginator::resolveCurrentPath(),
             'cursorName' => 'cursor',
             'parameters' => $orders->pluck('column')->all(),

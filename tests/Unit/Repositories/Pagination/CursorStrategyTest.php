@@ -27,6 +27,8 @@ class CursorStrategyTest extends TestCase
             ['title' => 'Delta', 'year' => 1999],
             ['title' => 'Delta', 'year' => 2001],
             ['title' => 'Echo', 'year' => null],
+            ['title' => '', 'year' => 1999, 'path' => '/music/Zulu.mp3'],
+            ['title' => '', 'year' => null, 'path' => '/music/Yankee.mp3'],
         ]);
     }
 
@@ -110,11 +112,13 @@ class CursorStrategyTest extends TestCase
         $ids = [];
         $cursor = null;
 
+        $pagesLeft = 50;
+
         do {
             $page = (new CursorStrategy($cursor))->apply($makeQuery(), 'songs.id', 2);
             array_push($ids, ...collect($page->items())->pluck('id')->all());
             $cursor = $page->nextCursor()?->encode();
-        } while ($cursor);
+        } while ($cursor && --$pagesLeft);
 
         return $ids;
     }
