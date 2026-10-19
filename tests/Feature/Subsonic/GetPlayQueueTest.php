@@ -42,6 +42,23 @@ class GetPlayQueueTest extends SubsonicTestCase
     }
 
     #[Test]
+    public function pointCurrentAtTheFirstEntryWhenNothingHasPlayedYet(): void
+    {
+        $user = create_user();
+        $songs = Song::factory()->count(2)->create();
+
+        QueueState::query()->create([
+            'user_id' => $user->id,
+            'song_ids' => $songs->pluck('id')->all(),
+        ]);
+
+        $this->getSubsonic('getPlayQueue.view', $user)->assertJsonPath(
+            'subsonic-response.playQueue.current',
+            $songs[0]->id,
+        );
+    }
+
+    #[Test]
     public function returnsEmptyResponseWhenNoQueueSaved(): void
     {
         $user = create_user();
