@@ -52,7 +52,7 @@ class ResumePodcast implements Tool
         }
 
         $position = (int) $state->progresses->get($episode->id, 0);
-        $finished = $position >= $episode->length;
+        $finished = $episode->length > 0 && $position >= $episode->length;
 
         $this->playbackService->playEpisode($episode, $finished ? 0 : $position);
 
