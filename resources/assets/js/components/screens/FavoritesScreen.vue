@@ -142,7 +142,9 @@ const onReorder = (target: Playable, placement: Placement) => {
 
 watch(
   () => playableStore.state.favorites,
-  favorites => (allPlayables.value = favorites),
+  favorites => {
+    allPlayables.value = favorites
+  },
   { immediate: true },
 )
 
