@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Subsonic;
 
+use App\Enums\PlayableType;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\Subsonic\Resources\StarredResource;
 use App\Http\Responses\Subsonic\SubsonicResponse;
@@ -26,7 +27,7 @@ class GetStarred2Controller extends Controller
     {
         $artists = $this->artistRepository->getFavorites(user: $user)->loadCount('albums');
         $albums = $this->albumRepository->getFavorites(user: $user)->loadCount('songs')->loadSum('songs', 'length');
-        $songs = $this->songRepository->getFavorites(scopedUser: $user);
+        $songs = $this->songRepository->getFavorites(scopedUser: $user, type: PlayableType::SONG);
 
         return SubsonicResponse::ok([
             static::RESPONSE_KEY => StarredResource::toArray($artists, $albums, $songs, $user),
