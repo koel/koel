@@ -16,6 +16,7 @@ use App\Repositories\SongRepository;
 use App\Repositories\ThemeRepository;
 use App\Services\EmbedService;
 use App\Values\EmbedOptions;
+use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -28,6 +29,7 @@ class EmbedController extends Controller
         private readonly SongRepository $songRepository,
         private readonly ThemeRepository $themeRepository,
         private readonly ?Authenticatable $user,
+        private readonly Gate $gate,
     ) {}
 
     public function resolveForEmbeddable(ResolveEmbedRequest $request)
@@ -42,6 +44,11 @@ class EmbedController extends Controller
 
     public function getPayload(Request $request, Embed $embed)
     {
+        abort_if(
+            $embed->embeddable && $this->gate->forUser($embed->user)->denies('embed', $embed->embeddable),
+            Response::HTTP_NOT_FOUND,
+        );
+
         try {
             $options = EmbedOptions::fromRequest($request);
             $theme = License::isPlus()
