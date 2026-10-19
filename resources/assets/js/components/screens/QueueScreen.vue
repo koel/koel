@@ -65,6 +65,7 @@ import { useErrorHandler } from '@/composables/useErrorHandler'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { playback } from '@/services/playbackManager'
+import { playbackService as queuePlayback } from '@/services/QueuePlaybackService'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -118,12 +119,7 @@ const removeSelected = async () => {
     return
   }
 
-  const currentId = queueStore.current?.id
-  queueStore.unqueue(selectedPlayables.value)
-
-  if (currentId && selectedPlayables.value.find(({ id }) => id === currentId)) {
-    await playback().playNext()
-  }
+  await queuePlayback.removeFromQueue(selectedPlayables.value)
 }
 
 const onPressEnter = () => selectedPlayables.value.length && playback().play(selectedPlayables.value[0])

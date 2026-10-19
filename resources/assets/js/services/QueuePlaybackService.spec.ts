@@ -2,6 +2,8 @@ import { nextTick, reactive } from 'vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import * as lodash from 'lodash-es'
 import { createHarness } from '@/__tests__/TestHarness'
+import { eventBus } from '@/utils/eventBus'
+import { audioService } from '@/services/audioService'
 
 vi.mock('lodash-es', async importOriginal => {
   const mod = await importOriginal<typeof lodash>()
@@ -130,6 +132,68 @@ describe('playbackService', () => {
 
     expect(playNextMock).toHaveBeenCalled()
     expect(logMock).toHaveBeenCalledWith(errorEvent)
+  })
+
+  it('routes its own element through the audio graph before playing a song', async () => {
+    const song = h.factory('song').make()
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue('http://test/play/song')
+    h.mock(playbackService, 'restart')
+    const routeElementMock = h.mock(audioService, 'routeElement')
+
+    await playbackService.play(song)
+
+    expect(routeElementMock).toHaveBeenCalledWith(playbackService.media)
+    playbackService.media.removeAttribute('src')
+  })
+
+  it('counts a song again when it was paused while loading', async () => {
+    const song = h.factory('song').make({ play_count_registered: true })
+    let resolveSourceUrl: (url: string) => void = () => {}
+    h.mock(playableStore, 'resolveSourceUrl').mockReturnValue(new Promise(resolve => (resolveSourceUrl = resolve)))
+
+    const playing = playbackService.play(song)
+    song.playback_state = 'Paused'
+    resolveSourceUrl('http://test/play/song')
+    await playing
+
+    expect(song.play_count_registered).toBe(false)
+    playbackService.media.removeAttribute('src')
+  })
+
+  it('announces the first song as up next near the end of the last one with Repeat All', () => {
+    preferences.temporary.repeat_mode = 'REPEAT_ALL'
+    const [first, last] = playableStore.syncWithVault(h.factory('song').make(2))
+    last.playback_state = 'Playing'
+    last.play_count_registered = true
+    queueStore.state.playables = reactive([first, last])
+    h.mock(playbackService, 'preload')
+    const emitMock = h.mock(eventBus, 'emit')
+
+    h.setReadOnlyProperty(playbackService.media, 'duration', 300)
+    h.setReadOnlyProperty(playbackService.media, 'currentTime', 290)
+    playbackService.media.dispatchEvent(new Event('timeupdate'))
+
+    expect(emitMock).toHaveBeenCalledWith('UP_NEXT', first)
+    preferences.temporary.repeat_mode = 'NO_REPEAT'
+  })
+
+  it('clears up next when no song follows anymore', () => {
+    preferences.temporary.repeat_mode = 'REPEAT_ALL'
+    const [first, last] = playableStore.syncWithVault(h.factory('song').make(2))
+    last.playback_state = 'Playing'
+    last.play_count_registered = true
+    queueStore.state.playables = reactive([first, last])
+    h.mock(playbackService, 'preload')
+    const emitMock = h.mock(eventBus, 'emit')
+
+    h.setReadOnlyProperty(playbackService.media, 'duration', 300)
+    h.setReadOnlyProperty(playbackService.media, 'currentTime', 290)
+    playbackService.media.dispatchEvent(new Event('timeupdate'))
+
+    preferences.temporary.repeat_mode = 'NO_REPEAT'
+    playbackService.media.dispatchEvent(new Event('timeupdate'))
+
+    expect(emitMock).toHaveBeenLastCalledWith('UP_NEXT', null)
   })
 
   it('reloads an expired source and resumes where it stopped', async () => {
@@ -412,6 +476,25 @@ describe('playbackService', () => {
     endCrossfadeTest(outgoingMedia)
   })
 
+  it('counts a song reached by crossfade as played once', async () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+    const incomingSong = queueStore.current!
+    incomingSong.play_count_registered = true
+    const registerPlayMock = vi.mocked(playbackService.registerPlay)
+    registerPlayMock.mockClear()
+
+    outgoingMedia.dispatchEvent(new Event('ended'))
+    await vi.waitFor(() => expect(playbackService.media).toBe(incomingMedia))
+
+    h.setReadOnlyProperty(incomingMedia, 'duration', 300)
+    h.setReadOnlyProperty(incomingMedia, 'currentTime', 150)
+    incomingMedia.dispatchEvent(new Event('timeupdate'))
+
+    expect(registerPlayMock).not.toHaveBeenCalled()
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
   it('keeps fading during a crossfade into the last song in the queue', () => {
     const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
     h.setReadOnlyProperty(queueStore, 'next', undefined)
@@ -444,15 +527,41 @@ describe('playbackService', () => {
     endCrossfadeTest(outgoingMedia)
   })
 
-  it('restores the volume when seeking cancels a crossfade', () => {
+  it('seeks within the song shown as playing when seeking during a crossfade', () => {
     const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
-    const pauseMock = h.mock(incomingMedia, 'pause')
 
     playbackService.seekTo(100)
 
     expect(crossfadeService.active).toBe(false)
+    expect(playbackService.media).toBe(incomingMedia)
+    expect(incomingMedia.currentTime).toBe(100)
+    expect(incomingMedia.volume).toBeCloseTo(0.8)
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
+  it('pauses the song shown as playing when pausing during a crossfade', async () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+    const incomingSong = crossfadeService.state!.playable
+    const pauseMock = h.mock(incomingMedia, 'pause')
+
+    await playbackService.pause()
+
+    expect(playbackService.media).toBe(incomingMedia)
     expect(pauseMock).toHaveBeenCalled()
-    expect(outgoingMedia.volume).toBeCloseTo(0.8)
+    expect(queueStore.current?.id).toBe(incomingSong.id)
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
+  it('ends the crossfade when going back during one', async () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+    h.mock(playbackService, 'play')
+
+    await playbackService.playPrev()
+
+    expect(crossfadeService.active).toBe(false)
+    expect(playbackService.media).toBe(incomingMedia)
 
     endCrossfadeTest(outgoingMedia)
   })
@@ -572,6 +681,30 @@ describe('playbackService', () => {
     await playbackService.playNext()
 
     expect(playMock).toHaveBeenCalledWith(nextSong)
+  })
+
+  it('plays the song after the playing one when that one is removed from the queue', async () => {
+    const songs = playableStore.syncWithVault(h.factory('song').make(4))
+    songs[1].playback_state = 'Playing'
+    queueStore.state.playables = reactive(songs)
+    const playMock = h.mock(playbackService, 'play')
+
+    await playbackService.removeFromQueue([songs[1]])
+
+    expect(playMock).toHaveBeenCalledWith(songs[2])
+    expect(queueStore.all.map(({ id }) => id)).toEqual([songs[0].id, songs[2].id, songs[3].id])
+  })
+
+  it('stops when the removed playing song had nothing after it', async () => {
+    preferences.temporary.repeat_mode = 'NO_REPEAT'
+    const songs = playableStore.syncWithVault(h.factory('song').make(2))
+    songs[1].playback_state = 'Playing'
+    queueStore.state.playables = reactive(songs)
+    const stopMock = h.mock(playbackService, 'stop')
+
+    await playbackService.removeFromQueue([songs[1]])
+
+    expect(stopMock).toHaveBeenCalled()
   })
 
   it('stops playback', () => {

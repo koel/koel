@@ -1,5 +1,3 @@
-import type { Ref } from 'vue'
-import { ref } from 'vue'
 import { shuffle } from 'lodash-es'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
@@ -43,7 +41,7 @@ const savePlaybackStatus = lastWriteWins((status: { song: Playable['id']; positi
 
 export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
-  private upNext: Ref<Playable | null> = ref(null)
+  private upNext: Playable | null = null
   private latestPlayRequest = 0
   private lastExpiredSourceReload: { playableId: Playable['id']; at: number } | null = null
   private lastSavedPosition: { playableId: Playable['id']; second: number } | null = null
@@ -137,29 +135,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     await this.setNowPlayingMeta(playable)
 
     if (isCrossfadeFinalization) {
-      // The incoming track is already playing via the crossfade audio element.
-      // Simply swap it in as the new primary — no src change, no seeking, no interruption.
-      const { incomingAudio } = crossfadeService.state!
-
-      // Stop and fully discard the old element
-      this.media.pause()
-      this.media.removeAttribute('src')
-      this.media.load()
-
-      // The incoming audio is already playing at the right position.
-      // Just make it the new primary media element.
-      this.swapMediaElement(incomingAudio)
-      this.setVolume(volumeManager.get())
-
-      // Reconnect the audio graph to the new element
-      if (isAudioContextSupported && audioService.context) {
-        volumeNormalizer.applyToStreamable(playable)
-        audioService.reconnectSource(incomingAudio)
-      }
-
-      crossfadeService.state = null
-
-      this.recordStartTime(playable)
+      this.takeOverCrossfadingTrack()
       this.showNotification(playable)
     } else {
       const playRequest = ++this.latestPlayRequest
@@ -184,8 +160,10 @@ export class QueuePlaybackService extends BasePlaybackService {
       }
 
       this.media.src = sourceUrl
+      audioService.routeElement(this.media)
 
       if (playable.playback_state !== 'Playing') {
+        this.recordStartTime(playable)
         this.seekTo(position)
         return
       }
@@ -247,7 +225,7 @@ export class QueuePlaybackService extends BasePlaybackService {
 
     // Reset the "up next" value to let subscribers know that the next item is cleared
     // (because another playable, likely the "next" one, is being played)
-    this.upNext.value = null
+    this.announceUpNext(null)
 
     this.recordStartTime(playable)
     socketService.broadcast('SOCKET_STREAMABLE', playable)
@@ -281,6 +259,8 @@ export class QueuePlaybackService extends BasePlaybackService {
    * If there's no prev item and the current mode is NO_REPEAT, we stop completely.
    */
   public async playPrev() {
+    this.settleCrossfade()
+
     // If the item's duration is greater than 5 seconds, and we've passed 5 seconds into it,
     // restart playing instead.
     if (this.media.currentTime > 5 && queueStore.current!.length > 5) {
@@ -308,6 +288,25 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
   }
 
+  /**
+   * Remove playables from the queue. If the playing one is among them, move on to the one that followed it.
+   */
+  public async removeFromQueue(playables: Playable[]) {
+    const current = queueStore.current
+    const removesCurrent = Boolean(current && playables.some(({ id }) => id === current.id))
+    const nextRemaining = removesCurrent ? queueStore.findNextRemaining(playables) : undefined
+
+    queueStore.unqueue(playables)
+
+    if (!removesCurrent) {
+      return
+    }
+
+    const next = nextRemaining ?? (preferences.repeat_mode === 'REPEAT_ALL' ? queueStore.first : undefined)
+
+    next ? await this.play(next) : await this.stop()
+  }
+
   public async stop() {
     this.cancelCrossfade()
 
@@ -326,7 +325,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   public async pause() {
-    this.cancelCrossfade()
+    this.settleCrossfade()
     this.media.pause()
 
     this.savePosition(queueStore.current!, Math.ceil(this.media.currentTime))
@@ -541,14 +540,14 @@ export class QueuePlaybackService extends BasePlaybackService {
       }
     }
 
-    const nextPlayable = queueStore.next
+    const nextPlayable = this.next
 
-    if (!nextPlayable) {
+    if (!nextPlayable || nextPlayable.id === currentPlayable.id) {
+      this.announceUpNext(null)
       return
     }
 
-    // Set the "up next" value to the next playable if we're near the end of the current playback.
-    this.upNext.value = media.currentTime + 15 > media.duration ? nextPlayable : null
+    this.announceUpNext(media.currentTime + 15 > media.duration ? nextPlayable : null)
 
     // Preload the next playable if we're near the end of the current playback.
     if (media.currentTime + PRELOAD_BUFFER > media.duration && !nextPlayable.preloaded) {
@@ -573,10 +572,20 @@ export class QueuePlaybackService extends BasePlaybackService {
         nextPlayable.playback_state = 'Playing'
         this.setNowPlayingMeta(nextPlayable)
         this.showNotification(nextPlayable)
+        this.recordStartTime(nextPlayable)
         this.registerPlay(nextPlayable)
         this.fadeCrossfadingTracks()
       }
     }
+  }
+
+  private announceUpNext(playable: Playable | null) {
+    if (this.upNext?.id === playable?.id) {
+      return
+    }
+
+    this.upNext = playable
+    eventBus.emit('UP_NEXT', playable)
   }
 
   private fadeCrossfadingTracks() {
@@ -588,6 +597,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   public rewind(seconds: number): void {
+    this.settleCrossfade()
     this.media.currentTime -= seconds
   }
 
@@ -596,8 +606,37 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   public seekTo(position: number): void {
-    this.cancelCrossfade()
+    this.settleCrossfade()
     this.media.currentTime = position || 0
+  }
+
+  /**
+   * The incoming track is already playing through the crossfade element: make it the primary one
+   * without a src change, a seek, or an interruption, and discard the outgoing element.
+   */
+  private takeOverCrossfadingTrack() {
+    const { incomingAudio, playable } = crossfadeService.state!
+
+    this.media.pause()
+    this.media.removeAttribute('src')
+    this.media.load()
+
+    this.swapMediaElement(incomingAudio)
+    this.setVolume(volumeManager.get())
+
+    if (isAudioContextSupported && audioService.context) {
+      volumeNormalizer.applyToStreamable(playable)
+      audioService.reconnectSource(incomingAudio)
+    }
+
+    crossfadeService.state = null
+  }
+
+  /** Finish an active crossfade at once, so pausing or seeking acts on the song shown as playing. */
+  private settleCrossfade() {
+    if (crossfadeService.active) {
+      this.takeOverCrossfadingTrack()
+    }
   }
 
   /** Cancel any active crossfade and restore volume */

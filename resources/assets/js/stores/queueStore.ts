@@ -60,7 +60,7 @@ export const queueStore = {
    */
   queue(playables: MaybeArray<Playable>) {
     playables = arrayify(playables)
-    this.all = unionBy(this.stopAndOmitPlayables(playables), playables, 'id')
+    this.all = unionBy(differenceBy(this.all, playables, 'id'), playables, 'id')
   },
 
   queueIfNotQueued(playable: Playable, position: 'top' | 'bottom' | 'after-current' = 'after-current') {
@@ -91,24 +91,31 @@ export const queueStore = {
 
   queueAfterCurrent(playables: MaybeArray<Playable>) {
     playables = arrayify(playables)
+    const current = this.current
 
-    if (!this.current || !this.all.length) {
+    if (!current || !this.all.length) {
       return this.queue(playables)
     }
 
-    const remaining = this.stopAndOmitPlayables(playables)
-    const head = remaining.splice(0, remaining.indexOf(reactive(this.current)) + 1)
-    this.all = head.concat(reactive(playables), remaining)
+    const playablesToMove = playables.filter(({ id }) => id !== current.id)
+    const remaining = differenceBy(this.all, playablesToMove, 'id')
+    const head = remaining.splice(0, remaining.indexOf(reactive(current)) + 1)
+    this.all = head.concat(reactive(playablesToMove), remaining)
   },
 
   unqueue(playables: MaybeArray<Playable>) {
-    this.all = this.stopAndOmitPlayables(arrayify(playables))
+    playables = arrayify(playables)
+    playables.forEach(playable => (playable.playback_state = 'Stopped'))
+    this.all = differenceBy(this.all, playables, 'id')
   },
 
-  stopAndOmitPlayables(playables: Playable[]) {
-    playables.forEach(playable => (playable.playback_state = 'Stopped'))
+  /**
+   * The first playable after the current one that would still be queued once the given playables are removed.
+   */
+  findNextRemaining(playablesToRemove: Playable[]) {
+    const removedIds = new Set(playablesToRemove.map(({ id }) => id))
 
-    return differenceBy(this.all, playables, 'id')
+    return this.all.slice(this.indexOf(this.current!) + 1).find(({ id }) => !removedIds.has(id))
   },
 
   /**
