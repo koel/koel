@@ -8,6 +8,7 @@ import { cache } from '@/services/cache'
 import models from '@/config/smart-playlist/models'
 import operators from '@/config/smart-playlist/operators'
 import { playableStore } from '@/stores/playableStore'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
 
 interface CreatePlaylistRequestData {
   name: Playlist['name']
@@ -94,6 +95,10 @@ export const playlistStore = {
 
     const playlist = reactive(await http.post<Playlist>('playlists', requestData))
 
+    if (data.folder_name) {
+      await playlistFolderStore.fetchAll()
+    }
+
     if (playlist.is_smart) {
       this.setupSmartPlaylist(playlist)
     }
@@ -140,16 +145,20 @@ export const playlistStore = {
   },
 
   async update(playlist: Playlist, data: UpdatePlaylistData) {
-    await http.put(`playlists/${playlist.id}`, {
+    const updated = await http.put<Playlist>(`playlists/${playlist.id}`, {
       ...data,
       rules: data.rules ? this.serializeSmartPlaylistRulesForStorage(data.rules) : null,
     })
+
+    if (data.folder_name) {
+      await playlistFolderStore.fetchAll()
+    }
 
     if (playlist.is_smart) {
       cache.remove(['playlist.songs', playlist.id])
     }
 
-    Object.assign(this.byId(playlist.id)!, data)
+    Object.assign(this.byId(playlist.id)!, data, { folder_id: updated.folder_id })
   },
 
   createEmptySmartPlaylistRule: (): SmartPlaylistRule => ({
