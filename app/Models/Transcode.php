@@ -53,7 +53,16 @@ class Transcode extends Model
             return true;
         }
 
-        return File::isReadable($this->location) && File::size($this->location) === $this->file_size;
+        return (
+            File::isReadable($this->location)
+            && File::size($this->location) === $this->file_size
+            && !$this->isOlderThanItsSource()
+        );
+    }
+
+    private function isOlderThanItsSource(): bool
+    {
+        return $this->updated_at && $this->updated_at->getTimestamp() < $this->song->mtime;
     }
 
     protected function storage(): Attribute
