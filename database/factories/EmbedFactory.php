@@ -25,7 +25,7 @@ class EmbedFactory extends Factory
             'embeddable_type' => $type->value,
             'embeddable_id' => static fn (array $attributes) => self::createEmbeddableOwnedBy(
                 $type,
-                User::query()->findOrFail($attributes['user_id']),
+                User::query()->whereKey($attributes['user_id'])->firstOrFail(),
             )
                 ->getKey(),
         ];

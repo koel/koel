@@ -44,19 +44,18 @@ class EmbedController extends Controller
 
     public function getPayload(Request $request, Embed $embed)
     {
-        abort_if(
-            $embed->embeddable && $this->gate->forUser($embed->user)->denies('embed', $embed->embeddable),
-            Response::HTTP_NOT_FOUND,
-        );
-
         try {
+            $playables = $this->songRepository->getForEmbed($embed);
+
+            abort_if($this->gate->forUser($embed->user)->denies('embed', $embed->embeddable), Response::HTTP_NOT_FOUND);
+
             $options = EmbedOptions::fromRequest($request);
             $theme = License::isPlus()
                 ? $this->themeRepository->findUserThemeById($options->theme, $embed->user)
                 : null;
 
             return response()->json([
-                'embed' => EmbedResource::make($embed, $this->songRepository->getForEmbed($embed)),
+                'embed' => EmbedResource::make($embed, $playables),
                 'options' => EmbedOptionsResource::make($options),
                 'theme' => $theme ? ThemeResource::make($theme) : null,
             ]);
