@@ -9,10 +9,12 @@ use App\Models\Album;
 use App\Models\Embed;
 use App\Models\Song;
 use App\Models\Theme;
+use App\Services\Playlist\PlaylistCollaborationService;
 use App\Values\EmbedOptions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_playlist;
 use function Tests\create_user;
 
 class EmbedTest extends PlusTestCase
@@ -71,5 +73,21 @@ class EmbedTest extends PlusTestCase
             ],
             $viewer,
         )->assertForbidden();
+    }
+
+    #[Test]
+    public function stopServingAnEmbedOnceItsCreatorLosesAccess(): void
+    {
+        $playlist = create_playlist();
+        $collaborator = create_user();
+        $playlist->addCollaborator($collaborator);
+        $embed = Embed::factory()->for($collaborator)->for($playlist, 'embeddable')->createOne();
+        $options = EmbedOptions::make();
+
+        $this->getJson("api/embeds/{$embed->id}/$options")->assertSuccessful();
+
+        app(PlaylistCollaborationService::class)->removeCollaborator($playlist->refresh(), $collaborator);
+
+        $this->getJson("api/embeds/{$embed->id}/$options")->assertNotFound();
     }
 }

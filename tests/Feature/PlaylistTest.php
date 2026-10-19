@@ -463,10 +463,7 @@ class PlaylistTest extends TestCase
     public function embedPayloadOmitsPermissions(): void
     {
         $playlist = create_playlist();
-        $embed = Embed::factory()->createOne([
-            'embeddable_type' => 'playlist',
-            'embeddable_id' => $playlist->id,
-        ]);
+        $embed = Embed::factory()->for($playlist->owner)->for($playlist, 'embeddable')->createOne();
 
         $this
             ->getJson("api/embeds/{$embed->id}/" . EmbedOptions::make())

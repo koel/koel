@@ -93,4 +93,17 @@ class UpdateSongLyricsToolTest extends PlusTestCase
 
         self::assertStringContainsString('Could not find', (string) $response);
     }
+
+    #[Test]
+    public function refuseToEditLyricsOfSomeoneElsesSong(): void
+    {
+        $song = Song::factory()->public()->createOne(['lyrics' => 'Original lyrics']);
+
+        app()->instance(AiRequestContext::class, new AiRequestContext($this->user, currentSongId: $song->id));
+
+        app()->make(UpdateSongLyrics::class)->handle(new Request(['lyrics' => 'Overwritten']));
+
+        self::assertSame('Original lyrics', $song->refresh()->lyrics);
+        self::assertNull($this->result->action);
+    }
 }

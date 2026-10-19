@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Subsonic;
 
 use App\Http\Requests\Request;
+use App\Rules\AllPlayablesAreAccessibleBy;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
@@ -22,6 +23,7 @@ class CreatePlaylistRequest extends Request
     {
         return [
             'name' => [Rule::required(), Rule::string()],
+            'songId' => [Rule::array(), new AllPlayablesAreAccessibleBy($this->user())],
         ];
     }
 }

@@ -8,6 +8,7 @@ use App\Services\LibrarySummaryService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_playlists;
 use function Tests\create_user;
 
 class SongVisibilityTest extends PlusTestCase
@@ -48,6 +49,24 @@ class SongVisibilityTest extends PlusTestCase
         $this->putAs('api/songs/privatize', ['songs' => $ownSongs->modelKeys()], $currentUser)->assertSuccessful();
 
         $ownSongs->each(static fn (Song $song) => self::assertFalse($song->refresh()->is_public));
+    }
+
+    #[Test]
+    public function keepOnlySongsInCollaborativePlaylistsPublic(): void
+    {
+        $owner = create_user();
+        [$soloSong, $sharedSong] = Song::factory()->for($owner, 'owner')->public()->createMany(2)->all();
+        [$soloPlaylist, $sharedPlaylist] = create_playlists(2, owner: $owner)->all();
+        $soloPlaylist->addPlayables($soloSong);
+        $sharedPlaylist->addPlayables($sharedSong);
+        $sharedPlaylist->addCollaborator(create_user());
+
+        $this->putAs('api/songs/privatize', ['songs' => [$soloSong->id, $sharedSong->id]], $owner)->assertJson([
+            $soloSong->id,
+        ]);
+
+        self::assertFalse($soloSong->refresh()->is_public);
+        self::assertTrue($sharedSong->refresh()->is_public);
     }
 
     #[Test]

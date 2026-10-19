@@ -5,6 +5,7 @@ namespace App\Ai\Tools;
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
 use App\Ai\Services\SongRequestResolver;
+use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -16,6 +17,7 @@ class UpdateSongLyrics implements Tool
         private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
         private readonly SongRequestResolver $songResolver,
+        private readonly Gate $gate,
     ) {}
 
     public function description(): Stringable|string
@@ -46,6 +48,10 @@ class UpdateSongLyrics implements Tool
 
         if (!$song) {
             return 'Could not find the song. Please specify a title or make sure a song is currently playing.';
+        }
+
+        if ($this->gate->forUser($this->context->user)->denies('edit', $song)) {
+            return sprintf('You don\'t have permission to edit the lyrics of "%s".', $song->title);
         }
 
         $song->lyrics = $request['lyrics'];

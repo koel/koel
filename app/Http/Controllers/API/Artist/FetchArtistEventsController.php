@@ -14,6 +14,8 @@ class FetchArtistEventsController extends Controller
 {
     public function __invoke(Artist $artist, TicketmasterService $ticketmasterService, Request $request)
     {
+        $this->authorize('access', $artist);
+
         $result = $ticketmasterService->searchEventForArtist($artist, $request->getClientIp());
 
         return response()->json([
