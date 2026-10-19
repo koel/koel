@@ -183,6 +183,7 @@ class SongService
             ->toQuery()
             ->join('playlist_song', 'songs.id', '=', 'playlist_song.song_id')
             ->join('playlist_user', 'playlist_song.playlist_id', '=', 'playlist_user.playlist_id')
+            ->where('playlist_user.role', 'collaborator')
             ->select('songs.id')
             ->distinct()
             ->pluck('songs.id')
