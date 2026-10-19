@@ -84,6 +84,16 @@ class PodcastServiceTest extends TestCase
     }
 
     #[Test]
+    public function storeEpisodePublishDatesInTheAppTimezone(): void
+    {
+        $podcast = $this->service->addPodcast('https://example.com/feed.xml', create_user());
+
+        $episode = $podcast->episodes->sole('episode_guid', 'BE486CAA-B3D5-4FB0-8298-EFEBE71C5982');
+
+        self::assertSame('2019-04-30 18:00:00', $episode->created_at->toDateTimeString());
+    }
+
+    #[Test]
     public function addPodcastFromAnApplePodcastsLink(): void
     {
         Saloon::fake([
