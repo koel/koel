@@ -1,7 +1,6 @@
 import { reactive } from 'vue'
 import { debounce, differenceBy, unionBy } from 'lodash-es'
 import { arrayify, moveItemsInList } from '@/utils/helpers'
-import { isSong } from '@/utils/typeGuards'
 import { http } from '@/services/http'
 import { lastWriteWins } from '@/utils/lastWriteWins'
 import { playableStore } from '@/stores/playableStore'
@@ -38,8 +37,7 @@ export const queueStore = {
   },
 
   set all(playables: Playable[]) {
-    this.replacePlayables(playables)
-    playableStore.syncWithVault(playables.filter(isSong))
+    this.replacePlayables(playableStore.syncWithVault(playables))
     this.saveState()
   },
 

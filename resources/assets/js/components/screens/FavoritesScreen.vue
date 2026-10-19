@@ -57,7 +57,7 @@
 <script lang="ts" setup>
 import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-regular-svg-icons'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { playableStore } from '@/stores/playableStore'
 import { useDownload } from '@/composables/useDownload'
@@ -115,8 +115,6 @@ const fetchFavorites = async () => {
   try {
     loading.value = true
     await playableStore.fetchFavorites()
-    // Keep a direct reference to the store's favorites array so in-place reorder mutations are reflected in the UI
-    allPlayables.value = playableStore.state.favorites
 
     const { sortField, sortOrder } = getSavedSort()
     sort(sortField, sortOrder)
@@ -141,6 +139,14 @@ const sort = (field: MaybeArray<PlayableListSortField> | null, order: SortOrder)
 const onReorder = (target: Playable, placement: Placement) => {
   playableStore.moveFavoritesInList(selectedPlayables.value, target, placement)
 }
+
+watch(
+  () => playableStore.state.favorites,
+  favorites => {
+    allPlayables.value = favorites
+  },
+  { immediate: true },
+)
 
 useRouter().onScreenActivated('Favorites', async () => {
   if (!initialized) {

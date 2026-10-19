@@ -44,6 +44,36 @@ describe('usePlayableList', () => {
     expect(playableList.filteredPlayables.value.map(playable => playable.id)).toEqual([first.id, second.id])
   })
 
+  it('sorts by disc again when a one-disc list grows into two discs', () => {
+    const discOneTrackOne = h.factory('song').make({ disc: 1, track: 1 })
+    const discOneTrackTwo = h.factory('song').make({ disc: 1, track: 2 })
+    const discTwoTrackOne = h.factory('song').make({ disc: 2, track: 1 })
+    const playables = ref<Playable[]>([discOneTrackTwo, discOneTrackOne])
+
+    let playableList!: ReturnType<typeof usePlayableList>
+
+    h.render(
+      defineComponent({
+        setup: () => {
+          playableList = usePlayableList(playables)
+
+          return () => null
+        },
+      }),
+    )
+
+    playableList.sortField.value = 'track'
+    expect(playableList.filteredPlayables.value).toHaveLength(2)
+
+    playables.value = [discTwoTrackOne, discOneTrackTwo, discOneTrackOne]
+
+    expect(playableList.filteredPlayables.value.map(playable => playable.id)).toEqual([
+      discOneTrackOne.id,
+      discOneTrackTwo.id,
+      discTwoTrackOne.id,
+    ])
+  })
+
   it('keeps the server order of a list sorted on the server', () => {
     const lowercase = h.factory('song').make({ title: 'apple' })
     const uppercase = h.factory('song').make({ title: 'Banana' })

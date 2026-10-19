@@ -76,7 +76,6 @@
 <script lang="ts" setup>
 import { faFile } from '@fortawesome/free-regular-svg-icons'
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { differenceBy } from 'lodash-es'
 import { computed, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
@@ -217,23 +216,30 @@ const editPlaylist = () => {
 const removeSelected = async () => await removeFromPlaylist(playlist.value!, selectedPlayables.value)
 
 const fetchDetails = async (refresh = false) => {
-  if (loading.value) {
-    return
-  }
+  const requestedPlaylist = playlist.value!
 
   try {
     loading.value = true
 
-    ;[allPlayables.value, collaborators.value] = await Promise.all([
-      playableStore.fetchForPlaylist(playlist.value!, refresh),
-      playlist.value!.is_collaborative
-        ? playlistCollaborationService.fetchCollaborators(playlist.value!)
+    const [playables, playlistCollaborators] = await Promise.all([
+      playableStore.fetchForPlaylist(requestedPlaylist, refresh),
+      requestedPlaylist.is_collaborative
+        ? playlistCollaborationService.fetchCollaborators(requestedPlaylist)
         : Promise.resolve<PlaylistCollaborator[]>([]),
     ])
+
+    if (requestedPlaylist !== playlist.value) {
+      return
+    }
+
+    allPlayables.value = playables
+    collaborators.value = playlistCollaborators
   } catch (error: unknown) {
     useErrorHandler().handleHttpError(error)
   } finally {
-    loading.value = false
+    if (requestedPlaylist === playlist.value) {
+      loading.value = false
+    }
   }
 }
 
@@ -295,9 +301,9 @@ const requestContextMenu = (event: MouseEvent) =>
 eventBus
   .on('PLAYLIST_UPDATED', async ({ id }) => id === playlistId.value && (await fetchDetails()))
   .on('PLAYLIST_COLLABORATOR_REMOVED', async ({ id }) => id === playlistId.value && (await fetchDetails()))
-  .on('PLAYLIST_CONTENT_REMOVED', async ({ id }, removed) => {
+  .on('PLAYLIST_CONTENT_REMOVED', async ({ id }) => {
     if (id === playlistId.value) {
-      allPlayables.value = differenceBy(allPlayables.value, removed, 'id')
+      allPlayables.value = playlist.value!.playables!
     }
   })
   .on('PLAYLIST_DELETED', async ({ id }) => id === playlistId.value && go(url('home')))

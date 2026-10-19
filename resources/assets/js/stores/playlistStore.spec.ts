@@ -3,6 +3,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import factory from '@/__tests__/factory'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
+import { playlistFolderStore } from '@/stores/playlistFolderStore'
 import { playlistStore } from '@/stores/playlistStore'
 
 const ruleGroups: SmartPlaylistRuleGroup[] = [
@@ -152,6 +153,16 @@ describe('playlistStore', () => {
     expect(removeMock).toHaveBeenCalledWith(['playlist.songs', playlist.id])
   })
 
+  it('drops removed songs from the playlist it holds', async () => {
+    const songs = h.factory('song').make(3)
+    const playlist = h.factory('playlist').make({ playables: songs })
+    h.mock(http, 'delete')
+
+    await playlistStore.removeContent(playlist, [songs[1]])
+
+    expect(playlist.playables).toEqual([songs[0], songs[2]])
+  })
+
   it('does not modify a smart playlist content', async () => {
     const playlist = factory('playlist').state('smart').make()
     const postMock = h.mock(http, 'post')
@@ -185,6 +196,30 @@ describe('playlistStore', () => {
     })
 
     expect(playlist.name).toBe('Foo')
+  })
+
+  it('loads a folder created along with a new playlist', async () => {
+    const folder = h.factory('playlist-folder').make({ name: 'Rock' })
+    h.mock(http, 'post').mockResolvedValue(h.factory('playlist').make({ folder_id: folder.id }))
+    const getMock = h.mock(http, 'get').mockResolvedValue([folder])
+
+    await playlistStore.store({ name: 'Classics', description: '', folder_id: null, folder_name: 'Rock', cover: null })
+
+    expect(getMock).toHaveBeenCalledWith('playlist-folders')
+    expect(playlistFolderStore.byId(folder.id)).toEqual(folder)
+  })
+
+  it('moves a playlist into a folder created while editing it', async () => {
+    const playlist = h.factory('playlist').make({ folder_id: null })
+    playlistStore.state.playlists = [playlist]
+    const folder = h.factory('playlist-folder').make({ name: 'Rock' })
+    h.mock(http, 'put').mockResolvedValue({ ...playlist, folder_id: folder.id })
+    h.mock(http, 'get').mockResolvedValue([folder])
+
+    await playlistStore.update(playlist, { name: playlist.name, description: '', folder_id: null, folder_name: 'Rock' })
+
+    expect(playlistFolderStore.byId(folder.id)).toEqual(folder)
+    expect(playlistStore.byId(playlist.id)!.folder_id).toBe(folder.id)
   })
 
   it('updates a smart playlist', async () => {

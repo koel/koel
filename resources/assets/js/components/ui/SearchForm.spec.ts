@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
+import { searchStore } from '@/stores/searchStore'
 import Router from '@/router'
 import Component from './SearchForm.vue'
 
@@ -32,6 +33,7 @@ describe('searchForm.vue', () => {
     await h.type(screen.getByRole('textbox'), 'hey')
 
     expect(mock).toHaveBeenCalledWith('SEARCH_KEYWORDS_CHANGED', 'hey')
+    expect(searchStore.state.keywords).toBe('hey')
   })
 
   it('goes to the search screen if the form is submitted', async () => {

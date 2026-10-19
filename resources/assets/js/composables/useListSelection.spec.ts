@@ -100,6 +100,19 @@ describe('useListSelection', () => {
     expect(items.value[2].selected).toBe(true)
   })
 
+  it('deselects items hidden from the list too', () => {
+    const { items, select, deselectAll, reapplySelection } = setup()
+    const [first, second] = items.value
+    select(second)
+
+    items.value = items.value.filter(item => item !== second)
+    deselectAll()
+    items.value = [first, second]
+    reapplySelection()
+
+    expect(second.selected).toBe(false)
+  })
+
   it('tracks lastSelected', () => {
     const { items, select, lastSelected } = setup()
     select(items.value[2])

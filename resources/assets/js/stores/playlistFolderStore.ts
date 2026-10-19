@@ -15,6 +15,10 @@ export const playlistFolderStore = {
     this.state.folders = this.sort(reactive(folders))
   },
 
+  async fetchAll() {
+    this.init(await http.get<PlaylistFolder[]>('playlist-folders'))
+  },
+
   byId(id: PlaylistFolder['id']) {
     return this.state.folders.find(folder => folder.id === id)
   },

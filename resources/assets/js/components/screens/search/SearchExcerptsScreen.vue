@@ -72,14 +72,18 @@ const doSearch = async () => {
   }
 }
 
-eventBus
-  .on('SEARCH_KEYWORDS_CHANGED', async _q => {
-    q.value = _q
+const searchKeywords = async (keywords: string) => {
+  q.value = keywords
+  await doSearch()
+}
+
+if (searchStore.state.keywords) {
+  searchKeywords(searchStore.state.keywords)
+}
+
+eventBus.on('SEARCH_KEYWORDS_CHANGED', searchKeywords).on('SONGS_DELETED', async songs => {
+  if (intersectionBy(songs, excerpt.value.playables, 'id').length !== 0) {
     await doSearch()
-  })
-  .on('SONGS_DELETED', async songs => {
-    if (intersectionBy(songs, excerpt.value.playables, 'id').length !== 0) {
-      await doSearch()
-    }
-  })
+  }
+})
 </script>

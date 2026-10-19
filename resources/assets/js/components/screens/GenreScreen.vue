@@ -124,8 +124,10 @@ const fetch = async () => {
       cursor: cursor.value,
     })
 
-    cursor.value = fetched.nextCursor
-    songs.value.push(...fetched.songs)
+    if (requestedSongListVersion === songListVersion) {
+      cursor.value = fetched.nextCursor
+      songs.value.push(...fetched.songs)
+    }
   } catch (error: unknown) {
     useErrorHandler('dialog').handleHttpError(error)
   } finally {
@@ -163,10 +165,8 @@ const fetchGenre = async () => {
 
 const refresh = async () => {
   genre.value = null
-  cursor.value = ''
-  songs.value = []
 
-  await Promise.all([fetchGenre(), fetch()])
+  await Promise.all([fetchGenre(), refetchSongsFromStart()])
 }
 
 const fetchWithSort = async (field: MaybeArray<PlayableListSortField>, order: SortOrder) => {

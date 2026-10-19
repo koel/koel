@@ -158,7 +158,7 @@ export const usePlayableList = (
         // If we're sorting by disc and there's only one disc, we remove `disc` from the sort fields.
         // Otherwise, the tracks will be sorted by disc number first, and since there's only one disc,
         // the track order will remain the same through alternating between asc and desc.
-        fields.shift()
+        return fields.slice(1)
       }
 
       return fields

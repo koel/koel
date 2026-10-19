@@ -222,4 +222,13 @@ describe('queueStore', () => {
 
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: songs.map(song => song.id) })
   })
+
+  it('queues the shared copies of fetched songs that are already loaded', async () => {
+    h.mock(http, 'get').mockResolvedValue([{ ...songs[1] }])
+    h.mock(http, 'put')
+
+    await queueStore.fetchRandom(1)
+
+    expect(queueStore.all[0]).toBe(songs[1])
+  })
 })

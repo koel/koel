@@ -151,6 +151,26 @@ describe('playableStore', () => {
     expect(removeArtistsMock).toHaveBeenCalledWith(['led-zeppelin'])
   })
 
+  it('forgets the cached songs of the albums and artists a song moves between', async () => {
+    const song = h.factory('song').make({ album_id: 'old-album', artist_id: 'old-artist' })
+    const updated = { ...song, album_id: 'new-album', artist_id: 'new-artist' }
+    const removeMock = h.mock(cache, 'remove')
+
+    h.mock(http, 'put').mockResolvedValueOnce({
+      songs: [updated],
+      albums: [],
+      artists: [],
+      removed: { album_ids: [], artist_ids: [] },
+    } satisfies SongUpdateResult)
+
+    await playableStore.updateSongs([song], { album_name: 'New Album' })
+
+    expect(removeMock).toHaveBeenCalledWith(['album.songs', 'old-album'])
+    expect(removeMock).toHaveBeenCalledWith(['artist.songs', 'old-artist'])
+    expect(removeMock).toHaveBeenCalledWith(['album.songs', 'new-album'])
+    expect(removeMock).toHaveBeenCalledWith(['artist.songs', 'new-artist'])
+  })
+
   it('gets the unsigned source URL', () => {
     commonStore.state.cdn_url = 'http://test/'
     const song = h.factory('song').make()

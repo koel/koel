@@ -14,6 +14,7 @@ describe('searchStore', () => {
       searchStore.state = reactive<{
         excerpt: ExcerptState
         playables: Playable[]
+        keywords: string
       }>({
         excerpt: {
           playables: [],
@@ -23,6 +24,7 @@ describe('searchStore', () => {
           radio_stations: [],
         },
         playables: [],
+        keywords: '',
       })
     },
   })

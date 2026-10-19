@@ -38,6 +38,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { ref } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { eventBus } from '@/utils/eventBus'
+import { searchStore } from '@/stores/searchStore'
 import { useRouter } from '@/composables/useRouter'
 
 import TextInput from '@/components/ui/form/TextInput.vue'
@@ -53,7 +54,11 @@ const q = ref('')
 
 let onInput = () => {
   const trimmed = q.value.trim()
-  trimmed && eventBus.emit('SEARCH_KEYWORDS_CHANGED', trimmed)
+
+  if (trimmed) {
+    searchStore.state.keywords = trimmed
+    eventBus.emit('SEARCH_KEYWORDS_CHANGED', trimmed)
+  }
 }
 
 if (!window.RUNNING_UNIT_TESTS) {
