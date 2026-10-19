@@ -7,12 +7,14 @@ use App\Http\Requests\Subsonic\IdRequest;
 use App\Http\Responses\Subsonic\SubsonicResponse;
 use App\Models\User;
 use App\Repositories\RadioStationRepository;
+use App\Services\RadioService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class DeleteInternetRadioStationController extends Controller
 {
     public function __construct(
         private readonly RadioStationRepository $radioStationRepository,
+        private readonly RadioService $radioService,
     ) {}
 
     /** @param User $user */
@@ -22,7 +24,7 @@ class DeleteInternetRadioStationController extends Controller
 
         $this->authorize('delete', $station);
 
-        $station->delete();
+        $this->radioService->deleteRadioStation($station);
 
         return SubsonicResponse::ok();
     }

@@ -49,7 +49,7 @@ class RadioStationController extends Controller
     {
         $this->authorize('delete', $station);
 
-        $station->delete();
+        $this->radioService->deleteRadioStation($station);
 
         return response()->noContent();
     }
