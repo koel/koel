@@ -43,9 +43,9 @@ class UpdatePlaylistController extends Controller
         }
 
         if ($request->songIndexToRemove) {
-            $songs = $playlist->load('playables')->playables->values();
+            $songs = $this->songRepository->getByPlaylist($playlist, $user)->values();
             $toRemove = collect($request->songIndexToRemove)
-                ->map($songs->get(...))
+                ->map(static fn (int|string $index) => $songs->get((int) $index))
                 ->filter()
                 ->values();
 
