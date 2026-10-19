@@ -34,4 +34,14 @@ describe('favoritesScreen.vue', () => {
     screen.getByTestId('screen-empty-state')
     expect(screen.queryByTestId('song-list')).toBeNull()
   })
+
+  it('drops a song unfavorited while the screen is open', async () => {
+    const favorites = h.factory('song').make(3)
+    await renderComponent(favorites)
+    await waitFor(() => expect(screen.getAllByTestId('song-item')).toHaveLength(3))
+
+    playableStore.state.favorites = favorites.slice(1)
+
+    await waitFor(() => expect(screen.getAllByTestId('song-item')).toHaveLength(2))
+  })
 })
