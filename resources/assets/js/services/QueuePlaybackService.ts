@@ -162,6 +162,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       }
 
       this.media.src = sourceUrl
+      audioService.routeElement(this.media)
 
       if (playable.playback_state !== 'Playing') {
         this.seekTo(position)

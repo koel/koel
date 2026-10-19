@@ -2,6 +2,7 @@ import { BasePlaybackService } from '@/services/BasePlaybackService'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { use } from '@/utils/helpers'
 import { socketService } from '@/services/socketService'
+import { audioService } from '@/services/audioService'
 
 export class RadioPlaybackService extends BasePlaybackService {
   public async play(station: RadioStation) {
@@ -16,6 +17,7 @@ export class RadioPlaybackService extends BasePlaybackService {
       throw error
     }
 
+    audioService.routeElement(this.media)
     await this.media.play()
 
     radioStationStore.startPolling(station)

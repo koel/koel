@@ -17,6 +17,7 @@ export const audioService = {
   element: null! as HTMLMediaElement,
   normalizationGainNode: null! as GainNode,
   crossfadeSource: null as MediaElementAudioSourceNode | null,
+  sourcesByElement: new WeakMap<HTMLMediaElement, MediaElementAudioSourceNode>(),
   crossfadeGainNode: null as GainNode | null,
   preampGainNode: null! as GainNode,
   analyzer: null! as AnalyserNode,
@@ -30,7 +31,7 @@ export const audioService = {
     this.context = new AudioContext()
     this.normalizationGainNode = this.context.createGain()
     this.preampGainNode = this.context.createGain()
-    this.source = this.context.createMediaElementSource(this.element)
+    this.source = this.getOrCreateSource(this.element)
     this.analyzer = this.context.createAnalyser()
 
     this.source.connect(this.normalizationGainNode)
@@ -90,10 +91,31 @@ export const audioService = {
       this.crossfadeSource = null
       this.disconnectCrossfadeElement()
     } else {
-      this.source = this.context.createMediaElementSource(newElement)
+      this.source = this.getOrCreateSource(newElement)
     }
 
     this.source.connect(this.normalizationGainNode)
+  },
+
+  /**
+   * Make the given element the one heard through the audio graph, if it isn't already.
+   */
+  routeElement(element: HTMLMediaElement) {
+    if (this.context && this.element !== element) {
+      this.reconnectSource(element)
+    }
+  },
+
+  /** An element can only ever get one source node, so reuse it when the element is routed again. */
+  getOrCreateSource(element: HTMLMediaElement) {
+    let source = this.sourcesByElement.get(element)
+
+    if (!source) {
+      source = this.context.createMediaElementSource(element)
+      this.sourcesByElement.set(element, source)
+    }
+
+    return source
   },
 
   /**
@@ -110,7 +132,7 @@ export const audioService = {
     this.crossfadeGainNode.gain.linearRampToValueAtTime(dbToGain(normalizationGainDb), now + fadeInDuration)
     this.crossfadeGainNode.connect(this.preampGainNode)
 
-    this.crossfadeSource = this.context.createMediaElementSource(element)
+    this.crossfadeSource = this.getOrCreateSource(element)
     this.crossfadeSource.connect(this.crossfadeGainNode)
   },
 

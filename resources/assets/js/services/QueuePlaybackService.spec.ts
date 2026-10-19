@@ -2,6 +2,7 @@ import { nextTick, reactive } from 'vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import * as lodash from 'lodash-es'
 import { createHarness } from '@/__tests__/TestHarness'
+import { audioService } from '@/services/audioService'
 
 vi.mock('lodash-es', async importOriginal => {
   const mod = await importOriginal<typeof lodash>()
@@ -130,6 +131,18 @@ describe('playbackService', () => {
 
     expect(playNextMock).toHaveBeenCalled()
     expect(logMock).toHaveBeenCalledWith(errorEvent)
+  })
+
+  it('routes its own element through the audio graph before playing a song', async () => {
+    const song = h.factory('song').make()
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue('http://test/play/song')
+    h.mock(playbackService, 'restart')
+    const routeElementMock = h.mock(audioService, 'routeElement')
+
+    await playbackService.play(song)
+
+    expect(routeElementMock).toHaveBeenCalledWith(playbackService.media)
+    playbackService.media.removeAttribute('src')
   })
 
   it('reloads an expired source and resumes where it stopped', async () => {

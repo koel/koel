@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { socketService } from '@/services/socketService'
+import { audioService } from '@/services/audioService'
 import { playbackService } from '@/services/RadioPlaybackService'
 
 describe('playbackService', () => {
@@ -31,9 +32,11 @@ describe('playbackService', () => {
     h.mock(radioStationStore, 'resolveSourceUrl').mockResolvedValue('https://station.com/stream.mp3')
 
     const startPollingMock = h.mock(radioStationStore, 'startPolling')
+    const routeElementMock = h.mock(audioService, 'routeElement')
 
     await playbackService.play(toBePlayedStation)
 
+    expect(routeElementMock).toHaveBeenCalledWith(playbackService.media)
     expect(playMock).toHaveBeenCalled()
     expect(playbackService.media.src).toBe('https://station.com/stream.mp3')
     expect(currentStation.playback_state).toBe('Stopped')

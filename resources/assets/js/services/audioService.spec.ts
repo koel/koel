@@ -56,6 +56,24 @@ describe('audioService', () => {
     })
   })
 
+  describe('routeElement', () => {
+    it('reuses the source of an element that is routed again', () => {
+      const createSource = vi.fn(() => ({ connect: vi.fn(), disconnect: vi.fn() }))
+      const firstElement = document.createElement('audio')
+      const secondElement = document.createElement('audio')
+      audioService.context = { createMediaElementSource: createSource } as unknown as AudioContext
+      audioService.sourcesByElement = new WeakMap()
+      audioService.source = audioService.getOrCreateSource(firstElement)
+      audioService.element = firstElement
+
+      audioService.routeElement(secondElement)
+      audioService.routeElement(firstElement)
+
+      expect(createSource).toHaveBeenCalledTimes(2)
+      expect(audioService.element).toBe(firstElement)
+    })
+  })
+
   describe('changeFilterGain', () => {
     it('sets a band in dB, since that is what a BiquadFilterNode expects', () => {
       const band = { gain: { value: 0 } } as unknown as BiquadFilterNode
