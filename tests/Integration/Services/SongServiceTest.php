@@ -597,6 +597,46 @@ class SongServiceTest extends TestCase
     }
 
     #[Test]
+    public function rescanIgnoringGenreKeepsTheCurrentGenre(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+        $song->syncGenres('Edited Genre');
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['genre'],
+            force: true,
+        ));
+
+        self::assertSame('Edited Genre', $song->refresh()->genre);
+    }
+
+    #[Test]
+    public function rescanByAnotherUserKeepsTheSongsOwnLibraryAndVisibility(): void
+    {
+        $uploader = create_user();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $uploader,
+            makePublic: false,
+        ));
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: create_admin(),
+            makePublic: true,
+            force: true,
+        ));
+
+        $song->refresh();
+
+        self::assertTrue($song->artist->user->is($uploader));
+        self::assertTrue($song->album->user->is($uploader));
+        self::assertFalse($song->is_public);
+    }
+
+    #[Test]
     public function rescanIgnoringAlbumKeepsTheCurrentAlbum(): void
     {
         $owner = create_admin();

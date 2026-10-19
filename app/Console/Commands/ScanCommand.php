@@ -70,7 +70,14 @@ class ScanCommand extends Command
             owner: $this->getOwner(),
             // When scanning via CLI, the songs should be public by default, unless explicitly specified otherwise.
             makePublic: !$this->option('private'),
-            ignores: collect($this->option('ignore'))->sort()->values()->all(),
+            ignores: collect($this->option('ignore'))
+                ->flatMap(static fn (string $tags) => explode(',', $tags))
+                ->map(static fn (string $tag) => trim($tag))
+                ->filter()
+                ->unique()
+                ->sort()
+                ->values()
+                ->all(),
             force: $this->option('force'),
         );
 

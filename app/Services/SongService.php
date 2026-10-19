@@ -276,10 +276,11 @@ class SongService
             $data += self::getCurrentArtistAndAlbumNames($song);
         }
 
-        $artist = $this->resolveArtist($config->owner, Arr::get($data, 'artist'));
+        $libraryOwner = $isFileNew ? $config->owner : $song->loadMissing('owner')->owner;
+        $artist = $this->resolveArtist($libraryOwner, Arr::get($data, 'artist'));
 
         $albumArtist = Arr::get($data, 'albumartist')
-            ? $this->resolveArtist($config->owner, $data['albumartist'])
+            ? $this->resolveArtist($libraryOwner, $data['albumartist'])
             : $artist;
 
         $album = $this->resolveAlbum($albumArtist, Arr::get($data, 'album'));
@@ -312,20 +313,22 @@ class SongService
 
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
-        $data['is_public'] = $config->makePublic;
         $data['album_name'] = $album->name;
         $data['artist_name'] = $artist->name;
 
         if ($isFileNew) {
-            // Only set the owner if the song is new, i.e., don't override the owner if the song is being updated.
+            // Only set the owner and visibility if the song is new, i.e., don't override them on an update.
             $data['owner_id'] = $config->owner->id;
+            $data['is_public'] = $config->makePublic;
             /** @var Song $song */
             $song = Song::query()->create($data);
         } else {
             $song->update($data);
         }
 
-        if ($genre !== $song->genre) {
+        $keepsCurrentGenre = !$isFileNew && in_array('genre', $config->ignores, true);
+
+        if (!$keepsCurrentGenre && $genre !== $song->genre) {
             $song->syncGenres($genre);
         }
 
