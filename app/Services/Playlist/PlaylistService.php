@@ -197,6 +197,11 @@ class PlaylistService
         );
     }
 
+    public function deletePlaylist(Playlist $playlist): void
+    {
+        $playlist->delete();
+    }
+
     public function deletePlaylistsByUser(User $user): void
     {
         $user
