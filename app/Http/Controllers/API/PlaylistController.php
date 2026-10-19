@@ -60,7 +60,7 @@ class PlaylistController extends Controller
     {
         $this->authorize('own', $playlist);
 
-        $playlist->delete();
+        $this->playlistService->deletePlaylist($playlist);
 
         return response()->noContent();
     }
