@@ -555,6 +555,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
             ->when(!$genre, static fn (SongBuilder $builder) => $builder->genreless())
             ->orderBy('songs.title')
+            ->orderBy('songs.id')
             ->when($offset > 0, static fn (Builder $builder) => $builder->offset($offset))
             ->limit($limit)
             ->get();

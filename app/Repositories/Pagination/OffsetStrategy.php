@@ -10,6 +10,6 @@ final class OffsetStrategy implements PaginationStrategy
 {
     public function apply(Builder $builder, string $idColumn, int $perPage): Paginator
     {
-        return $builder->simplePaginate($perPage);
+        return $builder->orderBy($idColumn)->simplePaginate($perPage);
     }
 }
