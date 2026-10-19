@@ -159,7 +159,6 @@ export class QueuePlaybackService extends BasePlaybackService {
 
       crossfadeService.state = null
 
-      this.recordStartTime(playable)
       this.showNotification(playable)
     } else {
       const playRequest = ++this.latestPlayRequest
@@ -592,6 +591,7 @@ export class QueuePlaybackService extends BasePlaybackService {
         nextPlayable.playback_state = 'Playing'
         this.setNowPlayingMeta(nextPlayable)
         this.showNotification(nextPlayable)
+        this.recordStartTime(nextPlayable)
         this.registerPlay(nextPlayable)
         this.fadeCrossfadingTracks()
       }

@@ -412,6 +412,25 @@ describe('playbackService', () => {
     endCrossfadeTest(outgoingMedia)
   })
 
+  it('counts a song reached by crossfade as played once', async () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+    const incomingSong = queueStore.current!
+    incomingSong.play_count_registered = true
+    const registerPlayMock = vi.mocked(playbackService.registerPlay)
+    registerPlayMock.mockClear()
+
+    outgoingMedia.dispatchEvent(new Event('ended'))
+    await vi.waitFor(() => expect(playbackService.media).toBe(incomingMedia))
+
+    h.setReadOnlyProperty(incomingMedia, 'duration', 300)
+    h.setReadOnlyProperty(incomingMedia, 'currentTime', 150)
+    incomingMedia.dispatchEvent(new Event('timeupdate'))
+
+    expect(registerPlayMock).not.toHaveBeenCalled()
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
   it('keeps fading during a crossfade into the last song in the queue', () => {
     const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
     h.setReadOnlyProperty(queueStore, 'next', undefined)
