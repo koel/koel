@@ -311,6 +311,33 @@ class EncyclopediaServiceTest extends TestCase
     }
 
     #[Test]
+    public function retryAnAlbumNotFoundInTheEncyclopediaTheNextDay(): void
+    {
+        $album = Album::factory()->createOne(['cover' => 'existing.jpg']);
+
+        $this->encyclopedia->expects('getAlbumInformation')->twice()->andReturn(null);
+
+        $this->encyclopediaService->getAlbumInformation($album);
+        $this->travel(2)->days();
+        $this->encyclopediaService->getAlbumInformation($album);
+    }
+
+    #[Test]
+    public function keepAnAlbumFoundInTheEncyclopediaForAWeek(): void
+    {
+        $album = Album::factory()->createOne(['cover' => 'existing.jpg']);
+
+        $this->encyclopedia
+            ->expects('getAlbumInformation')
+            ->once()
+            ->andReturn(AlbumInformation::make(url: 'https://www.last.fm/music/Cher/Believe'));
+
+        $this->encyclopediaService->getAlbumInformation($album);
+        $this->travel(2)->days();
+        $this->encyclopediaService->getAlbumInformation($album);
+    }
+
+    #[Test]
     public function forgetCachedAlbumInformation(): void
     {
         $album = Album::factory()->createOne(['cover' => 'existing.jpg']);

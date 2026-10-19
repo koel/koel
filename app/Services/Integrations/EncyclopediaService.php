@@ -12,9 +12,10 @@ use App\Services\Contracts\Encyclopedia;
 use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumInformation;
 use App\Values\Artist\ArtistInformation;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
-// @mago-ignore lint:cyclomatic-complexity
+// @mago-ignore lint:cyclomatic-complexity,too-many-methods
 class EncyclopediaService
 {
     public function __construct(
@@ -58,7 +59,7 @@ class EncyclopediaService
         return MusicBrainzService::rescueUnlessMusicBrainzIsBusy(
             fn () => Cache::remember(
                 self::resolveAlbumInformationCacheKey($album),
-                now()->addWeek(),
+                self::resolveInformationCacheTtl(...),
                 fn () => $this->fetchAlbumInformation($album),
             ),
             fn () => $this->fetchAlbumInformation($album),
@@ -96,7 +97,7 @@ class EncyclopediaService
         return MusicBrainzService::rescueUnlessMusicBrainzIsBusy(
             fn () => Cache::remember(
                 self::resolveArtistInformationCacheKey($artist),
-                now()->addWeek(),
+                self::resolveInformationCacheTtl(...),
                 fn () => $this->fetchArtistInformation($artist),
             ),
             fn () => $this->fetchArtistInformation($artist),
@@ -121,6 +122,13 @@ class EncyclopediaService
     private static function resolveArtistInformationCacheKey(Artist $artist): string
     {
         return cache_key('artist information', $artist->name);
+    }
+
+    private static function resolveInformationCacheTtl(AlbumInformation|ArtistInformation $info): Carbon
+    {
+        $foundInEncyclopedia = $info->url !== null;
+
+        return $foundInEncyclopedia ? now()->addWeek() : now()->addDay();
     }
 
     private function queueInformationFetchIfPossible(FetchEncyclopediaInformationJob $job): void
