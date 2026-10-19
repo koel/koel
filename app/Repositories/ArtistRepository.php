@@ -16,6 +16,7 @@ use Illuminate\Support\LazyCollection;
  * @extends Repository<Artist>
  * @implements ScoutableRepository<Artist>
  */
+// @mago-ignore lint:too-many-methods
 class ArtistRepository extends Repository implements ScoutableRepository
 {
     public function isAccessibleByUser(Artist $artist, User $user): bool
@@ -92,6 +93,29 @@ class ArtistRepository extends Repository implements ScoutableRepository
             ->pluck('artists.id');
 
         return $this->getMany($ids->all(), preserveOrder: true, user: $user);
+    }
+
+    /**
+     * The user's artists that songs or albums owned by others still use.
+     *
+     * @return Collection<int, Artist>
+     */
+    public function getOwnedByUserButUsedByOthers(User $user): Collection
+    {
+        return Artist::query()
+            ->where('user_id', $user->id)
+            ->where(static function (Builder $query) use ($user): void {
+                $query->whereHas('songs', static fn (Builder $songs) => $songs->where(
+                    'owner_id',
+                    '<>',
+                    $user->id,
+                ))->orWhereHas('albums.songs', static fn (Builder $songs) => $songs->where(
+                    'owner_id',
+                    '<>',
+                    $user->id,
+                ));
+            })
+            ->get();
     }
 
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection

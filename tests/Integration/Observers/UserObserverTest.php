@@ -5,6 +5,8 @@ namespace Tests\Integration\Observers;
 use App\Events\UserUnsubscribedFromPodcast;
 use App\Facades\Dispatcher;
 use App\Jobs\DeleteSongFilesJob;
+use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Podcast;
 use App\Models\RadioStation;
 use App\Models\Song;
@@ -13,12 +15,30 @@ use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_admin;
 use function Tests\create_playlist;
 use function Tests\create_playlists;
 use function Tests\create_user;
 
 class UserObserverTest extends TestCase
 {
+    #[Test]
+    public function keepTheScannedLibraryWhenItsOwningAdminIsDeleted(): void
+    {
+        $owningAdmin = create_admin();
+        $otherAdmin = create_admin();
+        $artist = Artist::factory()->for($owningAdmin)->createOne();
+        $scannedSong = Song::factory()
+            ->for($owningAdmin, 'owner')
+            ->for($artist)
+            ->for(Album::factory()->for($owningAdmin)->for($artist))
+            ->createOne(['path' => '/music/Scanned.mp3']);
+
+        $owningAdmin->delete();
+
+        self::assertTrue($scannedSong->refresh()->owner->is($otherAdmin));
+    }
+
     #[Test]
     public function deleteTheUsersSongsAndTheirFiles(): void
     {

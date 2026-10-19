@@ -12,6 +12,8 @@ use Mockery;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_admin;
+
 class LibraryManagerTest extends TestCase
 {
     private LibraryManager $libraryManager;
@@ -21,6 +23,30 @@ class LibraryManagerTest extends TestCase
         parent::setUp();
 
         $this->libraryManager = app(LibraryManager::class);
+    }
+
+    #[Test]
+    public function handOverScannedSongsAndTheirArtistAndAlbumToAnotherAdmin(): void
+    {
+        $leavingAdmin = create_admin();
+        $heir = create_admin();
+        $artist = Artist::factory()->for($leavingAdmin)->createOne();
+        $album = Album::factory()->for($leavingAdmin)->for($artist)->createOne();
+        $scannedSong = Song::factory()
+            ->for($leavingAdmin, 'owner')
+            ->for($artist)
+            ->for($album)
+            ->createOne(['path' => '/music/Scanned.mp3']);
+        $uploadedSong = Song::factory()->for($leavingAdmin, 'owner')->createOne([
+            'path' => '/music/__KOEL_UPLOADS_$1__/Uploaded.mp3',
+        ]);
+
+        $this->libraryManager->handOverScannedLibraryOfUser($leavingAdmin);
+
+        self::assertTrue($scannedSong->refresh()->owner->is($heir));
+        self::assertTrue($artist->refresh()->user->is($heir));
+        self::assertTrue($album->refresh()->user->is($heir));
+        self::assertTrue($uploadedSong->refresh()->owner->is($leavingAdmin));
     }
 
     #[Test]

@@ -469,6 +469,21 @@ class SongRepository extends Repository implements ScoutableRepository
         return $this->getMany($ids->shuffle()->all(), preserveOrder: true, scopedUser: $scopedUser);
     }
 
+    /**
+     * IDs of the user's songs that came from a library scan rather than an upload.
+     *
+     * @return array<string>
+     */
+    public function getIdsOfScannedSongsOwnedBy(User $user): array
+    {
+        return Song::query()
+            ->where('owner_id', $user->id)
+            ->storedLocally()
+            ->whereNot('path', 'like', '%__KOEL_UPLOADS_%')
+            ->pluck('id')
+            ->all();
+    }
+
     public function getMany(array $ids, bool $preserveOrder = false, ?User $scopedUser = null): Collection
     {
         $songs = Song::query(user: $scopedUser ?? $this->auth->user())

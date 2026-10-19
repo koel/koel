@@ -45,6 +45,8 @@ You cannot add, invite, edit, or delete users whose roles are higher than yours.
 
 When you change a user's email address, it takes effect right away. If a mailer is configured, Koel lets the user know at both the old and the new address.
 
+Deleting a user also deletes the songs they uploaded, along with their playlists and radio stations. Songs that came from scanning your media folder stay in the library and pass to another admin.
+
 ## Changing User Roles
 
 User roles can be changed via the web interface from the Users page if the current user has the `manage users`
