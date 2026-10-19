@@ -4,6 +4,7 @@ import factory from '@/__tests__/factory'
 import { cache } from '@/services/cache'
 import { http } from '@/services/http'
 import { playableStore } from '@/stores/playableStore'
+import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 
 describe('artistStore', () => {
@@ -129,10 +130,12 @@ describe('artistStore', () => {
 
     const putMock = h.mock(http, 'put').mockResolvedValue(updatedArtist)
     const syncPropsMock = h.mock(playableStore, 'syncArtistProperties')
+    const syncAlbumPropsMock = h.mock(albumStore, 'syncArtistProperties')
 
     await artistStore.update(artist, updateData)
 
     expect(putMock).toHaveBeenCalledWith(`artists/${artist.id}`, updateData)
     expect(syncPropsMock).toHaveBeenCalledWith(updatedArtist)
+    expect(syncAlbumPropsMock).toHaveBeenCalledWith(updatedArtist)
   })
 })

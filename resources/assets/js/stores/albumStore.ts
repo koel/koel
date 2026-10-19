@@ -40,6 +40,14 @@ export const albumStore = {
     })
   },
 
+  syncArtistProperties(artist: Artist) {
+    this.vault.forEach(album => {
+      if (album.artist_id === artist.id) {
+        album.artist_name = artist.name
+      }
+    })
+  },
+
   isUnknown: (album: Album | Album['name']) => {
     if (typeof album === 'string') {
       return album === UNKNOWN_ALBUM_NAME

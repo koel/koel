@@ -26,6 +26,19 @@ describe('albumStore', () => {
     expect(albumStore.state.albums).toEqual([albums[2]])
   })
 
+  it('shows the new name of a renamed artist on its albums', () => {
+    const artist = h.factory('artist').make({ name: 'Pink Floyd' })
+    const [ownAlbum, otherAlbum] = albumStore.syncWithVault([
+      h.factory('album').make({ artist_id: artist.id, artist_name: 'The Pink Floyd' }),
+      h.factory('album').make({ artist_name: 'Led Zeppelin' }),
+    ])
+
+    albumStore.syncArtistProperties(artist)
+
+    expect(ownAlbum.artist_name).toBe('Pink Floyd')
+    expect(otherAlbum.artist_name).toBe('Led Zeppelin')
+  })
+
   it('identifies an unknown album', () => {
     const album = factory('album').state('unknown').make()
 

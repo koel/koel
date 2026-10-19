@@ -6,6 +6,7 @@ import { http } from '@/services/http'
 import { flattenParams } from '@/utils/helpers'
 import { logger } from '@/utils/logger'
 import { useVault } from '@/composables/useVault'
+import { albumStore } from '@/stores/albumStore'
 import { playableStore as songStore } from '@/stores/playableStore'
 
 const UNKNOWN_ARTIST_NAME = 'Unknown Artist'
@@ -55,6 +56,7 @@ export const artistStore = {
     cache.remove(['artist.info', artist.id])
     this.state.artists = unionBy(this.state.artists, this.syncWithVault(updated), 'id')
     songStore.syncArtistProperties(updated)
+    albumStore.syncArtistProperties(updated)
   },
 
   async resolve(id: Artist['id']) {
