@@ -1,5 +1,6 @@
 import type { Ref } from 'vue'
 import { queueStore } from '@/stores/queueStore'
+import { playbackService as queuePlayback } from '@/services/QueuePlaybackService'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { usePlaylistContentManagement } from '@/composables/usePlaylistContentManagement'
 import { useModal } from '@/composables/useModal'
@@ -22,7 +23,7 @@ export const usePlayableMenuMethods = (playables: Ref<Playable[]>, close: Closur
     queueToTop: () => trigger(() => queueStore.queueToTop(playables.value)),
     addToFavorites: () => trigger(() => playableStore.favorite(playables.value)),
     removeFromFavorites: () => trigger(() => playableStore.undoFavorite(playables.value)),
-    removeFromQueue: () => trigger(() => queueStore.unqueue(playables.value)),
+    removeFromQueue: () => trigger(() => queuePlayback.removeFromQueue(playables.value)),
     addToExistingPlaylist: (playlist: Playlist) => trigger(() => addToPlaylist(playlist, playables.value)),
     addToNewPlaylist: () =>
       trigger(() =>

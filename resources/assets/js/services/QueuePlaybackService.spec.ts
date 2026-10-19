@@ -574,6 +574,30 @@ describe('playbackService', () => {
     expect(playMock).toHaveBeenCalledWith(nextSong)
   })
 
+  it('plays the song after the playing one when that one is removed from the queue', async () => {
+    const songs = playableStore.syncWithVault(h.factory('song').make(4))
+    songs[1].playback_state = 'Playing'
+    queueStore.state.playables = reactive(songs)
+    const playMock = h.mock(playbackService, 'play')
+
+    await playbackService.removeFromQueue([songs[1]])
+
+    expect(playMock).toHaveBeenCalledWith(songs[2])
+    expect(queueStore.all.map(({ id }) => id)).toEqual([songs[0].id, songs[2].id, songs[3].id])
+  })
+
+  it('stops when the removed playing song had nothing after it', async () => {
+    preferences.temporary.repeat_mode = 'NO_REPEAT'
+    const songs = playableStore.syncWithVault(h.factory('song').make(2))
+    songs[1].playback_state = 'Playing'
+    queueStore.state.playables = reactive(songs)
+    const stopMock = h.mock(playbackService, 'stop')
+
+    await playbackService.removeFromQueue([songs[1]])
+
+    expect(stopMock).toHaveBeenCalled()
+  })
+
   it('stops playback', () => {
     const currentSong = setCurrentSong()
     const pauseMock = h.mock(playbackService.media, 'pause')

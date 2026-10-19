@@ -39,6 +39,24 @@ describe('queueStore', () => {
     expect(putMock).toHaveBeenCalledWith('queue/state', { songs: queueStore.all.map(song => song.id) })
   })
 
+  it('keeps the playing song current when it is queued again', () => {
+    songs[1].playback_state = 'Playing'
+
+    queueStore.queue([songs[1], h.factory('song').make()])
+
+    expect(queueStore.current?.id).toBe(songs[1].id)
+  })
+
+  it('queues after the playing song even when the playing song is among the queued ones', () => {
+    songs[0].playback_state = 'Playing'
+    const newSong = h.factory('song').make()
+
+    queueStore.queueAfterCurrent([songs[0], newSong])
+
+    expect(queueStore.current?.id).toBe(songs[0].id)
+    expect(queueStore.all.map(({ id }) => id)).toEqual([songs[0].id, newSong.id, songs[1].id, songs[2].id])
+  })
+
   it('queues to top', () => {
     const song = h.factory('song').make()
     const putMock = h.mock(http, 'put')

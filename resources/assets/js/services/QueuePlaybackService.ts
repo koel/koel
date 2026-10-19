@@ -308,6 +308,25 @@ export class QueuePlaybackService extends BasePlaybackService {
     }
   }
 
+  /**
+   * Remove playables from the queue. If the playing one is among them, move on to the one that followed it.
+   */
+  public async removeFromQueue(playables: Playable[]) {
+    const current = queueStore.current
+    const removesCurrent = Boolean(current && playables.some(({ id }) => id === current.id))
+    const nextRemaining = removesCurrent ? queueStore.findNextRemaining(playables) : undefined
+
+    queueStore.unqueue(playables)
+
+    if (!removesCurrent) {
+      return
+    }
+
+    const next = nextRemaining ?? (preferences.repeat_mode === 'REPEAT_ALL' ? queueStore.first : undefined)
+
+    next ? await this.play(next) : await this.stop()
+  }
+
   public async stop() {
     this.cancelCrossfade()
 
