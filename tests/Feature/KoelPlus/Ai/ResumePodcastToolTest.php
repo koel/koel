@@ -66,6 +66,18 @@ class ResumePodcastToolTest extends PlusTestCase
     }
 
     #[Test]
+    public function continueAnEpisodeOfUnknownLength(): void
+    {
+        $episode = Song::factory()->asEpisode()->createOne(['podcast_id' => $this->podcast->id, 'length' => 0]);
+        app(PodcastService::class)->updateEpisodeProgress($this->user, $episode, 600);
+        $this->expectPodcastSearch();
+
+        app()->make(ResumePodcast::class)->handle(new Request(['podcast' => 'marktplatz']));
+
+        self::assertSame(600, $this->result->data['position']);
+    }
+
+    #[Test]
     public function reportAPodcastWithNoStartedEpisode(): void
     {
         $this->expectPodcastSearch();

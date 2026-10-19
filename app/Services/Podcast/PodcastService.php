@@ -186,14 +186,20 @@ class PodcastService
                 continue;
             }
 
+            $existingEpisodeGuids[$episodeValue->guid->value] = true;
+
+            $publishedAt = $episodeValue->metadata->pubDate
+                ? Carbon::instance($episodeValue->metadata->pubDate)->setTimezone(now()->getTimezone())
+                : now();
+
             $records[] = [
                 'id' => Uuid::generate(),
                 'podcast_id' => $podcast->id,
                 'title' => $episodeValue->title,
                 'lyrics' => '',
                 'path' => $enclosureUrl,
-                'created_at' => $episodeValue->metadata->pubDate ?: now(),
-                'updated_at' => $episodeValue->metadata->pubDate ?: now(),
+                'created_at' => $publishedAt,
+                'updated_at' => $publishedAt,
                 'episode_metadata' => $episodeValue->metadata->toJson(),
                 'episode_guid' => $episodeValue->guid,
                 'length' => $episodeValue->metadata->duration ?? 0,

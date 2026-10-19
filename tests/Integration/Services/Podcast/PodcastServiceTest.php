@@ -84,6 +84,16 @@ class PodcastServiceTest extends TestCase
     }
 
     #[Test]
+    public function storeEpisodePublishDatesInTheAppTimezone(): void
+    {
+        $podcast = $this->service->addPodcast('https://example.com/feed.xml', create_user());
+
+        $episode = $podcast->episodes->sole('episode_guid', 'BE486CAA-B3D5-4FB0-8298-EFEBE71C5982');
+
+        self::assertSame('2019-04-30 18:00:00', $episode->created_at->toDateTimeString());
+    }
+
+    #[Test]
     public function addPodcastFromAnApplePodcastsLink(): void
     {
         Saloon::fake([
@@ -454,6 +464,57 @@ class PodcastServiceTest extends TestCase
         $podcast = app(PodcastService::class)->addPodcast('https://example.com/feed.xml', create_user());
 
         self::assertSame(3000, $podcast->episodes()->count());
+    }
+
+    #[Test]
+    public function storeAnEpisodeOnceWhenItsFeedRepeatsItsGuid(): void
+    {
+        $this->fakeFeeds(self::feedWithGuids('Repeats', ['same', 'same']));
+
+        $podcast = app(PodcastService::class)->addPodcast('https://example.com/feed.xml', create_user());
+
+        self::assertSame(1, $podcast->episodes()->count());
+    }
+
+    #[Test]
+    public function letTwoPodcastsUseTheSameEpisodeGuids(): void
+    {
+        $this->fakeFeeds(self::feedWithGuids('First', ['1', '2']), self::feedWithGuids('Second', ['1', '2']));
+        $service = app(PodcastService::class);
+
+        $service->addPodcast('https://example.com/first.xml', create_user());
+        $second = $service->addPodcast('https://example.com/second.xml', create_user());
+
+        self::assertSame(2, $second->episodes()->count());
+    }
+
+    private function fakeFeeds(string ...$feeds): void
+    {
+        $responses = array_map(static fn (string $feed): Response => new Response(200, [], $feed), $feeds);
+
+        $this->instance(ClientInterface::class, new Client([
+            'handler' => HandlerStack::create(new MockHandler($responses)),
+        ]));
+    }
+
+    /** @param array<string> $guids */
+    private static function feedWithGuids(string $title, array $guids): string
+    {
+        $items = collect($guids)->map(
+            static fn (string $guid, int $index): string => sprintf(
+                '<item><title>Episode %1$d</title><guid>%2$s</guid>'
+                . '<enclosure url="https://example.com/%3$s-%1$d.mp3" length="1" type="audio/mpeg"/></item>',
+                $index,
+                $guid,
+                $title,
+            ),
+        )->implode('');
+
+        return sprintf(
+            '<?xml version="1.0"?><rss version="2.0"><channel><title>%s</title>%s</channel></rss>',
+            $title,
+            $items,
+        );
     }
 
     #[Test]
