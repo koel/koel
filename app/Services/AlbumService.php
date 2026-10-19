@@ -9,6 +9,7 @@ use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
 use App\Values\ImageWritingConfig;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 
 class AlbumService
@@ -50,10 +51,22 @@ class AlbumService
 
     public function trySetAlbumCoverFromDirectory(Album $album, string $directory): void
     {
+        $cover = $this->findCachedCoverInDirectory($directory);
+
+        if ($cover && !File::exists($cover)) {
+            Cache::forget(cache_key($directory, 'cover'));
+            $cover = $this->findCachedCoverInDirectory($directory);
+        }
+
+        if ($cover && is_image($cover)) {
+            $this->storeAlbumCover($album, $cover);
+        }
+    }
+
+    private function findCachedCoverInDirectory(string $directory): ?string
+    {
         // As directory scanning can be expensive, we cache and reuse the result.
-        $cover = Cache::remember(cache_key($directory, 'cover'), now()->addDay(), function () use (
-            $directory,
-        ): ?string {
+        return Cache::remember(cache_key($directory, 'cover'), now()->addDay(), function () use ($directory): ?string {
             $matches = array_keys(iterator_to_array(
                 $this->finder::create()
                     ->depth(0)
@@ -66,10 +79,6 @@ class AlbumService
 
             return $matches[0] ?? null;
         });
-
-        if ($cover && is_image($cover)) {
-            $this->storeAlbumCover($album, $cover);
-        }
     }
 
     public function generateAlbumThumbnail(Album $album): string

@@ -51,6 +51,24 @@ class AlbumServiceTest extends TestCase
     }
 
     #[Test]
+    public function findTheFolderCoverAgainAfterItIsRenamed(): void
+    {
+        $directory = sys_get_temp_dir() . '/koel-cover-' . uniqid();
+        File::ensureDirectoryExists($directory);
+        File::copy(test_path('fixtures/cover.png'), "$directory/cover.png");
+        [$firstAlbum, $secondAlbum] = Album::factory()->createMany(2)->all();
+        $this->imageStorage->expects('storeImage')->with("$directory/cover.png")->andReturn('cover.webp');
+        $this->imageStorage->expects('storeImage')->with("$directory/folder.png")->andReturn('folder.webp');
+
+        $this->service->trySetAlbumCoverFromDirectory($firstAlbum, $directory);
+        File::move("$directory/cover.png", "$directory/folder.png");
+        $this->service->trySetAlbumCoverFromDirectory($secondAlbum, $directory);
+
+        self::assertSame('folder.webp', $secondAlbum->refresh()->getRawOriginal('cover'));
+        File::deleteDirectory($directory);
+    }
+
+    #[Test]
     public function updateAlbum(): void
     {
         $album = Album::factory()->createOne([
