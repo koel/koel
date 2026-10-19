@@ -3,6 +3,7 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Http\Responses\Subsonic\Resources\SongResource;
+use App\Models\Genre;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -62,5 +63,32 @@ class GetRandomSongsTest extends TestCase
                 ->assertOk()
                 ->assertJsonPath('subsonic-response.error.code', 10);
         }
+    }
+
+    #[Test]
+    public function keepOnlySongsInTheRequestedGenre(): void
+    {
+        $user = create_user();
+        $jazz = Genre::factory()->createOne(['name' => 'Jazz']);
+        $jazzSong = Song::factory()->for($user, 'owner')->hasAttached($jazz)->createOne();
+        Song::factory()->for($user, 'owner')->count(3)->create();
+
+        $response = $this->getJson("/rest/getRandomSongs.view?apiKey={$user->subsonic_api_key}&f=json&genre=Jazz");
+
+        self::assertSame([$jazzSong->id], array_column($response->json('subsonic-response.randomSongs.song'), 'id'));
+    }
+
+    #[Test]
+    public function keepOnlySongsFromTheRequestedYears(): void
+    {
+        $user = create_user();
+        $nineties = Song::factory()->for($user, 'owner')->createOne(['year' => 1995]);
+        Song::factory()->for($user, 'owner')->createOne(['year' => 2005]);
+
+        $response = $this->getJson(
+            "/rest/getRandomSongs.view?apiKey={$user->subsonic_api_key}&f=json&fromYear=1990&toYear=1999",
+        );
+
+        self::assertSame([$nineties->id], array_column($response->json('subsonic-response.randomSongs.song'), 'id'));
     }
 }

@@ -429,6 +429,32 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection<int, Song> */
+    public function getRandomInGenreAndYears(
+        int $limit,
+        ?Genre $genre,
+        ?int $fromYear,
+        ?int $toYear,
+        ?User $scopedUser = null,
+    ): Collection {
+        $scopedUser ??= $this->auth->user();
+
+        $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
+            ->select('songs.id')
+            ->accessible()
+            ->when($genre, static fn (SongBuilder $query) => $query->whereIn(
+                'songs.id',
+                $genre->songs()->newPivotQuery()->select('song_id'),
+            ))
+            ->when($fromYear !== null, static fn (SongBuilder $query) => $query->where('songs.year', '>=', $fromYear))
+            ->when($toYear !== null, static fn (SongBuilder $query) => $query->where('songs.year', '<=', $toYear))
+            ->inRandomOrder()
+            ->limit($limit)
+            ->pluck('songs.id');
+
+        return $this->getMany($ids->all(), preserveOrder: true, scopedUser: $scopedUser);
+    }
+
+    /** @return Collection<int, Song> */
     public function getRandom(int $limit, ?User $scopedUser = null): Collection
     {
         $scopedUser ??= $this->auth->user();
