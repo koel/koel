@@ -53,6 +53,16 @@ describe('userCard.vue', () => {
     await assertOpenContextMenu(openContextMenu as Mock, UserContextMenu, { user })
   })
 
+  it('does not request the context menu on right-click for the current user', async () => {
+    const { openContextMenu } = useContextMenu()
+    const user = h.factory('user').state('current').make() as CurrentUser
+    h.actingAsUser(user)
+    renderComponent(user)
+
+    await h.trigger(screen.getByTestId('user-card'), 'contextMenu')
+    expect(openContextMenu).not.toHaveBeenCalled()
+  })
+
   it('requests the context menu via the More Actions button', async () => {
     const { openContextMenu } = useContextMenu()
     const { user } = renderComponent()

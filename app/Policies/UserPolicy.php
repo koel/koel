@@ -18,6 +18,7 @@ class UserPolicy
     {
         return (
             $currentUser->hasPermissionTo(Permission::MANAGE_USERS)
+            && $userToUpdate->isNot($currentUser)
             && $currentUser->role->canManage($userToUpdate->role)
         );
     }
