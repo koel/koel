@@ -46,6 +46,11 @@ export interface UploadFailure {
   message: string
 }
 
+export interface UploadDuplication {
+  upload_key: string
+  duplicate: DuplicateUpload
+}
+
 export type UploadStatus =
   | 'Ready'
   | 'Uploading'
@@ -186,8 +191,7 @@ export const uploadService = {
       const isObjectResponse = responseData !== null && typeof responseData === 'object'
 
       if (err.status === 409 && isObjectResponse) {
-        this.state.duplicatedSongs.push(responseData as DuplicateUpload)
-        this.remove(file)
+        this.markAsDuplicate(file, responseData as DuplicateUpload)
         return
       }
 
@@ -317,6 +321,19 @@ export const uploadService = {
       this.tracker.update(file, { status: 'Errored', message: failure.message })
       this.proceed()
     }
+  },
+
+  handleUploadDuplication(duplication: UploadDuplication) {
+    const file = this.findByUploadKey(duplication.upload_key)
+
+    if (file) {
+      this.markAsDuplicate(file, duplication.duplicate)
+    }
+  },
+
+  markAsDuplicate(file: UploadFile, duplicate: DuplicateUpload) {
+    this.state.duplicatedSongs.push(duplicate)
+    this.remove(file)
   },
 
   findByUploadKey(key?: string | null) {

@@ -51,6 +51,7 @@ class WebDAVStorageTest extends PlusTestCase
         $reference = UploadReference::make(
             location: 'webdav://123__random__song.mp3',
             localPath: '/tmp/random/song.mp3',
+            originalFileName: 'song.mp3',
         );
 
         $this->service->undoUpload($reference);

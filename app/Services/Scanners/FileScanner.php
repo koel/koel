@@ -16,7 +16,7 @@ class FileScanner
         private readonly SimpleLrcReader $lrcReader,
     ) {}
 
-    public function scan(string|SplFileInfo $path): ScanInformation
+    public function scan(string|SplFileInfo $path, ?string $originalFileName = null): ScanInformation
     {
         $file = $path instanceof SplFileInfo ? $path : new SplFileInfo($path);
         $filePath = $file->getRealPath();
@@ -33,10 +33,11 @@ class FileScanner
 
         $this->getID3->CopyTagsToComments($raw);
 
-        return tap(ScanInformation::fromGetId3Info($raw, $filePath), function (ScanInformation $info) use (
-            $filePath,
-        ): void {
-            $info->lyrics = $info->lyrics ?: $this->lrcReader->tryReadForMediaFile($filePath);
-        });
+        return tap(
+            ScanInformation::fromGetId3Info($raw, $filePath, $originalFileName),
+            function (ScanInformation $info) use ($filePath): void {
+                $info->lyrics = $info->lyrics ?: $this->lrcReader->tryReadForMediaFile($filePath);
+            },
+        );
     }
 }

@@ -11,17 +11,23 @@ final readonly class Downloadable
 
     private function __construct(
         public string $path,
+        public ?string $name,
+        public bool $isTemporaryCopy,
     ) {
         $this->redirectable = Str::startsWith($path, ['http://', 'https://']);
     }
 
-    public static function make(string $path): self
+    public static function make(string $path, ?string $name = null, bool $isTemporaryCopy = false): self
     {
-        return new self($path);
+        return new self($path, $name, $isTemporaryCopy);
     }
 
     public function toResponse(): Response
     {
-        return $this->redirectable ? response()->redirectTo($this->path) : response()->download($this->path);
+        if ($this->redirectable) {
+            return response()->redirectTo($this->path);
+        }
+
+        return response()->download($this->path, $this->name)->deleteFileAfterSend($this->isTemporaryCopy);
     }
 }

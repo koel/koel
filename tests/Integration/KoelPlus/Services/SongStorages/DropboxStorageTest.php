@@ -96,7 +96,11 @@ class DropboxStorageTest extends PlusTestCase
         $this->filesystem->expects('delete')->with('koel/song.mp3');
         File::expects('delete')->with('/tmp/random/song.mp3');
 
-        $reference = UploadReference::make(location: 'dropbox://koel/song.mp3', localPath: '/tmp/random/song.mp3');
+        $reference = UploadReference::make(
+            location: 'dropbox://koel/song.mp3',
+            localPath: '/tmp/random/song.mp3',
+            originalFileName: 'song.mp3',
+        );
 
         $this->client->expects('setAccessToken')->with('free-bird');
 

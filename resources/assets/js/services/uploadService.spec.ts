@@ -275,6 +275,27 @@ describe('uploadService', () => {
     expect(file.message).toBe('Empty file')
   })
 
+  it('moves a processing file to the duplicates when its upload turns out to be a duplicate', () => {
+    const file = createUploadFile({ status: 'Processing', uploadKey: '1__abc__song.mp3' })
+    uploadService.tracker.add([file])
+    uploadService.state.duplicatedSongs = []
+    h.mock(uploadService, 'proceed')
+
+    const duplicate = {
+      type: 'duplicate-uploads' as const,
+      id: crypto.randomUUID(),
+      song_title: 'Song',
+      artist_name: 'Artist',
+      filename: 'song.mp3',
+      created_at: new Date().toISOString(),
+    }
+
+    uploadService.handleUploadDuplication({ upload_key: '1__abc__song.mp3', duplicate })
+
+    expect(uploadService.state.duplicatedSongs).toEqual([duplicate])
+    expect(uploadService.tracker.size).toBe(0)
+  })
+
   it('ignores a broadcast for a file it no longer has', () => {
     expect(() => uploadService.handleUploadFailure({ upload_key: 'gone', message: 'Empty file' })).not.toThrow()
   })

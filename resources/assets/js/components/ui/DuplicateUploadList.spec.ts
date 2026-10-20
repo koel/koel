@@ -50,6 +50,18 @@ describe('duplicateUploadList', () => {
     expect(mock).toHaveBeenCalled()
   })
 
+  it('disables keeping all while a keep all is in flight', async () => {
+    const mock = h.mock(uploadService, 'keepAllDuplicates').mockReturnValue(new Promise(() => {}))
+    renderComponent()
+
+    const keepAllButton = screen.getByRole('button', { name: 'Keep All' })
+    await h.user.click(keepAllButton)
+    await h.user.click(keepAllButton)
+
+    expect(mock).toHaveBeenCalledOnce()
+    expect(keepAllButton).toHaveProperty('disabled', true)
+  })
+
   it('confirms before discarding all', async () => {
     mockShowConfirmDialog.mockResolvedValue(true)
     const mock = h.mock(uploadService, 'discardAllDuplicates')

@@ -39,7 +39,7 @@ class ScanInformation implements Arrayable
         public ?int $fileSize,
     ) {}
 
-    public static function fromGetId3Info(array $info, string $path): self
+    public static function fromGetId3Info(array $info, string $path, ?string $originalFileName = null): self
     {
         // We prefer ID3v2 tags over ID3v1 tags.
         $tags = array_merge(
@@ -80,7 +80,11 @@ class ScanInformation implements Arrayable
         ])));
 
         return new self(
-            title: html_entity_decode(TagFixer::fix(self::getTag($tags, 'title', pathinfo($path, PATHINFO_FILENAME)))),
+            title: html_entity_decode(TagFixer::fix(self::getTag(
+                $tags,
+                'title',
+                pathinfo($originalFileName ?? $path, PATHINFO_FILENAME),
+            ))),
             albumName: html_entity_decode(TagFixer::fix(self::getTag($tags, 'album', Album::UNKNOWN_NAME))),
             artistName: html_entity_decode(TagFixer::fix(self::getTag($tags, 'artist', Artist::UNKNOWN_NAME))),
             albumArtistName: html_entity_decode($albumArtistName),

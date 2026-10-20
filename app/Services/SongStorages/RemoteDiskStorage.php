@@ -31,7 +31,11 @@ abstract class RemoteDiskStorage extends SongStorage implements MustDeleteTempor
         $path = $this->generateStorageKey(basename($uploadedFilePath), $uploader);
         $this->putFile($path, $uploadedFilePath);
 
-        return UploadReference::make(location: $this->getLocationPrefix() . $path, localPath: $uploadedFilePath);
+        return UploadReference::make(
+            location: $this->getLocationPrefix() . $path,
+            localPath: $uploadedFilePath,
+            originalFileName: basename($uploadedFilePath),
+        );
     }
 
     protected function putFile(string $remotePath, string $localPath): void

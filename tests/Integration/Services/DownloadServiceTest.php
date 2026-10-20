@@ -33,7 +33,7 @@ class DownloadServiceTest extends TestCase
                 'path' => 'https://example.com/episode.mp3',
             ]);
 
-        $path = $this->service->getLocalPathOrDownloadableUrl($episode);
+        $path = $this->service->getDownloadable($episode)->path;
 
         self::assertSame('foo', File::get($path));
     }

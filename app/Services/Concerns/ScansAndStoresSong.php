@@ -16,6 +16,7 @@ trait ScansAndStoresSong
     private function scanAndStore(
         string $localFilePath,
         string $storageLocation,
+        string $originalFileName,
         User $owner,
         FileScanner $scanner,
         SongService $songService,
@@ -29,7 +30,7 @@ trait ScansAndStoresSong
             extractFolderStructure: $storage->getStorageType()->supportsFolderStructureExtraction(),
         );
 
-        $song = $songService->createOrUpdateSongFromScan($scanner->scan($localFilePath), $config);
+        $song = $songService->createOrUpdateSongFromScan($scanner->scan($localFilePath, $originalFileName), $config);
 
         if ($song->path !== $storageLocation || $song->storage !== $storage->getStorageType()) {
             $song->update([

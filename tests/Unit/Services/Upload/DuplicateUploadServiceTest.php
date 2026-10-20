@@ -6,6 +6,7 @@ use App\Enums\SongStorageType;
 use App\Exceptions\DuplicateSongUploadException;
 use App\Models\DuplicateUpload;
 use App\Models\Song;
+use App\Repositories\DuplicateUploadRepository;
 use App\Repositories\SongRepository;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\AudioAnalysis\AudioAnalyzer;
@@ -46,6 +47,7 @@ class DuplicateUploadServiceTest extends TestCase
     {
         return new DuplicateUploadService(
             $this->songRepository,
+            app(DuplicateUploadRepository::class),
             $this->songService,
             $this->scanner,
             $this->storage,
@@ -60,7 +62,7 @@ class DuplicateUploadServiceTest extends TestCase
     {
         $uploader = create_user(['preferences' => ['detect_duplicate_uploads' => true]]);
         $existingSong = Song::factory()->createOne();
-        $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3');
+        $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3', 'song.mp3');
 
         File::expects('hash')->with('/tmp/song.mp3', 'xxh128')->andReturn('fast-hash');
         File::expects('hash')->with('/tmp/song.mp3', 'md5')->andReturn('legacy-hash');
@@ -76,6 +78,7 @@ class DuplicateUploadServiceTest extends TestCase
             $this->assertDatabaseHas('duplicate_uploads', [
                 'user_id' => $uploader->id,
                 'existing_song_id' => $existingSong->id,
+                'file_name' => 'song.mp3',
             ]);
         }
     }
@@ -84,7 +87,7 @@ class DuplicateUploadServiceTest extends TestCase
     public function skipsDetectionWhenPreferenceIsDisabled(): void
     {
         $uploader = create_user(['preferences' => ['detect_duplicate_uploads' => false]]);
-        $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3');
+        $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3', 'song.mp3');
 
         $this->songRepository->expects('findByAnyHash')->never();
 
@@ -95,7 +98,7 @@ class DuplicateUploadServiceTest extends TestCase
     public function doesNothingWhenNoDuplicateFound(): void
     {
         $uploader = create_user(['preferences' => ['detect_duplicate_uploads' => true]]);
-        $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3');
+        $reference = UploadReference::make('/media/song.mp3', '/media/song.mp3', 'song.mp3');
 
         File::expects('hash')->twice()->andReturn('abc123');
         $this->songRepository->expects('findByAnyHash')->with(['abc123', 'abc123'], $uploader)->andReturnNull();
@@ -103,6 +106,22 @@ class DuplicateUploadServiceTest extends TestCase
         $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
 
         self::assertSame(0, DuplicateUpload::query()->count());
+    }
+
+    #[Test]
+    public function keepSkipsADuplicateAlreadyKept(): void
+    {
+        $upload = DuplicateUpload::factory()->createOne();
+        $upload->delete();
+
+        $this->scanner->expects('scan')->never();
+
+        self::assertTrue(
+            $this
+                ->makeService()
+                ->keep(collect([$upload]))
+                ->isEmpty(),
+        );
     }
 
     #[Test]

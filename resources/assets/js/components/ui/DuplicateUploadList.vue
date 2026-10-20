@@ -9,13 +9,14 @@
     </VirtualScroller>
 
     <footer class="flex justify-end gap-2">
-      <Btn variant="success" @click="keepAll">Keep All</Btn>
+      <Btn :disabled="keepingAll" variant="success" @click="keepAll">Keep All</Btn>
       <Btn variant="destructive" @click="confirmDiscardAll">Discard All</Btn>
     </footer>
   </section>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { uploadService } from '@/services/uploadService'
 
@@ -32,7 +33,17 @@ const ROW_HEIGHT = 36 + ROW_GAP
 
 const { showConfirmDialog } = useDialogBox()
 
-const keepAll = () => uploadService.keepAllDuplicates()
+const keepingAll = ref(false)
+
+const keepAll = async () => {
+  keepingAll.value = true
+
+  try {
+    await uploadService.keepAllDuplicates()
+  } finally {
+    keepingAll.value = false
+  }
+}
 
 const confirmDiscardAll = async () => {
   if (await showConfirmDialog('Discard all duplicate uploads?')) {

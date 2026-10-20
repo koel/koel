@@ -12,7 +12,7 @@
     >
       Uploaded {{ uploadedAgo }}
     </time>
-    <Btn v-koel-tooltip class="h-full px-4!" icon-only unrounded variant="success" @click="keep">
+    <Btn v-koel-tooltip :disabled="keeping" class="h-full px-4!" icon-only unrounded variant="success" @click="keep">
       <Icon :icon="faCheck" />
       <span class="sr-only">Keep</span>
     </Btn>
@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import { faCheck, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { useTimeAgo } from '@vueuse/core'
+import { ref } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { uploadService } from '@/services/uploadService'
 
@@ -40,7 +41,17 @@ const uploadedAgo = useTimeAgo(uploadedAt)
 
 const { showConfirmDialog } = useDialogBox()
 
-const keep = () => uploadService.keepDuplicate(props.upload.id)
+const keeping = ref(false)
+
+const keep = async () => {
+  keeping.value = true
+
+  try {
+    await uploadService.keepDuplicate(props.upload.id)
+  } finally {
+    keeping.value = false
+  }
+}
 
 const confirmDiscard = async () => {
   if (await showConfirmDialog('Discard this duplicate upload?')) {

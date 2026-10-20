@@ -45,6 +45,7 @@ class UploadService
             $song = $this->scanAndStore(
                 $uploadReference->localPath,
                 $uploadReference->location,
+                $uploadReference->originalFileName,
                 $uploader,
                 $this->scanner,
                 $this->songService,

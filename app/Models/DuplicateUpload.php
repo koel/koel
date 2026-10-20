@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $user_id
  * @property string|null $existing_song_id
  * @property string $location
+ * @property string|null $file_name
  * @property SongStorageType $storage
  * @property Carbon $created_at
  * @property Song|null $existingSong

@@ -1,6 +1,6 @@
 import type Echo from 'laravel-echo'
 import { authService } from '@/services/authService'
-import type { UploadFailure, UploadResult } from '@/services/uploadService'
+import type { UploadDuplication, UploadFailure, UploadResult } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 
 type Broadcaster = 'pusher' | 'null' // narrow down the supported broadcasters
@@ -41,5 +41,6 @@ export const broadcastSubscriber = {
       .private(`user.${userId}`)
       .listen('.song.uploaded', (event: UploadResult) => uploadService.handleUploadResult(event))
       .listen('.song.upload_failed', (event: UploadFailure) => uploadService.handleUploadFailure(event))
+      .listen('.song.upload_duplicated', (event: UploadDuplication) => uploadService.handleUploadDuplication(event))
   },
 }

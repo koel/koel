@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\DuplicateUpload;
 use App\Models\Setting;
 use App\Services\LibrarySummaryService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -105,6 +106,35 @@ class DuplicateUploadActionTest extends TestCase
         $this->postAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertJsonStructure(['song', 'album']);
 
         $this->assertDatabaseMissing('duplicate_uploads', ['id' => $upload->id]);
+    }
+
+    #[Test]
+    public function keptUntaggedDuplicateIsTitledAfterTheUploadedFile(): void
+    {
+        Setting::set('media_path', sandbox_path('media'));
+
+        $user = create_user();
+        $songPath = sandbox_path('media/abc123_Untagged Song.mp3');
+        File::copy(test_path('songs/blank.mp3'), $songPath);
+
+        $upload = DuplicateUpload::factory()->for($user)->createOne([
+            'location' => $songPath,
+            'file_name' => 'Untagged Song.mp3',
+        ]);
+
+        $this->postAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertJsonPath('song.title', 'Untagged Song');
+    }
+
+    #[Test]
+    public function keepingADuplicateBeingKeptElsewhereKeepsNothing(): void
+    {
+        $user = create_user();
+        $upload = DuplicateUpload::factory()->for($user)->createOne();
+        Cache::lock("keep-duplicate-upload.$upload->id")->get();
+
+        $this->postAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertNotFound();
+
+        $this->assertDatabaseHas('duplicate_uploads', ['id' => $upload->id]);
     }
 
     #[Test]
