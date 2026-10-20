@@ -24,7 +24,7 @@ class DuplicateUploadResource extends JsonResource
             'id' => $this->upload->id,
             'song_title' => $this->upload->existingSong?->title,
             'artist_name' => $this->upload->existingSong?->artist_name,
-            'filename' => basename($this->upload->location),
+            'filename' => $this->upload->file_name ?? basename($this->upload->location),
             'created_at' => $this->upload->created_at,
         ];
     }
