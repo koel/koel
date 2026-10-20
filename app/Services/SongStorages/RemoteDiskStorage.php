@@ -86,6 +86,25 @@ abstract class RemoteDiskStorage extends SongStorage implements MustDeleteTempor
         return $localPath;
     }
 
+    public function getReusableLocalCopy(string $path): string
+    {
+        $reusablePath = artifact_path(sprintf(
+            'tmp/stream_%s_%s',
+            sha1($this->getDiskName() . ':' . $path),
+            basename($path),
+        ));
+
+        if (File::exists($reusablePath)) {
+            touch($reusablePath);
+
+            return $reusablePath;
+        }
+
+        File::move($this->copyToLocal($path), $reusablePath);
+
+        return $reusablePath;
+    }
+
     public function testSetup(): void
     {
         $this->disk->put('test.txt', 'Koel test file');

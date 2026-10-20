@@ -79,4 +79,22 @@ class SftpStorageTest extends PlusTestCase
 
         self::assertStringEqualsFile($localPath, 'fake mp3 content');
     }
+
+    #[Test]
+    public function downloadARemoteFileOnceForRepeatedStreaming(): void
+    {
+        Storage::disk('sftp')->put('music/reused-song.mp3', 'fake mp3 content');
+
+        $firstCopy = $this->service->getReusableLocalCopy('music/reused-song.mp3');
+        touch($firstCopy, now()->subDays(2)->getTimestamp());
+        Storage::disk('sftp')->put('music/reused-song.mp3', 'changed content');
+        $secondCopy = $this->service->getReusableLocalCopy('music/reused-song.mp3');
+
+        self::assertSame($firstCopy, $secondCopy);
+        self::assertStringEqualsFile($secondCopy, 'fake mp3 content');
+        clearstatcache();
+        self::assertGreaterThan(now()->subHour()->getTimestamp(), filemtime($secondCopy));
+
+        File::delete($secondCopy);
+    }
 }

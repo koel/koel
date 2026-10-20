@@ -30,15 +30,15 @@ class RemoteDiskStreamerAdapterTest extends TestCase
     }
 
     #[Test]
-    public function deleteTheTemporaryCopyOnceStreamed(): void
+    public function keepTheLocalCopyForLaterRequests(): void
     {
         $song = Song::factory()->createOne(['storage' => SongStorageType::SFTP, 'path' => 'sftp://song.mp3']);
-        $temporaryCopy = artifact_path('tmp/' . uniqid() . '.mp3');
-        File::copy(test_path('songs/blank.mp3'), $temporaryCopy);
+        $localCopy = artifact_path('tmp/' . uniqid() . '.mp3');
+        File::copy(test_path('songs/blank.mp3'), $localCopy);
 
         $storage = Mockery::mock(SftpStorage::class);
         $storage->expects('assertSupported');
-        $storage->expects('copyToLocal')->with('song.mp3')->andReturn($temporaryCopy);
+        $storage->expects('getReusableLocalCopy')->with('song.mp3')->andReturn($localCopy);
 
         $response = (new RemoteDiskStreamerAdapter($storage))->stream($song);
 
@@ -46,6 +46,8 @@ class RemoteDiskStreamerAdapterTest extends TestCase
         $response->sendContent();
         ob_end_clean();
 
-        self::assertFileDoesNotExist($temporaryCopy);
+        self::assertFileExists($localCopy);
+
+        File::delete($localCopy);
     }
 }
