@@ -10,6 +10,7 @@ import { pluralize } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { canUploadFromThisDevice } from '@/utils/uploadAccess'
+import { uuid } from '@/utils/crypto'
 
 export const useUpload = () => {
   const { toastSuccess, toastWarning } = useMessageToaster()
@@ -30,7 +31,7 @@ export const useUpload = () => {
       Filter.SELECTED_UPLOADS,
       files.map((file): UploadFile => ({
         file,
-        id: `${file.name}-${file.size}`, // for simplicity, a file's identity is determined by its name and size
+        id: uuid(),
         status: acceptsFile(file) ? 'Ready' : 'Skipped',
         message: acceptsFile(file) ? undefined : 'Unsupported format',
         name: file.name,

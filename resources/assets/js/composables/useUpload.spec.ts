@@ -81,6 +81,13 @@ describe('useUpload', () => {
     expect(result[0].name).toBe('song.mp3')
   })
 
+  it('gives each queued copy of the same file its own id', () => {
+    const file = new File(['content'], 'song.mp3', { type: 'audio/mpeg' })
+    const [first, second] = useUpload().queueFilesForUpload([file, file])
+
+    expect(first.id).not.toBe(second.id)
+  })
+
   it('lists a file it cannot play as skipped rather than dropping it', () => {
     const { queueFilesForUpload } = useUpload()
 
