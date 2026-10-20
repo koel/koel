@@ -2,10 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\DuplicateSongUploadException;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
+use App\Responses\SongUploadDuplicatedResponse;
 use App\Responses\SongUploadFailedResponse;
 use App\Responses\SongUploadResponse;
 use App\Services\SongStorages\SongStorage;
@@ -26,14 +28,26 @@ class HandlePresignedSongUploadJob extends QueuedJob
         UploadService $uploadService,
         SongRepository $songRepository,
         AlbumRepository $albumRepository,
-    ): Song {
+    ): ?Song {
         $reference = UploadReference::make(
             location: $this->location,
             localPath: $storage->getLocalPath($this->location),
             originalFileName: $storage->getOriginalFileName($this->location),
         );
 
-        $song = $uploadService->handleStoredUpload($reference, $this->uploader);
+        try {
+            $song = $uploadService->handleStoredUpload($reference, $this->uploader);
+        } catch (DuplicateSongUploadException $e) {
+            throw_unless($this->wasQueued(), $e);
+
+            broadcast(SongUploadDuplicatedResponse::make(
+                uploader: $this->uploader,
+                uploadKey: $this->uploadKey,
+                duplicateUpload: $e->duplicateUpload,
+            ));
+
+            return null;
+        }
 
         $populatedSong = $songRepository->getOne($song->id, $this->uploader);
         $album = $albumRepository->getOne($populatedSong->album_id, $this->uploader);
