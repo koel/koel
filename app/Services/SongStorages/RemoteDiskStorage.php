@@ -8,6 +8,7 @@ use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Values\UploadReference;
 use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -15,6 +16,9 @@ use RuntimeException;
 
 abstract class RemoteDiskStorage extends SongStorage implements MustDeleteTemporaryLocalFileAfterUpload
 {
+    private const int LOCAL_COPY_LOCK_SECONDS = 600;
+    private const int LOCAL_COPY_LOCK_WAIT_SECONDS = 120;
+
     use DeletesUsingFilesystem;
 
     protected Filesystem $disk;
@@ -87,6 +91,14 @@ abstract class RemoteDiskStorage extends SongStorage implements MustDeleteTempor
     }
 
     public function getReusableLocalCopy(string $path): string
+    {
+        return Cache::lock(
+            cache_key('reusable local copy', $this->getDiskName(), $path),
+            self::LOCAL_COPY_LOCK_SECONDS,
+        )->block(self::LOCAL_COPY_LOCK_WAIT_SECONDS, fn (): string => $this->findOrCreateReusableLocalCopy($path));
+    }
+
+    private function findOrCreateReusableLocalCopy(string $path): string
     {
         $reusablePath = artifact_path(sprintf(
             'tmp/stream_%s_%s',
