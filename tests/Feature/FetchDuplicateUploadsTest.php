@@ -53,4 +53,16 @@ class FetchDuplicateUploadsTest extends TestCase
         $response->assertJsonPath('0.filename', 'my-song.mp3');
         $response->assertJsonStructure(['*' => ['song_title', 'artist_name']]);
     }
+
+    #[Test]
+    public function showTheFileNameAsUploaded(): void
+    {
+        $user = create_user();
+        DuplicateUpload::factory()->for($user)->createOne([
+            'location' => 's3://bucket/01JX0000000000000000000000_ab12cd__my-song.mp3',
+            'file_name' => 'my-song.mp3',
+        ]);
+
+        $this->getAs('api/duplicate-uploads', $user)->assertJsonPath('0.filename', 'my-song.mp3');
+    }
 }
