@@ -3,7 +3,6 @@
 use App\Providers\AppServiceProvider;
 use App\Providers\AuthServiceProvider;
 use App\Providers\BroadcastServiceProvider;
-use App\Providers\DownloadServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\ITunesServiceProvider;
 use App\Providers\LicenseServiceProvider;
@@ -29,7 +28,6 @@ return [
     AuthServiceProvider::class,
     EventServiceProvider::class,
     YouTubeServiceProvider::class,
-    DownloadServiceProvider::class,
     BroadcastServiceProvider::class,
     ITunesServiceProvider::class,
     StreamerServiceProvider::class,
