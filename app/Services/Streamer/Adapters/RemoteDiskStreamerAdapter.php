@@ -20,6 +20,7 @@ class RemoteDiskStreamerAdapter implements StreamerAdapter
     {
         $this->storage->assertSupported();
 
-        return self::streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()));
+        return self::streamLocalPath($this->storage->copyToLocal($song->storage_metadata->getPath()))
+            ->deleteFileAfterSend();
     }
 }
