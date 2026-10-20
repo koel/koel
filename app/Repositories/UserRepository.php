@@ -67,6 +67,11 @@ class UserRepository extends Repository
         );
     }
 
+    public function getOneLockedForUpdate(int $id): User
+    {
+        return User::query()->whereKey($id)->lockForUpdate()->firstOrFail();
+    }
+
     public function getOneByPublicId(string $publicId): User
     {
         return $this->getOneBy(['public_id' => $publicId]);

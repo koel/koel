@@ -105,6 +105,28 @@ describe('equalizerStore', () => {
     expect(equalizerStore.state.customPresets).toHaveLength(0)
   })
 
+  it('keeps a saved custom preset after re-initializing', async () => {
+    const serverPreset = { id: '01HSERVER', name: 'Mine', preamp: 0, gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+    h.mock(http, 'post').mockResolvedValueOnce(serverPreset)
+
+    await equalizerStore.saveCustomPreset('Mine', 0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    equalizerStore.init()
+
+    expect(equalizerStore.state.customPresets).toEqual([serverPreset])
+  })
+
+  it('leaves a deleted custom preset out after re-initializing', async () => {
+    const serverPreset = { id: '01HSERVER', name: 'Mine', preamp: 0, gains: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+    h.mock(http, 'delete').mockResolvedValueOnce(undefined)
+    preferenceStore.state.equalizer_presets = [serverPreset]
+    equalizerStore.init()
+
+    await equalizerStore.deleteCustomPreset('01HSERVER')
+    equalizerStore.init()
+
+    expect(equalizerStore.state.customPresets).toHaveLength(0)
+  })
+
   it('saves last-applied config (named preset)', () => {
     const rock = equalizerStore.getPresetById('01KR9JKWWQDDJZ5HT6DBY9DH49')!
     equalizerStore.saveConfig(rock, 0, rock.gains)

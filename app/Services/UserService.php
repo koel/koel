@@ -14,9 +14,12 @@ use App\Services\Image\ImageStorage;
 use App\Values\ImageWritingConfig;
 use App\Values\User\SsoUser;
 use App\Values\User\UserCreateData;
+use App\Values\User\UserPreferences;
 use App\Values\User\UserUpdateData;
+use Closure;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SensitiveParameter;
 
@@ -174,8 +177,23 @@ class UserService
 
     public function savePreference(User $user, string $key, mixed $value): void
     {
-        $user->preferences = $user->preferences->set($key, $value);
+        $this->updatePreferences($user, static fn (UserPreferences $preferences): UserPreferences => $preferences->set(
+            $key,
+            $value,
+        ));
+    }
 
-        $user->save();
+    /** @param Closure(UserPreferences): UserPreferences $changePreferences */
+    public function updatePreferences(User $user, Closure $changePreferences): void
+    {
+        $user->preferences = DB::transaction(function () use ($user, $changePreferences): UserPreferences {
+            $lockedUser = $this->repository->getOneLockedForUpdate($user->id);
+            $lockedUser->preferences = $changePreferences($lockedUser->preferences);
+            $lockedUser->save();
+
+            return $lockedUser->preferences;
+        }, attempts: 3);
+
+        $user->syncOriginalAttribute('preferences');
     }
 }

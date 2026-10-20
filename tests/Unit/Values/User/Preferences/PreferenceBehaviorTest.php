@@ -8,16 +8,20 @@ use App\Values\User\Preferences\ActiveExtraPanelTabPreference;
 use App\Values\User\Preferences\AlbumsSortFieldPreference;
 use App\Values\User\Preferences\AlbumsSortOrderPreference;
 use App\Values\User\Preferences\AlbumsViewModePreference;
+use App\Values\User\Preferences\ArtistsSortFieldPreference;
 use App\Values\User\Preferences\CrossfadeDurationPreference;
 use App\Values\User\Preferences\CurrentEqualizerPresetPreference;
 use App\Values\User\Preferences\EqualizerPresetsPreference;
 use App\Values\User\Preferences\HomeBlocksOrderPreference;
+use App\Values\User\Preferences\Preference;
+use App\Values\User\Preferences\RadioStationsSortFieldPreference;
 use App\Values\User\Preferences\RadioStationsViewModePreference;
 use App\Values\User\Preferences\RepeatModePreference;
 use App\Values\User\Preferences\TranscodeQualityPreference;
 use App\Values\User\Preferences\VolumePreference;
 use App\Values\User\UserPreferences;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use Webmozart\Assert\InvalidArgumentException as AssertException;
@@ -73,6 +77,27 @@ class PreferenceBehaviorTest extends TestCase
     {
         $this->expectException(AssertException::class);
         AlbumsSortFieldPreference::make('unknown_column');
+    }
+
+    /** @return array<string, array{class-string<Preference>, string}> */
+    public static function provideSortFieldsOfferedByTheUi(): array
+    {
+        return [
+            'albums by length' => [AlbumsSortFieldPreference::class, 'length'],
+            'albums by rating' => [AlbumsSortFieldPreference::class, 'rating'],
+            'albums by favorite' => [AlbumsSortFieldPreference::class, 'favorite'],
+            'artists by rating' => [ArtistsSortFieldPreference::class, 'rating'],
+            'artists by favorite' => [ArtistsSortFieldPreference::class, 'favorite'],
+            'radio stations by favorite' => [RadioStationsSortFieldPreference::class, 'favorite'],
+        ];
+    }
+
+    /** @param class-string<Preference> $class */
+    #[Test]
+    #[DataProvider('provideSortFieldsOfferedByTheUi')]
+    public function sortFieldAcceptsFieldOfferedByTheUi(string $class, string $field): void
+    {
+        self::assertSame($field, $class::make($field)->getValue());
     }
 
     #[Test]

@@ -193,4 +193,19 @@ class UserServiceTest extends TestCase
             email: 'steve@iron.com',
         ));
     }
+
+    #[Test]
+    public function savePreferenceKeepsPreferencesSavedAfterTheUserWasLoaded(): void
+    {
+        $user = create_user();
+        $sameUserLoadedEarlier = $user->fresh();
+
+        $this->service->savePreference($user, 'albums_sort_field', 'year');
+        $this->service->savePreference($sameUserLoadedEarlier, 'albums_sort_order', 'desc');
+
+        $user->refresh();
+
+        self::assertSame('year', $user->preferences->albumsSortField);
+        self::assertSame('desc', $user->preferences->albumsSortOrder);
+    }
 }
