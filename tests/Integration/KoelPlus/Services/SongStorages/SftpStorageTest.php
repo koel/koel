@@ -5,8 +5,11 @@ namespace Tests\Integration\KoelPlus\Services\SongStorages;
 use App\Helpers\Ulid;
 use App\Services\SongStorages\SftpStorage;
 use App\Values\UploadReference;
+use Illuminate\Contracts\Cache\LockTimeoutException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Sleep;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
@@ -96,5 +99,19 @@ class SftpStorageTest extends PlusTestCase
         self::assertGreaterThan(now()->subHour()->getTimestamp(), filemtime($secondCopy));
 
         File::delete($secondCopy);
+    }
+
+    #[Test]
+    public function waitForAnotherRequestDownloadingTheSameFile(): void
+    {
+        $this->freezeTime();
+        Sleep::fake(syncWithCarbon: true);
+
+        Storage::disk('sftp')->put('music/locked-song.mp3', 'fake mp3 content');
+        Cache::lock(cache_key('reusable local copy', 'sftp', 'music/locked-song.mp3'), 600)->get();
+
+        $this->expectException(LockTimeoutException::class);
+
+        $this->service->getReusableLocalCopy('music/locked-song.mp3');
     }
 }
