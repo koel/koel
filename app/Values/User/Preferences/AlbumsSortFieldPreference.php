@@ -13,6 +13,6 @@ class AlbumsSortFieldPreference extends Preference
 
     public function assert(): void
     {
-        Assert::oneOf($this->value, ['name', 'artist_name', 'year', 'created_at']);
+        Assert::oneOf($this->value, ['name', 'artist_name', 'year', 'created_at', 'length', 'rating', 'favorite']);
     }
 }
