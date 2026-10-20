@@ -10,6 +10,11 @@ const state = reactive({
 const byName = (a: EqualizerPreset, b: EqualizerPreset) =>
   (a.name ?? '').localeCompare(b.name ?? '', undefined, { sensitivity: 'base' })
 
+const setCustomPresets = (presets: EqualizerPreset[]) => {
+  state.customPresets = presets
+  preferences.state.equalizer_presets = presets
+}
+
 export const equalizerStore = {
   state,
 
@@ -55,13 +60,13 @@ export const equalizerStore = {
 
   async saveCustomPreset(name: string, preamp: number, gains: number[]): Promise<EqualizerPreset> {
     const preset = await http.post<EqualizerPreset>('me/equalizer-presets', { name, preamp, gains })
-    state.customPresets = [...state.customPresets, preset].sort(byName)
+    setCustomPresets([...state.customPresets, preset].sort(byName))
 
     return preset
   },
 
   async deleteCustomPreset(id: string) {
     await http.delete(`me/equalizer-presets/${id}`)
-    state.customPresets = state.customPresets.filter(p => p.id !== id)
+    setCustomPresets(state.customPresets.filter(p => p.id !== id))
   },
 }
