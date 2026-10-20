@@ -139,7 +139,7 @@ class PlaylistService
 
             // if the playlist is collaborative, make the songs public
             if ($this->isPlaylistCollaborative($playlist)) {
-                $this->makePlaylistContentPublic($playlist);
+                $this->makePlaylistContentPublic($playlist, $user);
             }
 
             // we want a fresh copy of the songs with the possibly updated visibility
@@ -161,7 +161,7 @@ class PlaylistService
             $playlist->addPlayables(array_values(array_unique($playableIds)), $user);
 
             if ($this->isPlaylistCollaborative($playlist)) {
-                $this->makePlaylistContentPublic($playlist);
+                $this->makePlaylistContentPublic($playlist, $user);
             }
         });
     }
@@ -171,9 +171,13 @@ class PlaylistService
         $playlist->removePlayables($playables);
     }
 
-    public function makePlaylistContentPublic(Playlist $playlist): void
+    public function makePlaylistContentPublic(Playlist $playlist, User $songOwner): void
     {
-        $playlist->playables()->where('is_public', false)->update(['is_public' => true]);
+        $playlist
+            ->playables()
+            ->whereBelongsTo($songOwner, 'owner')
+            ->where('is_public', false)
+            ->update(['is_public' => true]);
 
         $this->librarySummaryService->markLibraryChanged();
     }
