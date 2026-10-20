@@ -49,6 +49,18 @@ describe('duplicateUploadItem', () => {
     expect(mock).toHaveBeenCalledWith('dup-1')
   })
 
+  it('disables keeping while a keep is in flight', async () => {
+    const mock = h.mock(uploadService, 'keepDuplicate').mockReturnValue(new Promise(() => {}))
+    renderComponent()
+
+    const keepButton = screen.getByRole('button', { name: 'Keep' })
+    await h.user.click(keepButton)
+    await h.user.click(keepButton)
+
+    expect(mock).toHaveBeenCalledOnce()
+    expect(keepButton).toHaveProperty('disabled', true)
+  })
+
   it('confirms before discarding', async () => {
     mockShowConfirmDialog.mockResolvedValue(true)
     const mock = h.mock(uploadService, 'discardDuplicate')

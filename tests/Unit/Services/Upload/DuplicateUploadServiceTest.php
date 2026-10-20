@@ -6,6 +6,7 @@ use App\Enums\SongStorageType;
 use App\Exceptions\DuplicateSongUploadException;
 use App\Models\DuplicateUpload;
 use App\Models\Song;
+use App\Repositories\DuplicateUploadRepository;
 use App\Repositories\SongRepository;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\AudioAnalysis\AudioAnalyzer;
@@ -46,6 +47,7 @@ class DuplicateUploadServiceTest extends TestCase
     {
         return new DuplicateUploadService(
             $this->songRepository,
+            app(DuplicateUploadRepository::class),
             $this->songService,
             $this->scanner,
             $this->storage,
@@ -104,6 +106,22 @@ class DuplicateUploadServiceTest extends TestCase
         $this->makeService()->detectDuplicate('/tmp/song.mp3', $reference, $uploader);
 
         self::assertSame(0, DuplicateUpload::query()->count());
+    }
+
+    #[Test]
+    public function keepSkipsADuplicateAlreadyKept(): void
+    {
+        $upload = DuplicateUpload::factory()->createOne();
+        $upload->delete();
+
+        $this->scanner->expects('scan')->never();
+
+        self::assertTrue(
+            $this
+                ->makeService()
+                ->keep(collect([$upload]))
+                ->isEmpty(),
+        );
     }
 
     #[Test]

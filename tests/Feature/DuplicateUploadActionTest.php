@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\DuplicateUpload;
 use App\Models\Setting;
 use App\Services\LibrarySummaryService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -122,6 +123,18 @@ class DuplicateUploadActionTest extends TestCase
         ]);
 
         $this->postAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertJsonPath('song.title', 'Untagged Song');
+    }
+
+    #[Test]
+    public function keepingADuplicateBeingKeptElsewhereKeepsNothing(): void
+    {
+        $user = create_user();
+        $upload = DuplicateUpload::factory()->for($user)->createOne();
+        Cache::lock("keep-duplicate-upload.$upload->id")->get();
+
+        $this->postAs("api/duplicate-uploads/{$upload->id}", [], $user)->assertNotFound();
+
+        $this->assertDatabaseHas('duplicate_uploads', ['id' => $upload->id]);
     }
 
     #[Test]
