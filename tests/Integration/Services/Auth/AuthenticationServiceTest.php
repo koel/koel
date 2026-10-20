@@ -2,6 +2,7 @@
 
 namespace Tests\Integration\Services\Auth;
 
+use App\Models\User;
 use App\Services\Auth\AuthenticationService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
@@ -49,5 +50,23 @@ class AuthenticationServiceTest extends TestCase
         self::assertFalse($this->service->tryResetPasswordUsingBroker($user->email, 'new-password', 'invalid-token'));
         self::assertTrue(Hash::check('old-password', $user->fresh()->password));
         Event::assertNotDispatched(PasswordReset::class);
+    }
+
+    #[Test]
+    public function resettingPasswordAcceptsPendingInvitation(): void
+    {
+        Event::fake();
+        $prospect = User::factory()->prospect()->createOne();
+
+        self::assertTrue($this->service->tryResetPasswordUsingBroker(
+            $prospect->email,
+            'new-password',
+            Password::createToken($prospect),
+        ));
+
+        $prospect->refresh();
+
+        self::assertFalse($prospect->is_prospect);
+        self::assertNotNull($prospect->invitation_accepted_at);
     }
 }
