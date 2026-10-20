@@ -42,6 +42,19 @@ class PlaylistCollaborationTest extends PlusTestCase
     }
 
     #[Test]
+    public function acceptingExpiredTokenRespondsNotFound(): void
+    {
+        $token = PlaylistCollaborationToken::factory()->createOne();
+        $user = create_user();
+
+        $this->travel(8)->days();
+
+        $this->postAs('api/playlists/collaborators/accept', ['token' => $token->token], $user)->assertNotFound();
+
+        self::assertFalse($token->playlist->hasCollaborator($user));
+    }
+
+    #[Test]
     public function removeCollaborator(): void
     {
         $playlist = create_playlist();
