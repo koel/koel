@@ -156,14 +156,13 @@ describe('http service', () => {
       expect(emitMock).not.toHaveBeenCalledWith('LOG_OUT')
     })
 
-    it('emits LOG_OUT on 400 for non-login requests', async () => {
+    it('does not emit LOG_OUT on 400', async () => {
       mockFetch(400, {})
       h.restoreAllMocks()
       const emitMock = h.mock(eventBus, 'emit')
-      h.mock(authService, 'setRedirect')
 
-      await expect(http.get('data')).rejects.toThrow()
-      expect(emitMock).toHaveBeenCalledWith('LOG_OUT')
+      await expect(http.delete('podcasts/foo/subscriptions')).rejects.toThrow()
+      expect(emitMock).not.toHaveBeenCalledWith('LOG_OUT')
     })
 
     it.each([

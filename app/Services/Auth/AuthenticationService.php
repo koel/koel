@@ -128,6 +128,12 @@ class AuthenticationService
             string $password,
         ): void {
             $user->password = $password;
+
+            if ($user->is_prospect) {
+                $user->invitation_token = null;
+                $user->invitation_accepted_at = now();
+            }
+
             $user->save();
             event(new PasswordReset($user));
             $this->securityNoticeService->notifyPasswordChanged($user);

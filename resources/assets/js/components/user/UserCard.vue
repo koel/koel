@@ -64,8 +64,13 @@ const { currentUser } = useAuthorization()
 const isCurrentUser = computed(() => user.value.id === currentUser.value.id)
 const hasAdminPrivileges = computed(() => user.value.role === 'admin' || user.value.role === 'manager')
 
-const requestContextMenu = (event: MouseEvent) =>
+const requestContextMenu = (event: MouseEvent) => {
+  if (isCurrentUser.value) {
+    return
+  }
+
   openContextMenu<'USER'>(UserContextMenu, event, {
     user: user.value,
   })
+}
 </script>

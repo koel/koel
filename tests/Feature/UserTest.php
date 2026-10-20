@@ -214,6 +214,24 @@ class UserTest extends TestCase
     }
 
     #[Test]
+    public function selfUpdateNotAllowed(): void
+    {
+        $admin = create_admin();
+
+        $this->putAs(
+            "api/users/{$admin->public_id}",
+            [
+                'name' => 'Foo',
+                'email' => 'bar@baz.com',
+                'role' => 'user',
+            ],
+            $admin,
+        )->assertForbidden();
+
+        self::assertSame(Role::ADMIN, $admin->refresh()->role);
+    }
+
+    #[Test]
     public function selfDeletionNotAllowed(): void
     {
         $admin = create_admin();
@@ -316,15 +334,14 @@ class UserTest extends TestCase
     }
 
     #[Test]
-    public function listingDeniesDeletePermissionForSelfButAllowsEdit(): void
+    public function listingDeniesEditAndDeletePermissionsForSelf(): void
     {
         $admin = create_admin();
 
         $response = $this->getAs('api/users', $admin)->json();
         $selfRow = collect($response)->firstWhere('id', $admin->public_id);
 
-        // Admin can edit themselves but cannot self-destroy.
-        self::assertTrue($selfRow['permissions']['edit']);
+        self::assertFalse($selfRow['permissions']['edit']);
         self::assertFalse($selfRow['permissions']['delete']);
     }
 }

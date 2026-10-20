@@ -54,6 +54,14 @@ class UserService
         $existingUser = $this->repository->findOneBySso($ssoUser);
 
         if ($existingUser) {
+            if ($existingUser->is_prospect) {
+                $existingUser->fill([
+                    'name' => $ssoUser->name,
+                    'invitation_token' => null,
+                    'invitation_accepted_at' => now(),
+                ]);
+            }
+
             $existingUser->update([
                 'avatar' => $existingUser->has_custom_avatar
                     ? $existingUser->getRawOriginal('avatar')

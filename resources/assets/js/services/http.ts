@@ -61,7 +61,7 @@ class Http {
             this.silent || this.hideLoadingIndicator()
             this.silent = false
 
-            if (isHttpError(error) && (error.response.status === 400 || error.response.status === 401)) {
+            if (isHttpError(error) && error.response.status === 401) {
               const method = (error.request?.method || '').toLowerCase()
 
               let url = ''
