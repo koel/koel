@@ -286,7 +286,7 @@ class PlaylistServiceTest extends TestCase
         $playlist->refresh();
         self::assertTrue($this->service->isPlaylistCollaborative($playlist));
 
-        $songs = Song::factory()->state(['is_public' => false])->createMany(2);
+        $songs = Song::factory()->for($user, 'owner')->private()->createMany(2);
 
         $this->service->addPlayablesToPlaylist($playlist, $songs, $user);
 
@@ -294,14 +294,39 @@ class PlaylistServiceTest extends TestCase
     }
 
     #[Test]
+    public function addingToCollaborativePlaylistKeepsOtherUsersPrivateSongsPrivate(): void
+    {
+        PlusTestCase::enablePlusLicense();
+
+        $playlist = create_playlist();
+        $collaborator = create_user();
+        $playlist->collaborators()->attach($collaborator);
+        $playlist->refresh();
+
+        $othersPrivateSong = Song::factory()->private()->createOne();
+        $playlist->addPlayables($othersPrivateSong);
+
+        $this->service->addPlayablesToPlaylist(
+            $playlist,
+            Song::factory()->for($collaborator, 'owner')->createOne(),
+            $collaborator,
+        );
+
+        self::assertFalse($othersPrivateSong->refresh()->is_public);
+    }
+
+    #[Test]
     public function makePlaylistSongsPublic(): void
     {
         $playlist = create_playlist();
-        $playlist->addPlayables(Song::factory()->state(['is_public' => false])->createMany(2));
+        $ownSongs = Song::factory()->for($playlist->owner, 'owner')->private()->createMany(2);
+        $othersPrivateSong = Song::factory()->private()->createOne();
+        $playlist->addPlayables($ownSongs->merge([$othersPrivateSong]));
 
-        $this->service->makePlaylistContentPublic($playlist);
+        $this->service->makePlaylistContentPublic($playlist, $playlist->owner);
 
-        $playlist->playables->each(static fn (Song $song) => self::assertTrue($song->is_public));
+        $ownSongs->each(static fn (Song $song) => self::assertTrue($song->refresh()->is_public));
+        self::assertFalse($othersPrivateSong->refresh()->is_public);
     }
 
     #[Test]
@@ -310,7 +335,7 @@ class PlaylistServiceTest extends TestCase
         $playlist = create_playlist();
         $this->mock(LibrarySummaryService::class)->expects('markLibraryChanged');
 
-        app(PlaylistService::class)->makePlaylistContentPublic($playlist);
+        app(PlaylistService::class)->makePlaylistContentPublic($playlist, $playlist->owner);
     }
 
     #[Test]
