@@ -62,7 +62,7 @@ Route::middleware('web')->group(static function () use ($sessionMiddleware): voi
     Route::middleware('audio.auth')
         ->withoutMiddleware($sessionMiddleware)
         ->group(static function (): void {
-            Route::get('play/{songId}/{transcode?}', PlayController::class)->name('song.play');
+            Route::get('play/{songId}/{transcode?}/{bitRate?}', PlayController::class)->name('song.play');
 
             Route::get('radio/stream/{radioStation}', StreamRadioController::class)->name('radio.stream')->middleware(
                 'radio.enabled',

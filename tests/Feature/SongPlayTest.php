@@ -7,6 +7,7 @@ use App\Models\Song;
 use App\Services\Auth\TokenManager;
 use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Values\CompositeToken;
+use App\Values\RequestedStreamingConfig;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -205,5 +206,28 @@ class SongPlayTest extends TestCase
             ->andReturn(new StreamedFileResponse(test_path('songs/blank.mp3')));
 
         $this->get("play/{$song->id}/1?t=$token->audioToken")->assertOk();
+    }
+
+    #[Test]
+    public function forceTranscodingWithABitRateInTheUrl(): void
+    {
+        $user = create_user(['preferences' => ['transcode_quality' => 256]]);
+
+        /** @var CompositeToken $token */
+        $token = app(TokenManager::class)->createCompositeToken($user);
+        $song = Song::factory()->createOne(['path' => '/var/songs/blank.mp3']);
+
+        $this
+            ->mock(TranscodingStreamerAdapter::class)
+            ->expects('stream')
+            ->withArgs(
+                static fn (Song $streamedSong, RequestedStreamingConfig $config): bool => (
+                    $streamedSong->is($song)
+                    && $config->bitRate === 256
+                ),
+            )
+            ->andReturn(new StreamedFileResponse(test_path('songs/blank.mp3')));
+
+        $this->get("play/{$song->id}/1/128?t=$token->audioToken")->assertOk();
     }
 }
