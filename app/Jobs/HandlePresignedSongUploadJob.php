@@ -30,6 +30,7 @@ class HandlePresignedSongUploadJob extends QueuedJob
         $reference = UploadReference::make(
             location: $this->location,
             localPath: $storage->getLocalPath($this->location),
+            originalFileName: $storage->getOriginalFileName($this->location),
         );
 
         $song = $uploadService->handleStoredUpload($reference, $this->uploader);

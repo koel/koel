@@ -64,6 +64,7 @@ class DuplicateUploadService
             'user_id' => $uploader->id,
             'existing_song_id' => $existingSong->id,
             'location' => $uploadReference->location,
+            'file_name' => $uploadReference->originalFileName,
             'storage' => $this->storage->getStorageType(),
         ]);
 
@@ -82,6 +83,7 @@ class DuplicateUploadService
                 $songs->add($this->scanAndStore(
                     $localFilePath,
                     $upload->location,
+                    $upload->file_name ?? $this->storage->getOriginalFileName($upload->location),
                     $upload->user,
                     $this->scanner,
                     $this->songService,

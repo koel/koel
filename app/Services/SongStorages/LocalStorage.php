@@ -20,7 +20,11 @@ class LocalStorage extends SongStorage
         File::move($uploadedFilePath, $destination);
 
         // For local storage, the "location" and "localPath" are the same.
-        return UploadReference::make(location: $destination, localPath: $destination);
+        return UploadReference::make(
+            location: $destination,
+            localPath: $destination,
+            originalFileName: basename($uploadedFilePath),
+        );
     }
 
     public function undoUpload(UploadReference $reference): void

@@ -15,7 +15,11 @@ abstract class CloudStorage extends SongStorage implements MustDeleteTemporaryLo
         $key = $this->generateStorageKey(basename($uploadedFilePath), $uploader);
         $this->uploadToStorage($key, $uploadedFilePath);
 
-        return UploadReference::make(location: $this->getLocationPrefix() . $key, localPath: $uploadedFilePath);
+        return UploadReference::make(
+            location: $this->getLocationPrefix() . $key,
+            localPath: $uploadedFilePath,
+            originalFileName: basename($uploadedFilePath),
+        );
     }
 
     public function undoUpload(UploadReference $reference): void

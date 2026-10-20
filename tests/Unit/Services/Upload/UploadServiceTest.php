@@ -72,12 +72,13 @@ class UploadServiceTest extends TestCase
         $reference = UploadReference::make(
             location: '/var/media/koel/some-file.mp3',
             localPath: '/var/media/koel/some-file.mp3',
+            originalFileName: 'some-file.mp3',
         );
 
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->duplicateUploadService->expects('detectDuplicate');
 
-        $this->scanner->expects('scan')->with('/var/media/koel/some-file.mp3')->andReturn($scanInfo);
+        $this->scanner->expects('scan')->with('/var/media/koel/some-file.mp3', 'some-file.mp3')->andReturn($scanInfo);
 
         $this->songService
             ->expects('createOrUpdateSongFromScan')
@@ -102,11 +103,15 @@ class UploadServiceTest extends TestCase
             'storage' => SongStorageType::LOCAL,
         ]);
 
-        $reference = UploadReference::make(location: 's3://koel/some-file.mp3', localPath: '/tmp/some-tmp-file.mp3');
+        $reference = UploadReference::make(
+            location: 's3://koel/some-file.mp3',
+            localPath: '/tmp/some-tmp-file.mp3',
+            originalFileName: 'some-tmp-file.mp3',
+        );
 
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->duplicateUploadService->expects('detectDuplicate');
-        $this->scanner->expects('scan')->with('/tmp/some-tmp-file.mp3')->andReturn($scanInfo);
+        $this->scanner->expects('scan')->with('/tmp/some-tmp-file.mp3', 'some-tmp-file.mp3')->andReturn($scanInfo);
         $this->songService->expects('createOrUpdateSongFromScan')->andReturn($song);
 
         $result = $this->makeService($storage)->handleUpload($file, $uploader);
@@ -124,7 +129,11 @@ class UploadServiceTest extends TestCase
             'getStorageType' => SongStorageType::S3,
         ]);
         $song = Song::factory()->createOne();
-        $reference = UploadReference::make(location: 's3://koel/song.flac', localPath: '/tmp/song.flac');
+        $reference = UploadReference::make(
+            location: 's3://koel/song.flac',
+            localPath: '/tmp/song.flac',
+            originalFileName: 'song.flac',
+        );
 
         $storage->expects('storeUploadedFile')->andReturn($reference);
         $this->duplicateUploadService->expects('detectDuplicate');
@@ -163,7 +172,11 @@ class UploadServiceTest extends TestCase
         $file = '/tmp/some-tmp-file.mp3';
         $uploader = create_user();
 
-        $reference = UploadReference::make(location: 's3://koel/some-file.mp3', localPath: '/tmp/some-tmp-file.mp3');
+        $reference = UploadReference::make(
+            location: 's3://koel/some-file.mp3',
+            localPath: '/tmp/some-tmp-file.mp3',
+            originalFileName: 'some-tmp-file.mp3',
+        );
 
         $storage->expects('storeUploadedFile')->andReturn($reference);
         $this->duplicateUploadService->expects('detectDuplicate');
@@ -186,6 +199,7 @@ class UploadServiceTest extends TestCase
         $reference = UploadReference::make(
             location: '/var/media/koel/some-file.mp3',
             localPath: '/var/media/koel/some-file.mp3',
+            originalFileName: 'some-file.mp3',
         );
 
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
@@ -206,7 +220,7 @@ class UploadServiceTest extends TestCase
         $file = '/tmp/some-file.mp3';
         $uploader = create_user();
 
-        $reference = UploadReference::make(location: $file, localPath: $file);
+        $reference = UploadReference::make(location: $file, localPath: $file, originalFileName: basename($file));
 
         $storage->expects('storeUploadedFile')->with($file, $uploader)->andReturn($reference);
         $this->duplicateUploadService

@@ -135,7 +135,21 @@ class PresignedUploadTest extends PlusTestCase
         self::assertSame($user->id, $song->owner_id);
     }
 
-    private function fetchesTheObjectAsALocalCopy(): void
+    #[Test]
+    public function untaggedUploadIsTitledAfterTheUploadedFile(): void
+    {
+        $user = create_user();
+        $key = "pending/{$user->public_id}__random__Untagged Song.mp3";
+        Storage::disk('s3')->put($key, File::get(test_path('songs/blank.mp3')));
+        $this->fetchesTheObjectAsALocalCopy('songs/blank.mp3');
+
+        $this
+            ->postAs('api/upload/complete', ['key' => $key], $user)
+            ->assertOk()
+            ->assertJsonPath('song.title', 'Untagged Song');
+    }
+
+    private function fetchesTheObjectAsALocalCopy(string $sourcePath = 'songs/full.mp3'): void
     {
         $storage = Mockery::mock(S3CompatibleStorage::class . '[getLocalPath]', [
             Mockery::mock(S3UploadUrlSigner::class),
@@ -144,9 +158,9 @@ class PresignedUploadTest extends PlusTestCase
 
         $storage
             ->shouldReceive('getLocalPath')
-            ->andReturnUsing(static function (): string {
+            ->andReturnUsing(static function () use ($sourcePath): string {
                 $localPath = artifact_path('tmp/' . uniqid() . '.mp3');
-                File::copy(test_path('songs/full.mp3'), $localPath);
+                File::copy(test_path($sourcePath), $localPath);
 
                 return $localPath;
             });

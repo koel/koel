@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Setting;
+use App\Models\Song;
 use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -46,6 +47,23 @@ class UploadTest extends TestCase
         Setting::set('media_path', sandbox_path('media'));
 
         $this->postAs('/api/upload', ['file' => $this->file], create_admin())->assertJsonStructure(['song', 'album']);
+    }
+
+    #[Test]
+    public function untaggedUploadStoredUnderAClashingNameIsTitledAfterTheUploadedFile(): void
+    {
+        Setting::set('media_path', sandbox_path('media'));
+        $admin = create_admin(['preferences' => ['detect_duplicate_uploads' => false]]);
+
+        for ($i = 0; $i < 2; $i++) {
+            $this->postAs(
+                '/api/upload',
+                ['file' => UploadedFile::fromFile(test_path('songs/blank.mp3'), 'Untagged Song.mp3')], //@phpstan-ignore-line
+                $admin,
+            )->assertSuccessful();
+        }
+
+        self::assertSame(2, Song::query()->where('title', 'Untagged Song')->count());
     }
 
     #[Test]
