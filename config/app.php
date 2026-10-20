@@ -1,6 +1,5 @@
 <?php
 
-use App\Facades\Download;
 use App\Facades\ITunes;
 use App\Facades\License;
 use App\Facades\YouTube;
@@ -185,7 +184,6 @@ return [
         'View' => View::class,
 
         'YouTube' => YouTube::class,
-        'Download' => Download::class,
         'ITunes' => ITunes::class,
         'License' => License::class,
         'Dispatcher' => Dispatcher::class,

@@ -9,7 +9,6 @@ use App\Services\SongStorages\RemoteDiskStorage;
 use App\Services\SongStorages\SongStorageFactory;
 use App\Values\Downloadable;
 use App\Values\Podcast\EpisodePlayable;
-use Illuminate\Support\Facades\File;
 
 class DownloadService
 {
@@ -40,20 +39,5 @@ class DownloadService
             ),
             default => Downloadable::make($storage->getLocalPath($song->path)),
         };
-    }
-
-    public function getLocalPath(Song $song): ?string
-    {
-        if (!$song->storage->supported()) {
-            return null;
-        }
-
-        if ($song->isEpisode()) {
-            return EpisodePlayable::getForEpisode($song, $this->http)->path;
-        }
-
-        $localPath = SongStorageFactory::make($song->storage)->getLocalPath($song->path);
-
-        return File::exists($localPath) ? $localPath : null;
     }
 }
