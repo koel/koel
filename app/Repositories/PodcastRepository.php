@@ -45,6 +45,21 @@ class PodcastRepository extends Repository implements ScoutableRepository
     }
 
     /** @return Collection<int, Podcast> */
+    public function getRecentlySubscribedByUser(int $count, ?User $user = null): Collection
+    {
+        $user ??= $this->auth->user();
+
+        return Podcast::query()
+            ->with(['subscribers' => static fn (Relation $query) => $query->where('users.id', $user->id)])
+            ->setScopedUser($user)
+            ->withUserContext($user)
+            ->subscribed()
+            ->orderByDesc('podcast_user.created_at')
+            ->limit($count)
+            ->get();
+    }
+
+    /** @return Collection<int, Podcast> */
     public function getMany(array $ids, bool $preserveOrder = false, ?User $user = null): Collection
     {
         $user ??= $this->auth->user();
