@@ -16,6 +16,19 @@ return [
 
     /*
      |--------------------------------------------------------------------------
+     | Sanctum Guards
+     |--------------------------------------------------------------------------
+     |
+     | Sanctum checks these guards before looking for an access token, and a user
+     | found through them gets a token with every ability. Koel authenticates
+     | with access tokens only, so that each token keeps its own abilities.
+     |
+     */
+
+    'guard' => [],
+
+    /*
+     |--------------------------------------------------------------------------
      | Expiration Minutes
      |--------------------------------------------------------------------------
      |

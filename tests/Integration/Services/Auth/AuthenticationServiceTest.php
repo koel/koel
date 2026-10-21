@@ -4,6 +4,7 @@ namespace Tests\Integration\Services\Auth;
 
 use App\Models\User;
 use App\Services\Auth\AuthenticationService;
+use App\Services\Auth\TokenManager;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
@@ -39,6 +40,18 @@ class AuthenticationServiceTest extends TestCase
         self::assertTrue(Hash::check('new-password', $user->fresh()->password));
 
         Event::assertDispatched(PasswordReset::class);
+    }
+
+    #[Test]
+    public function tryResetPasswordUsingBrokerRevokesAllTokens(): void
+    {
+        $user = create_user();
+        app(TokenManager::class)->createCompositeToken($user);
+        app(TokenManager::class)->createCompositeToken($user);
+
+        $this->service->tryResetPasswordUsingBroker($user->email, 'new-password', Password::createToken($user));
+
+        self::assertSame(0, $user->tokens()->count());
     }
 
     #[Test]

@@ -3,6 +3,7 @@
 use App\Exceptions\SubsonicAwareErrorRenderer;
 use App\Http\Middleware\AddBuildHeader;
 use App\Http\Middleware\AddRequestContextForLogging;
+use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\AuthenticateAudioRequests;
 use App\Http\Middleware\EnsureEmbedsEnabled;
 use App\Http\Middleware\EnsurePodcastsEnabled;
@@ -69,6 +70,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
+            'auth' => Authenticate::class,
             'audio.auth' => AuthenticateAudioRequests::class,
             'os.auth' => ObjectStorageAuthenticate::class,
             'embeds.enabled' => EnsureEmbedsEnabled::class,

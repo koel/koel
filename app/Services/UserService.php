@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SensitiveParameter;
 
+// @mago-ignore lint:cyclomatic-complexity
 class UserService
 {
     public function __construct(
@@ -92,6 +93,10 @@ class UserService
         $previousEmail = $user->email;
 
         $this->applyUpdate($user, $dto, keepCurrentEmail: false);
+
+        if ($user->wasChanged('password')) {
+            $this->tokenManager->destroyTokens($user);
+        }
 
         if ($user->email !== $previousEmail) {
             $this->emailChangeService->notifyChange($user, $previousEmail);

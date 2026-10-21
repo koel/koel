@@ -184,6 +184,33 @@ class UserServiceTest extends TestCase
     }
 
     #[Test]
+    public function updateUserPasswordRevokesTheUserTokens(): void
+    {
+        $user = create_user();
+        $user->createToken('koel');
+        $user->createToken('koel', ['audio']);
+
+        $this->service->updateUser($user, UserUpdateData::make(
+            name: $user->name,
+            email: $user->email,
+            plainTextPassword: 'TheTrooper',
+        ));
+
+        self::assertSame(0, $user->tokens()->count());
+    }
+
+    #[Test]
+    public function updateUserWithoutPasswordKeepsTheUserTokens(): void
+    {
+        $user = create_user();
+        $user->createToken('koel');
+
+        $this->service->updateUser($user, UserUpdateData::make(name: 'Steve Harris', email: 'steve@iron.com'));
+
+        self::assertSame(1, $user->tokens()->count());
+    }
+
+    #[Test]
     public function updateProspectUserIsNotAllowed(): void
     {
         $this->expectException(UserProspectUpdateDeniedException::class);

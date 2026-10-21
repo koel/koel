@@ -35,11 +35,9 @@ class ChangePasswordController extends Controller
 
         $this->userService->changePassword($this->user, $request->new_password);
 
-        return response()
-            ->noContent()
-            ->header(
-                'Authorization',
-                $this->tokenManager->refreshApiToken($request->bearerToken() ?: '')->plainTextToken,
-            );
+        $newApiToken = $this->tokenManager->refreshApiToken($request->bearerToken() ?: '')->plainTextToken;
+        $this->tokenManager->destroyOtherSessions($this->user, $newApiToken);
+
+        return response()->noContent()->header('Authorization', $newApiToken);
     }
 }

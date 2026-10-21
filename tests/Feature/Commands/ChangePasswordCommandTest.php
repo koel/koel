@@ -42,6 +42,22 @@ class ChangePasswordCommandTest extends TestCase
     }
 
     #[Test]
+    public function changingPasswordRevokesTheUserTokens(): void
+    {
+        $user = User::factory()->createOne(['email' => 'john@example.com']);
+        $user->createToken('koel');
+        $user->createToken('koel', ['audio']);
+
+        $this
+            ->artisan('koel:admin:change-password', ['email' => 'john@example.com'])
+            ->expectsQuestion('Your desired password', 'secret123')
+            ->expectsQuestion('Again, just to be sure', 'secret123')
+            ->assertSuccessful();
+
+        self::assertSame(0, $user->tokens()->count());
+    }
+
+    #[Test]
     public function failForNonExistentUser(): void
     {
         $this

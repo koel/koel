@@ -4,6 +4,7 @@ namespace App\Console\Commands\Admin;
 
 use App\Console\Commands\Concerns\AskForPassword;
 use App\Repositories\UserRepository;
+use App\Services\Auth\TokenManager;
 use App\Services\UserService;
 use Illuminate\Console\Command;
 
@@ -18,6 +19,7 @@ class ChangePasswordCommand extends Command
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserService $userService,
+        private readonly TokenManager $tokenManager,
     ) {
         parent::__construct();
     }
@@ -37,6 +39,7 @@ class ChangePasswordCommand extends Command
         $this->comment("Changing the user's password (ID: {$user->id}, email: $user->email)");
 
         $this->userService->changePassword($user, $this->askForPassword());
+        $this->tokenManager->destroyTokens($user);
 
         $this->comment('Alrighty, the new password has been saved. Enjoy! 👌');
 

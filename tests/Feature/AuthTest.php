@@ -2,10 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Models\RadioStation;
 use App\Services\Auth\AuthenticationService;
+use App\Services\Auth\TokenManager;
+use App\Services\Radio\RadioStreamService;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
+use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Tests\TestCase;
 
 use function Tests\create_user;
@@ -66,6 +71,48 @@ class AuthTest extends TestCase
     public function unauthenticatedJsonRequestReturnsCleanUnauthorized(): void
     {
         $this->getJson('api/data')->assertUnauthorized()->assertJson(['error' => 'Unauthenticated.']);
+    }
+
+    #[Test]
+    public function audioTokenCannotAccessApiAsBearerToken(): void
+    {
+        $token = app(TokenManager::class)->createCompositeToken(create_user());
+
+        $this->withToken($token->audioToken)->getJson('api/me')->assertUnauthorized();
+    }
+
+    #[Test]
+    public function audioTokenCannotAccessApiAsQueryParameter(): void
+    {
+        $token = app(TokenManager::class)->createCompositeToken(create_user());
+
+        $this->getJson("api/me?t=$token->audioToken")->assertUnauthorized();
+        $this->getJson("api/me?api_token=$token->audioToken")->assertUnauthorized();
+    }
+
+    #[Test]
+    public function apiTokenCannotAccessApiAsQueryParameter(): void
+    {
+        $token = app(TokenManager::class)->createCompositeToken(create_user());
+
+        $this->getJson("api/me?t=$token->apiToken")->assertUnauthorized();
+        $this->getJson("api/me?api_token=$token->apiToken")->assertUnauthorized();
+    }
+
+    #[Test]
+    public function audioTokenStreamsRadioAsQueryParameter(): void
+    {
+        $user = create_user();
+        $station = RadioStation::factory()->for($user)->createOne();
+        $token = app(TokenManager::class)->createCompositeToken($user);
+
+        $this
+            ->mock(RadioStreamService::class)
+            ->expects('stream')
+            ->with(Mockery::on($station->is(...)))
+            ->andReturn(new StreamedResponse());
+
+        $this->get("radio/stream/{$station->id}?t=$token->audioToken")->assertOk();
     }
 
     #[Test]
