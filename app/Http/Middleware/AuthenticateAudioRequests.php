@@ -20,7 +20,7 @@ class AuthenticateAudioRequests
             $user = $this->userRepository->getOneByPublicId($request->string('user')->toString());
             abort_if($user->isPendingDeletion(), Response::HTTP_UNAUTHORIZED);
 
-            Auth::guard('web')->setUser($user);
+            Auth::setUser($user);
 
             return $next($request);
         }

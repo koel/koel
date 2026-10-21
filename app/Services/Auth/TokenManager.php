@@ -78,6 +78,14 @@ class TokenManager
     public function refreshApiToken(#[SensitiveParameter] string $currentPlainTextToken): NewAccessToken
     {
         $newToken = $this->createToken($this->getUserFromPlainTextToken($currentPlainTextToken));
+
+        /** @var ?string $audioToken */
+        $audioToken = Cache::pull("app.composite-tokens.$currentPlainTextToken");
+
+        if ($audioToken) {
+            Cache::forever("app.composite-tokens.$newToken->plainTextToken", $audioToken);
+        }
+
         $this->deleteTokenByPlainTextToken($currentPlainTextToken);
 
         return $newToken;

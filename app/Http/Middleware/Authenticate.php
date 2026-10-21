@@ -2,20 +2,20 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Auth\Middleware\Authenticate as BaseAuthenticate;
 
-class Authenticate
+/**
+ * Only tokens with full abilities may pass. The audio-only token is limited to the `audio.auth` routes.
+ */
+class Authenticate extends BaseAuthenticate
 {
-    public function handle(Request $request, Closure $next)
+    /** @inheritdoc */
+    protected function authenticate($request, array $guards): void
     {
-        if ($request->user()?->tokenCan('*')) {
-            return $next($request);
+        parent::authenticate($request, $guards);
+
+        if (!$request->user()?->tokenCan('*')) {
+            $this->unauthenticated($request, $guards);
         }
-
-        abort_if($request->ajax() || $request->wantsJson(), Response::HTTP_UNAUTHORIZED);
-
-        return redirect()->guest('/');
     }
 }

@@ -135,6 +135,7 @@ class AuthenticationService
             }
 
             $user->save();
+            $this->tokenManager->destroyTokens($user);
             event(new PasswordReset($user));
             $this->securityNoticeService->notifyPasswordChanged($user);
         });

@@ -109,4 +109,17 @@ class TokenManagerTest extends TestCase
         $this->assertModelMissing($oldToken->accessToken);
         $this->assertModelExists($newToken->accessToken);
     }
+
+    #[Test]
+    public function refreshApiTokenKeepsTheAudioTokenOfTheSession(): void
+    {
+        $compositeToken = $this->tokenManager->createCompositeToken(create_user());
+        $newApiToken = $this->tokenManager->refreshApiToken($compositeToken->apiToken);
+
+        self::assertNull(Cache::get("app.composite-tokens.$compositeToken->apiToken"));
+
+        $this->tokenManager->deleteCompositionToken($newApiToken->plainTextToken);
+
+        self::assertNull(PersonalAccessToken::findToken($compositeToken->audioToken));
+    }
 }
