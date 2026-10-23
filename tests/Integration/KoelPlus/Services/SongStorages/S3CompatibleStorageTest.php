@@ -226,12 +226,4 @@ class S3CompatibleStorageTest extends PlusTestCase
 
         self::assertStringContainsString(Str::after($reference->location, 's3://koel/'), $url);
     }
-
-    #[Test]
-    public function getFileSize(): void
-    {
-        Storage::disk('s3')->put('song.mp3', 'fake content');
-
-        self::assertSame(12, $this->service->getFileSize('song.mp3'));
-    }
 }

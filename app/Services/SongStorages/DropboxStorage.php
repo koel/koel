@@ -5,7 +5,6 @@ namespace App\Services\SongStorages;
 use App\Enums\SongStorageType;
 use App\Filesystems\DropboxFilesystem;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
-use App\Services\SongStorages\Concerns\ReadsFileSizeUsingFilesystem;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -13,7 +12,6 @@ use Illuminate\Support\Facades\Http;
 class DropboxStorage extends CloudStorage
 {
     use DeletesUsingFilesystem;
-    use ReadsFileSizeUsingFilesystem;
 
     public function __construct(
         private readonly DropboxFilesystem $filesystem,
@@ -55,11 +53,6 @@ class DropboxStorage extends CloudStorage
     public function delete(string $location, bool $backup = false): void
     {
         $this->deleteFileWithKey($location, $backup);
-    }
-
-    public function getFileSize(string $path): ?int
-    {
-        return self::readFileSizeUsingFilesystem($this->filesystem, $path);
     }
 
     public function testSetup(): void

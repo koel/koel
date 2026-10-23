@@ -96,11 +96,6 @@ class LocalStorage extends SongStorage
         return $location;
     }
 
-    public function getFileSize(string $path): ?int
-    {
-        return File::isFile($path) ? File::size($path) : null;
-    }
-
     public function getStorageType(): SongStorageType
     {
         return SongStorageType::LOCAL;

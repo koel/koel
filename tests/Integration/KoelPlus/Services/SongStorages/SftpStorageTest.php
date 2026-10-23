@@ -114,18 +114,4 @@ class SftpStorageTest extends PlusTestCase
 
         $this->service->getReusableLocalCopy('music/locked-song.mp3');
     }
-
-    #[Test]
-    public function getFileSize(): void
-    {
-        Storage::disk('sftp')->put('song.mp3', 'fake content');
-
-        self::assertSame(12, $this->service->getFileSize('song.mp3'));
-    }
-
-    #[Test]
-    public function getFileSizeOfMissingFile(): void
-    {
-        self::assertNull($this->service->getFileSize('missing.mp3'));
-    }
 }
