@@ -4,70 +4,76 @@
       <ScreenHeader layout="collapsed">Statistics</ScreenHeader>
     </template>
 
-    <div class="flex flex-col flex-1 gap-10">
-      <LibraryFacts v-if="libraryFacts.length" :facts="libraryFacts" />
+    <div class="flex flex-col flex-1 gap-14">
+      <section v-if="libraryFacts.length" aria-labelledby="statistics-storage" class="flex flex-col gap-6">
+        <h2 id="statistics-storage" class="text-3xl font-thin text-k-fg">Storage</h2>
+        <LibraryFacts :facts="libraryFacts" />
+      </section>
 
-      <SegmentedControl v-model="period" :options="periodOptions" class="self-start" name="listening-period" />
+      <section aria-labelledby="statistics-listening" class="flex flex-col flex-1 gap-10">
+        <h2 id="statistics-listening" class="text-3xl font-thin text-k-fg">Listening</h2>
+        <SegmentedControl v-model="period" :options="periodOptions" class="self-start" name="listening-period" />
 
-      <p v-if="loading" class="text-k-fg-70" role="status">Loading…</p>
+        <p v-if="loading" class="text-k-fg-70" role="status">Loading…</p>
 
-      <ScreenEmptyState v-else-if="!statistics?.summary.plays" data-testid="statistics-empty">
-        <template #icon>
-          <ChartColumnIcon :size="96" />
-        </template>
-        No plays in this period.
-      </ScreenEmptyState>
+        <ScreenEmptyState v-else-if="!statistics?.summary.plays" data-testid="statistics-empty">
+          <template #icon>
+            <ChartColumnIcon :size="96" />
+          </template>
+          No plays in this period.
+        </ScreenEmptyState>
 
-      <div v-else class="flex flex-col gap-10" data-testid="statistics">
-        <ListeningSummary :statistics />
+        <div v-else class="flex flex-col gap-10" data-testid="statistics">
+          <ListeningSummary :statistics />
 
-        <section class="flex flex-col gap-6">
-          <SegmentedControl v-model="measure" :options="measureOptions" class="self-start" name="listening-measure" />
-          <ListeningBarChart :bars="listeningOverTime" :measure title="Over time" />
+          <section class="flex flex-col gap-6">
+            <SegmentedControl v-model="measure" :options="measureOptions" class="self-start" name="listening-measure" />
+            <ListeningBarChart :bars="listeningOverTime" :measure title="Over time" />
 
-          <div class="grid md:grid-cols-2 gap-10">
-            <ListeningBarChart :bars="listeningByWeekday" :measure title="By day of the week" />
-            <ListeningBarChart :bars="listeningByHour" :measure title="By hour of the day" />
-          </div>
-        </section>
+            <div class="grid md:grid-cols-2 gap-10">
+              <ListeningBarChart :bars="listeningByWeekday" :measure title="By day of the week" />
+              <ListeningBarChart :bars="listeningByHour" :measure title="By hour of the day" />
+            </div>
+          </section>
 
-        <ShelfSection v-if="statistics.top_artists.length">
-          <template #header>Your Top Artists</template>
-          <Carousel>
-            <TopArtistCard
-              v-for="(entry, i) in statistics.top_artists"
-              :key="entry.artist.id"
-              :album-cover="entry.album_cover"
-              :artist="entry.artist"
-              :listening-time="entry.listening_time"
-              :rank="i + 1"
-            />
-          </Carousel>
-        </ShelfSection>
+          <ShelfSection v-if="statistics.top_artists.length">
+            <template #header>Your Top Artists</template>
+            <Carousel>
+              <TopArtistCard
+                v-for="(entry, i) in statistics.top_artists"
+                :key="entry.artist.id"
+                :album-cover="entry.album_cover"
+                :artist="entry.artist"
+                :listening-time="entry.listening_time"
+                :rank="i + 1"
+              />
+            </Carousel>
+          </ShelfSection>
 
-        <ShelfSection v-if="statistics.top_songs.length">
-          <template #header>Your Top Songs</template>
-          <RankedColumns :items="topSongs" />
-        </ShelfSection>
+          <ShelfSection v-if="statistics.top_songs.length">
+            <template #header>Your Top Songs</template>
+            <RankedColumns :items="topSongs" />
+          </ShelfSection>
 
-        <ShelfSection v-if="statistics.top_albums.length">
-          <template #header>Your Top Albums</template>
-          <Carousel>
-            <TopAlbumCard
-              v-for="(entry, i) in statistics.top_albums"
-              :key="entry.album.id"
-              :album="entry.album"
-              :listening-time="entry.listening_time"
-              :rank="i + 1"
-            />
-          </Carousel>
-        </ShelfSection>
+          <ShelfSection v-if="statistics.top_albums.length">
+            <template #header>Your Top Albums</template>
+            <Carousel>
+              <TopAlbumCard
+                v-for="(entry, i) in statistics.top_albums"
+                :key="entry.album.id"
+                :album="entry.album"
+                :listening-time="entry.listening_time"
+                :rank="i + 1"
+              />
+            </Carousel>
+          </ShelfSection>
 
-        <ShelfSection v-if="topGenres.length">
-          <template #header>Your Top Genres</template>
-          <RankedColumns :items="topGenres" />
-        </ShelfSection>
-      </div>
+          <ShelfSection v-if="topGenres.length">
+            <template #header>Your Top Genres</template>
+            <RankedColumns :items="topGenres" />
+          </ShelfSection>
+        </div>
+      </section>
     </div>
   </ScreenBase>
 </template>
