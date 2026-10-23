@@ -49,6 +49,11 @@ class Organization extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    public function ownedBy(User $user): bool
+    {
+        return $this->owner_id === $user->id;
+    }
+
     public function claimOwnership(User $user): void
     {
         if ($this->owner_id) {

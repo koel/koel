@@ -23,7 +23,8 @@ describe('statisticsScreen.vue', () => {
     streak: { current_days: 0, longest_days: 0 },
   })
 
-  const renderComponent = () => {
+  const renderComponent = (libraryStats: LibraryStat[] = []) => {
+    h.mock(listeningStatisticsService, 'fetchLibraryStats').mockResolvedValue(libraryStats)
     h.visit('/statistics')
 
     return h.render(Component, {
@@ -83,5 +84,23 @@ describe('statisticsScreen.vue', () => {
     await h.tick(2)
 
     screen.getByTestId('statistics-empty')
+  })
+
+  it('shows the library stats even without plays in the period', async () => {
+    h.mock(listeningStatisticsService, 'fetch').mockResolvedValue(makeStatistics(0))
+    renderComponent([{ key: 'storage', label: 'Storage used', value: 40, unit: 'bytes', used: 40, limit: 100 }])
+
+    await waitFor(() => screen.getByTestId('statistics-empty'))
+    screen.getByRole('meter')
+  })
+
+  it('shows the library stats above the period selector', async () => {
+    h.mock(listeningStatisticsService, 'fetch').mockResolvedValue(makeStatistics(3))
+    renderComponent([{ key: 'storage', label: 'Storage used', value: 40, unit: 'bytes', used: 40, limit: 100 }])
+
+    const meter = await screen.findByRole('meter')
+    const periodOption = screen.getByLabelText('12 months')
+
+    expect(meter.compareDocumentPosition(periodOption) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 })

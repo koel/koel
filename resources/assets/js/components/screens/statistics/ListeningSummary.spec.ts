@@ -42,7 +42,7 @@ describe('listeningSummary.vue', () => {
   ])('compares the 12 plays with the previous period %#', (previous, expectedStart) => {
     renderComponent({ previous_summary: previous })
 
-    const playsNote = screen.getByText('Plays').parentElement!.querySelector('[data-testid="figure-note"]')
+    const playsNote = screen.getByText('Plays').closest('div')!.querySelector('[data-testid="figure-note"]')
 
     if (expectedStart === null) {
       expect(playsNote).toBeNull()

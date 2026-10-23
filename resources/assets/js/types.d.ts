@@ -71,6 +71,15 @@ interface ListeningStatistics {
   streak: { current_days: number; longest_days: number }
 }
 
+interface LibraryStat {
+  key: string
+  label: string
+  value: number
+  unit: 'count' | 'bytes'
+  used: number | null
+  limit: number | null
+}
+
 interface Passkey {
   type: 'passkeys'
   id: number

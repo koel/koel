@@ -1,16 +1,22 @@
 <template>
   <dl class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <div v-for="figure in figures" :key="figure.label" class="flex flex-col gap-1 p-4 rounded-md bg-k-fg-5">
-      <dt class="text-sm text-k-fg-70">{{ figure.label }}</dt>
-      <dd class="text-2xl text-k-fg tabular-nums">{{ figure.value }}</dd>
+    <StatTile
+      v-for="figure in figures"
+      :key="figure.label"
+      :label="figure.label"
+      :tone="figure.tone"
+      :value="figure.value"
+    >
       <dd v-if="figure.note" class="text-sm text-k-fg-50" data-testid="figure-note">{{ figure.note }}</dd>
-    </div>
+    </StatTile>
   </dl>
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
+
+import StatTile from '@/components/screens/statistics/StatTile.vue'
 
 const props = defineProps<{ statistics: ListeningStatistics }>()
 
@@ -30,30 +36,50 @@ const figures = computed(() => {
   return [
     {
       label: 'Plays',
+      tone: 'highlight' as const,
       value: summary.plays.toLocaleString(),
       note: describeChange(summary.plays, previous_summary?.plays),
     },
     {
       label: 'Listening time',
+      tone: 'success' as const,
       value: secondsToHumanReadable(summary.listening_time),
       note: describeChange(summary.listening_time, previous_summary?.listening_time),
     },
     {
       label: 'Songs',
+      tone: 'primary' as const,
       value: summary.song_count.toLocaleString(),
       note: describeChange(summary.song_count, previous_summary?.song_count),
     },
     {
       label: 'Artists',
+      tone: 'love' as const,
       value: summary.artist_count.toLocaleString(),
       note: describeChange(summary.artist_count, previous_summary?.artist_count),
     },
-    { label: 'Current streak', value: pluralize(streak.current_days, 'day') },
-    { label: 'Longest streak', value: pluralize(streak.longest_days, 'day') },
+    {
+      label: 'Current streak',
+      tone: 'warning' as const,
+      value: pluralize(streak.current_days, 'day'),
+    },
+    {
+      label: 'Longest streak',
+      tone: 'warning' as const,
+      value: pluralize(streak.longest_days, 'day'),
+    },
     ...(discoveries
       ? [
-          { label: 'New songs', value: discoveries.song_count.toLocaleString() },
-          { label: 'New artists', value: discoveries.artist_count.toLocaleString() },
+          {
+            label: 'New songs',
+            tone: 'primary' as const,
+            value: discoveries.song_count.toLocaleString(),
+          },
+          {
+            label: 'New artists',
+            tone: 'love' as const,
+            value: discoveries.artist_count.toLocaleString(),
+          },
         ]
       : []),
   ]

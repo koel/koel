@@ -44,6 +44,11 @@ class PodcastRepository extends Repository implements ScoutableRepository
             ->get();
     }
 
+    public function countSubscribedByUser(User $user): int
+    {
+        return Podcast::query()->setScopedUser($user)->subscribed()->count();
+    }
+
     /** @return Collection<int, Podcast> */
     public function getRecentlySubscribedByUser(int $count, ?User $user = null): Collection
     {

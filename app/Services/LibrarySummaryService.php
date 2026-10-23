@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Repositories\AlbumRepository;
+use App\Repositories\ArtistRepository;
 use App\Repositories\GenreRepository;
 use App\Repositories\SongRepository;
 use App\Values\GenreSummary;
@@ -17,11 +19,40 @@ class LibrarySummaryService
     public function __construct(
         private readonly SongRepository $songRepository,
         private readonly GenreRepository $genreRepository,
+        private readonly AlbumRepository $albumRepository,
+        private readonly ArtistRepository $artistRepository,
     ) {}
 
     public function getSongCount(User $user): int
     {
         return $this->rememberSummaryForUser($user, 'song count', fn () => $this->songRepository->countSongs($user));
+    }
+
+    public function getAlbumCount(User $user): int
+    {
+        return $this->rememberSummaryForUser(
+            $user,
+            'album count',
+            fn () => $this->albumRepository->countAccessibleByUser($user),
+        );
+    }
+
+    public function getArtistCount(User $user): int
+    {
+        return $this->rememberSummaryForUser(
+            $user,
+            'artist count',
+            fn () => $this->artistRepository->countAccessibleByUser($user),
+        );
+    }
+
+    public function getTotalSongFileSize(User $user): int
+    {
+        return $this->rememberSummaryForUser(
+            $user,
+            'song file size',
+            fn () => $this->songRepository->getTotalSongFileSize($user->organization),
+        );
     }
 
     public function getTotalSongLength(User $user): float

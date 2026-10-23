@@ -1,12 +1,16 @@
 ---
-description: See what you've been listening to in Koel — top songs, artists, albums, and genres, your listening time, and when you listen most.
+description: See what you've been listening to in Koel — top songs, artists, albums, and genres, your listening time, when you listen most, and how big your library is.
 ---
 
-# Listening Statistics
+# Statistics
 
-Click **Statistics** in the sidebar to see what you've been listening to. Pick a period at the top: the last 7 days, 30 days, 12 months, or all time.
+Click **Statistics** in the sidebar to see what's in your library and what you've been listening to.
 
-For that period, you'll see:
+The **Storage** section shows how many songs, albums, and artists you can play. If podcasts are enabled, it also shows the podcasts you subscribe to and their episodes. If radio is enabled, it shows the radio stations you can listen to. These numbers count everything you can play and follow your choice to include public media or not.
+
+You may also see the total size of all song files in the library. Podcast episodes and transcoded files don't count. Older songs may count as zero until you run [`php artisan koel:fill-file-sizes`](../cli-commands#koel-fill-file-sizes).
+
+In the **Listening** section, pick a period: the last 7 days, 30 days, 12 months, or all time. For that period, you'll see:
 
 - how many plays, how much listening time, and how many different songs and artists;
 - your plays over time;

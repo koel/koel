@@ -61,7 +61,7 @@ export const routes = [
     name: 'statistics',
     path: '/statistics',
     screen: 'Statistics',
-    title: 'Listening Statistics',
+    title: 'Statistics',
   },
   {
     name: 'offline-songs',

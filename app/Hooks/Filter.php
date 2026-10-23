@@ -8,4 +8,5 @@ final class Filter
     public const string INVITATION_URL = 'invitation-url';
     public const string EMAIL_CHANGE_URL = 'email-change-url';
     public const string PASSWORD_RESET_URL = 'password-reset-url';
+    public const string LIBRARY_STATS = 'library-stats';
 }

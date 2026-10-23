@@ -141,4 +141,16 @@ class DropboxStorageTest extends PlusTestCase
             $service->getPresignedUrl($song->storage_metadata->getPath()),
         );
     }
+
+    #[Test]
+    public function getFileSize(): void
+    {
+        $this->client->allows('setAccessToken');
+        $this->filesystem->expects('fileSize')->with('song.mp3')->andReturn(1234);
+
+        /** @var DropboxStorage $service */
+        $service = app(DropboxStorage::class);
+
+        self::assertSame(1234, $service->getFileSize('song.mp3'));
+    }
 }

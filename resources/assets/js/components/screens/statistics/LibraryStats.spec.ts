@@ -1,0 +1,44 @@
+import { screen } from '@testing-library/vue'
+import { describe, expect, it } from 'vite-plus/test'
+import { createHarness } from '@/__tests__/TestHarness'
+import Component from './LibraryStats.vue'
+
+describe('libraryStats.vue', () => {
+  const h = createHarness()
+
+  const makeStat = (overrides: Partial<LibraryStat> = {}): LibraryStat => ({
+    key: 'songs',
+    label: 'Songs',
+    value: 1200,
+    unit: 'count',
+    used: null,
+    limit: null,
+    ...overrides,
+  })
+
+  it('shows every stat in the given order', () => {
+    h.render(Component, {
+      props: {
+        stats: [
+          makeStat({ key: 'songs', label: 'Songs' }),
+          makeStat({ key: 'albums', label: 'Albums' }),
+          makeStat({ key: 'storage', label: 'Storage used', unit: 'bytes' }),
+        ],
+      },
+    })
+
+    expect(screen.getAllByRole('term').map(term => term.textContent)).toEqual(['Songs', 'Albums', 'Storage used'])
+  })
+
+  it('measures a stat against its limit', () => {
+    h.render(Component, {
+      props: {
+        stats: [makeStat(), makeStat({ key: 'storage', unit: 'bytes', value: 40, used: 30, limit: 100 })],
+      },
+    })
+
+    const meter = screen.getByRole('meter')
+
+    expect([meter.getAttribute('aria-valuenow'), meter.getAttribute('aria-valuemax')]).toEqual(['30', '100'])
+  })
+})

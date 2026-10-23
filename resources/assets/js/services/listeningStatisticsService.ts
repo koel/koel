@@ -8,4 +8,6 @@ export const listeningStatisticsService = {
 
     return await http.get<ListeningStatistics>(`me/listening-statistics?${query}`)
   },
+
+  fetchLibraryStats: async () => await http.get<LibraryStat[]>('me/library-stats'),
 }

@@ -52,6 +52,11 @@ class AlbumRepository extends Repository implements ScoutableRepository
         return self::queryWithoutSmallCover()->count();
     }
 
+    public function countAccessibleByUser(User $user): int
+    {
+        return Album::query()->onlyStandard()->setScopedUser($user)->accessible()->count();
+    }
+
     private static function queryWithoutSmallCover(): AlbumBuilder
     {
         return Album::query()->where('albums.cover', '<>', '')->whereNull('albums.small_cover');
