@@ -155,6 +155,21 @@ identifier your files already supplied.
 php artisan koel:fetch-mbids
 ```
 
+### `koel:fill-file-sizes`
+
+Record the file size of songs that don't have one yet. Koel notes a song's size when it scans the file, so songs added
+by older versions may be missing it, and **Storage used** on the [Statistics](/usage/listening-statistics) screen
+comes out too low. Run this command once to fix that.
+
+Koel only asks your storage for each file's size, so nothing gets downloaded. When it's done, it shows how many songs
+it filled in, how many files it couldn't find, and how many it skipped because their storage needs Koel Plus.
+
+#### Usage
+
+```bash
+php artisan koel:fill-file-sizes
+```
+
 ### `koel:generate-small-covers`
 
 Create the small album covers that Koel shows in song lists, the queue, and the footer. Koel makes these by itself

@@ -48,4 +48,19 @@ class LocalStorageTest extends TestCase
         self::assertSame(sandbox_path("media/__KOEL_UPLOADS_\${$user->id}__/full.mp3"), $reference->location);
         self::assertSame($reference->location, $reference->localPath);
     }
+
+    #[Test]
+    public function getFileSize(): void
+    {
+        self::assertSame(
+            File::size(test_path('songs/full.mp3')),
+            $this->service->getFileSize(test_path('songs/full.mp3')),
+        );
+    }
+
+    #[Test]
+    public function getFileSizeOfMissingFile(): void
+    {
+        self::assertNull($this->service->getFileSize(test_path('songs/missing.mp3')));
+    }
 }
