@@ -22,6 +22,8 @@ abstract class SongStorage
 
     abstract public function getLocalPath(string $location): string;
 
+    abstract public function getFileSize(string $path): ?int;
+
     public function assertSupported(): void
     {
         throw_unless(

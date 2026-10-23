@@ -16,6 +16,7 @@ use App\Repositories\SongRepository;
 use App\Repositories\TranscodeRepository;
 use App\Services\Image\ImageStorage;
 use App\Services\Scanners\Contracts\ScannerCacheStrategy as CacheStrategy;
+use App\Services\SongStorages\SongStorageFactory;
 use App\Values\Scanning\ScanConfiguration;
 use App\Values\Scanning\ScanInformation;
 use App\Values\Song\SongFileInfo;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
 
 // @mago-ignore lint:cyclomatic-complexity
+// @mago-ignore lint:too-many-methods,kan-defect
 class SongService
 {
     private const int DELETION_BATCH_SIZE = 500;
@@ -196,6 +198,22 @@ class SongService
         $this->librarySummaryService->markLibraryChanged();
 
         return $applicableSongIds;
+    }
+
+    /**
+     * @return bool Whether the file was found and its size recorded.
+     */
+    public function fillMissingFileSize(Song $song): bool
+    {
+        $fileSize = SongStorageFactory::make($song->storage)->getFileSize($song->storage_metadata->getPath());
+
+        if ($fileSize === null) {
+            return false;
+        }
+
+        $song->updateQuietly(['file_size' => $fileSize]);
+
+        return true;
     }
 
     public function deleteSongsByUser(User $user): void

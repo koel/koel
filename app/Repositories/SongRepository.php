@@ -691,6 +691,20 @@ class SongRepository extends Repository implements ScoutableRepository
         );
     }
 
+    /** @return LazyCollection<int, Song> */
+    public function lazyGetSongsWithoutFileSize(): LazyCollection
+    {
+        return Song::query(type: PlayableType::SONG)
+            ->withoutEagerLoads()
+            ->whereNull('songs.file_size')
+            ->lazyById(column: 'songs.id', alias: 'id');
+    }
+
+    public function countSongsWithoutFileSize(): int
+    {
+        return Song::query(type: PlayableType::SONG)->whereNull('songs.file_size')->count();
+    }
+
     /** @return Collection<int, Song> */
     public function getNewestEpisodesForUser(int $count, ?User $user = null): Collection
     {

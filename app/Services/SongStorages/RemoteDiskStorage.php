@@ -4,6 +4,7 @@ namespace App\Services\SongStorages;
 
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
+use App\Services\SongStorages\Concerns\ReadsFileSizeUsingFilesystem;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Values\UploadReference;
 use Closure;
@@ -14,12 +15,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RuntimeException;
 
+// @mago-ignore lint:too-many-methods
 abstract class RemoteDiskStorage extends SongStorage implements MustDeleteTemporaryLocalFileAfterUpload
 {
     private const int LOCAL_COPY_LOCK_SECONDS = 600;
     private const int LOCAL_COPY_LOCK_WAIT_SECONDS = 120;
 
     use DeletesUsingFilesystem;
+    use ReadsFileSizeUsingFilesystem;
 
     protected Filesystem $disk;
 
@@ -115,6 +118,11 @@ abstract class RemoteDiskStorage extends SongStorage implements MustDeleteTempor
         File::move($this->copyToLocal($path), $reusablePath);
 
         return $reusablePath;
+    }
+
+    public function getFileSize(string $path): ?int
+    {
+        return self::readFileSizeUsingFilesystem($this->disk, $path);
     }
 
     public function testSetup(): void

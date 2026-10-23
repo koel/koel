@@ -709,4 +709,22 @@ class SongServiceTest extends TestCase
 
         self::assertNull($editedArtist->refresh()->mbid);
     }
+
+    #[Test]
+    public function fillMissingFileSizeOfExistingFile(): void
+    {
+        $song = Song::factory()->createOne(['file_size' => null, 'path' => test_path('songs/full.mp3')]);
+
+        self::assertTrue($this->service->fillMissingFileSize($song));
+        self::assertSame(File::size(test_path('songs/full.mp3')), $song->refresh()->file_size);
+    }
+
+    #[Test]
+    public function leaveFileSizeEmptyWhenTheFileIsMissing(): void
+    {
+        $song = Song::factory()->createOne(['file_size' => null, 'path' => test_path('songs/missing.mp3')]);
+
+        self::assertFalse($this->service->fillMissingFileSize($song));
+        self::assertNull($song->refresh()->file_size);
+    }
 }

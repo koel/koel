@@ -6,6 +6,7 @@ use App\Enums\SongStorageType;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\User;
 use App\Services\SongStorages\Concerns\DeletesUsingFilesystem;
+use App\Services\SongStorages\Concerns\ReadsFileSizeUsingFilesystem;
 use App\Services\SongStorages\Contracts\IssuesPresignedUploadUrls;
 use App\Values\PresignedUpload;
 use Illuminate\Container\Attributes\Config;
@@ -16,6 +17,7 @@ use Illuminate\Support\Str;
 class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadUrls
 {
     use DeletesUsingFilesystem;
+    use ReadsFileSizeUsingFilesystem;
 
     private const string PENDING_UPLOAD_PREFIX = 'pending/';
 
@@ -80,6 +82,11 @@ class S3CompatibleStorage extends CloudStorage implements IssuesPresignedUploadU
     public function delete(string $location, bool $backup = false): void
     {
         $this->deleteFileWithKey($location, $backup);
+    }
+
+    public function getFileSize(string $path): ?int
+    {
+        return self::readFileSizeUsingFilesystem(Storage::disk('s3'), $path);
     }
 
     public function uploadToStorage(string $key, string $path): void
