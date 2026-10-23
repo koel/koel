@@ -151,6 +151,16 @@ class ArtistRepository extends Repository implements ScoutableRepository
         return Artist::query()->onlyStandard()->whereNull('mbid')->count();
     }
 
+    public function countAccessibleByUser(User $user): int
+    {
+        return Artist::query()
+            ->onlyStandard()
+            ->onlyAlbumArtists()
+            ->setScopedUser($user)
+            ->accessible()
+            ->count();
+    }
+
     public function getAll(?User $user = null): Collection
     {
         return Artist::query()

@@ -10,64 +10,68 @@
       </ScreenHeader>
     </template>
 
-    <p v-if="loading" class="text-k-fg-70" role="status">Loading…</p>
+    <div class="flex flex-col flex-1 gap-10">
+      <LibraryFacts v-if="libraryFacts.length" :facts="libraryFacts" />
 
-    <ScreenEmptyState v-else-if="!statistics?.summary.plays" data-testid="statistics-empty">
-      <template #icon>
-        <ChartColumnIcon :size="96" />
-      </template>
-      No plays in this period.
-    </ScreenEmptyState>
+      <p v-if="loading" class="text-k-fg-70" role="status">Loading…</p>
 
-    <div v-else class="flex flex-col gap-10" data-testid="statistics">
-      <ListeningSummary :statistics />
+      <ScreenEmptyState v-else-if="!statistics?.summary.plays" data-testid="statistics-empty">
+        <template #icon>
+          <ChartColumnIcon :size="96" />
+        </template>
+        No plays in this period.
+      </ScreenEmptyState>
 
-      <section class="flex flex-col gap-6">
-        <SegmentedControl v-model="measure" :options="measureOptions" class="self-start" name="listening-measure" />
-        <ListeningBarChart :bars="listeningOverTime" :measure title="Over time" />
+      <div v-else class="flex flex-col gap-10" data-testid="statistics">
+        <ListeningSummary :statistics />
 
-        <div class="grid md:grid-cols-2 gap-10">
-          <ListeningBarChart :bars="listeningByWeekday" :measure title="By day of the week" />
-          <ListeningBarChart :bars="listeningByHour" :measure title="By hour of the day" />
-        </div>
-      </section>
+        <section class="flex flex-col gap-6">
+          <SegmentedControl v-model="measure" :options="measureOptions" class="self-start" name="listening-measure" />
+          <ListeningBarChart :bars="listeningOverTime" :measure title="Over time" />
 
-      <ShelfSection v-if="statistics.top_artists.length">
-        <template #header>Your Top Artists</template>
-        <Carousel>
-          <TopArtistCard
-            v-for="(entry, i) in statistics.top_artists"
-            :key="entry.artist.id"
-            :album-cover="entry.album_cover"
-            :artist="entry.artist"
-            :listening-time="entry.listening_time"
-            :rank="i + 1"
-          />
-        </Carousel>
-      </ShelfSection>
+          <div class="grid md:grid-cols-2 gap-10">
+            <ListeningBarChart :bars="listeningByWeekday" :measure title="By day of the week" />
+            <ListeningBarChart :bars="listeningByHour" :measure title="By hour of the day" />
+          </div>
+        </section>
 
-      <ShelfSection v-if="statistics.top_songs.length">
-        <template #header>Your Top Songs</template>
-        <RankedColumns :items="topSongs" />
-      </ShelfSection>
+        <ShelfSection v-if="statistics.top_artists.length">
+          <template #header>Your Top Artists</template>
+          <Carousel>
+            <TopArtistCard
+              v-for="(entry, i) in statistics.top_artists"
+              :key="entry.artist.id"
+              :album-cover="entry.album_cover"
+              :artist="entry.artist"
+              :listening-time="entry.listening_time"
+              :rank="i + 1"
+            />
+          </Carousel>
+        </ShelfSection>
 
-      <ShelfSection v-if="statistics.top_albums.length">
-        <template #header>Your Top Albums</template>
-        <Carousel>
-          <TopAlbumCard
-            v-for="(entry, i) in statistics.top_albums"
-            :key="entry.album.id"
-            :album="entry.album"
-            :listening-time="entry.listening_time"
-            :rank="i + 1"
-          />
-        </Carousel>
-      </ShelfSection>
+        <ShelfSection v-if="statistics.top_songs.length">
+          <template #header>Your Top Songs</template>
+          <RankedColumns :items="topSongs" />
+        </ShelfSection>
 
-      <ShelfSection v-if="topGenres.length">
-        <template #header>Your Top Genres</template>
-        <RankedColumns :items="topGenres" />
-      </ShelfSection>
+        <ShelfSection v-if="statistics.top_albums.length">
+          <template #header>Your Top Albums</template>
+          <Carousel>
+            <TopAlbumCard
+              v-for="(entry, i) in statistics.top_albums"
+              :key="entry.album.id"
+              :album="entry.album"
+              :listening-time="entry.listening_time"
+              :rank="i + 1"
+            />
+          </Carousel>
+        </ShelfSection>
+
+        <ShelfSection v-if="topGenres.length">
+          <template #header>Your Top Genres</template>
+          <RankedColumns :items="topGenres" />
+        </ShelfSection>
+      </div>
     </div>
   </ScreenBase>
 </template>
@@ -94,6 +98,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 import Carousel from '@/components/ui/Carousel.vue'
 import ShelfSection from '@/components/ui/ShelfSection.vue'
+import LibraryFacts from '@/components/screens/statistics/LibraryFacts.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
 import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
 import RankedColumns from '@/components/screens/statistics/RankedColumns.vue'
@@ -118,6 +123,7 @@ const { cover: defaultCover } = useBranding()
 
 const period = ref<ListeningPeriod>('month')
 const statistics = ref<ListeningStatistics | null>(null)
+const libraryFacts = ref<LibraryFact[]>([])
 const loading = ref(false)
 
 const measureOptions: { value: ListeningMeasure; label: string }[] = [
@@ -176,7 +182,18 @@ const fetchStatistics = async () => {
   }
 }
 
+const fetchLibraryFacts = async () => {
+  try {
+    libraryFacts.value = await listeningStatisticsService.fetchLibraryFacts()
+  } catch (error: unknown) {
+    handleHttpError(error)
+  }
+}
+
 watch(period, fetchStatistics)
 
-onScreenActivated('Statistics', fetchStatistics)
+onScreenActivated('Statistics', () => {
+  fetchLibraryFacts()
+  fetchStatistics()
+})
 </script>

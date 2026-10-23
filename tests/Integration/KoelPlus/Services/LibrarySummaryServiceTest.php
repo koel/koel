@@ -12,7 +12,7 @@ use function Tests\create_user;
 class LibrarySummaryServiceTest extends PlusTestCase
 {
     #[Test]
-    public function songCountFollowsThePublicMediaPreference(): void
+    public function countsFollowThePublicMediaPreference(): void
     {
         $service = app(LibrarySummaryService::class);
         $viewer = create_user();
@@ -22,10 +22,14 @@ class LibrarySummaryServiceTest extends PlusTestCase
         $viewer->save();
 
         self::assertSame(1, $service->getSongCount($viewer));
+        self::assertSame(1, $service->getAlbumCount($viewer));
+        self::assertSame(1, $service->getArtistCount($viewer));
 
         $viewer->preferences->includePublicMedia = false;
         $viewer->save();
 
         self::assertSame(0, $service->getSongCount($viewer));
+        self::assertSame(0, $service->getAlbumCount($viewer));
+        self::assertSame(0, $service->getArtistCount($viewer));
     }
 }

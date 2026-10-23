@@ -13,6 +13,7 @@ use App\Models\Artist;
 use App\Models\Embed;
 use App\Models\Folder;
 use App\Models\Genre;
+use App\Models\Organization;
 use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\Song;
@@ -672,6 +673,22 @@ class SongRepository extends Repository implements ScoutableRepository
             ->whereBelongsTo($podcast)
             ->orderByDesc('songs.created_at')
             ->get();
+    }
+
+    public function countEpisodesSubscribedByUser(User $user): int
+    {
+        return Song::query(type: PlayableType::PODCAST_EPISODE)
+            ->whereHas('podcast.subscribers', static fn (Builder $query) => $query->where('users.id', $user->id))
+            ->count();
+    }
+
+    public function getTotalSongFileSize(Organization $organization): int
+    {
+        $ownerInOrganization = static fn (Builder $owner) => $owner->whereBelongsTo($organization);
+
+        return (int) Song::query(type: PlayableType::SONG)->whereHas('owner', $ownerInOrganization)->sum(
+            'songs.file_size',
+        );
     }
 
     /** @return Collection<int, Song> */

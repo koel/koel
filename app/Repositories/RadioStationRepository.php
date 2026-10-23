@@ -37,6 +37,11 @@ class RadioStationRepository extends Repository implements ScoutableRepository
         return RadioStation::query()->withUserContext(user: $user)->get();
     }
 
+    public function countAccessibleByUser(User $user): int
+    {
+        return RadioStation::query()->withUserContext(user: $user, includeFavoriteStatus: false)->count();
+    }
+
     /** @return Collection<int, RadioStation> */
     public function getRecentlyAddedForUser(int $count, User $user): Collection
     {
