@@ -1,17 +1,13 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader layout="collapsed">
-        Listening Statistics
-
-        <template #controls>
-          <SegmentedControl v-model="period" :options="periodOptions" name="listening-period" />
-        </template>
-      </ScreenHeader>
+      <ScreenHeader layout="collapsed">Listening Statistics</ScreenHeader>
     </template>
 
     <div class="flex flex-col flex-1 gap-10">
       <LibraryFacts v-if="libraryFacts.length" :facts="libraryFacts" />
+
+      <SegmentedControl v-model="period" :options="periodOptions" class="self-start" name="listening-period" />
 
       <p v-if="loading" class="text-k-fg-70" role="status">Loading…</p>
 

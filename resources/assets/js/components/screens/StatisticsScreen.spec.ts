@@ -93,4 +93,14 @@ describe('statisticsScreen.vue', () => {
     await waitFor(() => screen.getByTestId('statistics-empty'))
     screen.getByRole('meter')
   })
+
+  it('shows the library facts above the period selector', async () => {
+    h.mock(listeningStatisticsService, 'fetch').mockResolvedValue(makeStatistics(3))
+    renderComponent([{ key: 'storage', label: 'Storage used', value: 40, unit: 'bytes', used: 40, limit: 100 }])
+
+    const meter = await screen.findByRole('meter')
+    const periodOption = screen.getByLabelText('12 months')
+
+    expect(meter.compareDocumentPosition(periodOption) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
 })
