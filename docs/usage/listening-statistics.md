@@ -8,7 +8,7 @@ Click **Statistics** in the sidebar to see what's in your library and what you'v
 
 The **Storage** section shows how many songs, albums, and artists you can play. If podcasts are enabled, it also shows the podcasts you subscribe to and their episodes. If radio is enabled, it shows the radio stations you can listen to. These numbers count everything you can play and follow your choice to include public media or not.
 
-If you're the owner of the Koel installation, you'll also see **Storage used**: the total size of all song files in the library. Podcast episodes and transcoded files don't count. Songs added by older Koel versions may not have a size on record and count as zero.
+If you're the owner of the Koel installation, you'll also see the total size of all song files in the library. Podcast episodes and transcoded files don't count. Songs added by older Koel versions may not have a size on record and count as zero.
 
 In the **Listening** section, pick a period: the last 7 days, 30 days, 12 months, or all time. For that period, you'll see:
 
