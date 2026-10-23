@@ -6,7 +6,7 @@ description: See what you've been listening to in Koel — top songs, artists, a
 
 Click **Statistics** in the sidebar to see what's in your library and what you've been listening to.
 
-The **Storage** section shows how many songs, albums, and artists you can play. If podcasts are turned on, it also shows the podcasts you subscribe to and their episodes. If radio is turned on, it shows the radio stations you can listen to. These numbers count everything you can play and follow your choice to include public media or not.
+The **Storage** section shows how many songs, albums, and artists you can play. If podcasts are enabled, it also shows the podcasts you subscribe to and their episodes. If radio is enabled, it shows the radio stations you can listen to. These numbers count everything you can play and follow your choice to include public media or not.
 
 If you're the owner of the Koel installation, you'll also see **Storage used**: the total size of all song files in the library. Podcast episodes and transcoded files don't count. Songs added by older Koel versions may not have a size on record and count as zero.
 

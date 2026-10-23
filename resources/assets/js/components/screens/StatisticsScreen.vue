@@ -5,9 +5,9 @@
     </template>
 
     <div class="flex flex-col flex-1 gap-14">
-      <section v-if="libraryFacts.length" aria-labelledby="statistics-storage" class="flex flex-col gap-6">
+      <section v-if="libraryStats.length" aria-labelledby="statistics-storage" class="flex flex-col gap-6">
         <h2 id="statistics-storage" class="text-3xl font-thin text-k-fg">Storage</h2>
-        <LibraryFacts :facts="libraryFacts" />
+        <LibraryStats :stats="libraryStats" />
       </section>
 
       <section aria-labelledby="statistics-listening" class="flex flex-col flex-1 gap-10">
@@ -100,7 +100,7 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 import Carousel from '@/components/ui/Carousel.vue'
 import ShelfSection from '@/components/ui/ShelfSection.vue'
-import LibraryFacts from '@/components/screens/statistics/LibraryFacts.vue'
+import LibraryStats from '@/components/screens/statistics/LibraryStats.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
 import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
 import RankedColumns from '@/components/screens/statistics/RankedColumns.vue'
@@ -125,7 +125,7 @@ const { cover: defaultCover } = useBranding()
 
 const period = ref<ListeningPeriod>('month')
 const statistics = ref<ListeningStatistics | null>(null)
-const libraryFacts = ref<LibraryFact[]>([])
+const libraryStats = ref<LibraryStat[]>([])
 const loading = ref(false)
 
 const measureOptions: { value: ListeningMeasure; label: string }[] = [
@@ -184,9 +184,9 @@ const fetchStatistics = async () => {
   }
 }
 
-const fetchLibraryFacts = async () => {
+const fetchLibraryStats = async () => {
   try {
-    libraryFacts.value = await listeningStatisticsService.fetchLibraryFacts()
+    libraryStats.value = await listeningStatisticsService.fetchLibraryStats()
   } catch (error: unknown) {
     handleHttpError(error)
   }
@@ -195,7 +195,7 @@ const fetchLibraryFacts = async () => {
 watch(period, fetchStatistics)
 
 onScreenActivated('Statistics', () => {
-  fetchLibraryFacts()
+  fetchLibraryStats()
   fetchStatistics()
 })
 </script>

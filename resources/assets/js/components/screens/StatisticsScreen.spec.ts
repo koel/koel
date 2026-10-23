@@ -23,8 +23,8 @@ describe('statisticsScreen.vue', () => {
     streak: { current_days: 0, longest_days: 0 },
   })
 
-  const renderComponent = (libraryFacts: LibraryFact[] = []) => {
-    h.mock(listeningStatisticsService, 'fetchLibraryFacts').mockResolvedValue(libraryFacts)
+  const renderComponent = (libraryStats: LibraryStat[] = []) => {
+    h.mock(listeningStatisticsService, 'fetchLibraryStats').mockResolvedValue(libraryStats)
     h.visit('/statistics')
 
     return h.render(Component, {
@@ -86,7 +86,7 @@ describe('statisticsScreen.vue', () => {
     screen.getByTestId('statistics-empty')
   })
 
-  it('shows the library facts even without plays in the period', async () => {
+  it('shows the library stats even without plays in the period', async () => {
     h.mock(listeningStatisticsService, 'fetch').mockResolvedValue(makeStatistics(0))
     renderComponent([{ key: 'storage', label: 'Storage used', value: 40, unit: 'bytes', used: 40, limit: 100 }])
 
@@ -94,7 +94,7 @@ describe('statisticsScreen.vue', () => {
     screen.getByRole('meter')
   })
 
-  it('shows the library facts above the period selector', async () => {
+  it('shows the library stats above the period selector', async () => {
     h.mock(listeningStatisticsService, 'fetch').mockResolvedValue(makeStatistics(3))
     renderComponent([{ key: 'storage', label: 'Storage used', value: 40, unit: 'bytes', used: 40, limit: 100 }])
 
