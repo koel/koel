@@ -1,7 +1,7 @@
 <template>
   <ScreenBase>
     <template #header>
-      <ScreenHeader layout="collapsed">Listening Statistics</ScreenHeader>
+      <ScreenHeader layout="collapsed">Statistics</ScreenHeader>
     </template>
 
     <div class="flex flex-col flex-1 gap-10">

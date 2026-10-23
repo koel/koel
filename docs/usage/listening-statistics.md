@@ -2,9 +2,9 @@
 description: See what you've been listening to in Koel — top songs, artists, albums, and genres, your listening time, when you listen most, and how big your library is.
 ---
 
-# Listening Statistics
+# Statistics
 
-Click **Statistics** in the sidebar to see what you've been listening to.
+Click **Statistics** in the sidebar to see what's in your library and what you've been listening to.
 
 At the top, a row of library facts shows how many songs, albums, and artists you can play. If podcasts are turned on, it also shows the podcasts you subscribe to and their episodes. If radio is turned on, it shows the radio stations you can listen to. These numbers count everything you can play, not just this period, and follow your choice to include public media or not.
 
