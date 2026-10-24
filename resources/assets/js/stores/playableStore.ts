@@ -17,6 +17,7 @@ import { artistStore } from '@/stores/artistStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { clientUrl } from '@/utils/clientUrl'
+import { getNativelyPlayableLosslessFormats } from '@/utils/supports'
 
 export interface SongUpdateData {
   title?: string
@@ -48,8 +49,21 @@ const shouldTranscode = () => isMobile.any && preferenceStore.transcode_on_mobil
 
 const hasOfflineCopy = async (unsignedUrl: string) => 'caches' in window && Boolean(await caches.match(unsignedUrl))
 
-const getPlayUrlEndpoint = (playable: Playable) =>
-  shouldTranscode() ? `songs/${playable.id}/play-url?transcode=1` : `songs/${playable.id}/play-url`
+const getPlayUrlEndpoint = (playable: Playable) => {
+  const endpoint = `songs/${playable.id}/play-url`
+
+  if (shouldTranscode()) {
+    return `${endpoint}?transcode=1`
+  }
+
+  if (!preferenceStore.stream_lossless_when_supported) {
+    return endpoint
+  }
+
+  const params = new URLSearchParams(getNativelyPlayableLosslessFormats().map(format => ['lossless[]', format]))
+
+  return params.size ? `${endpoint}?${params}` : endpoint
+}
 
 let isPlayStatsRefreshScheduled = false
 

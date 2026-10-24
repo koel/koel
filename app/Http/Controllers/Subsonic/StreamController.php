@@ -21,11 +21,13 @@ class StreamController extends Controller
 
         $maxBitRate = $request->integer('maxBitRate') ?: null;
         $startTime = (float) $request->input('timeOffset', 0);
+        $wantsOriginal = $request->input('format') === 'raw';
 
         return (new Streamer(song: $song, config: RequestedStreamingConfig::make(
-            transcode: $maxBitRate !== null,
+            transcode: $maxBitRate !== null && !$wantsOriginal,
             bitRate: $maxBitRate,
             startTime: $startTime,
+            streamOriginal: $wantsOriginal,
         )))->stream();
     }
 }

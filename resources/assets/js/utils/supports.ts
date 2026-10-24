@@ -17,3 +17,21 @@ export const isDirectoryReadingSupported =
   window.DataTransferItem && typeof window.DataTransferItem.prototype.webkitGetAsEntry === 'function'
 
 export const isFullscreenSupported = (): boolean => document.fullscreenEnabled ?? false
+
+const losslessFormatMimeTypes = {
+  flac: 'audio/flac',
+  alac: 'audio/mp4; codecs="alac"',
+  wav: 'audio/wav',
+  aiff: 'audio/aiff',
+}
+
+let formatProbe: HTMLAudioElement | null = null
+
+export const getNativelyPlayableLosslessFormats = () => {
+  formatProbe ??= document.createElement('audio')
+  const probe = formatProbe
+
+  return Object.entries(losslessFormatMimeTypes)
+    .filter(([, mimeType]) => probe.canPlayType(mimeType) !== '')
+    .map(([format]) => format)
+}

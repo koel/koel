@@ -481,6 +481,7 @@ interface UserPreferences extends Record<string, any> {
   radio_stations_favorites_only: boolean
   transcode_on_mobile: boolean
   transcode_quality: number
+  stream_lossless_when_supported: boolean
   support_bar_no_bugging: boolean
   show_album_art_overlay: boolean
   lyrics_zoom_level: number | null

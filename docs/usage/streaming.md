@@ -64,10 +64,18 @@ Since FLAC is [well-supported](https://caniuse.com/?search=flac) by modern brows
 default and maintains the lossless experience. You can also force transcoding FLAC as well by setting `TRANSCODE_FLAC`
 to `true` in the `.env` file.
 
+### Streaming Lossless When Supported
+
+Koel checks which lossless formats (FLAC, ALAC, WAV, AIFF) the device you're listening on can play. Files in those
+formats are streamed as-is, even if `TRANSCODE_FLAC` is on or the format would otherwise be transcoded. ALAC, for
+example, plays untouched in Safari but is transcoded in Chrome. You can turn this off from the [Preferences screen](./profile-preferences#preferences).
+
+Subsonic clients can ask for the original file, in any format, by passing `format=raw` to the `stream` endpoint.
+
 ### Forced Transcoding
 
 For audio formats that aren't [widely supported by browsers](https://caniuse.com/?search=audio%20format),
-such as AIFF or APE, Koel will always resort to transcoding. If you upload files in such formats, make sure the FFmpeg
+such as APE or WMA, Koel will always resort to transcoding. If you upload files in such formats, make sure the FFmpeg
 setup and configuration (see above) are correct.
 
 ### Transcoding on Mobile

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Enums\NativelyPlayableLosslessFormat;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\FetchSongPlayUrlRequest;
 use App\Models\Song;
@@ -23,7 +24,12 @@ class FetchSongPlayUrlController extends Controller
         $this->authorize('access', $song);
 
         return response()->json([
-            'url' => $signer->signSongPlayUrl($song, $user, $request->boolean('transcode')),
+            'url' => $signer->signSongPlayUrl(
+                $song,
+                $user,
+                $request->boolean('transcode'),
+                $request->enums('lossless', NativelyPlayableLosslessFormat::class),
+            ),
         ]);
     }
 }

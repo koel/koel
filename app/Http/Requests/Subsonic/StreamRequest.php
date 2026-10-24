@@ -13,6 +13,7 @@ class StreamRequest extends IdRequest
         + [
             'maxBitRate' => [Rule::numeric()->integer()->min(0)],
             'timeOffset' => [Rule::numeric()->min(0)],
+            'format' => [Rule::string()],
         ];
     }
 }

@@ -34,7 +34,7 @@ class Streamer
             return app(PodcastStreamerAdapter::class);
         }
 
-        if ($this->config?->transcode || self::shouldTranscode($this->song)) {
+        if ($this->config?->transcode || $this->shouldTranscodeForClient()) {
             return app(TranscodingStreamerAdapter::class);
         }
 
@@ -59,6 +59,19 @@ class Streamer
     public function getAdapter(): StreamerAdapter
     {
         return $this->adapter;
+    }
+
+    private function shouldTranscodeForClient(): bool
+    {
+        if ($this->config?->streamOriginal) {
+            return false;
+        }
+
+        if ($this->config?->clientPlaysLosslessMimeType($this->song->mime_type)) {
+            return false;
+        }
+
+        return self::shouldTranscode($this->song);
     }
 
     /**

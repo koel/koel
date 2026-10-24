@@ -62,6 +62,12 @@
     </FormRow>
     <FormRow>
       <label class="pref-row">
+        <CheckBox v-model="preferences.stream_lossless_when_supported" name="stream_lossless_when_supported" />
+        <span>Stream lossless files as-is if supported</span>
+      </label>
+    </FormRow>
+    <FormRow>
+      <label class="pref-row">
         <CheckBox v-model="preferences.show_album_art_overlay" name="show_album_art_overlay" />
         <span>Show a translucent, blurred overlay of the current album's art</span>
       </label>

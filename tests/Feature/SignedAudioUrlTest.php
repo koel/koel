@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\RadioStation;
 use App\Models\Song;
 use App\Services\DownloadService;
+use App\Services\Streamer\Adapters\LocalStreamerAdapter;
+use App\Services\Streamer\Adapters\TranscodingStreamerAdapter;
 use App\Services\Streamer\AudioUrlSigner;
 use App\Values\Downloadable;
 use Illuminate\Http\Response;
@@ -106,6 +108,29 @@ class SignedAudioUrlTest extends TestCase
 
         self::assertStringContainsString("play/{$song->id}/1?", $url);
         self::assertStringContainsString('signature=', $url);
+    }
+
+    #[Test]
+    public function playLosslessFileAsIsWhenTheClientSupportsItsCodec(): void
+    {
+        config(['koel.streaming.transcode_flac' => true]);
+        $user = create_user();
+        $song = Song::factory()->for($user, 'owner')->createOne([
+            'path' => test_path('songs/blank.mp3'),
+            'mime_type' => 'audio/flac',
+        ]);
+
+        $url = $this
+            ->getAs("api/songs/{$song->id}/play-url?lossless[]=flac&lossless[]=alac", $user)
+            ->assertOk()
+            ->json('url');
+
+        $this->mock(TranscodingStreamerAdapter::class)->expects('stream')->never();
+        $this->mock(LocalStreamerAdapter::class)->expects('stream');
+
+        $this->get($url)->assertOk();
+
+        config(['koel.streaming.transcode_flac' => false]);
     }
 
     #[Test]
