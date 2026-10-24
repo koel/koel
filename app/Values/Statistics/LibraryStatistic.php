@@ -2,15 +2,15 @@
 
 namespace App\Values\Statistics;
 
-use App\Enums\LibraryStatUnit;
+use App\Enums\LibraryStatisticUnit;
 
-final readonly class LibraryStat
+final readonly class LibraryStatistic
 {
     private function __construct(
         public string $key,
         public string $label,
         public int $value,
-        public LibraryStatUnit $unit,
+        public LibraryStatisticUnit $unit,
         public ?int $used,
         public ?int $limit,
     ) {}
@@ -19,7 +19,7 @@ final readonly class LibraryStat
         string $key,
         string $label,
         int $value,
-        LibraryStatUnit $unit = LibraryStatUnit::COUNT,
+        LibraryStatisticUnit $unit = LibraryStatisticUnit::COUNT,
         ?int $used = null,
         ?int $limit = null,
     ): self {

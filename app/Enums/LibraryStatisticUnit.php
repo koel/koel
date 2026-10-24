@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum LibraryStatUnit: string
+enum LibraryStatisticUnit: string
 {
     case COUNT = 'count';
     case BYTES = 'bytes';

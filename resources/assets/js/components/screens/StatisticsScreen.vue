@@ -6,20 +6,20 @@
 
     <div class="flex flex-col flex-1 gap-14">
       <section
-        v-if="loadingLibraryStats || libraryStats.length"
-        :aria-busy="loadingLibraryStats"
+        v-if="loadingLibraryStatistics || libraryStatistics.length"
+        :aria-busy="loadingLibraryStatistics"
         aria-labelledby="statistics-storage"
         class="flex flex-col gap-6"
       >
         <h2 id="statistics-storage" class="text-3xl font-thin text-k-fg">Storage</h2>
         <div
-          v-if="loadingLibraryStats"
+          v-if="loadingLibraryStatistics"
           class="grid grid-cols-2 md:grid-cols-4 gap-4"
-          data-testid="library-stats-skeleton"
+          data-testid="library-statistics-skeleton"
         >
-          <StatTileSkeleton v-for="i in 4" :key="i" />
+          <StatisticTileSkeleton v-for="i in 4" :key="i" />
         </div>
-        <LibraryStats v-else :stats="libraryStats" />
+        <LibraryStatistics v-else :statistics="libraryStatistics" />
       </section>
 
       <section aria-labelledby="statistics-listening" class="flex flex-col flex-1 gap-10">
@@ -28,14 +28,14 @@
 
         <div v-if="loading" aria-busy="true" class="flex flex-col gap-10" data-testid="statistics-skeleton">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatTileSkeleton v-for="i in 8" :key="i" />
+            <StatisticTileSkeleton v-for="i in 8" :key="i" />
           </div>
           <div class="skeleton">
             <div class="pulse h-64 rounded-md" />
           </div>
         </div>
 
-        <ScreenEmptyState v-else-if="!listeningStats?.summary.plays" data-testid="statistics-empty">
+        <ScreenEmptyState v-else-if="!listeningStatistics?.summary.plays" data-testid="statistics-empty">
           <template #icon>
             <ChartColumnIcon :size="96" />
           </template>
@@ -43,7 +43,7 @@
         </ScreenEmptyState>
 
         <div v-else class="flex flex-col gap-10" data-testid="statistics">
-          <ListeningSummary :stats="listeningStats" />
+          <ListeningSummary :statistics="listeningStatistics" />
 
           <section class="flex flex-col gap-6">
             <SegmentedControl v-model="measure" :options="measureOptions" class="self-start" name="listening-measure" />
@@ -55,11 +55,11 @@
             </div>
           </section>
 
-          <ShelfSection v-if="listeningStats.top_artists.length">
+          <ShelfSection v-if="listeningStatistics.top_artists.length">
             <template #header>Your Top Artists</template>
             <Carousel>
               <TopArtistCard
-                v-for="(entry, i) in listeningStats.top_artists"
+                v-for="(entry, i) in listeningStatistics.top_artists"
                 :key="entry.artist.id"
                 :album-cover="entry.album_cover"
                 :artist="entry.artist"
@@ -69,16 +69,16 @@
             </Carousel>
           </ShelfSection>
 
-          <ShelfSection v-if="listeningStats.top_songs.length">
+          <ShelfSection v-if="listeningStatistics.top_songs.length">
             <template #header>Your Top Songs</template>
             <RankedColumns :items="topSongs" />
           </ShelfSection>
 
-          <ShelfSection v-if="listeningStats.top_albums.length">
+          <ShelfSection v-if="listeningStatistics.top_albums.length">
             <template #header>Your Top Albums</template>
             <Carousel>
               <TopAlbumCard
-                v-for="(entry, i) in listeningStats.top_albums"
+                v-for="(entry, i) in listeningStatistics.top_albums"
                 :key="entry.album.id"
                 :album="entry.album"
                 :listening-time="entry.listening_time"
@@ -100,18 +100,18 @@
 <script lang="ts" setup>
 import { ChartColumnIcon } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
-import { statsService } from '@/services/statsService'
+import { statisticsService } from '@/services/statisticsService'
 import { pluralize } from '@/utils/formatters'
 import { useBranding } from '@/composables/useBranding'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useRouter } from '@/composables/useRouter'
-import type { ListeningMeasure, ListeningPeriod } from '@/utils/listeningStats'
+import type { ListeningMeasure, ListeningPeriod } from '@/utils/listeningStatistics'
 import {
   formatListeningMinutes,
   getListeningByHour,
   getListeningByWeekday,
   getListeningOverTime,
-} from '@/utils/listeningStats'
+} from '@/utils/listeningStatistics'
 
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -119,8 +119,8 @@ import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 import Carousel from '@/components/ui/Carousel.vue'
 import ShelfSection from '@/components/ui/ShelfSection.vue'
-import LibraryStats from '@/components/screens/statistics/LibraryStats.vue'
-import StatTileSkeleton from '@/components/screens/statistics/StatTileSkeleton.vue'
+import LibraryStatistics from '@/components/screens/statistics/LibraryStatistics.vue'
+import StatisticTileSkeleton from '@/components/screens/statistics/StatisticTileSkeleton.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
 import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
 import RankedColumns from '@/components/screens/statistics/RankedColumns.vue'
@@ -144,9 +144,9 @@ const { handleHttpError } = useErrorHandler()
 const { cover: defaultCover } = useBranding()
 
 const period = ref<ListeningPeriod>('month')
-const listeningStats = ref<ListeningStats | null>(null)
-const libraryStats = ref<LibraryStat[]>([])
-const loadingLibraryStats = ref(true)
+const listeningStatistics = ref<ListeningStatistics | null>(null)
+const libraryStatistics = ref<LibraryStatistic[]>([])
+const loadingLibraryStatistics = ref(true)
 const loading = ref(false)
 
 const measureOptions: { value: ListeningMeasure; label: string }[] = [
@@ -156,13 +156,13 @@ const measureOptions: { value: ListeningMeasure; label: string }[] = [
 
 const measure = ref<ListeningMeasure>('plays')
 
-const hourlyListening = computed(() => listeningStats.value?.hourly_listening ?? [])
+const hourlyListening = computed(() => listeningStatistics.value?.hourly_listening ?? [])
 const listeningOverTime = computed(() => getListeningOverTime(hourlyListening.value, period.value, measure.value))
 const listeningByWeekday = computed(() => getListeningByWeekday(hourlyListening.value, measure.value))
 const listeningByHour = computed(() => getListeningByHour(hourlyListening.value, measure.value))
 
 const topSongs = computed(() =>
-  (listeningStats.value?.top_songs ?? []).map(({ song, plays }) => ({
+  (listeningStatistics.value?.top_songs ?? []).map(({ song, plays }) => ({
     key: song.id,
     title: song.title,
     subtitle: `${song.artist_name} · ${pluralize(plays, 'play')}`,
@@ -172,7 +172,7 @@ const topSongs = computed(() =>
 )
 
 const topGenres = computed(() =>
-  (listeningStats.value?.top_genres ?? []).map(({ id, name, listening_time }) => ({
+  (listeningStatistics.value?.top_genres ?? []).map(({ id, name, listening_time }) => ({
     key: id,
     title: name,
     subtitle: formatListeningMinutes(listening_time),
@@ -189,10 +189,10 @@ const fetchStatistics = async () => {
   loading.value = true
 
   try {
-    const result = await statsService.fetchListeningStats(period.value)
+    const result = await statisticsService.fetchListeningStatistics(period.value)
 
     if (isLatestRequest()) {
-      listeningStats.value = result
+      listeningStatistics.value = result
     }
   } catch (error: unknown) {
     if (isLatestRequest()) {
@@ -205,20 +205,20 @@ const fetchStatistics = async () => {
   }
 }
 
-const fetchLibraryStats = async () => {
+const fetchLibraryStatistics = async () => {
   try {
-    libraryStats.value = await statsService.fetchLibraryStats()
+    libraryStatistics.value = await statisticsService.fetchLibraryStatistics()
   } catch (error: unknown) {
     handleHttpError(error)
   } finally {
-    loadingLibraryStats.value = false
+    loadingLibraryStatistics.value = false
   }
 }
 
 watch(period, fetchStatistics)
 
 onScreenActivated('Statistics', () => {
-  fetchLibraryStats()
+  fetchLibraryStatistics()
   fetchStatistics()
 })
 </script>

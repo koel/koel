@@ -22,7 +22,7 @@
 <script lang="ts" setup>
 import { useBranding } from '@/composables/useBranding'
 import { useRouter } from '@/composables/useRouter'
-import { formatListeningMinutes } from '@/utils/listeningStats'
+import { formatListeningMinutes } from '@/utils/listeningStatistics'
 
 defineProps<{ album: Album; rank: number; listeningTime: number }>()
 

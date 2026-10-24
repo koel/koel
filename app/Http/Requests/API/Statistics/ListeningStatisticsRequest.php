@@ -6,7 +6,7 @@ use App\Enums\ListeningPeriod;
 use App\Http\Requests\API\Request;
 use Illuminate\Validation\Rule;
 
-class ListeningStatsRequest extends Request
+class ListeningStatisticsRequest extends Request
 {
     /** @inheritdoc */
     public function rules(): array

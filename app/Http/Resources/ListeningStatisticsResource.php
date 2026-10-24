@@ -2,12 +2,12 @@
 
 namespace App\Http\Resources;
 
-use App\Values\Statistics\ListeningStats;
+use App\Values\Statistics\ListeningStatistics;
 use App\Values\Statistics\ListeningSummary;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ListeningStatsResource extends JsonResource
+class ListeningStatisticsResource extends JsonResource
 {
     public const array JSON_STRUCTURE = [
         'summary' => ['plays', 'listening_time', 'song_count', 'artist_count'],
@@ -22,45 +22,45 @@ class ListeningStatsResource extends JsonResource
     ];
 
     public function __construct(
-        private readonly ListeningStats $stats,
+        private readonly ListeningStatistics $statistics,
     ) {
-        parent::__construct($stats);
+        parent::__construct($statistics);
     }
 
     /** @inheritdoc */
     public function toArray(Request $request): array
     {
         return [
-            'summary' => self::summaryToArray($this->stats->summary),
+            'summary' => self::summaryToArray($this->statistics->summary),
             'top_songs' => array_map(static fn (array $entry): array => [
                 'plays' => $entry['plays'],
                 'song' => SongResource::make($entry['song']),
-            ], $this->stats->topSongs),
+            ], $this->statistics->topSongs),
             'top_artists' => array_map(static fn (array $entry): array => [
                 'listening_time' => $entry['listening_time'],
                 'artist' => ArtistResource::make($entry['artist']),
                 'album_cover' => $entry['album_cover'],
-            ], $this->stats->topArtists),
+            ], $this->statistics->topArtists),
             'top_albums' => array_map(static fn (array $entry): array => [
                 'listening_time' => $entry['listening_time'],
                 'album' => AlbumResource::make($entry['album']),
-            ], $this->stats->topAlbums),
-            'top_genres' => $this->stats->topGenres,
-            'hourly_listening' => collect($this->stats->hourlyListening)
+            ], $this->statistics->topAlbums),
+            'top_genres' => $this->statistics->topGenres,
+            'hourly_listening' => collect($this->statistics->hourlyListening)
                 ->map(static fn (array $listening, string $hour): array => ['hour' => $hour, ...$listening])
                 ->values()
                 ->all(),
-            'previous_summary' => $this->stats->previousSummary
-                ? self::summaryToArray($this->stats->previousSummary)
+            'previous_summary' => $this->statistics->previousSummary
+                ? self::summaryToArray($this->statistics->previousSummary)
                 : null,
-            'discoveries' => $this->stats->discoveries
+            'discoveries' => $this->statistics->discoveries
                 ? [
-                    'song_count' => $this->stats->discoveries->songCount,
-                    'artist_count' => $this->stats->discoveries->artistCount,
+                    'song_count' => $this->statistics->discoveries->songCount,
+                    'artist_count' => $this->statistics->discoveries->artistCount,
                 ] : null,
             'streak' => [
-                'current_days' => $this->stats->streak->currentDays,
-                'longest_days' => $this->stats->streak->longestDays,
+                'current_days' => $this->statistics->streak->currentDays,
+                'longest_days' => $this->statistics->streak->longestDays,
             ],
         ];
     }

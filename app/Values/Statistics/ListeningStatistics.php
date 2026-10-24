@@ -6,7 +6,7 @@ use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Song;
 
-final readonly class ListeningStats
+final readonly class ListeningStatistics
 {
     /**
      * @param list<array{song: Song, plays: int}> $topSongs

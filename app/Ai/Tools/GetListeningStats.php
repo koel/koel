@@ -4,7 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiRequestContext;
 use App\Enums\ListeningPeriod;
-use App\Services\ListeningStatsService;
+use App\Services\ListeningStatisticsService;
 use Carbon\CarbonInterval;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -18,7 +18,7 @@ class GetListeningStats implements Tool
 
     public function __construct(
         private readonly AiRequestContext $context,
-        private readonly ListeningStatsService $listeningStatsService,
+        private readonly ListeningStatisticsService $listeningStatisticsService,
         #[Config('app.timezone')]
         private readonly string $timezone,
     ) {}
@@ -46,7 +46,7 @@ class GetListeningStats implements Tool
     public function handle(Request $request): Stringable|string
     {
         $period = ListeningPeriod::tryFrom($request['period'] ?? '') ?? ListeningPeriod::MONTH;
-        $stats = $this->listeningStatsService->getStats($this->context->user, $period, $this->timezone);
+        $stats = $this->listeningStatisticsService->getStatistics($this->context->user, $period, $this->timezone);
 
         if (!$stats->summary->plays) {
             return 'No listening history for this period.';

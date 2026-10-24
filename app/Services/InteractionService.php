@@ -10,7 +10,7 @@ use App\Models\User;
 class InteractionService
 {
     public function __construct(
-        private readonly ListeningStatsService $listeningStatsService,
+        private readonly ListeningStatisticsService $listeningStatisticsService,
     ) {}
 
     public function increasePlayCount(Playable $playable, User $user): Interaction
@@ -22,7 +22,7 @@ class InteractionService
                 'played_at' => now(),
             ]);
 
-            $this->listeningStatsService->markPlaysChanged($user);
+            $this->listeningStatisticsService->markPlaysChanged($user);
         }
 
         return tap(

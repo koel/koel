@@ -59,7 +59,7 @@ interface ListeningSummary {
   artist_count: number
 }
 
-interface ListeningStats {
+interface ListeningStatistics {
   summary: ListeningSummary
   top_songs: { plays: number; song: Song }[]
   top_artists: { listening_time: number; artist: Artist; album_cover: string | null }[]
@@ -71,7 +71,7 @@ interface ListeningStats {
   streak: { current_days: number; longest_days: number }
 }
 
-interface LibraryStat {
+interface LibraryStatistic {
   key: string
   label: string
   value: number
