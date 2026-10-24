@@ -12,13 +12,13 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class FetchListeningStatisticsController extends Controller
 {
     public function __construct(
-        private readonly ListeningStatisticsService $statisticsService,
+        private readonly ListeningStatisticsService $listeningStatisticsService,
     ) {}
 
     /** @param User $user */
     public function __invoke(ListeningStatisticsRequest $request, Authenticatable $user)
     {
-        return ListeningStatisticsResource::make($this->statisticsService->getStatistics(
+        return ListeningStatisticsResource::make($this->listeningStatisticsService->getStatistics(
             $user,
             $request->period(),
             $request->timezone(),

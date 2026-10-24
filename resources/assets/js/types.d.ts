@@ -71,7 +71,7 @@ interface ListeningStatistics {
   streak: { current_days: number; longest_days: number }
 }
 
-interface LibraryStat {
+interface LibraryStatistic {
   key: string
   label: string
   value: number

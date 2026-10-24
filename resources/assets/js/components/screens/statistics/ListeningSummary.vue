@@ -1,6 +1,6 @@
 <template>
   <dl class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <StatTile
+    <StatisticTile
       v-for="figure in figures"
       :key="figure.label"
       :label="figure.label"
@@ -8,7 +8,7 @@
       :value="figure.value"
     >
       <dd v-if="figure.note" class="text-sm text-k-fg-50" data-testid="figure-note">{{ figure.note }}</dd>
-    </StatTile>
+    </StatisticTile>
   </dl>
 </template>
 
@@ -16,7 +16,7 @@
 import { computed } from 'vue'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 
-import StatTile from '@/components/screens/statistics/StatTile.vue'
+import StatisticTile from '@/components/screens/statistics/StatisticTile.vue'
 
 const props = defineProps<{ statistics: ListeningStatistics }>()
 

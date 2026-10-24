@@ -1,12 +1,12 @@
 import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import Component from './LibraryStats.vue'
+import Component from './LibraryStatistics.vue'
 
-describe('libraryStats.vue', () => {
+describe('libraryStatistics.vue', () => {
   const h = createHarness()
 
-  const makeStat = (overrides: Partial<LibraryStat> = {}): LibraryStat => ({
+  const makeStatistic = (overrides: Partial<LibraryStatistic> = {}): LibraryStatistic => ({
     key: 'songs',
     label: 'Songs',
     value: 1200,
@@ -16,13 +16,13 @@ describe('libraryStats.vue', () => {
     ...overrides,
   })
 
-  it('shows every stat in the given order', () => {
+  it('shows every statistic in the given order', () => {
     h.render(Component, {
       props: {
-        stats: [
-          makeStat({ key: 'songs', label: 'Songs' }),
-          makeStat({ key: 'albums', label: 'Albums' }),
-          makeStat({ key: 'storage', label: 'Storage used', unit: 'bytes' }),
+        statistics: [
+          makeStatistic({ key: 'songs', label: 'Songs' }),
+          makeStatistic({ key: 'albums', label: 'Albums' }),
+          makeStatistic({ key: 'storage', label: 'Storage used', unit: 'bytes' }),
         ],
       },
     })
@@ -30,10 +30,13 @@ describe('libraryStats.vue', () => {
     expect(screen.getAllByRole('term').map(term => term.textContent)).toEqual(['Songs', 'Albums', 'Storage used'])
   })
 
-  it('measures a stat against its limit', () => {
+  it('measures a statistic against its limit', () => {
     h.render(Component, {
       props: {
-        stats: [makeStat(), makeStat({ key: 'storage', unit: 'bytes', value: 40, used: 30, limit: 100 })],
+        statistics: [
+          makeStatistic(),
+          makeStatistic({ key: 'storage', unit: 'bytes', value: 40, used: 30, limit: 100 }),
+        ],
       },
     })
 

@@ -104,15 +104,11 @@ class ListeningStatisticsService
             return $cached['totals'];
         }
 
-        $totals = $this->computePlayTotals($user, $period);
-
-        Cache::put(
+        return tap($this->computePlayTotals($user, $period), static fn (array $totals) => Cache::put(
             $key,
             ['changed_at' => $changedAt, 'totals' => $totals],
             $period === ListeningPeriod::ALL_TIME ? now()->addWeek() : now()->addHour(),
-        );
-
-        return $totals;
+        ));
     }
 
     /** @return PlayTotals */

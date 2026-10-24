@@ -14,13 +14,13 @@
 <script lang="ts" setup>
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
 
-export type StatTileTone = 'highlight' | 'primary' | 'success' | 'love' | 'warning' | 'danger'
+export type StatisticTileTone = 'highlight' | 'primary' | 'success' | 'love' | 'warning' | 'danger'
 
-withDefaults(defineProps<{ label: string; value: string; tone?: StatTileTone }>(), {
+withDefaults(defineProps<{ label: string; value: string; tone?: StatisticTileTone }>(), {
   tone: 'highlight',
 })
 
-const toneColors: Record<StatTileTone, string> = {
+const toneColors: Record<StatisticTileTone, string> = {
   highlight: 'var(--color-highlight)',
   primary: 'var(--color-primary)',
   success: 'var(--color-success)',

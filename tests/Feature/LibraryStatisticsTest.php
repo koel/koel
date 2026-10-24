@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Http\Resources\LibraryStatResource;
+use App\Http\Resources\LibraryStatisticResource;
 use App\Models\Organization;
 use App\Models\Podcast;
 use App\Models\RadioStation;
@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 use function Tests\create_user;
 
-class LibraryStatsTest extends TestCase
+class LibraryStatisticsTest extends TestCase
 {
     #[Test]
     public function countWhatTheUserCanPlay(): void
@@ -30,17 +30,17 @@ class LibraryStatsTest extends TestCase
         RadioStation::factory()->for($user)->createOne();
         RadioStation::factory()->createOne();
 
-        $stats = $this
-            ->getAs('api/me/library-stats', $user)
+        $statistics = $this
+            ->getAs('api/me/library-statistics', $user)
             ->assertOk()
-            ->assertJsonStructure(['*' => LibraryStatResource::JSON_STRUCTURE])
+            ->assertJsonStructure(['*' => LibraryStatisticResource::JSON_STRUCTURE])
             ->collect()
             ->pluck('value', 'key')
             ->all();
 
         self::assertSame(
             ['songs' => 2, 'albums' => 2, 'artists' => 2, 'podcasts' => 1, 'episodes' => 3, 'radio_stations' => 1],
-            $stats,
+            $statistics,
         );
     }
 
@@ -57,7 +57,7 @@ class LibraryStatsTest extends TestCase
         Song::factory()->for(User::factory()->for(Organization::factory()), 'owner')->createOne(['file_size' => 7_000]);
 
         $this
-            ->getAs('api/me/library-stats', $owner)
+            ->getAs('api/me/library-statistics', $owner)
             ->assertOk()
             ->assertJsonFragment(['key' => 'storage', 'value' => 1_500, 'unit' => 'bytes']);
     }

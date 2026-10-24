@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use App\Enums\LibraryStatUnit;
+use App\Enums\LibraryStatisticUnit;
 use App\Hooks\Filter;
 use App\Models\User;
 use App\Repositories\PodcastRepository;
 use App\Repositories\RadioStationRepository;
 use App\Repositories\SongRepository;
-use App\Values\Statistics\LibraryStat;
+use App\Values\Statistics\LibraryStatistic;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Collection;
 
-class LibraryStatsService
+class LibraryStatisticsService
 {
     public function __construct(
         private readonly LibrarySummaryService $librarySummaryService,
@@ -25,24 +25,28 @@ class LibraryStatsService
         private readonly bool $radioEnabled = true,
     ) {}
 
-    /** @return Collection<int, LibraryStat> */
-    public function getStats(User $user): Collection
+    /** @return Collection<int, LibraryStatistic> */
+    public function getStatistics(User $user): Collection
     {
-        $stats = collect([
-            LibraryStat::make('songs', 'Songs', $this->librarySummaryService->getSongCount($user)),
-            LibraryStat::make('albums', 'Albums', $this->librarySummaryService->getAlbumCount($user)),
-            LibraryStat::make('artists', 'Artists', $this->librarySummaryService->getArtistCount($user)),
+        $statistics = collect([
+            LibraryStatistic::make('songs', 'Songs', $this->librarySummaryService->getSongCount($user)),
+            LibraryStatistic::make('albums', 'Albums', $this->librarySummaryService->getAlbumCount($user)),
+            LibraryStatistic::make('artists', 'Artists', $this->librarySummaryService->getArtistCount($user)),
         ]);
 
         if ($this->podcastsEnabled) {
-            $stats->push(
-                LibraryStat::make('podcasts', 'Podcasts', $this->podcastRepository->countSubscribedByUser($user)),
-                LibraryStat::make('episodes', 'Episodes', $this->songRepository->countEpisodesSubscribedByUser($user)),
+            $statistics->push(
+                LibraryStatistic::make('podcasts', 'Podcasts', $this->podcastRepository->countSubscribedByUser($user)),
+                LibraryStatistic::make(
+                    'episodes',
+                    'Episodes',
+                    $this->songRepository->countEpisodesSubscribedByUser($user),
+                ),
             );
         }
 
         if ($this->radioEnabled) {
-            $stats->push(LibraryStat::make(
+            $statistics->push(LibraryStatistic::make(
                 'radio_stations',
                 'Radio stations',
                 $this->radioStationRepository->countAccessibleByUser($user),
@@ -50,14 +54,14 @@ class LibraryStatsService
         }
 
         if ($user->organization->ownedBy($user)) {
-            $stats->push(LibraryStat::make(
+            $statistics->push(LibraryStatistic::make(
                 'storage',
                 'Storage used',
                 $this->librarySummaryService->getTotalSongFileSize($user),
-                LibraryStatUnit::BYTES,
+                LibraryStatisticUnit::BYTES,
             ));
         }
 
-        return apply_filters(Filter::LIBRARY_STATS, $stats, $user)->values();
+        return apply_filters(Filter::LIBRARY_STATISTICS, $statistics, $user)->values();
     }
 }

@@ -1,13 +1,13 @@
 import { http } from '@/services/http'
 import type { ListeningPeriod } from '@/utils/listeningStatistics'
 
-export const listeningStatisticsService = {
-  fetch: async (period: ListeningPeriod) => {
+export const statisticsService = {
+  fetchListeningStatistics: async (period: ListeningPeriod) => {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
     const query = new URLSearchParams({ period, timezone })
 
     return await http.get<ListeningStatistics>(`me/listening-statistics?${query}`)
   },
 
-  fetchLibraryStats: async () => await http.get<LibraryStat[]>('me/library-stats'),
+  fetchLibraryStatistics: async () => await http.get<LibraryStatistic[]>('me/library-statistics'),
 }

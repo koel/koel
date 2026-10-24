@@ -2,15 +2,15 @@
 
 namespace Tests\Unit\Services;
 
-use App\Enums\LibraryStatUnit;
+use App\Enums\LibraryStatisticUnit;
 use App\Hooks\Filter;
 use App\Models\User;
 use App\Repositories\PodcastRepository;
 use App\Repositories\RadioStationRepository;
 use App\Repositories\SongRepository;
-use App\Services\LibraryStatsService;
+use App\Services\LibraryStatisticsService;
 use App\Services\LibrarySummaryService;
-use App\Values\Statistics\LibraryStat;
+use App\Values\Statistics\LibraryStatistic;
 use Illuminate\Support\Collection;
 use Mockery;
 use Mockery\MockInterface;
@@ -19,7 +19,7 @@ use Tests\TestCase;
 
 use function Tests\create_user;
 
-class LibraryStatsServiceTest extends TestCase
+class LibraryStatisticsServiceTest extends TestCase
 {
     private LibrarySummaryService|MockInterface $librarySummaryService;
     private SongRepository|MockInterface $songRepository;
@@ -46,9 +46,9 @@ class LibraryStatsServiceTest extends TestCase
         $this->radioStationRepository->allows('countAccessibleByUser')->with($this->user)->andReturn(4);
     }
 
-    private function makeService(bool $podcastsEnabled = true, bool $radioEnabled = true): LibraryStatsService
+    private function makeService(bool $podcastsEnabled = true, bool $radioEnabled = true): LibraryStatisticsService
     {
-        return new LibraryStatsService(
+        return new LibraryStatisticsService(
             $this->librarySummaryService,
             $this->songRepository,
             $this->podcastRepository,
@@ -61,9 +61,9 @@ class LibraryStatsServiceTest extends TestCase
     #[Test]
     public function leaveOutPodcastsAndRadioWhenDisabled(): void
     {
-        $stats = $this->makeService(podcastsEnabled: false, radioEnabled: false)->getStats($this->user);
+        $statistics = $this->makeService(podcastsEnabled: false, radioEnabled: false)->getStatistics($this->user);
 
-        self::assertSame(['songs', 'albums', 'artists'], $stats->pluck('key')->all());
+        self::assertSame(['songs', 'albums', 'artists'], $statistics->pluck('key')->all());
     }
 
     #[Test]
@@ -71,19 +71,26 @@ class LibraryStatsServiceTest extends TestCase
     {
         $this->user->organization->claimOwnership($this->user);
 
-        add_filter(Filter::LIBRARY_STATS, static fn (Collection $stats, User $user) => $stats
-            ->reject(static fn (LibraryStat $stat) => $stat->key === 'episodes')
-            ->map(static fn (LibraryStat $stat) => $stat->key === 'storage'
-                ? LibraryStat::make('storage', 'Storage used', 4_096, LibraryStatUnit::BYTES, used: 4_096, limit: 8_192)
-                : $stat)
-            ->prepend(LibraryStat::make('members', 'Members', $user->id)));
+        add_filter(Filter::LIBRARY_STATISTICS, static fn (Collection $statistics, User $user) => $statistics
+            ->reject(static fn (LibraryStatistic $statistic) => $statistic->key === 'episodes')
+            ->map(static fn (LibraryStatistic $statistic) => $statistic->key === 'storage'
+                ? LibraryStatistic::make(
+                    'storage',
+                    'Storage used',
+                    4_096,
+                    LibraryStatisticUnit::BYTES,
+                    used: 4_096,
+                    limit: 8_192,
+                )
+                : $statistic)
+            ->prepend(LibraryStatistic::make('members', 'Members', $user->id)));
 
-        $stats = $this->makeService()->getStats($this->user);
+        $statistics = $this->makeService()->getStatistics($this->user);
 
         self::assertSame(
             ['members', 'songs', 'albums', 'artists', 'podcasts', 'radio_stations', 'storage'],
-            $stats->pluck('key')->all(),
+            $statistics->pluck('key')->all(),
         );
-        self::assertSame(8_192, $stats->last()->limit);
+        self::assertSame(8_192, $statistics->last()->limit);
     }
 }
