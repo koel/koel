@@ -5,7 +5,9 @@
     </template>
     <span class="flex flex-col">
       <span>{{ appName }} {{ latestVersion }} is available.</span>
-      <a :href="latestVersionReleaseUrl" rel="noopener" target="_blank">See what's new</a>
+      <a :href="latestVersionReleaseUrl" class="text-k-fg-70 hover:text-k-fg" rel="noopener" target="_blank"
+        >See what's new</a
+      >
     </span>
   </SystemFloatingNotice>
 </template>
@@ -34,11 +36,3 @@ const dismiss = () => {
   dismissedVersion.value = latestVersion.value
 }
 </script>
-
-<style lang="postcss" scoped>
-@reference '@css/app.pcss';
-
-a {
-  @apply text-k-fg-70 hover:text-k-fg;
-}
-</style>

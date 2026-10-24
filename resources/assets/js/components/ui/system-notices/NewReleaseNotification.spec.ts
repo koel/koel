@@ -1,5 +1,6 @@
 import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
+import { nextTick } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { commonStore } from '@/stores/commonStore'
 import Component from './NewReleaseNotification.vue'
@@ -28,7 +29,7 @@ describe('newReleaseNotification', () => {
     await h.user.click(screen.getByRole('button', { name: 'Dismiss' }))
 
     commonStore.state.latest_version = 'v1.2.0'
-    h.render(Component)
+    await nextTick()
 
     expect(screen.getByRole('link').getAttribute('href')).toBe('https://github.com/koel/koel/releases/tag/v1.2.0')
   })
