@@ -66,9 +66,9 @@ to `true` in the `.env` file.
 
 ### Streaming Lossless When Supported
 
-Koel checks which lossless formats (FLAC, ALAC, WAV, AIFF) your browser can play. Files in those formats are streamed
-as-is, even if `TRANSCODE_FLAC` is on or the format would otherwise be transcoded. ALAC, for example, plays untouched in
-Safari but is transcoded in Chrome. You can turn this off from the [Preferences screen](./profile-preferences#preferences).
+Koel checks which lossless formats (FLAC, ALAC, WAV, AIFF) the device you're listening on can play. Files in those
+formats are streamed as-is, even if `TRANSCODE_FLAC` is on or the format would otherwise be transcoded. ALAC, for
+example, plays untouched in Safari but is transcoded in Chrome. You can turn this off from the [Preferences screen](./profile-preferences#preferences).
 
 Subsonic clients can ask for the original file by passing `format=raw` to the `stream` endpoint.
 
