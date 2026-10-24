@@ -17,6 +17,7 @@ import { artistStore } from '@/stores/artistStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { clientUrl } from '@/utils/clientUrl'
+import { getNativelyPlayableLosslessFormats } from '@/utils/supports'
 
 export interface SongUpdateData {
   title?: string
@@ -48,24 +49,6 @@ const shouldTranscode = () => isMobile.any && preferenceStore.transcode_on_mobil
 
 const hasOfflineCopy = async (unsignedUrl: string) => 'caches' in window && Boolean(await caches.match(unsignedUrl))
 
-const losslessFormatMimeTypes = {
-  flac: 'audio/flac',
-  alac: 'audio/mp4; codecs="alac"',
-  wav: 'audio/wav',
-  aiff: 'audio/aiff',
-}
-
-let formatProbe: HTMLAudioElement | null = null
-
-const getPlayableLosslessFormats = () => {
-  formatProbe ??= document.createElement('audio')
-  const probe = formatProbe
-
-  return Object.entries(losslessFormatMimeTypes)
-    .filter(([, mimeType]) => probe.canPlayType(mimeType) !== '')
-    .map(([format]) => format)
-}
-
 const getPlayUrlEndpoint = (playable: Playable) => {
   const endpoint = `songs/${playable.id}/play-url`
 
@@ -77,7 +60,7 @@ const getPlayUrlEndpoint = (playable: Playable) => {
     return endpoint
   }
 
-  const params = new URLSearchParams(getPlayableLosslessFormats().map(format => ['lossless[]', format]))
+  const params = new URLSearchParams(getNativelyPlayableLosslessFormats().map(format => ['lossless[]', format]))
 
   return params.size ? `${endpoint}?${params}` : endpoint
 }
