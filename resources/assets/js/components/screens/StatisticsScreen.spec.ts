@@ -53,6 +53,18 @@ describe('statisticsScreen.vue', () => {
     await waitFor(() => expect(fetchMock).toHaveBeenLastCalledWith('year'))
   })
 
+  it('shows skeletons while loading', async () => {
+    h.mock(listeningStatisticsService, 'fetch').mockReturnValue(new Promise(() => {}))
+    h.mock(listeningStatisticsService, 'fetchLibraryStats').mockReturnValue(new Promise(() => {}))
+    h.visit('/statistics')
+    h.render(Component, { global: { stubs: { ListeningBarChart: h.stub('listening-bar-chart') } } })
+
+    await waitFor(() => {
+      screen.getByTestId('statistics-skeleton')
+      screen.getByTestId('library-stats-skeleton')
+    })
+  })
+
   it('explains when there are no plays in the period', async () => {
     h.mock(listeningStatisticsService, 'fetch').mockResolvedValue(makeStatistics(0))
     renderComponent()

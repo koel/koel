@@ -5,16 +5,35 @@
     </template>
 
     <div class="flex flex-col flex-1 gap-14">
-      <section v-if="libraryStats.length" aria-labelledby="statistics-storage" class="flex flex-col gap-6">
+      <section
+        v-if="loadingLibraryStats || libraryStats.length"
+        :aria-busy="loadingLibraryStats"
+        aria-labelledby="statistics-storage"
+        class="flex flex-col gap-6"
+      >
         <h2 id="statistics-storage" class="text-3xl font-thin text-k-fg">Storage</h2>
-        <LibraryStats :stats="libraryStats" />
+        <div
+          v-if="loadingLibraryStats"
+          class="grid grid-cols-2 md:grid-cols-4 gap-4"
+          data-testid="library-stats-skeleton"
+        >
+          <StatTileSkeleton v-for="i in 4" :key="i" />
+        </div>
+        <LibraryStats v-else :stats="libraryStats" />
       </section>
 
       <section aria-labelledby="statistics-listening" class="flex flex-col flex-1 gap-10">
         <h2 id="statistics-listening" class="text-3xl font-thin text-k-fg">Listening</h2>
         <SegmentedControl v-model="period" :options="periodOptions" class="self-start" name="listening-period" />
 
-        <p v-if="loading" class="text-k-fg-70" role="status">Loading…</p>
+        <div v-if="loading" aria-busy="true" class="flex flex-col gap-10" data-testid="statistics-skeleton">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatTileSkeleton v-for="i in 8" :key="i" />
+          </div>
+          <div class="skeleton">
+            <div class="pulse h-64 rounded-md" />
+          </div>
+        </div>
 
         <ScreenEmptyState v-else-if="!statistics?.summary.plays" data-testid="statistics-empty">
           <template #icon>
@@ -101,6 +120,7 @@ import SegmentedControl from '@/components/ui/SegmentedControl.vue'
 import Carousel from '@/components/ui/Carousel.vue'
 import ShelfSection from '@/components/ui/ShelfSection.vue'
 import LibraryStats from '@/components/screens/statistics/LibraryStats.vue'
+import StatTileSkeleton from '@/components/screens/statistics/StatTileSkeleton.vue'
 import ListeningSummary from '@/components/screens/statistics/ListeningSummary.vue'
 import ListeningBarChart from '@/components/screens/statistics/ListeningBarChart.vue'
 import RankedColumns from '@/components/screens/statistics/RankedColumns.vue'
@@ -126,6 +146,7 @@ const { cover: defaultCover } = useBranding()
 const period = ref<ListeningPeriod>('month')
 const statistics = ref<ListeningStatistics | null>(null)
 const libraryStats = ref<LibraryStat[]>([])
+const loadingLibraryStats = ref(true)
 const loading = ref(false)
 
 const measureOptions: { value: ListeningMeasure; label: string }[] = [
@@ -189,6 +210,8 @@ const fetchLibraryStats = async () => {
     libraryStats.value = await listeningStatisticsService.fetchLibraryStats()
   } catch (error: unknown) {
     handleHttpError(error)
+  } finally {
+    loadingLibraryStats.value = false
   }
 }
 
