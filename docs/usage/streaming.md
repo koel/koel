@@ -75,7 +75,7 @@ Subsonic clients can ask for the original file by passing `format=raw` to the `s
 ### Forced Transcoding
 
 For audio formats that aren't [widely supported by browsers](https://caniuse.com/?search=audio%20format),
-such as AIFF or APE, Koel will always resort to transcoding. If you upload files in such formats, make sure the FFmpeg
+such as APE or WMA, Koel will always resort to transcoding. If you upload files in such formats, make sure the FFmpeg
 setup and configuration (see above) are correct.
 
 ### Transcoding on Mobile

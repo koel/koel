@@ -12,11 +12,6 @@ enum LosslessCodec: string
     /** @return list<string> */
     public function mimeTypes(): array
     {
-        return match ($this) {
-            self::FLAC => ['audio/flac', 'audio/x-flac'],
-            self::ALAC => ['audio/x-m4a'],
-            self::WAV => ['audio/vnd.wave', 'audio/x-wav'],
-            self::AIFF => ['audio/aiff', 'audio/x-aiff'],
-        };
+        return config("koel.streaming.natively_playable_lossless_mime_types.{$this->value}", []);
     }
 }
