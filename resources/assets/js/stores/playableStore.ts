@@ -48,22 +48,22 @@ const shouldTranscode = () => isMobile.any && preferenceStore.transcode_on_mobil
 
 const hasOfflineCopy = async (unsignedUrl: string) => 'caches' in window && Boolean(await caches.match(unsignedUrl))
 
-const losslessCodecMimeTypes = {
+const losslessFormatMimeTypes = {
   flac: 'audio/flac',
   alac: 'audio/mp4; codecs="alac"',
   wav: 'audio/wav',
   aiff: 'audio/aiff',
 }
 
-let codecProbe: HTMLAudioElement | null = null
+let formatProbe: HTMLAudioElement | null = null
 
-const getPlayableLosslessCodecs = () => {
-  codecProbe ??= document.createElement('audio')
-  const probe = codecProbe
+const getPlayableLosslessFormats = () => {
+  formatProbe ??= document.createElement('audio')
+  const probe = formatProbe
 
-  return Object.entries(losslessCodecMimeTypes)
+  return Object.entries(losslessFormatMimeTypes)
     .filter(([, mimeType]) => probe.canPlayType(mimeType) !== '')
-    .map(([codec]) => codec)
+    .map(([format]) => format)
 }
 
 const getPlayUrlEndpoint = (playable: Playable) => {
@@ -77,7 +77,7 @@ const getPlayUrlEndpoint = (playable: Playable) => {
     return endpoint
   }
 
-  const params = new URLSearchParams(getPlayableLosslessCodecs().map(codec => ['lossless[]', codec]))
+  const params = new URLSearchParams(getPlayableLosslessFormats().map(format => ['lossless[]', format]))
 
   return params.size ? `${endpoint}?${params}` : endpoint
 }

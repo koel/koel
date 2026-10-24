@@ -63,7 +63,7 @@ class Streamer
 
     private function shouldTranscodeForClient(): bool
     {
-        if ($this->config?->clientPlaysMimeTypeLosslessly($this->song->mime_type)) {
+        if ($this->config?->clientPlaysLosslessMimeType($this->song->mime_type)) {
             return false;
         }
 

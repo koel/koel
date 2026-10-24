@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Values;
 
-use App\Enums\LosslessCodec;
+use App\Enums\NativelyPlayableLosslessFormat;
 use App\Values\RequestedStreamingConfig;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -10,18 +10,21 @@ use Tests\TestCase;
 class RequestedStreamingConfigTest extends TestCase
 {
     #[Test]
-    public function clientPlaysMimeTypeOfAListedCodec(): void
+    public function clientPlaysMimeTypeOfAListedFormat(): void
     {
-        $config = RequestedStreamingConfig::make(clientLosslessCodecs: [LosslessCodec::WAV, LosslessCodec::FLAC]);
+        $config = RequestedStreamingConfig::make(clientLosslessFormats: [
+            NativelyPlayableLosslessFormat::WAV,
+            NativelyPlayableLosslessFormat::FLAC,
+        ]);
 
-        self::assertTrue($config->clientPlaysMimeTypeLosslessly('audio/x-flac'));
+        self::assertTrue($config->clientPlaysLosslessMimeType('audio/x-flac'));
     }
 
     #[Test]
-    public function clientDoesNotPlayMimeTypeOfAnUnlistedCodec(): void
+    public function clientDoesNotPlayMimeTypeOfAnUnlistedFormat(): void
     {
-        $config = RequestedStreamingConfig::make(clientLosslessCodecs: [LosslessCodec::FLAC]);
+        $config = RequestedStreamingConfig::make(clientLosslessFormats: [NativelyPlayableLosslessFormat::FLAC]);
 
-        self::assertFalse($config->clientPlaysMimeTypeLosslessly('audio/x-m4a'));
+        self::assertFalse($config->clientPlaysLosslessMimeType('audio/x-m4a'));
     }
 }

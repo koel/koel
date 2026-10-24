@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum LosslessCodec: string
+enum NativelyPlayableLosslessFormat: string
 {
     case FLAC = 'flac';
     case ALAC = 'alac';

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\LosslessCodec;
+use App\Enums\NativelyPlayableLosslessFormat;
 use Illuminate\Validation\Rule;
 
 /**
@@ -16,7 +16,7 @@ class SongPlayRequest extends Request
     {
         return [
             'lossless' => [Rule::sometimes(), Rule::array()],
-            'lossless.*' => [Rule::enum(LosslessCodec::class)],
+            'lossless.*' => [Rule::enum(NativelyPlayableLosslessFormat::class)],
         ];
     }
 }

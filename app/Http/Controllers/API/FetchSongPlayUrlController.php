@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Enums\LosslessCodec;
+use App\Enums\NativelyPlayableLosslessFormat;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\FetchSongPlayUrlRequest;
 use App\Models\Song;
@@ -28,7 +28,7 @@ class FetchSongPlayUrlController extends Controller
                 $song,
                 $user,
                 $request->boolean('transcode'),
-                $request->enums('lossless', LosslessCodec::class),
+                $request->enums('lossless', NativelyPlayableLosslessFormat::class),
             ),
         ]);
     }
