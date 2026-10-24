@@ -41,7 +41,7 @@
     "@tiptap/vue-3": "^3.31.4",
     "@zip.js/zip.js": "^2.18.2",
     "chart.js": "^4.5.1",
-    "dompurify": "^3.4.16",
+    "dompurify": "^3.4.17",
     "events": "^3.3.0",
     "fuse.js": "^7.1.0",
     "idb": "^8.0.3",
