@@ -12,6 +12,7 @@ final readonly class RequestedStreamingConfig
         public ?int $bitRate,
         public float $startTime,
         public array $clientLosslessFormats,
+        public bool $streamOriginal,
     ) {}
 
     /** @param list<NativelyPlayableLosslessFormat> $clientLosslessFormats */
@@ -20,8 +21,9 @@ final readonly class RequestedStreamingConfig
         ?int $bitRate = 128,
         float $startTime = 0.0,
         array $clientLosslessFormats = [],
+        bool $streamOriginal = false,
     ): self {
-        return new self($transcode, $bitRate, $startTime, $clientLosslessFormats);
+        return new self($transcode, $bitRate, $startTime, $clientLosslessFormats, $streamOriginal);
     }
 
     public function clientPlaysLosslessMimeType(string $mimeType): bool

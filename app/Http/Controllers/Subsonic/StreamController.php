@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Subsonic;
 
-use App\Enums\NativelyPlayableLosslessFormat;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\StreamRequest;
 use App\Repositories\SongRepository;
@@ -28,7 +27,7 @@ class StreamController extends Controller
             transcode: $maxBitRate !== null && !$wantsOriginal,
             bitRate: $maxBitRate,
             startTime: $startTime,
-            clientLosslessFormats: $wantsOriginal ? NativelyPlayableLosslessFormat::cases() : [],
+            streamOriginal: $wantsOriginal,
         )))->stream();
     }
 }

@@ -60,12 +60,12 @@ class StreamTest extends TestCase
     }
 
     #[Test]
-    public function rawFormatStreamsTheLosslessOriginalDespiteMaxBitRate(): void
+    public function rawFormatStreamsTheOriginalOfATranscodedFormatDespiteMaxBitRate(): void
     {
         $user = create_user();
         $song = Song::factory()->createOne([
             'path' => test_path('songs/blank.mp3'),
-            'mime_type' => 'audio/x-flac',
+            'mime_type' => 'audio/x-ape',
             'owner_id' => $user->id,
         ]);
 
