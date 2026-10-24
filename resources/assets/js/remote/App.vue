@@ -20,7 +20,9 @@
       <Auth @logged-in="onUserLoggedIn" />
     </div>
 
-    <UpdateNotification />
+    <SystemNoticeStack>
+      <UpdateNotification />
+    </SystemNoticeStack>
   </div>
 </template>
 
@@ -34,7 +36,8 @@ import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
 import type { RemoteState } from '@/remote/types'
 
-import UpdateNotification from '@/components/ui/UpdateNotification.vue'
+import UpdateNotification from '@/components/ui/system-notices/UpdateNotification.vue'
+import SystemNoticeStack from '@/components/ui/system-notices/SystemNoticeStack.vue'
 
 const StreamableDetails = defineAsyncComponent(() => import('@/remote/components/StreamableDetails.vue'))
 const Scanner = defineAsyncComponent(() => import('@/remote/components/Scanner.vue'))
