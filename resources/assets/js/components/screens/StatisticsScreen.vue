@@ -14,6 +14,9 @@
         <h2 id="statistics-storage" class="text-3xl font-thin text-k-fg">Storage</h2>
         <div
           v-if="loadingLibraryStatistics"
+          role="status"
+          aria-busy="true"
+          aria-label="Loading"
           class="grid grid-cols-2 md:grid-cols-4 gap-4"
           data-testid="library-statistics-skeleton"
         >
@@ -26,7 +29,14 @@
         <h2 id="statistics-listening" class="text-3xl font-thin text-k-fg">Listening</h2>
         <SegmentedControl v-model="period" :options="periodOptions" class="self-start" name="listening-period" />
 
-        <div v-if="loading" aria-busy="true" class="flex flex-col gap-10" data-testid="statistics-skeleton">
+        <div
+          v-if="loading"
+          role="status"
+          aria-busy="true"
+          aria-label="Loading"
+          class="flex flex-col gap-10"
+          data-testid="statistics-skeleton"
+        >
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatisticTileSkeleton v-for="i in 8" :key="i" />
           </div>
