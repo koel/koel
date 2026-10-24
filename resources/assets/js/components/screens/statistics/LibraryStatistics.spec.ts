@@ -6,7 +6,7 @@ import Component from './LibraryStatistics.vue'
 describe('libraryStatistics.vue', () => {
   const h = createHarness()
 
-  const makeStat = (overrides: Partial<LibraryStatistic> = {}): LibraryStatistic => ({
+  const makeStatistic = (overrides: Partial<LibraryStatistic> = {}): LibraryStatistic => ({
     key: 'songs',
     label: 'Songs',
     value: 1200,
@@ -20,9 +20,9 @@ describe('libraryStatistics.vue', () => {
     h.render(Component, {
       props: {
         statistics: [
-          makeStat({ key: 'songs', label: 'Songs' }),
-          makeStat({ key: 'albums', label: 'Albums' }),
-          makeStat({ key: 'storage', label: 'Storage used', unit: 'bytes' }),
+          makeStatistic({ key: 'songs', label: 'Songs' }),
+          makeStatistic({ key: 'albums', label: 'Albums' }),
+          makeStatistic({ key: 'storage', label: 'Storage used', unit: 'bytes' }),
         ],
       },
     })
@@ -33,7 +33,10 @@ describe('libraryStatistics.vue', () => {
   it('measures a statistic against its limit', () => {
     h.render(Component, {
       props: {
-        statistics: [makeStat(), makeStat({ key: 'storage', unit: 'bytes', value: 40, used: 30, limit: 100 })],
+        statistics: [
+          makeStatistic(),
+          makeStatistic({ key: 'storage', unit: 'bytes', value: 40, used: 30, limit: 100 }),
+        ],
       },
     })
 
