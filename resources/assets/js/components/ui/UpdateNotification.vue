@@ -1,9 +1,9 @@
 <template>
-  <FloatingNotice v-if="newerVersionDeployed" class="items-center" data-testid="update-notification">
+  <SystemFloatingNotice v-if="newerVersionDeployed" class="items-center" data-testid="update-notification">
     <RocketIcon :size="18" class="shrink-0 text-k-fg-70" />
     <span class="whitespace-nowrap">Koel has been updated.</span>
     <Btn size="small" variant="highlight" @click="forceReloadWindow">Reload</Btn>
-  </FloatingNotice>
+  </SystemFloatingNotice>
 </template>
 
 <script lang="ts" setup>
@@ -15,7 +15,7 @@ import { isNewerVersionDeployed } from '@/utils/deployment'
 import { eventBus } from '@/utils/eventBus'
 
 import Btn from '@/components/ui/form/Btn.vue'
-import FloatingNotice from '@/components/ui/FloatingNotice.vue'
+import SystemFloatingNotice from '@/components/ui/SystemFloatingNotice.vue'
 
 const newerVersionDeployed = ref(false)
 

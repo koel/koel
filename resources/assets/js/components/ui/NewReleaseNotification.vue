@@ -1,24 +1,21 @@
 <template>
-  <FloatingNotice v-if="shown" class="items-start">
+  <SystemFloatingNotice v-if="shown" class="items-start" dismissible @dismiss="dismiss">
     <RocketIcon :size="18" class="shrink-0 mt-0.5 text-k-fg-70" />
     <span class="flex flex-col">
       <span>{{ appName }} {{ latestVersion }} is available.</span>
       <a :href="latestVersionReleaseUrl" rel="noopener" target="_blank">See what's new</a>
     </span>
-    <button type="button" title="Dismiss" class="mt-0.5" @click="dismiss">
-      <XIcon :size="16" />
-    </button>
-  </FloatingNotice>
+  </SystemFloatingNotice>
 </template>
 
 <script lang="ts" setup>
-import { RocketIcon, XIcon } from 'lucide-vue-next'
+import { RocketIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { useBranding } from '@/composables/useBranding'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useNewVersionNotification } from '@/composables/useNewVersionNotification'
 
-import FloatingNotice from '@/components/ui/FloatingNotice.vue'
+import SystemFloatingNotice from '@/components/ui/SystemFloatingNotice.vue'
 
 const dismissedVersionStorageKey = 'dismissed-new-release-version'
 
@@ -39,8 +36,7 @@ const dismiss = () => {
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
 
-a,
-button {
+a {
   @apply text-k-fg-70 hover:text-k-fg;
 }
 </style>
