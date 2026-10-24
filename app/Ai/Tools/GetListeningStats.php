@@ -4,7 +4,7 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiRequestContext;
 use App\Enums\ListeningPeriod;
-use App\Services\ListeningStatisticsService;
+use App\Services\ListeningStatsService;
 use Carbon\CarbonInterval;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -18,7 +18,7 @@ class GetListeningStats implements Tool
 
     public function __construct(
         private readonly AiRequestContext $context,
-        private readonly ListeningStatisticsService $listeningStatisticsService,
+        private readonly ListeningStatsService $listeningStatsService,
         #[Config('app.timezone')]
         private readonly string $timezone,
     ) {}
@@ -46,38 +46,38 @@ class GetListeningStats implements Tool
     public function handle(Request $request): Stringable|string
     {
         $period = ListeningPeriod::tryFrom($request['period'] ?? '') ?? ListeningPeriod::MONTH;
-        $statistics = $this->listeningStatisticsService->getStatistics($this->context->user, $period, $this->timezone);
+        $stats = $this->listeningStatsService->getStats($this->context->user, $period, $this->timezone);
 
-        if (!$statistics->summary->plays) {
+        if (!$stats->summary->plays) {
             return 'No listening history for this period.';
         }
 
         $lines = [
             sprintf(
                 '%d play(s), %s of listening, %d different song(s) by %d artist(s).',
-                $statistics->summary->plays,
-                self::formatDuration($statistics->summary->listeningTime),
-                $statistics->summary->songCount,
-                $statistics->summary->artistCount,
+                $stats->summary->plays,
+                self::formatDuration($stats->summary->listeningTime),
+                $stats->summary->songCount,
+                $stats->summary->artistCount,
             ),
-            self::formatTopList('Top songs', $statistics->topSongs, static fn (array $entry) => sprintf(
+            self::formatTopList('Top songs', $stats->topSongs, static fn (array $entry) => sprintf(
                 '%s by %s (%d play(s))',
                 $entry['song']->title,
                 $entry['song']->artist_name,
                 $entry['plays'],
             )),
-            self::formatTopList('Top artists', $statistics->topArtists, static fn (array $entry) => sprintf(
+            self::formatTopList('Top artists', $stats->topArtists, static fn (array $entry) => sprintf(
                 '%s (%s)',
                 $entry['artist']->name,
                 self::formatDuration($entry['listening_time']),
             )),
-            self::formatTopList('Top albums', $statistics->topAlbums, static fn (array $entry) => sprintf(
+            self::formatTopList('Top albums', $stats->topAlbums, static fn (array $entry) => sprintf(
                 '%s by %s (%s)',
                 $entry['album']->name,
                 $entry['album']->artist->name,
                 self::formatDuration($entry['listening_time']),
             )),
-            self::formatTopList('Top genres', $statistics->topGenres, static fn (array $entry) => sprintf(
+            self::formatTopList('Top genres', $stats->topGenres, static fn (array $entry) => sprintf(
                 '%s (%s)',
                 $entry['name'],
                 self::formatDuration($entry['listening_time']),

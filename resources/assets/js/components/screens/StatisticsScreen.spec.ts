@@ -11,7 +11,7 @@ describe('statisticsScreen.vue', () => {
     },
   })
 
-  const makeStatistics = (plays: number): ListeningStatistics => ({
+  const makeStatistics = (plays: number): ListeningStats => ({
     summary: { plays, listening_time: plays * 200, song_count: 1, artist_count: 1 },
     top_songs: [],
     top_artists: [],
@@ -73,11 +73,11 @@ describe('statisticsScreen.vue', () => {
   })
 
   it('keeps the latest period when an earlier answer arrives last', async () => {
-    let finishAllTime: (statistics: ListeningStatistics) => void = () => {}
+    let finishAllTime: (statistics: ListeningStats) => void = () => {}
 
     h.mock(statsService, 'fetchListeningStats').mockImplementation(async (period: string) => {
       if (period === 'all') {
-        return await new Promise<ListeningStatistics>(resolve => {
+        return await new Promise<ListeningStats>(resolve => {
           finishAllTime = resolve
         })
       }

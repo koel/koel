@@ -20,7 +20,7 @@
 import { computed } from 'vue'
 import { useBranding } from '@/composables/useBranding'
 import { useRouter } from '@/composables/useRouter'
-import { formatListeningMinutes } from '@/utils/listeningStatistics'
+import { formatListeningMinutes } from '@/utils/listeningStats'
 
 const props = defineProps<{ artist: Artist; rank: number; listeningTime: number; albumCover: string | null }>()
 

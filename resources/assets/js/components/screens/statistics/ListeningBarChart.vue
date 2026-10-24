@@ -13,7 +13,7 @@ import { BarElement, CategoryScale, Chart, LinearScale, Tooltip } from 'chart.js
 import StyleObserver from 'style-observer'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { Bar } from 'vue-chartjs'
-import type { ListeningBar, ListeningMeasure } from '@/utils/listeningStatistics'
+import type { ListeningBar, ListeningMeasure } from '@/utils/listeningStats'
 import { pluralize } from '@/utils/formatters'
 import { cssColorToRgb } from '@/utils/color'
 

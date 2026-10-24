@@ -7,21 +7,21 @@ use App\Models\Play;
 use App\Models\Song;
 use App\Services\InteractionService;
 use App\Services\LibrarySummaryService;
-use App\Services\ListeningStatisticsService;
+use App\Services\ListeningStatsService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
-class ListeningStatisticsServiceTest extends TestCase
+class ListeningStatsServiceTest extends TestCase
 {
-    private ListeningStatisticsService $service;
+    private ListeningStatsService $service;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->service = app(ListeningStatisticsService::class);
+        $this->service = app(ListeningStatsService::class);
     }
 
     #[Test]
@@ -32,15 +32,15 @@ class ListeningStatisticsServiceTest extends TestCase
 
         Play::factory()->for($user)->for($song)->createOne();
 
-        self::assertSame(1, $this->service->getStatistics($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
+        self::assertSame(1, $this->service->getStats($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
 
         Play::factory()->for($user)->for($song)->createOne();
 
-        self::assertSame(1, $this->service->getStatistics($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
+        self::assertSame(1, $this->service->getStats($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
 
         app(InteractionService::class)->increasePlayCount($song, $user);
 
-        self::assertSame(3, $this->service->getStatistics($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
+        self::assertSame(3, $this->service->getStats($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
     }
 
     #[Test]
@@ -50,11 +50,11 @@ class ListeningStatisticsServiceTest extends TestCase
 
         Play::factory()->for($user)->createOne();
 
-        self::assertSame(1, $this->service->getStatistics($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
+        self::assertSame(1, $this->service->getStats($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
 
         Play::factory()->for($user)->createOne();
         app(LibrarySummaryService::class)->markLibraryChanged();
 
-        self::assertSame(2, $this->service->getStatistics($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
+        self::assertSame(2, $this->service->getStats($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
     }
 }

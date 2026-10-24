@@ -12,7 +12,7 @@ use App\Repositories\ArtistRepository;
 use App\Repositories\PlayRepository;
 use App\Repositories\SongRepository;
 use App\Values\Statistics\Discoveries;
-use App\Values\Statistics\ListeningStatistics;
+use App\Values\Statistics\ListeningStats;
 use App\Values\Statistics\ListeningSummary;
 use Illuminate\Support\Facades\Cache;
 
@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Cache;
  *     played_hours: list<string>,
  * }
  */
-class ListeningStatisticsService
+class ListeningStatsService
 {
     private const string PLAYS_CHANGED_AT_CACHE_KEY = 'plays changed at';
 
@@ -43,7 +43,7 @@ class ListeningStatisticsService
         private readonly LibrarySummaryService $librarySummaryService,
     ) {}
 
-    public function getStatistics(User $user, ListeningPeriod $period, string $timezone): ListeningStatistics
+    public function getStats(User $user, ListeningPeriod $period, string $timezone): ListeningStats
     {
         $totals = $this->rememberPlayTotals($user, $period);
 
@@ -52,7 +52,7 @@ class ListeningStatisticsService
         $albumCovers = $totals['album_covers'];
         $albumListeningTimes = $totals['album_listening_times'];
 
-        return ListeningStatistics::make(
+        return ListeningStats::make(
             summary: $totals['summary'],
             topSongs: $this->songRepository
                 ->getMany(array_keys($songPlays), preserveOrder: true, scopedUser: $user)
@@ -97,22 +97,18 @@ class ListeningStatisticsService
             'library' => $this->librarySummaryService->getLibraryChangedAt(),
         ];
 
-        $key = cache_key('listening statistics', $user->id, $period->value);
+        $key = cache_key('listening stats', $user->id, $period->value);
         $cached = Cache::get($key);
 
         if (is_array($cached) && $cached['changed_at'] === $changedAt) {
             return $cached['totals'];
         }
 
-        $totals = $this->computePlayTotals($user, $period);
-
-        Cache::put(
+        return tap($this->computePlayTotals($user, $period), static fn (array $totals) => Cache::put(
             $key,
             ['changed_at' => $changedAt, 'totals' => $totals],
             $period === ListeningPeriod::ALL_TIME ? now()->addWeek() : now()->addHour(),
-        );
-
-        return $totals;
+        ));
     }
 
     /** @return PlayTotals */

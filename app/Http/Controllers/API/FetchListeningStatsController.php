@@ -3,22 +3,22 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\Statistics\ListeningStatisticsRequest;
-use App\Http\Resources\ListeningStatisticsResource;
+use App\Http\Requests\API\Statistics\ListeningStatsRequest;
+use App\Http\Resources\ListeningStatsResource;
 use App\Models\User;
-use App\Services\ListeningStatisticsService;
+use App\Services\ListeningStatsService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class FetchListeningStatsController extends Controller
 {
     public function __construct(
-        private readonly ListeningStatisticsService $statisticsService,
+        private readonly ListeningStatsService $listeningStatsService,
     ) {}
 
     /** @param User $user */
-    public function __invoke(ListeningStatisticsRequest $request, Authenticatable $user)
+    public function __invoke(ListeningStatsRequest $request, Authenticatable $user)
     {
-        return ListeningStatisticsResource::make($this->statisticsService->getStatistics(
+        return ListeningStatsResource::make($this->listeningStatsService->getStats(
             $user,
             $request->period(),
             $request->timezone(),

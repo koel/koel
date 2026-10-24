@@ -18,7 +18,7 @@ import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 
 import StatTile from '@/components/screens/statistics/StatTile.vue'
 
-const props = defineProps<{ statistics: ListeningStatistics }>()
+const props = defineProps<{ stats: ListeningStats }>()
 
 const describeChange = (current: number, previous?: number) => {
   if (!previous) {
@@ -31,7 +31,7 @@ const describeChange = (current: number, previous?: number) => {
 }
 
 const figures = computed(() => {
-  const { summary, previous_summary, discoveries, streak } = props.statistics
+  const { summary, previous_summary, discoveries, streak } = props.stats
 
   return [
     {

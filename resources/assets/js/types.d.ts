@@ -59,7 +59,7 @@ interface ListeningSummary {
   artist_count: number
 }
 
-interface ListeningStatistics {
+interface ListeningStats {
   summary: ListeningSummary
   top_songs: { plays: number; song: Song }[]
   top_artists: { listening_time: number; artist: Artist; album_cover: string | null }[]

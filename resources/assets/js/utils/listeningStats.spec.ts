@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { getListeningByHour, getListeningByWeekday, getListeningOverTime } from './listeningStatistics'
+import { getListeningByHour, getListeningByWeekday, getListeningOverTime } from './listeningStats'
 
 const localIso = (year: number, month: number, day: number, hour: number) =>
   new Date(year, month - 1, day, hour).toISOString()
@@ -10,7 +10,7 @@ const listening = (hour: string, plays: number, minutes = plays * 3) => ({
   listening_time: minutes * 60,
 })
 
-describe('listeningStatistics', () => {
+describe('listeningStats', () => {
   const now = new Date(2026, 9, 9, 15)
 
   it('sums plays per local day for the last week', () => {

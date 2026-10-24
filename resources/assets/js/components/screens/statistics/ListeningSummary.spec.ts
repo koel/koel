@@ -6,10 +6,10 @@ import Component from './ListeningSummary.vue'
 describe('listeningSummary.vue', () => {
   const h = createHarness()
 
-  const renderComponent = (overrides: Partial<ListeningStatistics> = {}) =>
+  const renderComponent = (overrides: Partial<ListeningStats> = {}) =>
     h.render(Component, {
       props: {
-        statistics: {
+        stats: {
           summary: { plays: 12, listening_time: 2400, song_count: 8, artist_count: 5 },
           top_songs: [],
           top_artists: [],

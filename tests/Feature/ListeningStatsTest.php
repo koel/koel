@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Http\Resources\ListeningStatisticsResource;
+use App\Http\Resources\ListeningStatsResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Play;
@@ -41,7 +41,7 @@ class ListeningStatsTest extends TestCase
         $this
             ->getAs('api/me/listening-stats?period=week', $user)
             ->assertOk()
-            ->assertJsonStructure(ListeningStatisticsResource::JSON_STRUCTURE)
+            ->assertJsonStructure(ListeningStatsResource::JSON_STRUCTURE)
             ->assertJsonPath('summary.plays', 2)
             ->assertJsonPath('summary.listening_time', 400)
             ->assertJsonPath('summary.song_count', 1);
