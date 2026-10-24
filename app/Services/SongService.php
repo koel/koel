@@ -191,7 +191,7 @@ class SongService
             ->pluck('songs.id')
             ->all();
 
-        $applicableSongIds = $songs->whereNotIn('id', $collaborativeSongs)->modelKeys();
+        $applicableSongIds = $songs->whereNotIn('id', $collaborativeSongs)->values()->modelKeys();
 
         Song::query()->whereKey($applicableSongIds)->update(['is_public' => false]);
 
