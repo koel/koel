@@ -41,6 +41,7 @@ use Webmozart\Assert\Assert;
  * @property bool $confirmBeforeClosing
  * @property bool $transcodeOnMobile
  * @property int $transcodeQuality
+ * @property bool $streamLosslessWhenSupported
  * @property bool $showAlbumArtOverlay
  * @property bool $makeUploadsPublic
  * @property bool $detectDuplicateUploads

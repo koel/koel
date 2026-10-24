@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\LosslessCodec;
 use App\Http\Requests\SongPlayRequest;
 use App\Models\User;
 use App\Repositories\SongRepository;
@@ -40,6 +41,7 @@ class PlayController extends Controller
             transcode: (bool) $transcode,
             bitRate: $transcodeBitRate,
             startTime: (float) $request->time,
+            clientLosslessCodecs: $request->enums('lossless', LosslessCodec::class),
         )))->stream();
     }
 }

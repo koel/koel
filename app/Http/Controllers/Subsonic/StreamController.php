@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Subsonic;
 
+use App\Enums\LosslessCodec;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subsonic\StreamRequest;
 use App\Repositories\SongRepository;
@@ -21,11 +22,13 @@ class StreamController extends Controller
 
         $maxBitRate = $request->integer('maxBitRate') ?: null;
         $startTime = (float) $request->input('timeOffset', 0);
+        $wantsOriginal = $request->input('format') === 'raw';
 
         return (new Streamer(song: $song, config: RequestedStreamingConfig::make(
-            transcode: $maxBitRate !== null,
+            transcode: $maxBitRate !== null && !$wantsOriginal,
             bitRate: $maxBitRate,
             startTime: $startTime,
+            clientLosslessCodecs: $wantsOriginal ? LosslessCodec::cases() : [],
         )))->stream();
     }
 }

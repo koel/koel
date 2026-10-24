@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API;
 
+use App\Enums\LosslessCodec;
 use Illuminate\Validation\Rule;
 
 /**
@@ -12,6 +13,10 @@ class FetchSongPlayUrlRequest extends Request
     /** @inheritdoc */
     public function rules(): array
     {
-        return ['transcode' => [Rule::sometimes(), Rule::boolean()]];
+        return [
+            'transcode' => [Rule::sometimes(), Rule::boolean()],
+            'lossless' => [Rule::sometimes(), Rule::array()],
+            'lossless.*' => [Rule::enum(LosslessCodec::class)],
+        ];
     }
 }

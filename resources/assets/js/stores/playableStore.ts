@@ -48,8 +48,39 @@ const shouldTranscode = () => isMobile.any && preferenceStore.transcode_on_mobil
 
 const hasOfflineCopy = async (unsignedUrl: string) => 'caches' in window && Boolean(await caches.match(unsignedUrl))
 
-const getPlayUrlEndpoint = (playable: Playable) =>
-  shouldTranscode() ? `songs/${playable.id}/play-url?transcode=1` : `songs/${playable.id}/play-url`
+const losslessCodecMimeTypes = {
+  flac: 'audio/flac',
+  alac: 'audio/mp4; codecs="alac"',
+  wav: 'audio/wav',
+  aiff: 'audio/aiff',
+}
+
+let codecProbe: HTMLAudioElement | null = null
+
+const getPlayableLosslessCodecs = () => {
+  codecProbe ??= document.createElement('audio')
+  const probe = codecProbe
+
+  return Object.entries(losslessCodecMimeTypes)
+    .filter(([, mimeType]) => probe.canPlayType(mimeType) !== '')
+    .map(([codec]) => codec)
+}
+
+const getPlayUrlEndpoint = (playable: Playable) => {
+  const endpoint = `songs/${playable.id}/play-url`
+
+  if (shouldTranscode()) {
+    return `${endpoint}?transcode=1`
+  }
+
+  if (!preferenceStore.stream_lossless_when_supported) {
+    return endpoint
+  }
+
+  const params = new URLSearchParams(getPlayableLosslessCodecs().map(codec => ['lossless[]', codec]))
+
+  return params.size ? `${endpoint}?${params}` : endpoint
+}
 
 let isPlayStatsRefreshScheduled = false
 

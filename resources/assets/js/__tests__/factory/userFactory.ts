@@ -32,6 +32,7 @@ const preferences: UserPreferences = {
   radio_stations_favorites_only: false,
   transcode_on_mobile: false,
   transcode_quality: 128,
+  stream_lossless_when_supported: true,
   support_bar_no_bugging: true,
   show_album_art_overlay: true,
   lyrics_zoom_level: 1,

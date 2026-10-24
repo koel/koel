@@ -2,6 +2,7 @@
 
 namespace App\Services\Streamer;
 
+use App\Enums\LosslessCodec;
 use App\Models\RadioStation;
 use App\Models\Song;
 use App\Models\User;
@@ -11,12 +12,18 @@ class AudioUrlSigner
 {
     private const int EXTRA_VALID_SECONDS = 30 * 60;
 
-    public function signSongPlayUrl(Song $song, User $user, bool $transcode): string
+    /** @param list<LosslessCodec> $clientLosslessCodecs */
+    public function signSongPlayUrl(Song $song, User $user, bool $transcode, array $clientLosslessCodecs = []): string
     {
         $parameters = ['songId' => $song->id, 'user' => $user->public_id];
 
         if ($transcode) {
             $parameters['transcode'] = 1;
+        } elseif ($clientLosslessCodecs) {
+            $parameters['lossless'] = array_map(
+                static fn (LosslessCodec $codec): string => $codec->value,
+                $clientLosslessCodecs,
+            );
         }
 
         return static_url(self::signRoute('song.play', $parameters, playbackSeconds: (int) ceil($song->length)));

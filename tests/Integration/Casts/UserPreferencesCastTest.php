@@ -51,6 +51,7 @@ class UserPreferencesCastTest extends TestCase
             'show_album_art_overlay',
             'show_now_playing_notification',
             'show_waveform',
+            'stream_lossless_when_supported',
             'support_bar_no_bugging',
             'theme',
             'transcode_on_mobile',

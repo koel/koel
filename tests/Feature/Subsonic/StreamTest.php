@@ -60,6 +60,24 @@ class StreamTest extends TestCase
     }
 
     #[Test]
+    public function rawFormatStreamsTheLosslessOriginalDespiteMaxBitRate(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->createOne([
+            'path' => test_path('songs/blank.mp3'),
+            'mime_type' => 'audio/x-flac',
+            'owner_id' => $user->id,
+        ]);
+
+        $this->mock(TranscodingStreamerAdapter::class)->expects('stream')->never();
+        $this->mock(LocalStreamerAdapter::class)->expects('stream');
+
+        $this->get(
+            "/rest/stream.view?id={$song->id}&apiKey={$user->subsonic_api_key}&maxBitRate=128&format=raw",
+        )->assertOk();
+    }
+
+    #[Test]
     public function unknownIdReturnsCode70(): void
     {
         $user = create_user();

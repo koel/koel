@@ -19,6 +19,7 @@ describe('playableStore', () => {
     afterEach: () => {
       isMobile.any = false
       preferenceStore.temporary.transcode_on_mobile = false
+      preferenceStore.temporary.stream_lossless_when_supported = true
       playlistStore.state.playlists = []
     },
   })
@@ -195,6 +196,21 @@ describe('playableStore', () => {
     preferenceStore.temporary.transcode_on_mobile = true
     await playableStore.resolveSourceUrl(song)
     expect(fetchMock).toHaveBeenLastCalledWith(`songs/${song.id}/play-url?transcode=1`)
+  })
+
+  it('asks for the lossless codecs this browser can play', async () => {
+    const song = h.factory('song').make()
+    const fetchMock = h.mock(signedUrlService, 'fetch').mockResolvedValue('http://test/play/signed')
+    h.mock(HTMLMediaElement.prototype, 'canPlayType').mockImplementation((type: string) =>
+      ['audio/flac', 'audio/wav'].includes(type) ? 'maybe' : '',
+    )
+
+    await playableStore.resolveSourceUrl(song)
+    expect(fetchMock).toHaveBeenLastCalledWith(`songs/${song.id}/play-url?lossless%5B%5D=flac&lossless%5B%5D=wav`)
+
+    preferenceStore.temporary.stream_lossless_when_supported = false
+    await playableStore.resolveSourceUrl(song)
+    expect(fetchMock).toHaveBeenLastCalledWith(`songs/${song.id}/play-url`)
   })
 
   it('falls back to the unsigned source URL of an offline copy when signing fails', async () => {
