@@ -41,7 +41,7 @@ use App\Http\Controllers\API\FetchDemoCreditsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchLibraryStatsController;
-use App\Http\Controllers\API\FetchListeningStatisticsController;
+use App\Http\Controllers\API\FetchListeningStatsController;
 use App\Http\Controllers\API\FetchOverviewController;
 use App\Http\Controllers\API\FetchRadioStationStreamUrlController;
 use App\Http\Controllers\API\FetchRandomAlbumsController;
@@ -276,7 +276,7 @@ Route::prefix('api')
             Route::post('me/equalizer-presets', [EqualizerPresetController::class, 'store']);
             Route::delete('me/equalizer-presets/{id}', [EqualizerPresetController::class, 'destroy']);
             Route::post('me/subsonic-api-key/regenerate', RegenerateSubsonicApiKeyController::class);
-            Route::get('me/listening-statistics', FetchListeningStatisticsController::class);
+            Route::get('me/listening-stats', FetchListeningStatsController::class);
             Route::get('me/library-stats', FetchLibraryStatsController::class);
 
             Route::post('me/two-factor', EnrollTwoFactorController::class);

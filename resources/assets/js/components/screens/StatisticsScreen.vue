@@ -100,7 +100,7 @@
 <script lang="ts" setup>
 import { ChartColumnIcon } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
-import { listeningStatisticsService } from '@/services/listeningStatisticsService'
+import { statsService } from '@/services/statsService'
 import { pluralize } from '@/utils/formatters'
 import { useBranding } from '@/composables/useBranding'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -189,7 +189,7 @@ const fetchStatistics = async () => {
   loading.value = true
 
   try {
-    const result = await listeningStatisticsService.fetch(period.value)
+    const result = await statsService.fetchListeningStats(period.value)
 
     if (isLatestRequest()) {
       statistics.value = result
@@ -207,7 +207,7 @@ const fetchStatistics = async () => {
 
 const fetchLibraryStats = async () => {
   try {
-    libraryStats.value = await listeningStatisticsService.fetchLibraryStats()
+    libraryStats.value = await statsService.fetchLibraryStats()
   } catch (error: unknown) {
     handleHttpError(error)
   } finally {

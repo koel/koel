@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Services\ListeningStatisticsService;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class FetchListeningStatisticsController extends Controller
+class FetchListeningStatsController extends Controller
 {
     public function __construct(
         private readonly ListeningStatisticsService $statisticsService,
