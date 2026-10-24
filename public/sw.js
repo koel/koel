@@ -3,20 +3,14 @@ var AUDIO_CACHE_NAME = "koel-audio-v1";
 var STATIC_CACHE_NAME = "koel-static-v2";
 var IMAGE_CACHE_NAME = "koel-images-v1";
 var MAX_CACHED_IMAGES = 500;
-var AUTH_QUERY_PARAMS = [
-	"t",
-	"expires",
-	"user",
-	"signature"
-];
 /**
-* Normalize a play URL to a stable cache key by stripping the auth query params.
+* Normalize a play URL to a stable cache key by stripping the query (auth and lossless format params).
 * e.g. "https://example.com/play/abc123?t=token" -> "https://example.com/play/abc123"
 *      "https://example.com/play/abc123/1?expires=1&user=u&signature=s" -> "https://example.com/play/abc123/1"
 */
 var normalizeCacheKey = (url) => {
 	const u = new URL(url);
-	AUTH_QUERY_PARAMS.forEach((param) => u.searchParams.delete(param));
+	u.search = "";
 	return u.toString();
 };
 /**

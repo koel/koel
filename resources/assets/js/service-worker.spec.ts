@@ -5,7 +5,7 @@ const createFakeCache = (urls: string[]) => {
 
   return {
     entries,
-    match: vi.fn(async (request: Request) => entries.get(request.url)),
+    match: vi.fn(async (request: Request | string) => entries.get(typeof request === 'string' ? request : request.url)),
     put: vi.fn(async (request: Request, response: Response) => void entries.set(request.url, response)),
     keys: vi.fn(async () => [...entries.keys()].map(url => new Request(url))),
     delete: vi.fn(async (request: Request) => entries.delete(request.url)),
@@ -83,6 +83,24 @@ describe('service worker', () => {
 
     await vi.waitFor(() => expect(imageCache.entries.has(coverUrl)).toBe(true))
     expect(staticCache.put).not.toHaveBeenCalled()
+  })
+
+  it('serves cached audio for a signed play URL with lossless formats', async () => {
+    const audioCache = createFakeCache(['https://koel.test/play/song-id'])
+
+    vi.stubGlobal('caches', {
+      open: vi.fn(async () => audioCache),
+    })
+    vi.stubGlobal('fetch', vi.fn())
+
+    const fetchListener = await loadFetchListener()
+    await fetchThroughWorker(
+      fetchListener,
+      'https://koel.test/play/song-id?lossless%5B0%5D=flac&lossless%5B1%5D=wav&user=user-id&expires=1&signature=sig',
+    )
+
+    expect(audioCache.match).toHaveBeenCalledWith('https://koel.test/play/song-id')
+    expect(fetch).not.toHaveBeenCalled()
   })
 
   it('does not evict fonts or stylesheets', async () => {
