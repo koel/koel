@@ -1,6 +1,8 @@
 <template>
   <SystemFloatingNotice v-if="shown" class="items-start" dismissible @dismiss="dismiss">
-    <RocketIcon :size="18" class="shrink-0 mt-0.5 text-k-fg-70" />
+    <template #icon>
+      <RocketIcon :size="18" class="mt-0.5 text-k-fg-70" />
+    </template>
     <span class="flex flex-col">
       <span>{{ appName }} {{ latestVersion }} is available.</span>
       <a :href="latestVersionReleaseUrl" rel="noopener" target="_blank">See what's new</a>
@@ -15,7 +17,7 @@ import { useBranding } from '@/composables/useBranding'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useNewVersionNotification } from '@/composables/useNewVersionNotification'
 
-import SystemFloatingNotice from '@/components/ui/SystemFloatingNotice.vue'
+import SystemFloatingNotice from '@/components/ui/system-notices/SystemFloatingNotice.vue'
 
 const dismissedVersionStorageKey = 'dismissed-new-release-version'
 

@@ -1,16 +1,18 @@
 <template>
   <SystemFloatingNotice v-if="!dismissed" class="items-center max-w-xs cursor-pointer" @click="dismissed = true">
-    <WifiOff :size="18" class="shrink-0 text-k-warning" />
+    <template #icon>
+      <WifiOffIcon :size="18" class="text-k-warning" />
+    </template>
     <span>You're offline.</span>
   </SystemFloatingNotice>
 </template>
 
 <script lang="ts" setup>
-import { WifiOff } from 'lucide-vue-next'
+import { WifiOffIcon } from 'lucide-vue-next'
 import { ref, watch } from 'vue'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 
-import SystemFloatingNotice from '@/components/ui/SystemFloatingNotice.vue'
+import SystemFloatingNotice from '@/components/ui/system-notices/SystemFloatingNotice.vue'
 
 const { online } = useNetworkStatus()
 const dismissed = ref(false)

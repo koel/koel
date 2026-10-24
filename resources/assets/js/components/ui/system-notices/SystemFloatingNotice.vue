@@ -1,5 +1,8 @@
 <template>
   <article class="flex gap-3 py-3 pl-4 pr-3 rounded-xl border border-k-fg-10 bg-k-bg-context-menu text-k-fg shadow-lg">
+    <span class="shrink-0 flex">
+      <slot name="icon" />
+    </span>
     <slot />
     <button v-if="dismissible" type="button" title="Dismiss" class="shrink-0 mt-0.5" @click="emit('dismiss')">
       <XIcon :size="16" />

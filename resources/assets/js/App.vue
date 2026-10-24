@@ -3,11 +3,11 @@
   <DialogBox ref="dialog" />
   <MessageToaster ref="toaster" />
   <GlobalEventListeners />
-  <div class="notification-stack fixed z-10000 left-4 flex flex-col items-start gap-3">
+  <SystemNoticeStack>
     <OfflineNotification v-if="!online" />
     <UpdateNotification />
     <NewReleaseNotification v-if="initialized" />
-  </div>
+  </SystemNoticeStack>
 
   <main
     v-if="layout === 'default' && initialized"
@@ -62,9 +62,10 @@ import type { Route } from '@/router'
 import DialogBox from '@/components/ui/DialogBox.vue'
 import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 import Overlay from '@/components/ui/Overlay.vue'
-import OfflineNotification from '@/components/ui/OfflineNotification.vue'
-import UpdateNotification from '@/components/ui/UpdateNotification.vue'
-import NewReleaseNotification from '@/components/ui/NewReleaseNotification.vue'
+import OfflineNotification from '@/components/ui/system-notices/OfflineNotification.vue'
+import UpdateNotification from '@/components/ui/system-notices/UpdateNotification.vue'
+import NewReleaseNotification from '@/components/ui/system-notices/NewReleaseNotification.vue'
+import SystemNoticeStack from '@/components/ui/system-notices/SystemNoticeStack.vue'
 
 // Do not dynamic-import app footer, as it contains the <audio> element
 // that is necessary to properly initialize the playService and equalizer.
@@ -204,10 +205,6 @@ provide(
 #dragGhost {
   @apply hidden py-2 pl-8 pr-3 rounded-md text-base fixed bg-k-bg border border-k-fg-10
   text-k-fg pointer-events-none z-50 whitespace-nowrap;
-}
-
-.notification-stack {
-  bottom: calc(var(--footer-height) + 2rem);
 }
 
 #copyArea {
