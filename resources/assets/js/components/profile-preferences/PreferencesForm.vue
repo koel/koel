@@ -60,7 +60,7 @@
         </span>
       </div>
     </FormRow>
-    <FormRow v-if="showTranscodingOption">
+    <FormRow>
       <label class="pref-row">
         <CheckBox v-model="preferences.stream_lossless_when_supported" name="stream_lossless_when_supported" />
         <span>Stream lossless files as-is when this browser can play them</span>
