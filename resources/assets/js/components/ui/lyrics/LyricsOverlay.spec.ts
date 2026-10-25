@@ -75,4 +75,14 @@ describe('lyricsOverlay.vue', () => {
 
     await waitFor(() => expect(isLyricsOverlayOpen.value).toBe(false))
   })
+
+  it('closes when the next song has no lyrics', async () => {
+    const { currentStreamable } = renderComponent()
+    openLyricsOverlay()
+    await waitFor(() => screen.getByRole('region', { name: 'Lyrics' }))
+
+    currentStreamable.value = h.factory('song').make({ lyrics: '' })
+
+    await waitFor(() => expect(isLyricsOverlayOpen.value).toBe(false))
+  })
 })
