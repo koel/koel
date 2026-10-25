@@ -18,11 +18,11 @@ return new class extends Migration {
             return;
         }
 
-        $songs = DB::selectOne(
+        $sql =
             'SELECT character_set_name AS charset, collation_name AS collation FROM information_schema.columns '
-            . 'WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?',
-            ['songs', 'path_hash'],
-        );
+            . 'WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?';
+
+        $songs = DB::selectOne($sql, ['songs', 'path_hash']);
 
         if (!$songs || !$songs->charset || !$songs->collation) {
             return;
