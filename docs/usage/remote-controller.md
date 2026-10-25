@@ -35,7 +35,7 @@ REVERB_PORT=443
 REVERB_SCHEME=https
 ```
 
-Then keep `php artisan reverb:start` running (with Supervisor, for example). It listens on port 8080; have your web server pass WebSocket traffic for `REVERB_HOST` to it. See [Reverb's docs](https://laravel.com/docs/reverb#production) for an nginx example.
+Then keep `php artisan reverb:start` running (with Supervisor, for example). It listens on port 8080; have your web server pass all traffic for `REVERB_HOST` (WebSocket and HTTP) to it. See [Reverb's docs](https://laravel.com/docs/reverb#production) for an nginx example.
 
 ## Usage
 
