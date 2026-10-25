@@ -43,6 +43,7 @@ window.KOEL = {
   build: null,
   is_demo: false,
   pusher: { app_key: '', app_cluster: '' },
+  reverb: null,
   branding: { name: 'Koel', logo: '', cover: '' },
   gravatar: { url: 'https://www.gravatar.com/avatar', default: 'robohash' },
   mailer_configured: true,

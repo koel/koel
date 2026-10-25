@@ -21,6 +21,22 @@ PUSHER_APP_CLUSTER=
 
 Finally, reload your Koel instance to apply the changes.
 
+### Using your own server
+
+Instead of Pusher, you can run [Laravel Reverb](https://reverb.laravel.com), which comes with Koel. Set these in `.env`:
+
+```
+BROADCAST_CONNECTION=reverb
+REVERB_APP_ID=my-koel
+REVERB_APP_KEY=any-random-string
+REVERB_APP_SECRET=another-random-string
+REVERB_HOST=ws.example.com
+REVERB_PORT=443
+REVERB_SCHEME=https
+```
+
+Then keep `php artisan reverb:start` running (with Supervisor, for example). It listens on port 8080; have your web server pass WebSocket traffic for `REVERB_HOST` to it. See [Reverb's docs](https://laravel.com/docs/reverb#production) for an nginx example.
+
 ## Usage
 
 You can access the remote controller by visiting `https://<your-koel-domain>/remote`.

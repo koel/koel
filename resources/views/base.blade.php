@@ -38,6 +38,12 @@
                 'app_key' => config('broadcasting.connections.pusher.key'),
                 'app_cluster' => config('broadcasting.connections.pusher.options.cluster'),
             ],
+            'reverb' => config('broadcasting.default') === 'reverb' ? [
+                'app_key' => config('broadcasting.connections.reverb.key'),
+                'host' => config('broadcasting.connections.reverb.options.host'),
+                'port' => (int) config('broadcasting.connections.reverb.options.port'),
+                'tls' => config('broadcasting.connections.reverb.options.useTLS'),
+            ] : null,
             'branding' => koel_branding(),
             'gravatar' => [
                 'url' => config('services.gravatar.url'),

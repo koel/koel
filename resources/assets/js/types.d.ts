@@ -93,6 +93,13 @@ type LoginResponse = CompositeToken | TwoFactorChallengeRequired
 
 type SSOProvider = 'Google' | 'OpenID Connect' | 'Reverse Proxy'
 
+interface ReverbServer {
+  readonly app_key: string
+  readonly host: string
+  readonly port: number
+  readonly tls: boolean
+}
+
 interface KoelGlobals {
   base_url: string
   clean_urls?: boolean
@@ -102,6 +109,7 @@ interface KoelGlobals {
     readonly app_key: string
     readonly app_cluster: string
   }
+  reverb: ReverbServer | null
   branding: Branding
   gravatar: {
     readonly url: string

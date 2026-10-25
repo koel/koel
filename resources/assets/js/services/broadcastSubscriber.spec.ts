@@ -61,6 +61,20 @@ describe('broadcastSubscriber', () => {
     expect(instance.options.authEndpoint).toBe(`${window.KOEL.base_url}api/broadcasting/auth`)
   })
 
+  it('connects to a self-hosted Reverb server', async () => {
+    window.KOEL.reverb = { app_key: 'reverb-key', host: 'ws.example.com', port: 8080, tls: false }
+
+    const instance = await broadcastSubscriber.newEchoInstance()
+
+    expect(instance.options.broadcaster).toBe('reverb')
+    expect(instance.options.key).toBe('reverb-key')
+    expect(instance.options.wsHost).toBe('ws.example.com')
+    expect(instance.options.wsPort).toBe(8080)
+    expect(instance.options.forceTLS).toBe(false)
+
+    window.KOEL.reverb = null
+  })
+
   it('falls back to no broadcaster when the server rendered no credentials', async () => {
     window.KOEL.pusher = { app_key: '', app_cluster: '' }
 

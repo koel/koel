@@ -56,7 +56,8 @@
     "robthree/twofactorauth": "^3.0",
     "intervention/image": "^4.0",
     "sentry/sentry-laravel": "^4.27",
-    "laravel/passkeys": "^0.2.1"
+    "laravel/passkeys": "^0.2.1",
+    "laravel/reverb": "^1.12"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
