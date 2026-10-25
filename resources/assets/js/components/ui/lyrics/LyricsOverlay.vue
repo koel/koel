@@ -4,13 +4,13 @@
       v-if="isLyricsOverlayOpen && song"
       ref="overlay"
       aria-label="Lyrics"
-      class="lyrics-overlay fixed inset-0 z-10 flex flex-col overflow-hidden bg-black"
+      class="lyrics-overlay fixed inset-0 z-10 flex flex-col overflow-hidden bg-k-bg text-k-fg"
       data-testid="lyrics-overlay"
       tabindex="-1"
       @keydown.esc="closeLyricsOverlay"
     >
       <img :src="cover" alt="" class="absolute inset-0 w-full h-full object-cover scale-125 blur-3xl opacity-70" />
-      <div class="absolute inset-0 bg-black/55" />
+      <div class="absolute inset-0 bg-k-bg-60" />
 
       <div class="lyrics-area relative flex-1 min-h-0 w-full mb-(--overlay-footer-space) text-2xl text-center">
         <LyricsPane :song collapsible />
@@ -50,10 +50,8 @@ watch(isLyricsOverlayOpen, async open => {
 
 <style lang="postcss" scoped>
 .lyrics-overlay {
-  --color-fg: #ffffff;
   --overlay-footer-space: calc(var(--footer-height, 84px) + 2rem);
 
-  color: #ffffff;
   outline: none;
 }
 
