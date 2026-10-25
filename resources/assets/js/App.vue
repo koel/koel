@@ -20,6 +20,7 @@
     <HotkeyListener />
     <HookSlot name="app.top" />
     <MainWrapper />
+    <LyricsOverlay />
     <AppFooter />
     <SupportKoel />
     <AiAssistantScreen v-if="commonStore.state.uses_ai" v-show="isCurrentScreen('AI')" />
@@ -80,6 +81,7 @@ import ContextMenu from '@/components/ui/context-menu/ContextMenu.vue'
 const HotkeyListener = defineAsyncComponent(() => import('@/components/utils/HotkeyListener.vue'))
 const Auth = defineAsyncComponent(() => import('@/components/auth/Auth.vue'))
 const MainWrapper = defineAsyncComponent(() => import('@/components/layout/main-wrapper/index.vue'))
+const LyricsOverlay = defineAsyncComponent(() => import('@/components/ui/lyrics/LyricsOverlay.vue'))
 const SupportKoel = defineAsyncComponent(() => import('@/components/meta/SupportKoel.vue'))
 const AiAssistantScreen = defineAsyncComponent(() => import('@/components/ai/AiAssistantScreen.vue'))
 const DropZone = defineAsyncComponent(() => import('@/components/ui/upload/DropZone.vue'))

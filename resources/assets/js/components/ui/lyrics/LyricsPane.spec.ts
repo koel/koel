@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { useLyricsOverlay } from '@/composables/useLyricsOverlay'
+import { preferenceStore } from '@/stores/preferenceStore'
 import { assertOpenModal } from '@/__tests__/assertions'
 import EditSongForm from '@/components/playable/EditSongForm.vue'
 
@@ -15,11 +17,16 @@ vi.mock('@/composables/useModal', () => ({
 import Component from './LyricsPane.vue'
 
 describe('lyricsPane.vue', () => {
+  const { isLyricsOverlayOpen, openLyricsOverlay, closeLyricsOverlay } = useLyricsOverlay()
+
   const h = createHarness({
-    beforeEach: () => openModalMock.mockClear(),
+    beforeEach: () => {
+      openModalMock.mockClear()
+      closeLyricsOverlay()
+    },
   })
 
-  const renderComponent = (song?: Song) => {
+  const renderComponent = (song?: Song, props: { expandable?: boolean; collapsible?: boolean } = {}) => {
     song =
       song ||
       h.factory('song').make({
@@ -29,10 +36,10 @@ describe('lyricsPane.vue', () => {
     const rendered = h.render(Component, {
       props: {
         song,
+        ...props,
       },
       global: {
         stubs: {
-          Magnifier: h.stub('magnifier'),
           LrcLyricsPane: h.stub('lrc-lyrics-pane'),
         },
       },
@@ -81,5 +88,33 @@ describe('lyricsPane.vue', () => {
     h.actingAsUser()
     renderComponent(h.factory('song').make({ lyrics: null }))
     expect(screen.queryByRole('button', { name: 'Click here' })).toBeNull()
+  })
+
+  it('opens the full-app lyrics view', async () => {
+    renderComponent(undefined, { expandable: true })
+
+    await h.user.click(screen.getByRole('button', { name: 'Show lyrics full screen' }))
+
+    expect(isLyricsOverlayOpen.value).toBe(true)
+  })
+
+  it('closes the full-app lyrics view', async () => {
+    openLyricsOverlay()
+    renderComponent(undefined, { collapsible: true })
+
+    await h.user.click(screen.getByRole('button', { name: 'Close lyrics' }))
+
+    expect(isLyricsOverlayOpen.value).toBe(false)
+  })
+
+  it('zooms the lyrics in and out', async () => {
+    preferenceStore.lyrics_zoom_level = 1
+    renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'Zoom in' }))
+    expect(preferenceStore.lyrics_zoom_level).toBe(2)
+
+    await h.user.click(screen.getByRole('button', { name: 'Zoom out' }))
+    expect(preferenceStore.lyrics_zoom_level).toBe(1)
   })
 })

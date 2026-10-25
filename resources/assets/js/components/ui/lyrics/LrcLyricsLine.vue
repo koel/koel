@@ -1,7 +1,7 @@
 <template>
   <p
     :class="{ active: isActive }"
-    class="relative leading-relaxed origin-left transition-all duration-200 cursor-default text-k-fg"
+    class="relative leading-relaxed transition-all duration-200 cursor-default text-k-fg"
   >
     {{ line.text }}
   </p>
@@ -18,7 +18,7 @@ defineProps<{
 @reference '@css/app.pcss';
 p {
   &.active {
-    @apply scale-105 font-semibold;
+    @apply text-[1.05em] font-semibold;
   }
 }
 </style>
