@@ -22,14 +22,18 @@ return new class extends Migration {
             'SELECT character_set_name AS charset, collation_name AS collation FROM information_schema.columns '
             . 'WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?';
 
-        $songs = DB::selectOne($sql, ['songs', 'path_hash']);
+        $prefix = DB::getTablePrefix();
+
+        // Read from the write connection: a lagging replica may not have the `songs.path_hash` column yet.
+        $songs = DB::selectOne($sql, [$prefix . 'songs', 'path_hash'], false);
 
         if (!$songs || !$songs->charset || !$songs->collation) {
             return;
         }
 
         DB::statement(sprintf(
-            'ALTER TABLE scanned_files MODIFY path_hash VARCHAR(32) CHARACTER SET %s COLLATE %s NOT NULL',
+            'ALTER TABLE `%s` MODIFY path_hash VARCHAR(32) CHARACTER SET %s COLLATE %s NOT NULL',
+            $prefix . 'scanned_files',
             $songs->charset,
             $songs->collation,
         ));
