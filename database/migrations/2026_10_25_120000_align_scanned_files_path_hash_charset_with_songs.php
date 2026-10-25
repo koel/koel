@@ -5,13 +5,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * `scanned_files.path_hash` is created as ASCII, while `songs.path_hash` takes the table default (utf8mb4 on a
-     * standard Laravel install). On MySQL and MariaDB, comparing two columns with different character sets converts the
-     * ASCII side, which makes the `(scan_id, path_hash)` index unusable. The post-scan "songs that are not in this scan"
-     * lookup then reads every scanned file once for every song, which takes minutes to hours on a large library.
-     * Giving `scanned_files.path_hash` the character set and collation of `songs.path_hash` lets the index work again.
-     */
     public function up(): void
     {
         if (!in_array(DB::getDriverName(), ['mysql', 'mariadb'], true) || !Schema::hasTable('scanned_files')) {
@@ -24,8 +17,7 @@ return new class extends Migration {
 
         $prefix = DB::getTablePrefix();
 
-        // Read from the write connection: a lagging replica may not have the `songs.path_hash` column yet.
-        $songs = DB::selectOne($sql, [$prefix . 'songs', 'path_hash'], false);
+        $songs = DB::selectOne($sql, [$prefix . 'songs', 'path_hash']);
 
         if (!$songs || !$songs->charset || !$songs->collation) {
             return;

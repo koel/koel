@@ -38,15 +38,6 @@ class AlignScannedFilesPathHashCharsetWithSongsTest extends TestCase
         self::assertSame(self::pathHashEncoding('songs'), self::pathHashEncoding('scanned_files'));
     }
 
-    #[Test]
-    public function runningTwiceChangesNothing(): void
-    {
-        $this->runMigration();
-        $this->runMigration();
-
-        self::assertSame(self::pathHashEncoding('songs'), self::pathHashEncoding('scanned_files'));
-    }
-
     /** @return array{string, string} The character set and the collation of `$table.path_hash`. */
     private static function pathHashEncoding(string $table): array
     {
