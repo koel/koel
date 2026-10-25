@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { useLyricsOverlay } from '@/composables/useLyricsOverlay'
+import { preferenceStore } from '@/stores/preferenceStore'
 import { assertOpenModal } from '@/__tests__/assertions'
 import EditSongForm from '@/components/playable/EditSongForm.vue'
 
@@ -39,7 +40,6 @@ describe('lyricsPane.vue', () => {
       },
       global: {
         stubs: {
-          Magnifier: { template: '<span><slot /></span>' },
           LrcLyricsPane: h.stub('lrc-lyrics-pane'),
         },
       },
@@ -105,5 +105,16 @@ describe('lyricsPane.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Close lyrics' }))
 
     expect(isLyricsOverlayOpen.value).toBe(false)
+  })
+
+  it('zooms the lyrics in and out', async () => {
+    preferenceStore.lyrics_zoom_level = 1
+    renderComponent()
+
+    await h.user.click(screen.getByRole('button', { name: 'Zoom in' }))
+    expect(preferenceStore.lyrics_zoom_level).toBe(2)
+
+    await h.user.click(screen.getByRole('button', { name: 'Zoom out' }))
+    expect(preferenceStore.lyrics_zoom_level).toBe(1)
   })
 })

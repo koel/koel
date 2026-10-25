@@ -10,7 +10,15 @@
       {{ plainTextLyrics }}
     </div>
 
-    <Magnifier :class="{ 'reveal-on-hover': !collapsible }" class="absolute top-4 right-4" @in="zoomIn" @out="zoomOut">
+    <ButtonGroup :class="{ 'reveal-on-hover': !collapsible }" class="absolute top-4 right-4">
+      <button v-koel-tooltip type="button" @click="zoomOut">
+        <Icon :icon="faSearchMinus" fixed-width />
+        <span class="sr-only">Zoom out</span>
+      </button>
+      <button v-koel-tooltip type="button" @click="zoomIn">
+        <Icon :icon="faSearchPlus" fixed-width />
+        <span class="sr-only">Zoom in</span>
+      </button>
       <button v-if="expandable" v-koel-tooltip type="button" @click="openLyricsOverlay">
         <Icon :icon="faUpRightAndDownLeftFromCenter" fixed-width />
         <span class="sr-only">Show lyrics full screen</span>
@@ -19,7 +27,7 @@
         <Icon :icon="faDownLeftAndUpRightToCenter" fixed-width />
         <span class="sr-only">Close lyrics</span>
       </button>
-    </Magnifier>
+    </ButtonGroup>
   </div>
   <p v-else class="px-6 py-8">
     <template v-if="userCanUpdateLyrics">
@@ -32,7 +40,12 @@
 </template>
 
 <script lang="ts" setup>
-import { faDownLeftAndUpRightToCenter, faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons'
+import {
+  faDownLeftAndUpRightToCenter,
+  faSearchMinus,
+  faSearchPlus,
+  faUpRightAndDownLeftFromCenter,
+} from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs, watch } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { defineAsyncComponent } from '@/utils/helpers'
@@ -40,6 +53,7 @@ import { useLyrics } from '@/composables/useLyrics'
 import { useModal } from '@/composables/useModal'
 import { useLyricsOverlay } from '@/composables/useLyricsOverlay'
 
+import ButtonGroup from '@/components/ui/ButtonGroup.vue'
 import LinkButton from '@/components/ui/form/LinkButton.vue'
 
 const props = withDefaults(defineProps<{ song: Song; expandable?: boolean; collapsible?: boolean }>(), {
@@ -47,7 +61,6 @@ const props = withDefaults(defineProps<{ song: Song; expandable?: boolean; colla
   collapsible: false,
 })
 const LrcLyricsPane = defineAsyncComponent(() => import('@/components/ui/lyrics/LrcLyricsPane.vue'))
-const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.vue'))
 const EditSongForm = defineAsyncComponent(() => import('@/components/playable/EditSongForm.vue'))
 
 const { openModal } = useModal()
