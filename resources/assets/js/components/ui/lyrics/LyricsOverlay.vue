@@ -1,7 +1,7 @@
 <template>
   <Transition name="lyrics-overlay">
     <section
-      v-if="isLyricsOverlayOpen && song"
+      v-if="isLyricsOverlayOpen && songWithLyrics"
       ref="overlay"
       aria-label="Lyrics"
       class="lyrics-overlay fixed inset-0 z-10 flex flex-col overflow-hidden bg-k-bg text-k-fg"
@@ -11,7 +11,7 @@
       <div class="absolute inset-0 bg-k-bg-60" />
 
       <div class="lyrics-area relative flex-1 min-h-0 w-full mb-(--overlay-footer-space) text-2xl text-center">
-        <LyricsPane :song collapsible />
+        <LyricsPane :song="songWithLyrics" collapsible />
       </div>
     </section>
   </Transition>
@@ -34,10 +34,15 @@ const { cover: defaultCover } = useBranding()
 const streamable = requireInjection(CurrentStreamableKey, ref(undefined))
 const overlay = ref<HTMLElement>()
 
-const song = computed(() => (streamable.value && isSong(streamable.value) ? streamable.value : null))
-const cover = computed(() => song.value?.album_cover || defaultCover)
+const songWithLyrics = computed(() => {
+  const current = streamable.value
 
-watch(song, value => value || closeLyricsOverlay())
+  return current && isSong(current) && current.lyrics?.trim() ? current : null
+})
+
+const cover = computed(() => songWithLyrics.value?.album_cover || defaultCover)
+
+watch(songWithLyrics, value => value || closeLyricsOverlay())
 
 onKeyStroke('Escape', event => (event.target as HTMLElement).closest('dialog') || closeLyricsOverlay())
 
