@@ -5,9 +5,7 @@
       ref="overlay"
       aria-label="Lyrics"
       class="lyrics-overlay fixed inset-0 z-10 flex flex-col overflow-hidden bg-k-bg text-k-fg"
-      data-testid="lyrics-overlay"
       tabindex="-1"
-      @keydown.esc="closeLyricsOverlay"
     >
       <img :src="cover" alt="" class="absolute inset-0 w-full h-full object-cover scale-125 blur-3xl opacity-70" />
       <div class="absolute inset-0 bg-k-bg-60" />
@@ -21,6 +19,7 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue'
+import { onKeyStroke } from '@vueuse/core'
 import { useBranding } from '@/composables/useBranding'
 import { useLyricsOverlay } from '@/composables/useLyricsOverlay'
 import { isSong } from '@/utils/typeGuards'
@@ -39,6 +38,8 @@ const song = computed(() => (streamable.value && isSong(streamable.value) ? stre
 const cover = computed(() => song.value?.album_cover || defaultCover)
 
 watch(song, value => value || closeLyricsOverlay())
+
+onKeyStroke('Escape', event => (event.target as HTMLElement).closest('dialog') || closeLyricsOverlay())
 
 watch(isLyricsOverlayOpen, async open => {
   if (open) {

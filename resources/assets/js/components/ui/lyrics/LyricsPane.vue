@@ -83,7 +83,7 @@ watch(zoomLevel, level => (preferences.lyrics_zoom_level = level), { immediate: 
 @reference '@css/app.pcss';
 
 .reveal-on-hover {
-  @apply opacity-0 group-hover:opacity-50 hover:opacity-100! transition-opacity no-hover:opacity-100!;
+  @apply opacity-0 group-hover:opacity-50 group-focus-within:opacity-100! hover:opacity-100! transition-opacity no-hover:opacity-100!;
 }
 
 .lyrics {

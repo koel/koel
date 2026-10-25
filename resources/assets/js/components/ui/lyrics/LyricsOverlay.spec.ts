@@ -37,20 +37,39 @@ describe('lyricsOverlay.vue', () => {
     await waitFor(() => screen.getByTestId('lyrics-pane'))
   })
 
-  it('closes on Escape', async () => {
+  it('closes on Escape when focus is outside the overlay', async () => {
     renderComponent()
     openLyricsOverlay()
-    await waitFor(() => screen.getByTestId('lyrics-overlay'))
+    const overlay = await waitFor(() => screen.getByRole('region', { name: 'Lyrics' }))
+    overlay.blur()
 
     await h.user.keyboard('{Escape}')
 
     expect(isLyricsOverlayOpen.value).toBe(false)
   })
 
+  it('stays open on Escape inside a dialog', async () => {
+    renderComponent()
+    openLyricsOverlay()
+    await waitFor(() => screen.getByRole('region', { name: 'Lyrics' }))
+
+    const dialog = document.createElement('dialog')
+    const input = document.createElement('input')
+    dialog.appendChild(input)
+    document.body.appendChild(dialog)
+    input.focus()
+
+    await h.user.keyboard('{Escape}')
+
+    expect(isLyricsOverlayOpen.value).toBe(true)
+
+    dialog.remove()
+  })
+
   it('closes when the current playable is not a song', async () => {
     const { currentStreamable } = renderComponent()
     openLyricsOverlay()
-    await waitFor(() => screen.getByTestId('lyrics-overlay'))
+    await waitFor(() => screen.getByRole('region', { name: 'Lyrics' }))
 
     currentStreamable.value = h.factory('episode').make()
 
