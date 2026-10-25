@@ -139,6 +139,13 @@ Also see [Service Integrations](service-integrations) for detailed setup instruc
 | `PUSHER_APP_KEY` | Your Pusher app key. Once it's set, Koel broadcasts through Pusher. | _(empty)_ |
 | `PUSHER_APP_SECRET` | Your Pusher app secret. | _(empty)_ |
 | `PUSHER_APP_CLUSTER` | Your Pusher app cluster, e.g. `eu` or `ap1`. | _(empty)_ |
+| `BROADCAST_CONNECTION` | Set to `reverb` to use your own [Reverb](usage/remote-controller#using-your-own-server) server instead of Pusher. | `pusher` once `PUSHER_APP_KEY` is set, otherwise `null` |
+| `REVERB_APP_ID` | Your Reverb app ID. Any value you choose. | _(empty)_ |
+| `REVERB_APP_KEY` | Your Reverb app key. Any value you choose. | _(empty)_ |
+| `REVERB_APP_SECRET` | Your Reverb app secret. Any value you choose; keep it private. | _(empty)_ |
+| `REVERB_HOST` | The public host name browsers connect to, e.g. `ws.example.com`. | _(empty)_ |
+| `REVERB_PORT` | The public port browsers connect to. | `443` |
+| `REVERB_SCHEME` | `https` or `http`. | `https` |
 
 ## SSO (Single Sign-On)
 

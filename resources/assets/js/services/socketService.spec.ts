@@ -60,6 +60,31 @@ describe('socketService', () => {
     })
   })
 
+  it('inits with a self-hosted Reverb server', async () => {
+    window.KOEL.reverb = { app_key: 'reverb-key', host: 'ws.example.com', port: 443, tls: true }
+    window.KOEL.base_url = 'http://localhost/'
+    userStore.state.current = h.factory('user').make() as CurrentUser
+
+    const result = await socketService.init()
+    expect(result).toBe(true)
+
+    expect(PusherLib).toHaveBeenCalledWith('reverb-key', {
+      cluster: '',
+      wsHost: 'ws.example.com',
+      wsPort: 443,
+      wssPort: 443,
+      forceTLS: true,
+      enabledTransports: ['ws', 'wss'],
+      channelAuthorization: {
+        endpoint: 'http://localhost/api/broadcasting/auth',
+        transport: 'ajax',
+        headers: { Authorization: 'Bearer test-token' },
+      },
+    })
+
+    window.KOEL.reverb = null
+  })
+
   it('broadcasts events', () => {
     const user = h.factory('user').make() as CurrentUser
     userStore.state.current = user
