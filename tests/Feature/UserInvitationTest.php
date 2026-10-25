@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Resources\UserProspectResource;
 use App\Mail\UserInvite;
+use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -124,6 +125,16 @@ class UserInvitationTest extends TestCase
         $prospect = self::createProspect();
 
         $this->deleteAs('api/invitations', ['email' => $prospect->email])->assertForbidden();
+
+        $this->assertModelExists($prospect);
+    }
+
+    #[Test]
+    public function cannotRevokeInvitationOfAnotherOrganization(): void
+    {
+        $prospect = User::factory()->prospect()->for(Organization::factory()->createOne())->createOne();
+
+        $this->deleteAs('api/invitations', ['email' => $prospect->email], create_admin())->assertUnprocessable();
 
         $this->assertModelExists($prospect);
     }

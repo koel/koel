@@ -19,6 +19,7 @@ class UserPolicy
         return (
             $currentUser->hasPermissionTo(Permission::MANAGE_USERS)
             && $userToUpdate->isNot($currentUser)
+            && $userToUpdate->organization_id === $currentUser->organization_id
             && $currentUser->role->canManage($userToUpdate->role)
         );
     }
@@ -28,6 +29,7 @@ class UserPolicy
         return (
             $currentUser->hasPermissionTo(Permission::MANAGE_USERS)
             && $userToDestroy->isNot($currentUser)
+            && $userToDestroy->organization_id === $currentUser->organization_id
             && $currentUser->role->canManage($userToDestroy->role)
         );
     }
