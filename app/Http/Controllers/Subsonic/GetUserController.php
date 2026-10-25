@@ -28,7 +28,10 @@ class GetUserController extends Controller
 
         $target = $isSelf
             ? $user
-            : $this->userRepository->findOneByEmail($request->username) ?? throw new ModelNotFoundException();
+            : $this->userRepository->findOneByEmailInOrganization(
+                $request->username,
+                $user->organization,
+            ) ?? throw new ModelNotFoundException();
 
         return SubsonicResponse::ok(['user' => UserResource::toArray($target)]);
     }

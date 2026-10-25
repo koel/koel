@@ -3,6 +3,8 @@
 namespace Tests\Feature\Subsonic;
 
 use App\Http\Responses\Subsonic\Resources\UserResource;
+use App\Models\Organization;
+use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -37,6 +39,21 @@ class GetUserTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(['subsonic-response' => ['user' => UserResource::JSON_STRUCTURE]])
             ->assertJsonPath('subsonic-response.user.username', $other->email);
+    }
+
+    #[Test]
+    public function adminQueryingUserOfAnotherOrganizationReturnsCode70(): void
+    {
+        $admin = create_admin();
+        $outsider = User::factory()->for(Organization::factory()->createOne())->createOne();
+
+        $this
+            ->getJson(
+                "/rest/getUser.view?apiKey={$admin->subsonic_api_key}&f=json&username=" . urlencode($outsider->email),
+            )
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.error.code', 70)
+            ->assertJsonMissingPath('subsonic-response.user');
     }
 
     #[Test]

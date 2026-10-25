@@ -10,6 +10,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 
 class UserController extends Controller
@@ -19,11 +20,12 @@ class UserController extends Controller
         private readonly UserService $userService,
     ) {}
 
-    public function index()
+    /** @param User $user */
+    public function index(Authenticatable $user)
     {
         $this->authorize('manage', User::class);
 
-        return UserResource::collection($this->userRepository->getAll());
+        return UserResource::collection($this->userRepository->getAllInOrganization($user->organization));
     }
 
     public function store(UserStoreRequest $request)

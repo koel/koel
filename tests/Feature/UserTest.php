@@ -7,6 +7,7 @@ use App\Facades\Dispatcher;
 use App\Helpers\Ulid;
 use App\Jobs\DeleteUserJob;
 use App\Models\Interaction;
+use App\Models\Organization;
 use App\Models\User;
 use App\Services\Auth\TokenManager;
 use Illuminate\Support\Facades\Artisan;
@@ -343,5 +344,54 @@ class UserTest extends TestCase
 
         self::assertFalse($selfRow['permissions']['edit']);
         self::assertFalse($selfRow['permissions']['delete']);
+    }
+
+    #[Test]
+    public function listingExcludesUsersOfAnotherOrganization(): void
+    {
+        $admin = create_admin();
+        $colleague = create_user();
+        $outsider = self::createUserOfAnotherOrganization();
+
+        $this
+            ->getAs('api/users', $admin)
+            ->assertSuccessful()
+            ->assertJsonCount(2)
+            ->assertJsonFragment(['id' => $colleague->public_id])
+            ->assertJsonMissing(['id' => $outsider->public_id]);
+    }
+
+    #[Test]
+    public function adminCannotUpdateUserOfAnotherOrganization(): void
+    {
+        $outsider = self::createUserOfAnotherOrganization();
+        $originalName = $outsider->name;
+
+        $this->putAs(
+            "api/users/{$outsider->public_id}",
+            [
+                'name' => 'Foo',
+                'email' => $outsider->email,
+                'role' => 'admin',
+            ],
+            create_admin(),
+        )->assertForbidden();
+
+        self::assertSame($originalName, $outsider->refresh()->name);
+    }
+
+    #[Test]
+    public function adminCannotDeleteUserOfAnotherOrganization(): void
+    {
+        $outsider = self::createUserOfAnotherOrganization();
+
+        $this->deleteAs("api/users/{$outsider->public_id}", [], create_admin())->assertForbidden();
+
+        $this->assertModelExists($outsider);
+    }
+
+    private static function createUserOfAnotherOrganization(): User
+    {
+        return User::factory()->for(Organization::factory()->createOne())->createOne();
     }
 }
