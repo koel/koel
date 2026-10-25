@@ -28,7 +28,7 @@
         aria-labelledby="extraTabLyrics"
         data-testid="side-sheet-lyrics"
       >
-        <LyricsPane v-if="streamable" :song="streamable" />
+        <LyricsPane v-if="streamable" :song="streamable" expandable />
       </SideSheetPanelLazyWrapper>
 
       <SideSheetPanelLazyWrapper

@@ -10,11 +10,16 @@
       {{ plainTextLyrics }}
     </div>
 
-    <Magnifier
-      class="absolute top-4 right-4 opacity-0 group-hover:opacity-50 hover:opacity-100! transition-opacity no-hover:opacity-100!"
-      @in="zoomIn"
-      @out="zoomOut"
-    />
+    <Magnifier :class="{ 'reveal-on-hover': !collapsible }" class="absolute top-4 right-4" @in="zoomIn" @out="zoomOut">
+      <button v-if="expandable" v-koel-tooltip type="button" @click="openLyricsOverlay">
+        <Icon :icon="faUpRightAndDownLeftFromCenter" fixed-width />
+        <span class="sr-only">Show lyrics full screen</span>
+      </button>
+      <button v-if="collapsible" v-koel-tooltip type="button" @click="closeLyricsOverlay">
+        <Icon :icon="faDownLeftAndUpRightToCenter" fixed-width />
+        <span class="sr-only">Close lyrics</span>
+      </button>
+    </Magnifier>
   </div>
   <p v-else class="px-6 py-8">
     <template v-if="userCanUpdateLyrics">
@@ -27,26 +32,32 @@
 </template>
 
 <script lang="ts" setup>
+import { faDownLeftAndUpRightToCenter, faUpRightAndDownLeftFromCenter } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, toRefs, watch } from 'vue'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { useLyrics } from '@/composables/useLyrics'
 import { useModal } from '@/composables/useModal'
+import { useLyricsOverlay } from '@/composables/useLyricsOverlay'
 
 import LinkButton from '@/components/ui/form/LinkButton.vue'
 
-const props = defineProps<{ song: Song }>()
+const props = withDefaults(defineProps<{ song: Song; expandable?: boolean; collapsible?: boolean }>(), {
+  expandable: false,
+  collapsible: false,
+})
 const LrcLyricsPane = defineAsyncComponent(() => import('@/components/ui/lyrics/LrcLyricsPane.vue'))
 const Magnifier = defineAsyncComponent(() => import('@/components/ui/Magnifier.vue'))
 const EditSongForm = defineAsyncComponent(() => import('@/components/playable/EditSongForm.vue'))
 
 const { openModal } = useModal()
+const { openLyricsOverlay, closeLyricsOverlay } = useLyricsOverlay()
 const { song } = toRefs(props)
 const zoomLevel = ref(preferences.lyrics_zoom_level || 1)
 
 const { plainTextLyrics, lrcLyrics, isLrc, hasLyrics, userCanUpdateLyrics } = useLyrics(song)
 
-const fontSize = computed(() => `${1 + (zoomLevel.value - 1) * 0.2}rem`)
+const fontSize = computed(() => `${1 + (zoomLevel.value - 1) * 0.2}em`)
 
 const zoomIn = () => (zoomLevel.value = Math.min(zoomLevel.value + 1, 8))
 const zoomOut = () => (zoomLevel.value = Math.max(zoomLevel.value - 1, -2))
@@ -56,6 +67,12 @@ watch(zoomLevel, level => (preferences.lyrics_zoom_level = level), { immediate: 
 </script>
 
 <style lang="postcss" scoped>
+@reference '@css/app.pcss';
+
+.reveal-on-hover {
+  @apply opacity-0 group-hover:opacity-50 hover:opacity-100! transition-opacity no-hover:opacity-100!;
+}
+
 .lyrics {
   font-size: v-bind(fontSize);
 }
