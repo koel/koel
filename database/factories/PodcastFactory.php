@@ -18,7 +18,7 @@ class PodcastFactory extends Factory
             'description' => fake()->paragraph,
             'image' => fake()->imageUrl(),
             'link' => fake()->url,
-            'url' => fake()->url,
+            'url' => fake()->unique()->url(),
             'author' => fake()->name,
             'categories' => [
                 ['text' => 'Technology', 'sub_category' => null],
