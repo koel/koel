@@ -31,4 +31,8 @@ describe('typeGuards', () => {
     const mixed = [{ type: 'songs' }, { type: 'episodes' }] as Playable[]
     expect(getPlayableCollectionContentType(mixed)).toBe('mixed')
   })
+
+  it('treats an empty collection as songs', () => {
+    expect(getPlayableCollectionContentType([])).toBe('songs')
+  })
 })

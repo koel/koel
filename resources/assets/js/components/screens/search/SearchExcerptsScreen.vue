@@ -18,8 +18,14 @@
       />
       <ArtistResultsBlock :artists="excerpt.artists" :searching data-testid="artist-excerpts" />
       <AlbumResultsBlock :albums="excerpt.albums" :searching data-testid="album-excerpts" />
-      <PodcastExcerptResultsBlock :podcasts="excerpt.podcasts" :searching data-testid="podcast-excerpts" />
+      <PodcastExcerptResultsBlock
+        v-if="usesPodcasts"
+        :podcasts="excerpt.podcasts"
+        :searching
+        data-testid="podcast-excerpts"
+      />
       <RadioStationExcerptResultsBlock
+        v-if="usesRadio"
         :stations="excerpt.radio_stations"
         :searching
         data-testid="radio-station-excerpts"
@@ -42,6 +48,7 @@ import { intersectionBy } from 'lodash-es'
 import { ref, toRef } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { searchStore } from '@/stores/searchStore'
+import { commonStore } from '@/stores/commonStore'
 import { usePageTitle } from '@/composables/usePageTitle'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
@@ -54,6 +61,8 @@ import PodcastExcerptResultsBlock from '@/components/screens/search/PodcastExcer
 import RadioStationExcerptResultsBlock from '@/components/screens/search/RadioStationExcerptResultsBlock.vue'
 
 const excerpt = toRef(searchStore.state, 'excerpt')
+const usesPodcasts = toRef(commonStore.state, 'uses_podcasts')
+const usesRadio = toRef(commonStore.state, 'uses_radio')
 const q = ref('')
 const searching = ref(false)
 

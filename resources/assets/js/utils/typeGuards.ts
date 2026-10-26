@@ -11,5 +11,9 @@ export function isRadioStation(streamable: Streamable): streamable is RadioStati
 }
 
 export function getPlayableCollectionContentType(playables: Playable[]): Song['type'] | Episode['type'] | 'mixed' {
+  if (!playables.length) {
+    return 'songs'
+  }
+
   return new Set(playables.map(playable => playable.type)).size === 1 ? playables[0].type : 'mixed'
 }

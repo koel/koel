@@ -15,9 +15,7 @@
     <FormRow v-if="isPlus">
       <label class="pref-row">
         <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
-        <span
-          >Show other users' public songs, albums, artists, and radio stations in your library (reload required)</span
-        >
+        <span>{{ includePublicMediaLabel }}</span>
       </label>
     </FormRow>
     <FormRow>
@@ -138,8 +136,24 @@ const toggleCrossfade = (enabled: boolean | undefined) => {
   preferences.crossfade_duration = enabled ? 7 : 0
 }
 
+const includePublicMediaLabel = computed(() => {
+  const types = ['songs', 'albums', 'artists']
+
+  if (commonStore.state.uses_radio) {
+    types.push('radio stations')
+  }
+
+  types[types.length - 1] = `and ${types[types.length - 1]}`
+
+  return `Show other users' public ${types.join(', ')} in your library (reload required)`
+})
+
 const continuousPlaybackLabel = computed(() => {
-  const types = ['playlist', 'album', 'artist', 'genre', 'podcast']
+  const types = ['playlist', 'album', 'artist', 'genre']
+
+  if (commonStore.state.uses_podcasts) {
+    types.push('podcast')
+  }
 
   if (commonStore.state.uses_media_browser) {
     types.push('folder')
@@ -147,7 +161,9 @@ const continuousPlaybackLabel = computed(() => {
 
   types[types.length - 1] = `or ${types[types.length - 1]}`
 
-  return `Playing a song or episode triggers continuous playback of the entire ${types.join(', ')}`
+  const playable = commonStore.state.uses_podcasts ? 'a song or episode' : 'a song'
+
+  return `Playing ${playable} triggers continuous playback of the entire ${types.join(', ')}`
 })
 </script>
 
