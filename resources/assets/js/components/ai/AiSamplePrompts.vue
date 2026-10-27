@@ -16,6 +16,7 @@
 <script lang="ts" setup>
 import { SparkleIcon } from 'lucide-vue-next'
 import { onBeforeUnmount, ref } from 'vue'
+import { commonStore } from '@/stores/commonStore'
 
 const emit = defineEmits<{ (e: 'select', prompt: string): void }>()
 
@@ -61,14 +62,17 @@ const allExamples = [
   'Who were my top artists over the past year?',
   'Do I have anything by Björk?',
   'Which albums do I have from 1997?',
-  'Play the latest episode of The Daily',
-  'Continue The Daily where I left off',
 ]
+
+const podcastExamples = ['Play the latest episode of The Daily', 'Continue The Daily where I left off']
 
 const DURATION = 500
 const COUNT = 3
 
-const pickRandom = () => [...allExamples].sort(() => Math.random() - 0.5).slice(0, COUNT)
+const pickRandom = () =>
+  [...allExamples, ...(commonStore.state.uses_podcasts ? podcastExamples : [])]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, COUNT)
 
 const examples = ref(pickRandom())
 const opacity = ref(1)

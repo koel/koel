@@ -4,6 +4,7 @@ import { defineComponent } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import { searchStore } from '@/stores/searchStore'
+import { commonStore } from '@/stores/commonStore'
 import { usePageTitle } from '@/composables/usePageTitle'
 import Component from './SearchExcerptsScreen.vue'
 
@@ -61,5 +62,21 @@ describe('searchExcerptsScreen.vue', () => {
     eventBus.emit('SEARCH_KEYWORDS_CHANGED', 'Dio')
 
     await waitFor(() => expect(document.title).toBe('Dio – Koel'))
+  })
+
+  it.each([
+    [true, true],
+    [false, false],
+  ])('shows podcast and radio results only when those are enabled (%s)', async (usesPodcasts, usesRadio) => {
+    h.mock(searchStore, 'excerptSearch')
+    commonStore.state.uses_podcasts = usesPodcasts
+    commonStore.state.uses_radio = usesRadio
+    h.render(Component)
+
+    eventBus.emit('SEARCH_KEYWORDS_CHANGED', 'foo')
+    await waitFor(() => screen.getByTestId('playable-excerpts'))
+
+    expect(Boolean(screen.queryByTestId('podcast-excerpts'))).toBe(usesPodcasts)
+    expect(Boolean(screen.queryByTestId('radio-station-excerpts'))).toBe(usesRadio)
   })
 })
