@@ -56,7 +56,7 @@ type ListedShortcut = Pick<KeyboardShortcut, 'group' | 'label' | 'keys' | 'isKey
 const listShortcuts: ListedShortcut[] = [
   { group: 'Lists', label: 'Navigate up or down', keys: ['↑', '↓'], isKeyChoice: true },
   { group: 'Lists', label: 'Extend the selection', keys: ['Shift', '↑', '↓'], isKeyChoice: true, firstChoiceIndex: 1 },
-  { group: 'Lists', label: 'Play or open the selection', keys: ['Enter'] },
+  { group: 'Lists', label: 'Play, queue or open the selection', keys: ['Enter'] },
   { group: 'Lists', label: 'Select all', keys: ['Cmd/Ctrl', 'A'] },
   ...(commonStore.state.uses_media_browser
     ? [{ group: 'Lists' as const, label: 'Parent folder', keys: ['Backspace'] }]

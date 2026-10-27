@@ -6,7 +6,7 @@
     @keydown.delete.prevent.stop="handleDelete"
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="selectAllWithKeyboard"
-    @keydown.up.down.prevent.stop="onArrowKey"
+    @keydown.up.down="onArrowKey"
   >
     <VirtualScroller
       carries-screen-header
@@ -166,6 +166,13 @@ const handleEnter = (event: KeyboardEvent) => {
 }
 
 const onArrowKey = (event: KeyboardEvent) => {
+  if ((event.target as HTMLElement).matches('input')) {
+    return
+  }
+
+  event.preventDefault()
+  event.stopPropagation()
+
   const index = moveSelectionWithArrowKey(event)
 
   if (index === null) {

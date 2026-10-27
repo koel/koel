@@ -72,6 +72,8 @@ export const useListSelection = <T>(
     for (let i = indexes[0]; i <= indexes[1]; ++i) {
       select(selectables.value[i])
     }
+
+    lastSelected.value = second
   }
 
   const inSelectedRange = (selectable: Selectable<T>) => {
@@ -144,7 +146,6 @@ export const useListSelection = <T>(
     deselectAll()
     selectBetween(anchor, target)
 
-    lastSelected.value = target
     rangeAnchor = anchor
 
     return targetIndex

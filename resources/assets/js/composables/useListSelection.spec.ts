@@ -171,6 +171,16 @@ describe('useListSelection', () => {
     expect(selectedFlags(items)).toEqual([true, true, false, false])
   })
 
+  it('extends a Shift-clicked range from the clicked row', () => {
+    const { items, toggleSelected, selectBetween, moveSelectionWithArrowKey } = setup()
+    toggleSelected(items.value[3])
+    selectBetween(items.value[3], items.value[1])
+
+    moveSelectionWithArrowKey(arrowKey('ArrowUp', true))
+
+    expect(selectedFlags(items)).toEqual([true, true, true, true])
+  })
+
   it('stops at the ends of the list', () => {
     const { items, select, moveSelectionWithArrowKey } = setup()
     select(items.value[3])
