@@ -13,13 +13,14 @@ import { queueStore } from '@/stores/queueStore'
 import { useModal } from '@/composables/useModal'
 import { useRouter } from '@/composables/useRouter'
 
-export type KeyboardShortcutGroup = 'Playback' | 'View' | 'Sound' | 'Go to'
+export type KeyboardShortcutGroup = 'Playback' | 'View' | 'Sound' | 'Go to' | 'Lists'
 
 export interface KeyboardShortcut {
   group: KeyboardShortcutGroup
   label: string
   keys: string[]
   isKeyRange?: boolean
+  isKeyChoice?: boolean
   key: KeyFilter
   run: (event: KeyboardEvent) => void
   isAvailable?: () => boolean
@@ -84,31 +85,20 @@ export const useKeyboardShortcuts = () => {
     { group: 'Playback', label: 'Play or pause', keys: ['Space'], key: ' ', run: () => playback('current')?.toggle() },
     {
       group: 'Playback',
-      label: 'Next song',
-      keys: ['J'],
-      key: letterKey('j'),
-      run: () => playback('current')?.playNext(),
+      label: 'Next/Previous song',
+      isKeyChoice: true,
+      keys: ['J', 'K'],
+      key: event => letterKey('j')(event) || letterKey('k')(event),
+      run: event =>
+        event.key.toLowerCase() === 'j' ? playback('current')?.playNext() : playback('current')?.playPrev(),
     },
     {
       group: 'Playback',
-      label: 'Previous song',
-      keys: ['K'],
-      key: letterKey('k'),
-      run: () => playback('current')?.playPrev(),
-    },
-    {
-      group: 'Playback',
-      label: 'Forward 10 seconds',
-      keys: ['→'],
-      key: 'ArrowRight',
-      run: () => playback('current')?.forward(10),
-    },
-    {
-      group: 'Playback',
-      label: 'Back 10 seconds',
-      keys: ['←'],
-      key: 'ArrowLeft',
-      run: () => playback('current')?.rewind(10),
+      label: 'Forward/Backward 10 seconds',
+      isKeyChoice: true,
+      keys: ['→', '←'],
+      key: ['ArrowRight', 'ArrowLeft'],
+      run: event => (event.key === 'ArrowRight' ? playback('current')?.forward(10) : playback('current')?.rewind(10)),
     },
     {
       group: 'Playback',
@@ -127,7 +117,7 @@ export const useKeyboardShortcuts = () => {
     },
     {
       group: 'Playback',
-      label: 'Favorite the current song',
+      label: 'Toggle favorite the current song',
       keys: ['L'],
       key: letterKey('l'),
       run: toggleFavoriteOfCurrentSong,
@@ -147,8 +137,14 @@ export const useKeyboardShortcuts = () => {
       run: () => eventBus.emit('FULLSCREEN_TOGGLE'),
       isAvailable: isFullscreenSupported,
     },
-    { group: 'Sound', label: 'Volume up', keys: ['↑'], key: 'ArrowUp', run: () => volumeManager.increase() },
-    { group: 'Sound', label: 'Volume down', keys: ['↓'], key: 'ArrowDown', run: () => volumeManager.decrease() },
+    {
+      group: 'Sound',
+      label: 'Volume up/down',
+      isKeyChoice: true,
+      keys: ['↑', '↓'],
+      key: ['ArrowUp', 'ArrowDown'],
+      run: event => (event.key === 'ArrowUp' ? volumeManager.increase() : volumeManager.decrease()),
+    },
     {
       group: 'Sound',
       label: 'Mute or unmute',
