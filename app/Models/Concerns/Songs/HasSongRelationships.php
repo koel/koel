@@ -10,6 +10,7 @@ use App\Models\Interaction;
 use App\Models\Playlist;
 use App\Models\Podcast;
 use App\Models\SongAnalysis;
+use App\Models\Transcode;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -61,5 +62,10 @@ trait HasSongRelationships
     public function analysis(): HasOne
     {
         return $this->hasOne(SongAnalysis::class);
+    }
+
+    public function preview(): HasOne
+    {
+        return $this->hasOne(Transcode::class)->where('is_preview', true)->without('song');
     }
 }

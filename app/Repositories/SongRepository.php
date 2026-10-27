@@ -705,6 +705,20 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query(type: PlayableType::SONG)->whereNull('songs.file_size')->count();
     }
 
+    /** @return LazyCollection<int, Song> */
+    public function lazyGetSongsWithoutPreview(): LazyCollection
+    {
+        return Song::query(type: PlayableType::SONG)
+            ->withoutEagerLoads()
+            ->whereDoesntHave('preview')
+            ->lazyById(column: 'songs.id', alias: 'id');
+    }
+
+    public function countSongsWithoutPreview(): int
+    {
+        return Song::query(type: PlayableType::SONG)->whereDoesntHave('preview')->count();
+    }
+
     /** @return Collection<int, Song> */
     public function getNewestEpisodesForUser(int $count, ?User $user = null): Collection
     {
@@ -849,11 +863,13 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         throw_unless((bool) $embed->embeddable, new EmbeddableNotFoundException());
 
-        return match (EmbeddableType::from($embed->embeddable_type)) {
+        $playables = match (EmbeddableType::from($embed->embeddable_type)) {
             EmbeddableType::ALBUM => $this->getByAlbum($embed->embeddable, $embed->user),
             EmbeddableType::ARTIST => $this->getByArtist($embed->embeddable, $embed->user),
             EmbeddableType::PLAYLIST => $this->getByPlaylist($embed->embeddable, $embed->user),
             EmbeddableType::PLAYABLE => $this->getMany(ids: [$embed->embeddable->getKey()], scopedUser: $embed->user),
         };
+
+        return $playables->load('preview');
     }
 }

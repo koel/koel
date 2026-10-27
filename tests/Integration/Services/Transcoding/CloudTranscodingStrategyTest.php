@@ -47,7 +47,7 @@ class CloudTranscodingStrategyTest extends TestCase
         $storage->expects('getPresignedUrl')->with($transcodeKey)->andReturn($transcodePresignedUrl);
         $storage->expects('uploadToStorage')->with($transcodeKey, $tmpDestination);
 
-        $this->transcoder->expects('transcode')->with($songPresignedUrl, $tmpDestination, 128);
+        $this->transcoder->expects('transcode')->with($songPresignedUrl, $tmpDestination, 128, null);
 
         File::expects('ensureDirectoryExists')->with(dirname($tmpDestination));
         File::expects('hash')->with($tmpDestination)->andReturn('mocked-checksum');
@@ -113,7 +113,7 @@ class CloudTranscodingStrategyTest extends TestCase
         $storage->expects('getPresignedUrl')->with($transcodeKey)->andReturn('https://s3.song.presigned.url/transcode');
         $storage->expects('uploadToStorage')->with($transcodeKey, $tmpDestination);
 
-        $this->transcoder->expects('transcode')->with('/tmp/upload/song.flac', $tmpDestination, 128);
+        $this->transcoder->expects('transcode')->with('/tmp/upload/song.flac', $tmpDestination, 128, null);
 
         File::expects('ensureDirectoryExists')->with(dirname($tmpDestination));
         File::expects('hash')->with($tmpDestination)->andReturn('mocked-checksum');

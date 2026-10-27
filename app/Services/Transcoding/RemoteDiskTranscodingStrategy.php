@@ -7,6 +7,7 @@ use App\Helpers\Ulid;
 use App\Models\Song;
 use App\Repositories\TranscodeRepository;
 use App\Services\SongStorages\RemoteDiskStorage;
+use App\Values\Transcoding\PreviewSection;
 use Illuminate\Support\Facades\File;
 use Throwable;
 use Webmozart\Assert\Assert;
@@ -21,9 +22,13 @@ class RemoteDiskTranscodingStrategy extends TranscodingStrategy
         parent::__construct($transcodeRepository, $transcoder);
     }
 
-    protected function findOrCreateTranscodeLocation(Song $song, int $bitRate, ?string $localSourcePath): string
-    {
-        $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate);
+    protected function findOrCreateTranscodeLocation(
+        Song $song,
+        int $bitRate,
+        ?string $localSourcePath,
+        ?PreviewSection $previewSection,
+    ): string {
+        $transcode = $this->findTranscode($song, $bitRate, $previewSection);
 
         if ($transcode?->isValid()) {
             return $transcode->location;
@@ -39,7 +44,13 @@ class RemoteDiskTranscodingStrategy extends TranscodingStrategy
         $destination = artifact_path(sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate()));
 
         try {
-            $this->transcodeAndUpsert($song, $localSourcePath ?? $downloadedSource, $destination, $bitRate);
+            $this->transcodeAndUpsert(
+                $song,
+                $localSourcePath ?? $downloadedSource,
+                $destination,
+                $bitRate,
+                $previewSection,
+            );
         } catch (Throwable $e) {
             File::delete($destination);
 

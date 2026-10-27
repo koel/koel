@@ -19,4 +19,9 @@ class TranscodeFactory extends Factory
             'location' => fake()->filePath() . '.mp4',
         ];
     }
+
+    public function asPreview(): self
+    {
+        return $this->state(['is_preview' => true, 'bit_rate' => 64]);
+    }
 }

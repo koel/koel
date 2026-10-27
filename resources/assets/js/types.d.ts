@@ -255,6 +255,7 @@ interface BasePlayable extends IStreamable {
   playback_state?: PlaybackState
   fmt_length?: string
   embed_stream_url?: string // only when embedded
+  preview_length?: number // only when embedded and the embed plays a preview
 }
 
 interface Song extends BasePlayable {

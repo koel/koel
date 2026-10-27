@@ -45,7 +45,7 @@ class RemoteDiskTranscodingStrategyTest extends TestCase
         File::expects('ensureDirectoryExists')->with(dirname($destination));
         File::expects('size')->with($destination)->andReturn(1_024);
 
-        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128);
+        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128, null);
 
         File::expects('hash')->with($destination)->andReturn('mocked-checksum');
         File::expects('delete')->with('/tmp/song.flac');
@@ -105,7 +105,7 @@ class RemoteDiskTranscodingStrategyTest extends TestCase
 
         File::expects('ensureDirectoryExists')->with(dirname($destination));
 
-        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128);
+        $this->transcoder->expects('transcode')->with('/tmp/song.flac', $destination, 128, null);
 
         File::expects('hash')->with($destination)->andReturn('mocked-checksum');
         File::expects('size')->with($destination)->andReturn(1_024);
@@ -133,7 +133,7 @@ class RemoteDiskTranscodingStrategyTest extends TestCase
         File::expects('hash')->with($destination)->andReturn('mocked-checksum');
         File::expects('delete')->never();
 
-        $this->transcoder->expects('transcode')->with('/tmp/upload/song.flac', $destination, 128);
+        $this->transcoder->expects('transcode')->with('/tmp/upload/song.flac', $destination, 128, null);
 
         $this->strategy->getTranscodeLocation($song, 128, '/tmp/upload/song.flac');
     }

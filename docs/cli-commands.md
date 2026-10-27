@@ -92,6 +92,17 @@ php artisan koel:clean-up-temp-files
 |----------|-------------------------------------------------------------------------------|
 | `--age=` | The age of temporary files to remove in minutes. Defaults to 1440 (one day).  |
 
+### `koel:create-previews`
+
+Create 30-second previews of songs that don't have one yet. Embeds play these previews instead of the full songs.
+Requires FFmpeg.
+
+#### Usage
+
+```bash
+php artisan koel:create-previews
+```
+
 ### `koel:doctor`
 
 Check Koel setup.

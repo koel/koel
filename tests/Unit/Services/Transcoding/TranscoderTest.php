@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Transcoding;
 
 use App\Exceptions\TranscodingFailedException;
 use App\Services\Transcoding\Transcoder;
+use App\Values\Transcoding\PreviewSection;
 use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
@@ -55,6 +56,31 @@ class TranscoderTest extends TestCase
         };
 
         Process::assertRanTimes($closure, 1);
+    }
+
+    #[Test]
+    public function transcodeOnlyThePreviewSection(): void
+    {
+        Process::fake();
+        File::expects('ensureDirectoryExists')->with('/path/to');
+
+        $transcoder = new Transcoder(transcodeTimeout: 300, ffmpegPath: '/usr/bin/ffmpeg');
+        $transcoder->transcode('/path/to/song.flac', '/path/to/preview.m4a', 64, PreviewSection::make(300));
+
+        Process::assertRan(
+            static fn (PendingProcess $process): bool => (
+                array_slice($process->command, 0, 8) === [
+                    '/usr/bin/ffmpeg',
+                    '-nostdin',
+                    '-ss',
+                    '100',
+                    '-t',
+                    '30',
+                    '-i',
+                    '/path/to/song.flac',
+                ]
+            ),
+        );
     }
 
     #[Test]

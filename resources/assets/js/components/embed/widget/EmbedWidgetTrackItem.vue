@@ -45,7 +45,7 @@ const { item } = toRefs(props)
 const playable = computed<Playable>(() => item.value.playable)
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 
-const fmtLength = secondsToHis(playable.value.length)
+const fmtLength = secondsToHis(playable.value.preview_length ?? playable.value.length)
 const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))
 const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podcast_title'))
 
