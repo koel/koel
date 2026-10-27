@@ -33,7 +33,7 @@
         {{ youtubeVideoTitle }}
       </YouTubeSidebarItem>
       <SidebarItem
-        v-if="usesPodcasts && !isDemo"
+        v-if="showsPodcasts"
         :href="url('podcasts.index')"
         :active="isCurrentScreen('Podcasts', 'Podcast', 'Episode')"
       >
@@ -74,6 +74,7 @@ import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { eventBus } from '@/utils/eventBus'
 import { useRouter } from '@/composables/useRouter'
 import { commonStore } from '@/stores/commonStore'
+import { usePolicies } from '@/composables/usePolicies'
 
 import SidebarSection from '@/components/layout/main-wrapper/sidebar/SidebarSection.vue'
 import SidebarSectionHeader from '@/components/layout/main-wrapper/sidebar/SidebarSectionHeader.vue'
@@ -90,6 +91,8 @@ const usesRadio = toRef(commonStore.state, 'uses_radio')
 const { swReady, cachedSongCount } = useOfflinePlayback()
 const supportsOffline = computed(() => swReady.value && cachedSongCount.value > 0)
 const isDemo = window.KOEL.is_demo
+const { currentUserCan } = usePolicies()
+const showsPodcasts = computed(() => usesPodcasts.value && !isDemo && currentUserCan.addPodcast())
 
 eventBus.on('PLAY_YOUTUBE_VIDEO', payload => (youtubeVideoTitle.value = unescape(payload.title)))
 </script>

@@ -36,6 +36,13 @@ describe('sidebarYourLibrarySection.vue', () => {
     screen.getByText('Podcasts')
   })
 
+  it('hides podcasts for guests', () => {
+    h.actingAsUser(h.factory('user').make({ role: 'guest' }) as CurrentUser)
+    renderWith(true, true)
+
+    expect(screen.queryByText('Podcasts')).toBeNull()
+  })
+
   it('shows YouTube item if a video is played', async () => {
     h.render(Component)
     expect(screen.queryByTestId('youtube')).toBeNull()
