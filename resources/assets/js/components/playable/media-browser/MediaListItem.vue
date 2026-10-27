@@ -60,12 +60,16 @@ const pausePlayback = () => playback().pause()
 
 <style scoped lang="postcss">
 @reference '@css/app.pcss';
-.selected {
-  @apply bg-k-fg-10 border-transparent;
-}
-
 .playing,
 .playing * {
   @apply text-k-highlight;
+}
+
+.selected {
+  @apply bg-k-highlight text-k-highlight-fg border-transparent;
+
+  * {
+    @apply text-k-highlight-fg;
+  }
 }
 </style>

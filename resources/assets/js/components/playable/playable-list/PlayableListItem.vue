@@ -142,7 +142,7 @@ article {
     }
   }
 
-  &.playing {
+  &.playing:not(.selected) {
     .title,
     .track-number,
     .favorite {
