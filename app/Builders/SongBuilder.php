@@ -89,9 +89,12 @@ class SongBuilder extends FavoriteableBuilder
     {
         throw_unless($this->user, new LogicException('User must be set to query play counts.'));
 
-        return $this->leftJoin('interactions', function (JoinClause $join): void {
-            $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
-        })->addSelect(DB::raw('COALESCE(interactions.play_count, 0) as play_count'));
+        return $this
+            ->leftJoin('interactions', function (JoinClause $join): void {
+                $join->on('interactions.song_id', 'songs.id')->where('interactions.user_id', $this->user->id);
+            })
+            ->addSelect(DB::raw('COALESCE(interactions.play_count, 0) as play_count'))
+            ->addSelect('interactions.last_played_at');
     }
 
     public function accessible(): self

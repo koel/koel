@@ -5,6 +5,7 @@ namespace Tests\Feature\Subsonic;
 use App\Http\Responses\Subsonic\Resources\SongResource;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Interaction;
 use App\Models\Song;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -25,6 +26,34 @@ class GetSongTest extends TestCase
             ->assertJsonStructure(['subsonic-response' => ['song' => SongResource::JSON_STRUCTURE]])
             ->assertJsonPath('subsonic-response.song.id', $song->id)
             ->assertJsonPath('subsonic-response.song.title', 'Karma Police');
+    }
+
+    #[Test]
+    public function populatesPlayedDateFromLastPlay(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->createOne(['owner_id' => $user->id]);
+        $lastPlayedAt = now()->subMinutes(2)->startOfSecond();
+
+        Interaction::factory()->for($user)->for($song)->createOne(['last_played_at' => $lastPlayedAt]);
+
+        $this
+            ->getJson("/rest/getSong.view?apiKey={$user->subsonic_api_key}&f=json&id={$song->id}")
+            ->assertOk()
+            ->assertJsonPath('subsonic-response.song.played', $lastPlayedAt->toIso8601String());
+    }
+
+    #[Test]
+    public function omitsPlayedDateWhenNeverPlayed(): void
+    {
+        $user = create_user();
+        $song = Song::factory()->createOne(['owner_id' => $user->id]);
+
+        $response = $this->getJson(
+            "/rest/getSong.view?apiKey={$user->subsonic_api_key}&f=json&id={$song->id}",
+        )->assertOk();
+
+        self::assertArrayNotHasKey('played', $response->json('subsonic-response.song'));
     }
 
     #[Test]
