@@ -1,6 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
 import type { Mock } from 'vite-plus/test'
-import { describe, expect, it, vi } from 'vite-plus/test'
+import { beforeAll, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { eventBus } from '@/utils/eventBus'
 import { playlistStore } from '@/stores/playlistStore'
@@ -16,6 +16,8 @@ vi.mock('@/composables/useContextMenu')
 
 describe('playlistScreen.vue', () => {
   const h = createHarness()
+
+  beforeAll(async () => await import('@/components/playable/playable-list/PlayableList.vue'))
 
   const renderComponent = async (songs: Playable[] = [], playlist = h.factory('playlist').make()) => {
     h.actingAsUser(h.factory('user').state('current').make({ id: playlist.owner_id }) as CurrentUser)

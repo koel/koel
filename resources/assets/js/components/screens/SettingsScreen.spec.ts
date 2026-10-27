@@ -163,7 +163,7 @@ describe('settingsScreen.vue', () => {
     h.visit('/settings/themes')
     h.render(DocumentTitle)
     renderComponent()
-    await h.tick()
+    await screen.findByRole('list')
 
     screen.getByRole('heading', { level: 1, name: 'Settings / Themes' })
     expect(document.title).toBe('Settings / Themes – Koel')

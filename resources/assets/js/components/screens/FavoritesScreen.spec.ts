@@ -1,11 +1,13 @@
 import { screen, waitFor } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { beforeAll, describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playableStore } from '@/stores/playableStore'
 import Component from './FavoritesScreen.vue'
 
 describe('favoritesScreen.vue', () => {
   const h = createHarness()
+
+  beforeAll(async () => await import('@/components/playable/playable-list/PlayableList.vue'))
 
   const renderComponent = async (favorites?: Playable[]) => {
     favorites = favorites ?? h.factory('song').make(13)
