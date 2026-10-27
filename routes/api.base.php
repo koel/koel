@@ -144,11 +144,11 @@ Route::prefix('api')
             Route::post('email-change/confirm/{user}', ConfirmEmailChangeController::class)
                 ->middleware('signed:relative')
                 ->name('email-change.confirm');
+        });
 
-            Route::middleware('embeds.enabled')->group(static function (): void {
-                Route::get('embeds/{embed}/{options}', [EmbedController::class, 'getPayload'])->name('embeds.payload');
-                Route::post('embed-options', [EmbedOptionsController::class, 'encrypt']);
-            });
+        Route::middleware(['embeds.enabled', 'throttle:60,1'])->group(static function (): void {
+            Route::get('embeds/{embed}/{options}', [EmbedController::class, 'getPayload'])->name('embeds.payload');
+            Route::post('embed-options', [EmbedOptionsController::class, 'encrypt']);
         });
 
         // @mago-ignore lint:halstead (a flat list of route definitions, not logic to break up)
