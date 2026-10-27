@@ -19,7 +19,6 @@
 
     <div class="text-center absolute w-full left-0 mt-[-2px]">
       <Btn
-        v-koel-tooltip
         size="small"
         variant="success"
         class="aspect-square scale-75 hover:scale-90 active:scale-[80%]"

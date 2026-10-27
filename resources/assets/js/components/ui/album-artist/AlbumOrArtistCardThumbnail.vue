@@ -35,7 +35,6 @@
     <button
       type="button"
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 opacity-0 group-hover/card:opacity-100 group-focus-within/card:opacity-100 no-hover:opacity-100 transition-opacity"
-      v-koel-tooltip
       @click.stop="playOrQueue"
     >
       <span

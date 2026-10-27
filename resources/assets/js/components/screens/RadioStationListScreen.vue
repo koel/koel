@@ -17,7 +17,7 @@
 
             <ListFilter />
 
-            <Btn size="small" v-if="canAdd" v-koel-tooltip variant="highlight" @click.prevent="requestAddStationForm">
+            <Btn size="small" v-if="canAdd" variant="highlight" @click.prevent="requestAddStationForm">
               <Icon :icon="faAdd" fixed-width />
               <span class="sr-only">Add a new station</span>
             </Btn>

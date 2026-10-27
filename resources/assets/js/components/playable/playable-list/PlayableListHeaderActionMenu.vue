@@ -1,6 +1,6 @@
 <template>
   <article>
-    <button ref="button" v-koel-tooltip class="w-full focus:text-k-highlight">
+    <button ref="button" class="w-full focus:text-k-highlight">
       <Icon v-if="sortable" :icon="faSort" />
       <Icon v-else :icon="faEllipsis" />
       <span class="sr-only">{{ sortable ? 'Sort and columns' : 'Columns' }}</span>

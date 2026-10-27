@@ -67,11 +67,7 @@
         <FavoriteButton :favorite="playable.favorite" @toggle="toggleFavorite" />
       </span>
       <span class="extra">
-        <button
-          v-koel-tooltip
-          class="text-k-fg-50 hover:text-k-fg p-1"
-          @click.stop="emit('request-context-menu', $event)"
-        >
+        <button class="text-k-fg-50 hover:text-k-fg p-1" @click.stop="emit('request-context-menu', $event)">
           <Icon :icon="faEllipsis" />
           <span class="sr-only">More actions</span>
         </button>

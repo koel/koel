@@ -8,7 +8,6 @@
     <label
       v-for="star in 5"
       :key="star"
-      v-koel-tooltip
       class="cursor-pointer transition-[color] duration-150"
       :class="(hover || currentRating) >= star ? 'text-k-fg-70' : 'text-k-fg-40'"
       @click="onClick($event, star)"

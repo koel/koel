@@ -6,13 +6,7 @@
         :class="message.role === 'user' ? 'user' : message.error ? 'error' : 'assistant'"
         v-html="renderedHtml"
       />
-      <button
-        v-if="message.role === 'assistant' && !message.error"
-        v-koel-tooltip
-        class="copy-btn"
-        type="button"
-        @click="copy"
-      >
+      <button v-if="message.role === 'assistant' && !message.error" class="copy-btn" type="button" @click="copy">
         <ClipboardCheckIcon v-if="copied" class="size-4" />
         <CopyIcon v-else class="size-4" />
         <span class="sr-only">Copy to clipboard</span>

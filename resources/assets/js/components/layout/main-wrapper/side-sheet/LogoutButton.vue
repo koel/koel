@@ -1,5 +1,5 @@
 <template>
-  <SideSheetButton v-koel-tooltip.left @click.prevent="logout">
+  <SideSheetButton @click.prevent="logout">
     <Icon :icon="faArrowRightFromBracket" />
     <span class="sr-only">Log out</span>
   </SideSheetButton>

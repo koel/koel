@@ -1,24 +1,19 @@
 <template>
   <span class="relative flex gap-1 w-[64px] p-[3px] rounded-md bg-k-fg-10 shadow-sm">
     <span :class="{ secondary: value !== 'grid' }" class="indicator" />
-    <label v-koel-tooltip :class="{ active: value === 'grid' }" data-testid="view-mode-grid">
+    <label :class="{ active: value === 'grid' }" data-testid="view-mode-grid">
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="grid" />
       <LayoutGridIcon :size="16" />
       <span class="sr-only">View as grid</span>
     </label>
 
-    <label
-      v-if="secondary === 'table'"
-      v-koel-tooltip
-      :class="{ active: value === 'table' }"
-      data-testid="view-mode-table"
-    >
+    <label v-if="secondary === 'table'" :class="{ active: value === 'table' }" data-testid="view-mode-table">
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="table" />
       <TableIcon :size="16" />
       <span class="sr-only">View as table</span>
     </label>
 
-    <label v-else v-koel-tooltip :class="{ active: value === 'list' }" data-testid="view-mode-list">
+    <label v-else :class="{ active: value === 'list' }" data-testid="view-mode-list">
       <input v-model="value" class="hidden" name="view-mode" type="radio" value="list" />
       <LayoutListIcon :size="16" />
       <span class="sr-only">View as list</span>
