@@ -146,7 +146,7 @@ Route::prefix('api')
                 ->name('email-change.confirm');
         });
 
-        Route::middleware(['embeds.enabled', 'throttle:60,1'])->group(static function (): void {
+        Route::middleware(['embeds.enabled', 'throttle:60,1,embeds'])->group(static function (): void {
             Route::get('embeds/{embed}/{options}', [EmbedController::class, 'getPayload'])->name('embeds.payload');
             Route::post('embed-options', [EmbedOptionsController::class, 'encrypt']);
         });
