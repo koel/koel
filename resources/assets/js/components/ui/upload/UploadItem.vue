@@ -36,15 +36,7 @@
           <Icon :icon="faRotateBack" />
           <span class="sr-only">Retry</span>
         </Btn>
-        <Btn
-          v-if="canRemove"
-          v-koel-tooltip
-          class="h-full px-4!"
-          icon-only
-          unrounded
-          variant="destructive"
-          @click="remove"
-        >
+        <Btn v-if="canRemove" class="h-full px-4!" icon-only unrounded variant="destructive" @click="remove">
           <Icon :icon="faTrashCan" />
           <span class="sr-only">Remove</span>
         </Btn>

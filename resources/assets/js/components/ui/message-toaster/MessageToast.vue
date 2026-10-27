@@ -7,12 +7,7 @@
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
-    <button
-      v-koel-tooltip
-      class="flex items-center px-3 py-0 bg-black/10 cursor-pointer"
-      type="button"
-      @click="dismiss"
-    >
+    <button class="flex items-center px-3 py-0 bg-black/10 cursor-pointer" type="button" @click="dismiss">
       <Icon :icon="hovering ? faTimesCircle : typeIcon" />
       <span class="sr-only">Dismiss</span>
     </button>

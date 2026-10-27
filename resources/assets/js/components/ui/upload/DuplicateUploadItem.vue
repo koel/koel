@@ -12,11 +12,11 @@
     >
       Uploaded {{ uploadedAgo }}
     </time>
-    <Btn v-koel-tooltip :disabled="keeping" class="h-full px-4!" icon-only unrounded variant="success" @click="keep">
+    <Btn :disabled="keeping" class="h-full px-4!" icon-only unrounded variant="success" @click="keep">
       <Icon :icon="faCheck" />
       <span class="sr-only">Keep</span>
     </Btn>
-    <Btn v-koel-tooltip class="h-full px-4!" icon-only unrounded variant="destructive" @click="confirmDiscard">
+    <Btn class="h-full px-4!" icon-only unrounded variant="destructive" @click="confirmDiscard">
       <Icon :icon="faTrashCan" />
       <span class="sr-only">Discard</span>
     </Btn>

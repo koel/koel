@@ -1,5 +1,5 @@
 <template>
-  <button v-koel-tooltip class="opacity-50 hover:opacity-100" type="button" @click.prevent="loginWithGoogle">
+  <button class="opacity-50 hover:opacity-100" type="button" @click.prevent="loginWithGoogle">
     <img :src="googleLogo" alt="" height="32" width="32" />
     <span class="sr-only">Log in with Google</span>
   </button>

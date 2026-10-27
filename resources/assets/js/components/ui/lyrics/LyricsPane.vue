@@ -11,19 +11,19 @@
     </div>
 
     <ButtonGroup :class="{ 'reveal-on-hover': !collapsible }" class="absolute top-4 right-4">
-      <button v-koel-tooltip type="button" @click="zoomOut">
+      <button type="button" @click="zoomOut">
         <Icon :icon="faSearchMinus" fixed-width />
         <span class="sr-only">Zoom out</span>
       </button>
-      <button v-koel-tooltip type="button" @click="zoomIn">
+      <button type="button" @click="zoomIn">
         <Icon :icon="faSearchPlus" fixed-width />
         <span class="sr-only">Zoom in</span>
       </button>
-      <button v-if="expandable" v-koel-tooltip type="button" @click="openLyricsOverlay">
+      <button v-if="expandable" type="button" @click="openLyricsOverlay">
         <Icon :icon="faUpRightAndDownLeftFromCenter" fixed-width />
         <span class="sr-only">Show lyrics full screen</span>
       </button>
-      <button v-if="collapsible" v-koel-tooltip type="button" @click="closeLyricsOverlay">
+      <button v-if="collapsible" type="button" @click="closeLyricsOverlay">
         <Icon :icon="faDownLeftAndUpRightToCenter" fixed-width />
         <span class="sr-only">Close lyrics</span>
       </button>

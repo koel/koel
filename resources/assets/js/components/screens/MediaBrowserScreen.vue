@@ -7,7 +7,7 @@
         <template #meta>
           <div class="flex items-center gap-2 mt-2">
             <Breadcrumbs :current="currentFolder" :ancestors class="flex-1" />
-            <Btn v-koel-tooltip size="small" variant="ghost" @click.prevent="refresh">
+            <Btn size="small" variant="ghost" @click.prevent="refresh">
               <Icon :icon="faRotateRight" />
               <span class="sr-only">Reload</span>
             </Btn>

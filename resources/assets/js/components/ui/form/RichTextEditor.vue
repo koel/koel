@@ -39,18 +39,11 @@
           type="url"
           @keydown.enter.prevent="applyLink"
         />
-        <Btn v-koel-tooltip bordered class="h-8 px-1.5! py-0!" type="button" variant="ghost" @click="applyLink">
+        <Btn bordered class="h-8 px-1.5! py-0!" type="button" variant="ghost" @click="applyLink">
           <CheckIcon :size="14" />
           <span class="sr-only">Apply</span>
         </Btn>
-        <Btn
-          v-if="editingExistingLink"
-          v-koel-tooltip
-          class="h-8 px-1.5! py-0!"
-          type="button"
-          variant="ghost"
-          @click="removeLink"
-        >
+        <Btn v-if="editingExistingLink" class="h-8 px-1.5! py-0!" type="button" variant="ghost" @click="removeLink">
           <UnlinkIcon :size="14" />
           <span class="sr-only">Remove link</span>
         </Btn>

@@ -64,7 +64,7 @@
       </BtnGroup>
 
       <BtnGroup v-if="config.refresh">
-        <Btn variant="success" v-if="config.refresh" v-koel-tooltip @click.prevent="refresh">
+        <Btn variant="success" v-if="config.refresh" @click.prevent="refresh">
           <Icon :icon="faRotateRight" fixed-width />
           <span class="sr-only">Refresh</span>
         </Btn>

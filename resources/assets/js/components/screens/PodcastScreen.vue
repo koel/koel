@@ -34,7 +34,7 @@
               {{ playButtonLabel }}
             </Btn>
             <BtnGroup uppercase>
-              <Btn variant="success" v-if="episodes" v-koel-tooltip="'Refresh'" @click.prevent="refresh">
+              <Btn variant="success" v-if="episodes" @click.prevent="refresh">
                 <Icon :icon="faRotateRight" fixed-width />
                 <span class="sr-only">Refresh Podcast</span>
               </Btn>

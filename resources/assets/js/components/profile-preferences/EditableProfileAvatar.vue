@@ -3,19 +3,19 @@
     <UserAvatar v-if="previewedUser.avatar" :user="previewedUser" class="avatar-width" />
 
     <div
-      class="absolute top-0 rounded-full w-full aspect-square flex items-center justify-center gap-2 pt-[50%] bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300"
+      class="absolute top-0 rounded-full w-full aspect-square flex items-center justify-center gap-2 pt-[50%] bg-black/50 opacity-0 hover:opacity-100 has-focus-visible:opacity-100 transition-opacity duration-300"
     >
-      <button v-koel-tooltip class="control" type="button" @click.prevent="openFileDialog">
+      <button class="control" type="button" @click.prevent="openFileDialog">
         <Icon :icon="faUpload" />
         <span class="sr-only">Pick a new avatar</span>
       </button>
 
-      <button v-if="isChanged" v-koel-tooltip class="control" type="button" @click.prevent="resetAvatar">
+      <button v-if="isChanged" class="control" type="button" @click.prevent="resetAvatar">
         <Icon :icon="faRefresh" />
         <span class="sr-only">Reset avatar</span>
       </button>
 
-      <button v-else v-koel-tooltip class="control" type="button" @click.prevent="removeAvatar">
+      <button v-else class="control" type="button" @click.prevent="removeAvatar">
         <Icon :icon="faTimes" />
         <span class="sr-only">Remove avatar</span>
       </button>

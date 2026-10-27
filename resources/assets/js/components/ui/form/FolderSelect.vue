@@ -16,7 +16,6 @@
       />
       <button
         class="px-2.5 bg-k-fg-5 text-k-success hover:text-white border-l border-k-fg-10"
-        v-koel-tooltip
         type="button"
         @click="confirm"
       >
@@ -25,7 +24,6 @@
       </button>
       <button
         class="px-2.5 bg-k-fg-5 text-k-fg-60 hover:text-white border-l border-k-fg-10"
-        v-koel-tooltip
         type="button"
         @click="cancel"
       >
