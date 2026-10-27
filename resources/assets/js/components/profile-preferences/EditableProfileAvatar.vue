@@ -3,7 +3,7 @@
     <UserAvatar v-if="previewedUser.avatar" :user="previewedUser" class="avatar-width" />
 
     <div
-      class="absolute top-0 rounded-full w-full aspect-square flex items-center justify-center gap-2 pt-[50%] bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-300"
+      class="absolute top-0 rounded-full w-full aspect-square flex items-center justify-center gap-2 pt-[50%] bg-black/50 opacity-0 hover:opacity-100 has-focus-visible:opacity-100 transition-opacity duration-300"
     >
       <button class="control" type="button" @click.prevent="openFileDialog">
         <Icon :icon="faUpload" />
