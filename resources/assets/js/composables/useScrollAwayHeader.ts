@@ -97,11 +97,14 @@ export const useScrollAwayHeader = (host: Ref<HTMLElement | undefined>) => {
     scroller.removeEventListener('scroll', onScroll)
     scrollers.delete(scroller)
 
+    const remainingScroller = scrollers.values().next().value
+
     if (activeScroller === scroller) {
       activeScroller = null
+      remainingScroller && activateScroller(remainingScroller)
     }
 
-    if (!scrollers.size) {
+    if (!remainingScroller) {
       scrollTop.value = 0
       revealed.value = false
     }

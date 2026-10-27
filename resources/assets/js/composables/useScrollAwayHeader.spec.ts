@@ -127,6 +127,18 @@ describe('useScrollAwayHeader', () => {
     expect(header.hiddenHeight.value).toBe(30)
   })
 
+  it('follows the remaining scroll box when the scrolled one goes away', async () => {
+    const { header, scroller, scrollTo } = await setUp()
+    const mainArea = document.createElement('div')
+    header.api.attachScroller(mainArea)
+
+    scrollTo(500)
+    header.api.detachScroller(scroller)
+
+    expect(header.hiddenHeight.value).toBe(0)
+    expect(header.api.columnHeaderTop.value).toBe(200)
+  })
+
   it('ignores the bounce past the end of the content', async () => {
     const { header, scroller, scrollTo } = await setUp()
     Object.defineProperty(scroller, 'scrollHeight', { value: 1000, configurable: true })
