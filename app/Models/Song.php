@@ -45,6 +45,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property ?bool $favorite Whether the song is liked by the current user (dynamically calculated)
  * @property ?Carbon $favorited_at When the current user favorited the song, if at all
  * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
+ * @property ?Carbon $last_played_at When the current user last played the song, if at all (dynamically calculated)
  * @property ?string $mbid The MusicBrainz recording ID
  * @property ?string $album_name
  * @property ?string $artist_name
@@ -127,6 +128,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Embeddable,
             'episode_metadata' => EpisodeMetadataCast::class,
             'favorite' => 'boolean',
             'favorited_at' => 'datetime',
+            'last_played_at' => 'datetime',
         ];
     }
 
