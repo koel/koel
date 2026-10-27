@@ -136,6 +136,7 @@ describe('useScrollAwayHeader', () => {
     header.api.detachScroller(scroller)
 
     expect(header.hiddenHeight.value).toBe(0)
+    expect(header.api.columnHeaderTop.value).toBe(200)
   })
 
   it('ignores the bounce past the end of the content', async () => {
