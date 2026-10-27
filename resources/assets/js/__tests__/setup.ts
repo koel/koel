@@ -1,8 +1,9 @@
 import vueSnapshotSerializer from 'jest-serializer-vue'
-import { expect, vi } from 'vite-plus/test'
+import { afterAll, expect, vi } from 'vite-plus/test'
 import './shims/popover'
 import './shims/storage'
 import './shims/mediaSession'
+import './shims/nodeWebApis'
 
 declare global {
   interface Window {
@@ -11,6 +12,8 @@ declare global {
 }
 
 expect.addSnapshotSerializer(vueSnapshotSerializer)
+
+afterAll(() => vi.dynamicImportSettled())
 
 globalThis.ResizeObserver =
   globalThis.ResizeObserver ||

@@ -13,6 +13,16 @@ declare module 'youtube-player' {
   export default createYouTubePlayer
 }
 
+declare module 'node:crypto' {
+  export const webcrypto: Crypto
+}
+
+declare module 'node:stream/web' {
+  export const ReadableStream: typeof globalThis.ReadableStream
+  export const TransformStream: typeof globalThis.TransformStream
+  export const WritableStream: typeof globalThis.WritableStream
+}
+
 declare module 'ismobilejs' {
   let apple: { device: boolean }
   let any: boolean

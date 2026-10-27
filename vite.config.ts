@@ -103,6 +103,8 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    pool: 'vmThreads',
+    vmMemoryLimit: '300MB',
     setupFiles: resolve(projectRoot, './resources/assets/js/__tests__/setup.ts'),
     server: {
       deps: {
