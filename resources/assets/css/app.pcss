@@ -41,6 +41,10 @@
     hover:bg-k-fg-5;
 
   &.selected {
-    @apply bg-k-fg-10;
+    @apply bg-k-highlight text-k-highlight-fg hover:bg-k-highlight;
+
+    * {
+      @apply text-k-highlight-fg;
+    }
   }
 }
