@@ -40,8 +40,10 @@ a song will play it. You can also perform multi-selection and bring up the conte
 Shuffle, Queue, and so on. Dragging and dropping songs or entire folders into the queue or a playlist is also
 supported.
 
+You can also use the keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> navigate up/down, <kbd>Enter</kbd> opens a folder or queues
+the selected songs, and <kbd>Backspace</kbd> or <kbd>Alt</kbd>+<kbd>↑</kbd> goes up one folder.
+
 ## Limitations
 
 The media browser is not a full-fledged file manager. It does not support file operations like renaming, moving, or
-deleting files or folders. Also, to keep things simple, browsing another user's upload folder is not supported (though
-this limitation may be removed in the future).
+deleting files or folders.

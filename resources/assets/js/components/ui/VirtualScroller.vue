@@ -109,7 +109,23 @@ const scrollToIndex = (index: number) => {
   scroller.value.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
 }
 
-defineExpose({ scrollToIndex, getScrollerElement: () => scroller.value })
+const scrollToIndexIfHidden = (index: number) => {
+  if (!scroller.value) {
+    return
+  }
+
+  itemsTop.value = itemsBox.value?.offsetTop ?? 0
+
+  const itemTop = itemsTop.value + index * itemHeight.value
+  const visibleTop = scroller.value.scrollTop + itemHeight.value
+  const visibleBottom = scroller.value.scrollTop + scroller.value.clientHeight - itemHeight.value
+
+  if (itemTop < visibleTop || itemTop + itemHeight.value > visibleBottom) {
+    scrollToIndex(index)
+  }
+}
+
+defineExpose({ scrollToIndex, scrollToIndexIfHidden, getScrollerElement: () => scroller.value })
 </script>
 
 <style lang="postcss" scoped>

@@ -27,6 +27,30 @@ describe('virtualScroller.vue', () => {
     expect(scrollToMock).toHaveBeenCalledWith(expect.objectContaining({ behavior: 'smooth' }))
   })
 
+  it('scrolls to an index only when its item is out of view', () => {
+    const items = Array.from({ length: 100 }, (_, i) => ({ id: i, name: `Item ${i}` }))
+
+    const { container } = h.render(Component, {
+      props: { items, itemHeight: 64 },
+      slots: {
+        default: (props: { item: { name: string } }) => props.item.name,
+      },
+    })
+
+    const scrollerEl = container.querySelector<HTMLElement>('.virtual-scroller')!
+    const scrollToMock = vi.fn()
+    scrollerEl.scrollTo = scrollToMock
+    Object.defineProperty(scrollerEl, 'clientHeight', { value: 640 })
+
+    const instance = (scrollerEl as any)['__vueParentComponent']
+
+    instance?.exposed?.scrollToIndexIfHidden(2)
+    expect(scrollToMock).not.toHaveBeenCalled()
+
+    instance?.exposed?.scrollToIndexIfHidden(50)
+    expect(scrollToMock).toHaveBeenCalledOnce()
+  })
+
   it('shows placeholders after the items while loading more', async () => {
     const { rerender } = h.render(Component, {
       props: { items: [{ id: 1 }, { id: 2 }], itemHeight: 64, loadingMore: true },

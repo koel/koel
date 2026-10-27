@@ -26,6 +26,20 @@ describe('keyboardShortcutsModal.vue', () => {
     expect(shortcutKeysInGroup('Go to')).not.toContainEqual(['/'])
   })
 
+  it('lists the parent folder shortcut when the media browser is on', () => {
+    commonStore.state.uses_media_browser = true
+    h.render(Component)
+
+    expect(shortcutKeysInGroup('Lists')).toContainEqual(['Backspace'])
+  })
+
+  it('leaves out the parent folder shortcut when the media browser is off', () => {
+    commonStore.state.uses_media_browser = false
+    h.render(Component)
+
+    expect(shortcutKeysInGroup('Lists')).not.toContainEqual(['Backspace'])
+  })
+
   it('closes on Escape', async () => {
     const { emitted } = h.render(Component)
     screen.getByTestId('keyboard-shortcuts').focus()

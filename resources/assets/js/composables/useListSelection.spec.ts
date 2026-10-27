@@ -129,6 +129,66 @@ describe('useListSelection', () => {
     expect(selected.value).toHaveLength(4)
   })
 
+  const arrowKey = (key: 'ArrowDown' | 'ArrowUp', shiftKey = false) => new KeyboardEvent('keydown', { key, shiftKey })
+
+  const selectedFlags = (items: ReturnType<typeof setup>['items']) => items.value.map(item => item.selected)
+
+  it('moves the single selection with the arrow keys', () => {
+    const { items, select, moveSelectionWithArrowKey } = setup()
+    select(items.value[0])
+    select(items.value[1])
+
+    expect(moveSelectionWithArrowKey(arrowKey('ArrowDown'))).toBe(2)
+    expect(selectedFlags(items)).toEqual([false, false, true, false])
+
+    expect(moveSelectionWithArrowKey(arrowKey('ArrowUp'))).toBe(1)
+    expect(selectedFlags(items)).toEqual([false, true, false, false])
+  })
+
+  it('starts from the first row going down and the last row going up when nothing is selected', () => {
+    const { items, moveSelectionWithArrowKey, deselectAll } = setup()
+
+    expect(moveSelectionWithArrowKey(arrowKey('ArrowDown'))).toBe(0)
+    expect(selectedFlags(items)).toEqual([true, false, false, false])
+
+    deselectAll()
+
+    expect(moveSelectionWithArrowKey(arrowKey('ArrowUp'))).toBe(3)
+    expect(selectedFlags(items)).toEqual([false, false, false, true])
+  })
+
+  it('extends and shrinks the selection from the anchor with Shift', () => {
+    const { items, toggleSelected, moveSelectionWithArrowKey } = setup()
+    toggleSelected(items.value[1])
+
+    moveSelectionWithArrowKey(arrowKey('ArrowDown', true))
+    moveSelectionWithArrowKey(arrowKey('ArrowDown', true))
+    expect(selectedFlags(items)).toEqual([false, true, true, true])
+
+    moveSelectionWithArrowKey(arrowKey('ArrowUp', true))
+    moveSelectionWithArrowKey(arrowKey('ArrowUp', true))
+    moveSelectionWithArrowKey(arrowKey('ArrowUp', true))
+    expect(selectedFlags(items)).toEqual([true, true, false, false])
+  })
+
+  it('extends a Shift-clicked range from the clicked row', () => {
+    const { items, toggleSelected, selectBetween, moveSelectionWithArrowKey } = setup()
+    toggleSelected(items.value[3])
+    selectBetween(items.value[3], items.value[1])
+
+    moveSelectionWithArrowKey(arrowKey('ArrowUp', true))
+
+    expect(selectedFlags(items)).toEqual([true, true, true, true])
+  })
+
+  it('stops at the ends of the list', () => {
+    const { items, select, moveSelectionWithArrowKey } = setup()
+    select(items.value[3])
+
+    expect(moveSelectionWithArrowKey(arrowKey('ArrowDown'))).toBeNull()
+    expect(selectedFlags(items)).toEqual([false, false, false, true])
+  })
+
   it('works with a function idPath', () => {
     const items = ref([reactive({ name: 'x', selected: false }), reactive({ name: 'y', selected: false })])
     const { select, isSelected } = useListSelection(items, s => s.name)

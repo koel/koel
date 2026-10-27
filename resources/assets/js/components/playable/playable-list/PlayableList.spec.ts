@@ -136,4 +136,32 @@ describe('playableList.vue', () => {
     expect(reapplySelectionSpy).not.toHaveBeenCalled()
     expect(setSelectedPlayables).not.toHaveBeenCalled()
   })
+
+  it('moves the selection with the arrow keys', async () => {
+    const songs = h.factory('song').make(3)
+    const { selectedPlayables } = renderComponent(songs)
+    await selectSongsAt(0)
+    screen.getByTestId('song-list').querySelector<HTMLElement>('.virtual-scroller')!.scrollTo = vi.fn()
+
+    await fireEvent.keyDown(screen.getAllByTestId('song-item')[0], { key: 'ArrowDown' })
+
+    expect(selectedIds(selectedPlayables)).toEqual([songs[1].id])
+  })
+
+  it('leaves the arrow keys to a focused input inside a row', async () => {
+    const songs = h.factory('song').make(3)
+    const { selectedPlayables } = renderComponent(songs)
+    await selectSongsAt(0)
+
+    const ratingInput = Object.assign(document.createElement('input'), { type: 'radio' })
+    screen.getAllByTestId('song-item')[0].appendChild(ratingInput)
+
+    const notCanceled = ratingInput.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }),
+    )
+    await h.tick()
+
+    expect(notCanceled).toBe(true)
+    expect(selectedIds(selectedPlayables)).toEqual([songs[0].id])
+  })
 })

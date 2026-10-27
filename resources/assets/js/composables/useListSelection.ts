@@ -9,12 +9,18 @@ export const useListSelection = <T>(
   idPath: string | ((s: Selectable<T>) => string) = 'item.id',
 ) => {
   const lastSelected = ref<Selectable<T> | null>(null)
+  let rangeAnchor: Selectable<T> | null = null
 
   // Keep track of selected items by their ID, so that when the list is updated (e.g., items are removed or added,
   // the list is sorted, or infinite loading triggered), we can reapply the selection.
   const selectedIds = new Set()
 
   const resolveIdPath = (selectable: Selectable<T>) => (typeof idPath === 'function' ? idPath(selectable) : idPath)
+
+  const indexOf = (selectable: Selectable<T>) =>
+    selectables.value.findIndex(
+      candidate => get(candidate, resolveIdPath(candidate)) === get(selectable, resolveIdPath(selectable)),
+    )
 
   const select = (selectable: Selectable<T>) => {
     selectable.selected = true
@@ -46,6 +52,7 @@ export const useListSelection = <T>(
     }
 
     lastSelected.value = selectable
+    rangeAnchor = selectable
   }
 
   const selectBetween = (first: Selectable<T>, second: Selectable<T>) => {
@@ -65,6 +72,8 @@ export const useListSelection = <T>(
     for (let i = indexes[0]; i <= indexes[1]; ++i) {
       select(selectables.value[i])
     }
+
+    lastSelected.value = second
   }
 
   const inSelectedRange = (selectable: Selectable<T>) => {
@@ -105,11 +114,49 @@ export const useListSelection = <T>(
     }
   }
 
+  const resolveRangeAnchor = (fallback: Selectable<T>) =>
+    rangeAnchor && indexOf(rangeAnchor) !== -1 ? rangeAnchor : fallback
+
+  /**
+   * Moves the selection one row up or down, or extends/shrinks it from the anchor when Shift is held.
+   * Returns the index of the row moved to, or null if there's nowhere to move.
+   */
+  const moveSelectionWithArrowKey = (event: KeyboardEvent) => {
+    if (event.altKey || event.ctrlKey || event.metaKey) {
+      return null
+    }
+
+    const step = event.key === 'ArrowDown' ? 1 : -1
+    const currentIndex = selected.value.length && lastSelected.value ? indexOf(lastSelected.value) : -1
+    const lastIndex = selectables.value.length - 1
+
+    let targetIndex = currentIndex + step
+
+    if (currentIndex === -1) {
+      targetIndex = step === 1 ? 0 : lastIndex
+    }
+
+    if (targetIndex < 0 || targetIndex > lastIndex) {
+      return null
+    }
+
+    const target = selectables.value[targetIndex]
+    const anchor = event.shiftKey && currentIndex !== -1 ? resolveRangeAnchor(lastSelected.value!) : target
+
+    deselectAll()
+    selectBetween(anchor, target)
+
+    rangeAnchor = anchor
+
+    return targetIndex
+  }
+
   return {
     select,
     isSelected,
     selectAll,
     selectAllWithKeyboard,
+    moveSelectionWithArrowKey,
     deselectAll,
     clearSelection: deselectAll,
     toggleSelected,

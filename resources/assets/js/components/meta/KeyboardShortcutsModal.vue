@@ -11,7 +11,7 @@
     <main class="grid md:grid-cols-2 gap-x-8 gap-y-2">
       <div v-for="(column, columnIndex) in columns" :key="columnIndex" class="flex flex-col gap-4">
         <section v-for="group in column" :key="group.name" :data-testid="`shortcut-group-${group.name}`">
-          <h2 class="mb-1.5 text-xs font-semibold uppercase tracking-wider text-k-fg-50">{{ group.name }}</h2>
+          <h2 class="mb-1.5 text-xs font-semibold uppercase tracking-wider text-k-fg-50">{{ group.heading }}</h2>
           <dl>
             <div
               v-for="shortcut in group.shortcuts"
@@ -22,6 +22,9 @@
               <dd class="flex items-center gap-1 flex-none">
                 <template v-for="(key, keyIndex) in shortcut.keys" :key="key">
                   <span v-if="shortcut.isKeyRange && keyIndex > 0" class="text-k-fg-50">–</span>
+                  <span v-if="shortcut.isKeyChoice && keyIndex > (shortcut.firstChoiceIndex ?? 0)" class="text-k-fg-50">
+                    /
+                  </span>
                   <kbd>{{ key }}</kbd>
                 </template>
               </dd>
@@ -35,21 +38,45 @@
 
 <script lang="ts" setup>
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import type { KeyboardShortcutGroup } from '@/composables/useKeyboardShortcuts'
+import type { KeyboardShortcut, KeyboardShortcutGroup } from '@/composables/useKeyboardShortcuts'
 import { isShortcutAvailable, useKeyboardShortcuts } from '@/composables/useKeyboardShortcuts'
+import { commonStore } from '@/stores/commonStore'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const columnLayout: KeyboardShortcutGroup[][] = [
-  ['Playback', 'View'],
-  ['Sound', 'Go to'],
+  ['Playback', 'View', 'Sound'],
+  ['Lists', 'Go to'],
 ]
 
-const availableShortcuts = useKeyboardShortcuts().shortcuts.filter(isShortcutAvailable)
+type ListedShortcut = Pick<KeyboardShortcut, 'group' | 'label' | 'keys' | 'isKeyRange' | 'isKeyChoice'> & {
+  firstChoiceIndex?: number
+}
+
+const listShortcuts: ListedShortcut[] = [
+  { group: 'Lists', label: 'Navigate up or down', keys: ['↑', '↓'], isKeyChoice: true },
+  { group: 'Lists', label: 'Extend the selection', keys: ['Shift', '↑', '↓'], isKeyChoice: true, firstChoiceIndex: 1 },
+  { group: 'Lists', label: 'Play, queue or open the selection', keys: ['Enter'] },
+  { group: 'Lists', label: 'Select all', keys: ['Cmd/Ctrl', 'A'] },
+  ...(commonStore.state.uses_media_browser
+    ? [{ group: 'Lists' as const, label: 'Parent folder', keys: ['Backspace'] }]
+    : []),
+]
+
+const listsHeading = commonStore.state.uses_media_browser ? 'Song Lists and Media Browser' : 'Song Lists'
+
+const availableShortcuts: ListedShortcut[] = [
+  ...useKeyboardShortcuts().shortcuts.filter(isShortcutAvailable),
+  ...listShortcuts,
+]
 
 const columns = columnLayout.map(groupNames =>
   groupNames
-    .map(name => ({ name, shortcuts: availableShortcuts.filter(shortcut => shortcut.group === name) }))
+    .map(name => ({
+      name,
+      heading: name === 'Lists' ? listsHeading : name,
+      shortcuts: availableShortcuts.filter(shortcut => shortcut.group === name),
+    }))
     .filter(group => group.shortcuts.length),
 )
 
@@ -60,6 +87,6 @@ const close = () => emit('close')
 @reference '@css/app.pcss';
 
 kbd {
-  @apply inline-grid place-items-center min-w-[26px] h-[26px] px-2 font-mono text-sm font-semibold text-k-fg bg-k-fg-10 border border-b-2 border-k-fg-10 rounded-md;
+  @apply inline-grid place-items-center min-w-[22px] h-[22px] px-1 font-mono text-xs text-k-fg bg-k-fg-10 border border-b-2 border-k-fg-10 rounded-md;
 }
 </style>

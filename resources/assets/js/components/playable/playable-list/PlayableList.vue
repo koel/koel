@@ -6,10 +6,13 @@
     @keydown.delete.prevent.stop="handleDelete"
     @keydown.enter.prevent.stop="handleEnter"
     @keydown.a.prevent="selectAllWithKeyboard"
+    @keydown.up.down="onArrowKey"
   >
     <VirtualScroller
       carries-screen-header
       ref="virtualScroller"
+      tabindex="-1"
+      class="focus:outline-hidden"
       :item-height="calculatedItemHeight"
       :items="rows"
       @scrolled-to-end="$emit('scrolled-to-end')"
@@ -115,6 +118,7 @@ const rows = computed(() => {
 const {
   select,
   selectAllWithKeyboard,
+  moveSelectionWithArrowKey,
   clearSelection,
   toggleSelected,
   isSelected,
@@ -159,6 +163,24 @@ const handleDelete = () => {
 const handleEnter = (event: KeyboardEvent) => {
   emit('press:enter', event) // eslint-disable-line vue/custom-event-name-casing
   clearSelection()
+}
+
+const onArrowKey = (event: KeyboardEvent) => {
+  if ((event.target as HTMLElement).matches('input')) {
+    return
+  }
+
+  event.preventDefault()
+  event.stopPropagation()
+
+  const index = moveSelectionWithArrowKey(event)
+
+  if (index === null) {
+    return
+  }
+
+  virtualScroller.value?.getScrollerElement()?.focus({ preventScroll: true })
+  virtualScroller.value?.scrollToIndexIfHidden(index)
 }
 
 const onDragStart = async (row: PlayableRow, event: DragEvent) => {
