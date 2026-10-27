@@ -65,7 +65,7 @@ const { openModal } = useModal()
 const { currentUserCan } = usePolicies()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
-const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
+const allowEmbedding = computed(() => commonStore.state.allows_embedding && currentUserCan.createEmbeds())
 const allowEdit = computed(() => currentUserCan.editAlbum(album.value))
 
 const isStandardAlbum = computed(() => !albumStore.isUnknown(album.value))

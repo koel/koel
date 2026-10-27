@@ -53,7 +53,7 @@ const isOnArtistScreen = computed(() => isCurrentScreen('Artist') && getRoutePar
 const viewDetails = () => trigger(() => go(url('artists.show', { id: artist.value.id })))
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
-const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
+const allowEmbedding = computed(() => commonStore.state.allows_embedding && currentUserCan.createEmbeds())
 const allowEdit = computed(() => currentUserCan.editArtist(artist.value))
 
 const isStandardArtist = computed(() => !artistStore.isUnknown(artist.value) && !artistStore.isVarious(artist.value))

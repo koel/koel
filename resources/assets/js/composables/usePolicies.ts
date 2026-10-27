@@ -36,6 +36,7 @@ export const usePolicies = () => {
       currentUser.value.role !== 'guest' &&
       (!window.KOEL.is_demo || currentUser.value.abilities.includes('manage radio stations')),
     addPodcast: () => currentUser.value.role !== 'guest',
+    createEmbeds: () => currentUser.value.role !== 'guest',
 
     manageSettings: () => currentUser.value.abilities.includes('manage settings'),
     manageUsers: () => currentUser.value.abilities.includes('manage users'),

@@ -10,8 +10,12 @@ use App\Models\Artist;
 use App\Models\Embed;
 use App\Models\Song;
 use App\Models\Theme;
+use App\Models\User;
 use App\Services\Playlist\PlaylistCollaborationService;
 use App\Values\EmbedOptions;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
@@ -63,13 +67,17 @@ class EmbedTest extends PlusTestCase
             ->public()
             ->createOne();
 
+        $viewer = create_user();
+        $viewer->preferences->includePublicMedia = true;
+        $viewer->save();
+
         $this->postAs(
             'api/embeds/resolve',
             [
                 'embeddable_id' => $album->id,
                 'embeddable_type' => 'album',
             ],
-            create_guest(),
+            $viewer,
         )->assertSuccessful();
     }
 
@@ -81,14 +89,61 @@ class EmbedTest extends PlusTestCase
 
         Song::factory()->for($artist)->for($owner, 'owner')->public()->createOne();
 
+        $viewer = create_user();
+        $viewer->preferences->includePublicMedia = true;
+        $viewer->save();
+
         $this->postAs(
             'api/embeds/resolve',
             [
                 'embeddable_id' => $artist->id,
                 'embeddable_type' => 'artist',
             ],
-            create_guest(),
+            $viewer,
         )->assertSuccessful();
+    }
+
+    /** @return array<string, array{string, Closure(User): Model}> */
+    public static function provideEmbeddablesSharedWithTheGuest(): array
+    {
+        return [
+            'song' => ['playable', static fn (): Model => Song::factory()->public()->createOne()],
+            'album' => [
+                'album',
+                static fn (): Model => Song::factory()->public()->createOne()->album,
+            ],
+            'artist' => [
+                'artist',
+                static fn (): Model => Song::factory()->public()->createOne()->artist,
+            ],
+            'playlist' => [
+                'playlist',
+                static function (User $guest): Model {
+                    $playlist = create_playlist();
+                    $playlist->addCollaborator($guest);
+
+                    return $playlist;
+                },
+            ],
+        ];
+    }
+
+    /** @param Closure(User): Model $createEmbeddable */
+    #[Test]
+    #[DataProvider('provideEmbeddablesSharedWithTheGuest')]
+    public function guestCannotEmbed(string $embeddableType, Closure $createEmbeddable): void
+    {
+        $guest = create_guest();
+        $embeddable = $createEmbeddable($guest);
+
+        $this->postAs(
+            'api/embeds/resolve',
+            [
+                'embeddable_id' => $embeddable->getKey(),
+                'embeddable_type' => $embeddableType,
+            ],
+            $guest,
+        )->assertForbidden();
     }
 
     #[Test]

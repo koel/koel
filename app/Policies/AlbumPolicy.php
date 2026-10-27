@@ -21,7 +21,7 @@ class AlbumPolicy
 
     public function embed(User $user, Album $album): bool
     {
-        return $this->access($user, $album);
+        return !$user->isGuest() && $this->access($user, $album);
     }
 
     /**
