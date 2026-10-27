@@ -46,5 +46,4 @@ the selected songs, and <kbd>Backspace</kbd> or <kbd>Alt</kbd>+<kbd>↑</kbd> go
 ## Limitations
 
 The media browser is not a full-fledged file manager. It does not support file operations like renaming, moving, or
-deleting files or folders. Also, to keep things simple, browsing another user's upload folder is not supported (though
-this limitation may be removed in the future).
+deleting files or folders.
