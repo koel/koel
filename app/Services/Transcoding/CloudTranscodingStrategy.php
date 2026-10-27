@@ -8,19 +8,25 @@ use App\Models\Song;
 use App\Models\Transcode;
 use App\Services\SongStorages\CloudStorage;
 use App\Services\SongStorages\CloudStorageFactory;
+use App\Values\Transcoding\PreviewSection;
 use Illuminate\Support\Facades\File;
 
 class CloudTranscodingStrategy extends TranscodingStrategy
 {
-    protected function findOrCreateTranscodeLocation(Song $song, int $bitRate, ?string $localSourcePath): string
-    {
+    protected function findOrCreateTranscodeLocation(
+        Song $song,
+        int $bitRate,
+        ?string $localSourcePath,
+        ?PreviewSection $previewSection,
+    ): string {
         $storage = CloudStorageFactory::make($song->storage);
 
-        $transcode = $this->findTranscodeBySongAndBitRate($song, $bitRate) ?? $this->createTranscode(
+        $transcode = $this->findTranscode($song, $bitRate, $previewSection) ?? $this->createTranscode(
             $storage,
             $song,
             $bitRate,
             $localSourcePath,
+            $previewSection,
         );
 
         return $storage->getPresignedUrl($transcode->location);
@@ -38,6 +44,7 @@ class CloudTranscodingStrategy extends TranscodingStrategy
         Song $song,
         int $bitRate,
         ?string $localSourcePath,
+        ?PreviewSection $previewSection,
     ): Transcode {
         $tmpDestination = artifact_path(sprintf('tmp/%s.m4a', Ulid::generate()));
 
@@ -45,6 +52,7 @@ class CloudTranscodingStrategy extends TranscodingStrategy
             $localSourcePath ?? $storage->getPresignedUrl($song->storage_metadata->getPath()),
             $tmpDestination,
             $bitRate,
+            $previewSection,
         );
 
         $key = sprintf('transcodes/%d/%s.m4a', $bitRate, Ulid::generate());
@@ -56,6 +64,7 @@ class CloudTranscodingStrategy extends TranscodingStrategy
                 $song,
                 $key,
                 $bitRate,
+                $previewSection,
                 File::hash($tmpDestination),
                 File::size($tmpDestination),
             );

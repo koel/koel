@@ -3,11 +3,14 @@
 namespace App\Services\Transcoding;
 
 use App\Facades\Dispatcher;
+use App\Jobs\CreateSongPreviewJob;
+use App\Jobs\QueuedJob;
 use App\Jobs\TranscodeSongJob;
 use App\Models\Song;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
 use App\Services\Streamer\Streamer;
+use Closure;
 use Illuminate\Container\Attributes\Config;
 
 class TranscodeOnScan
@@ -16,6 +19,8 @@ class TranscodeOnScan
         private readonly SongStorage $storage,
         #[Config('koel.streaming.transcode_on_scan')]
         private readonly bool $enabled = false,
+        #[Config('koel.streaming.previews_on_scan')]
+        private readonly bool $previewsEnabled = false,
         #[Config('koel.streaming.bitrate')]
         private readonly int $bitRate = 128,
         #[Config('koel.streaming.transcode_timeout')]
@@ -28,22 +33,39 @@ class TranscodeOnScan
      */
     public function transcodeSongIfNeeded(Song $song, string $localFilePath): void
     {
-        if (!$this->enabled || !Streamer::shouldTranscode($song)) {
-            return;
-        }
-
-        if ($this->storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
-            rescue(fn (): string => TranscodeStrategyFactory::make($song->storage)->getTranscodeLocation(
+        if ($this->enabled && Streamer::shouldTranscode($song)) {
+            $this->transcodeNowOrQueue(
                 $song,
-                $this->bitRate,
-                $localFilePath,
-            ));
+                fn (TranscodingStrategy $strategy): string => $strategy->getTranscodeLocation(
+                    $song,
+                    $this->bitRate,
+                    $localFilePath,
+                ),
+                new TranscodeSongJob($song, $this->bitRate, $this->transcodeTimeout),
+            );
+        }
+
+        if ($this->previewsEnabled && !$song->isEpisode()) {
+            $this->transcodeNowOrQueue(
+                $song,
+                static fn (TranscodingStrategy $strategy): string => $strategy->getPreviewLocation(
+                    $song,
+                    $localFilePath,
+                ),
+                new CreateSongPreviewJob($song, $this->transcodeTimeout),
+            );
+        }
+    }
+
+    /** @param Closure(TranscodingStrategy): string $transcodeTemporaryCopy */
+    private function transcodeNowOrQueue(Song $song, Closure $transcodeTemporaryCopy, QueuedJob $job): void
+    {
+        if ($this->storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
+            rescue(static fn (): string => $transcodeTemporaryCopy(TranscodeStrategyFactory::make($song->storage)));
 
             return;
         }
 
-        rescue(fn (): mixed => Dispatcher::dispatch(
-            new TranscodeSongJob($song, $this->bitRate, $this->transcodeTimeout),
-        ));
+        rescue(static fn (): mixed => Dispatcher::dispatch($job));
     }
 }

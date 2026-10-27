@@ -7,10 +7,12 @@ use App\Models\Song;
 use App\Models\Transcode;
 use App\Services\Transcoding\LocalTranscodingStrategy;
 use App\Services\Transcoding\Transcoder;
+use App\Values\Transcoding\PreviewSection;
 use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Sleep;
+use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -37,7 +39,7 @@ class LocalTranscodingStrategyTest extends TestCase
 
         $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
 
-        $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128);
+        $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128, null);
 
         File::expects('hash')->with($destination)->andReturn('mocked-checksum');
         File::expects('ensureDirectoryExists')->with(dirname($destination));
@@ -54,6 +56,59 @@ class LocalTranscodingStrategyTest extends TestCase
         ]);
 
         self::assertSame($transcodedPath, $destination);
+    }
+
+    #[Test]
+    public function createAPreviewBesideAFullTranscodeOfTheSameBitRate(): void
+    {
+        $song = Song::factory()->createOne(['path' => '/path/to/song.flac', 'length' => 300]);
+        $fullTranscode = Transcode::factory()->for($song)->createOne(['bit_rate' => 64]);
+
+        $ulid = Ulid::freeze();
+        $destination = artifact_path("transcodes/64/$ulid.m4a", ensureDirectoryExists: false);
+
+        $this->transcoder->expects('transcode')->with(
+            '/path/to/song.flac',
+            $destination,
+            64,
+            Mockery::on(
+                static fn (PreviewSection $section): bool => $section->start === 100.0 && $section->duration === 30.0,
+            ),
+        );
+
+        File::expects('ensureDirectoryExists')->with(dirname($destination));
+        File::expects('hash')->with($destination)->andReturn('mocked-checksum');
+        File::expects('size')->with($destination)->andReturn(256);
+
+        self::assertSame($destination, $this->strategy->getPreviewLocation($song));
+
+        $this->assertDatabaseHas(Transcode::class, [
+            'song_id' => $song->id,
+            'location' => $destination,
+            'bit_rate' => 64,
+            'is_preview' => true,
+        ]);
+
+        self::assertFalse($fullTranscode->refresh()->is_preview);
+    }
+
+    #[Test]
+    public function neverServeAPreviewAsAFullTranscode(): void
+    {
+        $song = Song::factory()->createOne(['path' => '/path/to/song.flac']);
+        $preview = Transcode::factory()->asPreview()->for($song)->createOne(['bit_rate' => 128]);
+
+        $ulid = Ulid::freeze();
+        $destination = artifact_path("transcodes/128/$ulid.m4a", ensureDirectoryExists: false);
+
+        $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128, null);
+
+        File::expects('ensureDirectoryExists')->with(dirname($destination));
+        File::expects('hash')->with($destination)->andReturn('mocked-checksum');
+        File::expects('size')->with($destination)->andReturn(1_024);
+
+        self::assertSame($destination, $this->strategy->getTranscodeLocation($song, 128));
+        self::assertNotSame($destination, $preview->refresh()->location);
     }
 
     #[Test]
@@ -96,7 +151,7 @@ class LocalTranscodingStrategyTest extends TestCase
         File::expects('ensureDirectoryExists')->with(dirname($destination));
         File::expects('size')->with($destination)->andReturn(1_024);
 
-        $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128);
+        $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128, null);
 
         $transcodedLocation = $this->strategy->getTranscodeLocation($song, 128);
 
@@ -126,7 +181,7 @@ class LocalTranscodingStrategyTest extends TestCase
         File::expects('ensureDirectoryExists')->with(dirname($destination));
         File::expects('size')->with($destination)->andReturn(1_024);
 
-        $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128);
+        $this->transcoder->expects('transcode')->with('/path/to/song.flac', $destination, 128, null);
 
         self::assertSame($destination, $this->strategy->getTranscodeLocation($song, 128));
     }

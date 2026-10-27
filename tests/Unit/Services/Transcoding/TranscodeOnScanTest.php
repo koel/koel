@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Transcoding;
 
 use App\Enums\SongStorageType;
 use App\Facades\Dispatcher;
+use App\Jobs\CreateSongPreviewJob;
 use App\Jobs\TranscodeSongJob;
 use App\Models\Song;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
@@ -120,5 +121,48 @@ class TranscodeOnScanTest extends TestCase
         );
 
         $this->addToAssertionCount(1);
+    }
+
+    #[Test]
+    public function createAPreviewFromATemporaryCopyOnTheSpot(): void
+    {
+        $song = Song::factory()->createOne(['mime_type' => 'audio/mpeg', 'storage' => SongStorageType::S3]);
+
+        $this
+            ->mock(CloudTranscodingStrategy::class)
+            ->expects('getPreviewLocation')
+            ->with($song, '/tmp/upload/song.mp3')
+            ->andReturn('https://preview');
+
+        (new TranscodeOnScan(self::makeRemoteStorage(), previewsEnabled: true))->transcodeSongIfNeeded(
+            $song,
+            '/tmp/upload/song.mp3',
+        );
+    }
+
+    #[Test]
+    public function leaveThePreviewOfAFileThatStaysOnDiskToAJob(): void
+    {
+        $song = Song::factory()->createOne(['mime_type' => 'audio/mpeg', 'storage' => SongStorageType::LOCAL]);
+
+        Dispatcher::expects('dispatch')->with(Mockery::type(CreateSongPreviewJob::class));
+
+        (new TranscodeOnScan(app(LocalStorage::class), enabled: true, previewsEnabled: true))->transcodeSongIfNeeded(
+            $song,
+            '/music/song.mp3',
+        );
+    }
+
+    #[Test]
+    public function createNoPreviewOfAPodcastEpisode(): void
+    {
+        $episode = Song::factory()->asEpisode()->createOne();
+
+        Dispatcher::expects('dispatch')->never();
+
+        (new TranscodeOnScan(app(LocalStorage::class), previewsEnabled: true))->transcodeSongIfNeeded(
+            $episode,
+            '/tmp/episode.mp3',
+        );
     }
 }

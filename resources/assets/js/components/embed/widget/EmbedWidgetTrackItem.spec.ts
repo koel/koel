@@ -42,6 +42,12 @@ describe('playableEmbedItem.vue', async () => {
     screen.getByText(`${episode.podcast_author} - ${episode.podcast_title}`)
   })
 
+  it('shows the length of the preview the embed plays', () => {
+    renderComponent(h.factory('song').make({ length: 200, preview_length: 30 }))
+
+    screen.getByText('00:30')
+  })
+
   it('emits the play event on double-click', async () => {
     const { playable, emitted } = renderComponent(h.factory('song').make())
     await h.user.dblClick(screen.getByTestId('playable-embed-item'))

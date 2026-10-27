@@ -3,6 +3,7 @@
 namespace App\Services\Transcoding;
 
 use App\Exceptions\TranscodingFailedException;
+use App\Values\Transcoding\PreviewSection;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
@@ -25,8 +26,12 @@ class Transcoder
         private readonly bool $aacFast = true,
     ) {}
 
-    public function transcode(string $source, string $destination, int $bitRate): void
-    {
+    public function transcode(
+        string $source,
+        string $destination,
+        int $bitRate,
+        ?PreviewSection $previewSection = null,
+    ): void {
         setlocale(LC_CTYPE, 'en_US.UTF-8'); // #1481 special chars might be stripped otherwise
 
         File::ensureDirectoryExists(dirname($destination));
@@ -36,6 +41,7 @@ class Transcoder
         $result = $process->run([
             $this->ffmpegPath,
             '-nostdin',
+            ...self::resolveSectionArguments($previewSection),
             '-i',
             $source,
             '-vn', // Strip video
@@ -51,6 +57,16 @@ class Transcoder
         ]);
 
         throw_if($result->failed(), new TranscodingFailedException($result->errorOutput()));
+    }
+
+    /** @return array<string> */
+    private static function resolveSectionArguments(?PreviewSection $previewSection): array
+    {
+        if (!$previewSection) {
+            return [];
+        }
+
+        return ['-ss', (string) $previewSection->start, '-t', (string) $previewSection->duration];
     }
 
     /**

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\File;
  * @property Song $song
  * @property-read SongStorageType $storage The storage type of the associated song.
  * @property int $bit_rate
+ * @property bool $is_preview
  * @property ?int $file_size
  * @property string $hash
  * @property string $location
@@ -34,6 +35,7 @@ class Transcode extends Model
     {
         return [
             'bit_rate' => 'int',
+            'is_preview' => 'bool',
             'file_size' => 'int',
         ];
     }

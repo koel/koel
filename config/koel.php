@@ -47,6 +47,7 @@ return [
         'ffmpeg_path' => env('FFMPEG_PATH') ?: find_ffmpeg_path(),
         'transcode_flac' => env('TRANSCODE_FLAC', true),
         'transcode_on_scan' => env('TRANSCODE_ON_SCAN', false),
+        'previews_on_scan' => env('PREVIEWS_ON_SCAN', false),
         'transcode_timeout' => max((int) env('TRANSCODE_TIMEOUT', 300), 0),
         'supported_mime_types' => [
             // Lossy formats
