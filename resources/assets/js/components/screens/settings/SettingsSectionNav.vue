@@ -35,7 +35,7 @@
           type="button"
           @click="selectedId = section.id"
         >
-          <component :is="section.icon" v-if="section.icon" :size="16" class="shrink-0" />
+          <component :is="section.icon" v-if="section.icon" :size="16" aria-hidden="true" class="shrink-0" />
           {{ section.label }}
         </button>
       </template>
