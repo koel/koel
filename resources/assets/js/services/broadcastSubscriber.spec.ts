@@ -1,9 +1,15 @@
 import type { Broadcaster } from 'laravel-echo'
 import Echo from 'laravel-echo'
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { uploadService } from '@/services/uploadService'
 import { broadcastSubscriber } from '@/services/broadcastSubscriber'
+
+vi.mock('pusher-js', () => ({
+  default: vi.fn().mockImplementation(function () {
+    return {}
+  }),
+}))
 
 /**
  * For testing purposes, we create a fake Echo instance that extends the Echo<'null'> class,
