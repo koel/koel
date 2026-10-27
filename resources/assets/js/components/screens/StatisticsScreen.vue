@@ -47,7 +47,7 @@
 
         <ScreenEmptyState v-else-if="!listeningStatistics?.summary.plays" data-testid="statistics-empty">
           <template #icon>
-            <ChartColumnIcon :size="96" />
+            <TrendingUpIcon :size="96" />
           </template>
           No plays in this period.
         </ScreenEmptyState>
@@ -108,7 +108,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ChartColumnIcon } from 'lucide-vue-next'
+import { TrendingUpIcon } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import { statisticsService } from '@/services/statisticsService'
 import { pluralize } from '@/utils/formatters'

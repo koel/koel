@@ -50,7 +50,7 @@
       </SidebarItem>
       <SidebarItem :href="url('statistics')" :active="isCurrentScreen('Statistics')">
         <template #icon>
-          <ChartColumnIcon :size="16" />
+          <TrendingUpIcon :size="16" />
         </template>
         Statistics
       </SidebarItem>
@@ -67,7 +67,7 @@
 
 <script lang="ts" setup>
 import { faCloudArrowDown, faCompactDisc, faMusic, faPodcast } from '@fortawesome/free-solid-svg-icons'
-import { ChartColumnIcon, GuitarIcon, MicVocalIcon, RadioIcon } from 'lucide-vue-next'
+import { GuitarIcon, MicVocalIcon, RadioIcon, TrendingUpIcon } from 'lucide-vue-next'
 import { unescape } from 'lodash-es'
 import { computed, ref, toRef } from 'vue'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
