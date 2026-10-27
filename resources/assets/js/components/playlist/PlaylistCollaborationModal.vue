@@ -12,7 +12,7 @@
       </p>
 
       <section class="space-y-5">
-        <h2 class="flex text-xl mt-6 mb-1 items-center">
+        <h2 class="flex text-xl mt-6 items-center">
           <span class="flex-1">Current Collaborators</span>
           <InviteCollaborators v-if="canManageCollaborators" :playlist />
         </h2>
