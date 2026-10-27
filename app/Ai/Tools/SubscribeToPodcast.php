@@ -7,8 +7,10 @@ use App\Ai\AiRequestContext;
 use App\Exceptions\ApplePodcastsFeedNotFoundException;
 use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
+use App\Models\Podcast;
 use App\Rules\SafeUrl;
 use App\Services\Podcast\PodcastService;
+use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Ai\Contracts\Tool;
@@ -21,7 +23,10 @@ class SubscribeToPodcast implements Tool
         private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
         private readonly PodcastService $podcastService,
-    ) {}
+        private Gate $gate,
+    ) {
+        $this->gate = $this->gate->forUser($this->context->user);
+    }
 
     public function description(): Stringable|string
     {
@@ -41,6 +46,10 @@ class SubscribeToPodcast implements Tool
 
     public function handle(Request $request): Stringable|string
     {
+        if ($this->gate->denies('create', Podcast::class)) {
+            return 'You don\'t have permission to subscribe to podcasts.';
+        }
+
         $validator = Validator::make(['url' => $request['url']], ['url' => ['required', 'url', new SafeUrl()]]);
 
         if ($validator->fails()) {

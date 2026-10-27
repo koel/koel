@@ -18,7 +18,7 @@ class RadioStationBuilder extends FavoriteableBuilder
     {
         throw_unless($this->user, new LogicException('User must be set to query accessible radio stations.'));
 
-        if (!$this->user->preferences->includePublicMedia) {
+        if (!$this->user->shouldIncludePublicMedia()) {
             // If the user does not want to include public media, we only return stations created by them.
             return $this->whereBelongsTo($this->user);
         }

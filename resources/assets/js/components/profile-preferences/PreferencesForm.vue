@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-4">
-    <FormRow v-if="isPlus">
+    <FormRow v-if="isPlus && currentUserCan.uploadSongs()">
       <label class="pref-row">
         <CheckBox v-model="preferences.make_uploads_public" name="make_uploads_public" />
         <span>Make uploaded songs public by default</span>
@@ -12,7 +12,7 @@
         <span>Detect and flag duplicate file uploads</span>
       </label>
     </FormRow>
-    <FormRow v-if="isPlus">
+    <FormRow v-if="isPlus && !isGuest">
       <label class="pref-row">
         <CheckBox v-model="preferences.include_public_media" name="include_public_media" />
         <span>{{ includePublicMediaLabel }}</span>
@@ -118,7 +118,9 @@ import isMobile from 'ismobilejs'
 import { computed, toRef } from 'vue'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
+import { useAuthorization } from '@/composables/useAuthorization'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { usePolicies } from '@/composables/usePolicies'
 import { canUploadFromThisDevice } from '@/utils/uploadAccess'
 
 import CheckBox from '@/components/ui/form/CheckBox.vue'
@@ -126,8 +128,11 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const onMobile = isMobile.any
 const { isPlus } = useKoelPlus()
+const { currentUser } = useAuthorization()
+const { currentUserCan } = usePolicies()
 const canUpload = canUploadFromThisDevice()
 
+const isGuest = computed(() => currentUser.value.role === 'guest')
 const showTranscodingOption = toRef(commonStore.state, 'supports_transcoding')
 
 const crossfadeEnabled = computed(() => preferences.crossfade_duration > 0)

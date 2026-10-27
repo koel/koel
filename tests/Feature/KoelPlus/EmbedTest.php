@@ -6,6 +6,7 @@ use App\Http\Resources\EmbedOptionsResource;
 use App\Http\Resources\EmbedResource;
 use App\Http\Resources\ThemeResource;
 use App\Models\Album;
+use App\Models\Artist;
 use App\Models\Embed;
 use App\Models\Song;
 use App\Models\Theme;
@@ -14,6 +15,7 @@ use App\Values\EmbedOptions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_guest;
 use function Tests\create_playlist;
 use function Tests\create_user;
 
@@ -49,7 +51,7 @@ class EmbedTest extends PlusTestCase
     }
 
     #[Test]
-    public function cannotEmbedAnAlbumSharedByAnotherUser(): void
+    public function embedAnAlbumSharedByAnotherUser(): void
     {
         $owner = create_user();
         $album = Album::factory()->for($owner)->createOne();
@@ -61,9 +63,46 @@ class EmbedTest extends PlusTestCase
             ->public()
             ->createOne();
 
-        $viewer = create_user();
-        $viewer->preferences->includePublicMedia = true;
-        $viewer->save();
+        $this->postAs(
+            'api/embeds/resolve',
+            [
+                'embeddable_id' => $album->id,
+                'embeddable_type' => 'album',
+            ],
+            create_guest(),
+        )->assertSuccessful();
+    }
+
+    #[Test]
+    public function embedAnArtistSharedByAnotherUser(): void
+    {
+        $owner = create_user();
+        $artist = Artist::factory()->for($owner)->createOne();
+
+        Song::factory()->for($artist)->for($owner, 'owner')->public()->createOne();
+
+        $this->postAs(
+            'api/embeds/resolve',
+            [
+                'embeddable_id' => $artist->id,
+                'embeddable_type' => 'artist',
+            ],
+            create_guest(),
+        )->assertSuccessful();
+    }
+
+    #[Test]
+    public function cannotEmbedAnAlbumNotSharedWithTheUser(): void
+    {
+        $owner = create_user();
+        $album = Album::factory()->for($owner)->createOne();
+
+        Song::factory()
+            ->for($album)
+            ->for($album->artist)
+            ->for($owner, 'owner')
+            ->private()
+            ->createOne();
 
         $this->postAs(
             'api/embeds/resolve',
@@ -71,7 +110,7 @@ class EmbedTest extends PlusTestCase
                 'embeddable_id' => $album->id,
                 'embeddable_type' => 'album',
             ],
-            $viewer,
+            create_user(),
         )->assertForbidden();
     }
 

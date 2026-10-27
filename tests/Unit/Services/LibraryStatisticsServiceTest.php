@@ -17,6 +17,7 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
+use function Tests\create_guest;
 use function Tests\create_user;
 
 class LibraryStatisticsServiceTest extends TestCase
@@ -92,5 +93,17 @@ class LibraryStatisticsServiceTest extends TestCase
             $statistics->pluck('key')->all(),
         );
         self::assertSame(8_192, $statistics->last()->limit);
+    }
+
+    #[Test]
+    public function giveGuestsNoStatisticsEvenThroughTheFilter(): void
+    {
+        add_filter(Filter::LIBRARY_STATISTICS, static fn (Collection $statistics) => $statistics->push(LibraryStatistic::make(
+            'members',
+            'Members',
+            1,
+        )));
+
+        self::assertTrue($this->makeService()->getStatistics(create_guest())->isEmpty());
     }
 }

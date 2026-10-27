@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\Acl\Permission;
+use App\Enums\Acl\Role;
 use App\Models\RadioStation;
 use App\Models\User;
 
@@ -15,6 +16,11 @@ class RadioStationPolicy
         }
 
         return $station->is_public && $station->user->organization_id === $user->organization_id;
+    }
+
+    public function create(User $user): bool
+    {
+        return $user->role !== Role::GUEST;
     }
 
     public function edit(User $user, RadioStation $station): bool

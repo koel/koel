@@ -79,7 +79,7 @@ class AlbumBuilder extends FavoriteableBuilder
             return;
         }
 
-        if (!$user->preferences->includePublicMedia) {
+        if (!$user->shouldIncludePublicMedia()) {
             $query->where('albums.user_id', $user->id);
 
             return;
