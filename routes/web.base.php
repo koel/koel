@@ -77,7 +77,7 @@ Route::middleware('web')->group(static function () use ($sessionMiddleware): voi
 
     Route::get('embeds/{embed}/stream/{song}/{options}', StreamEmbedController::class)
         ->name('embeds.stream')
-        ->middleware('embeds.enabled', 'signed', 'throttle:60,1')
+        ->middleware('embeds.enabled', 'signed', 'throttle:60,1,embeds')
         ->withoutMiddleware($sessionMiddleware);
 });
 
