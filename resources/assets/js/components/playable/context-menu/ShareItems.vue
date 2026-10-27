@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { faCode, faLink } from '@fortawesome/free-solid-svg-icons'
-import { computed, toRef } from 'vue'
+import { computed } from 'vue'
 import { copyText, defineAsyncComponent } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { commonStore } from '@/stores/commonStore'
@@ -29,6 +29,7 @@ import { useContextMenu } from '@/composables/useContextMenu'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useModal } from '@/composables/useModal'
+import { usePolicies } from '@/composables/usePolicies'
 
 const props = defineProps<{ playables: Playable[] }>()
 
@@ -38,10 +39,11 @@ const { MenuItem, trigger } = useContextMenu()
 const { toastSuccess } = useMessageToaster()
 const { openModal } = useModal()
 const { isPlus } = useKoelPlus()
+const { currentUserCan } = usePolicies()
 
 const playable = computed(() => props.playables[0])
 const canBeShared = computed(() => !isPlus.value || (isSong(playable.value) && playable.value.is_public))
-const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
+const allowEmbedding = computed(() => commonStore.state.allows_embedding && currentUserCan.createEmbeds())
 const canShare = computed(() => props.playables.length === 1 && (canBeShared.value || allowEmbedding.value))
 
 const copyUrl = () =>

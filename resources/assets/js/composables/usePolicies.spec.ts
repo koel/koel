@@ -130,4 +130,37 @@ describe('usePolicies', () => {
     expect(currentUserCan.editUser(editable)).toBe(true)
     expect(currentUserCan.editUser(readonly)).toBe(false)
   })
+
+  it('forbids guests from adding podcasts and radio stations', () => {
+    h.actingAsUser(h.factory('user').make({ abilities: [], role: 'guest' }) as CurrentUser)
+
+    const { currentUserCan } = usePolicies()
+
+    expect(currentUserCan.addPodcast()).toBe(false)
+    expect(currentUserCan.addRadioStation()).toBe(false)
+  })
+
+  it('forbids guests from creating embeds', () => {
+    h.actingAsUser(h.factory('user').make({ abilities: [], role: 'guest' }) as CurrentUser)
+
+    const { currentUserCan } = usePolicies()
+
+    expect(currentUserCan.createEmbeds()).toBe(false)
+  })
+
+  it('allows users to create embeds', () => {
+    h.actingAsUser(h.factory('user').make({ abilities: [] }) as CurrentUser)
+
+    const { currentUserCan } = usePolicies()
+
+    expect(currentUserCan.createEmbeds()).toBe(true)
+  })
+
+  it('allows users to add podcasts', () => {
+    h.actingAsUser(h.factory('user').make({ abilities: [] }) as CurrentUser)
+
+    const { currentUserCan } = usePolicies()
+
+    expect(currentUserCan.addPodcast()).toBe(true)
+  })
 })

@@ -15,7 +15,7 @@ class PlaylistPolicy
 
     public function embed(User $user, Playlist $playlist): bool
     {
-        return $this->access($user, $playlist);
+        return !$user->isGuest() && $this->access($user, $playlist);
     }
 
     public function own(User $user, Playlist $playlist): bool

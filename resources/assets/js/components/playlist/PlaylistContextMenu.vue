@@ -67,7 +67,7 @@ const { currentUserCan } = usePolicies()
 const { showConfirmDialog } = useDialogBox()
 
 const allowDownload = toRef(commonStore.state, 'allows_download')
-const allowEmbedding = toRef(commonStore.state, 'allows_embedding')
+const allowEmbedding = computed(() => commonStore.state.allows_embedding && currentUserCan.createEmbeds())
 
 const canEditPlaylist = computed(() => currentUserCan.editPlaylist(playlist.value))
 const canDeletePlaylist = computed(() => currentUserCan.deletePlaylist(playlist.value))

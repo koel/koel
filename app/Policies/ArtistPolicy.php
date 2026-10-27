@@ -21,7 +21,7 @@ class ArtistPolicy
 
     public function embed(User $user, Artist $artist): bool
     {
-        return License::isCommunity() || $artist->belongsToUser($user);
+        return !$user->isGuest() && $this->access($user, $artist);
     }
 
     public function update(User $user, Artist $artist): bool

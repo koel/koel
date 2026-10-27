@@ -35,7 +35,7 @@
       <template v-if="preferences.radio_stations_favorites_only"> No favorite stations. </template>
       <template v-else>
         No stations found.
-        <span class="secondary block">Add a station to get started.</span>
+        <span v-if="canAdd" class="secondary block">Add a station to get started.</span>
       </template>
     </ScreenEmptyState>
 

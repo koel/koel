@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\PlusTestCase;
 
+use function Tests\create_guest;
 use function Tests\create_user;
 
 class SubscribeToPodcastToolTest extends PlusTestCase
@@ -115,6 +116,17 @@ class SubscribeToPodcastToolTest extends PlusTestCase
             ->handle(new Request(['url' => 'https://example.com/feed.xml']));
 
         self::assertSame('Could not read a podcast feed at this URL.', $response);
+        self::assertNull($this->result->action);
+    }
+
+    #[Test]
+    public function refuseGuests(): void
+    {
+        app()->instance(AiRequestContext::class, new AiRequestContext(create_guest()));
+        $this->mock(PodcastService::class)->expects('addPodcast')->never();
+
+        app()->make(SubscribeToPodcast::class)->handle(new Request(['url' => 'https://example.com/feed.xml']));
+
         self::assertNull($this->result->action);
     }
 }

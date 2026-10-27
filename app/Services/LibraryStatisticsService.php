@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Acl\Role;
 use App\Enums\LibraryStatisticUnit;
 use App\Hooks\Filter;
 use App\Models\User;
@@ -28,6 +29,10 @@ class LibraryStatisticsService
     /** @return Collection<int, LibraryStatistic> */
     public function getStatistics(User $user): Collection
     {
+        if ($user->role === Role::GUEST) {
+            return collect();
+        }
+
         $statistics = collect([
             LibraryStatistic::make('songs', 'Songs', $this->librarySummaryService->getSongCount($user)),
             LibraryStatistic::make('albums', 'Albums', $this->librarySummaryService->getAlbumCount($user)),

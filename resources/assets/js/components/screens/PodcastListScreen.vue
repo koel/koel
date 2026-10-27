@@ -14,9 +14,10 @@
             />
 
             <ListFilter />
-            <BtnGroup uppercase>
+            <BtnGroup v-if="canAdd" uppercase>
               <Btn variant="highlight" @click.prevent="requestAddPodcastForm">
                 <Icon :icon="faAdd" fixed-width />
+                <span class="sr-only">Add a podcast</span>
               </Btn>
             </BtnGroup>
           </div>
@@ -31,7 +32,7 @@
       <template v-if="preferences.podcasts_favorites_only"> No favorite podcasts. </template>
       <template v-else>
         No podcasts found.
-        <span class="secondary block">Add a podcast to get started.</span>
+        <span v-if="canAdd" class="secondary block">Add a podcast to get started.</span>
       </template>
     </ScreenEmptyState>
 
@@ -59,6 +60,7 @@ import { defineAsyncComponent } from '@/utils/helpers'
 import { FilterKeywordsKey } from '@/config/symbols'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useModal } from '@/composables/useModal'
+import { usePolicies } from '@/composables/usePolicies'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import BtnGroup from '@/components/ui/form/BtnGroup.vue'
@@ -74,6 +76,7 @@ import FavoritesOnlyToggle from '@/components/ui/FavoritesOnlyToggle.vue'
 
 const AddPodcastForm = defineAsyncComponent(() => import('@/components/podcast/AddPodcastForm.vue'))
 const { openModal } = useModal()
+const { currentUserCan } = usePolicies()
 const fuzzy = useFuzzySearch<Podcast>([], ['title', 'description', 'author'])
 
 const loading = ref(false)
@@ -89,6 +92,7 @@ const podcasts = computed(() => {
   ).filter(podcast => (preferences.podcasts_favorites_only ? podcast.favorite : true))
 })
 
+const canAdd = computed(() => currentUserCan.addPodcast())
 const noPodcasts = computed(() => !loading.value && podcasts.value.length === 0)
 
 const fetchPodcasts = async () => {

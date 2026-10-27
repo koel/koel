@@ -4,10 +4,12 @@ namespace App\Ai\Tools;
 
 use App\Ai\AiAssistantResult;
 use App\Ai\AiRequestContext;
+use App\Models\RadioStation;
 use App\Rules\HasAudioContentType;
 use App\Rules\SafeUrl;
 use App\Services\RadioService;
 use App\Values\Radio\RadioStationCreateData;
+use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Validator;
@@ -22,7 +24,10 @@ class AddRadioStation implements Tool
         private readonly AiRequestContext $context,
         private readonly AiAssistantResult $result,
         private readonly RadioService $radioService,
-    ) {}
+        private Gate $gate,
+    ) {
+        $this->gate = $this->gate->forUser($this->context->user);
+    }
 
     public function description(): Stringable|string
     {
@@ -39,6 +44,10 @@ class AddRadioStation implements Tool
 
     public function handle(Request $request): Stringable|string
     {
+        if ($this->gate->denies('create', RadioStation::class)) {
+            return 'You don\'t have permission to add radio stations.';
+        }
+
         $userId = $this->context->user->id;
 
         $validator = Validator::make(['url' => $request['url']], [

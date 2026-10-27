@@ -92,7 +92,7 @@ class LibrarySummaryService
         $key = cache_key(
             'library summary',
             $user->id,
-            $user->preferences->includePublicMedia ? 'with public media' : 'own media only',
+            $user->shouldIncludePublicMedia() ? 'with public media' : 'own media only',
             $summaryName,
         );
 

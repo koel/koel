@@ -32,7 +32,11 @@ export const usePolicies = () => {
     deleteRadioStation: (station: RadioStation) => station.permissions.delete,
 
     // If the user has the permission, they can always add a radio station, even in demo mode.
-    addRadioStation: () => !window.KOEL.is_demo || currentUser.value.abilities.includes('manage radio stations'),
+    addRadioStation: () =>
+      currentUser.value.role !== 'guest' &&
+      (!window.KOEL.is_demo || currentUser.value.abilities.includes('manage radio stations')),
+    addPodcast: () => currentUser.value.role !== 'guest',
+    createEmbeds: () => currentUser.value.role !== 'guest',
 
     manageSettings: () => currentUser.value.abilities.includes('manage settings'),
     manageUsers: () => currentUser.value.abilities.includes('manage users'),

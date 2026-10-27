@@ -37,6 +37,8 @@ class PodcastController extends Controller
     #[DisabledInDemo]
     public function store(PodcastStoreRequest $request)
     {
+        $this->authorize('create', Podcast::class);
+
         try {
             return PodcastResource::make($this->podcastService->addPodcast($request->url, $this->user));
         } catch (UserAlreadySubscribedToPodcastException) {

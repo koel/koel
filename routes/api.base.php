@@ -339,8 +339,8 @@ Route::prefix('api')
 
             // Podcast routes
             Route::middleware('podcasts.enabled')->group(static function (): void {
-                Route::apiResource('podcasts', PodcastController::class);
-                Route::apiResource('podcasts.episodes', PodcastEpisodeController::class);
+                Route::apiResource('podcasts', PodcastController::class)->only(['index', 'store', 'show']);
+                Route::apiResource('podcasts.episodes', PodcastEpisodeController::class)->only(['index']);
                 Route::delete('podcasts/{podcast}/subscriptions', UnsubscribeFromPodcastController::class);
             });
 

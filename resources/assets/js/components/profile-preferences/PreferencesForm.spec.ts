@@ -41,4 +41,26 @@ describe('preferencesForm', () => {
     await h.user.click(screen.getByTestId('crossfade-toggle'))
     expect(preferences.crossfade_duration).toBe(0)
   })
+
+  it('hides the upload visibility and public media options from guests', async () => {
+    h.actingAsUser(h.factory('user').make({ abilities: [], role: 'guest' }) as CurrentUser)
+
+    await h.withPlusEdition(() => {
+      const { container } = h.render(Component)
+
+      expect(container.querySelector('[name="make_uploads_public"]')).toBeNull()
+      expect(container.querySelector('[name="include_public_media"]')).toBeNull()
+    })
+  })
+
+  it('shows the upload visibility and public media options to Plus users', async () => {
+    h.actingAsUser(h.factory('user').make({ abilities: [] }) as CurrentUser)
+
+    await h.withPlusEdition(() => {
+      const { container } = h.render(Component)
+
+      expect(container.querySelector('[name="make_uploads_public"]')).not.toBeNull()
+      expect(container.querySelector('[name="include_public_media"]')).not.toBeNull()
+    })
+  })
 })

@@ -6,7 +6,7 @@
 
     <div class="flex flex-col flex-1 gap-14">
       <section
-        v-if="loadingLibraryStatistics || libraryStatistics.length"
+        v-if="!isGuest && (loadingLibraryStatistics || libraryStatistics.length)"
         :aria-busy="loadingLibraryStatistics"
         aria-labelledby="statistics-storage"
         class="flex flex-col gap-6"
@@ -112,6 +112,7 @@ import { ChartColumnIcon } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
 import { statisticsService } from '@/services/statisticsService'
 import { pluralize } from '@/utils/formatters'
+import { useAuthorization } from '@/composables/useAuthorization'
 import { useBranding } from '@/composables/useBranding'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useRouter } from '@/composables/useRouter'
@@ -152,6 +153,9 @@ const periodOptions = (Object.keys(PERIOD_LABELS) as ListeningPeriod[]).map(valu
 const { url, onScreenActivated } = useRouter()
 const { handleHttpError } = useErrorHandler()
 const { cover: defaultCover } = useBranding()
+const { currentUser } = useAuthorization()
+
+const isGuest = computed(() => currentUser.value.role === 'guest')
 
 const period = ref<ListeningPeriod>('month')
 const listeningStatistics = ref<ListeningStatistics | null>(null)
@@ -228,7 +232,10 @@ const fetchLibraryStatistics = async () => {
 watch(period, fetchStatistics)
 
 onScreenActivated('Statistics', () => {
-  fetchLibraryStatistics()
+  if (!isGuest.value) {
+    fetchLibraryStatistics()
+  }
+
   fetchStatistics()
 })
 </script>

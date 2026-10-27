@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
 
+use function Tests\create_guest;
 use function Tests\create_user;
 
 class AddRadioStationToolTest extends PlusTestCase
@@ -96,5 +97,24 @@ class AddRadioStationToolTest extends PlusTestCase
         ]));
 
         self::assertStringContainsString('Cannot add radio station', (string) $response);
+    }
+
+    #[Test]
+    public function refusesGuests(): void
+    {
+        Http::fake();
+
+        $guest = create_guest();
+        app()->instance(AiRequestContext::class, new AiRequestContext($guest));
+
+        app()
+            ->make(AddRadioStation::class)
+            ->handle(new Request([
+                'name' => 'Guest Radio',
+                'url' => 'https://example.com/stream.mp3',
+            ]));
+
+        Http::assertNothingSent();
+        $this->assertDatabaseMissing(RadioStation::class, ['user_id' => $guest->id]);
     }
 }

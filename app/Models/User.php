@@ -183,6 +183,16 @@ class User extends Authenticatable implements AuditableContract, PasskeyUser
             });
     }
 
+    public function isGuest(): bool
+    {
+        return $this->role === RoleEnum::GUEST;
+    }
+
+    public function shouldIncludePublicMedia(): bool
+    {
+        return $this->isGuest() || $this->preferences->includePublicMedia;
+    }
+
     public function subscribedToPodcast(Podcast $podcast): bool
     {
         return $this->podcasts()->whereKey($podcast)->exists();

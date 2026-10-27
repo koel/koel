@@ -115,4 +115,16 @@ describe('statisticsScreen.vue', () => {
 
     expect(meter.compareDocumentPosition(periodOption) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
+
+  it('skips the library statistics for guests', async () => {
+    h.actingAsUser(h.factory('user').make({ role: 'guest' }) as CurrentUser)
+    h.mock(statisticsService, 'fetchListeningStatistics').mockReturnValue(new Promise(() => {}))
+    const fetchLibraryMock = h.mock(statisticsService, 'fetchLibraryStatistics')
+    h.visit('/statistics')
+    h.render(Component, { global: { stubs: { ListeningBarChart: h.stub('listening-bar-chart') } } })
+
+    await waitFor(() => screen.getByTestId('statistics-skeleton'))
+    expect(screen.queryByTestId('library-statistics-skeleton')).toBeNull()
+    expect(fetchLibraryMock).not.toHaveBeenCalled()
+  })
 })

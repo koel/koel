@@ -122,7 +122,7 @@ class SongBuilder extends FavoriteableBuilder
             $query
                 ->whereNotNull('songs.podcast_id')
                 ->orWhere(function (self $q2) {
-                    if (!$this->user->preferences->includePublicMedia) {
+                    if (!$this->user->shouldIncludePublicMedia()) {
                         return $q2->whereBelongsTo($this->user, 'owner');
                     }
 

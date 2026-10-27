@@ -107,7 +107,7 @@ class ArtistBuilder extends FavoriteableBuilder
 
         throw_unless($this->user, new LogicException('User must be set to query accessible artists.'));
 
-        if (!$this->user->preferences->includePublicMedia) {
+        if (!$this->user->shouldIncludePublicMedia()) {
             return $this->whereBelongsTo($this->user);
         }
 

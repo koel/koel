@@ -16,7 +16,7 @@ class SongPolicy
 
     public function embed(User $user, Song $song): bool
     {
-        return $this->access($user, $song);
+        return !$user->isGuest() && $this->access($user, $song);
     }
 
     public function own(User $user, Song $song): bool

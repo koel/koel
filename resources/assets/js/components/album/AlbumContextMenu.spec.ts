@@ -129,6 +129,16 @@ describe('albumContextMenu.vue', () => {
     expect(screen.queryByText('Embed…')).toBeNull()
   })
 
+  it('does not have an option to embed for guests', async () => {
+    h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValue([])
+
+    h.actingAsUser(h.factory('user').make({ role: 'guest' }) as CurrentUser).render(Component, {
+      props: { album: h.factory('album').make() },
+    })
+
+    expect(screen.queryByText('Embed…')).toBeNull()
+  })
+
   it('links to MusicBrainz', async () => {
     commonStore.state.uses_musicbrainz = true
     const openMock = h.mock(window, 'open')

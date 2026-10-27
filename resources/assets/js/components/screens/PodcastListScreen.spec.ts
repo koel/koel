@@ -71,4 +71,13 @@ describe('podcastListScreen.vue', () => {
       expect(emptyState.textContent).toContain('No favorite podcasts')
     })
   })
+
+  it('does not let guests add podcasts', async () => {
+    h.actingAsUser(h.factory('user').make({ role: 'guest' }) as CurrentUser)
+    h.mock(podcastStore, 'fetchAll')
+    podcastStore.state.podcasts = []
+    await renderComponent()
+
+    expect(screen.queryByRole('button', { name: 'Add a podcast' })).toBeNull()
+  })
 })
