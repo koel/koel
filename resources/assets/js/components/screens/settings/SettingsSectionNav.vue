@@ -35,6 +35,7 @@
           type="button"
           @click="selectedId = section.id"
         >
+          <component :is="section.icon" v-if="section.icon" :size="16" aria-hidden="true" class="shrink-0" />
           {{ section.label }}
         </button>
       </template>
@@ -108,7 +109,7 @@ const moveSelectionWithKeys = (event: KeyboardEvent) => {
 }
 
 .section {
-  @apply px-6 py-2.5 text-left text-k-fg-70 cursor-pointer border-y border-y-transparent;
+  @apply flex items-center gap-3 px-6 py-2.5 text-left text-k-fg-70 cursor-pointer border-y border-y-transparent;
 
   &:hover {
     @apply text-k-fg bg-k-fg-5;

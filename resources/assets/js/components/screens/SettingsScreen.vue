@@ -33,6 +33,19 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  BadgeCheckIcon,
+  CloudOffIcon,
+  PaletteIcon,
+  PlugIcon,
+  QrCodeIcon,
+  BlocksIcon,
+  ShieldCheckIcon,
+  SlidersHorizontalIcon,
+  SparklesIcon,
+  UserIcon,
+  UsersIcon,
+} from 'lucide-vue-next'
 import type { Component } from 'vue'
 import { computed, ref } from 'vue'
 import { Filter } from '@/config/hooks'
@@ -46,6 +59,8 @@ import { usePageTitle } from '@/composables/usePageTitle'
 import { defineAsyncComponent } from '@/utils/helpers'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
+import MusicFolderIcon from '@/components/ui/icons/MusicFolderIcon.vue'
+import SubmarineIcon from '@/components/ui/icons/SubmarineIcon.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import SettingsSectionNav from '@/components/screens/settings/SettingsSectionNav.vue'
 import MediaPathSettingGroup from '@/components/screens/settings/MediaPathSettingGroup.vue'
@@ -57,6 +72,7 @@ import UsersSettingGroup from '@/components/screens/settings/UsersSettingGroup.v
 export interface SettingsTab {
   id: string
   label: string
+  icon?: Component
   component: Component
   props?: Record<string, unknown>
 }
@@ -87,14 +103,14 @@ const { currentUserCan } = usePolicies()
 const panelId = 'settingsPanel'
 
 const accountSections: ProfileTab[] = [
-  { id: 'profile', label: 'Profile', component: ProfileSection },
-  { id: 'preferences', label: 'Preferences', component: PreferencesForm },
-  { id: 'themes', label: 'Themes', component: ThemePreferences },
-  { id: 'integrations', label: 'Integrations', component: Integrations },
-  { id: 'offline', label: 'Offline', component: OfflineStorage },
-  { id: 'subsonic', label: 'Subsonic', component: SubsonicCredentials },
-  { id: 'security', label: 'Security', component: SecuritySection },
-  { id: 'qr', label: 'QR Login', component: QRLogin },
+  { id: 'profile', label: 'Profile', icon: UserIcon, component: ProfileSection },
+  { id: 'preferences', label: 'Preferences', icon: SlidersHorizontalIcon, component: PreferencesForm },
+  { id: 'themes', label: 'Themes', icon: PaletteIcon, component: ThemePreferences },
+  { id: 'integrations', label: 'Integrations', icon: PlugIcon, component: Integrations },
+  { id: 'offline', label: 'Offline', icon: CloudOffIcon, component: OfflineStorage },
+  { id: 'subsonic', label: 'Subsonic', icon: SubmarineIcon, component: SubsonicCredentials },
+  { id: 'security', label: 'Security', icon: ShieldCheckIcon, component: SecuritySection },
+  { id: 'qr', label: 'QR Login', icon: QrCodeIcon, component: QRLogin },
   ...applyFilters<ProfileTab[]>(Filter.ACCOUNT_SETTINGS_TABS, []),
 ]
 
@@ -106,20 +122,30 @@ const getInstallSettingSections = (): SettingsTab[] => {
   const usesLocalStorage = commonStore.state.storage_driver === 'local'
 
   return [
-    ...(usesLocalStorage ? [{ id: 'media-path', label: 'Media Path', component: MediaPathSettingGroup }] : []),
+    ...(usesLocalStorage
+      ? [{ id: 'media-path', label: 'Media Path', icon: MusicFolderIcon, component: MediaPathSettingGroup }]
+      : []),
     ...(isPlus.value
       ? [
-          { id: 'branding', label: 'Branding', component: BrandingSettingGroup, props: { currentBranding } },
-          { id: 'ai', label: 'AI', component: AiSettingGroup },
+          {
+            id: 'branding',
+            label: 'Branding',
+            icon: BadgeCheckIcon,
+            component: BrandingSettingGroup,
+            props: { currentBranding },
+          },
+          { id: 'ai', label: 'AI', icon: SparklesIcon, component: AiSettingGroup },
         ]
       : []),
-    { id: 'services', label: 'Services', component: ServicesSettingGroup },
+    { id: 'services', label: 'Services', icon: BlocksIcon, component: ServicesSettingGroup },
   ]
 }
 
 const getServerSections = (): SettingsTab[] =>
   applyFilters<SettingsTab[]>(Filter.SERVER_SETTINGS_TABS, [
-    ...(currentUserCan.manageUsers() ? [{ id: 'users', label: 'Users', component: UsersSettingGroup }] : []),
+    ...(currentUserCan.manageUsers()
+      ? [{ id: 'users', label: 'Users', icon: UsersIcon, component: UsersSettingGroup }]
+      : []),
     ...getInstallSettingSections(),
   ])
 
