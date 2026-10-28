@@ -32,7 +32,7 @@
 
     <footer>
       <Btn class="btn-update" type="submit">Update</Btn>
-      <Btn variant="ghost" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
+      <Btn variant="neutral" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>

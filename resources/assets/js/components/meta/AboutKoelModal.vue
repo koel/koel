@@ -54,7 +54,7 @@
     </main>
 
     <footer>
-      <Btn variant="destructive" data-testid="close-modal-btn" rounded @click.prevent="close">Close</Btn>
+      <Btn variant="neutral" data-testid="close-modal-btn" rounded @click.prevent="close">Close</Btn>
     </footer>
   </div>
 </template>

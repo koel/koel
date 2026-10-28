@@ -14,7 +14,7 @@
     </main>
 
     <footer class="border-t-k-fg-5">
-      <Btn @click.prevent="close">Close</Btn>
+      <Btn variant="neutral" @click.prevent="close">Close</Btn>
     </footer>
   </div>
 </template>

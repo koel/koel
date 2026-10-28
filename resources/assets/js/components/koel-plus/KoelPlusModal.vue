@@ -23,7 +23,7 @@
 
       <div v-if="showingActivateLicenseForm" class="flex gap-3" data-testid="activateForm">
         <ActivateLicenseForm v-if="showingActivateLicenseForm" class="flex-1" />
-        <Btn variant="ghost" class="cancel" @click.prevent="hideActivateLicenseForm">Cancel</Btn>
+        <Btn variant="neutral" class="cancel" @click.prevent="hideActivateLicenseForm">Cancel</Btn>
       </div>
 
       <div class="text-[0.9rem] text-k-fg-70">
@@ -32,7 +32,7 @@
     </main>
 
     <footer class="w-full text-center bg-black/20">
-      <Btn variant="destructive" data-testid="close-modal-btn" rounded @click.prevent="close">Close</Btn>
+      <Btn variant="neutral" data-testid="close-modal-btn" rounded @click.prevent="close">Close</Btn>
     </footer>
   </div>
 </template>

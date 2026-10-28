@@ -50,7 +50,7 @@
 
     <footer>
       <Btn type="submit">Add</Btn>
-      <Btn type="button" variant="ghost" @click.prevent="maybeClose">Cancel</Btn>
+      <Btn type="button" variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>

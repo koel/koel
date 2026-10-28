@@ -22,7 +22,7 @@
 
     <footer>
       <Btn type="submit">Save</Btn>
-      <Btn variant="ghost" :disabled="loading" @click.prevent="maybeClose">Cancel</Btn>
+      <Btn variant="neutral" :disabled="loading" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>

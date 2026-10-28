@@ -34,7 +34,7 @@
               {{ playButtonLabel }}
             </Btn>
             <BtnGroup uppercase>
-              <Btn variant="success" v-if="episodes" @click.prevent="refresh">
+              <Btn variant="neutral" v-if="episodes" @click.prevent="refresh">
                 <Icon :icon="faRotateRight" fixed-width />
                 <span class="sr-only">Refresh Podcast</span>
               </Btn>

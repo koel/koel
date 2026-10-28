@@ -13,7 +13,7 @@
         />
         <div class="fixed top-6 right-6 flex flex-1 gap-2">
           <Btn variant="success" @click.prevent="crop">Crop</Btn>
-          <Btn variant="ghost" @click.prevent="emits('cancel')">Cancel</Btn>
+          <Btn variant="neutral" @click.prevent="emits('cancel')">Cancel</Btn>
         </div>
       </div>
     </div>
