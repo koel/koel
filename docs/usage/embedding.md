@@ -23,7 +23,7 @@ track(s) without having to log in.
 :::tip Previews <PlusBadge />
 By default, Preview mode still sends the full song and stops playback after 30 seconds. To send only a 30-second clip,
 set `PREVIEWS_ON_SCAN=true` in your `.env` file. Koel then makes a clip of each song as it's scanned or uploaded. For
-songs already in your library, run [`koel:create-previews`](../cli-commands#koel-create-previews) once.
+songs already in your library, run [`koel:create-song-previews`](../cli-commands#koel-create-song-previews) once.
 :::
 
 :::warning Legal Notice
