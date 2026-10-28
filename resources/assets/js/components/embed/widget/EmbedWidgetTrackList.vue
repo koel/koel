@@ -1,6 +1,6 @@
 <template>
-  <main class="relative flex flex-col overflow-scroll flex-1">
-    <div class="track-list-wrap relative flex flex-col flex-1 overflow-auto p-2">
+  <main class="relative flex flex-col overflow-auto flex-1">
+    <div class="track-list-wrap relative flex flex-col flex-1 overflow-auto">
       <VirtualScroller v-slot="{ item }: { item: PlayableRow }" :item-height="64" :items="rows">
         <TrackItem :key="item.playable.id" :item :preview @play="emit('play', item.playable)" />
       </VirtualScroller>
