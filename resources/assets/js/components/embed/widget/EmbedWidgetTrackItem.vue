@@ -2,7 +2,7 @@
   <div>
     <article
       :class="{ playing, selected: item.selected }"
-      class="playable-list-item group gap-4 px-4"
+      class="playable-list-item group gap-4 px-6"
       data-testid="playable-embed-item"
       tabindex="0"
       @dblclick.prevent.stop="play"
@@ -21,7 +21,7 @@
         <span class="title text-k-fg">{{ playable.title }}</span>
         <span>{{ artist }} - {{ album }}</span>
       </span>
-      <span class="font-mono">{{ fmtLength }}</span>
+      <span class="tabular-nums">{{ fmtLength }}</span>
     </article>
   </div>
 </template>
