@@ -5,7 +5,12 @@
         <AudioPlayer ref="player" :playables="embed.playables" :preview="options.preview" />
       </template>
     </Banner>
-    <TrackList v-if="showTrackList" :playables="embed.playables" @play="onItemPlayRequested" />
+    <TrackList
+      v-if="showTrackList"
+      :playables="embed.playables"
+      :preview="options.preview"
+      @play="onItemPlayRequested"
+    />
   </section>
 
   <ErrorMessage v-else-if="error" />

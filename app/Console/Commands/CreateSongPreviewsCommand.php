@@ -8,11 +8,11 @@ use App\Repositories\SongRepository;
 use Illuminate\Console\Command;
 use Illuminate\Container\Attributes\Config;
 
-class CreatePreviewsCommand extends Command
+class CreateSongPreviewsCommand extends Command
 {
-    protected $signature = 'koel:create-previews';
+    protected $signature = 'koel:create-song-previews';
 
-    protected $description = 'Create 30-second previews of songs that do not have one yet, for embeds to play.';
+    protected $description = 'Create 30-second previews of songs that do not have one yet, for embeds in Preview mode.';
 
     public function __construct(
         private readonly SongRepository $songRepository,

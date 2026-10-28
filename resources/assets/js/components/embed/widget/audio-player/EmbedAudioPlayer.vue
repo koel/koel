@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import { EMBED_PREVIEW_MAX_SECONDS } from '@/config/audio'
 import { computed, onMounted, ref, toRefs } from 'vue'
 import { useThrottleFn } from '@vueuse/core'
 import { secondsToHis } from '@/utils/formatters'
@@ -109,7 +110,7 @@ const playNext = () => (nextPlayable.value ? play(nextPlayable.value) : stop())
 
 const setupAudioEvents = (audio: HTMLAudioElement) => {
   audio.addEventListener('loadedmetadata', () => {
-    maxDuration.value = preview.value ? Math.min(audio.duration, 30) : audio.duration
+    maxDuration.value = preview.value ? Math.min(audio.duration, EMBED_PREVIEW_MAX_SECONDS) : audio.duration
     audio.volume = 0.75
   })
 

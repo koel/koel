@@ -32,20 +32,23 @@ import { computed, toRefs } from 'vue'
 import { getPlayableProp } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
 import { secondsToHis } from '@/utils/formatters'
+import { EMBED_PREVIEW_MAX_SECONDS } from '@/config/audio'
 
 import SoundBars from '@/components/ui/SoundBars.vue'
 import PlayableThumbnail from '@/components/playable/PlayableThumbnail.vue'
 
-const props = defineProps<{ item: PlayableRow }>()
+const props = defineProps<{ item: PlayableRow; preview: boolean }>()
 
 const emit = defineEmits<{ (e: 'play', playable: Playable): void }>()
 
-const { item } = toRefs(props)
+const { item, preview } = toRefs(props)
 
 const playable = computed<Playable>(() => item.value.playable)
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 
-const fmtLength = secondsToHis(playable.value.preview_length ?? playable.value.length)
+const fmtLength = computed(() =>
+  secondsToHis(preview.value ? Math.min(playable.value.length, EMBED_PREVIEW_MAX_SECONDS) : playable.value.length),
+)
 const artist = computed(() => getPlayableProp(playable.value, 'artist_name', 'podcast_author'))
 const album = computed(() => getPlayableProp(playable.value, 'album_name', 'podcast_title'))
 

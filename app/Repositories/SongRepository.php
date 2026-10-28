@@ -862,13 +862,11 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         throw_unless((bool) $embed->embeddable, new EmbeddableNotFoundException());
 
-        $playables = match (EmbeddableType::from($embed->embeddable_type)) {
+        return match (EmbeddableType::from($embed->embeddable_type)) {
             EmbeddableType::ALBUM => $this->getByAlbum($embed->embeddable, $embed->user),
             EmbeddableType::ARTIST => $this->getByArtist($embed->embeddable, $embed->user),
             EmbeddableType::PLAYLIST => $this->getByPlaylist($embed->embeddable, $embed->user),
             EmbeddableType::PLAYABLE => $this->getMany(ids: [$embed->embeddable->getKey()], scopedUser: $embed->user),
         };
-
-        return $playables->load('preview');
     }
 }

@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tests\TestCase;
 
-class CreatePreviewsCommandTest extends TestCase
+class CreateSongPreviewsCommandTest extends TestCase
 {
     #[Test]
     public function createPreviewsForSongsWithoutOne(): void
@@ -27,7 +27,7 @@ class CreatePreviewsCommandTest extends TestCase
         Dispatcher::expects('dispatch')->andThrow(new RuntimeException('ffmpeg failed'));
 
         $this
-            ->artisan('koel:create-previews')
+            ->artisan('koel:create-song-previews')
             ->expectsTable(['Result', 'Songs'], [
                 ['Created or queued',                 3],
                 ['Failed',                            1],
@@ -43,6 +43,9 @@ class CreatePreviewsCommandTest extends TestCase
 
         Dispatcher::expects('dispatch')->never();
 
-        $this->artisan('koel:create-previews')->expectsOutput('Every song already has a preview.')->assertSuccessful();
+        $this
+            ->artisan('koel:create-song-previews')
+            ->expectsOutput('Every song already has a preview.')
+            ->assertSuccessful();
     }
 }
