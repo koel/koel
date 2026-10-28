@@ -69,6 +69,7 @@ export default defineConfig({
         items: [
           { text: 'Music Discovery', link: '/usage/music-discovery' },
           { text: 'Streaming Music', link: '/usage/streaming' },
+          { text: 'FFmpeg', link: '/usage/ffmpeg' },
           { text: 'Using the Web Interface', link: '/usage/web-interface' },
           { text: 'Playlists', link: '/usage/playlists' },
           { text: 'Instant Search', link: '/usage/search' },

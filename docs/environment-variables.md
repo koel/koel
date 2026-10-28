@@ -110,7 +110,7 @@ Required when `STORAGE_DRIVER=webdav`.
 | `PREVIEWS_ON_SCAN` | Whether to create a 30-second, lower-quality preview of each song as soon as it's scanned or uploaded. Embeds play the preview instead of the full song when one exists. To create previews for songs already in your library, run [`koel:create-previews`](cli-commands#koel-create-previews). | `false` |
 | `TRANSCODE_BIT_RATE` | The bit rate (in kbps) for transcoded audio. Higher values mean better quality but slower streaming. | `128` |
 | `TRANSCODE_AAC_FAST` | Whether to use FFmpeg's faster AAC coding algorithm. Set to `false` to use its default AAC coder. Has no effect when FFmpeg has the `libfdk_aac` encoder, which Koel then uses instead. | `true` |
-| `FFMPEG_PATH` | The full path to the ffmpeg binary. Automatically detected if left empty. | _(auto-detected)_ |
+| `FFMPEG_PATH` | The full path to the ffmpeg binary. Automatically detected if left empty. See [FFmpeg](usage/ffmpeg). | _(auto-detected)_ |
 | `TRANSCODE_TIMEOUT` | The maximum time in seconds allowed for transcoding a single file. Increase for very large files. `0` disables the timeout. | `300` |
 
 ## Downloading
