@@ -6,6 +6,7 @@ use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\Integrations\MusicBrainzService;
+use App\Values\EmbedOptions;
 use App\Values\Transcoding\PreviewSection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -166,7 +167,7 @@ class SongResource extends JsonResource
                 'options' => $request->route('options'),
             ]),
             'preview_length' => $this->when(
-                $this->song->preview !== null,
+                $this->song->preview !== null && EmbedOptions::fromRequest($request)->preview,
                 fn (): float => PreviewSection::make($this->song->length)->duration,
             ),
         ];

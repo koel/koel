@@ -20,9 +20,10 @@ Once you're happy with the embed, click the "Copy Code" button to copy the embed
 paste it anywhere you want, e.g., in a blog post, and visitors will see the embed and be able to play the included
 track(s) without having to log in.
 
-:::tip Previews
-To keep embeds from playing full songs, set `PREVIEWS_ON_SCAN=true` in your `.env` file and run
-[`koel:create-previews`](../cli-commands#koel-create-previews). Embeds then play a 30-second preview of each song instead.
+:::tip Previews <PlusBadge />
+For a lighter Preview mode, set `PREVIEWS_ON_SCAN=true` in your `.env` file and run
+[`koel:create-previews`](../cli-commands#koel-create-previews). Embeds in Preview mode then stream a 30-second,
+lower-quality preview of each song instead of the full file.
 :::
 
 :::warning Legal Notice

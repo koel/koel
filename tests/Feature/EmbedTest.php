@@ -59,20 +59,16 @@ class EmbedTest extends TestCase
     }
 
     #[Test]
-    public function getPayloadWithThePreviewLengthOfSongsThatHaveAPreview(): void
+    public function getPayloadWithoutPreviewLengthOnCommunityEvenInPreviewMode(): void
     {
         $album = Album::factory()->createOne();
-        $songWithPreview = Song::factory()->for($album)->createOne(['length' => 200, 'track' => 1]);
-        $songWithoutPreview = Song::factory()->for($album)->createOne(['track' => 2]);
-        Transcode::factory()->asPreview()->for($songWithPreview)->createOne();
+        $song = Song::factory()->for($album)->createOne(['length' => 200]);
+        Transcode::factory()->asPreview()->for($song)->createOne();
         $embed = Embed::factory()->for($album->user)->for($album, 'embeddable')->createOne();
 
-        $response = $this->getJson("api/embeds/{$embed->id}/" . EmbedOptions::make())->assertSuccessful();
+        $response = $this->getJson("api/embeds/{$embed->id}/" . EmbedOptions::make(preview: true))->assertSuccessful();
 
-        $playables = collect($response->json('embed.playables'))->keyBy('id');
-
-        self::assertSame(30, $playables->get($songWithPreview->id)['preview_length']);
-        self::assertArrayNotHasKey('preview_length', $playables->get($songWithoutPreview->id));
+        self::assertArrayNotHasKey('preview_length', $response->json('embed.playables.0'));
     }
 
     #[Test]
