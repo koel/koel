@@ -41,9 +41,7 @@ The transcode quality can be controlled via `TRANSCODE_BIT_RATE`. The default va
 be transcoded to 128 kbps AAC. You can set it to a higher value, such as `192`, to improve the audio quality at the cost
 of a larger file size. Practically, it's almost impossible to differentiate between 320 kbps AAC and lossless audio.
 
-If your FFmpeg was built with Fraunhofer's `libfdk_aac` encoder (which needs `--enable-nonfree` when building FFmpeg),
-Koel uses it automatically, as it gives better quality than FFmpeg's own AAC encoder at the same bit rate. In our tests
-it was also faster, even than FFmpeg's encoder with `TRANSCODE_AAC_FAST` on.
+For better quality at the same bit rate, see [Better AAC Quality](./ffmpeg#better-aac-quality).
 
 As transcoding can take some time (albeit typically several seconds) and resources, Koel will cache the transcoded
 files for later use. You should also expect a slight delay when you first play a song that requires transcoding, as

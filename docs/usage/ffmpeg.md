@@ -33,6 +33,12 @@ brew install ffmpeg
 
 For other systems, see [FFmpeg's download page](https://ffmpeg.org/download.html).
 
+### Better AAC Quality
+
+If your FFmpeg was built with Fraunhofer's `libfdk_aac` encoder (which needs `--enable-nonfree` when building FFmpeg),
+Koel uses it automatically. It gives better quality than FFmpeg's own AAC encoder at the same bit rate, and in our tests
+it was also faster, even than FFmpeg's encoder with `TRANSCODE_AAC_FAST` on.
+
 ## Pointing Koel to FFmpeg
 
 Koel finds FFmpeg automatically. If it doesn't, set `FFMPEG_PATH` in your `.env` file to the full path of the `ffmpeg`
