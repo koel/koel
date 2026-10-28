@@ -4,14 +4,14 @@ description: What FFmpeg enables in Koel, and how to install it and point Koel t
 
 # FFmpeg
 
-[FFmpeg](https://ffmpeg.org/) is a free tool that converts and analyzes audio. Koel works without it, but with it you
-also get:
+[FFmpeg](https://ffmpeg.org/) is the most popular and powerful multimedia toolkit out there: it records, converts, and
+streams just about any audio or video format, and powers countless media apps. Though not a
+requirement for Koel to function, it unlocks these features:
 
 * **Every format plays:** songs in formats browsers can't play, such as APE or WMA, are
   [converted on the fly](./streaming#forced-transcoding).
 * **Smaller streams:** [FLAC transcoding](./streaming#flac-transcoding), [transcoding on mobile](./streaming#transcoding-on-mobile),
   and lower bit rates for [Subsonic apps](./subsonic).
-* **No wait on the first play:** transcode songs [as soon as they're scanned](./streaming#lossless-transcoding).
 * **Song previews:** 30-second clips for [embeds](./embedding) in Preview mode <PlusBadge />.
 * **Even volume and waveforms:** [volume normalization and waveforms](../plus/volume-normalization) <PlusBadge />.
 
