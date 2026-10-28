@@ -17,8 +17,9 @@ class StreamEmbedController extends Controller
 
     public function __invoke(Request $request, Embed $embed, Song $song)
     {
-        $playsPreview = $song->preview && EmbedOptions::fromRequest($request)->preview;
-        $adapter = $playsPreview ? $this->previewStreamerAdapter : null;
+        $adapter = $song->preview && EmbedOptions::fromRequest($request)->preview
+            ? $this->previewStreamerAdapter
+            : null;
 
         return (new Streamer(song: $song, adapter: $adapter))->stream();
     }
