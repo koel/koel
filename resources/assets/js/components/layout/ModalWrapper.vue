@@ -1,7 +1,7 @@
 <template>
   <dialog
     ref="dialog"
-    class="m-auto text-k-fg min-w-full md:min-w-[480px] border-0 p-0 md:rounded-xl overflow-visible bg-k-bg backdrop:bg-black/70"
+    class="m-auto text-k-fg min-w-full md:min-w-[480px] border-0 md:border md:border-k-fg-10 md:shadow-2xl p-0 md:rounded-xl overflow-visible bg-k-bg backdrop:bg-black/70"
     @cancel.prevent="forwardEscapeToModalContent"
     @close="closeIfDismissedNatively"
     @keydown.esc="handleDialogEscape"
