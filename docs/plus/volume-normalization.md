@@ -10,8 +10,7 @@ shows each song's waveform while it plays, so you can see the quiet and loud par
 
 ## Requirements
 
-Both features need [FFmpeg](https://ffmpeg.org/) installed on your server. Koel finds it automatically; if it doesn't,
-set `FFMPEG_PATH` in your `.env` file to the full path of the `ffmpeg` binary.
+Both features need [FFmpeg](../usage/ffmpeg).
 
 ## Setup
 
