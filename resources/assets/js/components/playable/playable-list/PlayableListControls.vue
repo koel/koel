@@ -56,7 +56,7 @@
           </Btn>
         </template>
 
-        <Btn variant="success" v-if="showAddToButton" ref="addToButton">
+        <Btn variant="neutral" v-if="showAddToButton" ref="addToButton">
           {{ showingAddToMenu ? 'Cancel' : 'Add To…' }}
         </Btn>
 
@@ -64,7 +64,7 @@
       </BtnGroup>
 
       <BtnGroup v-if="config.refresh">
-        <Btn variant="success" v-if="config.refresh" @click.prevent="refresh">
+        <Btn variant="neutral" v-if="config.refresh" @click.prevent="refresh">
           <Icon :icon="faRotateRight" fixed-width />
           <span class="sr-only">Refresh</span>
         </Btn>

@@ -9,7 +9,7 @@
       required
     />
     <Btn type="submit" variant="ghost">Save</Btn>
-    <Btn type="button" variant="ghost" @click.prevent="maybeClose">Cancel</Btn>
+    <Btn type="button" variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
   </form>
 </template>
 

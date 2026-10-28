@@ -37,7 +37,7 @@
 
     <footer>
       <Btn type="submit">Save</Btn>
-      <Btn variant="ghost" @click.prevent="maybeClose">Cancel</Btn>
+      <Btn variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>

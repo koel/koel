@@ -20,7 +20,7 @@
 
       <div class="flex gap-2">
         <Btn type="submit">Submit</Btn>
-        <Btn type="button" variant="ghost" @click.prevent="cancel">Cancel</Btn>
+        <Btn type="button" variant="neutral" @click.prevent="cancel">Cancel</Btn>
       </div>
     </form>
 

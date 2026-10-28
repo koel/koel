@@ -23,7 +23,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-type Variant = 'success' | 'destructive' | 'highlight' | 'ghost'
+type Variant = 'success' | 'destructive' | 'highlight' | 'ghost' | 'neutral'
 type Size = 'small' | 'large'
 
 withDefaults(defineProps<{ tag?: 'button' | 'a'; variant?: Variant; size?: Size }>(), {
@@ -63,6 +63,10 @@ a {
 
   &[data-variant='success'] {
     @apply bg-k-success text-white;
+  }
+
+  &[data-variant='neutral'] {
+    @apply bg-k-fg-10 text-k-fg;
   }
 
   &[data-variant='ghost'] {

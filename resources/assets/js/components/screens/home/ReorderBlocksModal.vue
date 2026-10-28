@@ -28,7 +28,7 @@
     </main>
 
     <footer>
-      <Btn @click.prevent="close">Close</Btn>
+      <Btn variant="neutral" @click.prevent="close">Close</Btn>
     </footer>
   </div>
 </template>
