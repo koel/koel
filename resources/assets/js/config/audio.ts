@@ -86,3 +86,5 @@ export const equalizerPresets: EqualizerPreset[] = [
 ]
 
 export const frequencies = [60, 170, 310, 600, 1_000, 3_000, 6_000, 12_000, 14_000, 16_000]
+
+export const EMBED_PREVIEW_MAX_SECONDS = 30

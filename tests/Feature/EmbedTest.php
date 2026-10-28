@@ -4,10 +4,8 @@ namespace Tests\Feature;
 
 use App\Http\Resources\EmbedOptionsResource;
 use App\Http\Resources\EmbedResource;
-use App\Models\Album;
 use App\Models\Embed;
 use App\Models\Song;
-use App\Models\Transcode;
 use App\Values\EmbedOptions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -56,19 +54,6 @@ class EmbedTest extends TestCase
 
         // getJson() instead of getAs() to make sure it passes without authentication
         $this->getJson("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonStructure($jsonStructure);
-    }
-
-    #[Test]
-    public function getPayloadWithoutPreviewLengthOnCommunityEvenInPreviewMode(): void
-    {
-        $album = Album::factory()->createOne();
-        $song = Song::factory()->for($album)->createOne(['length' => 200]);
-        Transcode::factory()->asPreview()->for($song)->createOne();
-        $embed = Embed::factory()->for($album->user)->for($album, 'embeddable')->createOne();
-
-        $response = $this->getJson("api/embeds/{$embed->id}/" . EmbedOptions::make(preview: true))->assertSuccessful();
-
-        self::assertArrayNotHasKey('preview_length', $response->json('embed.playables.0'));
     }
 
     #[Test]

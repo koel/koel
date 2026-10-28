@@ -10,7 +10,6 @@ use App\Models\Artist;
 use App\Models\Embed;
 use App\Models\Song;
 use App\Models\Theme;
-use App\Models\Transcode;
 use App\Models\User;
 use App\Services\Playlist\PlaylistCollaborationService;
 use App\Values\EmbedOptions;
@@ -184,35 +183,5 @@ class EmbedTest extends PlusTestCase
         app(PlaylistCollaborationService::class)->removeCollaborator($playlist->refresh(), $collaborator);
 
         $this->getJson("api/embeds/{$embed->id}/$options")->assertNotFound();
-    }
-
-    #[Test]
-    public function getPayloadWithThePreviewLengthInPreviewMode(): void
-    {
-        $album = Album::factory()->createOne();
-        $songWithPreview = Song::factory()->for($album)->createOne(['length' => 200, 'track' => 1]);
-        $songWithoutPreview = Song::factory()->for($album)->createOne(['track' => 2]);
-        Transcode::factory()->asPreview()->for($songWithPreview)->createOne();
-        $embed = Embed::factory()->for($album->user)->for($album, 'embeddable')->createOne();
-
-        $response = $this->getJson("api/embeds/{$embed->id}/" . EmbedOptions::make(preview: true))->assertSuccessful();
-
-        $playables = collect($response->json('embed.playables'))->keyBy('id');
-
-        self::assertSame(30, $playables->get($songWithPreview->id)['preview_length']);
-        self::assertArrayNotHasKey('preview_length', $playables->get($songWithoutPreview->id));
-    }
-
-    #[Test]
-    public function getPayloadWithoutPreviewLengthOutsidePreviewMode(): void
-    {
-        $album = Album::factory()->createOne();
-        $song = Song::factory()->for($album)->createOne(['length' => 200]);
-        Transcode::factory()->asPreview()->for($song)->createOne();
-        $embed = Embed::factory()->for($album->user)->for($album, 'embeddable')->createOne();
-
-        $response = $this->getJson("api/embeds/{$embed->id}/" . EmbedOptions::make())->assertSuccessful();
-
-        self::assertArrayNotHasKey('preview_length', $response->json('embed.playables.0'));
     }
 }

@@ -6,8 +6,6 @@ use App\Facades\License;
 use App\Models\Song;
 use App\Models\User;
 use App\Services\Integrations\MusicBrainzService;
-use App\Values\EmbedOptions;
-use App\Values\Transcoding\PreviewSection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
@@ -166,10 +164,6 @@ class SongResource extends JsonResource
                 'embed' => $request->route('embed')->id, // @phpstan-ignore-line
                 'options' => $request->route('options'),
             ]),
-            'preview_length' => $this->when(
-                $this->song->preview !== null && EmbedOptions::fromRequest($request)->preview,
-                fn (): float => PreviewSection::make($this->song->length)->duration,
-            ),
         ];
     }
 }
