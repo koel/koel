@@ -95,7 +95,7 @@ php artisan koel:clean-up-temp-files
 ### `koel:create-song-previews`
 
 Create 30-second previews of songs that don't have one yet. Embeds in Preview mode <PlusBadge /> play these instead of the full songs.
-Requires [FFmpeg](./usage/streaming#lossless-transcoding).
+Requires [FFmpeg](./usage/ffmpeg).
 
 #### Usage
 
