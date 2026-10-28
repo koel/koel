@@ -25,6 +25,9 @@ import ProgressBar from '@/components/embed/widget/audio-player/EmbedAudioPlayer
 import PlayButton from '@/components/embed/widget/audio-player/EmbedAudioPlayerPlayButton.vue'
 import NextButton from '@/components/embed/widget/audio-player/EmbedAudioPlayerNextButton.vue'
 
+const FULL_VOLUME = 0.75
+const PREVIEW_FADE_IN_SECONDS = 3
+
 const props = defineProps<{ playables: Playable[]; preview: boolean }>()
 
 const { playables, preview } = toRefs(props)
@@ -111,7 +114,7 @@ const playNext = () => (nextPlayable.value ? play(nextPlayable.value) : stop())
 const setupAudioEvents = (audio: HTMLAudioElement) => {
   audio.addEventListener('loadedmetadata', () => {
     maxDuration.value = preview.value ? Math.min(audio.duration, EMBED_PREVIEW_MAX_SECONDS) : audio.duration
-    audio.volume = 0.75
+    audio.volume = preview.value ? 0 : FULL_VOLUME
   })
 
   audio.addEventListener('ended', () => playNext())
@@ -125,6 +128,12 @@ const setupAudioEvents = (audio: HTMLAudioElement) => {
       timeRemainingLabel.value = timeRemaining === 'NaN:NaN' ? '--:--' : `-${timeRemaining}`
 
       if (preview.value) {
+        if (audio.currentTime < PREVIEW_FADE_IN_SECONDS) {
+          audio.volume = FULL_VOLUME * (audio.currentTime / PREVIEW_FADE_IN_SECONDS)
+        } else if (audio.currentTime + 3 < maxDuration.value) {
+          audio.volume = FULL_VOLUME
+        }
+
         if (audio.currentTime + 3 >= maxDuration.value) {
           // Gradually decrease the volume once we're approaching the end of the sample.
           audio.volume = Math.max(0, audio.volume - 0.07)
