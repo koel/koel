@@ -35,17 +35,13 @@ storage service. A **pre-signed URL** is a secret, generated on-the-fly URL that
 ## Lossless Transcoding
 
 Koel supports transcoding your lossless audio to AAC, a format [widely supported](https://caniuse.com/?search=aac)
-by modern browsers. To enable this feature, you'll need to have [FFmpeg](https://ffmpeg.org/) installed on your server
-and set its executable path via the `FFMPEG_PATH` setting in the `.env` file. If you use the
-[Docker image](https://github.com/koel/docker/), this is already done for you.
+by modern browsers. This needs [FFmpeg](./ffmpeg).
 
 The transcode quality can be controlled via `TRANSCODE_BIT_RATE`. The default value is `128`, which means the audio will
 be transcoded to 128 kbps AAC. You can set it to a higher value, such as `192`, to improve the audio quality at the cost
 of a larger file size. Practically, it's almost impossible to differentiate between 320 kbps AAC and lossless audio.
 
-If your FFmpeg was built with Fraunhofer's `libfdk_aac` encoder (which needs `--enable-nonfree` when building FFmpeg),
-Koel uses it automatically, as it gives better quality than FFmpeg's own AAC encoder at the same bit rate. In our tests
-it was also faster, even than FFmpeg's encoder with `TRANSCODE_AAC_FAST` on.
+For better quality at the same bit rate, see [Better AAC Quality](./ffmpeg#better-aac-quality).
 
 As transcoding can take some time (albeit typically several seconds) and resources, Koel will cache the transcoded
 files for later use. You should also expect a slight delay when you first play a song that requires transcoding, as
@@ -75,8 +71,8 @@ Subsonic clients can ask for the original file, in any format, by passing `forma
 ### Forced Transcoding
 
 For audio formats that aren't [widely supported by browsers](https://caniuse.com/?search=audio%20format),
-such as APE or WMA, Koel will always resort to transcoding. If you upload files in such formats, make sure the FFmpeg
-setup and configuration (see above) are correct.
+such as APE or WMA, Koel will always resort to transcoding. If you upload files in such formats, make sure
+[FFmpeg](./ffmpeg) is set up.
 
 ### Transcoding on Mobile
 
