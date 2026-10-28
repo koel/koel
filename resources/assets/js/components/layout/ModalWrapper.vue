@@ -1,7 +1,7 @@
 <template>
   <dialog
     ref="dialog"
-    class="m-auto text-k-fg min-w-full md:min-w-[480px] border-0 p-0 md:rounded-md overflow-visible bg-k-bg backdrop:bg-black/70"
+    class="m-auto text-k-fg min-w-full md:min-w-[480px] border-0 md:border md:border-k-fg-10 md:shadow-2xl p-0 md:rounded-xl overflow-visible bg-k-bg backdrop:bg-black/70"
     @cancel.prevent="forwardEscapeToModalContent"
     @close="closeIfDismissedNatively"
     @keydown.esc="handleDialogEscape"
@@ -70,7 +70,7 @@ dialog {
     }
 
     > header {
-      @apply flex bg-k-fg-5;
+      @apply flex bg-k-fg-5 md:rounded-t-xl;
 
       h1 {
         @apply text-3xl leading-normal truncate;
@@ -78,7 +78,7 @@ dialog {
     }
 
     > footer {
-      @apply mt-0 bg-black/10 border-t border-k-fg-5 space-x-2 rounded-b-md;
+      @apply mt-0 bg-black/10 border-t border-k-fg-5 space-x-2 md:rounded-b-xl;
     }
   }
 }
