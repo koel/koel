@@ -21,9 +21,9 @@ paste it anywhere you want, e.g., in a blog post, and visitors will see the embe
 track(s) without having to log in.
 
 :::tip Previews <PlusBadge />
-For a lighter Preview mode, set `PREVIEWS_ON_SCAN=true` in your `.env` file and run
-[`koel:create-previews`](../cli-commands#koel-create-previews). Embeds in Preview mode then stream a 30-second,
-lower-quality preview of each song instead of the full file.
+By default, Preview mode still sends the full song and stops playback after 30 seconds. To send only a 30-second clip,
+set `PREVIEWS_ON_SCAN=true` in your `.env` file. Koel then makes a clip of each song as it's scanned or uploaded. For
+songs already in your library, run [`koel:create-previews`](../cli-commands#koel-create-previews) once.
 :::
 
 :::warning Legal Notice
