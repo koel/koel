@@ -130,6 +130,8 @@ const setupAudioEvents = (audio: HTMLAudioElement) => {
       if (preview.value) {
         if (audio.currentTime < PREVIEW_FADE_IN_SECONDS) {
           audio.volume = FULL_VOLUME * (audio.currentTime / PREVIEW_FADE_IN_SECONDS)
+        } else if (audio.currentTime + 3 < maxDuration.value) {
+          audio.volume = FULL_VOLUME
         }
 
         if (audio.currentTime + 3 >= maxDuration.value) {

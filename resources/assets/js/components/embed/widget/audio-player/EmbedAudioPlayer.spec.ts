@@ -34,6 +34,14 @@ describe('embedAudioPlayer.vue', () => {
     expect(audio.volume).toBeCloseTo(0.375)
   })
 
+  it('reaches full volume once a preview passes the fade-in', () => {
+    const audio = renderComponent(true)
+
+    playAt(audio, 3.1)
+
+    expect(audio.volume).toBe(0.75)
+  })
+
   it('starts a full song at full volume', () => {
     const audio = renderComponent(false)
 
