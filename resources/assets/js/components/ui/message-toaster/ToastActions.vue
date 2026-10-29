@@ -3,7 +3,7 @@
     <button
       v-for="action in actions"
       :key="action.label"
-      class="underline underline-offset-2 cursor-pointer"
+      class="cursor-pointer hover:opacity-70"
       type="button"
       @click="action.handler()"
     >
