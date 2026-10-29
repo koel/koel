@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Embed;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -29,7 +30,7 @@ class EmbedResource extends JsonResource
 
     public function __construct(
         private readonly Embed $embed,
-        private readonly JsonResource $embeddable,
+        private readonly Model $embeddable,
         private readonly ?Collection $playables = null,
     ) {
         parent::__construct($embed);
@@ -46,7 +47,7 @@ class EmbedResource extends JsonResource
             'embeddable_type' => $this->embed->embeddable_type->value,
             'embeddable_id' => $this->embed->embeddable_id,
             'user_id' => $this->unless($embedding, $this->embed->user->public_id),
-            'embeddable' => $this->embeddable,
+            'embeddable' => $this->embed->embeddable_type->resourceClass()::make($this->embeddable),
             'playables' => SongResourceCollection::make($this->whenNotNull($this->playables))->for($this->embed->user),
         ];
     }

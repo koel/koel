@@ -2,16 +2,13 @@
 
 namespace App\Services\Embed\Resolvers;
 
-use App\Http\Resources\AlbumResource;
 use App\Models\Album;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
 use App\Services\Embed\Resolvers\Contracts\Resolver;
-use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 /** @implements Resolver<Album> */
 class AlbumResolver implements Resolver
@@ -19,18 +16,11 @@ class AlbumResolver implements Resolver
     public function __construct(
         private readonly AlbumRepository $albumRepository,
         private readonly SongRepository $songRepository,
-        private readonly Gate $gate,
     ) {}
 
     public function findEmbeddable(?string $embeddableId, User $embedOwner): ?Album
     {
         return $this->albumRepository->findOneBy(['id' => $embeddableId]);
-    }
-
-    /** @param Album $embeddable */
-    public function canEmbed(User $user, Model $embeddable): bool
-    {
-        return $this->gate->forUser($user)->allows('embed', $embeddable);
     }
 
     /** @param Album $embeddable */
@@ -43,11 +33,5 @@ class AlbumResolver implements Resolver
     public function getEmbeddableId(Model $embeddable): string
     {
         return $embeddable->id;
-    }
-
-    /** @param Album $embeddable */
-    public function makeEmbeddableResource(Model $embeddable): JsonResource
-    {
-        return AlbumResource::make($embeddable);
     }
 }

@@ -22,29 +22,41 @@ class EmbedServiceTest extends TestCase
     }
 
     #[Test]
-    public function resolveEmbedReturnsTheSameEmbedForTheSameEmbeddable(): void
+    public function resolveEmbedForEmbeddableReturnsTheSameEmbedForTheSameEmbeddable(): void
     {
         $song = Song::factory()->createOne();
         $user = create_user();
 
-        $embed = $this->service->resolveEmbed(EmbeddableType::PLAYABLE, $song->id, $user);
+        $embed = $this->service->resolveEmbedForEmbeddable(EmbeddableType::PLAYABLE, $song, $user);
 
         self::assertSame(EmbeddableType::PLAYABLE, $embed->embeddable_type);
         self::assertSame($song->id, $embed->embeddable_id);
         self::assertTrue($embed->user->is($user));
-        self::assertTrue($embed->is($this->service->resolveEmbed(EmbeddableType::PLAYABLE, $song->id, $user)));
-        self::assertFalse($embed->is($this->service->resolveEmbed(EmbeddableType::PLAYABLE, $song->id, create_user())));
+        self::assertTrue($embed->is($this->service->resolveEmbedForEmbeddable(EmbeddableType::PLAYABLE, $song, $user)));
+        self::assertFalse($embed->is($this->service->resolveEmbedForEmbeddable(
+            EmbeddableType::PLAYABLE,
+            $song,
+            create_user(),
+        )));
     }
 
     #[Test]
-    public function resolveEmbedReturnsTheSameFavoritesEmbedWithoutAnEmbeddableId(): void
+    public function resolveEmbedForEmbeddableReturnsTheSameFavoritesEmbedWithoutAnEmbeddableId(): void
     {
         $user = create_user();
 
-        $embed = $this->service->resolveEmbed(EmbeddableType::FAVORITES, null, $user);
+        $embed = $this->service->resolveEmbedForEmbeddable(EmbeddableType::FAVORITES, $user, $user);
 
         self::assertNull($embed->embeddable_id);
-        self::assertTrue($embed->is($this->service->resolveEmbed(EmbeddableType::FAVORITES, null, $user)));
-        self::assertFalse($embed->is($this->service->resolveEmbed(EmbeddableType::FAVORITES, null, create_user())));
+        self::assertTrue($embed->is($this->service->resolveEmbedForEmbeddable(
+            EmbeddableType::FAVORITES,
+            $user,
+            $user,
+        )));
+        self::assertFalse($embed->is($this->service->resolveEmbedForEmbeddable(
+            EmbeddableType::FAVORITES,
+            $user,
+            create_user(),
+        )));
     }
 }
