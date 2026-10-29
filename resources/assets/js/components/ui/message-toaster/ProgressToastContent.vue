@@ -1,7 +1,7 @@
 <template>
   <span class="flex items-center gap-2">
     <ProgressRing :value class="size-4 shrink-0 text-k-highlight" />
-    <span>{{ label }} {{ Math.floor(value) }}%</span>
+    <span>{{ label }}</span>
   </span>
 </template>
 
