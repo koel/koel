@@ -7,11 +7,11 @@
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
-    <span v-if="pending" class="flex items-center px-3 bg-black/10" data-testid="toast-pending">
+    <span v-if="pending" class="icon-slot flex items-center px-3" data-testid="toast-pending">
       <ProgressRing v-if="message.progress" :value="message.progress()" class="size-4" />
       <Icon v-else :icon="faCircleNotch" spin />
     </span>
-    <button v-else class="flex items-center px-3 py-0 bg-black/10 cursor-pointer" type="button" @click="dismiss">
+    <button v-else class="icon-slot flex items-center px-3 py-0 cursor-pointer" type="button" @click="dismiss">
       <Icon :icon="hovering ? faTimesCircle : typeIcon" />
       <span class="sr-only">Dismiss</span>
     </button>
@@ -124,5 +124,13 @@ onBeforeUnmount(cancelAutoDismiss)
 
 .loading {
   @apply bg-k-bg text-k-fg border border-r-0 border-k-fg-10;
+}
+
+.icon-slot {
+  @apply bg-black/10;
+
+  .loading & {
+    @apply bg-k-fg-10;
+  }
 }
 </style>
