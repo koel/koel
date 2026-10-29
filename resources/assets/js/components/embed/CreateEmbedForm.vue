@@ -135,6 +135,9 @@ switch (embeddable.type) {
   case 'episodes':
     typeLabel = 'Podcast Episode'
     break
+  case 'favorites':
+    typeLabel = 'Favorites'
+    break
   default:
     throw new Error('Unknown embeddable type')
 }

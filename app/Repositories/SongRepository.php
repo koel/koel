@@ -867,6 +867,7 @@ class SongRepository extends Repository implements ScoutableRepository
             EmbeddableType::ARTIST => $this->getByArtist($embed->embeddable, $embed->user),
             EmbeddableType::PLAYLIST => $this->getByPlaylist($embed->embeddable, $embed->user),
             EmbeddableType::PLAYABLE => $this->getMany(ids: [$embed->embeddable->getKey()], scopedUser: $embed->user),
+            EmbeddableType::FAVORITES => $this->getFavorites(scopedUser: $embed->user),
         };
     }
 }

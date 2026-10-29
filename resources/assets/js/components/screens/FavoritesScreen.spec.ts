@@ -69,6 +69,7 @@ describe('favoritesScreen.vue', () => {
 
   it('hides the More Actions button when the menu would be empty', async () => {
     commonStore.state.allows_download = false
+    commonStore.state.allows_embedding = false
     await renderComponent()
 
     await waitFor(() => screen.getByTestId('song-list'))

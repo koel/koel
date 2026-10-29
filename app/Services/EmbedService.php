@@ -9,10 +9,11 @@ use App\Models\Embed;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
+use App\Models\UserFavorites;
 
 class EmbedService
 {
-    /** @param Album|Artist|Playlist|Song $embeddable */
+    /** @param Album|Artist|Playlist|Song|UserFavorites $embeddable */
     public function resolveEmbedForEmbeddable(Embeddable $embeddable, User $user): Embed
     {
         return $embeddable

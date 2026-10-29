@@ -15,6 +15,7 @@ use App\Models\Podcast;
 use App\Models\RadioStation;
 use App\Models\Song;
 use App\Models\User;
+use App\Models\UserFavorites;
 use App\Services\Contracts\Encyclopedia;
 use App\Services\DotenvEditor;
 use App\Services\Geolocation\Contracts\GeolocationService;
@@ -108,6 +109,7 @@ class AppServiceProvider extends ServiceProvider
             'podcast' => Podcast::class,
             'radio-station' => RadioStation::class,
             'playlist' => Playlist::class,
+            'favorites' => UserFavorites::class,
         ]);
 
         $this->app->bind(GeolocationService::class, static function (): GeolocationService {

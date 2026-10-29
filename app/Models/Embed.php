@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property Carbon $created_at
- * @property Song|Album|Artist|Playlist $embeddable
+ * @property Song|Album|Artist|Playlist|UserFavorites $embeddable
  * @property User $user
  * @property string $id
  * @property string $embeddable_id

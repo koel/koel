@@ -8,9 +8,11 @@ use App\Http\Resources\ThemeResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Embed;
+use App\Models\Favorite;
 use App\Models\Song;
 use App\Models\Theme;
 use App\Models\User;
+use App\Models\UserFavorites;
 use App\Services\Playlist\PlaylistCollaborationService;
 use App\Values\EmbedOptions;
 use Closure;
@@ -125,6 +127,10 @@ class EmbedTest extends PlusTestCase
                     return $playlist;
                 },
             ],
+            'favorites' => [
+                'favorites',
+                static fn (User $guest): Model => UserFavorites::query()->findOrFail($guest->public_id),
+            ],
         ];
     }
 
@@ -183,5 +189,29 @@ class EmbedTest extends PlusTestCase
         app(PlaylistCollaborationService::class)->removeCollaborator($playlist->refresh(), $collaborator);
 
         $this->getJson("api/embeds/{$embed->id}/$options")->assertNotFound();
+    }
+
+    #[Test]
+    public function favoritesEmbedSkipsSongsTheOwnerCannotAccess(): void
+    {
+        $user = create_user();
+        $accessibleSong = Song::factory()->for($user, 'owner')->createOne();
+        $otherUsersPrivateSong = Song::factory()->private()->createOne();
+
+        Favorite::factory()->for($user)->for($accessibleSong, 'favoriteable')->createOne();
+        Favorite::factory()->for($user)->for($otherUsersPrivateSong, 'favoriteable')->createOne();
+
+        $embed = Embed::factory()
+            ->for($user)
+            ->for(UserFavorites::query()->findOrFail($user->public_id), 'embeddable')
+            ->createOne();
+
+        $options = EmbedOptions::make();
+
+        $this
+            ->getJson("api/embeds/{$embed->id}/$options")
+            ->assertSuccessful()
+            ->assertJsonCount(1, 'embed.playables')
+            ->assertJsonPath('embed.playables.0.id', $accessibleSong->id);
     }
 }

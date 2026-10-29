@@ -9,6 +9,7 @@ use App\Models\Embed;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
+use App\Models\UserFavorites;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /** @extends Factory<Embed> */
@@ -31,8 +32,10 @@ class EmbedFactory extends Factory
         ];
     }
 
-    private static function createEmbeddableOwnedBy(EmbeddableType $type, User $user): Song|Playlist|Album|Artist
-    {
+    private static function createEmbeddableOwnedBy(
+        EmbeddableType $type,
+        User $user,
+    ): Song|Playlist|Album|Artist|UserFavorites {
         return match ($type) {
             EmbeddableType::PLAYABLE => Song::factory()->for($user, 'owner')->createOne(),
             EmbeddableType::PLAYLIST => tap(Playlist::factory()->createOne(), static function (Playlist $playlist) use (
@@ -43,6 +46,7 @@ class EmbedFactory extends Factory
             }),
             EmbeddableType::ALBUM => Album::factory()->for($user)->createOne(),
             EmbeddableType::ARTIST => Artist::factory()->for($user)->createOne(),
+            EmbeddableType::FAVORITES => UserFavorites::query()->findOrFail($user->public_id),
         };
     }
 }

@@ -9,6 +9,10 @@ export const embedService = {
       embeddableType = 'playable'
     }
 
+    if (embeddable.type === 'favorites') {
+      embeddableType = 'favorites'
+    }
+
     return await http.post<Embed>('embeds/resolve', {
       embeddable_id: embeddable.id,
       embeddable_type: embeddableType,

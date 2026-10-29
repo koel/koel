@@ -1,7 +1,12 @@
 <template>
   <header class="flex h-[150px] p-6 gap-5 bg-k-fg-5 shrink-0 justify-end">
     <aside class="size-[112px] aspect-square">
-      <Thumbnail :embeddable="embed.embeddable" />
+      <ThumbnailStack
+        v-if="embed.embeddable_type === 'favorites'"
+        :thumbnails="favoritesThumbnails"
+        class="rounded-md"
+      />
+      <Thumbnail v-else :embeddable="embed.embeddable" />
     </aside>
 
     <div class="flex-1 flex flex-col justify-end gap-3">
@@ -26,15 +31,21 @@
 
 <script setup lang="ts">
 import { getPlayableProp } from '@/utils/helpers'
+import { pluralize } from '@/utils/formatters'
 import { useBranding } from '@/composables/useBranding'
 
 import Thumbnail from '@/components/embed/widget/EmbedWidgetThumbnail.vue'
 import PreviewBadge from '@/components/embed/widget/PreviewBadge.vue'
+import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
 
 const props = defineProps<{ embed: WidgetReadyEmbed; options: EmbedOptions }>()
 const { embed, options } = props
 
 const { logo } = useBranding()
+
+const favoritesThumbnails = Array.from(
+  new Set(embed.playables.map(playable => getPlayableProp(playable, 'album_cover', 'episode_image')).filter(Boolean)),
+).slice(0, 4)
 
 let heading: string
 let subheading: string
@@ -62,6 +73,9 @@ switch (embed.embeddable_type) {
   case 'playlist':
     const playlist = embed.embeddable as Playlist
     setAttributes(playlist.name, playlist.description || 'Playlist')
+    break
+  case 'favorites':
+    setAttributes(`${(embed.embeddable as UserFavorites).owner_name}'s Favorites`, pluralize(embed.playables, 'item'))
     break
 }
 </script>

@@ -6,10 +6,12 @@ use App\Http\Resources\AlbumResource;
 use App\Http\Resources\ArtistResource;
 use App\Http\Resources\PlaylistResource;
 use App\Http\Resources\SongResource;
+use App\Http\Resources\UserFavoritesResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Playlist;
 use App\Models\Song;
+use App\Models\UserFavorites;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 enum EmbeddableType: string
@@ -18,8 +20,9 @@ enum EmbeddableType: string
     case PLAYLIST = 'playlist';
     case ALBUM = 'album';
     case ARTIST = 'artist';
+    case FAVORITES = 'favorites';
 
-    /** @return class-string<Song|Playlist|Album|Artist> */
+    /** @return class-string<Song|Playlist|Album|Artist|UserFavorites> */
     public function modelClass(): string
     {
         return match ($this) {
@@ -27,6 +30,7 @@ enum EmbeddableType: string
             self::PLAYLIST => Playlist::class,
             self::ALBUM => Album::class,
             self::ARTIST => Artist::class,
+            self::FAVORITES => UserFavorites::class,
         };
     }
 
@@ -38,6 +42,7 @@ enum EmbeddableType: string
             self::PLAYLIST => PlaylistResource::class,
             self::ALBUM => AlbumResource::class,
             self::ARTIST => ArtistResource::class,
+            self::FAVORITES => UserFavoritesResource::class,
         };
     }
 }

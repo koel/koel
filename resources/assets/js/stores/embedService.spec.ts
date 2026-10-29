@@ -28,6 +28,18 @@ describe('embedService', async () => {
     expect(resolved).toEqual(embed)
   })
 
+  it('resolves for favorites', async () => {
+    const favorites: UserFavorites = { type: 'favorites', id: crypto.randomUUID(), owner_name: 'Lisa' }
+    const postMock = h.mock(http, 'post').mockResolvedValue(h.factory('embed').make())
+
+    await embedService.resolveForEmbeddable(favorites)
+
+    expect(postMock).toHaveBeenCalledWith('embeds/resolve', {
+      embeddable_id: favorites.id,
+      embeddable_type: 'favorites',
+    })
+  })
+
   it('encrypts options', async () => {
     const options: EmbedOptions = {
       theme: 'cat',

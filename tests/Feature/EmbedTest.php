@@ -5,12 +5,14 @@ namespace Tests\Feature;
 use App\Http\Resources\EmbedOptionsResource;
 use App\Http\Resources\EmbedResource;
 use App\Models\Embed;
+use App\Models\Favorite;
 use App\Models\Song;
 use App\Values\EmbedOptions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_playlist;
+use function Tests\create_user;
 
 class EmbedTest extends TestCase
 {
@@ -89,5 +91,60 @@ class EmbedTest extends TestCase
         $options = EmbedOptions::make();
 
         $this->getJson("api/embeds/{$embed->id}/$options")->assertNotFound();
+    }
+
+    #[Test]
+    public function resolveForOwnFavorites(): void
+    {
+        $user = create_user();
+
+        $this
+            ->postAs(
+                'api/embeds/resolve',
+                [
+                    'embeddable_id' => $user->public_id,
+                    'embeddable_type' => 'favorites',
+                ],
+                $user,
+            )
+            ->assertSuccessful()
+            ->assertJsonStructure(EmbedResource::JSON_STRUCTURE)
+            ->assertJsonPath('embeddable.id', $user->public_id);
+    }
+
+    #[Test]
+    public function resolveFailsForAnotherUsersFavorites(): void
+    {
+        $this->postAs('api/embeds/resolve', [
+            'embeddable_id' => create_user()->public_id,
+            'embeddable_type' => 'favorites',
+        ])->assertForbidden();
+    }
+
+    #[Test]
+    public function getPayloadForFavoritesReturnsTheCurrentFavorites(): void
+    {
+        $user = create_user();
+        Favorite::factory()->for($user)->createOne();
+
+        $embedId = $this->postAs(
+            'api/embeds/resolve',
+            [
+                'embeddable_id' => $user->public_id,
+                'embeddable_type' => 'favorites',
+            ],
+            $user,
+        )->json('id');
+
+        $laterFavorite = Favorite::factory()->for($user)->createOne();
+        Favorite::factory()->createOne();
+
+        $options = EmbedOptions::make();
+
+        $this
+            ->getJson("api/embeds/$embedId/$options")
+            ->assertSuccessful()
+            ->assertJsonCount(2, 'embed.playables')
+            ->assertJsonPath('embed.playables.1.id', $laterFavorite->favoriteable_id);
     }
 }

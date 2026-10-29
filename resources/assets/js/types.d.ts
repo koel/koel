@@ -315,7 +315,7 @@ interface RadioStation extends IStreamable {
 type Playable = Song | Episode
 
 type Streamable = Playable | RadioStation
-type Embeddable = Playable | Playlist | Artist | Album
+type Embeddable = Playable | Playlist | Artist | Album | UserFavorites
 type Rateable = Song | Album | Artist | Podcast
 
 interface Embed {
@@ -323,7 +323,7 @@ interface Embed {
   id: string
   user_id: User['id']
   embeddable_id: Embeddable['id']
-  embeddable_type: 'playable' | 'playlist' | 'artist' | 'album'
+  embeddable_type: 'playable' | 'playlist' | 'artist' | 'album' | 'favorites'
 }
 
 type WidgetReadyEmbed = Embed & {
@@ -394,6 +394,12 @@ interface SerializedSmartPlaylistRule {
 }
 
 type SmartPlaylistInputTypes = Record<SmartPlaylistModel['type'], SmartPlaylistOperator[]>
+
+interface UserFavorites {
+  type: 'favorites'
+  id: User['id']
+  owner_name: User['name']
+}
 
 interface FavoriteList {
   name: 'Favorites'
