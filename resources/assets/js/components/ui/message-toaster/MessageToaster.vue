@@ -1,6 +1,6 @@
 <template>
   <div ref="root" class="popover">
-    <TransitionGroup class="flex flex-col items-end gap-2" name="toast" tag="ul">
+    <TransitionGroup class="flex flex-col items-end gap-2" name="toast" tag="ul" @after-leave="hideWhenEmpty">
       <li v-for="message in messages" :key="message.id">
         <MessageToast :message="message" @dismiss="dismiss(message.id)" />
       </li>
@@ -53,8 +53,13 @@ const toMessageFields = (details: ToastDetails) =>
 const resolveOutcome = <T>(outcome: ToastOutcome<T>, value: T) =>
   typeof outcome === 'function' ? outcome(value) : outcome
 
+let toasterShown = false
+
 const add = (type: ToastType, details: ToastDetails, timeout = DEFAULT_TIMEOUT) => {
-  messages.value.length || root.value?.showPopover?.()
+  if (!toasterShown) {
+    root.value?.showPopover?.()
+    toasterShown = true
+  }
 
   const id = uuid()
   messages.value.push({ id, type, timeout, ...toMessageFields(details) })
@@ -81,10 +86,15 @@ const dismiss = (id: string) => {
 
   messages.value = messages.value.filter(({ id: messageId }) => messageId !== id)
   message.onDismiss?.()
+}
 
-  if (messages.value.length === 0) {
-    root.value?.hidePopover?.()
+const hideWhenEmpty = () => {
+  if (messages.value.length) {
+    return
   }
+
+  root.value?.hidePopover?.()
+  toasterShown = false
 }
 
 const promise = <T>(pending: Promise<T>, outcomes: ToastPromiseMessages<T>) => {
