@@ -12,6 +12,10 @@
       @apply rounded-none;
     }
 
+    &:not(:first-of-type) {
+      @apply border-l-k-fg-10;
+    }
+
     &:first-of-type {
       @apply rounded-l-md rounded-r-none;
     }
