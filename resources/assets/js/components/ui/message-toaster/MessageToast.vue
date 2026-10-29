@@ -1,14 +1,15 @@
 <template>
   <article
     :class="message.type"
-    class="rounded-l-md flex items-stretch opacity-90 transition-[transform,background-color,color] duration-300 origin-right hover:opacity-100 hover:scale-110"
+    class="rounded-l-md flex items-stretch opacity-90 transition-[background-color,color,opacity] duration-300 hover:opacity-100"
     @focusin="onFocusIn"
     @focusout="onFocusOut"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
     <span v-if="pending" class="flex items-center px-3 bg-black/10" data-testid="toast-pending">
-      <Icon :icon="faCircleNotch" spin />
+      <ProgressRing v-if="message.progress" :value="message.progress()" class="size-4" />
+      <Icon v-else :icon="faCircleNotch" spin />
     </span>
     <button v-else class="flex items-center px-3 py-0 bg-black/10 cursor-pointer" type="button" @click="dismiss">
       <Icon :icon="hovering ? faTimesCircle : typeIcon" />
@@ -33,6 +34,7 @@ import {
   faTriangleExclamation,
 } from '@fortawesome/free-solid-svg-icons'
 
+import ProgressRing from '@/components/ui/ProgressRing.vue'
 import ToastActions from '@/components/ui/message-toaster/ToastActions.vue'
 
 const props = defineProps<{ message: ToastMessage }>()

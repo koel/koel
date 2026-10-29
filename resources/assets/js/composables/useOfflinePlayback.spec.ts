@@ -271,7 +271,7 @@ describe('useOfflinePlayback', () => {
     const [caching, messages] = toastPromiseMock.mock.calls[0]
 
     simulateMessage({ type: 'CACHE_AUDIO_PROGRESS', songId: okSong.id, progress: 1 })
-    expect(messages.loading.props.value).toBe(50)
+    expect(messages.loading.progress()).toBe(50)
 
     simulateMessage({ type: 'CACHE_AUDIO_COMPLETE', songId: okSong.id })
     simulateMessage({ type: 'CACHE_AUDIO_ERROR', songId: failingSong.id, error: 'Nope' })

@@ -1,10 +1,7 @@
-import { DownloadIcon } from 'lucide-vue-next'
-import { computed, markRaw, reactive, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { zipDownloadService } from '@/services/zipDownloadService'
-
-import ProgressToastContent from '@/components/ui/message-toaster/ProgressToastContent.vue'
 
 export const useZipDownloadToast = () => {
   const { toastPromise, dismissToast } = useMessageToaster()
@@ -44,13 +41,12 @@ export const useZipDownloadToast = () => {
     const toastId = toastPromise(waitForArchive(), {
       loading: {
         content: 'Preparing download…',
-        component: ProgressToastContent,
-        props: reactive({ label: 'Preparing download…', value: progress }),
+        progress: () => progress.value,
         actions: [{ label: 'Cancel', handler: confirmCancel }],
       },
       success: {
         content: 'Download ready',
-        actions: [{ label: 'Save', icon: markRaw(DownloadIcon), handler: () => saveArchive(toastId) }],
+        actions: [{ label: 'Save', handler: () => saveArchive(toastId) }],
         onDismiss: dismissUnsavedArchive,
       },
       warning: status => (status === 'ready' ? undefined : 'Download canceled'),

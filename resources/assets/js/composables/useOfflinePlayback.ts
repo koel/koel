@@ -1,4 +1,4 @@
-import { computed, reactive, ref, toRaw, watch } from 'vue'
+import { computed, ref, toRaw, watch } from 'vue'
 import { playableStore } from '@/stores/playableStore'
 import { offlineManifest } from '@/services/offlineManifest'
 import type { OfflineManifestEntry } from '@/services/offlineManifest'
@@ -8,8 +8,6 @@ import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 import { isSong } from '@/utils/typeGuards'
-
-import ProgressToastContent from '@/components/ui/message-toaster/ProgressToastContent.vue'
 
 type CacheProgress = {
   songId: Song['id']
@@ -403,8 +401,7 @@ export const useOfflinePlayback = () => {
     toastPromise(caching, {
       loading: {
         content: 'Making songs available offline…',
-        component: ProgressToastContent,
-        props: reactive({ label: 'Making available offline…', value: progress }),
+        progress: () => progress.value,
       },
       success: `Made ${pluralize(songIds, 'song')} available offline.`,
       warning: failedCount =>
