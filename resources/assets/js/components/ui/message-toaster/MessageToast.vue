@@ -1,7 +1,7 @@
 <template>
   <article
     :class="message.type"
-    class="rounded-l-md flex items-stretch opacity-90 transition-transform duration-300 origin-right hover:opacity-100 hover:scale-110"
+    class="rounded-l-md flex items-stretch opacity-90 transition-[transform,background-color,color] duration-300 origin-right hover:opacity-100 hover:scale-110"
     @focusin="onFocusIn"
     @focusout="onFocusOut"
     @mouseenter="onMouseEnter"
