@@ -57,6 +57,13 @@ describe('hotkeyListener.vue', () => {
     expect(goMock).toHaveBeenCalledWith('/#/home')
   })
 
+  it('navigates to settings on "," key', () => {
+    h.render(Component)
+    pressKey(',')
+
+    expect(goMock).toHaveBeenCalledWith('/#/settings')
+  })
+
   it('seeks forward on ArrowRight', () => {
     h.render(Component)
     pressKey('ArrowRight')
