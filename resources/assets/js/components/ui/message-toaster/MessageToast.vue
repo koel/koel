@@ -123,6 +123,6 @@ onBeforeUnmount(cancelAutoDismiss)
 }
 
 .loading {
-  @apply bg-k-bg text-k-fg;
+  @apply bg-k-bg text-k-fg border border-r-0 border-k-fg-10;
 }
 </style>
