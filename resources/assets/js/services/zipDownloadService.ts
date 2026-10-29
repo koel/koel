@@ -263,7 +263,10 @@ export const zipDownloadService = {
       return
     }
 
-    Object.assign(document.createElement('a'), { href: this.state.fileUrl, download: this.state.archiveName }).click()
+    Object.assign(document.createElement('a'), {
+      href: this.state.fileUrl,
+      download: this.state.archiveName,
+    }).click()
   },
 
   cancel() {

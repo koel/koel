@@ -42,11 +42,21 @@ export const useZipDownloadToast = () => {
       loading: {
         content: 'Preparing download…',
         progress: () => progress.value,
-        actions: [{ label: 'Cancel', handler: confirmCancel }],
+        actions: [
+          {
+            label: 'Cancel',
+            handler: confirmCancel,
+          },
+        ],
       },
       success: {
         content: 'Download ready.',
-        actions: [{ label: 'Save', handler: () => saveArchive(toastId) }],
+        actions: [
+          {
+            label: 'Save',
+            handler: () => saveArchive(toastId),
+          },
+        ],
         onDismiss: dismissUnsavedArchive,
       },
       warning: status => (status === 'ready' ? undefined : 'Download canceled'),

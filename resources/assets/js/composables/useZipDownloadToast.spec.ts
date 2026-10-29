@@ -32,7 +32,10 @@ describe('useZipDownloadToast', () => {
 
     h.render(
       defineComponent({
-        components: { MessageToaster, ZipDownloadToastUser },
+        components: {
+          MessageToaster,
+          ZipDownloadToastUser,
+        },
         setup: () => ({ toaster }),
         template: '<MessageToaster ref="toaster" /><ZipDownloadToastUser v-if="toaster" />',
       }),
@@ -45,11 +48,18 @@ describe('useZipDownloadToast', () => {
   const startZipping = async () => {
     let finishBuilding!: () => void
     zipDownloadService.building = new Promise(resolve => (finishBuilding = resolve))
-    Object.assign(state, { status: 'zipping', bytesDone: 25, bytesTotal: 100 })
+    Object.assign(state, {
+      status: 'zipping',
+      bytesDone: 25,
+      bytesTotal: 100,
+    })
     await h.tick()
 
     return async (status: 'ready' | 'failed' | 'idle', error = '') => {
-      Object.assign(state, { status, error })
+      Object.assign(state, {
+        status,
+        error,
+      })
       finishBuilding()
       await h.tick(3)
     }

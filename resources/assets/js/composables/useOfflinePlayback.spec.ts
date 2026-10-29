@@ -238,7 +238,12 @@ describe('useOfflinePlayback', () => {
     )
 
     const [removing] = toastPromiseMock.mock.calls[0]
-    songs.forEach(song => simulateMessage({ type: 'DELETE_AUDIO_CACHE_COMPLETE', songId: song.id }))
+    songs.forEach(song =>
+      simulateMessage({
+        type: 'DELETE_AUDIO_CACHE_COMPLETE',
+        songId: song.id,
+      }),
+    )
 
     await expect(removing).resolves.toBeUndefined()
   })
@@ -270,11 +275,22 @@ describe('useOfflinePlayback', () => {
 
     const [caching, messages] = toastPromiseMock.mock.calls[0]
 
-    simulateMessage({ type: 'CACHE_AUDIO_PROGRESS', songId: okSong.id, progress: 1 })
+    simulateMessage({
+      type: 'CACHE_AUDIO_PROGRESS',
+      songId: okSong.id,
+      progress: 1,
+    })
     expect(messages.loading.progress()).toBe(50)
 
-    simulateMessage({ type: 'CACHE_AUDIO_COMPLETE', songId: okSong.id })
-    simulateMessage({ type: 'CACHE_AUDIO_ERROR', songId: failingSong.id, error: 'Nope' })
+    simulateMessage({
+      type: 'CACHE_AUDIO_COMPLETE',
+      songId: okSong.id,
+    })
+    simulateMessage({
+      type: 'CACHE_AUDIO_ERROR',
+      songId: failingSong.id,
+      error: 'Nope',
+    })
 
     await expect(caching).resolves.toBe(1)
     expect(messages.warning(1)).toBeTruthy()

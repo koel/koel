@@ -73,7 +73,12 @@ describe('messageToast.vue', () => {
   })
 
   it('shows the progress in place of the pending indicator', () => {
-    renderComponent(makeMessage({ type: 'loading', progress: () => 40 }))
+    renderComponent(
+      makeMessage({
+        type: 'loading',
+        progress: () => 40,
+      }),
+    )
 
     expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('40')
   })
@@ -81,7 +86,16 @@ describe('messageToast.vue', () => {
   it('stays open while it offers actions', () => {
     vi.useFakeTimers()
 
-    const { emitted } = renderComponent(makeMessage({ actions: [{ label: 'Save', handler: vi.fn() }] }))
+    const { emitted } = renderComponent(
+      makeMessage({
+        actions: [
+          {
+            label: 'Save',
+            handler: vi.fn(),
+          },
+        ],
+      }),
+    )
     vi.advanceTimersByTime(60_000)
 
     expect(emitted().dismiss).toBeUndefined()

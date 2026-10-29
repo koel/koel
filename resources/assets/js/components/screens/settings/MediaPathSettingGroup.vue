@@ -60,7 +60,11 @@ const shouldWarn = computed(() => {
 const save = async () => {
   scanning.value = true
   const updating = settingStore.updateMediaPath(mediaPath.value!)
-  toastPromise(updating, { loading: 'Scanning…', success: 'Settings saved.', error: getHttpErrorMessage })
+  toastPromise(updating, {
+    loading: 'Scanning…',
+    success: 'Settings saved.',
+    error: getHttpErrorMessage,
+  })
 
   try {
     await updating

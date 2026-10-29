@@ -111,7 +111,10 @@ describe('useForm', () => {
 
     expect(toastShownDuringSubmit).toBe(true)
     expect(mockToastLoading).toHaveBeenCalledWith('Saving')
-    expect(mockUpdateToast).toHaveBeenCalledWith('toast-id', { type: 'success', content: 'Saved John' })
+    expect(mockUpdateToast).toHaveBeenCalledWith('toast-id', {
+      type: 'success',
+      content: 'Saved John',
+    })
   })
 
   it('closes the loading toast on success when there is no success message', async () => {
@@ -144,7 +147,10 @@ describe('useForm', () => {
     data.name = 'Jane'
     await handleSubmit()
 
-    expect(mockUpdateToast).toHaveBeenCalledWith('toast-id', { type: 'danger', content: 'Server error' })
+    expect(mockUpdateToast).toHaveBeenCalledWith('toast-id', {
+      type: 'danger',
+      content: 'Server error',
+    })
     expect(mockHandleHttpError).not.toHaveBeenCalled()
     expect(onSuccess).not.toHaveBeenCalled()
     expect(data.name).toBe('Jane')

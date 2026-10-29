@@ -46,7 +46,15 @@ export const useForm = <T extends Record<string, any>>(config: UseFormConfig<T>)
     const success = config.toast?.success
     const message = typeof success === 'function' ? success(result) : success
 
-    message ? updateToast(toastId, { type: 'success', content: message }) : dismissToast(toastId)
+    if (!message) {
+      dismissToast(toastId)
+      return
+    }
+
+    updateToast(toastId, {
+      type: 'success',
+      content: message,
+    })
   }
 
   const onError = async (error: unknown, toastId: string | null) => {
@@ -58,7 +66,10 @@ export const useForm = <T extends Record<string, any>>(config: UseFormConfig<T>)
 
     if (toastId) {
       logger.error(error)
-      updateToast(toastId, { type: 'danger', content: getHttpErrorMessage(error) })
+      updateToast(toastId, {
+        type: 'danger',
+        content: getHttpErrorMessage(error),
+      })
       return
     }
 

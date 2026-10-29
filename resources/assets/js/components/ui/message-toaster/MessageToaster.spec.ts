@@ -30,7 +30,11 @@ describe('messageToaster', () => {
       reject = rejectPromise
     })
 
-    return { promise, resolve, reject }
+    return {
+      promise,
+      resolve,
+      reject,
+    }
   }
 
   const getToast = () => screen.getByRole('article')
@@ -57,7 +61,10 @@ describe('messageToaster', () => {
 
     const id = toaster.info('Syncing')
     await h.tick()
-    toaster.update(id, { type: 'danger', content: 'Sync failed' })
+    toaster.update(id, {
+      type: 'danger',
+      content: 'Sync failed',
+    })
     await h.tick()
 
     expect(screen.getAllByRole('article')).toHaveLength(1)
@@ -69,7 +76,11 @@ describe('messageToaster', () => {
     const toaster = renderToaster()
     const Content = defineComponent({ props: { count: Number }, template: '<b data-testid="content">{{ count }}</b>' })
 
-    toaster.info({ content: 'Counting', component: Content, props: { count: 3 } })
+    toaster.info({
+      content: 'Counting',
+      component: Content,
+      props: { count: 3 },
+    })
     await h.tick()
 
     expect(screen.getByTestId('content').textContent).toBe('3')
@@ -79,7 +90,15 @@ describe('messageToaster', () => {
     const toaster = renderToaster()
     const undo = vi.fn()
 
-    toaster.success({ content: 'Removed', actions: [{ label: 'Undo', handler: undo }] })
+    toaster.success({
+      content: 'Removed',
+      actions: [
+        {
+          label: 'Undo',
+          handler: undo,
+        },
+      ],
+    })
     await h.tick()
     await h.user.click(screen.getByRole('button', { name: 'Undo' }))
 
@@ -90,7 +109,10 @@ describe('messageToaster', () => {
     const toaster = renderToaster()
     const onDismiss = vi.fn()
 
-    const id = toaster.success({ content: 'Saved', onDismiss })
+    const id = toaster.success({
+      content: 'Saved',
+      onDismiss,
+    })
     toaster.dismiss(id)
     await h.tick()
 
@@ -101,7 +123,11 @@ describe('messageToaster', () => {
   it('cannot be dismissed while its promise is pending', async () => {
     const toaster = renderToaster()
 
-    toaster.promise(deferred().promise, { loading: 'Saving', success: 'Saved', error: 'Failed' })
+    toaster.promise(deferred().promise, {
+      loading: 'Saving',
+      success: 'Saved',
+      error: 'Failed',
+    })
     await h.tick()
 
     expect(getToast().classList).toContain('loading')
@@ -112,7 +138,11 @@ describe('messageToaster', () => {
     const toaster = renderToaster()
     const { promise, resolve } = deferred<number>()
 
-    toaster.promise(promise, { loading: 'Saving', success: count => `${count} saved`, error: 'Failed' })
+    toaster.promise(promise, {
+      loading: 'Saving',
+      success: count => `${count} saved`,
+      error: 'Failed',
+    })
     resolve(3)
     await h.tick(2)
 
@@ -160,7 +190,16 @@ describe('messageToaster', () => {
     const Content = defineComponent({ template: '<b data-testid="content" />' })
 
     toaster.promise(promise, {
-      loading: { content: 'Saving', component: Content, actions: [{ label: 'Stop', handler: vi.fn() }] },
+      loading: {
+        content: 'Saving',
+        component: Content,
+        actions: [
+          {
+            label: 'Stop',
+            handler: vi.fn(),
+          },
+        ],
+      },
       success: 'Saved',
       error: 'Failed',
     })
@@ -182,7 +221,11 @@ describe('messageToaster', () => {
     await h.tick()
     expect(leavingIsBlocked()).toBe(false)
 
-    toaster.promise(promise, { loading: 'Saving', success: 'Saved', error: 'Failed' })
+    toaster.promise(promise, {
+      loading: 'Saving',
+      success: 'Saved',
+      error: 'Failed',
+    })
     await h.tick()
     expect(leavingIsBlocked()).toBe(true)
 
