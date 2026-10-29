@@ -95,8 +95,6 @@ on it and choosing "Download."
 
 You can also download several songs, all songs from an album, all songs by an artist, or a whole playlist as a zip file
 via the "Download" buttons found on according screens or context menus.
-Koel builds the zip file in your browser and shows its progress in a notification at the top right.
-The file is saved once it's ready. If your browser blocks it, click "Save" in the notification.
 
 ## Deleting Songs
 
