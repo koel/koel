@@ -67,7 +67,10 @@ const close = () => emit('close')
 
 const { data, loading, handleSubmit, maybeClose } = useForm<RadioStationData>({
   initialValues: { ...pick(station, 'name', 'url', 'homepage_url', 'description', 'is_public', 'logo') },
-  toast: { loading: 'Saving station…', success: 'Station updated.' },
+  toast: {
+    loading: 'Saving station…',
+    success: 'Station updated.',
+  },
   onSubmit: async data => {
     const formData = structuredClone(toRaw(data))
 

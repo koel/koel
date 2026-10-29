@@ -28,7 +28,9 @@ const { data, loading, handleSubmit } = useForm<{ licenseKey: string }>({
   initialValues: {
     licenseKey: '',
   },
-  toast: { loading: 'Activating…' },
+  toast: {
+    loading: 'Activating…',
+  },
   onSubmit: async ({ licenseKey }) => await plusService.activateLicense(licenseKey),
   onSuccess: async () => {
     await showSuccessDialog('Thanks for purchasing Koel Plus! Koel will now refresh to activate the changes.')

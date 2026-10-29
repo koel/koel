@@ -224,7 +224,10 @@ const withoutUntouchedAlbumArtist = ({ album_artist_name, ...otherData }: SongUp
 
 const { data, loading, handleSubmit, maybeClose } = useForm<SongUpdateData>({
   initialValues,
-  toast: { loading: 'Updating…', success: `Updated ${pluralize(songs, 'song')}.` },
+  toast: {
+    loading: 'Updating…',
+    success: `Updated ${pluralize(songs, 'song')}.`,
+  },
   onSubmit: async data => await songStore.updateSongs(songs, withoutUntouchedAlbumArtist(data)),
   onSuccess: (result: SongUpdateResult) => {
     eventBus.emit('SONGS_UPDATED', result)

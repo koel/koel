@@ -83,7 +83,9 @@ const { data, loading, handleSubmit } = useForm<{ email: string; password: strin
         email: loginHint,
         password: '',
       },
-  toast: { loading: 'Logging in…' },
+  toast: {
+    loading: 'Logging in…',
+  },
   onSubmit: async ({ email, password }) => await authService.login(email, password),
   onSuccess: challenge => {
     failed.value = false

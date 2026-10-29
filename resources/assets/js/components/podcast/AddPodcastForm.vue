@@ -44,7 +44,10 @@ const { loading, handleSubmit, data, maybeClose } = useForm<Pick<Podcast, 'url'>
   initialValues: {
     url: '',
   },
-  toast: { loading: 'Adding podcast…', success: (podcast: Podcast) => `Podcast "${podcast.title}" added.` },
+  toast: {
+    loading: 'Adding podcast…',
+    success: (podcast: Podcast) => `Podcast "${podcast.title}" added.`,
+  },
   onSubmit: async ({ url }) => await podcastStore.store(url),
   onSuccess: close,
   onError: error =>

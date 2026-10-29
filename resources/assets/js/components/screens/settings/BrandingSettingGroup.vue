@@ -47,7 +47,9 @@ const { koelBirdCover, koelBirdLogo, isKoelBirdCover, isKoelBirdLogo } = useBran
 
 const { data, loading, handleSubmit } = useForm<Branding>({
   initialValues: { ...props.currentBranding },
-  toast: { loading: 'Saving branding…' },
+  toast: {
+    loading: 'Saving branding…',
+  },
   onSubmit: async data => {
     const submittedData: Partial<Branding> = { ...data }
 

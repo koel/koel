@@ -50,7 +50,10 @@ const { data, loading, handleSubmit, maybeClose } = useForm<CreateUserData>({
     password: '',
     role: 'user',
   },
-  toast: { loading: 'Creating user…', success: (user: User) => `New user "${user.name}" created.` },
+  toast: {
+    loading: 'Creating user…',
+    success: (user: User) => `New user "${user.name}" created.`,
+  },
   onSubmit: async data => await userStore.store(data),
   onSuccess: close,
   onClose: close,

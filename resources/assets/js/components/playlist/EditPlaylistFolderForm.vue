@@ -65,7 +65,10 @@ const close = () => emit('close')
 
 const { data, loading, handleSubmit, maybeClose } = useForm<Pick<PlaylistFolder, 'name' | 'parent_id'>>({
   initialValues: pick(folder, 'name', 'parent_id'),
-  toast: { loading: 'Saving folder…', success: 'Playlist folder updated.' },
+  toast: {
+    loading: 'Saving folder…',
+    success: 'Playlist folder updated.',
+  },
   onSubmit: async changes => await playlistFolderStore.update(folder, changes),
   onSuccess: close,
   onClose: close,

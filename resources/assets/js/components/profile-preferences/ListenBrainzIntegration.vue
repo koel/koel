@@ -65,7 +65,10 @@ const connected = computed(() => Boolean(currentUser.value.preferences.listenbra
 
 const { data, loading, handleSubmit } = useForm<{ token: string }>({
   initialValues: { token: '' },
-  toast: { loading: 'Connecting…', success: 'ListenBrainz account connected.' },
+  toast: {
+    loading: 'Connecting…',
+    success: 'ListenBrainz account connected.',
+  },
   onSubmit: async ({ token }) => {
     await http.post('listenbrainz/token', { token })
     return token

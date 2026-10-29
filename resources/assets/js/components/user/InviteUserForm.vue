@@ -73,7 +73,10 @@ const { data, loading, handleSubmit, maybeClose } = useForm<{ raw_emails: string
 
     return true
   },
-  toast: { loading: 'Sending invitations…', success: 'Invitation(s) sent.' },
+  toast: {
+    loading: 'Sending invitations…',
+    success: 'Invitation(s) sent.',
+  },
   onSubmit: async ({ role }) => invitationService.invite(collectValidEmails(), role),
   onSuccess: close,
   onClose: close,

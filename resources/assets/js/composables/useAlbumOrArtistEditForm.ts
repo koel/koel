@@ -20,7 +20,10 @@ export const useAlbumOrArtistEditForm = <T extends Record<string, any> & { descr
 
   const form = useForm<T>({
     initialValues: config.initialValues,
-    toast: { loading: 'Saving…', success: config.successMessage },
+    toast: {
+      loading: 'Saving…',
+      success: config.successMessage,
+    },
     isPristine: (original, current) =>
       isEqual(omit(original, 'description'), omit(current, 'description')) &&
       (current.description === original.description ||

@@ -41,7 +41,10 @@ const close = () => emit('close')
 
 const { data, loading, handleSubmit, maybeClose } = useForm<UpdatePlaylistData>({
   initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
-  toast: { loading: 'Saving playlist…', success: 'Playlist updated.' },
+  toast: {
+    loading: 'Saving playlist…',
+    success: 'Playlist updated.',
+  },
   onSubmit: async data => {
     const formData = structuredClone(toRaw(data))
 

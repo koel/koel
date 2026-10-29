@@ -113,7 +113,10 @@ const { data, loading, handleSubmit, maybeClose } = useForm<ThemeData>({
     highlight_color: style.getPropertyValue('--color-highlight'),
     bg_image: '',
   },
-  toast: { loading: 'Creating theme…', success: 'Theme created.' },
+  toast: {
+    loading: 'Creating theme…',
+    success: 'Theme created.',
+  },
   onSubmit: async data => await themeStore.store(data),
   onSuccess: (theme: Theme) => {
     themeStore.setTheme(theme)

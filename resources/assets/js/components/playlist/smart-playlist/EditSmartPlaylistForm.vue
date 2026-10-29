@@ -48,7 +48,10 @@ const close = () => emit('close')
 const { data, loading, handleSubmit, maybeClose } = useForm<UpdatePlaylistData>({
   initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
   isPristine: (original, current) => isEqual(original, current) && isEqual(ruleGroups.value, playlist.rules),
-  toast: { loading: 'Saving playlist…', success: () => `Playlist "${playlist.name}" updated.` },
+  toast: {
+    loading: 'Saving playlist…',
+    success: () => `Playlist "${playlist.name}" updated.`,
+  },
   onSubmit: async data => {
     const formData = {
       ...structuredClone(toRaw(data)),

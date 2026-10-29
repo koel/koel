@@ -97,7 +97,10 @@ describe('useForm', () => {
 
     const { handleSubmit } = useForm({
       initialValues: { name: 'John' },
-      toast: { loading: 'Saving', success: (result: string) => `Saved ${result}` },
+      toast: {
+        loading: 'Saving',
+        success: (result: string) => `Saved ${result}`,
+      },
       onSubmit: async () => {
         toastShownDuringSubmit = mockToastLoading.mock.calls.length > 0
         return 'John'
@@ -114,7 +117,9 @@ describe('useForm', () => {
   it('closes the loading toast on success when there is no success message', async () => {
     const { handleSubmit } = useForm({
       initialValues: { name: 'John' },
-      toast: { loading: 'Logging in' },
+      toast: {
+        loading: 'Logging in',
+      },
       onSubmit: vi.fn().mockResolvedValue(undefined),
     })
 
@@ -128,7 +133,10 @@ describe('useForm', () => {
 
     const { data, handleSubmit } = useForm({
       initialValues: { name: 'John' },
-      toast: { loading: 'Saving', success: 'Saved' },
+      toast: {
+        loading: 'Saving',
+        success: 'Saved',
+      },
       onSubmit: vi.fn().mockRejectedValue(new Error('fail')),
       onSuccess,
     })
@@ -148,7 +156,9 @@ describe('useForm', () => {
 
     const { handleSubmit } = useForm({
       initialValues: { name: 'John' },
-      toast: { loading: 'Saving' },
+      toast: {
+        loading: 'Saving',
+      },
       onSubmit: vi.fn().mockRejectedValue(error),
       onError,
     })

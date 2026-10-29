@@ -57,7 +57,10 @@ const isDemo = window.KOEL.is_demo
 
 const { data, loading, handleSubmit } = useForm<{ current_password: string; new_password: string }>({
   initialValues: { current_password: '', new_password: '' },
-  toast: { loading: 'Updating password…', success: 'Password updated.' },
+  toast: {
+    loading: 'Updating password…',
+    success: 'Password updated.',
+  },
   onSubmit: async ({ current_password, new_password }) => {
     if (isDemo) {
       return

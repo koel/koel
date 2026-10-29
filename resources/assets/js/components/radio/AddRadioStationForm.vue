@@ -67,7 +67,10 @@ const { data, loading, handleSubmit, maybeClose } = useForm<RadioStationData>({
     description: '',
     is_public: false,
   },
-  toast: { loading: 'Adding station…', success: (station: RadioStation) => `Station "${station.name}" added.` },
+  toast: {
+    loading: 'Adding station…',
+    success: (station: RadioStation) => `Station "${station.name}" added.`,
+  },
   onSubmit: async data => await radioStationStore.store(data),
   onSuccess: close,
   onClose: close,

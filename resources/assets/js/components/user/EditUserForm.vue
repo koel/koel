@@ -62,7 +62,10 @@ const { data, loading, handleSubmit, maybeClose } = useForm<UpdateUserData>({
     ...pick(user, 'name', 'email', 'role'),
     password: '',
   },
-  toast: { loading: 'Saving user…', success: 'User profile updated.' },
+  toast: {
+    loading: 'Saving user…',
+    success: 'User profile updated.',
+  },
   onSubmit: async data => {
     const formattedData = { ...data }
 

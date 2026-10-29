@@ -51,7 +51,9 @@ const clearErrorResetTimer = () => {
 
 const { data, loading, handleSubmit } = useForm<{ code: string }>({
   initialValues: { code: '' },
-  toast: { loading: 'Verifying…' },
+  toast: {
+    loading: 'Verifying…',
+  },
   onSubmit: async ({ code }) => await authService.submitTwoFactorChallenge(props.loginToken, code),
   onSuccess: () => {
     failed.value = false
