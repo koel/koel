@@ -7,7 +7,11 @@
       type="button"
       @click="action.handler()"
     >
-      {{ action.label }}
+      <template v-if="action.icon">
+        <component :is="action.icon" :size="14" />
+        <span class="sr-only">{{ action.label }}</span>
+      </template>
+      <template v-else>{{ action.label }}</template>
     </button>
   </div>
 </template>

@@ -1,4 +1,5 @@
-import { computed, reactive, watch } from 'vue'
+import { DownloadIcon } from 'lucide-vue-next'
+import { computed, markRaw, reactive, watch } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { zipDownloadService } from '@/services/zipDownloadService'
@@ -49,7 +50,7 @@ export const useZipDownloadToast = () => {
       },
       success: {
         content: 'Download ready',
-        actions: [{ label: 'Save', handler: () => saveArchive(toastId) }],
+        actions: [{ label: 'Save', icon: markRaw(DownloadIcon), handler: () => saveArchive(toastId) }],
         onDismiss: dismissUnsavedArchive,
       },
       warning: status => (status === 'ready' ? undefined : 'Download canceled'),
