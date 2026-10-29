@@ -5,7 +5,6 @@ import { arrayify } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
 import type { SongUpdateResult } from '@/stores/playableStore'
 import { playableStore as songStore } from '@/stores/playableStore'
-import { MessageToasterStub } from '@/__tests__/stubs'
 import Component from './EditSongForm.vue'
 
 describe('editSongForm.vue', () => {
@@ -42,7 +41,6 @@ describe('editSongForm.vue', () => {
 
     const updateMock = h.mock(songStore, 'updateSongs').mockResolvedValue(result)
     const emitMock = h.mock(eventBus, 'emit')
-    const alertMock = h.mock(MessageToasterStub.value, 'success')
 
     const { songs } = await renderComponent(
       h.factory('song').make({
@@ -78,7 +76,6 @@ describe('editSongForm.vue', () => {
       year: 1971,
     })
 
-    expect(alertMock).toHaveBeenCalledWith('Updated 1 song.')
     expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED', result)
   })
 
@@ -95,7 +92,6 @@ describe('editSongForm.vue', () => {
 
     const updateMock = h.mock(songStore, 'updateSongs').mockResolvedValue(result)
     const emitMock = h.mock(eventBus, 'emit')
-    const alertMock = h.mock(MessageToasterStub.value, 'success')
 
     const { songs } = await renderComponent(h.factory('song').make(3))
 
@@ -122,7 +118,6 @@ describe('editSongForm.vue', () => {
       year: 1990,
     })
 
-    expect(alertMock).toHaveBeenCalledWith('Updated 3 songs.')
     expect(emitMock).toHaveBeenCalledWith('SONGS_UPDATED', result)
   })
 

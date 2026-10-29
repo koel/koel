@@ -3,7 +3,7 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { settingStore } from '@/stores/settingStore'
 import Router from '@/router'
 import { screen, waitFor } from '@testing-library/vue'
-import { DialogBoxStub } from '@/__tests__/stubs'
+import { DialogBoxStub, MessageToasterStub } from '@/__tests__/stubs'
 import Component from './MediaPathSettingGroup.vue'
 
 describe('mediaPathSettingGroup.vue', () => {
@@ -45,5 +45,20 @@ describe('mediaPathSettingGroup.vue', () => {
       expect(goMock).not.toHaveBeenCalled()
       expect(confirmMock).toHaveBeenCalled()
     })
+  })
+
+  it('shows the scan in a loading toast', async () => {
+    const scanning = Promise.resolve()
+    h.mock(settingStore, 'updateMediaPath').mockReturnValue(scanning)
+    h.mock(Router, 'go')
+    const toastMock = h.mock(MessageToasterStub.value, 'promise')
+
+    settingStore.state.media_path = ''
+    renderComponent()
+
+    await h.type(screen.getByPlaceholderText('/path/to/your/music'), '/media')
+    await h.user.click(screen.getByTestId('submit'))
+
+    expect(toastMock).toHaveBeenCalledWith(scanning, expect.anything())
   })
 })

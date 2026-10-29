@@ -11,6 +11,7 @@ export const MessageToasterStub = ref({
   success: noop,
   warning: noop,
   error: noop,
+  loading: noop,
   promise: noop,
   update: noop,
   dismiss: noop,

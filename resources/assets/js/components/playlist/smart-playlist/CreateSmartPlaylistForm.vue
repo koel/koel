@@ -17,7 +17,7 @@
     </main>
 
     <footer>
-      <Btn :disabled="!ruleGroups.length" type="submit">Save</Btn>
+      <Btn :disabled="loading || !ruleGroups.length" type="submit">Save</Btn>
       <Btn variant="neutral" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -28,7 +28,6 @@ import { isEqual } from 'lodash-es'
 import { ref } from 'vue'
 import type { CreatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useRouter } from '@/composables/useRouter'
 import { useForm } from '@/composables/useForm'
 
@@ -45,12 +44,11 @@ const initialRuleGroups = [playlistStore.createEmptySmartPlaylistRuleGroup()]
 
 const ruleGroups = ref<SmartPlaylistRuleGroup[]>(structuredClone(initialRuleGroups))
 
-const { toastSuccess } = useMessageToaster()
 const { go, url } = useRouter()
 
 const close = () => emit('close')
 
-const { data, handleSubmit, maybeClose } = useForm<CreatePlaylistData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<CreatePlaylistData>({
   initialValues: {
     name: '',
     description: '',
@@ -59,13 +57,16 @@ const { data, handleSubmit, maybeClose } = useForm<CreatePlaylistData>({
     cover: null,
   },
   isPristine: (original, current) => isEqual(original, current) && isEqual(ruleGroups.value, initialRuleGroups),
+  toast: {
+    loading: 'Creating playlist…',
+    success: (playlist: Playlist) => `Playlist "${playlist.name}" created.`,
+  },
   onSubmit: async data =>
     await playlistStore.store({
       ...data,
       rules: ruleGroups.value,
     }),
   onSuccess: (playlist: Playlist) => {
-    toastSuccess(`Playlist "${playlist.name}" created.`)
     close()
     go(url('playlists.show', { id: playlist.id }))
   },

@@ -36,14 +36,13 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="loading" type="submit">Save</Btn>
       <Btn variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>
 
 <script setup lang="ts">
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import type { RadioStationData } from '@/stores/radioStationStore'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { useForm } from '@/composables/useForm'
@@ -57,11 +56,9 @@ import ArtworkField from '@/components/ui/form/ArtworkField.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const { toastSuccess } = useMessageToaster()
-
 const close = () => emit('close')
 
-const { data, handleSubmit, maybeClose } = useForm<RadioStationData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<RadioStationData>({
   initialValues: {
     name: '',
     logo: null,
@@ -70,11 +67,9 @@ const { data, handleSubmit, maybeClose } = useForm<RadioStationData>({
     description: '',
     is_public: false,
   },
+  toast: { loading: 'Adding station…', success: (station: RadioStation) => `Station "${station.name}" added.` },
   onSubmit: async data => await radioStationStore.store(data),
-  onSuccess: (station: RadioStation) => {
-    close()
-    toastSuccess(`Station "${station.name}" added.`)
-  },
+  onSuccess: close,
   onClose: close,
 })
 </script>

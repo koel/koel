@@ -31,7 +31,6 @@ const { data, loading, handleSubmit } = useForm<{ email: string }>({
   initialValues: {
     email: '',
   },
-  useOverlay: false,
   onSubmit: async ({ email }) => await authService.requestResetPasswordLink(email),
   onSuccess: () => {
     data.email = ''

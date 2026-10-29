@@ -36,7 +36,7 @@
     </div>
 
     <footer class="mt-8">
-      <Btn class="btn-submit" type="submit">Save</Btn>
+      <Btn class="btn-submit" :disabled="loading" type="submit">Save</Btn>
       <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2">Changes will not be saved in the demo version.</span>
     </footer>
   </form>
@@ -47,7 +47,6 @@ import { pick } from 'lodash-es'
 import type { UpdateCurrentProfileData } from '@/services/authService'
 import { authService } from '@/services/authService'
 import { useAuthorization } from '@/composables/useAuthorization'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -56,15 +55,18 @@ import AlertBox from '@/components/ui/AlertBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
-const { toastSuccess, toastInfo } = useMessageToaster()
 const { currentUser } = useAuthorization()
 
 const isDemo = window.KOEL.is_demo
 
-const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
+const { data, loading, handleSubmit } = useForm<UpdateCurrentProfileData>({
   initialValues: {
     ...pick(currentUser.value, 'name', 'email'),
     avatar: undefined,
+  },
+  toast: {
+    loading: 'Saving profile…',
+    success: () => (data.email === currentUser.value.email ? 'Profile updated.' : 'Confirmation email sent.'),
   },
   onSubmit: async data => {
     if (isDemo) {
@@ -75,13 +77,6 @@ const { data, handleSubmit } = useForm<UpdateCurrentProfileData>({
   },
   onSuccess: () => {
     data.avatar = undefined
-
-    if (data.email === currentUser.value.email) {
-      toastSuccess('Profile updated.')
-      return
-    }
-
-    toastInfo('Confirmation email sent.')
     data.email = currentUser.value.email
   },
 })

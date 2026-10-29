@@ -1,7 +1,6 @@
 import { fireEvent, screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
-import { MessageToasterStub } from '@/__tests__/stubs'
 import { userStore } from '@/stores/userStore'
 import Component from './EditUserForm.vue'
 
@@ -30,7 +29,6 @@ describe('editUserForm.vue', () => {
 
   it('edits a user', async () => {
     const updateMock = h.mock(userStore, 'update')
-    const alertMock = h.mock(MessageToasterStub.value, 'success')
 
     const { user } = renderComponent()
 
@@ -46,8 +44,6 @@ describe('editUserForm.vue', () => {
         role: 'manager',
         password: 'new-password-duck',
       })
-
-      expect(alertMock).toHaveBeenCalledWith('User profile updated.')
     })
   })
 })

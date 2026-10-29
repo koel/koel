@@ -13,7 +13,7 @@
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import { markRaw, onMounted, ref } from 'vue'
+import { computed, markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { uuid } from '@/utils/crypto'
 
 import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
@@ -36,6 +36,12 @@ const root = ref<
 >()
 
 const messages = ref<ToastMessage[]>([])
+const hasLoadingToast = computed(() => messages.value.some(({ type }) => type === 'loading'))
+
+const warnBeforeLeaving = (event: BeforeUnloadEvent) => {
+  event.preventDefault()
+  event.returnValue = ''
+}
 
 const withRawComponent = <T extends { component?: Component }>(fields: T) =>
   fields.component ? { ...fields, component: markRaw(fields.component) } : fields
@@ -107,6 +113,7 @@ const info = (details: ToastDetails, timeout?: number) => add('info', details, t
 const success = (details: ToastDetails, timeout?: number) => add('success', details, timeout)
 const warning = (details: ToastDetails, timeout?: number) => add('warning', details, timeout)
 const error = (details: ToastDetails, timeout?: number) => add('danger', details, timeout)
+const loading = (details: ToastDetails) => add('loading', details)
 
 onMounted(() => {
   if (!root.value) {
@@ -116,7 +123,15 @@ onMounted(() => {
   root.value.popover = 'manual'
 })
 
-defineExpose({ info, success, warning, error, promise, update, dismiss })
+watch(hasLoadingToast, pending =>
+  pending
+    ? window.addEventListener('beforeunload', warnBeforeLeaving)
+    : window.removeEventListener('beforeunload', warnBeforeLeaving),
+)
+
+onBeforeUnmount(() => window.removeEventListener('beforeunload', warnBeforeLeaving))
+
+defineExpose({ info, success, warning, error, loading, promise, update, dismiss })
 </script>
 
 <style lang="postcss" scoped>

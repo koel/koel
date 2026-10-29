@@ -36,7 +36,7 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="loading" type="submit">Save</Btn>
       <Btn variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -46,7 +46,6 @@
 import { pick } from 'lodash-es'
 import { toRaw } from 'vue'
 
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import type { RadioStationData } from '@/stores/radioStationStore'
 import { radioStationStore } from '@/stores/radioStationStore'
 import { useForm } from '@/composables/useForm'
@@ -66,10 +65,9 @@ const { station } = props
 
 const close = () => emit('close')
 
-const { toastSuccess } = useMessageToaster()
-
-const { data, handleSubmit, maybeClose } = useForm<RadioStationData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<RadioStationData>({
   initialValues: { ...pick(station, 'name', 'url', 'homepage_url', 'description', 'is_public', 'logo') },
+  toast: { loading: 'Saving station…', success: 'Station updated.' },
   onSubmit: async data => {
     const formData = structuredClone(toRaw(data))
 
@@ -86,10 +84,7 @@ const { data, handleSubmit, maybeClose } = useForm<RadioStationData>({
       await playback('radio').play(updated)
     }
   },
-  onSuccess: () => {
-    close()
-    toastSuccess('Station updated.')
-  },
+  onSuccess: close,
   onClose: close,
 })
 </script>

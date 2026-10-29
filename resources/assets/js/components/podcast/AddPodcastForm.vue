@@ -21,14 +21,13 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="loading" type="submit">Save</Btn>
       <Btn variant="neutral" :disabled="loading" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
 </template>
 
 <script setup lang="ts">
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useErrorHandler } from '@/composables/useErrorHandler'
 import { podcastStore } from '@/stores/podcastStore'
 import { useForm } from '@/composables/useForm'
@@ -39,19 +38,15 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const { toastSuccess } = useMessageToaster()
-
 const close = () => emit('close')
 
 const { loading, handleSubmit, data, maybeClose } = useForm<Pick<Podcast, 'url'>>({
   initialValues: {
     url: '',
   },
+  toast: { loading: 'Adding podcast…', success: (podcast: Podcast) => `Podcast "${podcast.title}" added.` },
   onSubmit: async ({ url }) => await podcastStore.store(url),
-  onSuccess: (podcast: Podcast) => {
-    close()
-    toastSuccess(`Podcast "${podcast.title}" added.`)
-  },
+  onSuccess: close,
   onError: error =>
     useErrorHandler('dialog').handleHttpError(error, {
       409: 'You have already subscribed to this podcast.',

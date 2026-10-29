@@ -171,4 +171,23 @@ describe('messageToaster', () => {
     expect(screen.queryByTestId('content')).toBeNull()
     expect(screen.queryByRole('button', { name: 'Stop' })).toBeNull()
   })
+
+  it('warns before leaving the page only while a toast is loading', async () => {
+    const toaster = renderToaster()
+    const { promise, resolve } = deferred()
+
+    const leavingIsBlocked = () => !window.dispatchEvent(new Event('beforeunload', { cancelable: true }))
+
+    toaster.success('Saved')
+    await h.tick()
+    expect(leavingIsBlocked()).toBe(false)
+
+    toaster.promise(promise, { loading: 'Saving', success: 'Saved', error: 'Failed' })
+    await h.tick()
+    expect(leavingIsBlocked()).toBe(true)
+
+    resolve(undefined)
+    await h.tick(2)
+    expect(leavingIsBlocked()).toBe(false)
+  })
 })

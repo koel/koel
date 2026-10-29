@@ -15,7 +15,7 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="loading" type="submit">Save</Btn>
       <Btn variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -27,7 +27,6 @@ import { toRaw } from 'vue'
 
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -38,12 +37,11 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { playlist } = props
 
-const { toastSuccess } = useMessageToaster()
-
 const close = () => emit('close')
 
-const { data, handleSubmit, maybeClose } = useForm<UpdatePlaylistData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<UpdatePlaylistData>({
   initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
+  toast: { loading: 'Saving playlist…', success: 'Playlist updated.' },
   onSubmit: async data => {
     const formData = structuredClone(toRaw(data))
 
@@ -53,10 +51,7 @@ const { data, handleSubmit, maybeClose } = useForm<UpdatePlaylistData>({
 
     await playlistStore.update(playlist, formData)
   },
-  onSuccess: () => {
-    toastSuccess('Playlist updated.')
-    close()
-  },
+  onSuccess: close,
   onClose: close,
 })
 </script>

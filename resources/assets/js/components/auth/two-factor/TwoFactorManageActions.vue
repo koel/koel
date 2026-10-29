@@ -58,7 +58,6 @@ const cancel = () => {
 
 const { data, handleSubmit } = useForm<{ code: string }>({
   initialValues: { code: '' },
-  useOverlay: false,
   onSubmit: async ({ code }) => {
     if (action.value === 'regenerate') {
       const result = await authService.regenerateRecoveryCodes(code)

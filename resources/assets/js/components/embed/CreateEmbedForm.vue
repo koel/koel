@@ -84,7 +84,6 @@ const {
     preview: false,
   },
   onSubmit: async data => (encryptedOptions.value = await embedService.encryptOptions(data)),
-  useOverlay: false,
 })
 
 watch(options, async () => await encryptOptions(), { immediate: true })

@@ -31,7 +31,6 @@
 <script lang="ts" setup>
 import type { CreateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -42,8 +41,6 @@ import PasswordField from '@/components/ui/form/PasswordField.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
 
-const { toastSuccess } = useMessageToaster()
-
 const close = () => emit('close')
 
 const { data, loading, handleSubmit, maybeClose } = useForm<CreateUserData>({
@@ -53,11 +50,9 @@ const { data, loading, handleSubmit, maybeClose } = useForm<CreateUserData>({
     password: '',
     role: 'user',
   },
+  toast: { loading: 'Creating user…', success: (user: User) => `New user "${user.name}" created.` },
   onSubmit: async data => await userStore.store(data),
-  onSuccess: (user: User) => {
-    toastSuccess(`New user "${user.name}" created.`)
-    close()
-  },
+  onSuccess: close,
   onClose: close,
 })
 </script>

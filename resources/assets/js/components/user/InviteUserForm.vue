@@ -14,7 +14,7 @@
     </main>
 
     <footer>
-      <Btn class="btn-add" type="submit">Invite</Btn>
+      <Btn class="btn-add" :disabled="loading" type="submit">Invite</Btn>
       <Btn variant="neutral" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -23,7 +23,6 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { invitationService } from '@/services/invitationService'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -32,8 +31,6 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 import RolePicker from '@/components/user/RolePicker.vue'
 
 const emit = defineEmits<{ (e: 'close'): void }>()
-
-const { toastSuccess } = useMessageToaster()
 
 const emailsEl = ref<InstanceType<typeof TextArea>>()
 
@@ -54,7 +51,7 @@ const collectValidEmails = () => {
 
 const close = () => emit('close')
 
-const { data, handleSubmit, maybeClose } = useForm<{ raw_emails: string; role: Role }>({
+const { data, loading, handleSubmit, maybeClose } = useForm<{ raw_emails: string; role: Role }>({
   initialValues: {
     raw_emails: '',
     role: 'user',
@@ -76,11 +73,9 @@ const { data, handleSubmit, maybeClose } = useForm<{ raw_emails: string; role: R
 
     return true
   },
+  toast: { loading: 'Sending invitations…', success: 'Invitation(s) sent.' },
   onSubmit: async ({ role }) => invitationService.invite(collectValidEmails(), role),
-  onSuccess: () => {
-    toastSuccess('Invitation(s) sent.')
-    close()
-  },
+  onSuccess: close,
   onClose: close,
 })
 

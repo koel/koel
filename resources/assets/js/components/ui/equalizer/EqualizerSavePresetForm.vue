@@ -28,7 +28,6 @@ const { data, handleSubmit, maybeClose } = useForm<{ name: string }>({
   initialValues: { name: '' },
   validator: ({ name }) => name.trim().length > 0,
   onSubmit: async ({ name }) => emit('submit', name.trim()),
-  useOverlay: false,
   onClose: () => emit('cancel'),
   discardConfirmation: 'Discard preset name?',
 })
