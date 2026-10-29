@@ -175,6 +175,7 @@ export const useKeyboardShortcuts = () => {
       run: () => toggleScreen('Queue', 'queue'),
     },
     { group: 'Go to', label: 'Home', keys: ['H'], key: letterKey('h'), run: () => go(url('home')) },
+    { group: 'Go to', label: 'Settings', keys: [','], key: ',', run: () => go(url('settings')) },
     {
       group: 'Go to',
       label: 'Toggle AI Assistant',

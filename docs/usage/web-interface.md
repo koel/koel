@@ -126,6 +126,7 @@ the music track)
 or a textarea.
 
 * <kbd>h</kbd> shows the Home screen
+* <kbd>,</kbd> opens Settings
 * <kbd>q</kbd> toggles the Queue screen
 * <kbd>f</kbd> puts the focus into the search box and opens the [instant search](search.md) screen
 * <kbd>Enter</kbd> plays a song. If multiple songs are being selected, <kbd>Enter</kbd> adds them to the bottom of the
