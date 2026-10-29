@@ -1,7 +1,7 @@
 <template>
   <article
     :class="message.type"
-    class="rounded-l-md flex items-stretch opacity-90 transition-[background-color,color,opacity] duration-300 hover:opacity-100"
+    class="rounded-l-md flex items-stretch transition-[background-color,color] duration-300"
     @focusin="onFocusIn"
     @focusout="onFocusOut"
     @mouseenter="onMouseEnter"
@@ -123,6 +123,6 @@ onBeforeUnmount(cancelAutoDismiss)
 }
 
 .loading {
-  @apply bg-k-bg-90 text-k-fg;
+  @apply bg-blue-600 text-blue-100;
 }
 </style>
