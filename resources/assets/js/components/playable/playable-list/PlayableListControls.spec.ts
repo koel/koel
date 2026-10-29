@@ -78,7 +78,7 @@ describe('playableListControls.vue', () => {
   it('clears queue', async () => {
     const { emitted } = renderComponent(0)
 
-    await h.user.click(screen.getByRole('button', { name: 'Clear' }))
+    await h.user.click(screen.getByRole('button', { name: 'Clear queue' }))
 
     expect(emitted()['clear-queue']).toBeTruthy()
   })
