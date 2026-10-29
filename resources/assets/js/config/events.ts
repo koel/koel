@@ -24,7 +24,6 @@ export interface Events {
   SONGS_UPDATED: (result: SongUpdateResult) => void
   SONGS_DELETED: (songs: Song[]) => void
   SONG_UPLOADED: (song: Song) => void
-  DOWNLOAD_ARCHIVE_SAVED: () => void
 
   EPISODE_PROGRESS_UPDATED: (episode: Episode, progress: number) => void
 

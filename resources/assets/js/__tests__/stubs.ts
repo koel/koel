@@ -11,6 +11,9 @@ export const MessageToasterStub = ref({
   success: noop,
   warning: noop,
   error: noop,
+  promise: noop,
+  update: noop,
+  dismiss: noop,
 }) as unknown as Ref<InstanceType<typeof MessageToaster>>
 
 export const DialogBoxStub = ref({
