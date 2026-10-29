@@ -9,7 +9,6 @@ use App\Models\Embed;
 use App\Models\Playlist;
 use App\Models\Song;
 use App\Models\User;
-use App\Models\UserFavorites;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /** @extends Factory<Embed> */
@@ -23,19 +22,33 @@ class EmbedFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'embeddable_type' => $type->value,
-            'embeddable_id' => static fn (array $attributes) => self::createEmbeddableOwnedBy(
+            'embeddable_type' => $type,
+            'embeddable_id' => static fn (array $attributes): ?string => self::createEmbeddableOwnedBy(
                 $type,
                 User::query()->whereKey($attributes['user_id'])->firstOrFail(),
             )
-                ->getKey(),
+                ?->getKey(),
         ];
     }
 
-    private static function createEmbeddableOwnedBy(
-        EmbeddableType $type,
-        User $user,
-    ): Song|Playlist|Album|Artist|UserFavorites {
+    public function embedding(Song|Album|Artist|Playlist $embeddable): self
+    {
+        return $this->state([
+            'embeddable_type' => EmbeddableType::from($embeddable->getMorphClass()),
+            'embeddable_id' => $embeddable->getKey(),
+        ]);
+    }
+
+    public function embeddingFavorites(): self
+    {
+        return $this->state([
+            'embeddable_type' => EmbeddableType::FAVORITES,
+            'embeddable_id' => null,
+        ]);
+    }
+
+    private static function createEmbeddableOwnedBy(EmbeddableType $type, User $user): Song|Playlist|Album|Artist|null
+    {
         return match ($type) {
             EmbeddableType::PLAYABLE => Song::factory()->for($user, 'owner')->createOne(),
             EmbeddableType::PLAYLIST => tap(Playlist::factory()->createOne(), static function (Playlist $playlist) use (
@@ -46,7 +59,7 @@ class EmbedFactory extends Factory
             }),
             EmbeddableType::ALBUM => Album::factory()->for($user)->createOne(),
             EmbeddableType::ARTIST => Artist::factory()->for($user)->createOne(),
-            EmbeddableType::FAVORITES => UserFavorites::query()->findOrFail($user->public_id),
+            EmbeddableType::FAVORITES => null,
         };
     }
 }

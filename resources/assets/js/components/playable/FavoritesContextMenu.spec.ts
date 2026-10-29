@@ -83,7 +83,7 @@ describe('favoritesContextMenu.vue', () => {
     await h.user.click(screen.getByRole('menuitem', { name: 'Embed…' }))
 
     await assertOpenModal(openModalMock, CreateEmbedForm, {
-      embeddable: { type: 'favorites', id: user.id, owner_name: user.name },
+      embeddable: { type: 'favorites', owner_name: user.name },
     })
   })
 

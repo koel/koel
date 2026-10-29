@@ -5,11 +5,9 @@ namespace App\Models;
 use App\Builders\AlbumBuilder;
 use App\Models\Concerns\Albums\HasAlbumAttributes;
 use App\Models\Concerns\HasMbid;
-use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\MorphsToRatings;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
-use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Rateable;
 use App\Observers\AlbumObserver;
@@ -60,14 +58,13 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 #[Guarded(['id'])]
 #[Hidden(['updated_at'])]
 #[Appends(['is_compilation'])]
-class Album extends Model implements AuditableContract, Embeddable, Favoriteable, Rateable
+class Album extends Model implements AuditableContract, Favoriteable, Rateable
 {
     use Auditable;
     use HasAlbumAttributes;
     use HasMbid;
     use HasFactory;
     use HasUlids;
-    use MorphsToEmbeds;
     use MorphsToFavorites;
     use MorphsToRatings;
     use Searchable;

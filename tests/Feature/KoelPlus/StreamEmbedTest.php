@@ -21,7 +21,7 @@ class StreamEmbedTest extends PlusTestCase
 {
     private static function makeStreamUrl(Song $song, bool $previewMode): string
     {
-        $embed = Embed::factory()->for($song->owner)->for($song, 'embeddable')->createOne();
+        $embed = Embed::factory()->for($song->owner)->embedding($song)->createOne();
 
         return URL::temporarySignedRoute('embeds.stream', now()->addDay(), [
             'embed' => $embed->id,

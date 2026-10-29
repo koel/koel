@@ -3,14 +3,11 @@
 namespace App\Repositories;
 
 use App\Builders\SongBuilder;
-use App\Enums\EmbeddableType;
 use App\Enums\PlayableType;
-use App\Exceptions\EmbeddableNotFoundException;
 use App\Exceptions\NonSmartPlaylistException;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
-use App\Models\Embed;
 use App\Models\Folder;
 use App\Models\Genre;
 use App\Models\Organization;
@@ -856,18 +853,5 @@ class SongRepository extends Repository implements ScoutableRepository
         $resultIds = $candidateIds->intersect($accessibleCandidateIds)->take($limit)->values()->all();
 
         return $this->getMany(ids: $resultIds, preserveOrder: true, scopedUser: $user);
-    }
-
-    public function getForEmbed(Embed $embed): Collection
-    {
-        throw_unless((bool) $embed->embeddable, new EmbeddableNotFoundException());
-
-        return match (EmbeddableType::from($embed->embeddable_type)) {
-            EmbeddableType::ALBUM => $this->getByAlbum($embed->embeddable, $embed->user),
-            EmbeddableType::ARTIST => $this->getByArtist($embed->embeddable, $embed->user),
-            EmbeddableType::PLAYLIST => $this->getByPlaylist($embed->embeddable, $embed->user),
-            EmbeddableType::PLAYABLE => $this->getMany(ids: [$embed->embeddable->getKey()], scopedUser: $embed->user),
-            EmbeddableType::FAVORITES => $this->getFavorites(scopedUser: $embed->user),
-        };
     }
 }

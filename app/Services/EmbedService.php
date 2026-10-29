@@ -2,26 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\Album;
-use App\Models\Artist;
-use App\Models\Contracts\Embeddable;
+use App\Enums\EmbeddableType;
 use App\Models\Embed;
-use App\Models\Playlist;
-use App\Models\Song;
 use App\Models\User;
-use App\Models\UserFavorites;
 
 class EmbedService
 {
-    /** @param Album|Artist|Playlist|Song|UserFavorites $embeddable */
-    public function resolveEmbedForEmbeddable(Embeddable $embeddable, User $user): Embed
+    public function resolveEmbed(EmbeddableType $type, ?string $embeddableId, User $user): Embed
     {
-        return $embeddable
-            ->embeds()
-            ->firstOrCreate([
-                'embeddable_id' => $embeddable->getKey(),
-                'embeddable_type' => $embeddable->getMorphClass(),
-                'user_id' => $user->id,
-            ]);
+        return Embed::query()->firstOrCreate([
+            'embeddable_type' => $type,
+            'embeddable_id' => $embeddableId,
+            'user_id' => $user->id,
+        ]);
     }
 }

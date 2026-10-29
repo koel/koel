@@ -322,7 +322,7 @@ interface Embed {
   type: 'embeds'
   id: string
   user_id: User['id']
-  embeddable_id: Embeddable['id']
+  embeddable_id: Exclude<Embeddable, UserFavorites>['id'] | null
   embeddable_type: 'playable' | 'playlist' | 'artist' | 'album' | 'favorites'
 }
 
@@ -397,7 +397,6 @@ type SmartPlaylistInputTypes = Record<SmartPlaylistModel['type'], SmartPlaylistO
 
 interface UserFavorites {
   type: 'favorites'
-  id: User['id']
   owner_name: User['name']
 }
 

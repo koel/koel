@@ -168,10 +168,10 @@ describe('embedWidgetBanner.vue', async () => {
 
   it('renders favorites with a cover stack', () => {
     const songs = h.factory('song').make(5)
-    const favorites: UserFavorites = { type: 'favorites', id: crypto.randomUUID(), owner_name: 'Lisa' }
+    const favorites: UserFavorites = { type: 'favorites', owner_name: 'Lisa' }
 
     renderComponent({
-      ...h.factory('embed').make({ embeddable_type: 'favorites', embeddable_id: favorites.id }),
+      ...h.factory('embed').make({ embeddable_type: 'favorites', embeddable_id: null }),
       embeddable: favorites,
       playables: songs,
     })

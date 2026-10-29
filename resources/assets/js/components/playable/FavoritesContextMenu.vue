@@ -44,7 +44,7 @@ const download = () => trigger(() => fromFavorites())
 const showEmbedModal = () =>
   trigger(() =>
     openModal<'CREATE_EMBED_FORM'>(CreateEmbedForm, {
-      embeddable: { type: 'favorites', id: userStore.current.id, owner_name: userStore.current.name },
+      embeddable: { type: 'favorites', owner_name: userStore.current.name },
     }),
   )
 </script>

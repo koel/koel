@@ -7,11 +7,9 @@ use App\Facades\License;
 use App\Helpers\Encoding\Bom;
 use App\Models\Concerns\Artists\HasArtistAttributes;
 use App\Models\Concerns\HasMbid;
-use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\MorphsToFavorites;
 use App\Models\Concerns\MorphsToRatings;
 use App\Models\Concerns\SupportsDeleteWhereValueNotIn;
-use App\Models\Contracts\Embeddable;
 use App\Models\Contracts\Favoriteable;
 use App\Models\Contracts\Rateable;
 use App\Observers\ArtistObserver;
@@ -57,14 +55,13 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 #[UseEloquentBuilder(ArtistBuilder::class)]
 #[Guarded(['id'])]
 #[Hidden(['created_at', 'updated_at'])]
-class Artist extends Model implements AuditableContract, Embeddable, Favoriteable, Rateable
+class Artist extends Model implements AuditableContract, Favoriteable, Rateable
 {
     use Auditable;
     use HasArtistAttributes;
     use HasMbid;
     use HasFactory;
     use HasUlids;
-    use MorphsToEmbeds;
     use MorphsToFavorites;
     use MorphsToRatings;
     use Searchable;

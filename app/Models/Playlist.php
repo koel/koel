@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use App\Casts\SmartPlaylistRulesCast;
-use App\Models\Concerns\MorphsToEmbeds;
 use App\Models\Concerns\Playlists\ManagesCollaborators;
 use App\Models\Concerns\Playlists\ManagesPlayables;
-use App\Models\Contracts\Embeddable;
 use App\Models\Song as Playable;
 use App\Observers\PlaylistObserver;
 use App\Values\SmartPlaylist\SmartPlaylistRuleGroupCollection;
@@ -50,14 +48,13 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 #[Unguarded]
 #[Hidden(['created_at', 'updated_at'])]
 #[Appends(['is_smart'])]
-class Playlist extends Model implements AuditableContract, Embeddable
+class Playlist extends Model implements AuditableContract
 {
     use Auditable;
     use HasFactory;
     use HasUuids;
     use ManagesCollaborators;
     use ManagesPlayables;
-    use MorphsToEmbeds;
     use Searchable;
 
     protected function casts(): array

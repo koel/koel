@@ -8,6 +8,8 @@ use App\Models\Embed;
 use App\Models\Favorite;
 use App\Models\Song;
 use App\Values\EmbedOptions;
+use Closure;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -41,28 +43,74 @@ class EmbedTest extends TestCase
         ])->assertForbidden();
     }
 
-    #[Test]
-    public function getPayload(): void
+    /** @return array<string, array{Closure(): array{Embed, Song}}> */
+    public static function provideEmbedsWithTheirSong(): array
     {
+        return [
+            'playable' => [
+                static function (): array {
+                    $song = Song::factory()->createOne();
+
+                    return [Embed::factory()->for($song->owner)->embedding($song)->createOne(), $song];
+                },
+            ],
+            'album' => [
+                static function (): array {
+                    $song = Song::factory()->createOne();
+
+                    return [Embed::factory()->for($song->owner)->embedding($song->album)->createOne(), $song];
+                },
+            ],
+            'artist' => [
+                static function (): array {
+                    $song = Song::factory()->createOne();
+
+                    return [Embed::factory()->for($song->owner)->embedding($song->artist)->createOne(), $song];
+                },
+            ],
+            'playlist' => [
+                static function (): array {
+                    $playlist = create_playlist();
+                    $song = Song::factory()->for($playlist->owner, 'owner')->createOne();
+                    $playlist->addPlayables($song);
+
+                    return [Embed::factory()->for($playlist->owner)->embedding($playlist)->createOne(), $song];
+                },
+            ],
+        ];
+    }
+
+    /** @param Closure(): array{Embed, Song} $createEmbedWithSong */
+    #[Test]
+    #[DataProvider('provideEmbedsWithTheirSong')]
+    public function getPayload(Closure $createEmbedWithSong): void
+    {
+        [$embed, $song] = $createEmbedWithSong();
+
         $jsonStructure = [
             'embed' => EmbedResource::JSON_PUBLIC_STRUCTURE,
             'options' => EmbedOptionsResource::JSON_STRUCTURE,
             'theme',
         ];
-        $embed = Embed::factory()->createOne();
         $options = EmbedOptions::make();
 
         $this->getAs("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonStructure($jsonStructure);
 
         // getJson() instead of getAs() to make sure it passes without authentication
-        $this->getJson("api/embeds/{$embed->id}/$options")->assertSuccessful()->assertJsonStructure($jsonStructure);
+        $this
+            ->getJson("api/embeds/{$embed->id}/$options")
+            ->assertSuccessful()
+            ->assertJsonStructure($jsonStructure)
+            ->assertJsonCount(1, 'embed.playables')
+            ->assertJsonPath('embed.playables.0.id', $song->id);
     }
 
     #[Test]
     public function getPayloadThrowsNotFoundIfEmbeddableIsNotAvailableAnyMore(): void
     {
-        $embed = Embed::factory()->createOne();
-        $embed->embeddable->delete();
+        $song = Song::factory()->createOne();
+        $embed = Embed::factory()->for($song->owner)->embedding($song)->createOne();
+        $song->delete();
 
         $options = EmbedOptions::make();
 
@@ -94,31 +142,19 @@ class EmbedTest extends TestCase
     }
 
     #[Test]
-    public function resolveForOwnFavorites(): void
+    public function resolveForFavorites(): void
     {
         $user = create_user();
 
-        $this
-            ->postAs(
-                'api/embeds/resolve',
-                [
-                    'embeddable_id' => $user->public_id,
-                    'embeddable_type' => 'favorites',
-                ],
-                $user,
-            )
+        $embedId = $this
+            ->postAs('api/embeds/resolve', ['embeddable_type' => 'favorites'], $user)
             ->assertSuccessful()
             ->assertJsonStructure(EmbedResource::JSON_STRUCTURE)
-            ->assertJsonPath('embeddable.id', $user->public_id);
-    }
+            ->assertJsonPath('embeddable_id', null)
+            ->assertJsonPath('embeddable.owner_name', $user->name)
+            ->json('id');
 
-    #[Test]
-    public function resolveFailsForAnotherUsersFavorites(): void
-    {
-        $this->postAs('api/embeds/resolve', [
-            'embeddable_id' => create_user()->public_id,
-            'embeddable_type' => 'favorites',
-        ])->assertForbidden();
+        $this->postAs('api/embeds/resolve', ['embeddable_type' => 'favorites'], $user)->assertJsonPath('id', $embedId);
     }
 
     #[Test]
@@ -126,15 +162,7 @@ class EmbedTest extends TestCase
     {
         $user = create_user();
         Favorite::factory()->for($user)->createOne();
-
-        $embedId = $this->postAs(
-            'api/embeds/resolve',
-            [
-                'embeddable_id' => $user->public_id,
-                'embeddable_type' => 'favorites',
-            ],
-            $user,
-        )->json('id');
+        $embed = Embed::factory()->for($user)->embeddingFavorites()->createOne();
 
         $laterFavorite = Favorite::factory()->for($user)->createOne();
         Favorite::factory()->createOne();
@@ -142,7 +170,7 @@ class EmbedTest extends TestCase
         $options = EmbedOptions::make();
 
         $this
-            ->getJson("api/embeds/$embedId/$options")
+            ->getJson("api/embeds/{$embed->id}/$options")
             ->assertSuccessful()
             ->assertJsonCount(2, 'embed.playables')
             ->assertJsonPath('embed.playables.1.id', $laterFavorite->favoriteable_id);
