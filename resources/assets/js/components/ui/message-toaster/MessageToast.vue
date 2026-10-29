@@ -130,7 +130,7 @@ onBeforeUnmount(cancelAutoDismiss)
   @apply bg-black/10;
 
   .loading & {
-    @apply bg-k-fg-10;
+    @apply bg-k-fg-5;
   }
 }
 </style>
