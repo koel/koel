@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Embeddables\Contracts;
+namespace App\Services\Embed\Resolvers\Contracts;
 
 use App\Models\Song;
 use App\Models\User;
@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @template TEmbeddable of Model
  */
-interface EmbeddableResolver
+interface Resolver
 {
     /** @return ?TEmbeddable */
     public function findEmbeddable(?string $embeddableId, User $embedOwner): ?Model;

@@ -1,53 +1,53 @@
 <?php
 
-namespace App\Services\Embeddables;
+namespace App\Services\Embed\Resolvers;
 
-use App\Http\Resources\PlaylistResource;
-use App\Models\Playlist;
+use App\Http\Resources\AlbumResource;
+use App\Models\Album;
 use App\Models\User;
-use App\Repositories\PlaylistRepository;
+use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
-use App\Services\Embeddables\Contracts\EmbeddableResolver;
+use App\Services\Embed\Resolvers\Contracts\Resolver;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @implements EmbeddableResolver<Playlist> */
-class PlaylistEmbeddableResolver implements EmbeddableResolver
+/** @implements Resolver<Album> */
+class AlbumResolver implements Resolver
 {
     public function __construct(
-        private readonly PlaylistRepository $playlistRepository,
+        private readonly AlbumRepository $albumRepository,
         private readonly SongRepository $songRepository,
         private readonly Gate $gate,
     ) {}
 
-    public function findEmbeddable(?string $embeddableId, User $embedOwner): ?Playlist
+    public function findEmbeddable(?string $embeddableId, User $embedOwner): ?Album
     {
-        return $this->playlistRepository->findOneBy(['id' => $embeddableId]);
+        return $this->albumRepository->findOneBy(['id' => $embeddableId]);
     }
 
-    /** @param Playlist $embeddable */
+    /** @param Album $embeddable */
     public function canEmbed(User $user, Model $embeddable): bool
     {
         return $this->gate->forUser($user)->allows('embed', $embeddable);
     }
 
-    /** @param Playlist $embeddable */
+    /** @param Album $embeddable */
     public function getPlayables(Model $embeddable, User $embedOwner): Collection
     {
-        return $this->songRepository->getByPlaylist($embeddable, $embedOwner);
+        return $this->songRepository->getByAlbum($embeddable, $embedOwner);
     }
 
-    /** @param Playlist $embeddable */
+    /** @param Album $embeddable */
     public function getEmbeddableId(Model $embeddable): string
     {
         return $embeddable->id;
     }
 
-    /** @param Playlist $embeddable */
+    /** @param Album $embeddable */
     public function makeEmbeddableResource(Model $embeddable): JsonResource
     {
-        return PlaylistResource::make($embeddable);
+        return AlbumResource::make($embeddable);
     }
 }

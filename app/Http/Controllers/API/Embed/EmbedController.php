@@ -12,8 +12,8 @@ use App\Http\Resources\ThemeResource;
 use App\Models\Embed;
 use App\Models\User;
 use App\Repositories\ThemeRepository;
-use App\Services\Embeddables\EmbeddableResolverRegistry;
-use App\Services\EmbedService;
+use App\Services\Embed\EmbedService;
+use App\Services\Embed\Resolvers\ResolverRegistry;
 use App\Values\EmbedOptions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -25,7 +25,7 @@ class EmbedController extends Controller
     /** @param ?User $user */
     public function __construct(
         private readonly EmbedService $service,
-        private readonly EmbeddableResolverRegistry $resolverRegistry,
+        private readonly ResolverRegistry $resolverRegistry,
         private readonly ThemeRepository $themeRepository,
         private readonly ?Authenticatable $user,
     ) {}

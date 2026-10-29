@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Embed;
 
 use App\Enums\EmbeddableType;
 use App\Models\Embed;

@@ -1,19 +1,19 @@
 <?php
 
-namespace Tests\Unit\Services\Embeddables;
+namespace Tests\Unit\Services\Embed\Resolvers;
 
-use App\Services\Embeddables\FavoritesEmbeddableResolver;
+use App\Services\Embed\Resolvers\FavoritesResolver;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
-class FavoritesEmbeddableResolverTest extends TestCase
+class FavoritesResolverTest extends TestCase
 {
     #[Test]
     public function cannotEmbedAnotherUsersFavorites(): void
     {
-        $resolver = app(FavoritesEmbeddableResolver::class);
+        $resolver = app(FavoritesResolver::class);
 
         self::assertFalse($resolver->canEmbed(create_user(), create_user()));
     }

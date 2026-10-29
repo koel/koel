@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Services\Embeddables;
+namespace App\Services\Embed\Resolvers;
 
 use App\Models\User;
 use App\Repositories\SongRepository;
-use App\Services\Embeddables\Contracts\EmbeddableResolver;
+use App\Services\Embed\Resolvers\Contracts\Resolver;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @implements EmbeddableResolver<User> */
-class FavoritesEmbeddableResolver implements EmbeddableResolver
+/** @implements Resolver<User> */
+class FavoritesResolver implements Resolver
 {
     public function __construct(
         private readonly SongRepository $songRepository,

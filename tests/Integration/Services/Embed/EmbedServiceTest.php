@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Integration\Services;
+namespace Tests\Integration\Services\Embed;
 
 use App\Enums\EmbeddableType;
 use App\Models\Song;
-use App\Services\EmbedService;
+use App\Services\Embed\EmbedService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
