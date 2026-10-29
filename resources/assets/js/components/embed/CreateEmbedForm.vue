@@ -31,7 +31,7 @@
       </div>
     </main>
     <footer class="flex items-center">
-      <div class="flex-1">
+      <div class="flex-1 flex gap-2">
         <Btn type="submit" @click.prevent="copyCode">Copy Code</Btn>
         <Btn variant="neutral" @click="emit('close')">Close</Btn>
       </div>
