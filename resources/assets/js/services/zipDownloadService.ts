@@ -1,7 +1,6 @@
 import type { ZipWriter } from '@zip.js/zip.js'
 import { reactive } from 'vue'
 import { authService } from '@/services/authService'
-import { eventBus } from '@/utils/eventBus'
 
 export class ZipTooLargeError extends Error {}
 export class ZipUnsupportedError extends Error {}
@@ -114,6 +113,7 @@ export const zipDownloadService = {
 
   abortController: null as AbortController | null,
   building: Promise.resolve(),
+  releaseArchive: null as Closure | null,
 
   isSupported: () => typeof navigator.storage?.getDirectory === 'function',
 
@@ -187,7 +187,8 @@ export const zipDownloadService = {
       this.state.fileUrl = URL.createObjectURL(await handle.getFile())
       this.state.status = 'ready'
       const archiveDirectory = directory
-      this.save(() => this.removeArchive(archiveDirectory, archiveFileName))
+      this.releaseArchive = () => this.removeArchive(archiveDirectory, archiveFileName)
+      this.save()
     } catch (error: unknown) {
       writeAborter.abort()
       await writing.catch(() => {})
@@ -257,22 +258,15 @@ export const zipDownloadService = {
     return quota === undefined ? Number.POSITIVE_INFINITY : quota - usage
   },
 
-  save(releaseArchive: Closure = () => {}) {
+  save() {
     if (!this.state.fileUrl) {
       return
     }
 
-    const fileUrl = this.state.fileUrl
-    Object.assign(document.createElement('a'), { href: fileUrl, download: this.state.archiveName }).click()
-
-    this.state.fileUrl = null
-    this.state.status = 'idle'
-    eventBus.emit('DOWNLOAD_ARCHIVE_SAVED')
-
-    window.setTimeout(() => {
-      URL.revokeObjectURL(fileUrl)
-      releaseArchive()
-    }, ARCHIVE_RETENTION_MS)
+    Object.assign(document.createElement('a'), {
+      href: this.state.fileUrl,
+      download: this.state.archiveName,
+    }).click()
   },
 
   cancel() {
@@ -280,8 +274,15 @@ export const zipDownloadService = {
   },
 
   dismiss() {
-    if (this.state.fileUrl) {
-      URL.revokeObjectURL(this.state.fileUrl)
+    const { fileUrl } = this.state
+    const releaseArchive = this.releaseArchive
+    this.releaseArchive = null
+
+    if (fileUrl) {
+      window.setTimeout(() => {
+        URL.revokeObjectURL(fileUrl)
+        releaseArchive?.()
+      }, ARCHIVE_RETENTION_MS)
     }
 
     Object.assign(this.state, {

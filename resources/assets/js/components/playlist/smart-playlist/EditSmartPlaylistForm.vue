@@ -17,7 +17,7 @@
     </main>
 
     <footer>
-      <Btn :disabled="!ruleGroups.length" type="submit">Save</Btn>
+      <Btn :disabled="loading || !ruleGroups.length" type="submit">Save</Btn>
       <Btn variant="neutral" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -30,7 +30,6 @@ import { ref, toRaw } from 'vue'
 import type { UpdatePlaylistData } from '@/stores/playlistStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { eventBus } from '@/utils/eventBus'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -42,15 +41,17 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { playlist } = props
 
-const { toastSuccess } = useMessageToaster()
-
 const ruleGroups = ref<SmartPlaylistRuleGroup[]>(structuredClone(toRaw(playlist.rules)))
 
 const close = () => emit('close')
 
-const { data, handleSubmit, maybeClose } = useForm<UpdatePlaylistData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<UpdatePlaylistData>({
   initialValues: { ...pick(playlist, 'name', 'folder_id', 'description', 'cover'), folder_name: null },
   isPristine: (original, current) => isEqual(original, current) && isEqual(ruleGroups.value, playlist.rules),
+  toast: {
+    loading: 'Saving playlist…',
+    success: () => `Playlist "${playlist.name}" updated.`,
+  },
   onSubmit: async data => {
     const formData = {
       ...structuredClone(toRaw(data)),
@@ -64,7 +65,6 @@ const { data, handleSubmit, maybeClose } = useForm<UpdatePlaylistData>({
     await playlistStore.update(playlist, formData)
   },
   onSuccess: () => {
-    toastSuccess(`Playlist "${playlist.name}" updated.`)
     eventBus.emit('PLAYLIST_UPDATED', playlist)
     close()
   },

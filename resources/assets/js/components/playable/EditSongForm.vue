@@ -144,7 +144,7 @@
     </Tabs>
 
     <footer>
-      <Btn type="submit">Update</Btn>
+      <Btn :disabled="loading" type="submit">Update</Btn>
       <Btn variant="neutral" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -156,7 +156,6 @@ import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
 import type { SongUpdateData, SongUpdateResult } from '@/stores/playableStore'
 import { playableStore as songStore } from '@/stores/playableStore'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { genres } from '@/config/genres'
 import { useForm } from '@/composables/useForm'
 import { useBranding } from '@/composables/useBranding'
@@ -181,7 +180,6 @@ const currentTab = ref(props.initialTab)
 
 const close = () => emit('close')
 
-const { toastSuccess } = useMessageToaster()
 const { cover: defaultCover } = useBranding()
 
 const editingOnlyOneSong = songs.length === 1
@@ -224,11 +222,14 @@ const initialAlbumArtistName = initialValues.album_artist_name
 const withoutUntouchedAlbumArtist = ({ album_artist_name, ...otherData }: SongUpdateData): SongUpdateData =>
   album_artist_name === initialAlbumArtistName ? otherData : { ...otherData, album_artist_name }
 
-const { data, handleSubmit, maybeClose } = useForm<SongUpdateData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<SongUpdateData>({
   initialValues,
+  toast: {
+    loading: 'Updating…',
+    success: `Updated ${pluralize(songs, 'song')}.`,
+  },
   onSubmit: async data => await songStore.updateSongs(songs, withoutUntouchedAlbumArtist(data)),
   onSuccess: (result: SongUpdateResult) => {
-    toastSuccess(`Updated ${pluralize(songs, 'song')}.`)
     eventBus.emit('SONGS_UPDATED', result)
     close()
   },

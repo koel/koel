@@ -31,7 +31,7 @@
     </main>
 
     <footer>
-      <Btn class="btn-update" type="submit">Update</Btn>
+      <Btn class="btn-update" :disabled="loading" type="submit">Update</Btn>
       <Btn variant="neutral" class="btn-cancel" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -41,7 +41,6 @@
 import { pick } from 'lodash-es'
 import type { UpdateUserData } from '@/stores/userStore'
 import { userStore } from '@/stores/userStore'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -56,14 +55,16 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { user } = props
 
-const { toastSuccess } = useMessageToaster()
-
 const close = () => emit('close')
 
-const { data, handleSubmit, maybeClose } = useForm<UpdateUserData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<UpdateUserData>({
   initialValues: {
     ...pick(user, 'name', 'email', 'role'),
     password: '',
+  },
+  toast: {
+    loading: 'Saving user…',
+    success: 'User profile updated.',
   },
   onSubmit: async data => {
     const formattedData = { ...data }
@@ -74,10 +75,7 @@ const { data, handleSubmit, maybeClose } = useForm<UpdateUserData>({
 
     await userStore.update(user, formattedData)
   },
-  onSuccess: () => {
-    toastSuccess('User profile updated.')
-    close()
-  },
+  onSuccess: close,
   onClose: close,
 })
 </script>

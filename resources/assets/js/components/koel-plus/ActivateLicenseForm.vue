@@ -16,7 +16,6 @@
 <script lang="ts" setup>
 import { plusService } from '@/services/plusService'
 import { useDialogBox } from '@/composables/useDialogBox'
-import { useErrorHandler } from '@/composables/useErrorHandler'
 import { forceReloadWindow } from '@/utils/helpers'
 import { useForm } from '@/composables/useForm'
 
@@ -29,11 +28,13 @@ const { data, loading, handleSubmit } = useForm<{ licenseKey: string }>({
   initialValues: {
     licenseKey: '',
   },
+  toast: {
+    loading: 'Activating…',
+  },
   onSubmit: async ({ licenseKey }) => await plusService.activateLicense(licenseKey),
   onSuccess: async () => {
     await showSuccessDialog('Thanks for purchasing Koel Plus! Koel will now refresh to activate the changes.')
     forceReloadWindow()
   },
-  onError: (error: unknown) => useErrorHandler('dialog').handleHttpError(error),
 })
 </script>

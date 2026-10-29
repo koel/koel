@@ -27,15 +27,13 @@ vi.mock('@/composables/useModal', () => ({
   }),
 }))
 
-const makeAvailableOfflineMock = vi.fn()
-const removeOfflineCacheMock = vi.fn()
+const togglePlayablesOfflineMock = vi.fn()
 const isCachedMock = vi.fn().mockReturnValue(false)
 
 vi.mock('@/composables/useOfflinePlayback', () => ({
   useOfflinePlayback: () => ({
     swReady: ref(true),
-    makeAvailableOffline: makeAvailableOfflineMock,
-    removeOfflineCache: removeOfflineCacheMock,
+    togglePlayablesOffline: togglePlayablesOfflineMock,
     isCached: isCachedMock,
   }),
 }))
@@ -54,8 +52,7 @@ describe('playableContextMenu.vue', () => {
     beforeEach: () => {
       queueStore.state.playables = []
       openModalMock.mockClear()
-      makeAvailableOfflineMock.mockClear()
-      removeOfflineCacheMock.mockClear()
+      togglePlayablesOfflineMock.mockClear()
       isCachedMock.mockReturnValue(false)
     },
   })
@@ -336,8 +333,9 @@ describe('playableContextMenu.vue', () => {
 
   it('deletes song', async () => {
     const confirmMock = h.mock(DialogBoxStub.value, 'confirm', true)
-    const toasterMock = h.mock(MessageToasterStub.value, 'success')
-    const deleteMock = h.mock(playableStore, 'deleteSongsFromFilesystem')
+    const toastMock = h.mock(MessageToasterStub.value, 'promise')
+    const deleting = Promise.resolve()
+    const deleteMock = h.mock(playableStore, 'deleteSongsFromFilesystem').mockReturnValue(deleting)
     h.actingAsAdmin()
     const { playables } = await renderComponent()
 
@@ -348,7 +346,7 @@ describe('playableContextMenu.vue', () => {
     await waitFor(() => {
       expect(confirmMock).toHaveBeenCalled()
       expect(deleteMock).toHaveBeenCalledWith(playables)
-      expect(toasterMock).toHaveBeenCalledWith('Deleted 5 songs from the filesystem.')
+      expect(toastMock).toHaveBeenCalledWith(deleting, expect.anything())
       expect(emitMock).toHaveBeenCalledWith('SONGS_DELETED', playables)
     })
   })
@@ -381,12 +379,14 @@ describe('playableContextMenu.vue', () => {
 
       h.actingAsUser(user)
 
+      const toastMock = h.mock(MessageToasterStub.value, 'promise')
       await renderComponent(songs)
       const privatizeMock = h.mock(playableStore, 'privatizeSongs').mockResolvedValue(songs.map(song => song.id))
 
       await h.user.click(screen.getByText('Mark as Private'))
 
       expect(privatizeMock).toHaveBeenCalledWith(songs)
+      expect(toastMock).toHaveBeenCalledWith(privatizeMock.mock.results[0].value, expect.anything())
     }))
 
   it('makes songs public', async () =>
@@ -402,12 +402,14 @@ describe('playableContextMenu.vue', () => {
 
       h.actingAsUser(user)
 
+      const toastMock = h.mock(MessageToasterStub.value, 'promise')
       await renderComponent(songs)
       const publicizeMock = h.mock(playableStore, 'publicizeSongs').mockResolvedValue(songs.map(song => song.id))
 
       await h.user.click(screen.getByText('Unmark as Private'))
 
       expect(publicizeMock).toHaveBeenCalledWith(songs)
+      expect(toastMock).toHaveBeenCalledWith(publicizeMock.mock.results[0].value, expect.anything())
     }))
 
   it('does not have an option to make songs public or private if current user is not owner', async () => {
@@ -497,9 +499,7 @@ describe('playableContextMenu.vue', () => {
 
     await h.user.click(screen.getByText('Make Available Offline'))
 
-    for (const playable of playables) {
-      expect(makeAvailableOfflineMock).toHaveBeenCalledWith(playable)
-    }
+    expect(togglePlayablesOfflineMock).toHaveBeenCalledWith(playables)
   })
 
   it('does not show offline option for episodes', async () => {
@@ -513,9 +513,7 @@ describe('playableContextMenu.vue', () => {
 
     await h.user.click(screen.getByText('Remove Offline Versions'))
 
-    for (const playable of playables) {
-      expect(removeOfflineCacheMock).toHaveBeenCalledWith(playable)
-    }
+    expect(togglePlayablesOfflineMock).toHaveBeenCalledWith(playables)
   })
 
   it('links to MusicBrainz', async () => {

@@ -104,7 +104,6 @@ const proveIdentity = async ({ password, code }: { password: string; code: strin
 
 const { data, handleSubmit, maybeClose } = useForm<{ name: string; password: string; code: string }>({
   initialValues: { name: '', password: '', code: '' },
-  useOverlay: false,
   validator: ({ name }) => name.trim().length > 0,
   onSubmit: async formData => await passkeyService.add(formData.name.trim(), await proveIdentity(formData)),
   onSuccess: (passkey: Passkey) => {

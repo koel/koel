@@ -27,7 +27,7 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="loading" type="submit">Save</Btn>
       <Btn variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -37,7 +37,6 @@
 import { orderBy, pick } from 'lodash-es'
 import { computed } from 'vue'
 import { playlistFolderStore } from '@/stores/playlistFolderStore'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -49,8 +48,6 @@ const props = defineProps<{ folder: PlaylistFolder }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { folder } = props
-
-const { toastSuccess } = useMessageToaster()
 
 const parentFolders = computed(() => {
   const unavailableParentIds = new Set([
@@ -66,13 +63,14 @@ const parentFolders = computed(() => {
 
 const close = () => emit('close')
 
-const { data, handleSubmit, maybeClose } = useForm<Pick<PlaylistFolder, 'name' | 'parent_id'>>({
+const { data, loading, handleSubmit, maybeClose } = useForm<Pick<PlaylistFolder, 'name' | 'parent_id'>>({
   initialValues: pick(folder, 'name', 'parent_id'),
-  onSubmit: async changes => await playlistFolderStore.update(folder, changes),
-  onSuccess: () => {
-    toastSuccess('Playlist folder updated.')
-    close()
+  toast: {
+    loading: 'Saving folder…',
+    success: 'Playlist folder updated.',
   },
+  onSubmit: async changes => await playlistFolderStore.update(folder, changes),
+  onSuccess: close,
   onClose: close,
 })
 </script>

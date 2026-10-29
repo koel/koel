@@ -58,7 +58,6 @@ onMounted(async () => {
 
 const { data, handleSubmit } = useForm<{ code: string }>({
   initialValues: { code: '' },
-  useOverlay: false,
   onSubmit: async ({ code }) => await authService.confirmTwoFactor(code),
   onSuccess: result => {
     toastSuccess('Two-factor authentication enabled.')

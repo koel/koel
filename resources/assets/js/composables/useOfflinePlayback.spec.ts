@@ -14,11 +14,11 @@ vi.mock('@/services/offlineManifest', () => ({
   },
 }))
 
-const toastSuccessMock = vi.fn()
+const toastPromiseMock = vi.fn()
 
 vi.mock('@/composables/useMessageToaster', () => ({
   useMessageToaster: () => ({
-    toastSuccess: toastSuccessMock,
+    toastPromise: toastPromiseMock,
   }),
 }))
 
@@ -64,7 +64,7 @@ describe('useOfflinePlayback', () => {
 
   beforeEach(() => {
     postMessageMock.mockClear()
-    toastSuccessMock.mockClear()
+    toastPromiseMock.mockClear()
     cachedSongIds.value.clear()
     cachingProgress.value.clear()
     manifestEntries.value = []
@@ -222,7 +222,7 @@ describe('useOfflinePlayback', () => {
     expect(offlineManifest.clear).toHaveBeenCalled()
   })
 
-  it('removes offline versions when all playables are cached', () => {
+  it('removes offline versions when all playables are cached, in a toast that settles once they are gone', async () => {
     const songs = h.factory('song').make(2)
     songs.forEach(song => cachedSongIds.value.add(song.id))
     h.mock(playableStore, 'getUnsignedSourceUrl').mockReturnValue('http://localhost/play/abc123')
@@ -237,7 +237,15 @@ describe('useOfflinePlayback', () => {
       }),
     )
 
-    expect(toastSuccessMock).toHaveBeenCalledWith('Removed offline versions for favorites.')
+    const [removing] = toastPromiseMock.mock.calls[0]
+    songs.forEach(song =>
+      simulateMessage({
+        type: 'DELETE_AUDIO_CACHE_COMPLETE',
+        songId: song.id,
+      }),
+    )
+
+    await expect(removing).resolves.toBeUndefined()
   })
 
   it('makes the uncached playables available offline when not all are cached', async () => {
@@ -256,15 +264,44 @@ describe('useOfflinePlayback', () => {
       songId: uncachedSong.id,
       sourceUrl,
     })
+  })
 
-    expect(toastSuccessMock).toHaveBeenCalledWith('Making 2 songs available offline…')
+  it('shows the caching progress in a toast that settles with the failure count', async () => {
+    const [okSong, failingSong] = h.factory('song').make(2)
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue('http://localhost/play/abc123')
+
+    togglePlayablesOffline([okSong, failingSong])
+    await h.tick()
+
+    const [caching, messages] = toastPromiseMock.mock.calls[0]
+
+    simulateMessage({
+      type: 'CACHE_AUDIO_PROGRESS',
+      songId: okSong.id,
+      progress: 1,
+    })
+    expect(messages.loading.progress()).toBe(50)
+
+    simulateMessage({
+      type: 'CACHE_AUDIO_COMPLETE',
+      songId: okSong.id,
+    })
+    simulateMessage({
+      type: 'CACHE_AUDIO_ERROR',
+      songId: failingSong.id,
+      error: 'Nope',
+    })
+
+    await expect(caching).resolves.toBe(1)
+    expect(messages.warning(1)).toBeTruthy()
+    expect(messages.warning(0)).toBeUndefined()
   })
 
   it('does nothing when no playable is a song', () => {
     togglePlayablesOffline(h.factory('episode').make(2), 'favorites')
 
     expect(postMessageMock).not.toHaveBeenCalled()
-    expect(toastSuccessMock).not.toHaveBeenCalled()
+    expect(toastPromiseMock).not.toHaveBeenCalled()
   })
 
   it('tells whether any playable can be made available offline', () => {

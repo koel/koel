@@ -47,6 +47,9 @@ const { koelBirdCover, koelBirdLogo, isKoelBirdCover, isKoelBirdLogo } = useBran
 
 const { data, loading, handleSubmit } = useForm<Branding>({
   initialValues: { ...props.currentBranding },
+  toast: {
+    loading: 'Saving branding…',
+  },
   onSubmit: async data => {
     const submittedData: Partial<Branding> = { ...data }
 
@@ -59,7 +62,8 @@ const { data, loading, handleSubmit } = useForm<Branding>({
     }
 
     await settingStore.updateBranding(submittedData)
-
+  },
+  onSuccess: async () => {
     if (await showConfirmDialog('Settings saved. Reload to apply the changes?')) {
       forceReloadWindow()
     }

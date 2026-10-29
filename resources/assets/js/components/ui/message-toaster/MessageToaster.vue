@@ -1,8 +1,8 @@
 <template>
   <div ref="root" class="popover">
-    <TransitionGroup class="flex flex-col items-end gap-2" name="toast" tag="ul">
+    <TransitionGroup class="flex flex-col items-end gap-2" name="toast" tag="ul" @after-leave="hideWhenEmpty">
       <li v-for="message in messages" :key="message.id">
-        <MessageToast :message="message" @dismiss="removeMessage(message)" />
+        <MessageToast :message="message" @dismiss="dismiss(message.id)" />
       </li>
     </TransitionGroup>
   </div>
@@ -12,10 +12,22 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import type { Component } from 'vue'
+import { computed, markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { uuid } from '@/utils/crypto'
 
 import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
+
+const DEFAULT_TIMEOUT = 5
+
+const SETTLED_DEFAULTS = {
+  component: undefined,
+  props: undefined,
+  actions: undefined,
+  progress: undefined,
+  onDismiss: undefined,
+  timeout: DEFAULT_TIMEOUT,
+}
 
 const root = ref<
   HTMLDivElement & {
@@ -25,30 +37,94 @@ const root = ref<
 >()
 
 const messages = ref<ToastMessage[]>([])
+const hasLoadingToast = computed(() => messages.value.some(({ type }) => type === 'loading'))
 
-const addMessage = (type: 'info' | 'success' | 'warning' | 'danger', content: string, timeout = 5) => {
-  messages.value.length || root.value?.showPopover?.()
-
-  messages.value.push({
-    type,
-    content,
-    timeout,
-    id: uuid(),
-  })
+const warnBeforeLeaving = (event: BeforeUnloadEvent) => {
+  event.preventDefault()
+  event.returnValue = ''
 }
 
-const removeMessage = (message: ToastMessage) => {
-  messages.value = messages.value.filter(({ id }) => id !== message.id)
+const withRawComponent = <T extends { component?: Component }>(fields: T) =>
+  fields.component ? { ...fields, component: markRaw(fields.component) } : fields
 
-  if (messages.value.length === 0) {
-    root.value?.hidePopover?.()
+const toMessageFields = (details: ToastDetails) =>
+  typeof details === 'string' ? { content: details } : withRawComponent(details)
+
+const resolveOutcome = <T>(outcome: ToastOutcome<T>, value: T) =>
+  typeof outcome === 'function' ? outcome(value) : outcome
+
+let toasterShown = false
+
+const add = (type: ToastType, details: ToastDetails, timeout = DEFAULT_TIMEOUT) => {
+  if (!toasterShown) {
+    root.value?.showPopover?.()
+    toasterShown = true
   }
+
+  const id = uuid()
+  messages.value.push({ id, type, timeout, ...toMessageFields(details) })
+
+  return id
 }
 
-const info = (content: string, timeout?: number) => addMessage('info', content, timeout)
-const success = (content: string, timeout?: number) => addMessage('success', content, timeout)
-const warning = (content: string, timeout?: number) => addMessage('warning', content, timeout)
-const error = (content: string, timeout?: number) => addMessage('danger', content, timeout)
+const update = (id: string, changes: Partial<Omit<ToastMessage, 'id'>>) => {
+  const message = messages.value.find(({ id: messageId }) => messageId === id)
+
+  if (!message) {
+    return
+  }
+
+  Object.assign(message, withRawComponent(changes))
+}
+
+const dismiss = (id: string) => {
+  const message = messages.value.find(({ id: messageId }) => messageId === id)
+
+  if (!message) {
+    return
+  }
+
+  messages.value = messages.value.filter(({ id: messageId }) => messageId !== id)
+  message.onDismiss?.()
+}
+
+const hideWhenEmpty = () => {
+  if (messages.value.length) {
+    return
+  }
+
+  root.value?.hidePopover?.()
+  toasterShown = false
+}
+
+const promise = <T>(pending: Promise<T>, outcomes: ToastPromiseMessages<T>) => {
+  const id = add('loading', outcomes.loading)
+
+  const settle = (type: ToastType, details: ToastDetails) =>
+    update(id, { ...SETTLED_DEFAULTS, type, ...toMessageFields(details) })
+
+  pending.then(
+    value => {
+      const warning = outcomes.warning?.(value)
+
+      if (warning) {
+        settle('warning', warning)
+        return
+      }
+
+      settle('success', resolveOutcome(outcomes.success, value))
+    },
+    (error: unknown) => settle('danger', resolveOutcome(outcomes.error, error)),
+  )
+
+  return id
+}
+
+const info = (details: ToastDetails, timeout?: number) => add('info', details, timeout)
+const success = (details: ToastDetails, timeout?: number) => add('success', details, timeout)
+const warning = (details: ToastDetails, timeout?: number) => add('warning', details, timeout)
+const error = (details: ToastDetails, timeout?: number) => add('danger', details, timeout)
+const loading = (details: ToastDetails) => add('loading', details)
 
 onMounted(() => {
   if (!root.value) {
@@ -58,7 +134,15 @@ onMounted(() => {
   root.value.popover = 'manual'
 })
 
-defineExpose({ info, success, warning, error })
+watch(hasLoadingToast, pending =>
+  pending
+    ? window.addEventListener('beforeunload', warnBeforeLeaving)
+    : window.removeEventListener('beforeunload', warnBeforeLeaving),
+)
+
+onBeforeUnmount(() => window.removeEventListener('beforeunload', warnBeforeLeaving))
+
+defineExpose({ info, success, warning, error, loading, promise, update, dismiss })
 </script>
 
 <style lang="postcss" scoped>

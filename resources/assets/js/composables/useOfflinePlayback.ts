@@ -1,4 +1,4 @@
-import { computed, ref, toRaw } from 'vue'
+import { computed, ref, toRaw, watch } from 'vue'
 import { playableStore } from '@/stores/playableStore'
 import { offlineManifest } from '@/services/offlineManifest'
 import type { OfflineManifestEntry } from '@/services/offlineManifest'
@@ -244,6 +244,24 @@ const extractSongIdFromUrl = (url: string): Song['id'] | null => {
 
 export const shouldWarnUponWindowUnload = () => cachingProgress.value.size > 0
 
+const waitUntil = (isDone: () => boolean) =>
+  new Promise<void>(resolve => {
+    if (isDone()) {
+      resolve()
+      return
+    }
+
+    const stopWatching = watch(isDone, done => {
+      if (done) {
+        stopWatching()
+        resolve()
+      }
+    })
+  })
+
+const getSongCachingProgress = (songId: Song['id']) =>
+  cachedSongIds.value.has(songId) || cachingErrors.value.has(songId) ? 1 : (cachingProgress.value.get(songId) ?? 0)
+
 export const useOfflinePlayback = () => {
   if (!listenerSetup) {
     listenerSetup = true
@@ -345,20 +363,51 @@ export const useOfflinePlayback = () => {
 
   const hasOfflineCapablePlayables = (playables: Playable[]) => playables.some(p => isSong(p))
 
-  const togglePlayablesOffline = (playables: Playable[], collectionLabel: string) => {
+  const togglePlayablesOffline = (playables: Playable[], collectionLabel?: string) => {
     const songs = playables.filter(p => isSong(p))
 
-    if (!songs.length) return
+    if (!songs.length || !getSW()) return
 
-    const { toastSuccess } = useMessageToaster()
+    const { toastPromise } = useMessageToaster()
 
     if (allPlayablesCached(songs)) {
       removePlayablesOfflineCache(songs)
-      toastSuccess(`Removed offline versions for ${collectionLabel}.`)
-    } else {
-      makePlayablesAvailableOffline(songs)
-      toastSuccess(`Making ${pluralize(songs, 'song')} available offline…`)
+
+      toastPromise(
+        waitUntil(() => songs.every(song => !isCached(song))),
+        {
+          loading: 'Removing offline versions…',
+          success: collectionLabel
+            ? `Removed offline versions for ${collectionLabel}.`
+            : `Removed offline versions of ${pluralize(songs, 'song')}.`,
+          error: 'Couldn’t remove offline versions.',
+        },
+      )
+
+      return
     }
+
+    const songIds = songs.filter(song => !isCached(song)).map(song => song.id)
+    makePlayablesAvailableOffline(songs)
+
+    const progress = computed(
+      () => (songIds.reduce((total, songId) => total + getSongCachingProgress(songId), 0) / songIds.length) * 100,
+    )
+
+    const caching = waitUntil(() => songIds.every(songId => !cachingProgress.value.has(songId))).then(
+      () => songIds.filter(songId => cachingErrors.value.has(songId)).length,
+    )
+
+    toastPromise(caching, {
+      loading: {
+        content: 'Making songs available offline…',
+        progress: () => progress.value,
+      },
+      success: `Made ${pluralize(songIds, 'song')} available offline.`,
+      warning: failedCount =>
+        failedCount ? `${pluralize(failedCount, 'song')} couldn’t be made available offline.` : undefined,
+      error: 'Couldn’t make songs available offline.',
+    })
   }
 
   return {

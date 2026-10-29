@@ -71,12 +71,13 @@ const { data, loading, handleSubmit } = useForm<{ provider: AiProvider | ''; api
     provider: current.value?.provider ?? '',
     api_key: '',
   },
+  toast: {
+    loading: 'Saving…',
+    success: 'AI assistant saved.',
+  },
   onSubmit: async ({ provider, api_key }) =>
     await settingStore.updateAi({ enabled: true, provider: provider as AiProvider, ...(api_key ? { api_key } : {}) }),
-  onSuccess: () => {
-    data.api_key = ''
-    toastSuccess('AI assistant saved.')
-  },
+  onSuccess: () => (data.api_key = ''),
 })
 
 const canKeepApiKey = computed(() => Boolean(current.value?.has_api_key) && data.provider === current.value?.provider)

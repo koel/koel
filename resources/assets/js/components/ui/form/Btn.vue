@@ -53,6 +53,10 @@ a {
     box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.6);
   }
 
+  &[disabled] {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
   &[data-size='large'] {
     @apply px-6 py-3;
   }

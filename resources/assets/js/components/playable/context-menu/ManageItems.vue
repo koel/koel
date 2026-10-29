@@ -21,6 +21,7 @@ import { computed } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { pluralize } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
+import { logger } from '@/utils/logger'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
@@ -28,6 +29,7 @@ import { playlistStore } from '@/stores/playlistStore'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useDownload } from '@/composables/useDownload'
+import { getHttpErrorMessage } from '@/composables/useErrorHandler'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useModal } from '@/composables/useModal'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
@@ -40,14 +42,14 @@ const props = defineProps<{ playables: Playable[] }>()
 const EditSongForm = defineAsyncComponent(() => import('@/components/playable/EditSongForm.vue'))
 
 const { MenuItem, Separator, trigger } = useContextMenu()
-const { toastSuccess } = useMessageToaster()
+const { toastPromise } = useMessageToaster()
 const { showConfirmDialog } = useDialogBox()
 const { openModal } = useModal()
 const { getRouteParam, isCurrentScreen } = useRouter()
 const { currentUserCan } = usePolicies()
 const { removeFromPlaylist } = usePlaylistContentManagement()
 const { fromPlayables } = useDownload()
-const { swReady, makeAvailableOffline, removeOfflineCache, isCached } = useOfflinePlayback()
+const { swReady, togglePlayablesOffline, isCached } = useOfflinePlayback()
 
 const onlySongs = computed(() => getPlayableCollectionContentType(props.playables) === 'songs')
 const allowEdit = computed(() => onlySongs.value && currentUserCan.editSong(props.playables as Song[]))
@@ -78,20 +80,7 @@ const openEditForm = () =>
 
 const download = () => trigger(() => fromPlayables(props.playables))
 
-const toggleOffline = () =>
-  trigger(() => {
-    if (allCached.value) {
-      props.playables.forEach(playable => removeOfflineCache(playable))
-      toastSuccess(
-        props.playables.length === 1
-          ? 'Removed offline version.'
-          : `Removed ${props.playables.length} offline versions.`,
-      )
-    } else {
-      props.playables.filter(playable => !isCached(playable)).forEach(playable => makeAvailableOffline(playable))
-      toastSuccess(`Making ${pluralize(props.playables, 'song')} available offline…`)
-    }
-  })
+const toggleOffline = () => trigger(() => togglePlayablesOffline(props.playables))
 
 const removePlayablesFromPlaylist = () =>
   trigger(async () => {
@@ -106,10 +95,23 @@ const removePlayablesFromPlaylist = () =>
 
 const deleteFromFilesystem = () =>
   trigger(async () => {
-    if (await showConfirmDialog('Delete selected playable(s) from the filesystem? This action is NOT reversible!')) {
-      await playableStore.deleteSongsFromFilesystem(props.playables as Song[])
-      toastSuccess(`Deleted ${pluralize(props.playables, 'song')} from the filesystem.`)
+    if (!(await showConfirmDialog('Delete selected playable(s) from the filesystem? This action is NOT reversible!'))) {
+      return
+    }
+
+    const deleting = playableStore.deleteSongsFromFilesystem(props.playables as Song[])
+
+    toastPromise(deleting, {
+      loading: 'Deleting…',
+      success: `Deleted ${pluralize(props.playables, 'song')} from the filesystem.`,
+      error: getHttpErrorMessage,
+    })
+
+    try {
+      await deleting
       eventBus.emit('SONGS_DELETED', props.playables as Song[])
+    } catch (error: unknown) {
+      logger.error(error)
     }
   })
 </script>

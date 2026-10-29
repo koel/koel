@@ -1,3 +1,4 @@
+import type { MockInstance } from 'vite-plus/test'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
@@ -77,12 +78,18 @@ describe('zipDownloadService', () => {
       }),
     )
 
+  let saveClickMock: MockInstance<() => void>
+
   beforeEach(() => {
     URL.createObjectURL = vi.fn().mockReturnValue('blob:zip')
     URL.revokeObjectURL = vi.fn()
+    saveClickMock = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
   })
 
-  afterEach(() => vi.unstubAllGlobals())
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    saveClickMock.mockRestore()
+  })
 
   it.each<[string, string]>([
     ['AC/DC: Live?', 'AC-DC- Live-'],
@@ -132,7 +139,6 @@ describe('zipDownloadService', () => {
     stubPrivateStorage()
     stubSongDownloads()
     navigator.storage.estimate = vi.fn().mockRejectedValue(new Error('No estimate'))
-    h.mock(zipDownloadService, 'save')
 
     await zipDownloadService.start([makeSong()], 'Songs', 'none')
     await zipDownloadService.building
@@ -152,18 +158,18 @@ describe('zipDownloadService', () => {
     await expect(zipDownloadService.start([makeSong()], 'Songs', 'none')).rejects.toThrow(ZipInProgressError)
   })
 
-  it('zips songs and episodes in order and saves the archive', async () => {
+  it('zips songs and episodes in order and saves the archive once', async () => {
     stubPrivateStorage()
     stubSongDownloads()
     const episode = h.factory('episode').make({ podcast_title: 'The Show', title: 'Pilot' })
     const playables = [makeSong({ title: 'One' }), episode, makeSong({ title: 'Two' })]
-    const saveMock = h.mock(zipDownloadService, 'save')
 
     await zipDownloadService.start(playables, 'My Mix', 'position')
     await zipDownloadService.building
 
     expect(addedEntries).toEqual(['01 Dio - One.mp3', '02 The Show - Pilot.mp3', '03 Dio - Two.mp3'])
-    expect(saveMock).toHaveBeenCalled()
+    expect(saveClickMock).toHaveBeenCalledOnce()
+    expect(zipDownloadService.state.status).toBe('ready')
     expect(zipDownloadService.state.archiveName).toBe('My Mix.zip')
     expect(zipDownloadService.state.bytesDone).toBe(15)
   })
@@ -172,7 +178,6 @@ describe('zipDownloadService', () => {
     stubPrivateStorage()
     stubSongDownloads()
     h.mock(authService, 'getApiToken').mockReturnValue('api-token')
-    h.mock(zipDownloadService, 'save')
     const songs = [makeSong({ title: 'One' }), makeSong({ title: 'Two' })]
 
     await zipDownloadService.start(songs, 'My Mix', 'none')
@@ -207,10 +212,9 @@ describe('zipDownloadService', () => {
     expect(directory.removeEntry).toHaveBeenCalledWith(expect.stringMatching(/^download-\d+-[\w-]+\.zip$/))
   })
 
-  it('does not save an archive cancelled while it was being finished', async () => {
+  it('drops an archive canceled while it was being finished', async () => {
     stubPrivateStorage()
     stubSongDownloads()
-    const saveMock = h.mock(zipDownloadService, 'save')
     const addedLastSong = new Promise<void>(resolve => {
       const originalFetch = globalThis.fetch
       vi.stubGlobal('fetch', async (...args: Parameters<typeof fetch>) => {
@@ -225,8 +229,41 @@ describe('zipDownloadService', () => {
     zipDownloadService.cancel()
     await zipDownloadService.building
 
-    expect(saveMock).not.toHaveBeenCalled()
+    expect(saveClickMock).not.toHaveBeenCalled()
     expect(zipDownloadService.state.status).toBe('idle')
+  })
+
+  it('saves a ready archive again on request', async () => {
+    stubPrivateStorage()
+    stubSongDownloads()
+    await zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.building
+
+    zipDownloadService.save()
+
+    expect(saveClickMock).toHaveBeenCalledTimes(2)
+    expect(zipDownloadService.state.status).toBe('ready')
+  })
+
+  it('deletes the archive file a while after a ready download is dismissed', async () => {
+    stubPrivateStorage()
+    stubSongDownloads()
+    await zipDownloadService.start([makeSong()], 'Songs', 'none')
+    await zipDownloadService.building
+    directory.removeEntry.mockClear()
+    vi.useFakeTimers()
+
+    zipDownloadService.dismiss()
+
+    expect(zipDownloadService.state.status).toBe('idle')
+    expect(directory.removeEntry).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(5 * 60_000)
+
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:zip')
+    expect(directory.removeEntry).toHaveBeenCalled()
+
+    vi.useRealTimers()
   })
 
   it('treats only archives older than the cutoff as leftovers', () => {

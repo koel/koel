@@ -14,7 +14,7 @@
     </FormRow>
 
     <FormRow>
-      <Btn class="w-full" data-testid="submit" type="submit">Log In</Btn>
+      <Btn class="w-full" data-testid="submit" :disabled="loading" type="submit">Log In</Btn>
     </FormRow>
 
     <div v-if="canResetPassword">
@@ -76,13 +76,16 @@ const clearErrorResetTimer = () => {
   }
 }
 
-const { data, handleSubmit } = useForm<{ email: string; password: string }>({
+const { data, loading, handleSubmit } = useForm<{ email: string; password: string }>({
   initialValues: window.KOEL.is_demo
     ? demoAccount
     : {
         email: loginHint,
         password: '',
       },
+  toast: {
+    loading: 'Logging in…',
+  },
   onSubmit: async ({ email, password }) => await authService.login(email, password),
   onSuccess: challenge => {
     failed.value = false

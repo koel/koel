@@ -18,7 +18,7 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="loading" type="submit">Save</Btn>
       <Btn variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -31,7 +31,6 @@ import { playlistStore } from '@/stores/playlistStore'
 import { getPlayableCollectionContentType } from '@/utils/typeGuards'
 import { pluralize } from '@/utils/formatters'
 import { useRouter } from '@/composables/useRouter'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
@@ -45,12 +44,11 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { playables, folder: targetFolder } = props
 
-const { toastSuccess } = useMessageToaster()
 const { go, url } = useRouter()
 
 const close = () => emit('close')
 
-const { data, handleSubmit, maybeClose } = useForm<CreatePlaylistData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<CreatePlaylistData>({
   initialValues: {
     name: '',
     description: '',
@@ -58,10 +56,13 @@ const { data, handleSubmit, maybeClose } = useForm<CreatePlaylistData>({
     folder_name: null,
     cover: null,
   },
+  toast: {
+    loading: 'Creating playlist…',
+    success: (playlist: Playlist) => `Playlist "${playlist.name}" created.`,
+  },
   onSubmit: async data => await playlistStore.store(data, playables),
   onSuccess: (playlist: Playlist) => {
     close()
-    toastSuccess(`Playlist "${playlist.name}" created.`)
     go(url('playlists.show', { id: playlist.id }))
   },
   onClose: close,

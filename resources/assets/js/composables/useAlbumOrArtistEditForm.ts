@@ -7,6 +7,7 @@ interface AlbumOrArtistEditFormConfig<T extends Record<string, any> & { descript
   artworkField: keyof T
   fetchOnlineDescription: () => Promise<string>
   onSubmit: (data: T) => Promise<void>
+  successMessage: string
   onSuccess: () => void
   onClose: () => void
 }
@@ -19,6 +20,10 @@ export const useAlbumOrArtistEditForm = <T extends Record<string, any> & { descr
 
   const form = useForm<T>({
     initialValues: config.initialValues,
+    toast: {
+      loading: 'Saving…',
+      success: config.successMessage,
+    },
     isPristine: (original, current) =>
       isEqual(omit(original, 'description'), omit(current, 'description')) &&
       (current.description === original.description ||

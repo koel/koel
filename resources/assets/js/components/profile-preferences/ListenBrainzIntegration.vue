@@ -37,7 +37,7 @@
             required
           />
         </div>
-        <Btn type="submit">Connect</Btn>
+        <Btn :disabled="loading" type="submit">Connect</Btn>
       </div>
     </form>
   </SettingGroup>
@@ -63,16 +63,17 @@ const { toastSuccess } = useMessageToaster()
 
 const connected = computed(() => Boolean(currentUser.value.preferences.listenbrainz_token))
 
-const { data, handleSubmit } = useForm<{ token: string }>({
+const { data, loading, handleSubmit } = useForm<{ token: string }>({
   initialValues: { token: '' },
+  toast: {
+    loading: 'Connecting…',
+    success: 'ListenBrainz account connected.',
+  },
   onSubmit: async ({ token }) => {
     await http.post('listenbrainz/token', { token })
     return token
   },
-  onSuccess: (token: string) => {
-    currentUser.value.preferences.listenbrainz_token = token
-    toastSuccess('ListenBrainz account connected.')
-  },
+  onSuccess: (token: string) => (currentUser.value.preferences.listenbrainz_token = token),
 })
 
 const disconnect = async () => {

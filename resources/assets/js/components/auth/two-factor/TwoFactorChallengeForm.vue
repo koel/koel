@@ -9,7 +9,7 @@
       </template>
     </TwoFactorChallengeInput>
 
-    <Btn class="w-full" data-testid="submit" type="submit">Verify</Btn>
+    <Btn class="w-full" data-testid="submit" :disabled="loading" type="submit">Verify</Btn>
 
     <Btn
       bordered
@@ -49,8 +49,11 @@ const clearErrorResetTimer = () => {
   }
 }
 
-const { data, handleSubmit } = useForm<{ code: string }>({
+const { data, loading, handleSubmit } = useForm<{ code: string }>({
   initialValues: { code: '' },
+  toast: {
+    loading: 'Verifying…',
+  },
   onSubmit: async ({ code }) => await authService.submitTwoFactorChallenge(props.loginToken, code),
   onSuccess: () => {
     failed.value = false

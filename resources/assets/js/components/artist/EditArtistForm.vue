@@ -15,7 +15,7 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="loading" type="submit">Save</Btn>
       <Btn variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
   </form>
@@ -26,7 +26,6 @@ import { pick } from 'lodash-es'
 
 import type { ArtistUpdateData } from '@/stores/artistStore'
 import { artistStore } from '@/stores/artistStore'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useAlbumOrArtistEditForm } from '@/composables/useAlbumOrArtistEditForm'
 import { encyclopediaService } from '@/services/encyclopediaService'
 
@@ -41,19 +40,15 @@ const emit = defineEmits<{ (e: 'close'): void }>()
 
 const { artist } = props
 
-const { toastSuccess } = useMessageToaster()
-
 const close = () => emit('close')
 
-const { data, handleSubmit, maybeClose } = useAlbumOrArtistEditForm<ArtistUpdateData>({
+const { data, loading, handleSubmit, maybeClose } = useAlbumOrArtistEditForm<ArtistUpdateData>({
   initialValues: { ...pick(artist, 'name', 'image'), description: artist.description ?? '' },
   artworkField: 'image',
   fetchOnlineDescription: async () => (await encyclopediaService.fetchForArtist(artist))?.bio?.full ?? '',
   onSubmit: async data => await artistStore.update(artist, data),
-  onSuccess: () => {
-    toastSuccess('Artist updated.')
-    close()
-  },
+  successMessage: 'Artist updated.',
+  onSuccess: close,
   onClose: close,
 })
 </script>

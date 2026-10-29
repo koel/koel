@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { fireEvent, screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { MessageToasterStub } from '@/__tests__/stubs'
 import { invitationService } from '@/services/invitationService'
 import Component from './InviteUserForm.vue'
 
@@ -20,7 +19,6 @@ describe('inviteUserForm.vue', () => {
 
   it('invites single email', async () => {
     const inviteMock = h.mock(invitationService, 'invite')
-    const alertMock = h.mock(MessageToasterStub.value, 'success')
 
     renderComponent()
 
@@ -30,13 +28,11 @@ describe('inviteUserForm.vue', () => {
 
     await waitFor(() => {
       expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai'], 'manager')
-      expect(alertMock).toHaveBeenCalledWith('Invitation(s) sent.')
     })
   })
 
   it('invites multiple emails', async () => {
     const inviteMock = h.mock(invitationService, 'invite')
-    const alertMock = h.mock(MessageToasterStub.value, 'success')
 
     renderComponent()
 
@@ -45,7 +41,6 @@ describe('inviteUserForm.vue', () => {
 
     await waitFor(() => {
       expect(inviteMock).toHaveBeenCalledWith(['foo@bar.ai', 'a@b.c'], 'user')
-      expect(alertMock).toHaveBeenCalledWith('Invitation(s) sent.')
     })
   })
 

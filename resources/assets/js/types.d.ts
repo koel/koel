@@ -822,11 +822,34 @@ interface CursorPaginatorResource<T> {
 
 type EditSongFormTabName = 'details' | 'lyrics' | 'visibility'
 
+type ToastType = 'info' | 'success' | 'warning' | 'danger' | 'loading'
+
+interface ToastAction {
+  label: string
+  handler: Closure
+}
+
 interface ToastMessage {
   id: string
-  type: 'info' | 'success' | 'warning' | 'danger'
+  type: ToastType
   content: string
+  component?: import('vue').Component
+  props?: Record<string, unknown>
+  actions?: ToastAction[]
+  progress?: () => number
   timeout: number // seconds
+  onDismiss?: Closure
+}
+
+type ToastDetails = string | (Pick<ToastMessage, 'content'> & Partial<Omit<ToastMessage, 'id' | 'type' | 'content'>>)
+
+type ToastOutcome<T> = ToastDetails | ((value: T) => ToastDetails)
+
+interface ToastPromiseMessages<T> {
+  loading: ToastDetails
+  success: ToastOutcome<T>
+  error: ToastOutcome<unknown>
+  warning?: (value: T) => ToastDetails | undefined
 }
 
 interface Genre {

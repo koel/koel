@@ -62,7 +62,7 @@
     </main>
 
     <footer>
-      <Btn type="submit">Save</Btn>
+      <Btn :disabled="loading" type="submit">Save</Btn>
       <Btn variant="ghost" bordered @click.prevent="previewing = true">Preview</Btn>
       <Btn variant="neutral" @click.prevent="maybeClose">Cancel</Btn>
     </footer>
@@ -79,7 +79,6 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { logger } from '@/utils/logger'
 import { useImageFileInput } from '@/composables/useImageFileInput'
 import { useForm } from '@/composables/useForm'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 import { themeStore } from '@/stores/themeStore'
 import type { ThemeData } from '@/stores/themeStore'
 import { commonFonts, genericFonts } from '@/config/fonts'
@@ -102,11 +101,9 @@ const restoreThemeAndClose = () => {
   close()
 }
 
-const { toastSuccess } = useMessageToaster()
-
 const style = window.getComputedStyle(document.body)
 
-const { data, handleSubmit, maybeClose } = useForm<ThemeData>({
+const { data, loading, handleSubmit, maybeClose } = useForm<ThemeData>({
   initialValues: {
     name: '',
     font_family: style.getPropertyValue('--font-family'),
@@ -116,9 +113,12 @@ const { data, handleSubmit, maybeClose } = useForm<ThemeData>({
     highlight_color: style.getPropertyValue('--color-highlight'),
     bg_image: '',
   },
+  toast: {
+    loading: 'Creating theme…',
+    success: 'Theme created.',
+  },
   onSubmit: async data => await themeStore.store(data),
   onSuccess: (theme: Theme) => {
-    toastSuccess('Theme created.')
     themeStore.setTheme(theme)
     close()
   },

@@ -46,7 +46,6 @@ const { data, loading, handleSubmit } = useForm<{ password: string }>({
   initialValues: {
     password: '',
   },
-  useOverlay: false,
   onSubmit: async ({ password }) => {
     await authService.resetPassword(email.value, password, token.value)
     toastSuccess('Password set.')

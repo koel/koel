@@ -33,7 +33,7 @@
       </div>
 
       <template v-if="!currentUser.sso_provider" #footer>
-        <Btn type="submit">Update Password</Btn>
+        <Btn :disabled="loading" type="submit">Update Password</Btn>
         <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2">Changes will not be saved in the demo version.</span>
       </template>
     </SettingGroup>
@@ -44,7 +44,6 @@
 import { authService } from '@/services/authService'
 import { useAuthorization } from '@/composables/useAuthorization'
 import { useForm } from '@/composables/useForm'
-import { useMessageToaster } from '@/composables/useMessageToaster'
 
 import AlertBox from '@/components/ui/AlertBox.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -53,12 +52,15 @@ import PasswordField from '@/components/ui/form/PasswordField.vue'
 import SettingGroup from '@/components/screens/settings/SettingGroup.vue'
 
 const { currentUser } = useAuthorization()
-const { toastSuccess } = useMessageToaster()
 
 const isDemo = window.KOEL.is_demo
 
-const { data, handleSubmit } = useForm<{ current_password: string; new_password: string }>({
+const { data, loading, handleSubmit } = useForm<{ current_password: string; new_password: string }>({
   initialValues: { current_password: '', new_password: '' },
+  toast: {
+    loading: 'Updating password…',
+    success: 'Password updated.',
+  },
   onSubmit: async ({ current_password, new_password }) => {
     if (isDemo) {
       return
@@ -69,7 +71,6 @@ const { data, handleSubmit } = useForm<{ current_password: string; new_password:
   onSuccess: () => {
     data.current_password = ''
     data.new_password = ''
-    toastSuccess('Password updated.')
   },
 })
 </script>
