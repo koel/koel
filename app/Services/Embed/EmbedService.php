@@ -26,7 +26,7 @@ class EmbedService
         return $embeddable;
     }
 
-    public function resolveEmbedForEmbeddable(EmbeddableType $type, Model $embeddable, User $user): Embed
+    public function resolveEmbed(EmbeddableType $type, Model $embeddable, User $user): Embed
     {
         return Embed::query()->firstOrCreate([
             'embeddable_type' => $type,

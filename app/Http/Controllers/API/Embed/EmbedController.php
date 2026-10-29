@@ -36,10 +36,7 @@ class EmbedController extends Controller
 
         $this->authorize('embed', $embeddable);
 
-        return EmbedResource::make(
-            $this->service->resolveEmbedForEmbeddable($type, $embeddable, $this->user),
-            $embeddable,
-        );
+        return EmbedResource::make($this->service->resolveEmbed($type, $embeddable, $this->user), $embeddable);
     }
 
     public function getPayload(Request $request, Embed $embed)
