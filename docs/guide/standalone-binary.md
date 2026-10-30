@@ -1,5 +1,5 @@
 ---
-description: Install Koel from the single-archive standalone distribution (FrankenPHP + Caddy + PHP + Koel app), customize the database, and run as a systemd service.
+description: Install Koel from the single-archive standalone distribution (FrankenPHP + Caddy + PHP + Koel app), customize the database, run as a systemd service, and run Reverb for live updates.
 ---
 
 # Standalone Binary
@@ -138,3 +138,27 @@ If you're already running nginx (or another reverse proxy) in front of Koel, bin
 ```
 
 Then point your existing reverse proxy at `127.0.0.1:8001` and let it terminate TLS as before.
+
+## Live updates with Reverb
+
+To use [live updates and the remote controller](../usage/remote-controller.md) without Pusher, add these to
+`$HOME/.koel/.env`:
+
+```
+BROADCAST_CONNECTION=reverb
+REVERB_APP_ID=koel
+REVERB_APP_KEY=any-random-string
+REVERB_APP_SECRET=another-random-string
+REVERB_HOST=koel.example.com
+REVERB_PORT=8080
+REVERB_SCHEME=http
+```
+
+Then restart Koel. It starts Reverb next to the web server on port 8080 and logs to
+`$HOME/.koel/storage/logs/reverb.log`. If Reverb can't start, for example because port 8080 is taken, Koel shows a
+warning in the terminal and keeps running without live updates. The log says why.
+
+Set `REVERB_HOST` to the address browsers use to reach this machine. The port and scheme above suit plain HTTP. On
+HTTPS, browsers only accept a secure connection to Reverb, so put it behind a reverse proxy: forward `/app/` and
+`/apps/` (including WebSocket upgrades) to port 8080, and set `REVERB_PORT` and `REVERB_SCHEME` to the proxy's,
+e.g. `443` and `https`.
