@@ -1,6 +1,7 @@
 export interface ContextMenus {
   ALBUM: { album: Album }
   ARTIST: { artist: Artist }
+  FAVORITES: { playables: Playable[] }
   GENRE: { genre: Genre }
   MEDIA_BROWSER: { items: MaybeArray<Song | Folder> }
   PLAYABLES: { playables: Playable[] }

@@ -11,11 +11,6 @@
         <template v-if="playables.length" #meta>
           <span>{{ pluralize(playables, 'item') }}</span>
           <span>{{ duration }}</span>
-
-          <LinkButton v-if="downloadable" class="download" @click.prevent="download"> Download All </LinkButton>
-          <LinkButton v-if="canToggleOffline" @click.prevent="toggleOffline">
-            {{ allCached ? 'Remove Offline' : 'Make Offline' }}
-          </LinkButton>
         </template>
 
         <template #controls>
@@ -25,7 +20,12 @@
             @filter="applyFilter"
             @play-all="playAll"
             @play-selected="playSelected"
-          />
+          >
+            <Btn v-if="hasMoreActions" variant="ghost" @click="requestContextMenu">
+              <Icon :icon="faEllipsis" fixed-width />
+              <span class="sr-only">More Actions</span>
+            </Btn>
+          </PlayableListControls>
         </template>
       </ScreenHeader>
     </template>
@@ -55,23 +55,26 @@
 </template>
 
 <script lang="ts" setup>
-import { faHeartBroken } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsis, faHeartBroken } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, ref, watch } from 'vue'
 import { pluralize } from '@/utils/formatters'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { playableStore } from '@/stores/playableStore'
-import { useDownload } from '@/composables/useDownload'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { useRouter } from '@/composables/useRouter'
 import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { usePersistedSort } from '@/composables/usePersistedSort'
+import { useContextMenu } from '@/composables/useContextMenu'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
 import PlayableListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
-import LinkButton from '@/components/ui/form/LinkButton.vue'
+import Btn from '@/components/ui/form/Btn.vue'
+
+const ContextMenu = defineAsyncComponent(() => import('@/components/playable/FavoritesContextMenu.vue'))
 
 const allPlayables = ref<Playable[]>([])
 
@@ -98,15 +101,16 @@ listConfig.hasCustomOrderSort = true
 const { PlayableListControls, config } = usePlayableListControls('Favorites')
 const { getSavedSort, saveSort } = usePersistedSort('favorites', 'position')
 
-const { fromFavorites } = useDownload()
-const download = () => fromFavorites()
 const removeSelected = () => selectedPlayables.value.length && playableStore.undoFavorite(selectedPlayables.value)
 
-const { swReady, allPlayablesCached, hasOfflineCapablePlayables, togglePlayablesOffline } = useOfflinePlayback()
+const { swReady, hasOfflineCapablePlayables } = useOfflinePlayback()
 const canToggleOffline = computed(() => swReady.value && hasOfflineCapablePlayables(playables.value))
-const allCached = computed(() => allPlayablesCached(playables.value))
+const hasMoreActions = computed(() => downloadable.value || canToggleOffline.value)
 
-const toggleOffline = () => togglePlayablesOffline(playables.value, 'favorites')
+const { openContextMenu } = useContextMenu()
+
+const requestContextMenu = (event: MouseEvent) =>
+  openContextMenu<'FAVORITES'>(ContextMenu, event, { playables: playables.value })
 
 let initialized = false
 const loading = ref(false)
