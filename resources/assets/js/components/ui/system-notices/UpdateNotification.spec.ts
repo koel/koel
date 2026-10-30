@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { MessageToasterStub } from '@/__tests__/stubs'
 import { eventBus } from '@/utils/eventBus'
 
 const isNewerVersionDeployedMock = vi.fn<() => Promise<boolean>>()
@@ -23,38 +23,46 @@ describe('updateNotification', () => {
   const failToLoadAFile = () => window.dispatchEvent(new Event('vite:preloadError'))
 
   it('stays hidden until a file fails to load', () => {
+    const infoMock = h.mock(MessageToasterStub.value, 'info')
     h.render(Component)
 
-    expect(screen.queryByText('Koel has been updated.')).toBeNull()
+    expect(infoMock).not.toHaveBeenCalled()
     expect(isNewerVersionDeployedMock).not.toHaveBeenCalled()
   })
 
   it('offers a reload when a file fails to load because a newer version is deployed', async () => {
     isNewerVersionDeployedMock.mockResolvedValue(true)
+    const infoMock = h.mock(MessageToasterStub.value, 'info')
     h.render(Component)
 
     failToLoadAFile()
-    await screen.findByText('Koel has been updated.')
-    await h.user.click(screen.getByRole('button', { name: 'Reload' }))
+    await vi.waitFor(() => expect(infoMock).toHaveBeenCalled())
 
+    const [reload] = infoMock.mock.calls[0][0].actions
+    reload.handler()
+
+    expect(reload.primary).toBe(true)
     expect(forceReloadWindowMock).toHaveBeenCalled()
   })
 
   it('stays hidden when a file fails to load for another reason', async () => {
     isNewerVersionDeployedMock.mockResolvedValue(false)
+    const infoMock = h.mock(MessageToasterStub.value, 'info')
     h.render(Component)
 
     failToLoadAFile()
     await vi.waitFor(() => expect(isNewerVersionDeployedMock).toHaveBeenCalled())
 
-    expect(screen.queryByText('Koel has been updated.')).toBeNull()
+    expect(infoMock).not.toHaveBeenCalled()
   })
 
-  it('offers a reload when the API reports a newer build', async () => {
+  it('offers a reload once when the API reports a newer build more than once', () => {
+    const infoMock = h.mock(MessageToasterStub.value, 'info')
     h.render(Component)
 
     eventBus.emit('NEW_VERSION_DEPLOYED')
+    eventBus.emit('NEW_VERSION_DEPLOYED')
 
-    await screen.findByTestId('update-notification')
+    expect(infoMock).toHaveBeenCalledOnce()
   })
 })

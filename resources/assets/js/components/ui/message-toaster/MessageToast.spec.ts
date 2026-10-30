@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { fireEvent, screen } from '@testing-library/vue'
+import { nextTick } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './MessageToast.vue'
 
@@ -96,6 +97,71 @@ describe('messageToast.vue', () => {
         ],
       }),
     )
+    vi.advanceTimersByTime(60_000)
+
+    expect(emitted().dismiss).toBeUndefined()
+
+    vi.useRealTimers()
+  })
+
+  const firePointerEvent = async (target: HTMLElement, type: string, clientX: number) => {
+    const event = new MouseEvent(type, { bubbles: true, clientX, clientY: 0 })
+    Object.assign(event, { pointerId: 1, pointerType: 'touch' })
+    await fireEvent(target, event)
+  }
+
+  const swipeRight = async (distance: number) => {
+    const toast = screen.getByRole('article')
+    toast.setPointerCapture = vi.fn()
+    await nextTick()
+
+    await firePointerEvent(toast, 'pointerdown', 0)
+    await firePointerEvent(toast, 'pointermove', distance)
+    await firePointerEvent(toast, 'pointerup', distance)
+  }
+
+  it('dismisses when swiped far enough to the right', async () => {
+    const { emitted } = renderComponent()
+    await swipeRight(100)
+
+    expect(emitted().dismiss).toBeTruthy()
+  })
+
+  it('stays open after a short swipe', async () => {
+    const { emitted } = renderComponent()
+    await swipeRight(40)
+
+    expect(emitted().dismiss).toBeUndefined()
+  })
+
+  it('stays open when swiped while loading', async () => {
+    const { emitted } = renderComponent(makeMessage({ type: 'loading' }))
+    await swipeRight(100)
+
+    expect(emitted().dismiss).toBeUndefined()
+  })
+
+  it('resumes the countdown from where it paused', async () => {
+    vi.useFakeTimers()
+
+    const { emitted } = renderComponent()
+    vi.advanceTimersByTime(3000)
+
+    await h.trigger(screen.getByRole('article'), 'mouseEnter')
+    vi.advanceTimersByTime(10_000)
+    expect(emitted().dismiss).toBeUndefined()
+
+    await h.trigger(screen.getByRole('article'), 'mouseLeave')
+    vi.advanceTimersByTime(2000)
+    expect(emitted().dismiss).toBeTruthy()
+
+    vi.useRealTimers()
+  })
+
+  it('stays open while persistent', () => {
+    vi.useFakeTimers()
+
+    const { emitted } = renderComponent(makeMessage({ persistent: true }))
     vi.advanceTimersByTime(60_000)
 
     expect(emitted().dismiss).toBeUndefined()

@@ -3,11 +3,9 @@
   <DialogBox ref="dialog" />
   <MessageToaster ref="toaster" />
   <GlobalEventListeners />
-  <SystemNoticeStack>
-    <OfflineNotification v-if="!online" />
-    <UpdateNotification />
-    <NewReleaseNotification v-if="initialized" />
-  </SystemNoticeStack>
+  <OfflineNotification v-if="!online" />
+  <UpdateNotification />
+  <NewReleaseNotification v-if="initialized" />
 
   <main
     v-if="layout === 'default' && initialized"
@@ -66,7 +64,6 @@ import Overlay from '@/components/ui/Overlay.vue'
 import OfflineNotification from '@/components/ui/system-notices/OfflineNotification.vue'
 import UpdateNotification from '@/components/ui/system-notices/UpdateNotification.vue'
 import NewReleaseNotification from '@/components/ui/system-notices/NewReleaseNotification.vue'
-import SystemNoticeStack from '@/components/ui/system-notices/SystemNoticeStack.vue'
 
 // Do not dynamic-import app footer, as it contains the <audio> element
 // that is necessary to properly initialize the playService and equalizer.

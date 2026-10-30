@@ -21,10 +21,12 @@ import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
 const DEFAULT_TIMEOUT = 5
 
 const SETTLED_DEFAULTS = {
+  icon: undefined,
   component: undefined,
   props: undefined,
   actions: undefined,
   progress: undefined,
+  persistent: undefined,
   onDismiss: undefined,
   timeout: DEFAULT_TIMEOUT,
 }
@@ -44,11 +46,14 @@ const warnBeforeLeaving = (event: BeforeUnloadEvent) => {
   event.returnValue = ''
 }
 
-const withRawComponent = <T extends { component?: Component }>(fields: T) =>
-  fields.component ? { ...fields, component: markRaw(fields.component) } : fields
+const withRawComponents = <T extends { icon?: Component; component?: Component }>(fields: T) => ({
+  ...fields,
+  ...(fields.icon && { icon: markRaw(fields.icon) }),
+  ...(fields.component && { component: markRaw(fields.component) }),
+})
 
 const toMessageFields = (details: ToastDetails) =>
-  typeof details === 'string' ? { content: details } : withRawComponent(details)
+  typeof details === 'string' ? { content: details } : withRawComponents(details)
 
 const resolveOutcome = <T>(outcome: ToastOutcome<T>, value: T) =>
   typeof outcome === 'function' ? outcome(value) : outcome
@@ -74,7 +79,7 @@ const update = (id: string, changes: Partial<Omit<ToastMessage, 'id'>>) => {
     return
   }
 
-  Object.assign(message, withRawComponent(changes))
+  Object.assign(message, withRawComponents(changes))
 }
 
 const dismiss = (id: string) => {
@@ -150,7 +155,7 @@ defineExpose({ info, success, warning, error, loading, promise, update, dismiss 
 .popover,
 .popover:popover-open {
   inset: unset;
-  @apply fixed top-3 right-0 p-0 bg-transparent m-0 overflow-visible border-0 backdrop:bg-transparent;
+  @apply fixed top-3 right-3 p-0 bg-transparent m-0 overflow-visible border-0 backdrop:bg-transparent;
 }
 
 .toast-enter-active {
