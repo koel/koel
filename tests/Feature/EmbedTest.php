@@ -161,10 +161,10 @@ class EmbedTest extends TestCase
     public function getPayloadForFavoritesReturnsTheCurrentFavorites(): void
     {
         $user = create_user();
-        Favorite::factory()->for($user)->createOne();
+        Favorite::factory()->for($user)->createOne(['position' => 0]);
         $embed = Embed::factory()->for($user)->embeddingFavorites()->createOne();
 
-        $laterFavorite = Favorite::factory()->for($user)->createOne();
+        $laterFavorite = Favorite::factory()->for($user)->createOne(['position' => 1]);
         Favorite::factory()->createOne();
 
         $options = EmbedOptions::make();
