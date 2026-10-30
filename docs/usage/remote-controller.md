@@ -37,6 +37,9 @@ REVERB_SCHEME=https
 
 Then keep `php artisan reverb:start` running (with Supervisor, for example). It listens on port 8080; have your web server pass all traffic for `REVERB_HOST` (WebSocket and HTTP) to it. See [Reverb's docs](https://laravel.com/docs/reverb#production) for an nginx example.
 
+The [Docker image](https://github.com/koel/docker#background-jobs-and-live-updates) and the
+[standalone binary](../guide/standalone-binary.md#live-updates-with-reverb) run Reverb for you.
+
 ## Usage
 
 You can access the remote controller by visiting `https://<your-koel-domain>/remote`.
