@@ -8,13 +8,13 @@ use App\Http\Resources\ThemeResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Embed;
+use App\Models\Favorite;
 use App\Models\Song;
 use App\Models\Theme;
 use App\Models\User;
 use App\Services\Playlist\PlaylistCollaborationService;
 use App\Values\EmbedOptions;
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\PlusTestCase;
@@ -103,43 +103,43 @@ class EmbedTest extends PlusTestCase
         )->assertSuccessful();
     }
 
-    /** @return array<string, array{string, Closure(User): Model}> */
+    /** @return array<string, array{string, Closure(User): ?string}> */
     public static function provideEmbeddablesSharedWithTheGuest(): array
     {
         return [
-            'song' => ['playable', static fn (): Model => Song::factory()->public()->createOne()],
+            'song' => ['playable', static fn (): string => Song::factory()->public()->createOne()->id],
             'album' => [
                 'album',
-                static fn (): Model => Song::factory()->public()->createOne()->album,
+                static fn (): string => Song::factory()->public()->createOne()->album->id,
             ],
             'artist' => [
                 'artist',
-                static fn (): Model => Song::factory()->public()->createOne()->artist,
+                static fn (): string => Song::factory()->public()->createOne()->artist->id,
             ],
             'playlist' => [
                 'playlist',
-                static function (User $guest): Model {
+                static function (User $guest): string {
                     $playlist = create_playlist();
                     $playlist->addCollaborator($guest);
 
-                    return $playlist;
+                    return $playlist->id;
                 },
             ],
+            'favorites' => ['favorites', static fn (): ?string => null],
         ];
     }
 
-    /** @param Closure(User): Model $createEmbeddable */
+    /** @param Closure(User): ?string $createEmbeddable */
     #[Test]
     #[DataProvider('provideEmbeddablesSharedWithTheGuest')]
     public function guestCannotEmbed(string $embeddableType, Closure $createEmbeddable): void
     {
         $guest = create_guest();
-        $embeddable = $createEmbeddable($guest);
 
         $this->postAs(
             'api/embeds/resolve',
             [
-                'embeddable_id' => $embeddable->getKey(),
+                'embeddable_id' => $createEmbeddable($guest),
                 'embeddable_type' => $embeddableType,
             ],
             $guest,
@@ -175,7 +175,7 @@ class EmbedTest extends PlusTestCase
         $playlist = create_playlist();
         $collaborator = create_user();
         $playlist->addCollaborator($collaborator);
-        $embed = Embed::factory()->for($collaborator)->for($playlist, 'embeddable')->createOne();
+        $embed = Embed::factory()->for($collaborator)->embedding($playlist)->createOne();
         $options = EmbedOptions::make();
 
         $this->getJson("api/embeds/{$embed->id}/$options")->assertSuccessful();
@@ -183,5 +183,26 @@ class EmbedTest extends PlusTestCase
         app(PlaylistCollaborationService::class)->removeCollaborator($playlist->refresh(), $collaborator);
 
         $this->getJson("api/embeds/{$embed->id}/$options")->assertNotFound();
+    }
+
+    #[Test]
+    public function favoritesEmbedSkipsSongsTheOwnerCannotAccess(): void
+    {
+        $user = create_user();
+        $accessibleSong = Song::factory()->for($user, 'owner')->createOne();
+        $otherUsersPrivateSong = Song::factory()->private()->createOne();
+
+        Favorite::factory()->for($user)->for($accessibleSong, 'favoriteable')->createOne();
+        Favorite::factory()->for($user)->for($otherUsersPrivateSong, 'favoriteable')->createOne();
+
+        $embed = Embed::factory()->for($user)->embeddingFavorites()->createOne();
+
+        $options = EmbedOptions::make();
+
+        $this
+            ->getJson("api/embeds/{$embed->id}/$options")
+            ->assertSuccessful()
+            ->assertJsonCount(1, 'embed.playables')
+            ->assertJsonPath('embed.playables.0.id', $accessibleSong->id);
     }
 }

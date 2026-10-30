@@ -60,6 +60,7 @@ import { faHeart } from '@fortawesome/free-regular-svg-icons'
 import { computed, ref, watch } from 'vue'
 import { pluralize } from '@/utils/formatters'
 import { defineAsyncComponent } from '@/utils/helpers'
+import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
 import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 import { useRouter } from '@/composables/useRouter'
@@ -67,6 +68,7 @@ import { usePlayableList } from '@/composables/usePlayableList'
 import { usePlayableListControls } from '@/composables/usePlayableListControls'
 import { usePersistedSort } from '@/composables/usePersistedSort'
 import { useContextMenu } from '@/composables/useContextMenu'
+import { usePolicies } from '@/composables/usePolicies'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import ScreenEmptyState from '@/components/ui/ScreenEmptyState.vue'
@@ -105,7 +107,9 @@ const removeSelected = () => selectedPlayables.value.length && playableStore.und
 
 const { swReady, hasOfflineCapablePlayables } = useOfflinePlayback()
 const canToggleOffline = computed(() => swReady.value && hasOfflineCapablePlayables(playables.value))
-const hasMoreActions = computed(() => downloadable.value || canToggleOffline.value)
+const { currentUserCan } = usePolicies()
+const canEmbed = computed(() => commonStore.state.allows_embedding && currentUserCan.createEmbeds())
+const hasMoreActions = computed(() => downloadable.value || canToggleOffline.value || canEmbed.value)
 
 const { openContextMenu } = useContextMenu()
 

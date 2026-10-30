@@ -3,6 +3,10 @@ import { themeStore } from '@/stores/themeStore'
 
 export const embedService = {
   async resolveForEmbeddable(embeddable: Embeddable) {
+    if (embeddable.type === 'favorites') {
+      return await http.post<Embed>('embeds/resolve', { embeddable_type: 'favorites' })
+    }
+
     let embeddableType = embeddable.type.slice(0, -1) // remove the last 's' to get the singular form
 
     if (embeddableType === 'song' || embeddableType === 'episode') {

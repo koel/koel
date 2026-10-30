@@ -34,6 +34,11 @@ class UserPolicy
         );
     }
 
+    public function embed(User $currentUser, User $favoritesOwner): bool
+    {
+        return !$currentUser->isGuest() && $currentUser->is($favoritesOwner);
+    }
+
     public function upload(User $currentUser): bool
     {
         if (License::isCommunity()) {

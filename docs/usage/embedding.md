@@ -1,5 +1,5 @@
 ---
-description: Embedding tracks, playlists, albums, and artists via iframe with layout and theme options.
+description: Embedding tracks, playlists, albums, artists, and favorites via iframe with layout and theme options.
 ---
 
 # Embedding
@@ -7,6 +7,8 @@ description: Embedding tracks, playlists, albums, and artists via iframe with la
 Koel supports embedding tracks, playlists (including smart playlists), albums, and artists. To create a new embed,
 right-click on the track/playlist/album/artist to bring up the context menu and select "Embed…". The Create Embed dialog
 will appear.
+
+You can embed your favorites too: on the Favorites screen, click the "More Actions" (⋯) button and select "Embed…".
 
 <img alt="Create Embed dialog" src="../assets/img/interface/create-embed-dialog.avif" style="width: 100%; max-width: 650px;"/>
 

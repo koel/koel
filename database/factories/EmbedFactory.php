@@ -22,16 +22,32 @@ class EmbedFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'embeddable_type' => $type->value,
-            'embeddable_id' => static fn (array $attributes) => self::createEmbeddableOwnedBy(
+            'embeddable_type' => $type,
+            'embeddable_id' => static fn (array $attributes): ?string => self::createEmbeddableOwnedBy(
                 $type,
                 User::query()->whereKey($attributes['user_id'])->firstOrFail(),
             )
-                ->getKey(),
+                ?->getKey(),
         ];
     }
 
-    private static function createEmbeddableOwnedBy(EmbeddableType $type, User $user): Song|Playlist|Album|Artist
+    public function embedding(Song|Album|Artist|Playlist $embeddable): self
+    {
+        return $this->state([
+            'embeddable_type' => EmbeddableType::from($embeddable->getMorphClass()),
+            'embeddable_id' => $embeddable->getKey(),
+        ]);
+    }
+
+    public function embeddingFavorites(): self
+    {
+        return $this->state([
+            'embeddable_type' => EmbeddableType::FAVORITES,
+            'embeddable_id' => null,
+        ]);
+    }
+
+    private static function createEmbeddableOwnedBy(EmbeddableType $type, User $user): Song|Playlist|Album|Artist|null
     {
         return match ($type) {
             EmbeddableType::PLAYABLE => Song::factory()->for($user, 'owner')->createOne(),
@@ -43,6 +59,7 @@ class EmbedFactory extends Factory
             }),
             EmbeddableType::ALBUM => Album::factory()->for($user)->createOne(),
             EmbeddableType::ARTIST => Artist::factory()->for($user)->createOne(),
+            EmbeddableType::FAVORITES => null,
         };
     }
 }

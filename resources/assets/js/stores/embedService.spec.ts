@@ -14,7 +14,7 @@ describe('embedService', async () => {
     ['artist', 'artist'],
     ['playlist', 'playlist'],
   ])('resolves for %s', async (model, embeddableType) => {
-    const playable = h.factory(model).make() as Embeddable
+    const playable = h.factory(model).make() as Exclude<Embeddable, UserFavorites>
     const embed = h.factory('embed').make()
     const postMock = h.mock(http, 'post').mockResolvedValue(embed)
 
@@ -26,6 +26,15 @@ describe('embedService', async () => {
     })
 
     expect(resolved).toEqual(embed)
+  })
+
+  it('resolves for favorites', async () => {
+    const favorites: UserFavorites = { type: 'favorites', owner_name: 'Lisa' }
+    const postMock = h.mock(http, 'post').mockResolvedValue(h.factory('embed').make())
+
+    await embedService.resolveForEmbeddable(favorites)
+
+    expect(postMock).toHaveBeenCalledWith('embeds/resolve', { embeddable_type: 'favorites' })
   })
 
   it('encrypts options', async () => {

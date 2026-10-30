@@ -8,7 +8,7 @@ import { themeStore } from '@/stores/themeStore'
 describe('createEmbedForm.vue', () => {
   const h = createHarness()
 
-  const renderComponent = async (embeddable?: Embeddable, embed?: Embed) => {
+  const renderComponent = async (embeddable?: Exclude<Embeddable, UserFavorites>, embed?: Embed) => {
     embeddable = embeddable ?? h.factory('playlist').make()
 
     embed =
