@@ -1,25 +1,16 @@
 <template>
-  <SystemFloatingNotice v-if="shown" class="items-start" dismissible @dismiss="dismiss">
-    <template #icon>
-      <RocketIcon :size="18" class="mt-0.5 text-k-fg-70" />
-    </template>
-    <span class="flex flex-col">
-      <span>{{ appName }} {{ latestVersion }} is available.</span>
-      <a :href="latestVersionReleaseUrl" class="text-k-fg-70 hover:text-k-fg" rel="noopener" target="_blank"
-        >See what's new</a
-      >
-    </span>
-  </SystemFloatingNotice>
+  <slot />
 </template>
 
 <script lang="ts" setup>
 import { RocketIcon } from 'lucide-vue-next'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useBranding } from '@/composables/useBranding'
 import { useLocalStorage } from '@/composables/useLocalStorage'
+import { useMessageToaster } from '@/composables/useMessageToaster'
 import { useNewVersionNotification } from '@/composables/useNewVersionNotification'
 
-import SystemFloatingNotice from '@/components/ui/system-notices/SystemFloatingNotice.vue'
+import NewReleaseToastContent from '@/components/ui/system-notices/NewReleaseToastContent.vue'
 
 const dismissedVersionStorageKey = 'dismissed-new-release-version'
 
@@ -28,11 +19,35 @@ const { name: appName } = useBranding()
 const { get, set } = useLocalStorage()
 
 const dismissedVersion = ref(get<string>(dismissedVersionStorageKey))
-
 const shown = computed(() => shouldNotifyNewVersion.value && dismissedVersion.value !== latestVersion.value)
 
-const dismiss = () => {
-  set(dismissedVersionStorageKey, latestVersion.value)
-  dismissedVersion.value = latestVersion.value
+const dismiss = (version: string) => {
+  set(dismissedVersionStorageKey, version)
+  dismissedVersion.value = version
 }
+
+onMounted(() => {
+  const { toastInfo } = useMessageToaster()
+
+  watch(
+    shown,
+    show => {
+      if (!show) {
+        return
+      }
+
+      const version = latestVersion.value
+
+      toastInfo({
+        content: `${appName} ${version} is available.`,
+        icon: RocketIcon,
+        component: NewReleaseToastContent,
+        props: { appName, version, releaseUrl: latestVersionReleaseUrl.value },
+        persistent: true,
+        onDismiss: () => dismiss(version),
+      })
+    },
+    { immediate: true },
+  )
+})
 </script>

@@ -55,6 +55,7 @@ export const useZipDownloadToast = () => {
           {
             label: 'Save',
             handler: () => saveArchive(toastId),
+            primary: true,
           },
         ],
         onDismiss: dismissUnsavedArchive,

@@ -1,7 +1,7 @@
-import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { nextTick } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { MessageToasterStub } from '@/__tests__/stubs'
 import { commonStore } from '@/stores/commonStore'
 import Component from './NewReleaseNotification.vue'
 
@@ -14,23 +14,26 @@ describe('newReleaseNotification', () => {
     },
   })
 
-  it('stays dismissed for the dismissed version', async () => {
+  it('stays dismissed for the dismissed version', () => {
+    const infoMock = h.mock(MessageToasterStub.value, 'info')
     h.actingAsAdmin().render(Component)
 
-    await h.user.click(screen.getByRole('button', { name: 'Dismiss' }))
-    expect(screen.queryByRole('link')).toBeNull()
-
+    infoMock.mock.calls[0][0].onDismiss()
     h.render(Component)
-    expect(screen.queryByRole('link')).toBeNull()
+
+    expect(infoMock).toHaveBeenCalledOnce()
   })
 
   it('shows again for a newer version than the dismissed one', async () => {
+    const infoMock = h.mock(MessageToasterStub.value, 'info')
     h.actingAsAdmin().render(Component)
-    await h.user.click(screen.getByRole('button', { name: 'Dismiss' }))
+    infoMock.mock.calls[0][0].onDismiss()
+    await nextTick()
 
     commonStore.state.latest_version = 'v1.2.0'
     await nextTick()
 
-    expect(screen.getByRole('link').getAttribute('href')).toBe('https://github.com/koel/koel/releases/tag/v1.2.0')
+    expect(infoMock).toHaveBeenCalledTimes(2)
+    expect(infoMock.mock.calls[1][0].props.releaseUrl).toBe('https://github.com/koel/koel/releases/tag/v1.2.0')
   })
 })

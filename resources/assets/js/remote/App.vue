@@ -20,9 +20,8 @@
       <Auth @logged-in="onUserLoggedIn" />
     </div>
 
-    <SystemNoticeStack>
-      <UpdateNotification />
-    </SystemNoticeStack>
+    <MessageToaster ref="toaster" />
+    <UpdateNotification />
   </div>
 </template>
 
@@ -35,9 +34,10 @@ import { userStore } from '@/stores/userStore'
 import { isSong } from '@/utils/typeGuards'
 import { logger } from '@/utils/logger'
 import type { RemoteState } from '@/remote/types'
+import { MessageToasterKey } from '@/config/symbols'
 
 import UpdateNotification from '@/components/ui/system-notices/UpdateNotification.vue'
-import SystemNoticeStack from '@/components/ui/system-notices/SystemNoticeStack.vue'
+import MessageToaster from '@/components/ui/message-toaster/MessageToaster.vue'
 
 const StreamableDetails = defineAsyncComponent(() => import('@/remote/components/StreamableDetails.vue'))
 const Scanner = defineAsyncComponent(() => import('@/remote/components/Scanner.vue'))
@@ -54,6 +54,9 @@ const state = reactive<RemoteState>({
 })
 
 provide('state', state)
+
+const toaster = ref<InstanceType<typeof MessageToaster>>()
+provide(MessageToasterKey, toaster)
 
 const showAlbumArtOverlay = computed(() => {
   return preferenceStore.show_album_art_overlay && state.streamable && isSong(state.streamable)

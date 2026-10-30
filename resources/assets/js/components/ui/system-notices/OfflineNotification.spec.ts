@@ -1,47 +1,27 @@
-import { describe, expect, it, vi } from 'vite-plus/test'
-import { nextTick, ref } from 'vue'
-import { screen, waitFor } from '@testing-library/vue'
+import { describe, expect, it } from 'vite-plus/test'
+import { defineComponent, h as createVNode } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-
-const onlineMock = ref(false)
-
-vi.mock('@/composables/useNetworkStatus', () => ({
-  useNetworkStatus: () => ({
-    online: onlineMock,
-  }),
-}))
-
+import { MessageToasterStub } from '@/__tests__/stubs'
 import Component from './OfflineNotification.vue'
 
 describe('offlineNotification', () => {
-  const h = createHarness({
-    beforeEach: () => {
-      onlineMock.value = false
-    },
+  const h = createHarness()
+
+  const Host = defineComponent({
+    props: { offline: Boolean },
+    setup: props => () => createVNode('div', null, props.offline ? [createVNode(Component)] : []),
   })
 
-  it('shows offline message', () => {
-    h.render(Component)
-    screen.getByText("You're offline.")
-  })
+  it('shows a lasting warning while offline and dismisses it once back online', async () => {
+    const warningMock = h.mock(MessageToasterStub.value, 'warning', 'toast-id')
+    const dismissMock = h.mock(MessageToasterStub.value, 'dismiss')
 
-  it('can be dismissed', async () => {
-    h.render(Component)
-    await h.user.click(screen.getByText("You're offline."))
-    expect(screen.queryByText("You're offline.")).toBeNull()
-  })
+    const { rerender } = h.render(Host, { props: { offline: true } })
 
-  it('re-shows when going offline again after dismiss', async () => {
-    h.render(Component)
-    await h.user.click(screen.getByText("You're offline."))
-    expect(screen.queryByText("You're offline.")).toBeNull()
+    expect(warningMock).toHaveBeenCalledWith(expect.objectContaining({ persistent: true }))
 
-    // Go online then offline again
-    onlineMock.value = true
-    await nextTick()
-    onlineMock.value = false
-    await nextTick()
+    await rerender({ offline: false })
 
-    await waitFor(() => screen.getByText("You're offline."))
+    expect(dismissMock).toHaveBeenCalledWith('toast-id')
   })
 })

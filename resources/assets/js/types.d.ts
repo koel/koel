@@ -832,16 +832,19 @@ type ToastType = 'info' | 'success' | 'warning' | 'danger' | 'loading'
 interface ToastAction {
   label: string
   handler: Closure
+  primary?: boolean
 }
 
 interface ToastMessage {
   id: string
   type: ToastType
   content: string
+  icon?: import('vue').Component
   component?: import('vue').Component
   props?: Record<string, unknown>
   actions?: ToastAction[]
   progress?: () => number
+  persistent?: boolean
   timeout: number // seconds
   onDismiss?: Closure
 }
