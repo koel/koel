@@ -9,13 +9,10 @@
       <Thumbnail v-else :embeddable="embed.embeddable" />
     </aside>
 
-    <div class="flex-1 flex flex-col justify-end gap-3">
-      <h3
-        :title="heading"
-        class="text-3xl text-k-fg flex items-center gap-2 font-medium sm:text-4xl sm:font-bold line-clamp-1"
-      >
+    <div class="flex-1 min-w-0 flex flex-col justify-end gap-3">
+      <h3 :title="heading" class="text-3xl text-k-fg flex items-center gap-2 pr-9 font-medium sm:text-4xl sm:font-bold">
         <PreviewBadge v-if="options.preview" />
-        <span>{{ heading }}</span>
+        <MarqueeText :text="heading" />
       </h3>
 
       <p :title="subheading" class="line-clamp-1">{{ subheading }}</p>
@@ -37,6 +34,7 @@ import { useBranding } from '@/composables/useBranding'
 import Thumbnail from '@/components/embed/widget/EmbedWidgetThumbnail.vue'
 import PreviewBadge from '@/components/embed/widget/PreviewBadge.vue'
 import ThumbnailStack from '@/components/ui/ThumbnailStack.vue'
+import MarqueeText from '@/components/ui/MarqueeText.vue'
 
 const props = defineProps<{ embed: WidgetReadyEmbed; options: EmbedOptions }>()
 const { embed, options } = props
