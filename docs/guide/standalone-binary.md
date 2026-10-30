@@ -157,6 +157,7 @@ REVERB_SCHEME=http
 Then restart Koel. It starts Reverb next to the web server on port 8080 and logs to
 `$HOME/.koel/storage/logs/reverb.log`.
 
-Set `REVERB_HOST` to the address browsers use to reach this machine. Behind a reverse proxy, forward `/app/` and
+Set `REVERB_HOST` to the address browsers use to reach this machine. The port and scheme above suit plain HTTP. On
+HTTPS, browsers only accept a secure connection to Reverb, so put it behind a reverse proxy: forward `/app/` and
 `/apps/` (including WebSocket upgrades) to port 8080, and set `REVERB_PORT` and `REVERB_SCHEME` to the proxy's,
 e.g. `443` and `https`.

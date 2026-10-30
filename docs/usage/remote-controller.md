@@ -1,5 +1,5 @@
 ---
-description: Using Koel's Pusher-based remote controller to control a desktop instance from your phone.
+description: Using Koel's remote controller, powered by Pusher or Reverb, to control a desktop instance from your phone.
 ---
 
 # Remote Controller
