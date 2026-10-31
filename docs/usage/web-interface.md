@@ -35,6 +35,10 @@ You can click on any artist, album, or genre name to see all the songs that belo
 On the artist and album screens, you can also find other albums and songs by the same artist as well as extra metadata
 like the artist or album's information when [configured](../service-integrations).
 
+In list view, the Artists, Albums, and Radio screens let you select items the same way as songs: click, hold
+<kbd>Shift</kbd> or <kbd>Ctrl/Cmd</kbd> while clicking, or use <kbd>↑</kbd>/<kbd>↓</kbd> and <kbd>Cmd/Ctrl</kbd>+<kbd>a</kbd>.
+Right-click a selection to play, shuffle, download, or mark all selected items as favorite at once.
+
 On any screen with a song list (a "song-list screen") you can:
 
 * Sort the list by clicking on the column headers

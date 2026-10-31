@@ -9,6 +9,9 @@ export interface ContextMenus {
   PLAYLIST_FOLDER: { folder: PlaylistFolder }
   PODCAST: { podcast: Podcast }
   RADIO_STATION: { station: RadioStation }
+  SELECTED_ALBUMS: { albums: Album[] }
+  SELECTED_ARTISTS: { artists: Artist[] }
+  SELECTED_RADIO_STATIONS: { stations: RadioStation[] }
   USER: { user: User }
   THEME: { theme: Theme }
 }

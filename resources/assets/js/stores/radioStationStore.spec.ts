@@ -174,4 +174,24 @@ describe('radioStationStore', () => {
     await store.toggleFavorite(station)
     expect(station.favorite).toBe(false)
   })
+
+  it('favorites several at once', async () => {
+    const stations = h.factory('radio-station').make({ favorite: false }, 2)
+    const postMock = h.mock(http, 'post')
+
+    await store.favorite(stations)
+
+    expect(postMock).toHaveBeenCalledWith('favorites', { type: 'radio-station', ids: stations.map(({ id }) => id) })
+    expect(stations.every(({ favorite }) => favorite)).toBe(true)
+  })
+
+  it('undoes favorite of several at once', async () => {
+    const stations = h.factory('radio-station').make({ favorite: true }, 2)
+    const deleteMock = h.mock(http, 'delete')
+
+    await store.undoFavorite(stations)
+
+    expect(deleteMock).toHaveBeenCalledWith('favorites', { type: 'radio-station', ids: stations.map(({ id }) => id) })
+    expect(stations.some(({ favorite }) => favorite)).toBe(false)
+  })
 })

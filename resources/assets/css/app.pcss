@@ -33,6 +33,16 @@
   }
 }
 
+@utility selectable-list-item {
+  &.selected {
+    @apply bg-k-highlight text-k-highlight-fg hover:bg-k-highlight;
+
+    * {
+      @apply text-k-highlight-fg;
+    }
+  }
+}
+
 @utility playable-list-item {
   @apply border-b border-k-fg-10 max-w-full! h-[64px] flex
     items-center transition-[background-color] ease-in-out duration-200

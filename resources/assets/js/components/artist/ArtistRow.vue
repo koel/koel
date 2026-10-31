@@ -1,9 +1,9 @@
 <template>
   <article
-    class="artist-row group pl-5 flex items-center h-[64px] border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
+    class="artist-row selectable-list-item group pl-5 flex items-center h-[64px] border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
     data-testid="artist-row"
     :draggable="true"
-    @contextmenu.prevent="onContextMenu"
+    @contextmenu.prevent="emit('open-context-menu', $event)"
     @dblclick.prevent.stop="goToArtist"
     @dragstart="onDragStart"
   >
@@ -20,7 +20,7 @@
       <FavoriteButton :favorite="artist.favorite" @toggle="emit('toggle-favorite', artist)" />
     </span>
     <span class="extra">
-      <button class="text-k-fg-50 hover:text-k-fg p-1" @click="onContextMenu">
+      <button class="text-k-fg-50 hover:text-k-fg p-1" @click.stop="emit('open-context-menu', $event)">
         <Icon :icon="faEllipsis" />
         <span class="sr-only">More actions</span>
       </button>
@@ -32,10 +32,8 @@
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
-import { useContextMenu } from '@/composables/useContextMenu'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { artistTableColumnConfig } from '@/config/tables'
-import { defineAsyncComponent } from '@/utils/helpers'
 
 import StarRating from '@/components/ui/StarRating.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
@@ -45,17 +43,12 @@ const props = defineProps<{ artist: Artist }>()
 
 const emit = defineEmits<{
   (e: 'toggle-favorite', artist: Artist): void
+  (e: 'open-context-menu', event: MouseEvent): void
 }>()
 
-const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
-
 const { go, url } = useRouter()
-const { openContextMenu } = useContextMenu()
 const { startDragging } = useDraggable('artist')
 const { shouldShowColumn } = useTableColumnVisibility(artistTableColumnConfig)
-
-const onContextMenu = (event: MouseEvent) =>
-  openContextMenu<'ARTIST'>(ArtistContextMenu, event, { artist: props.artist })
 
 const goToArtist = () => go(url('artists.show', { id: props.artist.id }))
 

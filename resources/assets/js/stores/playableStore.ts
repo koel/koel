@@ -262,6 +262,10 @@ export const playableStore = {
     )
   },
 
+  async fetchSongsForAlbums(albums: Album[]) {
+    return (await Promise.all(albums.map(album => this.fetchSongsForAlbum(album)))).flat()
+  },
+
   invalidateAlbumAndArtistSongCaches(song: Song) {
     cache.remove(['album.songs', song.album_id])
     cache.remove(['artist.songs', song.artist_id])
@@ -275,6 +279,10 @@ export const playableStore = {
         this.syncWithVault(await http.get<Song[]>(`artists/${id}/songs`)),
       )) as Song[],
     )
+  },
+
+  async fetchSongsForArtists(artists: Artist[]) {
+    return (await Promise.all(artists.map(artist => this.fetchSongsForArtist(artist)))).flat()
   },
 
   async fetchForPlaylist(playlist: Playlist | Playlist['id'], refresh = false) {

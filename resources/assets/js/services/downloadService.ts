@@ -23,6 +23,14 @@ export const downloadService = {
     await zipDownloadService.start(await playableStore.fetchSongsForArtist(artist), artist.name, 'none')
   },
 
+  async fromAlbums(albums: Album[]) {
+    await zipDownloadService.start(await playableStore.fetchSongsForAlbums(albums), 'koel-download', 'none')
+  },
+
+  async fromArtists(artists: Artist[]) {
+    await zipDownloadService.start(await playableStore.fetchSongsForArtists(artists), 'koel-download', 'none')
+  },
+
   async fromPlaylist(playlist: Playlist) {
     await zipDownloadService.start(await playableStore.fetchForPlaylist(playlist), playlist.name, 'position')
   },

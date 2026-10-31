@@ -1,8 +1,14 @@
 <template>
   <div class="artist-table-wrap relative flex flex-col flex-1 overflow-auto" data-testid="artist-table">
     <VirtualScroller
+      ref="scroller"
       carries-screen-header
-      :items="artists"
+      tabindex="0"
+      class="focus-visible:outline-hidden"
+      :items="rows"
+      @keydown.a.prevent="selectAllWithKeyboard"
+      @keydown.up.down.prevent.stop="onArrowKey"
+      @keydown.enter.prevent.stop="openSelectedItem"
       :item-height="64"
       :loading-more
       @scrolled-to-end="$emit('scrolled-to-end')"
@@ -43,8 +49,14 @@
           </div>
         </ScreenHeaderPinned>
       </template>
-      <template #default="{ item }: { item: Artist }">
-        <ArtistRow :artist="item" @toggle-favorite="emit('toggle-favorite', $event)" />
+      <template #default="{ item: row }: { item: SelectableRow<Artist> }">
+        <ArtistRow
+          :artist="row.item"
+          :class="{ selected: row.selected }"
+          @click="onRowClick(row, $event)"
+          @open-context-menu="openContextMenuForRow(row, $event)"
+          @toggle-favorite="emit('toggle-favorite', $event)"
+        />
       </template>
       <template #placeholder>
         <ArtistTableRowSkeleton />
@@ -55,7 +67,12 @@
 
 <script lang="ts" setup>
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
-import { toRefs } from 'vue'
+import { ref, toRefs } from 'vue'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { useRouter } from '@/composables/useRouter'
+import type { SelectableRow } from '@/composables/useSelectableRows'
+import { useSelectableRows } from '@/composables/useSelectableRows'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { artistTableColumnConfig, artistTableMenuItems } from '@/config/tables'
 
@@ -81,6 +98,36 @@ const emit = defineEmits<{
 
 const { shouldShowColumn } = useTableColumnVisibility(artistTableColumnConfig)
 const { field, order } = toRefs(props)
+
+const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
+const SelectedArtistsContextMenu = defineAsyncComponent(
+  () => import('@/components/artist/SelectedArtistsContextMenu.vue'),
+)
+
+const { artists } = toRefs(props)
+const scroller = ref<InstanceType<typeof VirtualScroller>>()
+
+const { openContextMenu } = useContextMenu()
+const { go, url } = useRouter()
+
+const { rows, selectedItems, onRowClick, onArrowKey, selectAllWithKeyboard, selectRowForContextMenu } =
+  useSelectableRows(artists, scroller)
+
+const openContextMenuForRow = async (row: SelectableRow<Artist>, event: MouseEvent) => {
+  await selectRowForContextMenu(row)
+
+  if (selectedItems.value.length > 1) {
+    openContextMenu<'SELECTED_ARTISTS'>(SelectedArtistsContextMenu, event, { artists: selectedItems.value })
+  } else {
+    openContextMenu<'ARTIST'>(ArtistContextMenu, event, { artist: row.item })
+  }
+}
+
+const openSelectedItem = () => {
+  if (selectedItems.value.length === 1) {
+    go(url('artists.show', { id: selectedItems.value[0].id }))
+  }
+}
 
 const onSort = (clicked: ArtistListSortField) => {
   const nextOrder: SortOrder = field.value === clicked && order.value === 'asc' ? 'desc' : 'asc'

@@ -1,9 +1,9 @@
 <template>
   <article
-    class="album-row group h-[64px] pl-5 flex items-center border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
+    class="album-row selectable-list-item group h-[64px] pl-5 flex items-center border-b border-k-fg-10 hover:bg-k-fg-5 transition-colors"
     data-testid="album-row"
     :draggable="true"
-    @contextmenu.prevent="onContextMenu"
+    @contextmenu.prevent="emit('open-context-menu', $event)"
     @dblclick.prevent.stop="goToAlbum"
     @dragstart="onDragStart"
   >
@@ -42,7 +42,7 @@
       <FavoriteButton :favorite="album.favorite" @toggle="emit('toggle-favorite', album)" />
     </span>
     <span class="extra">
-      <button class="text-k-fg-50 hover:text-k-fg p-1" @click="onContextMenu">
+      <button class="text-k-fg-50 hover:text-k-fg p-1" @click.stop="emit('open-context-menu', $event)">
         <Icon :icon="faEllipsis" />
         <span class="sr-only">More actions</span>
       </button>
@@ -55,11 +55,9 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
 import { artistStore } from '@/stores/artistStore'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useRouter } from '@/composables/useRouter'
-import { useContextMenu } from '@/composables/useContextMenu'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { albumTableColumnConfig } from '@/config/tables'
 import { secondsToHis } from '@/utils/formatters'
-import { defineAsyncComponent } from '@/utils/helpers'
 
 import StarRating from '@/components/ui/StarRating.vue'
 import FavoriteButton from '@/components/ui/FavoriteButton.vue'
@@ -69,18 +67,14 @@ const props = defineProps<{ album: Album }>()
 
 const emit = defineEmits<{
   (e: 'toggle-favorite', album: Album): void
+  (e: 'open-context-menu', event: MouseEvent): void
 }>()
 
-const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
-
 const { go, url } = useRouter()
-const { openContextMenu } = useContextMenu()
 const { startDragging } = useDraggable('album')
 const { shouldShowColumn } = useTableColumnVisibility(albumTableColumnConfig)
 
 const formatLength = (seconds: number) => (seconds > 0 ? secondsToHis(seconds) : '—')
-
-const onContextMenu = (event: MouseEvent) => openContextMenu<'ALBUM'>(AlbumContextMenu, event, { album: props.album })
 
 const goToAlbum = () => go(url('albums.show', { id: props.album.id }))
 

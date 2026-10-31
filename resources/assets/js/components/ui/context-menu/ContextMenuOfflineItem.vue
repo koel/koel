@@ -12,7 +12,7 @@ import { useOfflinePlayback } from '@/composables/useOfflinePlayback'
 
 const props = defineProps<{
   playables: Playable[]
-  collectionName: string
+  collectionName?: string
 }>()
 
 const { MenuItem, Separator, trigger } = useContextMenu()
@@ -20,5 +20,6 @@ const { swReady, allPlayablesCached, hasOfflineCapablePlayables, togglePlayables
 
 const allCached = computed(() => allPlayablesCached(props.playables))
 
-const toggleOffline = () => trigger(() => togglePlayablesOffline(props.playables, `"${props.collectionName}"`))
+const toggleOffline = () =>
+  trigger(() => togglePlayablesOffline(props.playables, props.collectionName && `"${props.collectionName}"`))
 </script>

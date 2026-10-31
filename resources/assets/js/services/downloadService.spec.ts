@@ -61,6 +61,28 @@ describe('downloadService', () => {
     expect(zipMock).toHaveBeenCalledWith(songs, album.name, 'track')
   })
 
+  it('zips songs of several albums', async () => {
+    const zipMock = h.mock(zipDownloadService, 'start')
+    const albums = h.factory('album').make(2)
+    const songs = h.factory('song').make(3)
+    h.mock(playableStore, 'fetchSongsForAlbums').mockResolvedValue(songs)
+
+    await downloadService.fromAlbums(albums)
+
+    expect(zipMock).toHaveBeenCalledWith(songs, 'koel-download', 'none')
+  })
+
+  it('zips songs of several artists', async () => {
+    const zipMock = h.mock(zipDownloadService, 'start')
+    const artists = h.factory('artist').make(2)
+    const songs = h.factory('song').make(3)
+    h.mock(playableStore, 'fetchSongsForArtists').mockResolvedValue(songs)
+
+    await downloadService.fromArtists(artists)
+
+    expect(zipMock).toHaveBeenCalledWith(songs, 'koel-download', 'none')
+  })
+
   it('zips a playlist numbered by position', async () => {
     const zipMock = h.mock(zipDownloadService, 'start')
     const playlist = h.factory('playlist').make()

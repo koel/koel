@@ -293,6 +293,24 @@ describe('playableStore', () => {
     expect(syncMock).toHaveBeenCalledWith(songs)
   })
 
+  it('fetches songs for several albums in order', async () => {
+    const albums = h.factory('album').make(2)
+    const firstSongs = h.factory('song').make(2)
+    const secondSongs = h.factory('song').make(3)
+    h.mock(playableStore, 'fetchSongsForAlbum').mockResolvedValueOnce(firstSongs).mockResolvedValueOnce(secondSongs)
+
+    expect(await playableStore.fetchSongsForAlbums(albums)).toEqual([...firstSongs, ...secondSongs])
+  })
+
+  it('fetches songs for several artists in order', async () => {
+    const artists = h.factory('artist').make(2)
+    const firstSongs = h.factory('song').make(2)
+    const secondSongs = h.factory('song').make(3)
+    h.mock(playableStore, 'fetchSongsForArtist').mockResolvedValueOnce(firstSongs).mockResolvedValueOnce(secondSongs)
+
+    expect(await playableStore.fetchSongsForArtists(artists)).toEqual([...firstSongs, ...secondSongs])
+  })
+
   it('fetches for artist', async () => {
     const songs = h.factory('song').make(3)
     const artist = h.factory('artist').make()
