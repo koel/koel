@@ -92,6 +92,24 @@ describe('playableContextMenu.vue', () => {
     expect(playMock).toHaveBeenCalledWith(song)
   })
 
+  it('plays multiple', async () => {
+    const queueAndPlayMock = h.mock(playbackService, 'queueAndPlay')
+    const { playables } = await renderComponent()
+
+    await h.user.click(screen.getByText('Play'))
+
+    expect(queueAndPlayMock).toHaveBeenCalledWith(playables)
+  })
+
+  it('shuffles multiple', async () => {
+    const queueAndPlayMock = h.mock(playbackService, 'queueAndPlay')
+    const { playables } = await renderComponent()
+
+    await h.user.click(screen.getByText('Shuffle'))
+
+    expect(queueAndPlayMock).toHaveBeenCalledWith(playables, true)
+  })
+
   it('pauses playback', async () => {
     h.createAudioPlayer()
 
@@ -223,20 +241,33 @@ describe('playableContextMenu.vue', () => {
     expect(screen.queryByText('Remove from Queue')).toBeNull()
   })
 
-  it('adds to favorites', async () => {
-    const likeMock = h.mock(playableStore, 'favorite')
-    const { playables } = await renderComponent()
+  it('favorites', async () => {
+    const favoriteMock = h.mock(playableStore, 'favorite')
+    const playables = h.factory('song').make({ favorite: false }, 3)
+    playables[0].favorite = true
+    await renderComponent(playables)
 
-    await h.user.click(screen.getByText('Favorites'))
+    await h.user.click(screen.getByText('Favorite'))
 
-    expect(likeMock).toHaveBeenCalledWith(playables)
+    expect(favoriteMock).toHaveBeenCalledWith(playables)
   })
 
-  it('does not have an option to add to favorites for Favorites screen', async () => {
+  it('undoes favorite when all are favorites', async () => {
+    const undoFavoriteMock = h.mock(playableStore, 'undoFavorite')
+    const playables = h.factory('song').make({ favorite: true }, 3)
+    await renderComponent(playables)
+
+    await h.user.click(screen.getByText('Undo Favorite'))
+
+    expect(undoFavoriteMock).toHaveBeenCalledWith(playables)
+  })
+
+  it('does not have a favorite toggle on Favorites screen', async () => {
     h.visit('/favorites')
     await renderComponent()
 
-    expect(screen.queryByText('Favorites')).toBeNull()
+    expect(screen.queryByText('Favorite')).toBeNull()
+    expect(screen.queryByText('Undo Favorite')).toBeNull()
   })
 
   it('removes from favorites', async () => {

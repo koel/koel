@@ -8,10 +8,6 @@
         <MenuItem @click="queueToTop">Top of Queue</MenuItem>
       </template>
       <MenuItem v-else @click="queueToBottom">Queue</MenuItem>
-      <template v-if="!isCurrentScreen('Favorites') && !(playables.length === 1 && playables[0].favorite)">
-        <Separator />
-        <MenuItem @click="addToFavorites">Favorites</MenuItem>
-      </template>
       <Separator v-if="normalPlaylists.length" />
       <template class="block">
         <ul v-if="normalPlaylists.length" class="scroll-mask-y relative max-h-48 overflow-y-auto">
@@ -32,15 +28,13 @@ import { playlistStore } from '@/stores/playlistStore'
 import { queueStore } from '@/stores/queueStore'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { usePlayableMenuMethods } from '@/composables/usePlayableMenuMethods'
-import { useRouter } from '@/composables/useRouter'
 
 const props = defineProps<{ playables: Playable[] }>()
 const { playables } = toRefs(props)
 
 const { MenuItem, Separator, closeContextMenu } = useContextMenu()
-const { isCurrentScreen } = useRouter()
 
-const { queueAfterCurrent, queueToBottom, queueToTop, addToFavorites, addToExistingPlaylist, addToNewPlaylist } =
+const { queueAfterCurrent, queueToBottom, queueToTop, addToExistingPlaylist, addToNewPlaylist } =
   usePlayableMenuMethods(playables, closeContextMenu)
 
 const queue = toRef(queueStore.state, 'playables')
