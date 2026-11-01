@@ -88,6 +88,9 @@ class PresignedUploadTest extends PlusTestCase
     #[Test]
     public function presigningAllowsAFileLargerThanPhpUploadLimit(): void
     {
+        $fileSize = UploadedFile::getMaxFilesize() + 1;
+        config(['koel.upload.presigned_max_size' => $fileSize]);
+
         $this
             ->mock(S3UploadUrlSigner::class)
             ->expects('sign')
@@ -104,7 +107,7 @@ class PresignedUploadTest extends PlusTestCase
 
         $this->postAs(
             'api/upload/presign',
-            ['file_name' => 'song.flac', 'file_size' => UploadedFile::getMaxFilesize() + 1],
+            ['file_name' => 'song.flac', 'file_size' => $fileSize],
             create_user(),
         )->assertSuccessful();
     }
