@@ -76,11 +76,37 @@ class PresignedUploadTest extends PlusTestCase
     #[Test]
     public function presigningRefusesAFileLargerThanTheUploadLimit(): void
     {
+        config(['koel.upload.presigned_max_size' => 1_024]);
+
         $this->postAs(
             'api/upload/presign',
-            ['file_name' => 'song.mp3', 'file_size' => UploadedFile::getMaxFilesize() + 1],
+            ['file_name' => 'song.mp3', 'file_size' => 1_025],
             create_user(),
         )->assertUnprocessable();
+    }
+
+    #[Test]
+    public function presigningAllowsAFileLargerThanPhpUploadLimit(): void
+    {
+        $this
+            ->mock(S3UploadUrlSigner::class)
+            ->expects('sign')
+            ->andReturnUsing(static fn (
+                string $key,
+                int $size,
+                Carbon $expiresAt,
+            ): PresignedUpload => PresignedUpload::make(
+                key: $key,
+                url: "https://storage.example.com/$key",
+                headers: [],
+                expiresAt: $expiresAt,
+            ));
+
+        $this->postAs(
+            'api/upload/presign',
+            ['file_name' => 'song.flac', 'file_size' => UploadedFile::getMaxFilesize() + 1],
+            create_user(),
+        )->assertSuccessful();
     }
 
     #[Test]
@@ -104,7 +130,7 @@ class PresignedUploadTest extends PlusTestCase
             Mockery::mock(S3UploadUrlSigner::class),
             'koel',
         ]);
-        $storage->shouldReceive('sizeOfUpload')->andReturn(UploadedFile::getMaxFilesize() + 1);
+        $storage->shouldReceive('sizeOfUpload')->andReturn(config('koel.upload.presigned_max_size') + 1);
         $this->app->instance(SongStorage::class, $storage);
 
         $this->postAs(
