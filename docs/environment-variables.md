@@ -52,6 +52,7 @@ Required when `STORAGE_DRIVER=s3`. Remember to set your CORS policy to allow acc
 | `AWS_REGION` | The region of your bucket. Set to `auto` for Cloudflare R2. | _(empty)_ |
 | `AWS_ENDPOINT` | The endpoint URL for S3-compatible services. | _(empty)_ |
 | `AWS_BUCKET` | The name of your S3 bucket. | _(empty)_ |
+| `PRESIGNED_UPLOAD_MAX_SIZE` | The largest file in MB that can be uploaded. Files go straight to the bucket without passing through PHP, so PHP's `upload_max_filesize` doesn't apply. | `2048` |
 
 ### Dropbox
 

@@ -29,6 +29,10 @@ return [
         'analyze_audio' => env('ANALYZE_AUDIO_ON_SCAN', false),
     ],
 
+    'upload' => [
+        'presigned_max_size' => (int) (env('PRESIGNED_UPLOAD_MAX_SIZE') ?: 2048) * 1024 * 1024,
+    ],
+
     /*
      |--------------------------------------------------------------------------
      | Streaming Configurations

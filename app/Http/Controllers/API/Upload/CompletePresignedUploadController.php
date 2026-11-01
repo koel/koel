@@ -17,7 +17,6 @@ use App\Services\SongStorages\SongStorage;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[DisabledInDemo]
 class CompletePresignedUploadController extends Controller
@@ -50,7 +49,7 @@ class CompletePresignedUploadController extends Controller
         );
 
         abort_if(
-            $storage->sizeOfUpload($request->key) > UploadedFile::getMaxFilesize(),
+            $storage->sizeOfUpload($request->key) > config('koel.upload.presigned_max_size'),
             Response::HTTP_REQUEST_ENTITY_TOO_LARGE,
             'The uploaded file is too large.',
         );
