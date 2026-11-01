@@ -1,6 +1,8 @@
 import { screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent, nextTick } from 'vue'
+import { SelectedPlayablesKey } from '@/config/symbols'
+import { requireInjection } from '@/utils/helpers'
 import { createHarness } from '@/__tests__/TestHarness'
 import Router from '@/router'
 import { commonStore } from '@/stores/commonStore'
@@ -118,6 +120,36 @@ describe('allSongsScreen.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith({ sort: 'title', order: 'asc', cursor: '' }))
+  })
+
+  it('clears the selection when refreshed', async () => {
+    h.mock(playableStore, 'paginateSongs').mockResolvedValue(null)
+
+    h.router.$currentRoute.value = {
+      screen: 'Songs',
+      path: '/songs',
+    }
+
+    h.render(Component, {
+      global: {
+        stubs: {
+          SongList: defineComponent({
+            setup: () => {
+              const [, setSelectedPlayables] = requireInjection<[unknown, Closure]>(SelectedPlayablesKey)
+              return { select: () => setSelectedPlayables(playableStore.state.playables.slice(0, 2)) }
+            },
+            template: `<button data-testid="song-list" @click="select" />`,
+          }),
+        },
+      },
+    })
+
+    await h.user.click(screen.getByTestId('song-list'))
+    expect(screen.queryByTestId('btn-shuffle-selected')).not.toBeNull()
+
+    await h.user.click(screen.getByRole('button', { name: 'Refresh' }))
+
+    await waitFor(() => expect(screen.queryByTestId('btn-shuffle-selected')).toBeNull())
   })
 
   it('refetches from the start when revisited after an upload', async () => {

@@ -78,6 +78,7 @@ const {
   thumbnails,
   playables: songs,
   playableList: songList,
+  selectedPlayables,
   onPressEnter,
   playSelected,
   sort: composableSort,
@@ -130,6 +131,7 @@ const refetchFromStart = async () => {
   listVersion++
   cursor.value = ''
   playableStore.state.playables = []
+  selectedPlayables.value = []
 
   await fetchSongs()
 }
