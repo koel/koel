@@ -6,7 +6,7 @@
           v-if="showsProgressRing"
           :aria-label="`Upload progress for ${file.name}`"
           :value="file.status === 'Ready' ? 0 : file.progress"
-          class="size-4 shrink-0 ml-4"
+          class="size-4 shrink-0 ml-4 text-k-highlight"
           data-testid="upload-item-progress"
         />
         <a
@@ -95,14 +95,6 @@ const canRemove = computed(
 const cssClass = computed(() => file.value.status.toLowerCase())
 const showsReasonInRow = computed(() => ['Skipped', 'Errored', 'Canceled'].includes(file.value.status))
 
-const progressBarWidth = computed(() => {
-  if (isProcessing.value) {
-    return '100%'
-  }
-
-  return file.value.status === 'Uploading' ? `${file.value.progress}%` : '0'
-})
-
 const { showConfirmDialog } = useDialogBox()
 
 const remove = () => uploadService.remove(file.value)
@@ -117,17 +109,7 @@ const abort = async () => {
 
 <style lang="postcss" scoped>
 @reference '@css/app.pcss';
-article > div::before {
-  width: v-bind(progressBarWidth);
-  content: '';
-  @apply absolute h-full top-0 left-0 z-0 duration-200 ease-out bg-k-highlight;
-}
-
 .uploaded:hover {
   @apply bg-k-fg-10;
-}
-
-.processing {
-  @apply text-k-highlight-fg;
 }
 </style>
