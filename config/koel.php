@@ -27,6 +27,7 @@ return [
         'memory_limit' => env('MEMORY_LIMIT'),
         'jobs' => env('SCAN_JOBS', 4),
         'analyze_audio' => env('ANALYZE_AUDIO_ON_SCAN', false),
+        'analysis_queue' => env('AUDIO_ANALYSIS_QUEUE') ?: null,
     ],
 
     'upload' => [

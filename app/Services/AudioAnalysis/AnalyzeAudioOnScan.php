@@ -15,6 +15,8 @@ class AnalyzeAudioOnScan
         private readonly bool $enabled = false,
         #[Config('koel.streaming.ffmpeg_path')]
         private readonly ?string $ffmpegPath = null,
+        #[Config('koel.scan.analysis_queue')]
+        private readonly ?string $queue = null,
     ) {}
 
     public function analyzeSongIfEnabled(Song $song): void
@@ -23,7 +25,9 @@ class AnalyzeAudioOnScan
             return;
         }
 
-        rescue(static fn (): mixed => Dispatcher::dispatch(new AnalyzeSongAudioJob($song)));
+        $job = (new AnalyzeSongAudioJob($song))->onQueue($this->queue);
+
+        rescue(static fn (): mixed => Dispatcher::dispatch($job));
     }
 
     private function canAnalyze(): bool

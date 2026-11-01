@@ -24,6 +24,15 @@ From then on, Koel measures the loudness and draws the waveform of every song as
 typically takes about a second per song. Songs scanned before you turned it on aren't analyzed until they are scanned
 again, and play as before.
 
+If you use a [queue](https://laravel.com/docs/queues), the analysis runs in the background. To keep it from slowing
+down uploads, give it its own queue:
+
+```dotenv
+AUDIO_ANALYSIS_QUEUE=analysis
+```
+
+Then start your queue workers with `php artisan queue:work --queue=default,analysis`.
+
 ## Turning It Off
 
 Both features are on by default. Each user can turn them off under _Settings → Preferences_, with the
