@@ -42,6 +42,11 @@
       </template>
     </MenuItem>
   </template>
+  <template v-else>
+    <MenuItem @click="playAll">Play</MenuItem>
+    <MenuItem @click="shuffleAll">Shuffle</MenuItem>
+    <Separator />
+  </template>
 </template>
 
 <script lang="ts" setup>
@@ -76,6 +81,9 @@ const doPlayback = () =>
         break
     }
   })
+
+const playAll = () => trigger(() => playback().queueAndPlay(props.playables))
+const shuffleAll = () => trigger(() => playback().queueAndPlay(props.playables, true))
 
 const viewAlbum = (song: Song) => trigger(() => go(url('albums.show', { id: song.album_id })))
 const viewArtist = (song: Song) => trigger(() => go(url('artists.show', { id: song.artist_id })))
