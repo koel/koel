@@ -285,6 +285,7 @@ php artisan koel:sync [options] # Alias, deprecated
 | `O`, `--owner=`  | The ID of the user who should own the newly scanned songs. Defaults to the first admin user.                                                                                  |
 | `P`, `--private` | Whether to make the newly scanned songs private to the user.                                                                                                                  |
 | `I`, `--ignore=` | The comma-separated tags to ignore (exclude) from scanning. Valid tags are `title`, `album`,`artist`, `albumartist`, `track`, `disc`, `year`, `genre`, `lyrics`, and `cover`. |
+| `--only=`       | The comma-separated tags to scan, ignoring all others. Takes the same tags as `--ignore`. Can't be used with `--ignore`. |
 | `F`, `--force`   | Force re-scanning even unchanged files.                                                                                                                                       |
 
 ### `koel:scheduler:install`

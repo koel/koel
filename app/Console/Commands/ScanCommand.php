@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\ScanEvent;
+use App\Exceptions\InvalidScanTagsException;
 use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -26,6 +27,7 @@ class ScanCommand extends Command
         {--P|private : Whether to make the newly scanned songs private to the user.}
         {--V|verbose : Show more details about the scanning process
         {--I|ignore=* : The comma-separated tags to ignore (exclude) from scanning}
+        {--only=* : The comma-separated tags to scan, ignoring all others}
         {--F|force : Force re-scanning even unchanged files}
         {--J|jobs= : Number of parallel worker processes}';
 
@@ -64,20 +66,24 @@ class ScanCommand extends Command
             return self::INVALID;
         }
 
+        try {
+            $ignoredTags = ScanConfiguration::resolveIgnoredTags(
+                self::parseTags($this->option('ignore')),
+                self::parseTags($this->option('only')),
+            );
+        } catch (InvalidScanTagsException $e) {
+            $this->components->error($e->getMessage());
+
+            return self::INVALID;
+        }
+
         $this->mediaPath = $this->getMediaPath();
 
         $config = ScanConfiguration::make(
             owner: $this->getOwner(),
             // When scanning via CLI, the songs should be public by default, unless explicitly specified otherwise.
             makePublic: !$this->option('private'),
-            ignores: collect($this->option('ignore'))
-                ->flatMap(static fn (string $tags) => explode(',', $tags))
-                ->map(static fn (string $tag) => trim($tag))
-                ->filter()
-                ->unique()
-                ->sort()
-                ->values()
-                ->all(),
+            ignores: $ignoredTags,
             force: $this->option('force'),
         );
 
@@ -90,6 +96,23 @@ class ScanCommand extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    /**
+     * @param array<string> $options
+     *
+     * @return array<string>
+     */
+    private static function parseTags(array $options): array
+    {
+        return collect($options)
+            ->flatMap(static fn (string $tags) => explode(',', $tags))
+            ->map(static fn (string $tag) => trim($tag))
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
     }
 
     /**

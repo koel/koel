@@ -270,6 +270,7 @@ interface Song extends BasePlayable {
   album_artist_name: Artist['name']
   genre: string
   track: number | null
+  track_label: string | null
   disc: number
   year: number | null
   lyrics: string
