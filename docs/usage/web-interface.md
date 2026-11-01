@@ -37,7 +37,8 @@ like the artist or album's information when [configured](../service-integrations
 
 In list view, the Artists, Albums, and Radio screens let you select items the same way as songs: click, hold
 <kbd>Shift</kbd> or <kbd>Ctrl/Cmd</kbd> while clicking, or use <kbd>↑</kbd>/<kbd>↓</kbd> and <kbd>Cmd/Ctrl</kbd>+<kbd>a</kbd>.
-Right-click a selection to play, shuffle, download, or mark all selected items as favorite at once.
+Right-click a selection of artists or albums to play, shuffle, download (if allowed), or favorite them all at once.
+For radio stations, you can favorite them all at once.
 
 On any screen with a song list (a "song-list screen") you can:
 

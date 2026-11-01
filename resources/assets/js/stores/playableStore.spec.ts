@@ -302,6 +302,25 @@ describe('playableStore', () => {
     expect(await playableStore.fetchSongsForAlbums(albums)).toEqual([...firstSongs, ...secondSongs])
   })
 
+  it('fetches songs for many albums a few at a time', async () => {
+    const albums = h.factory('album').make(12)
+    let inFlight = 0
+    let maxInFlight = 0
+
+    const fetchMock = h.mock(playableStore, 'fetchSongsForAlbum').mockImplementation(async () => {
+      inFlight++
+      maxInFlight = Math.max(maxInFlight, inFlight)
+      await Promise.resolve()
+      inFlight--
+      return []
+    })
+
+    await playableStore.fetchSongsForAlbums(albums)
+
+    expect(fetchMock).toHaveBeenCalledTimes(12)
+    expect(maxInFlight).toBe(5)
+  })
+
   it('fetches songs for several artists in order', async () => {
     const artists = h.factory('artist').make(2)
     const firstSongs = h.factory('song').make(2)
