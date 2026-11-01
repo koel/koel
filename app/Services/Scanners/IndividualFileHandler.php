@@ -57,6 +57,6 @@ class IndividualFileHandler
     private function transcodeAndAnalyzeSong(Song $song, string $path): void
     {
         $this->transcodeOnScan->transcodeSongIfNeeded($song, $path);
-        $this->analyzeAudioOnScan->analyzeSongIfEnabled($song, $path);
+        $this->analyzeAudioOnScan->analyzeSongIfEnabled($song);
     }
 }

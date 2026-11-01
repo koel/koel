@@ -8,7 +8,6 @@ use App\Exceptions\SongUploadFailedException;
 use App\Models\DuplicateUpload;
 use App\Models\Song;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
-use App\Services\AudioAnalysis\AudioAnalyzer;
 use App\Services\LibrarySummaryService;
 use App\Services\Scanners\FileScanner;
 use App\Services\SongService;
@@ -55,7 +54,7 @@ class UploadServiceTest extends TestCase
             $this->scanner,
             $this->duplicateUploadService,
             new TranscodeOnScan(app(LocalStorage::class)),
-            new AnalyzeAudioOnScan(app(LocalStorage::class), new AudioAnalyzer()),
+            new AnalyzeAudioOnScan(),
             $this->librarySummaryService,
         );
     }
@@ -143,7 +142,7 @@ class UploadServiceTest extends TestCase
         $transcodeOnScan = Mockery::mock(TranscodeOnScan::class);
         $transcodeOnScan->expects('transcodeSongIfNeeded')->with($song, '/tmp/song.flac')->globally()->ordered();
         $analyzeAudioOnScan = Mockery::mock(AnalyzeAudioOnScan::class);
-        $analyzeAudioOnScan->expects('analyzeSongIfEnabled')->with($song, '/tmp/song.flac')->globally()->ordered();
+        $analyzeAudioOnScan->expects('analyzeSongIfEnabled')->with($song)->globally()->ordered();
         File::expects('delete')->with('/tmp/song.flac')->globally()->ordered();
 
         $service = new UploadService(

@@ -4,7 +4,10 @@ namespace App\Jobs;
 
 use App\Models\Song;
 use App\Services\AudioAnalysis\AudioAnalyzer;
+use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
+use App\Services\SongStorages\SongStorageFactory;
 use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
+use Illuminate\Support\Facades\File;
 
 #[DeleteWhenMissingModels]
 class AnalyzeSongAudioJob extends QueuedJob
@@ -19,6 +22,15 @@ class AnalyzeSongAudioJob extends QueuedJob
 
     public function handle(AudioAnalyzer $analyzer): void
     {
-        $analyzer->analyzeSong($this->song, $this->song->path);
+        $storage = SongStorageFactory::make($this->song->storage);
+        $localPath = $storage->getLocalPath($this->song->path);
+
+        try {
+            $analyzer->analyzeSong($this->song, $localPath);
+        } finally {
+            if ($storage instanceof MustDeleteTemporaryLocalFileAfterUpload) {
+                File::delete($localPath);
+            }
+        }
     }
 }

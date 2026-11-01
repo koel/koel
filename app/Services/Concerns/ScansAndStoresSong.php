@@ -40,7 +40,7 @@ trait ScansAndStoresSong
         }
 
         $transcodeOnScan->transcodeSongIfNeeded($song, $localFilePath);
-        $analyzeAudioOnScan->analyzeSongIfEnabled($song, $localFilePath);
+        $analyzeAudioOnScan->analyzeSongIfEnabled($song);
 
         return $song;
     }
