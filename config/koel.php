@@ -30,7 +30,7 @@ return [
     ],
 
     'upload' => [
-        'presigned_max_size' => (int) env('PRESIGNED_UPLOAD_MAX_SIZE', 2048) * 1024 * 1024,
+        'presigned_max_size' => (int) (env('PRESIGNED_UPLOAD_MAX_SIZE') ?: 2048) * 1024 * 1024,
     ],
 
     /*
