@@ -24,6 +24,18 @@ class AnalyzeAudioOnScanTest extends PlusTestCase
     }
 
     #[Test]
+    public function queueTheAnalysisOnTheConfiguredQueue(): void
+    {
+        $song = Song::factory()->createOne();
+
+        Dispatcher::expects('dispatch')->with(Mockery::on(
+            static fn (AnalyzeSongAudioJob $job): bool => $job->queue === 'analysis',
+        ));
+
+        (new AnalyzeAudioOnScan(enabled: true, ffmpegPath: PHP_BINARY, queue: 'analysis'))->analyzeSongIfEnabled($song);
+    }
+
+    #[Test]
     public function doNothingWhenTurnedOff(): void
     {
         $song = Song::factory()->createOne();
