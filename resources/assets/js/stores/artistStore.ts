@@ -95,6 +95,18 @@ export const artistStore = {
     this.state.artists = []
   },
 
+  async favorite(artists: Reactive<Artist>[]) {
+    artists.forEach(artist => (artist.favorite = true))
+
+    await http.post('favorites', { type: 'artist', ids: artists.map(({ id }) => id) })
+  },
+
+  async undoFavorite(artists: Reactive<Artist>[]) {
+    artists.forEach(artist => (artist.favorite = false))
+
+    await http.delete('favorites', { type: 'artist', ids: artists.map(({ id }) => id) })
+  },
+
   async toggleFavorite(artist: Reactive<Artist>) {
     // Don't wait for the HTTP response to update the status, just toggle right away.
     // We'll update the liked status again after the HTTP request.

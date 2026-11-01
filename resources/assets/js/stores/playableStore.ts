@@ -1,5 +1,5 @@
 import isMobile from 'ismobilejs'
-import { differenceBy, orderBy, unionBy, uniqBy } from 'lodash-es'
+import { chunk, differenceBy, orderBy, unionBy, uniqBy } from 'lodash-es'
 import { nextTick, Reactive, reactive } from 'vue'
 import { arrayify, flattenParams, moveItemsInList, use } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
@@ -18,6 +18,18 @@ import { overviewStore } from '@/stores/overviewStore'
 import { playlistStore } from '@/stores/playlistStore'
 import { clientUrl } from '@/utils/clientUrl'
 import { getNativelyPlayableLosslessFormats } from '@/utils/supports'
+
+const BULK_FETCH_BATCH_SIZE = 5
+
+const fetchSongsInBatches = async <T>(entities: T[], fetchSongs: (entity: T) => Promise<Song[]>) => {
+  const songs: Song[] = []
+
+  for (const batch of chunk(entities, BULK_FETCH_BATCH_SIZE)) {
+    songs.push(...(await Promise.all(batch.map(fetchSongs))).flat())
+  }
+
+  return songs
+}
 
 export interface SongUpdateData {
   title?: string
@@ -262,6 +274,10 @@ export const playableStore = {
     )
   },
 
+  async fetchSongsForAlbums(albums: Album[]) {
+    return await fetchSongsInBatches(albums, album => this.fetchSongsForAlbum(album))
+  },
+
   invalidateAlbumAndArtistSongCaches(song: Song) {
     cache.remove(['album.songs', song.album_id])
     cache.remove(['artist.songs', song.artist_id])
@@ -275,6 +291,10 @@ export const playableStore = {
         this.syncWithVault(await http.get<Song[]>(`artists/${id}/songs`)),
       )) as Song[],
     )
+  },
+
+  async fetchSongsForArtists(artists: Artist[]) {
+    return uniqBy(await fetchSongsInBatches(artists, artist => this.fetchSongsForArtist(artist)), 'id')
   },
 
   async fetchForPlaylist(playlist: Playlist | Playlist['id'], refresh = false) {

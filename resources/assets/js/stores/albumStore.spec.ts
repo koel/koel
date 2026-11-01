@@ -137,4 +137,24 @@ describe('albumStore', () => {
     expect(postMock).toHaveBeenNthCalledWith(2, 'favorites/toggle', { type: 'album', id: album.id })
     expect(album.favorite).toBe(false)
   })
+
+  it('favorites several at once', async () => {
+    const albums = h.factory('album').make({ favorite: false }, 2)
+    const postMock = h.mock(http, 'post')
+
+    await albumStore.favorite(albums)
+
+    expect(postMock).toHaveBeenCalledWith('favorites', { type: 'album', ids: albums.map(({ id }) => id) })
+    expect(albums.every(({ favorite }) => favorite)).toBe(true)
+  })
+
+  it('undoes favorite of several at once', async () => {
+    const albums = h.factory('album').make({ favorite: true }, 2)
+    const deleteMock = h.mock(http, 'delete')
+
+    await albumStore.undoFavorite(albums)
+
+    expect(deleteMock).toHaveBeenCalledWith('favorites', { type: 'album', ids: albums.map(({ id }) => id) })
+    expect(albums.some(({ favorite }) => favorite)).toBe(false)
+  })
 })

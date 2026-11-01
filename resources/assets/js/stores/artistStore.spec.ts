@@ -138,4 +138,24 @@ describe('artistStore', () => {
     expect(syncPropsMock).toHaveBeenCalledWith(updatedArtist)
     expect(syncAlbumPropsMock).toHaveBeenCalledWith(updatedArtist)
   })
+
+  it('favorites several at once', async () => {
+    const artists = h.factory('artist').make({ favorite: false }, 2)
+    const postMock = h.mock(http, 'post')
+
+    await artistStore.favorite(artists)
+
+    expect(postMock).toHaveBeenCalledWith('favorites', { type: 'artist', ids: artists.map(({ id }) => id) })
+    expect(artists.every(({ favorite }) => favorite)).toBe(true)
+  })
+
+  it('undoes favorite of several at once', async () => {
+    const artists = h.factory('artist').make({ favorite: true }, 2)
+    const deleteMock = h.mock(http, 'delete')
+
+    await artistStore.undoFavorite(artists)
+
+    expect(deleteMock).toHaveBeenCalledWith('favorites', { type: 'artist', ids: artists.map(({ id }) => id) })
+    expect(artists.some(({ favorite }) => favorite)).toBe(false)
+  })
 })

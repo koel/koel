@@ -1,5 +1,5 @@
 import type { Reactive, Ref } from 'vue'
-import { computed, ref } from 'vue'
+import { computed, shallowRef } from 'vue'
 import { get } from 'lodash-es'
 
 type Selectable<T> = Reactive<T & { selected: boolean }>
@@ -8,7 +8,7 @@ export const useListSelection = <T>(
   selectables: Ref<Array<Selectable<T>>>,
   idPath: string | ((s: Selectable<T>) => string) = 'item.id',
 ) => {
-  const lastSelected = ref<Selectable<T> | null>(null)
+  const lastSelected = shallowRef<Selectable<T> | null>(null)
   let rangeAnchor: Selectable<T> | null = null
 
   // Keep track of selected items by their ID, so that when the list is updated (e.g., items are removed or added,

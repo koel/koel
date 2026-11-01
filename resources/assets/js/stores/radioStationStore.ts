@@ -102,6 +102,18 @@ export const radioStationStore = {
     this.nowPlaying.value = null
   },
 
+  async favorite(stations: Reactive<RadioStation>[]) {
+    stations.forEach(station => (station.favorite = true))
+
+    await http.post('favorites', { type: 'radio-station', ids: stations.map(({ id }) => id) })
+  },
+
+  async undoFavorite(stations: Reactive<RadioStation>[]) {
+    stations.forEach(station => (station.favorite = false))
+
+    await http.delete('favorites', { type: 'radio-station', ids: stations.map(({ id }) => id) })
+  },
+
   toggleFavorite: async (station: Reactive<RadioStation>) => {
     station.favorite = !station.favorite
 

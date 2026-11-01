@@ -1,6 +1,15 @@
 <template>
   <div class="radio-station-table-wrap relative flex flex-col flex-1 overflow-auto" data-testid="radio-station-table">
-    <VirtualScroller carries-screen-header :items="stations" :item-height="64">
+    <VirtualScroller
+      ref="scroller"
+      carries-screen-header
+      tabindex="0"
+      class="focus-visible:outline-hidden"
+      :items="rows"
+      @keydown.a.prevent="selectAllWithKeyboard"
+      @keydown.up.down.prevent.stop="onArrowKey"
+      :item-height="64"
+    >
       <template #before>
         <ScreenHeaderPinned>
           <div class="radio-station-table-header sortable flex bg-k-fg-3 pl-5">
@@ -38,8 +47,14 @@
           </div>
         </ScreenHeaderPinned>
       </template>
-      <template #default="{ item }: { item: RadioStation }">
-        <RadioStationRow :station="item" @toggle-favorite="emit('toggle-favorite', $event)" />
+      <template #default="{ item: row }: { item: SelectableRow<RadioStation> }">
+        <RadioStationRow
+          :station="row.item"
+          :class="{ selected: row.selected }"
+          @click="onRowClick(row, $event)"
+          @open-context-menu="openContextMenuForRow(row, $event)"
+          @toggle-favorite="emit('toggle-favorite', $event)"
+        />
       </template>
     </VirtualScroller>
   </div>
@@ -47,7 +62,11 @@
 
 <script lang="ts" setup>
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
-import { toRefs } from 'vue'
+import { ref, toRefs } from 'vue'
+import { useContextMenu } from '@/composables/useContextMenu'
+import type { SelectableRow } from '@/composables/useSelectableRows'
+import { useSelectableRows } from '@/composables/useSelectableRows'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { radioStationTableColumnConfig, radioStationTableMenuItems } from '@/config/tables'
 
@@ -70,6 +89,31 @@ const emit = defineEmits<{
 
 const { shouldShowColumn } = useTableColumnVisibility(radioStationTableColumnConfig)
 const { field, order } = toRefs(props)
+
+const RadioStationContextMenu = defineAsyncComponent(() => import('@/components/radio/RadioStationContextMenu.vue'))
+const SelectedRadioStationsContextMenu = defineAsyncComponent(
+  () => import('@/components/radio/SelectedRadioStationsContextMenu.vue'),
+)
+
+const { stations } = toRefs(props)
+const scroller = ref<InstanceType<typeof VirtualScroller>>()
+
+const { openContextMenu } = useContextMenu()
+
+const { rows, selectedItems, onRowClick, onArrowKey, selectAllWithKeyboard, selectRowForContextMenu } =
+  useSelectableRows(stations, scroller)
+
+const openContextMenuForRow = async (row: SelectableRow<RadioStation>, event: MouseEvent) => {
+  await selectRowForContextMenu(row)
+
+  if (selectedItems.value.length > 1) {
+    openContextMenu<'SELECTED_RADIO_STATIONS'>(SelectedRadioStationsContextMenu, event, {
+      stations: selectedItems.value,
+    })
+  } else {
+    openContextMenu<'RADIO_STATION'>(RadioStationContextMenu, event, { station: row.item })
+  }
+}
 
 const onSort = (clicked: RadioStationListSortField) => {
   const nextOrder: SortOrder = field.value === clicked && order.value === 'asc' ? 'desc' : 'asc'

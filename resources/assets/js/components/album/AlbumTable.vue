@@ -1,8 +1,14 @@
 <template>
   <div class="album-table-wrap relative flex flex-col flex-1 overflow-auto" data-testid="album-table">
     <VirtualScroller
+      ref="scroller"
       carries-screen-header
-      :items="albums"
+      tabindex="0"
+      class="focus-visible:outline-hidden"
+      :items="rows"
+      @keydown.a.prevent="selectAllWithKeyboard"
+      @keydown.up.down.prevent.stop="onArrowKey"
+      @keydown.enter.prevent.stop="openSelectedItem"
       :item-height="64"
       :loading-more
       @scrolled-to-end="$emit('scrolled-to-end')"
@@ -67,8 +73,14 @@
           </div>
         </ScreenHeaderPinned>
       </template>
-      <template #default="{ item }: { item: Album }">
-        <AlbumRow :album="item" @toggle-favorite="emit('toggle-favorite', $event)" />
+      <template #default="{ item: row }: { item: SelectableRow<Album> }">
+        <AlbumRow
+          :album="row.item"
+          :class="{ selected: row.selected }"
+          @click="onRowClick(row, $event)"
+          @open-context-menu="openContextMenuForRow(row, $event)"
+          @toggle-favorite="emit('toggle-favorite', $event)"
+        />
       </template>
       <template #placeholder>
         <AlbumTableRowSkeleton />
@@ -79,7 +91,12 @@
 
 <script lang="ts" setup>
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
-import { toRefs } from 'vue'
+import { ref, toRefs } from 'vue'
+import { useContextMenu } from '@/composables/useContextMenu'
+import { useRouter } from '@/composables/useRouter'
+import type { SelectableRow } from '@/composables/useSelectableRows'
+import { useSelectableRows } from '@/composables/useSelectableRows'
+import { defineAsyncComponent } from '@/utils/helpers'
 import { useTableColumnVisibility } from '@/composables/useTableColumnVisibility'
 import { albumTableColumnConfig, albumTableMenuItems } from '@/config/tables'
 
@@ -105,6 +122,34 @@ const emit = defineEmits<{
 
 const { shouldShowColumn } = useTableColumnVisibility(albumTableColumnConfig)
 const { field, order } = toRefs(props)
+
+const AlbumContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
+const SelectedAlbumsContextMenu = defineAsyncComponent(() => import('@/components/album/SelectedAlbumsContextMenu.vue'))
+
+const { albums } = toRefs(props)
+const scroller = ref<InstanceType<typeof VirtualScroller>>()
+
+const { openContextMenu } = useContextMenu()
+const { go, url } = useRouter()
+
+const { rows, selectedItems, onRowClick, onArrowKey, selectAllWithKeyboard, selectRowForContextMenu } =
+  useSelectableRows(albums, scroller)
+
+const openContextMenuForRow = async (row: SelectableRow<Album>, event: MouseEvent) => {
+  await selectRowForContextMenu(row)
+
+  if (selectedItems.value.length > 1) {
+    openContextMenu<'SELECTED_ALBUMS'>(SelectedAlbumsContextMenu, event, { albums: selectedItems.value })
+  } else {
+    openContextMenu<'ALBUM'>(AlbumContextMenu, event, { album: row.item })
+  }
+}
+
+const openSelectedItem = () => {
+  if (selectedItems.value.length === 1) {
+    go(url('albums.show', { id: selectedItems.value[0].id }))
+  }
+}
 
 const onSort = (clicked: AlbumListSortField) => {
   const nextOrder: SortOrder = field.value === clicked && order.value === 'asc' ? 'desc' : 'asc'
