@@ -304,7 +304,8 @@ export const uploadService = {
     playableStore.syncWithVault(result.song)
     playableStore.invalidateAlbumAndArtistSongCaches(result.song)
     albumStore.syncWithVault(result.album)
-    commonStore.state.song_length += 1
+    commonStore.state.song_count += 1
+    commonStore.state.song_length += result.song.length
     eventBus.emit('SONG_UPLOADED', result.song)
 
     const file = uploadedFile ?? this.findByUploadKey(result.upload_key)

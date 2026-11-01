@@ -176,6 +176,17 @@ describe('uploadService', () => {
     expect(file.song).toBe(song)
   })
 
+  it('adds an uploaded song to the library totals', () => {
+    commonStore.state.song_count = 2
+    commonStore.state.song_length = 300
+    const song = h.factory('song').make({ length: 120 })
+
+    uploadService.handleUploadResult({ song, album: h.factory('album').make() })
+
+    expect(commonStore.state.song_count).toBe(3)
+    expect(commonStore.state.song_length).toBe(420)
+  })
+
   it('retries a file that failed on the network, and uploads fewer at once', async () => {
     mockPostWithProgressRejection(new Error('Network error'))
     h.mock(uploadService, 'proceed')

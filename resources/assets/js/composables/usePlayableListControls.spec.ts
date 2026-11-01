@@ -30,8 +30,9 @@ describe('usePlayableListControls', () => {
     expect(usePlayableListControls('Album').config.clearQueue).toBe(false)
   })
 
-  it('enables refresh only for Playlist screen', () => {
+  it('enables refresh only for Playlist and Songs screens', () => {
     expect(usePlayableListControls('Playlist').config.refresh).toBe(true)
+    expect(usePlayableListControls('Songs').config.refresh).toBe(true)
     expect(usePlayableListControls('Album').config.refresh).toBe(false)
   })
 

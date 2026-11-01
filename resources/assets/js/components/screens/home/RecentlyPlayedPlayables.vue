@@ -13,8 +13,9 @@
 </template>
 
 <script lang="ts" setup>
-import { toRef, toRefs } from 'vue'
-import { overviewStore } from '@/stores/overviewStore'
+import { computed, toRefs } from 'vue'
+import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
+import { isSong } from '@/utils/typeGuards'
 
 import ShelfSection from '@/components/ui/ShelfSection.vue'
 import ViewAllRecentlyPlayedPlayablesButton from '@/components/screens/home/ViewAllRecentlyPlayedPlayablesButton.vue'
@@ -24,5 +25,9 @@ import PlayableCardGridSkeleton from '@/components/screens/home/PlayableCardGrid
 const props = withDefaults(defineProps<{ loading?: boolean }>(), { loading: false })
 const { loading } = toRefs(props)
 
-const playables = toRef(overviewStore.state, 'recentlyPlayed')
+const playables = computed(() =>
+  recentlyPlayedStore.excerptState.playables.filter(
+    playable => !(isSong(playable) && playable.deleted) && playable.play_count > 0,
+  ),
+)
 </script>

@@ -4,6 +4,11 @@ import { playableStore } from '@/stores/playableStore'
 
 const EXCERPT_COUNT = 6
 
+const moveToTop = (playables: Playable[], playable: Playable) => [
+  playable,
+  ...playables.filter(({ id }) => id !== playable.id),
+]
+
 export const recentlyPlayedStore = {
   excerptState: reactive({
     playables: [] as Playable[],
@@ -19,15 +24,12 @@ export const recentlyPlayedStore = {
   },
 
   async add(playable: Playable) {
+    this.excerptState.playables = moveToTop(this.excerptState.playables, playable).slice(0, EXCERPT_COUNT)
+
     if (!this.state.playables.length) {
       await this.fetch()
     }
 
-    ;[this.state, this.excerptState].forEach(state => {
-      state.playables = state.playables.filter(s => s.id !== playable.id)
-      state.playables.unshift(playable)
-    })
-
-    this.excerptState.playables.splice(EXCERPT_COUNT)
+    this.state.playables = moveToTop(this.state.playables, playable)
   },
 }
