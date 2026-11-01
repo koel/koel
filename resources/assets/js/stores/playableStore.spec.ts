@@ -330,6 +330,18 @@ describe('playableStore', () => {
     expect(await playableStore.fetchSongsForArtists(artists)).toEqual([...firstSongs, ...secondSongs])
   })
 
+  it('fetches a song shared by several selected artists once', async () => {
+    const artists = h.factory('artist').make(2)
+    const sharedSong = h.factory('song').make()
+    const otherSong = h.factory('song').make()
+
+    h.mock(playableStore, 'fetchSongsForArtist')
+      .mockResolvedValueOnce([sharedSong])
+      .mockResolvedValueOnce([sharedSong, otherSong])
+
+    expect(await playableStore.fetchSongsForArtists(artists)).toEqual([sharedSong, otherSong])
+  })
+
   it('fetches for artist', async () => {
     const songs = h.factory('song').make(3)
     const artist = h.factory('artist').make()

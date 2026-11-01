@@ -294,7 +294,7 @@ export const playableStore = {
   },
 
   async fetchSongsForArtists(artists: Artist[]) {
-    return await fetchSongsInBatches(artists, artist => this.fetchSongsForArtist(artist))
+    return uniqBy(await fetchSongsInBatches(artists, artist => this.fetchSongsForArtist(artist)), 'id')
   },
 
   async fetchForPlaylist(playlist: Playlist | Playlist['id'], refresh = false) {
