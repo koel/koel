@@ -4,7 +4,6 @@ import { playableStore } from '@/stores/playableStore'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
-import { isSong } from '@/utils/typeGuards'
 
 export const overviewStore = {
   state: reactive({
@@ -16,7 +15,6 @@ export const overviewStore = {
     recentlyAddedAlbums: [] as Album[],
     recentlyAddedArtists: [] as Artist[],
     recentlyAddedSongs: [] as Song[],
-    recentlyPlayed: [] as Playable[],
     leastPlayedSongs: [] as Song[],
     randomSongs: [] as Song[],
     similarSongs: [] as Song[],
@@ -82,14 +80,5 @@ export const overviewStore = {
 
   refreshPlayStats() {
     this.state.mostPlayedSongs = playableStore.getMostPlayedSongs(6)
-    this.state.recentlyPlayed = recentlyPlayedStore.excerptState.playables
-      .filter(playable => {
-        if (isSong(playable) && playable.deleted) {
-          return false
-        }
-
-        return playable.play_count > 0
-      })
-      .slice(0, 6)
   },
 }

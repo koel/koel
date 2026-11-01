@@ -29,6 +29,17 @@ describe('recentlyPlayedStore', () => {
     expect(fetchMock).toHaveBeenCalled()
   })
 
+  it('updates the excerpt before fetching the full list', async () => {
+    recentlyPlayedStore.state.playables = []
+    recentlyPlayedStore.excerptState.playables = []
+    const newSong = h.factory('song').make()
+    h.mock(recentlyPlayedStore, 'fetch').mockReturnValue(new Promise(() => {}))
+
+    recentlyPlayedStore.add(newSong)
+
+    expect(recentlyPlayedStore.excerptState.playables).toEqual([newSong])
+  })
+
   it('adds a song to the state', async () => {
     const newSong = h.factory('song').make()
     const songs = h.factory('song').make(10)

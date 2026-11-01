@@ -13,7 +13,7 @@ export const usePlayableListControls = (
       favorites: screen !== 'Favorites',
     },
     clearQueue: screen === 'Queue',
-    refresh: screen === 'Playlist',
+    refresh: ['Playlist', 'Songs'].includes(screen),
     filter: [
       'Queue',
       'Artist',

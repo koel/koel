@@ -4,14 +4,12 @@ import { http } from '@/services/http'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { overviewStore } from '@/stores/overviewStore'
-import { recentlyPlayedStore } from '@/stores/recentlyPlayedStore'
 import { playableStore } from '@/stores/playableStore'
 
 describe('overviewStore', () => {
   const h = createHarness({
     beforeEach: () => {
       overviewStore.state = {
-        recentlyPlayed: [],
         recentlyAddedSongs: [],
         recentlyAddedAlbums: [],
         recentlyAddedArtists: [],
@@ -81,16 +79,11 @@ describe('overviewStore', () => {
 
   it('refreshes the store', () => {
     const mostPlayedSongs = h.factory('song').make(6)
-    const recentlyPlayedSongs = h.factory('song').make(6)
-
     const mostPlayedSongsMock = h.mock(playableStore, 'getMostPlayedSongs', mostPlayedSongs)
-    recentlyPlayedStore.excerptState.playables = recentlyPlayedSongs
 
     overviewStore.refreshPlayStats()
 
     expect(mostPlayedSongsMock).toHaveBeenCalled()
-
-    expect(overviewStore.state.recentlyPlayed).toEqual(recentlyPlayedSongs)
     expect(overviewStore.state.mostPlayedSongs).toEqual(mostPlayedSongs)
   })
 })
