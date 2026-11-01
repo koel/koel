@@ -541,6 +541,26 @@ describe('uploadService', () => {
     expect(uploadService.tracker.count(['Ready'])).toBe(1)
   })
 
+  it('stops all unfinished uploads and clears them from the queue', () => {
+    const abortMock = vi.fn()
+    const uploading = createUploadFile({ status: 'Uploading' })
+    uploadService.abortHandles.set(uploading.id, abortMock)
+
+    uploadService.tracker.add([
+      uploading,
+      createUploadFile({ status: 'Ready' }),
+      createUploadFile({ status: 'Retrying' }),
+      createUploadFile({ status: 'Processing' }),
+      createUploadFile({ status: 'Uploaded' }),
+    ])
+
+    uploadService.stopAll()
+
+    expect(abortMock).toHaveBeenCalled()
+    expect(uploadService.tracker.count(['Ready', 'Uploading', 'Retrying'])).toBe(0)
+    expect(uploadService.tracker.count(['Processing', 'Uploaded'])).toBe(2)
+  })
+
   it('invalidates album and artist song caches when handling an upload result', () => {
     const song = h.factory('song').make()
     const album = h.factory('album').make()
