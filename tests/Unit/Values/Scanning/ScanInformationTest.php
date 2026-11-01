@@ -69,6 +69,7 @@ class ScanInformationTest extends TestCase
             'number' => ['5', 5, null],
             'number with total' => ['5/12', 5, null],
             'vinyl side and number' => ['B2', 2, 'B2'],
+            'vinyl side and number with total' => ['A1/12', 1, 'A1'],
             'vinyl double-letter side' => ['AA1', 1, 'AA1'],
             'vinyl side only' => ['C', 0, 'C'],
             'text that is not a vinyl label' => ['Bonus Track', 0, null],

@@ -11,6 +11,11 @@ class InvalidScanTagsException extends InvalidArgumentException
         return new self('Use either --ignore or --only, not both.');
     }
 
+    public static function noTagsInOnly(): self
+    {
+        return new self('Give at least one tag to --only.');
+    }
+
     /** @param array<string> $tags */
     public static function unknownTags(array $tags): self
     {

@@ -152,6 +152,11 @@ class SongService
         $song->title = $data->title;
         $song->lyrics = $data->lyrics;
         $song->track = $data->track;
+
+        if ($song->isDirty('track')) {
+            $song->track_label = null;
+        }
+
         $song->disc = $data->disc;
         $song->year = $data->year;
 
@@ -350,7 +355,7 @@ class SongService
             $song->syncGenres($genre);
         }
 
-        if ($song->track_label) {
+        if ($song->track_label && Arr::has($data, 'track')) {
             $this->numberLabeledTracksInLabelOrder($album, $song->disc);
             $song->refresh();
         }

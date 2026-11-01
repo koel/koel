@@ -47,16 +47,21 @@ final class ScanConfiguration
     }
 
     /**
-     * @param array<string> $ignoredTags
-     * @param array<string> $onlyTags
+     * @param array<string> $ignoreOptions
+     * @param array<string> $onlyOptions
      *
      * @return array<string>
      */
-    public static function resolveIgnoredTags(array $ignoredTags, array $onlyTags): array
+    public static function resolveIgnoredTags(array $ignoreOptions, array $onlyOptions): array
     {
-        if (!$onlyTags) {
+        $ignoredTags = self::parseTags($ignoreOptions);
+        $onlyTags = self::parseTags($onlyOptions);
+
+        if (!$onlyOptions) {
             return $ignoredTags;
         }
+
+        throw_unless($onlyTags, InvalidScanTagsException::noTagsInOnly());
 
         throw_if($ignoredTags, InvalidScanTagsException::bothIgnoredAndOnly());
 
@@ -65,5 +70,22 @@ final class ScanConfiguration
         throw_if($unknownTags, InvalidScanTagsException::unknownTags($unknownTags));
 
         return collect(self::TAGS)->diff($onlyTags)->sort()->values()->all();
+    }
+
+    /**
+     * @param array<string> $options
+     *
+     * @return array<string>
+     */
+    private static function parseTags(array $options): array
+    {
+        return collect($options)
+            ->flatMap(static fn (string $tags) => explode(',', $tags))
+            ->map(static fn (string $tag) => trim($tag))
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
     }
 }

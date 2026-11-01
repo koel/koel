@@ -67,10 +67,7 @@ class ScanCommand extends Command
         }
 
         try {
-            $ignoredTags = ScanConfiguration::resolveIgnoredTags(
-                self::parseTags($this->option('ignore')),
-                self::parseTags($this->option('only')),
-            );
+            $ignoredTags = ScanConfiguration::resolveIgnoredTags($this->option('ignore'), $this->option('only'));
         } catch (InvalidScanTagsException $e) {
             $this->components->error($e->getMessage());
 
@@ -96,23 +93,6 @@ class ScanCommand extends Command
         }
 
         return self::SUCCESS;
-    }
-
-    /**
-     * @param array<string> $options
-     *
-     * @return array<string>
-     */
-    private static function parseTags(array $options): array
-    {
-        return collect($options)
-            ->flatMap(static fn (string $tags) => explode(',', $tags))
-            ->map(static fn (string $tag) => trim($tag))
-            ->filter()
-            ->unique()
-            ->sort()
-            ->values()
-            ->all();
     }
 
     /**

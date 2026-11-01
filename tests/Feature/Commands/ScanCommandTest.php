@@ -128,4 +128,13 @@ class ScanCommandTest extends TestCase
 
         $this->artisan('koel:scan', ['--only' => ['track,tempo']])->assertExitCode(Command::INVALID);
     }
+
+    #[Test]
+    public function refuseEmptyOnly(): void
+    {
+        config(['koel.storage_driver' => 'local']);
+        Setting::set('media_path', $this->mediaPath);
+
+        $this->artisan('koel:scan', ['--only' => [',']])->assertExitCode(Command::INVALID);
+    }
 }

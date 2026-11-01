@@ -162,7 +162,7 @@ class ScanInformation implements Arrayable
 
     private static function getVinylTrackLabel(string $trackTag): ?string
     {
-        return preg_match('/^[a-z]{1,2}\d{0,3}$/i', $trackTag) ? $trackTag : null;
+        return preg_match('/^([a-z]{1,2}\d{0,3})(\/\d+)?$/i', $trackTag, $matches) ? $matches[1] : null;
     }
 
     private static function getTag(array $arr, string|array $keys, $default = ''): mixed
