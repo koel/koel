@@ -398,6 +398,86 @@ class SongServiceTest extends TestCase
     }
 
     #[Test]
+    public function createFromScanNumbersVinylTracksInLabelOrder(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+
+        $songs = collect(['B1', 'A10', 'A2'])->mapWithKeys(function (string $label) use ($info, $owner): array {
+            $info->path = "/vinyl/$label.mp3";
+            $info->trackLabel = $label;
+            $info->track = 99;
+
+            return [$label => $this->service->createOrUpdateSongFromScan(
+                $info,
+                ScanConfiguration::make(owner: $owner),
+            )];
+        });
+
+        self::assertSame(1, $songs['A2']->track);
+        self::assertSame(2, $songs['A10']->refresh()->track);
+        self::assertSame(3, $songs['B1']->refresh()->track);
+    }
+
+    #[Test]
+    public function rescanIgnoringTrackKeepsTheCurrentTrackLabel(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+        $song->update(['track_label' => 'A1']);
+
+        $info->trackLabel = 'B2';
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['track'],
+            force: true,
+        ));
+
+        self::assertSame('A1', $song->refresh()->track_label);
+    }
+
+    #[Test]
+    public function rescanIgnoringTrackKeepsTheCurrentTrackNumberOfAVinylTrack(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $info->trackLabel = 'A2';
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+        $song->update(['track' => 5]);
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ['track'],
+            force: true,
+        ));
+
+        self::assertSame(5, $song->refresh()->track);
+    }
+
+    #[Test]
+    public function updatingTheTrackNumberClearsTheVinylTrackLabel(): void
+    {
+        $song = Song::factory()->createOne(['track' => 2, 'track_label' => 'A2']);
+
+        $this->service->updateSongs([$song->id], SongUpdateData::make(track: 5));
+
+        self::assertSame(5, $song->refresh()->track);
+        self::assertNull($song->track_label);
+    }
+
+    #[Test]
+    public function updatingOtherFieldsKeepsTheVinylTrackLabel(): void
+    {
+        $song = Song::factory()->createOne(['track' => 2, 'track_label' => 'A2']);
+
+        $this->service->updateSongs([$song->id], SongUpdateData::make(track: 2, year: 1999));
+
+        self::assertSame('A2', $song->refresh()->track_label);
+    }
+
+    #[Test]
     public function creatingOrUpdatingFromScanSetsAlbumReleaseYearIfApplicable(): void
     {
         Dispatcher::expects('dispatch')->with(ExtractSongFolderStructureJob::class);

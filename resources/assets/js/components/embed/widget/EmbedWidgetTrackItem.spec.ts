@@ -36,6 +36,13 @@ describe('playableEmbedItem.vue', async () => {
     screen.getByText(`${song.artist_name} - ${song.album_name}`)
   })
 
+  it('shows the vinyl label instead of the track number', () => {
+    renderComponent(h.factory('song').make({ track: 3, track_label: 'B1' }))
+
+    screen.getByText('B1')
+    expect(screen.queryByText('3')).toBeNull()
+  })
+
   it('shows the author and podcast of an episode', () => {
     const episode = h.factory('episode').make()
     renderComponent(episode)

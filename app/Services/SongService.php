@@ -152,6 +152,11 @@ class SongService
         $song->title = $data->title;
         $song->lyrics = $data->lyrics;
         $song->track = $data->track;
+
+        if ($song->isDirty('track')) {
+            $song->track_label = null;
+        }
+
         $song->disc = $data->disc;
         $song->year = $data->year;
 
@@ -290,7 +295,7 @@ class SongService
         // If the file is new, we take all necessary metadata, totally discarding the "ignores" config.
         // Otherwise, we only take the metadata not in the "ignores" config.
         if (!$isFileNew) {
-            Arr::forget($data, [...$config->ignores, ...self::getMbidKeysOfIgnoredNames($config->ignores)]);
+            Arr::forget($data, [...$config->ignores, ...self::getKeysTiedToIgnoredNames($config->ignores)]);
             $data += self::getCurrentArtistAndAlbumNames($song);
         }
 
@@ -350,6 +355,11 @@ class SongService
             $song->syncGenres($genre);
         }
 
+        if ($song->track_label && Arr::has($data, 'track')) {
+            $this->numberLabeledTracksInLabelOrder($album, $song->disc);
+            $song->refresh();
+        }
+
         if (!$album->year && $song->year) {
             $album->update(['year' => $song->year]);
         }
@@ -366,13 +376,25 @@ class SongService
      *
      * @return array<string>
      */
-    private static function getMbidKeysOfIgnoredNames(array $ignores): array
+    private static function getKeysTiedToIgnoredNames(array $ignores): array
     {
         return array_values(Arr::only([
             'artist' => 'artist_mbid',
             'albumartist' => 'albumartist_mbid',
             'album' => 'album_mbid',
+            'track' => 'track_label',
         ], $ignores));
+    }
+
+    private function numberLabeledTracksInLabelOrder(Album $album, int $disc): void
+    {
+        $this->songRepository
+            ->getLabeledTracksOnDisc($album, $disc)
+            ->sortBy('track_label', SORT_NATURAL | SORT_FLAG_CASE)
+            ->values()
+            ->each(static function (Song $song, int $index): void {
+                $song->update(['track' => $index + 1]);
+            });
     }
 
     /**

@@ -75,4 +75,66 @@ class ScanCommandTest extends TestCase
 
         self::assertSame('', Setting::get('media_path'));
     }
+
+    #[Test]
+    public function scanOnlyTheGivenTags(): void
+    {
+        config(['koel.storage_driver' => 'local']);
+        Setting::set('media_path', $this->mediaPath);
+        create_admin();
+
+        $scanner = Mockery::mock(DirectoryScanner::class);
+        $scanner->allows('on');
+        $scanner
+            ->expects('scan')
+            ->with(
+                Mockery::any(),
+                Mockery::on(
+                    static fn (ScanConfiguration $config) => (
+                        $config->ignores === [
+                            'album',
+                            'albumartist',
+                            'artist',
+                            'cover',
+                            'disc',
+                            'genre',
+                            'lyrics',
+                            'title',
+                        ]
+                    ),
+                ),
+                Mockery::any(),
+            )
+            ->andReturn(ScanSummary::make('scan-id', 0, 0, 0));
+        $this->instance(DirectoryScanner::class, $scanner);
+
+        $this->artisan('koel:scan', ['--only' => ['track, year']])->assertSuccessful();
+    }
+
+    #[Test]
+    public function refuseOnlyWithIgnore(): void
+    {
+        config(['koel.storage_driver' => 'local']);
+        Setting::set('media_path', $this->mediaPath);
+
+        $this->artisan('koel:scan', ['--only' => ['track'], '--ignore' => ['title']])->assertExitCode(Command::INVALID);
+    }
+
+    #[Test]
+    public function refuseUnknownTagsInOnly(): void
+    {
+        config(['koel.storage_driver' => 'local']);
+        Setting::set('media_path', $this->mediaPath);
+
+        $this->artisan('koel:scan', ['--only' => ['track,tempo']])->assertExitCode(Command::INVALID);
+    }
+
+    #[Test]
+    public function refuseEmptyOnly(): void
+    {
+        config(['koel.storage_driver' => 'local']);
+        Setting::set('media_path', $this->mediaPath);
+
+        $this->artisan('koel:scan', ['--only' => [',']])->assertExitCode(Command::INVALID);
+    }
 }

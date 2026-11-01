@@ -100,6 +100,17 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query()->wherePathIn($paths)->get();
     }
 
+    /** @return Collection<int, Song> */
+    public function getLabeledTracksOnDisc(Album $album, int $disc): Collection
+    {
+        return Song::query()
+            ->withoutEagerLoads()
+            ->whereBelongsTo($album)
+            ->where('disc', $disc)
+            ->whereNotNull('track_label')
+            ->get();
+    }
+
     /** @param array<string> $hashes */
     public function findByAnyHash(array $hashes, User $owner): ?Song
     {

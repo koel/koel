@@ -10,7 +10,7 @@
       <span class="track-number flex items-center justify-center min-w-5 overflow-hidden">
         <SoundBars v-if="playable.playback_state === 'Playing'" />
         <span v-else>
-          <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
+          <template v-if="isSong(playable)">{{ playable.track_label || playable.track || '' }}</template>
           <Icon v-else :icon="faPodcast" />
         </span>
       </span>

@@ -62,6 +62,32 @@ class ScanInformationTest extends TestCase
         self::assertSame(2, $info->disc);
     }
 
+    /** @return array<string, array{string, int, ?string}> */
+    public static function provideTrackTags(): array
+    {
+        return [
+            'number' => ['5', 5, null],
+            'number with total' => ['5/12', 5, null],
+            'vinyl side and number' => ['B2', 2, 'B2'],
+            'vinyl side and number with total' => ['A1/12', 1, 'A1'],
+            'vinyl double-letter side' => ['AA1', 1, 'AA1'],
+            'vinyl side only' => ['C', 0, 'C'],
+            'text that is not a vinyl label' => ['Bonus Track', 0, null],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideTrackTags')]
+    public function readTheTrackNumberAndVinylLabel(string $tag, int $track, ?string $label): void
+    {
+        $info = ScanInformation::fromGetId3Info([
+            'comments' => ['title' => ['Track'], 'track_number' => [$tag]],
+        ], test_path('songs/full.mp3'));
+
+        self::assertSame($track, $info->track);
+        self::assertSame($label, $info->trackLabel);
+    }
+
     #[Test]
     public function readAnAlbumArtistTaggedWithASpace(): void
     {

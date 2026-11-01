@@ -20,6 +20,7 @@ const generate = (partOfCompilation = false): Song => {
     title: faker.lorem.sentence(),
     length: faker.number.int(),
     track: faker.number.int({ min: 1, max: 20 }),
+    track_label: null,
     disc: faker.number.int({ min: 1, max: 2 }),
     genre: faker.helpers.arrayElement(genres),
     year: faker.helpers.arrayElement([null, faker.date.past().getFullYear()]),

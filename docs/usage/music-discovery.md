@@ -40,6 +40,18 @@ Koel groups a compilation's songs under the "Various Artists" album artist when 
 - the songs' album artist tag is "Various Artists" (in any letter case) or "VA", or
 - the songs have no album artist but are marked as part of a compilation (the "compilation" flag in MP3, FLAC, Ogg, and M4A files).
 
+## Vinyl Track Numbers
+
+Koel shows vinyl track numbers like `A1`, `A2`, and `B1` as they are in your files, and plays and sorts the tracks in
+that order.
+
+Songs scanned before Koel supported these numbers show `0` instead. To fix them, scan again and update only the track
+numbers:
+
+```bash
+php artisan koel:scan --force --only=track
+```
+
 ## Scan via the Web interface
 
 :::warning Not for large libraries

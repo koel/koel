@@ -26,6 +26,7 @@ class ScanInformation implements Arrayable
         public ?string $artistMbid,
         public ?string $albumArtistMbid,
         public ?int $track,
+        public ?string $trackLabel,
         public ?int $disc,
         public ?int $year,
         public ?string $genre,
@@ -79,6 +80,9 @@ class ScanInformation implements Arrayable
             'lyrics',
         ])));
 
+        $trackTag = (string) self::getTag($tags, ['track', 'tracknumber', 'track_number']);
+        $trackLabel = self::getVinylTrackLabel($trackTag);
+
         return new self(
             title: html_entity_decode(TagFixer::fix(self::getTag(
                 $tags,
@@ -92,7 +96,8 @@ class ScanInformation implements Arrayable
             albumMbid: MbidReader::getAlbumMbid($tags),
             artistMbid: MbidReader::getArtistMbid($tags),
             albumArtistMbid: MbidReader::getAlbumArtistMbid($tags),
-            track: (int) self::getTag($tags, ['track', 'tracknumber', 'track_number']),
+            track: $trackLabel ? (int) preg_replace('/\D/', '', $trackLabel) : (int) $trackTag,
+            trackLabel: $trackLabel,
             disc: (int) self::getTag($tags, ['discnumber', 'disc_number', 'part_of_a_set'], 1),
             year: (int) self::getTag($tags, ['year', 'date']) ?: null,
             genre: TagFixer::fix(self::getTag($tags, 'genre')),
@@ -117,6 +122,7 @@ class ScanInformation implements Arrayable
         ?string $artistMbid = null,
         ?string $albumArtistMbid = null,
         ?int $track = null,
+        ?string $trackLabel = null,
         ?int $disc = null,
         ?int $year = null,
         ?string $genre = null,
@@ -139,6 +145,7 @@ class ScanInformation implements Arrayable
             artistMbid: $artistMbid,
             albumArtistMbid: $albumArtistMbid,
             track: $track,
+            trackLabel: $trackLabel,
             disc: $disc,
             year: $year,
             genre: $genre,
@@ -151,6 +158,11 @@ class ScanInformation implements Arrayable
             mimeType: $mimeType,
             fileSize: $fileSize,
         );
+    }
+
+    private static function getVinylTrackLabel(string $trackTag): ?string
+    {
+        return preg_match('/^([a-z]{1,2}\d{0,3})(\/\d+)?$/i', $trackTag, $matches) ? $matches[1] : null;
     }
 
     private static function getTag(array $arr, string|array $keys, $default = ''): mixed
@@ -179,6 +191,7 @@ class ScanInformation implements Arrayable
             'artist_mbid' => $this->artistMbid,
             'albumartist_mbid' => $this->albumArtistMbid,
             'track' => $this->track,
+            'track_label' => $this->trackLabel,
             'disc' => $this->disc,
             'year' => $this->year,
             'genre' => $this->genre,

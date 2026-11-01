@@ -63,6 +63,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property ?string $hash The hash of the song file. Null for legacy songs.
  * @property int $owner_id
  * @property int $track
+ * @property ?string $track_label The track's label on a vinyl release, e.g. "A2".
  * @property ?int $year
  * @property ?int $file_size The size in bytes of the song file, if available.
  * @property ?SongAnalysis $analysis The loudness and waveform, if analyzed.

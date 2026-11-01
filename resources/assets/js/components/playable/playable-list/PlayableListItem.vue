@@ -14,7 +14,7 @@
       <span v-if="shouldShowColumn('track')" class="track-number">
         <SoundBars v-if="playable.playback_state === 'Playing'" />
         <span v-else>
-          <template v-if="isSong(playable)">{{ playable.track || '' }}</template>
+          <template v-if="isSong(playable)">{{ playable.track_label || playable.track || '' }}</template>
           <Icon v-else :icon="faPodcast" />
         </span>
       </span>

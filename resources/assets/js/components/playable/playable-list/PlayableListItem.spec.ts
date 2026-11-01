@@ -75,6 +75,13 @@ describe('playableListItem.vue', () => {
     screen.getByRole('button', { name: 'Undo Favorite' })
   })
 
+  it('shows the vinyl label instead of the track number', () => {
+    renderComponent(h.factory('song').make({ track: 3, track_label: 'B1' }))
+
+    screen.getByText('B1')
+    expect(screen.queryByText('3')).toBeNull()
+  })
+
   it('emits play event on double click', async () => {
     const { emitted } = renderComponent()
     await h.user.dblClick(screen.getByTestId('song-item'))
