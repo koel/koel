@@ -360,4 +360,9 @@ export const uploadService = {
   removeFailed() {
     this.tracker.removeWithStatus(FAILED_STATUSES)
   },
+
+  stopAll() {
+    this.tracker.getFilesWithStatus(['Uploading']).forEach(file => this.abort(file))
+    this.tracker.removeWithStatus(UNFINISHED_STATUSES)
+  },
 }

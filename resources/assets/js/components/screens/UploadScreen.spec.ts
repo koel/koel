@@ -8,6 +8,7 @@ import Component from './UploadScreen.vue'
 
 const queueFilesForUploadMock = vi.fn()
 const handleDropEventMock = vi.fn()
+const showConfirmDialogMock = vi.fn()
 
 vi.mock('@/utils/mediaHelper', () => ({
   acceptedExtensions: ['mp3', 'flac', 'ogg'],
@@ -22,6 +23,10 @@ vi.mock('@/composables/useUpload', () => ({
   }),
 }))
 
+vi.mock('@/composables/useDialogBox', () => ({
+  useDialogBox: () => ({ showConfirmDialog: showConfirmDialogMock }),
+}))
+
 describe('uploadScreen.vue', () => {
   const h = createHarness()
 
@@ -30,6 +35,7 @@ describe('uploadScreen.vue', () => {
     vi.spyOn(uploadService, 'fetchDuplicates').mockResolvedValue(undefined)
     uploadService.state.duplicatedSongs = []
     uploadService.tracker = new UploadTracker()
+    showConfirmDialogMock.mockReset()
   })
 
   it('shows empty state when no files are queued', () => {
@@ -89,6 +95,45 @@ describe('uploadScreen.vue', () => {
     await h.user.click(await screen.findByTestId('upload-remove-all-btn'))
 
     expect(removeFailedMock).toHaveBeenCalled()
+  })
+
+  it('stops all uploads after confirming', async () => {
+    const stopAllMock = h.mock(uploadService, 'stopAll')
+    showConfirmDialogMock.mockResolvedValue(true)
+
+    uploadService.tracker.add([
+      { id: '1', file: new File([], 'song.mp3'), status: 'Uploading', name: 'song.mp3', progress: 50 },
+    ])
+
+    h.render(Component)
+    await h.user.click(await screen.findByTestId('upload-stop-all-btn'))
+
+    expect(stopAllMock).toHaveBeenCalled()
+  })
+
+  it('keeps uploading when stopping is not confirmed', async () => {
+    const stopAllMock = h.mock(uploadService, 'stopAll')
+    showConfirmDialogMock.mockResolvedValue(false)
+
+    uploadService.tracker.add([
+      { id: '1', file: new File([], 'song.mp3'), status: 'Ready', name: 'song.mp3', progress: 0 },
+    ])
+
+    h.render(Component)
+    await h.user.click(await screen.findByTestId('upload-stop-all-btn'))
+
+    expect(stopAllMock).not.toHaveBeenCalled()
+  })
+
+  it('offers no Stop All once nothing is left to upload', () => {
+    uploadService.tracker.add([
+      { id: '1', file: new File([], 'good.mp3'), status: 'Uploaded', name: 'good.mp3', progress: 100 },
+      { id: '2', file: new File([], 'big.flac'), status: 'Processing', name: 'big.flac', progress: 100 },
+    ])
+
+    h.render(Component)
+
+    expect(screen.queryByTestId('upload-stop-all-btn')).toBeNull()
   })
 
   it('sorts the files into tabs by state', async () => {
