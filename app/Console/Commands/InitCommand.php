@@ -438,8 +438,10 @@ class InitCommand extends Command
 
     private function announceUpdate(): void
     {
-        $this->components->task('Announcing the update to open tabs', static function (): void {
-            rescue(static fn () => Artisan::call('koel:announce-update', ['--quiet' => true]));
+        $this->components->task('Announcing the update to open tabs', static function (): bool {
+            $exitCode = rescue(static fn () => Artisan::call('koel:announce-update', ['--quiet' => true]));
+
+            return $exitCode === self::SUCCESS;
         });
     }
 }
