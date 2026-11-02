@@ -14,36 +14,32 @@
       @dragover.prevent
     >
       <div v-if="showsFilters" :class="{ 'flex-1': !showsDropPrompt }" class="min-h-0 flex flex-col gap-4">
-        <UploadSummary v-if="hasFiles" class="mb-4" />
+        <UploadSummary v-if="hasFiles" class="mb-4">
+          <Btn
+            v-if="unfinishedCount"
+            size="small"
+            variant="destructive"
+            data-testid="upload-stop-all-btn"
+            @click="stopAll"
+          >
+            Stop All
+          </Btn>
+        </UploadSummary>
 
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <SegmentedControl v-model="currentFilter" :options="filterOptions" name="upload-filter">
-            <template #default="{ option }">
-              {{ option.label }}
-              <span
-                :data-count="filterCounts[option.value]"
-                :data-filter="option.value"
-                :data-testid="`upload-filter-count-${option.value}`"
-                class="count inline-flex items-center justify-center h-[16px] min-w-[16px] px-[5px] rounded-full bg-k-fg-10 text-[.8rem] leading-none tabular-nums"
-                data-badge
-              >
-                {{ filterCounts[option.value] }}
-              </span>
-            </template>
-          </SegmentedControl>
-
-          <div class="flex gap-2">
-            <template v-if="currentFilter === 'errored' && filterCounts.errored">
-              <Btn variant="success" data-testid="upload-retry-all-btn" @click="retryAll">Retry All</Btn>
-              <Btn variant="destructive" data-testid="upload-remove-all-btn" @click="removeFailedEntries">
-                Remove Failed
-              </Btn>
-            </template>
-            <Btn v-if="unfinishedCount" variant="destructive" data-testid="upload-stop-all-btn" @click="stopAll">
-              Stop All
-            </Btn>
-          </div>
-        </div>
+        <SegmentedControl v-model="currentFilter" :options="filterOptions" class="self-start" name="upload-filter">
+          <template #default="{ option }">
+            {{ option.label }}
+            <span
+              :data-count="filterCounts[option.value]"
+              :data-filter="option.value"
+              :data-testid="`upload-filter-count-${option.value}`"
+              class="count inline-flex items-center justify-center h-[16px] min-w-[16px] px-[5px] rounded-full bg-k-fg-10 text-[.8rem] leading-none tabular-nums"
+              data-badge
+            >
+              {{ filterCounts[option.value] }}
+            </span>
+          </template>
+        </SegmentedControl>
 
         <div class="flex-1 min-h-0 flex flex-col gap-4">
           <DuplicateUploadList
@@ -64,6 +60,13 @@
               </div>
             </template>
           </VirtualScroller>
+
+          <footer v-if="currentFilter === 'errored' && filterCounts.errored" class="flex justify-end gap-1.5">
+            <Btn size="small" variant="success" data-testid="upload-retry-all-btn" @click="retryAll">Retry All</Btn>
+            <Btn size="small" variant="neutral" data-testid="upload-remove-all-btn" @click="removeFailedEntries">
+              Remove Failed
+            </Btn>
+          </footer>
         </div>
       </div>
 

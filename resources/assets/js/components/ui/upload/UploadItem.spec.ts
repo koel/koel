@@ -62,29 +62,29 @@ describe('uploadItem.vue', () => {
     expect(mock).toHaveBeenCalled()
   })
 
-  it('aborts upload after confirmation', async () => {
+  it('stops an upload after confirmation', async () => {
     mockShowConfirmDialog.mockResolvedValue(true)
     const mock = h.mock(uploadService, 'abort')
     renderComponent('Uploading')
 
-    await h.user.click(screen.getByRole('button', { name: 'Abort' }))
+    await h.user.click(screen.getByRole('button', { name: 'Stop' }))
 
-    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Abort this upload?')
+    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Stop this upload?')
     expect(mock).toHaveBeenCalled()
   })
 
-  it('does not abort upload if confirmation is declined', async () => {
+  it('keeps uploading if stopping is not confirmed', async () => {
     mockShowConfirmDialog.mockResolvedValue(false)
     const mock = h.mock(uploadService, 'abort')
     renderComponent('Uploading')
 
-    await h.user.click(screen.getByRole('button', { name: 'Abort' }))
+    await h.user.click(screen.getByRole('button', { name: 'Stop' }))
 
-    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Abort this upload?')
+    expect(mockShowConfirmDialog).toHaveBeenCalledWith('Stop this upload?')
     expect(mock).not.toHaveBeenCalled()
   })
 
-  it('does not abort if upload completed while confirming', async () => {
+  it('does not stop an upload that finished while confirming', async () => {
     mockShowConfirmDialog.mockImplementation(async () => {
       // Simulate the upload finishing while the dialog is open
       renderResult.file.status = 'Uploaded'
@@ -93,7 +93,7 @@ describe('uploadItem.vue', () => {
     const mock = h.mock(uploadService, 'abort')
     const renderResult = renderComponent('Uploading')
 
-    await h.user.click(screen.getByRole('button', { name: 'Abort' }))
+    await h.user.click(screen.getByRole('button', { name: 'Stop' }))
 
     expect(mock).not.toHaveBeenCalled()
   })

@@ -1,11 +1,14 @@
 <template>
   <section class="flex flex-col gap-2" data-testid="upload-summary">
-    <p class="self-end text-k-fg-70 tabular-nums">
-      {{ formatBytes(sentBytes) }} of {{ formatBytes(totalBytes) }} uploaded
-      <span v-if="secondsLeft !== null" :data-seconds="Math.round(secondsLeft)" data-testid="time-left">
-        · about {{ secondsToHumanReadable(secondsLeft) }} left
-      </span>
-    </p>
+    <div class="flex items-center justify-end gap-3">
+      <p class="text-k-fg-70 tabular-nums">
+        {{ formatBytes(sentBytes) }} of {{ formatBytes(totalBytes) }} uploaded
+        <span v-if="secondsLeft !== null" :data-seconds="Math.round(secondsLeft)" data-testid="time-left">
+          · about {{ secondsToHumanReadable(secondsLeft) }} left
+        </span>
+      </p>
+      <slot />
+    </div>
     <progress
       :max="totalBytes || 1"
       :value="sentBytes"
