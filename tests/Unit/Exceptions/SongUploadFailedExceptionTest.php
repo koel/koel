@@ -3,6 +3,7 @@
 namespace Tests\Unit\Exceptions;
 
 use App\Exceptions\SongUploadFailedException;
+use App\Exceptions\UnreadableMediaFileException;
 use ErrorException;
 use Illuminate\Support\Facades\Exceptions;
 use PHPUnit\Framework\Attributes\Test;
@@ -35,5 +36,13 @@ class SongUploadFailedExceptionTest extends TestCase
         $exception = SongUploadFailedException::make('The uploaded file could not be stored.');
 
         self::assertSame('The uploaded file could not be stored.', $exception->render()->getData(true)['message']);
+    }
+
+    #[Test]
+    public function renderTheReasonOfAnUnreadableMediaFile(): void
+    {
+        $exception = SongUploadFailedException::make(UnreadableMediaFileException::create('Empty file'));
+
+        self::assertSame('Empty file', $exception->render()->getData(true)['message']);
     }
 }

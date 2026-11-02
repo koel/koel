@@ -35,7 +35,11 @@ class SongUploadFailedException extends RuntimeException implements ShouldntRepo
 
     public function getUserFacingMessage(): string
     {
-        return $this->getPrevious() ? self::GENERIC_USER_FACING_MESSAGE : $this->getMessage();
+        $cause = $this->getPrevious();
+
+        return !$cause || $cause instanceof UnreadableMediaFileException
+            ? $this->getMessage()
+            : self::GENERIC_USER_FACING_MESSAGE;
     }
 
     public function render(): JsonResponse
