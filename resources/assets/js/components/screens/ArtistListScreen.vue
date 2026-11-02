@@ -17,6 +17,16 @@
             <ListFilter :icon="faSearch" label="Search" />
 
             <ViewModeSwitch v-model="preferences.artists_view_mode" secondary="table" />
+            <button
+              v-koel-tooltip
+              :disabled="loading"
+              class="px-3.5 py-2 border rounded-md border-k-fg-10 disabled:opacity-50"
+              title="Reload"
+              type="button"
+              @click.prevent="reload"
+            >
+              <Icon :icon="faRotateRight" />
+            </button>
           </div>
         </template>
       </ScreenHeader>
@@ -88,7 +98,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faMicrophoneSlash, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faMicrophoneSlash, faSearch, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, toRef } from 'vue'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
@@ -119,6 +129,7 @@ const {
   showSkeletons,
   loadingMore,
   fetchMore: fetchArtists,
+  reload,
   sort,
   toggleFavoritesOnly,
 } = useCursorPaginatedList({
