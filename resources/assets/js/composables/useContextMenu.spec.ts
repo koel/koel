@@ -56,4 +56,16 @@ describe('useContextMenu', () => {
     expect(fn).toHaveBeenCalled()
     expect(contextMenuOptions.value.component).toBeNull()
   })
+
+  it('closes right away when the triggered function is still running', () => {
+    const { openContextMenu, trigger } = useContextMenu()
+    const FakeComponent = markRaw({ template: '<div />' })
+    const fn = vi.fn(() => new Promise<void>(() => {}))
+
+    openContextMenu(FakeComponent, { top: 100, left: 200 })
+    trigger(fn)
+
+    expect(fn).toHaveBeenCalled()
+    expect(contextMenuOptions.value.component).toBeNull()
+  })
 })
