@@ -79,10 +79,8 @@ class HandlePresignedSongUploadJob extends QueuedJob
 
     private static function describeFailureToUploader(Throwable $exception): string
     {
-        $failure = $exception instanceof SongUploadFailedException
-            ? $exception
-            : SongUploadFailedException::make($exception);
-
-        return $failure->getUserFacingMessage();
+        return $exception instanceof SongUploadFailedException
+            ? $exception->getUserFacingMessage()
+            : SongUploadFailedException::GENERIC_USER_FACING_MESSAGE;
     }
 }
