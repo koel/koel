@@ -9,6 +9,13 @@
           class="size-4 shrink-0 ml-4 text-k-highlight"
           data-testid="upload-item-progress"
         />
+        <Icon
+          v-if="isProcessing"
+          :icon="faSpinner"
+          class="size-4 shrink-0 ml-4 text-k-highlight"
+          data-testid="upload-item-processing-spinner"
+          spin
+        />
         <a
           v-if="file.song"
           :href="url('albums.show', { id: file.song.album_id })"
@@ -42,13 +49,8 @@
           <Icon :icon="faCircleCheck" />
           <span class="sr-only">Uploaded</span>
         </span>
-        <span
-          v-if="isProcessing"
-          class="shrink-0 flex items-center gap-3 px-3 text-k-fg-50"
-          data-testid="upload-item-processing"
-        >
+        <span v-if="isProcessing" class="shrink-0 px-3 text-k-fg-50" data-testid="upload-item-processing">
           Processing
-          <Icon :icon="faSpinner" spin />
         </span>
       </div>
     </div>
