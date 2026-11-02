@@ -24,6 +24,7 @@ class UserResource extends JsonResource
         'abilities',
         'subsonic_api_key',
         'two_factor',
+        'has_password',
         'permissions' => [
             'edit',
             'delete',
@@ -60,6 +61,7 @@ class UserResource extends JsonResource
                 ->toArray()),
             'subsonic_api_key' => $this->when($isCurrentUser, fn () => $this->user->subsonic_api_key),
             'two_factor' => $this->when($isCurrentUser, fn () => $this->user->hasTwoFactorEnabled()),
+            'has_password' => $this->when($isCurrentUser, fn () => $this->user->password !== null),
             'permissions' => [
                 'edit' => $currentUser->can('update', $this->user),
                 'delete' => $currentUser->can('destroy', $this->user),

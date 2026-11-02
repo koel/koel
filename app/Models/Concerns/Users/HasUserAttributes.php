@@ -32,6 +32,11 @@ trait HasUserAttributes
         return Attribute::get(fn (): bool => License::isPlus() && $this->sso_provider)->shouldCache();
     }
 
+    protected function canSetPasswordWithoutCurrentOne(): Attribute
+    {
+        return Attribute::get(fn (): bool => $this->password === null && $this->sso_provider === null);
+    }
+
     protected function connectedToLastfm(): Attribute
     {
         return Attribute::get(fn (): bool => (bool) $this->preferences->lastFmSessionKey)->shouldCache();

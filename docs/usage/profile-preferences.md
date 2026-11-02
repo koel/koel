@@ -9,9 +9,10 @@ Your own settings are listed under **Account**. If you're allowed to manage Koel
 
 ## Profile
 
-To update your profile, you must first authenticate yourself by entering your current password.
-After that, you can update your name and email, and set a new password.
-Leaving the New Password field blank will keep your current password intact.
+Under **Profile**, you can update your name and email.
+
+To change your password, go to **Security** and enter your current password and a new one.
+If your account doesn't have a password yet, you can set one there without a current password.
 
 If Koel has been [configured](../guide/getting-started#configure-a-mailer) with a mailer, a new email address only takes effect once you confirm it: Koel sends a confirmation link to the new address, valid for 24 hours, and lets your old address know about the change. If you change your mind and enter another address, only the newest link works. Until then, you keep logging in with your old address.
 

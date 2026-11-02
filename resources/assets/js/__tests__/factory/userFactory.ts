@@ -57,6 +57,7 @@ export default (): User => ({
   avatar: 'https://gravatar.com/foo',
   sso_provider: null,
   sso_id: null,
+  has_password: true,
   permissions: {
     edit: faker.datatype.boolean(),
     delete: faker.datatype.boolean(),

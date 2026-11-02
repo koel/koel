@@ -29,7 +29,8 @@ class ChangePasswordController extends Controller
         abort_if($this->user->is_sso, Response::HTTP_FORBIDDEN, 'Password is managed by your SSO provider.');
 
         throw_unless(
-            $this->hash->check($request->current_password, $this->user->password),
+            $this->user->can_set_password_without_current_one
+            || $this->hash->check($request->current_password, $this->user->password),
             ValidationException::withMessages(['current_password' => 'Invalid current password']),
         );
 

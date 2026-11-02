@@ -67,7 +67,7 @@ export const authService = {
     merge(userStore.current, await http.put<User>('me', data))
   },
 
-  changePassword: async (currentPassword: string, newPassword: string) => {
+  changePassword: async (currentPassword: string | undefined, newPassword: string) => {
     await http.put('me/password', { current_password: currentPassword, new_password: newPassword })
   },
 

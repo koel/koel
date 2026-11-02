@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { screen, waitFor } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { authService } from '@/services/authService'
 import Component from './ChangePasswordForm.vue'
@@ -17,6 +17,21 @@ describe('changePasswordForm.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Update Password' }))
 
     expect(changeMock).toHaveBeenCalledWith('old-secret', 'new-secret-1234')
+  })
+
+  it('sets a first password without asking for the current one', async () => {
+    const changeMock = h.mock(authService, 'changePassword')
+    const user = h.factory('user').make({ sso_provider: null, has_password: false }) as CurrentUser
+
+    h.actingAsUser(user).render(Component)
+
+    expect(screen.queryByTestId('current-password')).toBeNull()
+
+    await h.type(screen.getByTestId('new-password'), 'new-secret-1234')
+    await h.user.click(screen.getByRole('button', { name: 'Set Password' }))
+
+    expect(changeMock).toHaveBeenCalledWith(undefined, 'new-secret-1234')
+    await waitFor(() => screen.getByTestId('current-password'))
   })
 
   it('hides the form for SSO users', () => {
