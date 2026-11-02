@@ -87,7 +87,7 @@ Right-clicking the footer area brings up the context menu for the currently play
 
 As a user with `manage songs` permission (Community edition) or the song owner (Koel Plus), you can edit a song's metadata by right-clicking on it and
 choosing "Edit…".
-A dialog will appear, allowing you to change the song's title, artist, album, genre, lyrics, and more.
+A dialog will appear, allowing you to change the song's title, artist, album, genres, lyrics, and more.
 
 <img loading="lazy" src="../assets/img/interface/edit-song.webp" alt="Edit song" style="width: 480px">
 

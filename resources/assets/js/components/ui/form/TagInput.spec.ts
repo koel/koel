@@ -1,0 +1,66 @@
+import { describe, expect, it } from 'vite-plus/test'
+import { screen } from '@testing-library/vue'
+import { ref } from 'vue'
+import { createHarness } from '@/__tests__/TestHarness'
+import Component from './TagInput.vue'
+
+describe('tagInput.vue', () => {
+  const h = createHarness()
+
+  const renderComponent = (initialTags: string[] = []) => {
+    const tags = ref(initialTags)
+
+    h.render(Component, {
+      props: {
+        name: 'genre',
+        modelValue: tags.value,
+        'onUpdate:modelValue': (value: string[]) => {
+          tags.value = value
+        },
+      },
+    })
+
+    return { tags, input: screen.getByRole('textbox', { name: 'genre' }) }
+  }
+
+  it('adds a tag on Enter', async () => {
+    const { tags, input } = renderComponent(['Rock'])
+
+    await h.user.type(input, 'Blues{Enter}')
+
+    expect(tags.value).toEqual(['Rock', 'Blues'])
+  })
+
+  it('splits comma-separated text into tags and skips duplicates', async () => {
+    const { tags, input } = renderComponent(['Rock'])
+
+    await h.user.type(input, 'rock, Jazz,')
+
+    expect(tags.value).toEqual(['Rock', 'Jazz'])
+  })
+
+  it('adds the pending text on blur', async () => {
+    const { tags, input } = renderComponent()
+
+    await h.user.type(input, 'Pop')
+    await h.user.tab()
+
+    expect(tags.value).toEqual(['Pop'])
+  })
+
+  it('removes a tag with its button', async () => {
+    const { tags } = renderComponent(['Rock', 'Blues'])
+
+    await h.user.click(screen.getByRole('button', { name: 'Remove Rock' }))
+
+    expect(tags.value).toEqual(['Blues'])
+  })
+
+  it('removes the last tag on Backspace in an empty input', async () => {
+    const { tags, input } = renderComponent(['Rock', 'Blues'])
+
+    await h.user.type(input, '{Backspace}')
+
+    expect(tags.value).toEqual(['Rock'])
+  })
+})
