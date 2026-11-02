@@ -77,6 +77,16 @@ class ChangePasswordTest extends TestCase
     }
 
     #[Test]
+    public function ssoUserWithoutPasswordCannotSetOneWithoutCurrentPassword(): void
+    {
+        $user = create_user(['password' => null, 'sso_provider' => 'Google', 'sso_id' => 'abc123']);
+
+        $this->putAs('api/me/password', ['new_password' => 'new-secret-1234'], $user)->assertUnprocessable();
+
+        self::assertNull($user->refresh()->password);
+    }
+
+    #[Test]
     public function changePasswordRequiresBothFields(): void
     {
         $user = create_user();

@@ -15,7 +15,10 @@ class ChangePasswordRequest extends Request
     public function rules(): array
     {
         return [
-            'current_password' => [Rule::requiredIf(fn (): bool => $this->user()->password !== null), Rule::string()],
+            'current_password' => [
+                Rule::requiredIf(fn (): bool => !$this->user()->can_set_password_without_current_one),
+                Rule::string(),
+            ],
             'new_password' => [Rule::required(), Password::defaults()],
         ];
     }
