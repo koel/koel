@@ -73,12 +73,13 @@ describe('tagInput.vue', () => {
     expect(tags.value).toEqual(['Rock', 'Blues'])
   })
 
-  it('ignores Enter and Backspace while composing', async () => {
+  it('ignores Enter, Backspace and Escape while composing', async () => {
     const { tags, input } = renderComponent(['Rock'])
 
     await fireEvent.keyDown(input, { key: 'Backspace', isComposing: true })
     await h.user.type(input, 'Jazz')
     await fireEvent.keyDown(input, { key: 'Enter', isComposing: true })
+    await fireEvent.keyDown(input, { key: 'Escape', isComposing: true })
 
     expect(tags.value).toEqual(['Rock'])
   })

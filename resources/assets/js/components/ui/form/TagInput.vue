@@ -35,7 +35,7 @@
       @input="onInput"
       @keydown.backspace="removeLastTagIfDraftIsEmpty"
       @keydown.enter="onEnter"
-      @keydown.esc="commitDraft"
+      @keydown.esc="onEscape"
     />
 
     <datalist v-if="suggestions.length" :id="suggestionListId">
@@ -93,6 +93,15 @@ const onEnter = (event: KeyboardEvent) => {
   }
 
   event.preventDefault()
+  commitDraft()
+}
+
+const onEscape = (event: KeyboardEvent) => {
+  if (event.isComposing) {
+    event.stopPropagation()
+    return
+  }
+
   commitDraft()
 }
 
