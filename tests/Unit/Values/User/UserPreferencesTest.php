@@ -3,6 +3,7 @@
 namespace Tests\Unit\Values\User;
 
 use App\Values\User\Preferences\BooleanPreference;
+use App\Values\User\Preferences\VolumePreference;
 use App\Values\User\UserPreferences;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Fakes\FakeExtensionPreference;
@@ -35,5 +36,13 @@ class UserPreferencesTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         UserPreferences::register(BooleanPreference::class);
+    }
+
+    #[Test]
+    public function refuseToRegisterAPreferenceWhoseKeyIsTaken(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        UserPreferences::register(VolumePreference::class);
     }
 }

@@ -111,6 +111,9 @@ final class UserPreferences implements Arrayable, JsonSerializable
             return;
         }
 
+        $key = (new $class())->getKey();
+        Assert::null(self::classByKey($key), "Preference key already in use: {$key}");
+
         self::$registeredClasses[] = $class;
         self::$discoveredClasses = null;
     }
