@@ -551,6 +551,7 @@ interface User {
    */
   subsonic_api_key?: string
   two_factor?: boolean
+  has_password?: boolean
   /**
    * What the *current user* (the one making the request) is permitted to do
    * *to this user* — the result of running UserPolicy from their perspective.
@@ -568,6 +569,7 @@ type CurrentUser = User & {
   abilities: Ability[]
   subsonic_api_key: string
   two_factor: boolean
+  has_password: boolean
 }
 
 type AiProvider = 'openai' | 'anthropic' | 'gemini' | 'deepseek' | 'groq' | 'mistral' | 'openrouter' | 'xai'
