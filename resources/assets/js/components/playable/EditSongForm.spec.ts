@@ -28,6 +28,14 @@ describe('editSongForm.vue', () => {
     }
   }
 
+  it('keeps the genres when the genre label is clicked', async () => {
+    await renderComponent(h.factory('song').make({ genre: 'Rock' }))
+
+    await h.user.click(screen.getByText('Genre'))
+
+    screen.getByRole('button', { name: 'Remove Rock' })
+  })
+
   it('edits a single song', async () => {
     const result: SongUpdateResult = {
       songs: [],

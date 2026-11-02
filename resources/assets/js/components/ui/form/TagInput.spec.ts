@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vite-plus/test'
-import { screen } from '@testing-library/vue'
+import { fireEvent, screen } from '@testing-library/vue'
 import { ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import Component from './TagInput.vue'
@@ -10,12 +10,13 @@ describe('tagInput.vue', () => {
   const renderComponent = (initialTags: string[] = []) => {
     const tags = ref(initialTags)
 
-    h.render(Component, {
+    const { rerender } = h.render(Component, {
       props: {
         name: 'genre',
         modelValue: tags.value,
-        'onUpdate:modelValue': (value: string[]) => {
+        'onUpdate:modelValue': async (value: string[]) => {
           tags.value = value
+          await rerender({ modelValue: value })
         },
       },
     })
@@ -60,6 +61,24 @@ describe('tagInput.vue', () => {
     const { tags, input } = renderComponent(['Rock', 'Blues'])
 
     await h.user.type(input, '{Backspace}')
+
+    expect(tags.value).toEqual(['Rock'])
+  })
+
+  it('adds the pending text on Escape', async () => {
+    const { tags, input } = renderComponent(['Rock'])
+
+    await h.user.type(input, 'Blues{Escape}')
+
+    expect(tags.value).toEqual(['Rock', 'Blues'])
+  })
+
+  it('ignores Enter and Backspace while composing', async () => {
+    const { tags, input } = renderComponent(['Rock'])
+
+    await fireEvent.keyDown(input, { key: 'Backspace', isComposing: true })
+    await h.user.type(input, 'Jazz')
+    await fireEvent.keyDown(input, { key: 'Enter', isComposing: true })
 
     expect(tags.value).toEqual(['Rock'])
   })

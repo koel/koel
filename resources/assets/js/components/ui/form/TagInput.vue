@@ -21,6 +21,7 @@
     </span>
 
     <input
+      :id
       ref="input"
       v-model="draft"
       :aria-label="name"
@@ -33,7 +34,8 @@
       @blur="commitDraft"
       @input="onInput"
       @keydown.backspace="removeLastTagIfDraftIsEmpty"
-      @keydown.enter.prevent="commitDraft"
+      @keydown.enter="onEnter"
+      @keydown.esc="commitDraft"
     />
 
     <datalist v-if="suggestions.length" :id="suggestionListId">
@@ -46,7 +48,7 @@
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { computed, ref, useId } from 'vue'
 
-const props = withDefaults(defineProps<{ name: string; placeholder?: string; suggestions?: string[] }>(), {
+const props = withDefaults(defineProps<{ name: string; id?: string; placeholder?: string; suggestions?: string[] }>(), {
   placeholder: '',
   suggestions: () => [],
 })
@@ -85,6 +87,15 @@ const commitDraft = () => {
   draft.value = ''
 }
 
+const onEnter = (event: KeyboardEvent) => {
+  if (event.isComposing) {
+    return
+  }
+
+  event.preventDefault()
+  commitDraft()
+}
+
 const onInput = () => {
   if (draft.value.includes(',')) {
     commitDraft()
@@ -95,8 +106,8 @@ const removeTag = (name: string) => {
   tags.value = tags.value.filter(tag => tag !== name)
 }
 
-const removeLastTagIfDraftIsEmpty = () => {
-  if (!draft.value && tags.value.length) {
+const removeLastTagIfDraftIsEmpty = (event: KeyboardEvent) => {
+  if (!event.isComposing && !draft.value && tags.value.length) {
     tags.value = tags.value.slice(0, -1)
   }
 }

@@ -104,10 +104,16 @@
           </FormRow>
 
           <FormRow :cols="2">
-            <FormRow>
-              <template #label>Genre</template>
-              <TagInput v-model="genreTags" :placeholder="inputPlaceholder" :suggestions="genres" name="genre" />
-            </FormRow>
+            <div class="flex flex-col gap-1.5 text-k-fg">
+              <label for="editSongGenre">Genre</label>
+              <TagInput
+                id="editSongGenre"
+                v-model="genreTags"
+                :placeholder="inputPlaceholder"
+                :suggestions="genres"
+                name="genre"
+              />
+            </div>
             <FormRow>
               <template #label>Year</template>
               <TextInput
