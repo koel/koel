@@ -18,6 +18,7 @@
       <div class="flex flex-wrap gap-3 items-center justify-center">
         <PasskeyLoginButton @logged-in="$emit('loggedIn')" />
         <SsoLoginOptions @logged-in="$emit('loggedIn')" @two-factor-required="twoFactorLoginToken = $event" />
+        <HookSlot name="login-form.footer" />
       </div>
     </template>
   </div>
@@ -28,6 +29,8 @@ import { onMounted, ref } from 'vue'
 import { authService } from '@/services/authService'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { defineAsyncComponent } from '@/utils/helpers'
+
+import HookSlot from '@/components/utils/HookSlot.vue'
 
 const CredentialsLoginForm = defineAsyncComponent(() => import('@/components/auth/CredentialsLoginForm.vue'))
 const ForgotPasswordForm = defineAsyncComponent(() => import('@/components/auth/ForgotPasswordForm.vue'))

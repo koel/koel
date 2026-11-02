@@ -17,7 +17,11 @@
       <Btn class="w-full" data-testid="submit" :disabled="loading" type="submit">Log In</Btn>
     </FormRow>
 
-    <div v-if="canResetPassword">
+    <div v-if="forgotPasswordUrl">
+      <a :href="forgotPasswordHref" class="text-right text-[.95rem] text-k-fg-70">Forgot password?</a>
+    </div>
+
+    <div v-else-if="canResetPassword">
       <button class="text-right text-[.95rem] text-k-fg-70" type="button" @click.prevent="$emit('forgotPassword')">
         Forgot password?
       </button>
@@ -26,7 +30,9 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
+import { Filter } from '@/config/hooks'
+import { applyFilters } from '@/hooks'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import { useForm } from '@/composables/useForm'
@@ -52,6 +58,7 @@ const failed = ref(false)
 const canResetPassword = window.KOEL.mailer_configured && !window.KOEL.is_demo
 const emailPlaceholder = window.KOEL.is_demo ? demoAccount.email : 'Your email address'
 const passwordPlaceholder = window.KOEL.is_demo ? demoAccount.password : 'Your password'
+const forgotPasswordUrl = applyFilters<string | null>(Filter.FORGOT_PASSWORD_URL, null)
 
 const takeLoginHint = () => {
   const url = new URL(window.location.href)
@@ -107,6 +114,20 @@ const { data, loading, handleSubmit } = useForm<{ email: string; password: strin
       errorResetTimer = null
     }, 2000)
   },
+})
+
+const forgotPasswordHref = computed(() => {
+  if (!forgotPasswordUrl) {
+    return undefined
+  }
+
+  const url = new URL(forgotPasswordUrl, window.location.href)
+
+  if (data.email) {
+    url.searchParams.set('email', data.email)
+  }
+
+  return url.toString()
 })
 
 onBeforeUnmount(clearErrorResetTimer)
