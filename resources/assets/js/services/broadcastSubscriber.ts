@@ -3,6 +3,7 @@ import { authService } from '@/services/authService'
 import type { UploadDuplication, UploadFailure, UploadResult } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import { makeReverbConnectionOptions } from '@/utils/reverbServer'
+import { announceIfBuildChanged } from '@/utils/deployment'
 
 type Broadcaster = 'reverb' | 'pusher' | 'null' // narrow down the supported broadcasters
 
@@ -49,6 +50,8 @@ export const broadcastSubscriber = {
   },
 
   subscribeToEvents: (echo: Echo<Broadcaster>, userId: User['id']) => {
+    echo.channel('koel').listen('.app.updated', ({ build }: { build: string }) => announceIfBuildChanged(build))
+
     return echo
       .private(`user.${userId}`)
       .listen('.song.uploaded', (event: UploadResult) => uploadService.handleUploadResult(event))

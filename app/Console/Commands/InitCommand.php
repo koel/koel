@@ -14,6 +14,7 @@ use App\Services\PublicStorageLinker;
 use App\Services\PwaManifestService;
 use App\Services\SettingService;
 use Illuminate\Console\Command;
+use Illuminate\Console\View\TaskResult;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +73,7 @@ class InitCommand extends Command
             $this->maybeCompileFrontEndAssets();
             $this->removeLegacyManifests();
             $this->tryInstallingScheduler();
+            $this->announceUpdate();
         } catch (Throwable $e) {
             Log::error($e);
 
@@ -432,6 +434,15 @@ class InitCommand extends Command
     {
         $this->components->task('Removing legacy manifests', function (): void {
             $this->pwaManifestService->removeUncustomizedLegacyFiles();
+        });
+    }
+
+    private function announceUpdate(): void
+    {
+        $this->components->task('Announcing the update to open tabs', static function (): int {
+            $exitCode = rescue(static fn () => Artisan::call('koel:announce-update', ['--quiet' => true]));
+
+            return $exitCode === self::SUCCESS ? TaskResult::Success->value : TaskResult::Failure->value;
         });
     }
 }

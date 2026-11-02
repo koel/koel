@@ -1,3 +1,5 @@
+import { eventBus } from '@/utils/eventBus'
+
 const ENTRY_SCRIPT_CHECK_TIMEOUT_MS = 10_000
 
 const findEntryScriptUrl = () => document.querySelector<HTMLScriptElement>('script[type="module"][src]')?.src
@@ -23,5 +25,11 @@ export const isNewerVersionDeployed = async () => {
     return response.status === 404
   } catch {
     return false
+  }
+}
+
+export const announceIfBuildChanged = (build: string | null | undefined) => {
+  if (build && window.KOEL.build && build !== window.KOEL.build) {
+    eventBus.emit('NEW_VERSION_DEPLOYED')
   }
 }

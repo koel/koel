@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { uploadService } from '@/services/uploadService'
 import { broadcastSubscriber } from '@/services/broadcastSubscriber'
+import { eventBus } from '@/utils/eventBus'
 
 vi.mock('pusher-js', () => ({
   default: vi.fn().mockImplementation(function () {
@@ -23,6 +24,12 @@ class FakeEcho extends Echo<'null'> {
     const channel = new FakeChannel()
     this.channels[channelName] = channel
     return channel as unknown as Broadcaster['null']['private']
+  }
+
+  channel(channelName: string) {
+    const channel = new FakeChannel()
+    this.channels[channelName] = channel
+    return channel as unknown as Broadcaster['null']['public']
   }
 }
 
@@ -49,6 +56,19 @@ describe('broadcastSubscriber', () => {
   broadcastSubscriber.init('foo-id', echo)
   const privateChannel = echo.channels['user.foo-id']
   expect(privateChannel).toBeInstanceOf(FakeChannel)
+
+  it.each([
+    ['build-b', true],
+    ['build-a', false],
+  ])('announces a new version when build %s is broadcast', (build, announced) => {
+    window.KOEL.build = 'build-a'
+    const emitMock = h.mock(eventBus, 'emit')
+
+    echo.channels.koel.trigger('.app.updated', { build })
+
+    expect(emitMock.mock.calls.some(([event]) => event === 'NEW_VERSION_DEPLOYED')).toBe(announced)
+    window.KOEL.build = null
+  })
 
   it('listens to .song.uploaded event', () => {
     const handleMock = h.mock(uploadService, 'handleUploadResult')
