@@ -104,19 +104,16 @@
           </FormRow>
 
           <FormRow :cols="2">
-            <FormRow>
-              <template #label>Genre</template>
-              <TextInput
-                v-model="data.genre"
+            <div class="flex flex-col gap-1.5 text-k-fg">
+              <label for="editSongGenre">Genre</label>
+              <TagInput
+                id="editSongGenre"
+                v-model="genreTags"
                 :placeholder="inputPlaceholder"
-                data-testid="genre-input"
-                list="genres"
+                :suggestions="genres"
                 name="genre"
               />
-              <datalist id="genres">
-                <option v-for="genre in genres" :key="genre" :value="genre" />
-              </datalist>
-            </FormRow>
+            </div>
             <FormRow>
               <template #label>Year</template>
               <TextInput
@@ -162,6 +159,7 @@ import { useBranding } from '@/composables/useBranding'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
+import TagInput from '@/components/ui/form/TagInput.vue'
 import TextArea from '@/components/ui/form/TextArea.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 import Tabs from '@/components/ui/tabs/Tabs.vue'
@@ -234,6 +232,17 @@ const { data, loading, handleSubmit, maybeClose } = useForm<SongUpdateData>({
     close()
   },
   onClose: close,
+})
+
+const genreTags = computed({
+  get: () =>
+    (data.genre ?? '')
+      .split(',')
+      .map(genre => genre.trim())
+      .filter(Boolean),
+  set: (tags: string[]) => {
+    data.genre = tags.join(', ')
+  },
 })
 
 const displayedTitle = computed(() => (editingOnlyOneSong ? data.title : `${songs.length} songs selected`))

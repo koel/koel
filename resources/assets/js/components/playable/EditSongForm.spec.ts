@@ -28,6 +28,14 @@ describe('editSongForm.vue', () => {
     }
   }
 
+  it('keeps the genres when the genre label is clicked', async () => {
+    await renderComponent(h.factory('song').make({ genre: 'Rock' }))
+
+    await h.user.click(screen.getByText('Genre'))
+
+    screen.getByRole('button', { name: 'Remove Rock' })
+  })
+
   it('edits a single song', async () => {
     const result: SongUpdateResult = {
       songs: [],
@@ -58,7 +66,8 @@ describe('editSongForm.vue', () => {
     await h.type(screen.getByTestId('album-input'), 'Back in Black')
     await h.type(screen.getByTestId('disc-input'), '1')
     await h.type(screen.getByTestId('track-input'), '10')
-    await h.type(screen.getByTestId('genre-input'), 'Rock & Roll')
+    await h.user.click(screen.getByRole('button', { name: 'Remove Rock' }))
+    await h.type(screen.getByRole('combobox', { name: 'genre' }), 'Rock & Roll')
     await h.type(screen.getByTestId('year-input'), '1971')
     await h.type(screen.getByTestId('lyrics-input'), "I'm gonna make him an offer he can't refuse")
 
@@ -104,7 +113,7 @@ describe('editSongForm.vue', () => {
     await h.type(screen.getByTestId('disc-input'), '1')
     await h.type(screen.getByTestId('track-input'), '10')
     await h.type(screen.getByTestId('year-input'), '1990')
-    await h.type(screen.getByTestId('genre-input'), 'Pop')
+    await h.type(screen.getByRole('combobox', { name: 'genre' }), 'Pop')
 
     await h.user.click(screen.getByRole('button', { name: 'Update' }))
 
