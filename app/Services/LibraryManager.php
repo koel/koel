@@ -11,6 +11,7 @@ use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 use App\Repositories\SongRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -107,15 +108,8 @@ class LibraryManager
     public function prune(bool $dryRun = false): array
     {
         return DB::transaction(static function () use ($dryRun): array {
-            $albumQuery = Album::query()
-                ->leftJoin('songs', 'songs.album_id', '=', 'albums.id')
-                ->whereNull('songs.album_id');
-
-            $artistQuery = Artist::query()
-                ->leftJoin('songs', 'songs.artist_id', '=', 'artists.id')
-                ->leftJoin('albums', 'albums.artist_id', '=', 'artists.id')
-                ->whereNull('songs.artist_id')
-                ->whereNull('albums.artist_id');
+            $albumQuery = self::queryEmptyAlbums();
+            $artistQuery = self::queryEmptyArtists();
 
             $results = [
                 'albums' => $albumQuery->get('albums.*'),
@@ -131,5 +125,41 @@ class LibraryManager
 
             return $results;
         });
+    }
+
+    /**
+     * Delete the given songs' albums and artists if they have no songs left.
+     *
+     * @param Collection<int, Song> $songs
+     */
+    public function pruneAlbumsAndArtistsOfSongs(Collection $songs): void
+    {
+        DB::transaction(static function () use ($songs): void {
+            $albumQuery = self::queryEmptyAlbums()->whereIn('albums.id', $songs->pluck('album_id')->unique());
+            $emptyAlbums = $albumQuery->get('albums.*');
+            (new Album())->queueRemoveFromSearch($emptyAlbums);
+            $albumQuery->delete();
+
+            $artistIds = $songs->pluck('artist_id')->merge($emptyAlbums->pluck('artist_id'))->unique();
+            $artistQuery = self::queryEmptyArtists()->whereIn('artists.id', $artistIds);
+            (new Artist())->queueRemoveFromSearch($artistQuery->get('artists.*'));
+            $artistQuery->delete();
+        });
+    }
+
+    /** @return Builder<Album> */
+    private static function queryEmptyAlbums(): Builder
+    {
+        return Album::query()->leftJoin('songs', 'songs.album_id', '=', 'albums.id')->whereNull('songs.album_id');
+    }
+
+    /** @return Builder<Artist> */
+    private static function queryEmptyArtists(): Builder
+    {
+        return Artist::query()
+            ->leftJoin('songs', 'songs.artist_id', '=', 'artists.id')
+            ->leftJoin('albums', 'albums.artist_id', '=', 'artists.id')
+            ->whereNull('songs.artist_id')
+            ->whereNull('albums.artist_id');
     }
 }

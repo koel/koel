@@ -42,6 +42,7 @@ class SongService
         private readonly ImageStorage $imageStorage,
         private readonly CacheStrategy $cache,
         private readonly LibrarySummaryService $librarySummaryService,
+        private readonly LibraryManager $libraryManager,
     ) {}
 
     public function updateSongs(array $ids, SongUpdateData $data): SongUpdateResult
@@ -267,6 +268,7 @@ class SongService
         }
 
         (new Song())->queueRemoveFromSearch($songs);
+        $this->libraryManager->pruneAlbumsAndArtistsOfSongs($songs);
 
         Dispatcher::dispatch(new DeleteSongFilesJob($songs->map(SongFileInfo::fromSong(...))));
 

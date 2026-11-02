@@ -86,7 +86,7 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query()
             ->withoutEagerLoads()
             ->whereKey($ids)
-            ->select('songs.id', 'songs.path', 'songs.storage')
+            ->select('songs.id', 'songs.path', 'songs.storage', 'songs.album_id', 'songs.artist_id')
             ->get();
     }
 
