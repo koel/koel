@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it, vi } from 'vite-plus/test'
 import { fireEvent, screen } from '@testing-library/vue'
 import { ref } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
@@ -82,5 +82,16 @@ describe('tagInput.vue', () => {
     await fireEvent.keyDown(input, { key: 'Escape', isComposing: true })
 
     expect(tags.value).toEqual(['Rock'])
+  })
+
+  it('keeps a composing Escape from reaching its parents', async () => {
+    const { input } = renderComponent()
+    const parentKeydownListener = vi.fn()
+    document.body.addEventListener('keydown', parentKeydownListener)
+
+    await fireEvent.keyDown(input, { key: 'Escape', isComposing: true })
+
+    document.body.removeEventListener('keydown', parentKeydownListener)
+    expect(parentKeydownListener).not.toHaveBeenCalled()
   })
 })
