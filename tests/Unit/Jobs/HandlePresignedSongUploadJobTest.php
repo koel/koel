@@ -2,14 +2,18 @@
 
 namespace Tests\Unit\Jobs;
 
+use App\Enums\SongStorageType;
 use App\Exceptions\DuplicateSongUploadException;
 use App\Jobs\HandlePresignedSongUploadJob;
 use App\Models\DuplicateUpload;
+use App\Models\Song;
 use App\Repositories\AlbumRepository;
 use App\Repositories\SongRepository;
 use App\Responses\SongUploadDuplicatedResponse;
+use App\Responses\SongUploadFailedResponse;
 use App\Services\SongStorages\SongStorage;
 use App\Services\Upload\UploadService;
+use Exception;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Facades\Event;
 use Mockery;
@@ -40,13 +44,13 @@ class HandlePresignedSongUploadJobTest extends TestCase
         );
 
         $this->uploadService = Mockery::mock(UploadService::class);
-        $this->uploadService->expects('handleStoredUpload')->andThrow($this->duplicateException);
     }
 
     #[Test]
     public function broadcastAQueuedDuplicateInsteadOfFailing(): void
     {
         Event::fake(SongUploadDuplicatedResponse::class);
+        $this->uploadService->expects('handleStoredUpload')->andThrow($this->duplicateException);
 
         $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
         $job->setJob(Mockery::mock(Job::class));
@@ -65,10 +69,76 @@ class HandlePresignedSongUploadJobTest extends TestCase
     #[Test]
     public function rethrowADuplicateWhenRunInline(): void
     {
+        $this->uploadService->expects('handleStoredUpload')->andThrow($this->duplicateException);
+
         $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
 
         $this->expectExceptionObject($this->duplicateException);
 
         $job->handle($this->storage, $this->uploadService, app(SongRepository::class), app(AlbumRepository::class));
+    }
+
+    #[Test]
+    public function deleteTheStoredFileWhenTheLocalCopyFailsForGood(): void
+    {
+        Event::fake(SongUploadFailedResponse::class);
+
+        $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::S3]);
+        $storage->expects('getLocalPath')->andThrow(new Exception('Permission denied'));
+        $storage->expects('delete')->with('song.mp3');
+        $this->instance(SongStorage::class, $storage);
+
+        $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
+
+        try {
+            app()->call([$job, 'handle']);
+        } catch (Exception $e) {
+            $job->failed($e);
+        }
+
+        Event::assertDispatched(SongUploadFailedResponse::class);
+    }
+
+    #[Test]
+    public function keepADuplicateUploadWhenFailingForGood(): void
+    {
+        Event::fake(SongUploadFailedResponse::class);
+        DuplicateUpload::factory()->createOne(['location' => 's3://koel/song.mp3']);
+
+        $storage = Mockery::mock(SongStorage::class);
+        $storage->expects('delete')->never();
+        $this->instance(SongStorage::class, $storage);
+
+        $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
+        $job->failed(new Exception('Broadcast failed'));
+    }
+
+    #[Test]
+    public function keepAStoredSongFileWhenFailingForGood(): void
+    {
+        Event::fake(SongUploadFailedResponse::class);
+        Song::factory()->createOne(['path' => 's3://koel/song.mp3', 'storage' => SongStorageType::S3]);
+
+        $storage = Mockery::mock(SongStorage::class);
+        $storage->expects('delete')->never();
+        $this->instance(SongStorage::class, $storage);
+
+        $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
+        $job->failed(new Exception('Broadcast failed'));
+    }
+
+    #[Test]
+    public function stillReportTheFailureWhenTheStoredFileCannotBeDeleted(): void
+    {
+        Event::fake(SongUploadFailedResponse::class);
+
+        $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::S3]);
+        $storage->expects('delete')->andThrow(new Exception('Not found'));
+        $this->instance(SongStorage::class, $storage);
+
+        $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
+        $job->failed(new Exception('Permission denied'));
+
+        Event::assertDispatched(SongUploadFailedResponse::class);
     }
 }

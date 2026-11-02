@@ -6,6 +6,8 @@ use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\DuplicateUploadRepository;
+use App\Repositories\SongRepository;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\Concerns\ScansAndStoresSong;
 use App\Services\LibrarySummaryService;
@@ -14,6 +16,7 @@ use App\Services\SongService;
 use App\Services\SongStorages\Contracts\MustDeleteTemporaryLocalFileAfterUpload;
 use App\Services\SongStorages\SongStorage;
 use App\Services\Transcoding\TranscodeOnScan;
+use App\Values\Song\SongFileInfo;
 use App\Values\UploadReference;
 use Illuminate\Support\Facades\File;
 use Throwable;
@@ -30,6 +33,8 @@ class UploadService
         private readonly TranscodeOnScan $transcodeOnScan,
         private readonly AnalyzeAudioOnScan $analyzeAudioOnScan,
         private readonly LibrarySummaryService $librarySummaryService,
+        private readonly SongRepository $songRepository,
+        private readonly DuplicateUploadRepository $duplicateUploadRepository,
     ) {}
 
     public function handleUpload(string $filePath, User $uploader): Song
@@ -68,5 +73,18 @@ class UploadService
                 File::delete($uploadReference->localPath);
             }
         }
+    }
+
+    public function discardFailedStoredUpload(string $location): void
+    {
+        $isKept =
+            $this->songRepository->findOneByPath($location)
+            || $this->duplicateUploadRepository->existsAtLocation($location);
+
+        if ($isKept) {
+            return;
+        }
+
+        $this->storage->delete(SongFileInfo::fromLocation($location, $this->storage->getStorageType())->location);
     }
 }
