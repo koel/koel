@@ -1,5 +1,6 @@
 export const Action = {
   APPLICATION_CREATED: 'application-created',
+  QUEUE_ENDED: 'queue-ended',
 } as const
 
 export const Filter = {
