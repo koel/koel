@@ -62,6 +62,16 @@ describe('addPasskeyForm.vue', () => {
     expect(addMock).toHaveBeenCalledWith('MacBook', {})
   })
 
+  it('needs no proof from a user without a password or passkeys', async () => {
+    h.actingAsUser(h.factory('user').state('current').make({ has_password: false }) as CurrentUser)
+    const addMock = h.mock(passkeyService, 'add').mockResolvedValue(passkey)
+    renderComponent()
+
+    await fillIn('MacBook')
+
+    expect(addMock).toHaveBeenCalledWith('MacBook', {})
+  })
+
   it('stays quiet when the passkey prompt is dismissed', async () => {
     h.actingAsUser()
     h.mock(passkeyService, 'add').mockRejectedValue(new DOMException('Dismissed', 'NotAllowedError'))

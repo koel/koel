@@ -178,7 +178,7 @@ class PasskeyService
 
     private static function hasNothingToConfirmWith(User $user): bool
     {
-        return $user->sso_provider && !$user->hasPasskeysEnabled();
+        return ($user->sso_provider || $user->password === null) && !$user->hasPasskeysEnabled();
     }
 
     private static function ensureOriginIsAllowed(PublicKeyCredential $credential, string $rejectionMessage): void

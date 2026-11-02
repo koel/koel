@@ -178,6 +178,12 @@ class PasskeyTest extends TestCase
     }
 
     #[Test]
+    public function getRegistrationOptionsAsUserWithoutPasswordOrPasskeys(): void
+    {
+        $this->postAs('api/me/passkeys/registration-options', [], create_user(['password' => null]))->assertOk();
+    }
+
+    #[Test]
     public function registerPasskeyWithoutRegistrationOptions(): void
     {
         $this->postAs('api/me/passkeys', [
