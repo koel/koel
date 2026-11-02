@@ -4,6 +4,7 @@ namespace Tests\Unit\Jobs;
 
 use App\Enums\SongStorageType;
 use App\Exceptions\DuplicateSongUploadException;
+use App\Exceptions\SongUploadFailedException;
 use App\Jobs\HandlePresignedSongUploadJob;
 use App\Models\DuplicateUpload;
 use App\Models\Song;
@@ -13,8 +14,10 @@ use App\Responses\SongUploadDuplicatedResponse;
 use App\Responses\SongUploadFailedResponse;
 use App\Services\SongStorages\SongStorage;
 use App\Services\Upload\UploadService;
+use ErrorException;
 use Exception;
 use Illuminate\Contracts\Queue\Job;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Mockery;
 use Mockery\MockInterface;
@@ -98,6 +101,46 @@ class HandlePresignedSongUploadJobTest extends TestCase
         }
 
         Event::assertDispatched(SongUploadFailedResponse::class);
+    }
+
+    #[Test]
+    public function hideAnInternalErrorFromTheUploader(): void
+    {
+        Event::fake(SongUploadFailedResponse::class);
+        $this->instance(SongStorage::class, Mockery::spy(SongStorage::class, [
+            'getStorageType' => SongStorageType::S3,
+        ]));
+
+        $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
+        $job->setJob(Mockery::mock(Job::class));
+        $job->failed(SongUploadFailedException::make(new ErrorException('copy(https://bucket.host/key): Failed')));
+
+        Event::assertDispatched(
+            SongUploadFailedResponse::class,
+            static fn (SongUploadFailedResponse $response): bool => (
+                Arr::get($response->toArray(), 'message') === 'The file could not be processed.'
+            ),
+        );
+    }
+
+    #[Test]
+    public function showAUserFacingErrorToTheUploader(): void
+    {
+        Event::fake(SongUploadFailedResponse::class);
+        $this->instance(SongStorage::class, Mockery::spy(SongStorage::class, [
+            'getStorageType' => SongStorageType::S3,
+        ]));
+
+        $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
+        $job->setJob(Mockery::mock(Job::class));
+        $job->failed(SongUploadFailedException::make('The uploaded file could not be stored.'));
+
+        Event::assertDispatched(
+            SongUploadFailedResponse::class,
+            static fn (SongUploadFailedResponse $response): bool => (
+                Arr::get($response->toArray(), 'message') === 'The uploaded file could not be stored.'
+            ),
+        );
     }
 
     #[Test]

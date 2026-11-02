@@ -29,6 +29,11 @@ class SongUploadFailedException extends RuntimeException implements ShouldntRepo
         return self::fromErrorMessage($error);
     }
 
+    public function hasUserFacingMessage(): bool
+    {
+        return !$this->getPrevious();
+    }
+
     public function render(): JsonResponse
     {
         return response()->json(['message' => $this->getMessage()], Response::HTTP_BAD_REQUEST);
