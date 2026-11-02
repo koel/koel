@@ -672,6 +672,7 @@ interface HookSlotNames {
   'sidebar.footer': true
   'screen.header': true
   'accept-invitation-form.footer': true
+  'login-form.footer': true
   'profile-tab.footer': true
 }
 
