@@ -23,6 +23,8 @@ import { crossfadeService } from '@/services/crossfadeService'
 import { volumeManager } from '@/services/volumeManager'
 import { useBranding } from '@/composables/useBranding'
 import { usePageTitle } from '@/composables/usePageTitle'
+import { Action } from '@/config/hooks'
+import { addAction, removeAction } from '@/hooks'
 
 describe('playbackService', () => {
   const h = createHarness({
@@ -671,6 +673,46 @@ describe('playbackService', () => {
     await playbackService.playNext()
 
     expect(stopMock).toHaveBeenCalled()
+  })
+
+  it('announces the end of the queue with the last playable when repeat is off', async () => {
+    const lastSong = setCurrentSong()
+    h.setReadOnlyProperty(playbackService, 'next', undefined)
+    preferences.temporary.repeat_mode = 'NO_REPEAT'
+    h.mock(playbackService, 'stop')
+    const listener = vi.fn()
+    const handle = addAction(Action.QUEUE_ENDED, listener)
+
+    await playbackService.playNext()
+
+    removeAction(handle)
+    expect(listener).toHaveBeenCalledWith(lastSong)
+  })
+
+  it('does not announce the end of the queue when nothing was playing', async () => {
+    queueStore.state.playables = reactive([])
+    h.setReadOnlyProperty(playbackService, 'next', undefined)
+    preferences.temporary.repeat_mode = 'NO_REPEAT'
+    h.mock(playbackService, 'stop')
+    const listener = vi.fn()
+    const handle = addAction(Action.QUEUE_ENDED, listener)
+
+    await playbackService.playNext()
+
+    removeAction(handle)
+    expect(listener).not.toHaveBeenCalled()
+  })
+
+  it('does not announce the end of the queue when there is a next playable', async () => {
+    h.setReadOnlyProperty(playbackService, 'next', h.factory('song').make())
+    h.mock(playbackService, 'play')
+    const listener = vi.fn()
+    const handle = addAction(Action.QUEUE_ENDED, listener)
+
+    await playbackService.playNext()
+
+    removeAction(handle)
+    expect(listener).not.toHaveBeenCalled()
   })
 
   it('plays the next playable', async () => {

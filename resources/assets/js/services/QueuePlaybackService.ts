@@ -23,6 +23,8 @@ import { encyclopediaService } from '@/services/encyclopediaService'
 import { volumeManager } from '@/services/volumeManager'
 import { useBranding } from '@/composables/useBranding'
 import { usePageTitle } from '@/composables/usePageTitle'
+import { Action } from '@/config/hooks'
+import { doAction } from '@/hooks'
 
 /**
  * The number of seconds before the current playable ends to start preloading the next one.
@@ -282,7 +284,9 @@ export class QueuePlaybackService extends BasePlaybackService {
    */
   public async playNext() {
     if (!this.next && preferences.repeat_mode === 'NO_REPEAT') {
+      const lastPlayable = queueStore.current
       await this.stop() //  Nothing lasts forever, even cold November rain.
+      lastPlayable && doAction(Action.QUEUE_ENDED, lastPlayable)
     } else {
       this.next && (await this.play(this.next))
     }
