@@ -16,6 +16,7 @@ export const Filter = {
   SELECTED_UPLOADS: 'selected-uploads',
   PLAYABLE_CONTEXT_MENU_SECTIONS: 'playable-context-menu-sections',
   FORGOT_PASSWORD_URL: 'forgot-password-url',
+  PREFERENCE_ROWS: 'preference-rows',
 } as const
 
 export type ActionName = (typeof Action)[keyof typeof Action]

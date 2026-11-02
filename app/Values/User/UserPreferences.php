@@ -63,6 +63,9 @@ final class UserPreferences implements Arrayable, JsonSerializable
     /** @var Collection<int, class-string<Preference>>|null */
     private static ?Collection $discoveredClasses = null;
 
+    /** @var list<class-string<Preference>> */
+    private static array $registeredClasses = [];
+
     /** @param Collection<string, Preference> $preferences */
     private function __construct(
         private Collection $preferences,
@@ -97,6 +100,28 @@ final class UserPreferences implements Arrayable, JsonSerializable
         $preference = $this->preferenceByProperty($property);
 
         return $preference !== null && $preference->getValue() !== null;
+    }
+
+    /** @param class-string<Preference> $class */
+    public static function register(string $class): void
+    {
+        Assert::false((new ReflectionClass($class))->isAbstract(), "{$class} is abstract");
+
+        if (in_array($class, self::$registeredClasses, true)) {
+            return;
+        }
+
+        $key = (new $class())->getKey();
+        Assert::null(self::classByKey($key), "Preference key already in use: {$key}");
+
+        self::$registeredClasses[] = $class;
+        self::$discoveredClasses = null;
+    }
+
+    public static function forgetRegisteredPreferences(): void
+    {
+        self::$registeredClasses = [];
+        self::$discoveredClasses = null;
     }
 
     public static function customizable(string $key): bool
@@ -163,6 +188,8 @@ final class UserPreferences implements Arrayable, JsonSerializable
                     is_subclass_of($candidate, Preference::class) && !(new ReflectionClass($candidate))->isAbstract()
                 ),
             )
+            ->merge(self::$registeredClasses)
+            ->unique()
             ->values();
 
         self::$discoveredClasses = $classes;

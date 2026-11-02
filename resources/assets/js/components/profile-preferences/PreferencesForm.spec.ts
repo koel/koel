@@ -1,12 +1,36 @@
 import { screen } from '@testing-library/vue'
-import { describe, expect, it } from 'vite-plus/test'
+import { afterEach, describe, expect, it } from 'vite-plus/test'
+import { defineComponent } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import { Filter } from '@/config/hooks'
+import { addFilter, type HookHandle, removeFilter } from '@/hooks'
 import { commonStore } from '@/stores/commonStore'
 import { preferenceStore as preferences } from '@/stores/preferenceStore'
-import Component from './PreferencesForm.vue'
+import Component, { type PreferenceRow } from './PreferencesForm.vue'
 
 describe('preferencesForm', () => {
   const h = createHarness()
+
+  let handle: HookHandle | null = null
+
+  afterEach(() => {
+    if (handle) {
+      removeFilter(handle)
+      handle = null
+    }
+  })
+
+  it('renders rows added through the preference rows filter', () => {
+    const ExtensionRow = defineComponent({ template: '<p data-testid="extension-row" />' })
+    handle = addFilter<PreferenceRow[]>(Filter.PREFERENCE_ROWS, rows => [
+      ...rows,
+      { id: 'extension', component: ExtensionRow },
+    ])
+
+    h.render(Component)
+
+    screen.getByTestId('extension-row')
+  })
 
   it('has "Transcode on mobile" option if supported', () => {
     commonStore.state.supports_transcoding = true

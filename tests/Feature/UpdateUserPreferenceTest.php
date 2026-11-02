@@ -2,13 +2,45 @@
 
 namespace Tests\Feature;
 
+use App\Values\User\UserPreferences;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Fakes\FakeExtensionPreference;
 use Tests\TestCase;
 
 use function Tests\create_user;
 
 class UpdateUserPreferenceTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        UserPreferences::forgetRegisteredPreferences();
+
+        parent::tearDown();
+    }
+
+    #[Test]
+    public function saveARegisteredPreference(): void
+    {
+        UserPreferences::register(FakeExtensionPreference::class);
+        $user = create_user();
+
+        $this->patchAs('api/me/preferences', ['key' => 'fake_extension', 'value' => false], $user)->assertNoContent();
+
+        self::assertFalse($user->refresh()->preferences->toArray()['fake_extension']);
+    }
+
+    #[Test]
+    public function refuseToSaveAnUnknownPreference(): void
+    {
+        $user = create_user();
+
+        $this->patchAs(
+            'api/me/preferences',
+            ['key' => 'fake_extension', 'value' => false],
+            $user,
+        )->assertUnprocessable();
+    }
+
     #[Test]
     public function saveACustomizablePreference(): void
     {

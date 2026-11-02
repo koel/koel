@@ -25,6 +25,20 @@ describe('preferenceStore', () => {
     expect(mock).not.toHaveBeenCalled()
   })
 
+  it('proxies preferences that only the server knows about', async () => {
+    preferenceStore.init({ ...defaultPreferences, extension_feature_enabled: false })
+    const mock = h.mock(http, 'patch')
+
+    expect(preferenceStore.extension_feature_enabled).toBe(false)
+
+    preferenceStore.extension_feature_enabled = true
+
+    expect(preferenceStore.get('extension_feature_enabled')).toBe(true)
+    await vi.waitFor(() =>
+      expect(mock).toHaveBeenCalledWith('me/preferences', { key: 'extension_feature_enabled', value: true }),
+    )
+  })
+
   it('returns preference values', () => {
     const mock = h.mock(http, 'patch')
     preferenceStore.set('volume', 4.2)
