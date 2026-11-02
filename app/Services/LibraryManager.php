@@ -136,10 +136,12 @@ class LibraryManager
     {
         DB::transaction(static function () use ($songs): void {
             $albumQuery = self::queryEmptyAlbums()->whereIn('albums.id', $songs->pluck('album_id')->unique());
-            (new Album())->queueRemoveFromSearch($albumQuery->get('albums.*'));
+            $emptyAlbums = $albumQuery->get('albums.*');
+            (new Album())->queueRemoveFromSearch($emptyAlbums);
             $albumQuery->delete();
 
-            $artistQuery = self::queryEmptyArtists()->whereIn('artists.id', $songs->pluck('artist_id')->unique());
+            $artistIds = $songs->pluck('artist_id')->merge($emptyAlbums->pluck('artist_id'))->unique();
+            $artistQuery = self::queryEmptyArtists()->whereIn('artists.id', $artistIds);
             (new Artist())->queueRemoveFromSearch($artistQuery->get('artists.*'));
             $artistQuery->delete();
         });

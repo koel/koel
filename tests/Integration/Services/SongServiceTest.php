@@ -258,6 +258,23 @@ class SongServiceTest extends TestCase
     }
 
     #[Test]
+    public function deleteSongsRemovesTheEmptyAlbumArtistOfACompilation(): void
+    {
+        Event::fake(LibraryChanged::class);
+        Dispatcher::shouldReceive('dispatch');
+
+        $compilation = Album::factory()->createOne();
+        $albumArtist = $compilation->artist;
+        $trackArtist = Artist::factory()->createOne();
+        $song = Song::factory()->for($compilation)->for($trackArtist)->createOne();
+
+        $this->service->deleteSongs([$song->id]);
+
+        $this->assertModelMissing($albumArtist);
+        $this->assertModelMissing($trackArtist);
+    }
+
+    #[Test]
     public function deleteSongsRefreshesTheSongCount(): void
     {
         $user = create_user();
