@@ -7,6 +7,8 @@ use App\Exceptions\DuplicateSongUploadException;
 use App\Exceptions\SongUploadFailedException;
 use App\Models\DuplicateUpload;
 use App\Models\Song;
+use App\Repositories\DuplicateUploadRepository;
+use App\Repositories\SongRepository;
 use App\Services\AudioAnalysis\AnalyzeAudioOnScan;
 use App\Services\LibrarySummaryService;
 use App\Services\Scanners\FileScanner;
@@ -56,6 +58,8 @@ class UploadServiceTest extends TestCase
             new TranscodeOnScan(app(LocalStorage::class)),
             new AnalyzeAudioOnScan(),
             $this->librarySummaryService,
+            app(SongRepository::class),
+            app(DuplicateUploadRepository::class),
         );
     }
 
@@ -153,6 +157,8 @@ class UploadServiceTest extends TestCase
             $transcodeOnScan,
             $analyzeAudioOnScan,
             $this->librarySummaryService,
+            app(SongRepository::class),
+            app(DuplicateUploadRepository::class),
         );
 
         $service->handleUpload('/tmp/song.flac', create_user());

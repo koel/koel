@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Exceptions\DuplicateSongUploadException;
+use App\Exceptions\SongUploadFailedException;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
@@ -61,10 +62,25 @@ class HandlePresignedSongUploadJob extends QueuedJob
 
     public function failed(Throwable $exception): void
     {
+        rescue(function (): void {
+            app(UploadService::class)->discardFailedStoredUpload($this->location);
+        });
+
+        if (!$this->wasQueued()) {
+            return;
+        }
+
         broadcast(SongUploadFailedResponse::make(
             uploader: $this->uploader,
             uploadKey: $this->uploadKey,
-            message: $exception->getMessage(),
+            message: self::describeFailureToUploader($exception),
         ));
+    }
+
+    private static function describeFailureToUploader(Throwable $exception): string
+    {
+        return $exception instanceof SongUploadFailedException
+            ? $exception->getUserFacingMessage()
+            : SongUploadFailedException::GENERIC_USER_FACING_MESSAGE;
     }
 }

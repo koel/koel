@@ -10,8 +10,12 @@ use Throwable;
 
 class SongUploadFailedException extends RuntimeException implements ShouldntReport
 {
+    public const string GENERIC_USER_FACING_MESSAGE = 'The file could not be processed.';
+
     private static function fromThrowable(Throwable $e): self
     {
+        report($e);
+
         return new self($e->getMessage(), $e->getCode(), $e);
     }
 
@@ -29,8 +33,13 @@ class SongUploadFailedException extends RuntimeException implements ShouldntRepo
         return self::fromErrorMessage($error);
     }
 
+    public function getUserFacingMessage(): string
+    {
+        return $this->getPrevious() ? self::GENERIC_USER_FACING_MESSAGE : $this->getMessage();
+    }
+
     public function render(): JsonResponse
     {
-        return response()->json(['message' => $this->getMessage()], Response::HTTP_BAD_REQUEST);
+        return response()->json(['message' => $this->getUserFacingMessage()], Response::HTTP_BAD_REQUEST);
     }
 }
