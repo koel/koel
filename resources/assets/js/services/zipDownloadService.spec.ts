@@ -172,6 +172,23 @@ describe('zipDownloadService', () => {
     expect(zipDownloadService.state.status).toBe('ready')
     expect(zipDownloadService.state.archiveName).toBe('My Mix.zip')
     expect(zipDownloadService.state.bytesDone).toBe(15)
+    expect(zipDownloadService.state.itemsDone).toBe(3)
+    expect(zipDownloadService.state.itemsTotal).toBe(3)
+  })
+
+  it('measures progress in bytes only when every size is known', async () => {
+    stubPrivateStorage()
+    stubSongDownloads()
+
+    await zipDownloadService.start([makeSong(), makeSong()], 'Known', 'none')
+    await zipDownloadService.building
+
+    expect(zipDownloadService.state.allSizesKnown).toBe(true)
+
+    await zipDownloadService.start([makeSong(), makeSong({ file_size: null })], 'Unknown', 'none')
+    await zipDownloadService.building
+
+    expect(zipDownloadService.state.allSizesKnown).toBe(false)
   })
 
   it('downloads each song with one authenticated request', async () => {
