@@ -14,6 +14,7 @@ use App\Services\PublicStorageLinker;
 use App\Services\PwaManifestService;
 use App\Services\SettingService;
 use Illuminate\Console\Command;
+use Illuminate\Console\View\TaskResult;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -438,10 +439,10 @@ class InitCommand extends Command
 
     private function announceUpdate(): void
     {
-        $this->components->task('Announcing the update to open tabs', static function (): bool {
+        $this->components->task('Announcing the update to open tabs', static function (): int {
             $exitCode = rescue(static fn () => Artisan::call('koel:announce-update', ['--quiet' => true]));
 
-            return $exitCode === self::SUCCESS;
+            return $exitCode === self::SUCCESS ? TaskResult::Success->value : TaskResult::Failure->value;
         });
     }
 }
