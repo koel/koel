@@ -45,13 +45,17 @@ describe('useZipDownloadToast', () => {
     await h.tick()
   }
 
-  const startZipping = async () => {
+  const startZipping = async (progress: Partial<typeof state> = {}) => {
     let finishBuilding!: () => void
     zipDownloadService.building = new Promise(resolve => (finishBuilding = resolve))
     Object.assign(state, {
       status: 'zipping',
       bytesDone: 25,
       bytesTotal: 100,
+      itemsDone: 1,
+      itemsTotal: 2,
+      allSizesKnown: true,
+      ...progress,
     })
     await h.tick()
 
@@ -78,6 +82,13 @@ describe('useZipDownloadToast', () => {
     await h.tick()
 
     expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('50')
+  })
+
+  it('shows the progress by finished items when a size is unknown', async () => {
+    await renderToaster()
+    await startZipping({ bytesDone: 500, itemsDone: 1, itemsTotal: 4, allSizesKnown: false })
+
+    expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('25')
   })
 
   it('cancels after the user confirms', async () => {

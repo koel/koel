@@ -91,6 +91,8 @@ const getFileSize = (playable: Playable) => (playable.type === 'songs' ? (playab
 export const getTotalBytes = (playables: Playable[]) =>
   playables.reduce((total, playable) => total + getFileSize(playable), 0)
 
+const hasKnownFileSize = (playable: Playable) => playable.type === 'songs' && playable.file_size != null
+
 const getDownloadUrl = (playable: Playable) => `${window.KOEL.base_url}download/songs?songs[]=${playable.id}`
 
 const countBytesInto = (onBytes: (count: number) => void) =>
@@ -107,6 +109,9 @@ export const zipDownloadService = {
     archiveName: '',
     bytesDone: 0,
     bytesTotal: 0,
+    itemsDone: 0,
+    itemsTotal: 0,
+    allSizesKnown: true,
     error: '',
     fileUrl: null as string | null,
   }),
@@ -144,6 +149,9 @@ export const zipDownloadService = {
       archiveName: `${toSafeFileName(archiveName)}.zip`,
       bytesDone: 0,
       bytesTotal: getTotalBytes(playables),
+      itemsDone: 0,
+      itemsTotal: playables.length,
+      allSizesKnown: playables.every(hasKnownFileSize),
       error: '',
     })
 
@@ -242,6 +250,8 @@ export const zipDownloadService = {
         response.body.pipeThrough(countBytesInto(count => (this.state.bytesDone += count))),
         { level: 0, signal },
       )
+
+      this.state.itemsDone++
     } catch (error: unknown) {
       if (signal.aborted) {
         throw error
@@ -291,6 +301,8 @@ export const zipDownloadService = {
       error: '',
       bytesDone: 0,
       bytesTotal: 0,
+      itemsDone: 0,
+      itemsTotal: 0,
     })
   },
 }

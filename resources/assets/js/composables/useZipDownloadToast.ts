@@ -10,7 +10,13 @@ export const useZipDownloadToast = () => {
 
   let currentToastId: string | null = null
 
-  const progress = computed(() => (state.bytesTotal ? Math.min(100, (state.bytesDone / state.bytesTotal) * 100) : 0))
+  const progress = computed(() => {
+    const [done, total] = state.allSizesKnown
+      ? [state.bytesDone, state.bytesTotal]
+      : [state.itemsDone, state.itemsTotal]
+
+    return total ? Math.min(100, (done / total) * 100) : 0
+  })
 
   const confirmCancel = async () => {
     if (await showConfirmDialog('Cancel the download?')) {
