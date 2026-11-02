@@ -1,6 +1,8 @@
 import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { Filter } from '@/config/hooks'
+import { addFilter, removeFilter } from '@/hooks'
 import { authService } from '@/services/authService'
 import { logger } from '@/utils/logger'
 import Component from './CredentialsLoginForm.vue'
@@ -80,6 +82,20 @@ describe('credentialsLoginForm.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Forgot password?' }))
 
     expect(emitted().forgotPassword).toBeTruthy()
+  })
+
+  it('links forgot password to the filtered URL with the typed email', async () => {
+    const handle = addFilter<string | null>(Filter.FORGOT_PASSWORD_URL, () => 'https://example.com/reset?ref=login')
+    h.render(Component)
+
+    await h.type(screen.getByPlaceholderText('Your email address'), 'john@doe.com')
+
+    expect(screen.queryByRole('button', { name: 'Forgot password?' })).toBeNull()
+    expect(screen.getByRole('link', { name: 'Forgot password?' }).getAttribute('href')).toBe(
+      'https://example.com/reset?ref=login&email=john%40doe.com',
+    )
+
+    removeFilter(handle)
   })
 
   it('hides the forgot-password link when the mailer is not configured', () => {
