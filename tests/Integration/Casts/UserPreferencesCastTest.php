@@ -12,6 +12,13 @@ use function Tests\create_user;
 
 class UserPreferencesCastTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        UserPreferences::forgetRegisteredPreferences();
+    }
+
     #[Test]
     public function serializedArrayContainsExactlyTheRegisteredPreferenceKeys(): void
     {
