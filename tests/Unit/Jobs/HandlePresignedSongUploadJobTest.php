@@ -113,7 +113,7 @@ class HandlePresignedSongUploadJobTest extends TestCase
 
         $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
         $job->setJob(Mockery::mock(Job::class));
-        $job->failed(SongUploadFailedException::make(new ErrorException('copy(https://bucket.host/key): Failed')));
+        $job->failed(new ErrorException('copy(https://bucket.host/key): Failed'));
 
         Event::assertDispatched(
             SongUploadFailedResponse::class,
