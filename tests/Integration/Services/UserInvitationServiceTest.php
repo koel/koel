@@ -97,4 +97,16 @@ class UserInvitationServiceTest extends TestCase
         self::assertNotNull($user->invitation_accepted_at);
         self::assertTrue(Hash::check('SuperSecretPassword', $user->password));
     }
+
+    #[Test]
+    public function acceptWithoutPassword(): void
+    {
+        $admin = create_admin();
+        $prospect = User::factory()->for($admin, 'invitedBy')->admin()->prospect()->createOne();
+
+        $user = $this->service->accept($prospect->invitation_token, 'Bruce Dickinson', null);
+
+        self::assertFalse($user->is_prospect);
+        self::assertNull($user->password);
+    }
 }

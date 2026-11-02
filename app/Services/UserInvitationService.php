@@ -75,7 +75,7 @@ class UserInvitationService
         string $token,
         string $name,
         #[SensitiveParameter]
-        string $password,
+        ?string $password,
     ): User {
         $user = $this->getUserProspectByToken($token);
 
