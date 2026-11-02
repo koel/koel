@@ -101,6 +101,7 @@ export const useCursorPaginatedList = <Item extends { favorite: boolean }, SortF
     showSkeletons,
     loadingMore,
     fetchMore,
+    reload: refetchFromStart,
     sort,
     toggleFavoritesOnly,
   }

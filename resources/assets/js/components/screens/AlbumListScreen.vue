@@ -17,6 +17,16 @@
             <ListFilter :icon="faSearch" label="Search" />
 
             <ViewModeSwitch v-model="preferences.albums_view_mode" secondary="table" />
+            <button
+              v-koel-tooltip
+              :disabled="loading"
+              class="px-3.5 py-2 border rounded-md border-k-fg-10 disabled:opacity-50"
+              title="Reload"
+              type="button"
+              @click.prevent="reload"
+            >
+              <Icon :icon="faRotateRight" />
+            </button>
           </div>
         </template>
       </ScreenHeader>
@@ -89,7 +99,7 @@
 </template>
 
 <script lang="ts" setup>
-import { faCompactDisc, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faCompactDisc, faSearch, faRotateRight } from '@fortawesome/free-solid-svg-icons'
 import { computed, onMounted, ref, toRef } from 'vue'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
@@ -120,6 +130,7 @@ const {
   showSkeletons,
   loadingMore,
   fetchMore: fetchAlbums,
+  reload,
   sort,
   toggleFavoritesOnly,
 } = useCursorPaginatedList({
