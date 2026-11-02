@@ -286,7 +286,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     if (!this.next && preferences.repeat_mode === 'NO_REPEAT') {
       const lastPlayable = queueStore.current
       await this.stop() //  Nothing lasts forever, even cold November rain.
-      doAction(Action.QUEUE_ENDED, lastPlayable)
+      lastPlayable && doAction(Action.QUEUE_ENDED, lastPlayable)
     } else {
       this.next && (await this.play(this.next))
     }
