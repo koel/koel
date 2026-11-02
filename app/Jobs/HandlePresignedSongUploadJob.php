@@ -65,6 +65,10 @@ class HandlePresignedSongUploadJob extends QueuedJob
             app(UploadService::class)->discardFailedStoredUpload($this->location);
         });
 
+        if (!$this->wasQueued()) {
+            return;
+        }
+
         broadcast(SongUploadFailedResponse::make(
             uploader: $this->uploader,
             uploadKey: $this->uploadKey,

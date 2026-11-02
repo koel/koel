@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Throwable;
+
 class Dispatcher
 {
     /**
@@ -28,6 +30,14 @@ class Dispatcher
         // Otherwise, we call the job's `handle` method directly, providing the necessary dependencies
         // and returning the result. This allows the caller (like a controller) to grab the result
         // and e.g., return it as a response.
-        return app()->call([$job, 'handle']);
+        try {
+            return app()->call([$job, 'handle']);
+        } catch (Throwable $e) {
+            if (method_exists($job, 'failed')) {
+                $job->failed($e);
+            }
+
+            throw $e;
+        }
     }
 }

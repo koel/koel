@@ -89,6 +89,7 @@ class HandlePresignedSongUploadJobTest extends TestCase
         $this->instance(SongStorage::class, $storage);
 
         $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
+        $job->setJob(Mockery::mock(Job::class));
 
         try {
             app()->call([$job, 'handle']);
@@ -137,8 +138,24 @@ class HandlePresignedSongUploadJobTest extends TestCase
         $this->instance(SongStorage::class, $storage);
 
         $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
+        $job->setJob(Mockery::mock(Job::class));
         $job->failed(new Exception('Permission denied'));
 
         Event::assertDispatched(SongUploadFailedResponse::class);
+    }
+
+    #[Test]
+    public function skipTheFailureBroadcastWhenRunInline(): void
+    {
+        Event::fake(SongUploadFailedResponse::class);
+
+        $storage = Mockery::mock(SongStorage::class, ['getStorageType' => SongStorageType::S3]);
+        $storage->expects('delete')->with('song.mp3');
+        $this->instance(SongStorage::class, $storage);
+
+        $job = new HandlePresignedSongUploadJob('s3://koel/song.mp3', 'pending/song.mp3', create_user());
+        $job->failed(new Exception('Permission denied'));
+
+        Event::assertNotDispatched(SongUploadFailedResponse::class);
     }
 }

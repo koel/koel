@@ -5,6 +5,8 @@ namespace Tests\Integration\Services;
 use App\Services\Dispatcher;
 use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
+use Tests\Fakes\FailingFakeJob;
 use Tests\Fakes\FakeJob;
 use Tests\TestCase;
 
@@ -45,6 +47,19 @@ class DispatcherTest extends TestCase
         self::assertSame('Job executed', $result);
 
         Bus::assertNotDispatched(FakeJob::class);
+    }
+
+    #[Test]
+    public function reportTheFailureOfAJobExecutedSynchronously(): void
+    {
+        $job = new FailingFakeJob();
+
+        try {
+            app(Dispatcher::class)->dispatch($job);
+            self::fail('The job failure was not rethrown.');
+        } catch (RuntimeException $e) {
+            self::assertSame($e, $job->failure);
+        }
     }
 
     protected function tearDown(): void
