@@ -72,6 +72,7 @@ class InitCommand extends Command
             $this->maybeCompileFrontEndAssets();
             $this->removeLegacyManifests();
             $this->tryInstallingScheduler();
+            $this->announceUpdate();
         } catch (Throwable $e) {
             Log::error($e);
 
@@ -432,6 +433,13 @@ class InitCommand extends Command
     {
         $this->components->task('Removing legacy manifests', function (): void {
             $this->pwaManifestService->removeUncustomizedLegacyFiles();
+        });
+    }
+
+    private function announceUpdate(): void
+    {
+        $this->components->task('Announcing the update to open tabs', static function (): void {
+            rescue(static fn () => Artisan::call('koel:announce-update', ['--quiet' => true]));
         });
     }
 }

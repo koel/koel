@@ -3,6 +3,7 @@ import NProgress from 'nprogress'
 import type { ServerValidationError } from '@/utils/formatters'
 import { authService } from '@/services/authService'
 import { eventBus } from '@/utils/eventBus'
+import { announceIfBuildChanged } from '@/utils/deployment'
 
 export { HTTPError }
 
@@ -49,11 +50,7 @@ class Http {
             const token = response.headers.get('authorization')
             token && authService.setApiToken(token)
 
-            const build = response.headers.get('x-koel-build')
-
-            if (build && window.KOEL.build && build !== window.KOEL.build) {
-              eventBus.emit('NEW_VERSION_DEPLOYED')
-            }
+            announceIfBuildChanged(response.headers.get('x-koel-build'))
           },
         ],
         beforeError: [

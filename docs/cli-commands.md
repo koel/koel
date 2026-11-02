@@ -76,6 +76,16 @@ php artisan koel:admin:set-user-role <email>
 |---------|-------------------|
 | `email` | The user's email. |
 
+### `koel:announce-update`
+
+Let open Koel tabs know that a new version has been deployed. `koel:init` runs it for you.
+
+#### Usage
+
+```bash
+php artisan koel:announce-update
+```
+
 ### `koel:clean-up-temp-files`
 
 Remove temporary files older than a certain age. Examples of temporary files include temporarily downloaded files,
