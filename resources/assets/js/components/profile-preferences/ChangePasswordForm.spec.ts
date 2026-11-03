@@ -34,9 +34,22 @@ describe('changePasswordForm.vue', () => {
     await waitFor(() => screen.getByTestId('current-password'))
   })
 
-  it('hides the form for SSO users', () => {
-    h.actingAsUser(h.factory('user').make({ sso_provider: 'Google' }) as CurrentUser).render(Component)
+  it('lets a single sign-on user set a password', async () => {
+    const changeMock = h.mock(authService, 'changePassword')
+    const user = h.factory('user').make({ sso_provider: 'Google', has_password: false }) as CurrentUser
 
-    expect(screen.queryByTestId('change-password-form')).toBeNull()
+    h.actingAsUser(user).render(Component)
+
+    await h.type(screen.getByTestId('new-password'), 'new-secret-1234')
+    await h.user.click(screen.getByRole('button', { name: 'Set Password' }))
+
+    expect(changeMock).toHaveBeenCalledWith(undefined, 'new-secret-1234')
+  })
+
+  it('hides the form for reverse proxy users', () => {
+    h.actingAsUser(h.factory('user').make({ sso_provider: 'Reverse Proxy' }) as CurrentUser).render(Component)
+
+    expect(screen.queryByTestId('new-password')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Update Password' })).toBeNull()
   })
 })

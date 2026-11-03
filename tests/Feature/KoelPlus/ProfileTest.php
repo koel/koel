@@ -22,7 +22,6 @@ class ProfileTest extends PlusTestCase
             // no current password required for SSO users
         ]);
 
-        self::assertTrue($user->is_sso);
         self::assertFalse($user->has_custom_avatar);
 
         $this->putAs(

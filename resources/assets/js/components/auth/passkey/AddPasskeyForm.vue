@@ -83,7 +83,7 @@ const props = defineProps<{ hasPasskeys: boolean }>()
 const emit = defineEmits<{ (e: 'close'): void }>()
 
 const currentUser = userStore.current
-const canUsePassword = !currentUser.sso_provider && currentUser.has_password
+const canUsePassword = currentUser.sso_provider !== 'Reverse Proxy' && currentUser.has_password
 
 const confirmsWithPasskey = ref(props.hasPasskeys)
 const confirmsWithPassword = computed(() => !confirmsWithPasskey.value && canUsePassword)

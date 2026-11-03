@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use App\Services\Auth\TokenManager;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -77,13 +78,14 @@ class ChangePasswordTest extends TestCase
     }
 
     #[Test]
-    public function ssoUserWithoutPasswordCannotSetOneWithoutCurrentPassword(): void
+    public function setFirstPasswordWithoutCurrentPasswordWhenStoredPasswordIsEmpty(): void
     {
-        $user = create_user(['password' => null, 'sso_provider' => 'Google', 'sso_id' => 'abc123']);
+        $user = create_user();
+        User::query()->whereKey($user->id)->update(['password' => '']);
 
-        $this->putAs('api/me/password', ['new_password' => 'new-secret-1234'], $user)->assertUnprocessable();
+        $this->putAs('api/me/password', ['new_password' => 'new-secret-1234'], $user)->assertNoContent();
 
-        self::assertNull($user->refresh()->password);
+        self::assertTrue(Hash::check('new-secret-1234', $user->refresh()->password));
     }
 
     #[Test]

@@ -11,21 +11,42 @@ use function Tests\create_user;
 class ChangePasswordTest extends PlusTestCase
 {
     #[Test]
-    public function changePasswordForbiddenForSsoUsers(): void
+    public function ssoUserWithoutPasswordSetsOneWithoutCurrentPassword(): void
+    {
+        $user = create_user(['password' => null, 'sso_provider' => 'Google', 'sso_id' => 'abc123']);
+
+        $this->putAs('api/me/password', ['new_password' => 'new-secret-1234'], $user)->assertNoContent();
+
+        self::assertTrue(Hash::check('new-secret-1234', $user->refresh()->password));
+    }
+
+    #[Test]
+    public function ssoUserWithPasswordMustConfirmCurrentPassword(): void
     {
         $user = create_user([
             'password' => Hash::make('old-secret'),
-            'sso_provider' => 'Google',
+            'sso_provider' => 'OpenID Connect',
             'sso_id' => 'abc123',
         ]);
+
+        $this->putAs('api/me/password', ['new_password' => 'new-secret-1234'], $user)->assertUnprocessable();
 
         $this->putAs(
             'api/me/password',
             ['current_password' => 'old-secret', 'new_password' => 'new-secret-1234'],
             $user,
-        )->assertForbidden();
+        )->assertNoContent();
 
-        $user->refresh();
-        self::assertTrue(Hash::check('old-secret', $user->password));
+        self::assertTrue(Hash::check('new-secret-1234', $user->refresh()->password));
+    }
+
+    #[Test]
+    public function changePasswordForbiddenForReverseProxyUsers(): void
+    {
+        $user = create_user(['password' => null, 'sso_provider' => 'Reverse Proxy', 'sso_id' => 'abc123']);
+
+        $this->putAs('api/me/password', ['new_password' => 'new-secret-1234'], $user)->assertForbidden();
+
+        self::assertNull($user->refresh()->password);
     }
 }
