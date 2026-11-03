@@ -198,4 +198,28 @@ describe('homeScreen.vue', () => {
       ...builtInBlockIds.slice(5),
     ])
   })
+
+  it('ignores saved block ids without a matching block', () => {
+    commonStore.state.song_length = 100
+    h.mock(overviewStore, 'fetch')
+    preferenceStore.temporary.home_blocks_order = ['removed-block', ...builtInBlockIds]
+
+    const { container } = h.render(Component)
+
+    expect(blockIdsInDom(container)).toEqual(builtInBlockIds)
+  })
+
+  it('renders an added block without a predecessor first', () => {
+    commonStore.state.song_length = 100
+    h.mock(overviewStore, 'fetch')
+    handle = addFilter<HomeBlock[]>(Filter.HOME_BLOCKS, blocks => [
+      { id: 'custom-block', label: 'Custom', component: CustomBlock },
+      ...blocks,
+    ])
+    preferenceStore.temporary.home_blocks_order = [...builtInBlockIds].reverse()
+
+    const { container } = h.render(Component)
+
+    expect(blockIdsInDom(container)).toEqual(['custom-block', ...[...builtInBlockIds].reverse()])
+  })
 })
