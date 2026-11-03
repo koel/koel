@@ -161,17 +161,34 @@ class PasskeyTest extends TestCase
     }
 
     #[Test]
-    public function getRegistrationOptionsAsSsoUserWithoutPasskeys(): void
+    public function getRegistrationOptionsAsSsoUserWithoutPasswordOrPasskeys(): void
+    {
+        $this->postAs('api/me/passkeys/registration-options', [], create_user([
+            'password' => null,
+            'sso_provider' => 'Google',
+        ]))->assertOk();
+    }
+
+    #[Test]
+    public function getRegistrationOptionsAsSsoUserWithPasswordRequiresConfirmation(): void
     {
         $this->postAs('api/me/passkeys/registration-options', [], create_user([
             'sso_provider' => 'Google',
+        ]))->assertUnprocessable();
+    }
+
+    #[Test]
+    public function getRegistrationOptionsAsReverseProxyUserWithoutPasskeys(): void
+    {
+        $this->postAs('api/me/passkeys/registration-options', [], create_user([
+            'sso_provider' => 'Reverse Proxy',
         ]))->assertOk();
     }
 
     #[Test]
     public function getRegistrationOptionsAsSsoUserWithPasskeysRequiresConfirmation(): void
     {
-        $user = create_user(['sso_provider' => 'Google']);
+        $user = create_user(['password' => null, 'sso_provider' => 'Google']);
         Passkey::factory()->for($user)->createOne();
 
         $this->postAs('api/me/passkeys/registration-options', [], $user)->assertUnprocessable();

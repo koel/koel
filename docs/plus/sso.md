@@ -60,7 +60,7 @@ If, however, there's already an existing user with the same email address, Koel 
 
 New SSO users are given the **User** role by default. To place them in the **Guest** role instead, set `SSO_DEFAULT_ROLE=guest` in your `.env` file.
 
-SSO users can update their name and avatar, but not their email address. Furthermore, a new user created via SSO does not have a password set and won't be able to log in via the email+password method.
+SSO users can update their name and avatar, but not their email address. A new user created via SSO has no password at first. They can set one on their [profile](../usage/profile-preferences) and then also log in with their email and password.
 
 <script lang="ts" setup>
 import googleOauth from '../assets/img/plus/google-oauth.webp'

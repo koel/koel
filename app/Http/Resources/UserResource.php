@@ -61,7 +61,7 @@ class UserResource extends JsonResource
                 ->toArray()),
             'subsonic_api_key' => $this->when($isCurrentUser, fn () => $this->user->subsonic_api_key),
             'two_factor' => $this->when($isCurrentUser, fn () => $this->user->hasTwoFactorEnabled()),
-            'has_password' => $this->when($isCurrentUser, fn () => $this->user->password !== null),
+            'has_password' => $this->when($isCurrentUser, fn () => (bool) $this->user->password),
             'permissions' => [
                 'edit' => $currentUser->can('update', $this->user),
                 'delete' => $currentUser->can('destroy', $this->user),

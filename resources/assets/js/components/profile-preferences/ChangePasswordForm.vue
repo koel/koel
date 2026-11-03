@@ -3,9 +3,8 @@
     <SettingGroup>
       <template #title>{{ currentUser.has_password ? 'Change Password' : 'Set a Password' }}</template>
 
-      <AlertBox v-if="currentUser.sso_provider">
-        Your password is managed by your single sign-on provider ({{ currentUser.sso_provider }}). You can't change it
-        here.
+      <AlertBox v-if="currentUser.sso_provider === 'Reverse Proxy'">
+        Your password is managed by your reverse proxy. You can't change it here.
       </AlertBox>
 
       <div v-else class="space-y-5 max-w-md">
@@ -32,7 +31,7 @@
         </FormRow>
       </div>
 
-      <template v-if="!currentUser.sso_provider" #footer>
+      <template v-if="currentUser.sso_provider !== 'Reverse Proxy'" #footer>
         <Btn :disabled="loading" type="submit">{{ currentUser.has_password ? 'Update Password' : 'Set Password' }}</Btn>
         <span v-if="isDemo" class="text-[.95rem] opacity-70 ml-2">Changes will not be saved in the demo version.</span>
       </template>

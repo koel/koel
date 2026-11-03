@@ -61,7 +61,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read bool $connected_to_lastfm Whether the user is connected to Last.fm
  * @property-read bool $has_custom_avatar
  * @property-read bool $is_prospect
- * @property-read bool $is_sso
  * @property-read bool $can_set_password_without_current_one
  * @property-read string $avatar
  * @property-read RoleEnum $role

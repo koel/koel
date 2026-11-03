@@ -134,8 +134,11 @@ class UserService
         }
 
         if ($user->sso_provider) {
-            // SSO users cannot change their password or email
-            Arr::forget($data, ['password', 'email']);
+            Arr::forget($data, 'email');
+        }
+
+        if ($user->sso_provider === 'Reverse Proxy') {
+            Arr::forget($data, 'password');
         }
 
         if ($keepCurrentEmail) {
