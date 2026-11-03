@@ -17,6 +17,7 @@ export const Filter = {
   PLAYABLE_CONTEXT_MENU_SECTIONS: 'playable-context-menu-sections',
   FORGOT_PASSWORD_URL: 'forgot-password-url',
   PREFERENCE_ROWS: 'preference-rows',
+  HOME_BLOCKS: 'home-blocks',
 } as const
 
 export type ActionName = (typeof Action)[keyof typeof Action]
