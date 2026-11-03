@@ -48,6 +48,8 @@ import { sample } from 'lodash-es'
 import type { Component } from 'vue'
 import { computed, defineAsyncComponent, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
+import { Filter } from '@/config/hooks'
+import { applyFilters } from '@/hooks'
 import { commonStore } from '@/stores/commonStore'
 import { overviewStore } from '@/stores/overviewStore'
 import { preferenceStore } from '@/stores/preferenceStore'
@@ -68,92 +70,94 @@ import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 
 const ReorderBlocksModal = defineAsyncComponent(() => import('@/components/screens/home/ReorderBlocksModal.vue'))
 
-interface Block {
+export interface HomeBlock {
   id: string
   label: string
   component: Component
   props?: Record<string, unknown>
 }
 
-const blocks: Block[] = [
-  { id: 'recently-played-songs', label: 'Recently Played', component: RecentlyPlayedPlayables },
-  {
-    id: 'recently-added-albums',
-    label: 'Latest Albums',
-    component: AlbumArtistShelf,
-    props: { header: 'Latest Albums', stateKey: 'recentlyAddedAlbums', emptyText: 'No albums added yet.' },
-  },
-  { id: 'similar-songs', label: 'You Might Also Like', component: SimilarSongs },
-  {
-    id: 'most-played-albums',
-    label: 'Top Albums',
-    component: AlbumArtistShelf,
-    props: { header: 'Top Albums', stateKey: 'mostPlayedAlbums', emptyText: 'No albums found.' },
-  },
-  {
-    id: 'most-played-songs',
-    label: 'Most Played',
-    component: PlayableShelf,
-    props: { header: 'Most Played', stateKey: 'mostPlayedSongs', emptyText: 'Nothing played as of late.' },
-  },
-  {
-    id: 'most-played-artists',
-    label: 'Top Artists',
-    component: AlbumArtistShelf,
-    props: { header: 'Top Artists', stateKey: 'mostPlayedArtists', emptyText: 'No artists found.' },
-  },
-  {
-    id: 'recently-added-songs',
-    label: 'New Songs',
-    component: PlayableShelf,
-    props: { header: 'New Songs', stateKey: 'recentlyAddedSongs', emptyText: 'No songs available.' },
-  },
-  {
-    id: 'recently-added-artists',
-    label: 'New Artists',
-    component: AlbumArtistShelf,
-    props: { header: 'New Artists', stateKey: 'recentlyAddedArtists', emptyText: 'No new artists.' },
-  },
-  {
-    id: 'least-played-songs',
-    label: 'Hidden Gems',
-    component: PlayableShelf,
-    props: { header: 'Hidden Gems', stateKey: 'leastPlayedSongs', emptyText: 'No songs to rediscover.' },
-  },
-  {
-    id: 'random-songs',
-    label: 'Random Songs',
-    component: PlayableShelf,
-    props: {
-      header: 'Random Songs',
-      stateKey: 'randomSongs',
-      emptyText: 'No songs available.',
-      refresh: () => overviewStore.refreshRandomSongs(),
+const blocks = computed(() =>
+  applyFilters<HomeBlock[]>(Filter.HOME_BLOCKS, [
+    { id: 'recently-played-songs', label: 'Recently Played', component: RecentlyPlayedPlayables },
+    {
+      id: 'recently-added-albums',
+      label: 'Latest Albums',
+      component: AlbumArtistShelf,
+      props: { header: 'Latest Albums', stateKey: 'recentlyAddedAlbums', emptyText: 'No albums added yet.' },
     },
-  },
-  {
-    id: 'random-albums',
-    label: 'Random Albums',
-    component: AlbumArtistShelf,
-    props: {
-      header: 'Random Albums',
-      stateKey: 'randomAlbums',
-      emptyText: 'No albums yet.',
-      refresh: () => overviewStore.refreshRandomAlbums(),
+    { id: 'similar-songs', label: 'You Might Also Like', component: SimilarSongs },
+    {
+      id: 'most-played-albums',
+      label: 'Top Albums',
+      component: AlbumArtistShelf,
+      props: { header: 'Top Albums', stateKey: 'mostPlayedAlbums', emptyText: 'No albums found.' },
     },
-  },
-  {
-    id: 'random-artists',
-    label: 'Random Artists',
-    component: AlbumArtistShelf,
-    props: {
-      header: 'Random Artists',
-      stateKey: 'randomArtists',
-      emptyText: 'No artists yet.',
-      refresh: () => overviewStore.refreshRandomArtists(),
+    {
+      id: 'most-played-songs',
+      label: 'Most Played',
+      component: PlayableShelf,
+      props: { header: 'Most Played', stateKey: 'mostPlayedSongs', emptyText: 'Nothing played as of late.' },
     },
-  },
-]
+    {
+      id: 'most-played-artists',
+      label: 'Top Artists',
+      component: AlbumArtistShelf,
+      props: { header: 'Top Artists', stateKey: 'mostPlayedArtists', emptyText: 'No artists found.' },
+    },
+    {
+      id: 'recently-added-songs',
+      label: 'New Songs',
+      component: PlayableShelf,
+      props: { header: 'New Songs', stateKey: 'recentlyAddedSongs', emptyText: 'No songs available.' },
+    },
+    {
+      id: 'recently-added-artists',
+      label: 'New Artists',
+      component: AlbumArtistShelf,
+      props: { header: 'New Artists', stateKey: 'recentlyAddedArtists', emptyText: 'No new artists.' },
+    },
+    {
+      id: 'least-played-songs',
+      label: 'Hidden Gems',
+      component: PlayableShelf,
+      props: { header: 'Hidden Gems', stateKey: 'leastPlayedSongs', emptyText: 'No songs to rediscover.' },
+    },
+    {
+      id: 'random-songs',
+      label: 'Random Songs',
+      component: PlayableShelf,
+      props: {
+        header: 'Random Songs',
+        stateKey: 'randomSongs',
+        emptyText: 'No songs available.',
+        refresh: () => overviewStore.refreshRandomSongs(),
+      },
+    },
+    {
+      id: 'random-albums',
+      label: 'Random Albums',
+      component: AlbumArtistShelf,
+      props: {
+        header: 'Random Albums',
+        stateKey: 'randomAlbums',
+        emptyText: 'No albums yet.',
+        refresh: () => overviewStore.refreshRandomAlbums(),
+      },
+    },
+    {
+      id: 'random-artists',
+      label: 'Random Artists',
+      component: AlbumArtistShelf,
+      props: {
+        header: 'Random Artists',
+        stateKey: 'randomArtists',
+        emptyText: 'No artists yet.',
+        refresh: () => overviewStore.refreshRandomArtists(),
+      },
+    },
+  ]),
+)
 
 const { openModal } = useModal()
 
@@ -176,18 +180,24 @@ const loading = ref(false)
 let initialized = false
 let overviewOutdated = false
 
-// Sort `blocks` so they appear in the order saved in the preference. Blocks
-// whose id isn't in the saved list fall to the end (Infinity), keeping their
-// canonical relative order via Array.sort's stability.
-const orderedBlocks = computed<Block[]>(() => {
-  const saved = preferenceStore.home_blocks_order ?? []
-  const positionOf = (id: string) => {
-    const i = saved.indexOf(id)
-    return i === -1 ? Infinity : i
-  }
+const orderBlocks = (blocksToOrder: HomeBlock[], savedOrder: string[]) => {
+  const ordered = savedOrder
+    .map(id => blocksToOrder.find(block => block.id === id))
+    .filter((block): block is HomeBlock => Boolean(block))
 
-  return [...blocks].sort((a, b) => positionOf(a.id) - positionOf(b.id))
-})
+  blocksToOrder.forEach((block, index) => {
+    if (ordered.includes(block)) {
+      return
+    }
+
+    const predecessor = blocksToOrder[index - 1]
+    ordered.splice(predecessor ? ordered.indexOf(predecessor) + 1 : 0, 0, block)
+  })
+
+  return ordered
+}
+
+const orderedBlocks = computed(() => orderBlocks(blocks.value, preferenceStore.home_blocks_order ?? []))
 
 const openReorderModal = () =>
   openModal<'REORDER_HOME_BLOCKS'>(ReorderBlocksModal, {
