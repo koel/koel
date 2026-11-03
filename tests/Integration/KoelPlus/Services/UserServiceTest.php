@@ -204,6 +204,7 @@ class UserServiceTest extends PlusTestCase
     public function updateReverseProxyUserKeepsPassword(): void
     {
         $user = create_user(['sso_provider' => 'Reverse Proxy']);
+        $originalPassword = $user->password;
 
         $this->service->updateUser($user, UserUpdateData::make(
             name: 'Steve Harris',
@@ -211,6 +212,6 @@ class UserServiceTest extends PlusTestCase
             plainTextPassword: 'TheTrooper',
         ));
 
-        self::assertFalse(Hash::check('TheTrooper', $user->refresh()->password));
+        self::assertSame($originalPassword, $user->refresh()->password);
     }
 }
