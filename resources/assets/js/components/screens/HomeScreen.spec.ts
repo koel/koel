@@ -34,7 +34,7 @@ const builtInBlockIds = [
   'random-artists',
 ]
 
-const ExtensionBlock = defineComponent({ template: '<section />' })
+const CustomBlock = defineComponent({ template: '<section />' })
 
 describe('homeScreen.vue', () => {
   const h = createHarness()
@@ -48,10 +48,10 @@ describe('homeScreen.vue', () => {
     }
   })
 
-  const addExtensionBlockAfterRecentlyPlayed = () => {
+  const addCustomBlockAfterRecentlyPlayed = () => {
     handle = addFilter<HomeBlock[]>(Filter.HOME_BLOCKS, blocks => [
       blocks[0],
-      { id: 'extension-block', label: 'Extension', component: ExtensionBlock },
+      { id: 'custom-block', label: 'Custom', component: CustomBlock },
       ...blocks.slice(1),
     ])
   }
@@ -163,7 +163,7 @@ describe('homeScreen.vue', () => {
   it('renders an added block missing from the saved order right after its predecessor', () => {
     commonStore.state.song_length = 100
     h.mock(overviewStore, 'fetch')
-    addExtensionBlockAfterRecentlyPlayed()
+    addCustomBlockAfterRecentlyPlayed()
     preferenceStore.temporary.home_blocks_order = [
       ...builtInBlockIds.slice(1, 4),
       'recently-played-songs',
@@ -175,7 +175,7 @@ describe('homeScreen.vue', () => {
     expect(blockIdsInDom(container)).toEqual([
       ...builtInBlockIds.slice(1, 4),
       'recently-played-songs',
-      'extension-block',
+      'custom-block',
       ...builtInBlockIds.slice(4),
     ])
   })
@@ -183,10 +183,10 @@ describe('homeScreen.vue', () => {
   it('renders an added block at its saved position', () => {
     commonStore.state.song_length = 100
     h.mock(overviewStore, 'fetch')
-    addExtensionBlockAfterRecentlyPlayed()
+    addCustomBlockAfterRecentlyPlayed()
     preferenceStore.temporary.home_blocks_order = [
       ...builtInBlockIds.slice(0, 5),
-      'extension-block',
+      'custom-block',
       ...builtInBlockIds.slice(5),
     ]
 
@@ -194,7 +194,7 @@ describe('homeScreen.vue', () => {
 
     expect(blockIdsInDom(container)).toEqual([
       ...builtInBlockIds.slice(0, 5),
-      'extension-block',
+      'custom-block',
       ...builtInBlockIds.slice(5),
     ])
   })
