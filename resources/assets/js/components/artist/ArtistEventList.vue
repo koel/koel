@@ -1,5 +1,5 @@
 <template>
-  <section class="p-6">
+  <section>
     <div v-if="loading" class="space-y-4">
       <ArtistEventSkeleton v-for="key in 3" :key />
     </div>
