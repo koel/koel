@@ -8,7 +8,32 @@
     @keydown.a.prevent="selectAllWithKeyboard"
     @keydown.up.down="onArrowKey"
   >
+    <DefineRow v-slot="{ item }">
+      <PlayableListItem
+        :item
+        :show-disc="showDiscLabel(item.playable)"
+        :draggable="!isMobile.any"
+        @click="onClick(item, $event)"
+        @dragleave="onDragLeave"
+        @dragstart="onDragStart(item, $event)"
+        @play="onPlay(item.playable)"
+        @contextmenu.prevent="onContextMenu(item, $event)"
+        @request-context-menu="onContextMenu(item, $event)"
+        @dragover.prevent="onDragOver"
+        @drop.prevent="onDrop(item, $event)"
+        @dragend.prevent="onDragEnd"
+      />
+    </DefineRow>
+
+    <template v-if="unvirtualized">
+      <PlayableListHeader v-if="config.hasHeader" :content-type="contentType" @sort="sort" />
+      <div ref="rowsBox" tabindex="-1" class="focus:outline-hidden">
+        <ReuseRow v-for="item in rows" :key="item.playable.id" :item />
+      </div>
+    </template>
+
     <VirtualScroller
+      v-else
       carries-screen-header
       ref="virtualScroller"
       tabindex="-1"
@@ -24,28 +49,14 @@
       </template>
 
       <template #default="{ item }: { item: PlayableRow }">
-        <PlayableListItem
-          :key="item.playable.id"
-          :item="item"
-          :show-disc="showDiscLabel(item.playable)"
-          :draggable="!isMobile.any"
-          @click="onClick(item, $event)"
-          @dragleave="onDragLeave"
-          @dragstart="onDragStart(item, $event)"
-          @play="onPlay(item.playable)"
-          @contextmenu.prevent="onContextMenu(item, $event)"
-          @request-context-menu="onContextMenu(item, $event)"
-          @dragover.prevent="onDragOver"
-          @drop.prevent="onDrop(item, $event)"
-          @dragend.prevent="onDragEnd"
-        />
+        <ReuseRow :key="item.playable.id" :item />
       </template>
     </VirtualScroller>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useThrottleFn } from '@vueuse/core'
+import { createReusableTemplate, useThrottleFn } from '@vueuse/core'
 import isMobile from 'ismobilejs'
 import type { Ref } from 'vue'
 import { computed, nextTick, onMounted, reactive, ref, toRaw, watch } from 'vue'
@@ -71,6 +82,8 @@ import VirtualScroller from '@/components/ui/VirtualScroller.vue'
 import PlayableListHeader from '@/components/playable/playable-list/PlayableListHeader.vue'
 import ScreenHeaderPinned from '@/components/ui/ScreenHeaderPinned.vue'
 
+const props = withDefaults(defineProps<{ unvirtualized?: boolean }>(), { unvirtualized: false })
+
 const emit = defineEmits<{
   (e: 'press:enter', event: KeyboardEvent): void
   (e: 'press:delete'): void
@@ -80,6 +93,8 @@ const emit = defineEmits<{
 }>()
 
 const PlayableContextMenu = defineAsyncComponent(() => import('@/components/playable/PlayableContextMenu.vue'))
+
+const [DefineRow, ReuseRow] = createReusableTemplate<{ item: PlayableRow }>()
 
 const { startDragging } = useDraggable('playables')
 const { getDroppedData, acceptsDrop } = useDroppable(['playables'])
@@ -93,6 +108,7 @@ const [context] = requireInjection<[PlayableListContext]>(PlayableListContextKey
 
 const wrapper = ref<HTMLElement>()
 const virtualScroller = ref<InstanceType<typeof VirtualScroller>>()
+const rowsBox = ref<HTMLElement>()
 const sortFields = ref<PlayableListSortField[]>([])
 
 let rowsByPlayableId = new Map<Playable['id'], PlayableRow>()
@@ -176,6 +192,12 @@ const onArrowKey = (event: KeyboardEvent) => {
   const index = moveSelectionWithArrowKey(event)
 
   if (index === null) {
+    return
+  }
+
+  if (props.unvirtualized) {
+    rowsBox.value?.focus({ preventScroll: true })
+    rowsBox.value?.children[index]?.scrollIntoView({ block: 'nearest' })
     return
   }
 

@@ -40,12 +40,13 @@ describe('playableList.vue', () => {
     beforeEach: () => reapplySelectionSpy.mockClear(),
   })
 
-  const renderComponent = (songs: Song[]) => {
+  const renderComponent = (songs: Song[], props: { unvirtualized?: boolean } = {}) => {
     const playables = ref<Playable[]>(songs)
     const selectedPlayables = ref<Playable[]>([])
     const setSelectedPlayables = vi.fn((value: Playable[]) => (selectedPlayables.value = value))
 
     h.render(Component, {
+      props,
       global: {
         provide: {
           [<symbol>FilteredPlayablesKey]: [playables],
@@ -163,5 +164,24 @@ describe('playableList.vue', () => {
 
     expect(notCanceled).toBe(true)
     expect(selectedIds(selectedPlayables)).toEqual([songs[0].id])
+  })
+
+  it('renders every row when unvirtualized', () => {
+    renderComponent(h.factory('song').make(30), { unvirtualized: true })
+
+    expect(screen.getAllByTestId('song-item')).toHaveLength(30)
+  })
+
+  it('brings the selected row into view with the arrow keys when unvirtualized', async () => {
+    const songs = h.factory('song').make(3)
+    renderComponent(songs, { unvirtualized: true })
+    await selectSongsAt(0)
+
+    const secondRow = screen.getAllByTestId('song-item')[1].parentElement!
+    secondRow.scrollIntoView = vi.fn()
+
+    await fireEvent.keyDown(screen.getAllByTestId('song-item')[0], { key: 'ArrowDown' })
+
+    expect(secondRow.scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' })
   })
 })
