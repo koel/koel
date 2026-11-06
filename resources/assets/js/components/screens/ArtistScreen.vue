@@ -38,54 +38,65 @@
           </SongListControls>
         </template>
       </ScreenHeader>
-      <ArtistAlbumScreenTabNav v-if="artist">
-        <li :class="activeTab === 'songs' && 'active'">
-          <a :href="url('artists.show', { id: artist.id, tab: 'songs' })">Songs</a>
-        </li>
-        <li :class="activeTab === 'albums' && 'active'">
-          <a :href="url('artists.show', { id: artist.id, tab: 'albums' })">Albums</a>
-        </li>
-        <li v-if="showsInformation" :class="activeTab === 'information' && 'active'">
-          <a :href="url('artists.show', { id: artist.id, tab: 'information' })">Information</a>
-        </li>
-        <li v-if="useTicketmaster" :class="activeTab === 'events' && 'active'">
-          <a :href="url('artists.show', { id: artist.id, tab: 'events' })">Events</a>
-        </li>
-      </ArtistAlbumScreenTabNav>
     </template>
 
     <ScreenTabs v-if="artist" class="-m-6" :class="loading && 'pointer-events-none'">
-      <div v-show="activeTab === 'songs'" class="songs-pane">
+      <div v-if="view === 'songs'" class="songs-pane">
         <ScreenHeaderSpace v-if="loading" />
         <SongListSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
         <SongList v-if="!loading && artist" ref="songList" @sort="saveSort" @press:enter="onPressEnter" />
       </div>
 
-      <ScreenHeaderScrollBox v-show="activeTab === 'albums'" class="albums-pane">
-        <GridListView class="scroll-mask-y">
-          <template v-if="albums">
-            <AlbumCard v-for="album in albums" :key="album.id" :album :show-release-year="true" />
-          </template>
-          <template v-else>
-            <AlbumCardSkeleton v-for="i in 6" :key="i" />
-          </template>
-        </GridListView>
-      </ScreenHeaderScrollBox>
+      <ScreenHeaderScrollBox v-else class="overview-pane flex-1 px-6 pb-6">
+        <div class="space-y-12">
+          <ShelfSection v-if="loading || songs.length" data-testid="artist-top-songs">
+            <template #header>Songs</template>
+            <template #actions>
+              <Btn
+                v-if="songs.length > topSongs.length"
+                :href="url('artists.show', { id: artist.id, tab: 'songs' })"
+                rounded
+                size="small"
+                tag="a"
+                variant="highlight"
+              >
+                Show All
+              </Btn>
+            </template>
+            <PlayableCardGridSkeleton
+              v-if="loading"
+              class="-mx-6"
+              role="status"
+              aria-busy="true"
+              aria-label="Loading"
+            />
+            <PlayableCardGrid v-else class="-mx-6" :playables="topSongs" />
+          </ShelfSection>
 
-      <ScreenHeaderScrollBox
-        v-if="showsInformation && artist"
-        v-show="activeTab === 'information'"
-        class="info-pane flex-1"
-      >
-        <ArtistInfo :artist mode="full" />
-      </ScreenHeaderScrollBox>
+          <ShelfSection v-if="!albums || albums.length" data-testid="artist-albums">
+            <template #header>Albums</template>
+            <Carousel>
+              <template v-if="albums">
+                <AlbumCard v-for="album in albums" :key="album.id" :album :show-release-year="true" />
+              </template>
+              <template v-else>
+                <AlbumCardSkeleton v-for="i in 6" :key="i" />
+              </template>
+            </Carousel>
+          </ShelfSection>
 
-      <ScreenHeaderScrollBox
-        v-if="useTicketmaster && artist"
-        v-show="activeTab === 'events'"
-        class="events-pane flex-1"
-      >
-        <ArtistEventList :artist />
+          <ShelfSection v-if="showsInformation" data-testid="artist-about">
+            <template #header>About</template>
+            <ExpandableContentBlock :key="artist.id">
+              <ArtistInfo :artist mode="full" />
+            </ExpandableContentBlock>
+          </ShelfSection>
+
+          <ShelfSection v-if="useTicketmaster" data-testid="artist-events">
+            <template #header>Events</template>
+            <ArtistEventList :artist />
+          </ShelfSection>
+        </div>
       </ScreenHeaderScrollBox>
     </ScreenTabs>
   </ScreenBase>
@@ -93,6 +104,7 @@
 
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
+import { orderBy } from 'lodash-es'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { eventBus } from '@/utils/eventBus'
@@ -114,23 +126,25 @@ import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail
 import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import SongListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
-import ArtistAlbumScreenTabNav from '@/components/ui/ArtistAlbumScreenTabNav.vue'
 import ScreenHeaderScrollBox from '@/components/ui/ScreenHeaderScrollBox.vue'
 import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import GridListView from '@/components/ui/GridListView.vue'
+import ShelfSection from '@/components/ui/ShelfSection.vue'
+import Carousel from '@/components/ui/Carousel.vue'
+import AlbumCard from '@/components/album/AlbumCard.vue'
+import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
+import ExpandableContentBlock from '@/components/ui/album-artist/ExpandableContentBlock.vue'
+import PlayableCardGrid from '@/components/screens/home/PlayableCardGrid.vue'
+import PlayableCardGridSkeleton from '@/components/screens/home/PlayableCardGridSkeleton.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
 const ArtistInfo = defineAsyncComponent(() => import('@/components/artist/ArtistInfo.vue'))
-const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const ArtistEventList = defineAsyncComponent(() => import('@/components/artist/ArtistEventList.vue'))
-const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'))
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 const StarRating = defineAsyncComponent(() => import('@/components/ui/StarRating.vue'))
 const ArtistContextMenu = defineAsyncComponent(() => import('@/components/artist/ArtistContextMenu.vue'))
 
-const validTabs = ['songs', 'albums', 'information', 'events'] as const
-type Tab = (typeof validTabs)[number]
+const TOP_SONG_COUNT = 10
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Artist')
 const { useLastfm, useMusicBrainz, useTicketmaster } = useThirdPartyServices()
@@ -138,7 +152,7 @@ const { getRouteParam, go, onScreenActivated, onRouteChanged, url, triggerNotFou
 const { openContextMenu } = useContextMenu()
 const { getSavedSort, saveSort } = usePersistedSort('artist', 'track')
 
-const activeTab = ref<Tab>('songs')
+const view = ref<'overview' | 'songs'>('overview')
 const artist = ref<Artist>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
@@ -161,11 +175,9 @@ const {
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
 const showsInformation = computed(() => useEncyclopedia.value || Boolean(artist.value?.description))
 
-watch(showsInformation, shown => {
-  if (!shown && activeTab.value === 'information' && artist.value) {
-    go(url('artists.show', { id: artist.value.id, tab: 'songs' }))
-  }
-})
+const topSongs = computed(() => orderBy(songs.value, 'play_count', 'desc').slice(0, TOP_SONG_COUNT))
+
+watch(view, currentView => (config.filter = currentView === 'songs'), { immediate: true })
 
 const albumCount = computed(() => {
   const albums = new Set()
@@ -175,14 +187,23 @@ const albumCount = computed(() => {
 
 const toggleFavorite = () => artistStore.toggleFavorite(artist.value!)
 
+const fetchAlbums = async (forArtist: Artist) => {
+  try {
+    albums.value = await albumStore.fetchForArtist(forArtist)
+  } catch (error: unknown) {
+    albums.value = []
+    useErrorHandler().handleHttpError(error)
+  }
+}
+
 const fetchScreenData = async () => {
   if (loading.value) {
     return
   }
 
   const id = getRouteParam('id')
-  const tabParam = getRouteParam<Tab>('tab') || 'songs'
-  activeTab.value = validTabs.includes(tabParam) ? tabParam : 'songs'
+  view.value = getRouteParam('tab') === 'songs' ? 'songs' : 'overview'
+  albums.value = undefined
 
   loading.value = true
 
@@ -194,14 +215,14 @@ const fetchScreenData = async () => {
       return
     }
 
-    if (activeTab.value === 'albums') {
-      albums.value = await albumStore.fetchForArtist(artist.value)
-    }
-
     context.entity = artist.value
 
     const { sortField, sortOrder } = getSavedSort()
     sort(sortField, sortOrder)
+
+    if (view.value === 'overview') {
+      void fetchAlbums(artist.value)
+    }
   } catch (error: unknown) {
     if ((error as any)?.status === 404) {
       triggerNotFound()

@@ -1,17 +1,29 @@
 <template>
   <article>
-    <div :class="showingFull ? 'line-clamp-none' : 'line-clamp-10'">
-      <slot />
+    <div ref="content" :class="showingFull ? '' : 'max-h-[3lh] overflow-hidden'">
+      <div ref="slotContent">
+        <slot />
+      </div>
     </div>
 
-    <Btn size="small" v-if="!showingFull" class="mt-4" @click.prevent="showingFull = true"> Read More </Btn>
+    <LinkButton v-if="overflowing && !showingFull" class="mt-2" variant="highlight" @click.prevent="showingFull = true"
+      >More</LinkButton
+    >
   </article>
 </template>
 
 <script lang="ts" setup>
+import { useResizeObserver } from '@vueuse/core'
 import { ref } from 'vue'
 
-import Btn from '@/components/ui/form/Btn.vue'
+import LinkButton from '@/components/ui/form/LinkButton.vue'
 
+const content = ref<HTMLElement>()
+const slotContent = ref<HTMLElement>()
 const showingFull = ref(false)
+const overflowing = ref(false)
+
+useResizeObserver([content, slotContent], () => {
+  overflowing.value = content.value!.scrollHeight > content.value!.clientHeight + 1
+})
 </script>
