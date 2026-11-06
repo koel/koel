@@ -1,6 +1,8 @@
 import { screen, waitFor, within } from '@testing-library/vue'
 import type { Mock } from 'vite-plus/test'
 import { describe, expect, it, vi } from 'vite-plus/test'
+import type { Component as VueComponent } from 'vue'
+import { defineComponent } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { commonStore } from '@/stores/commonStore'
@@ -25,7 +27,19 @@ vi.mock('@/composables/useErrorHandler', () => ({
 describe('albumScreen.vue', () => {
   const h = createHarness()
 
-  const renderComponent = async (album?: Album, otherAlbums: Album[] = []) => {
+  const EmptyInfoStub = defineComponent({
+    emits: ['empty'],
+    mounted() {
+      this.$emit('empty')
+    },
+    template: '<br />',
+  })
+
+  const renderComponent = async (
+    album?: Album,
+    otherAlbums: Album[] = [],
+    infoStub: VueComponent = h.stub('album-info'),
+  ) => {
     album =
       album ||
       h.factory('album').make({
@@ -46,7 +60,7 @@ describe('albumScreen.vue', () => {
       global: {
         stubs: {
           AlbumCard: h.stub('album-card'),
-          AlbumInfo: h.stub('album-info'),
+          AlbumInfo: infoStub,
         },
       },
     })
@@ -150,6 +164,15 @@ describe('albumScreen.vue', () => {
     commonStore.state.uses_musicbrainz = false
     await renderComponent()
     await h.tick()
+
+    expect(screen.queryByTestId('album-about')).toBeNull()
+  })
+
+  it('hides the About section if the information turns out to be empty', async () => {
+    commonStore.state.uses_last_fm = true
+    await renderComponent(undefined, [], EmptyInfoStub)
+
+    await h.tick(2)
 
     expect(screen.queryByTestId('album-about')).toBeNull()
   })

@@ -36,6 +36,8 @@ const TrackList = defineAsyncComponent(() => import('@/components/album/AlbumTra
 
 const { album, mode } = toRefs(props)
 
+const emit = defineEmits<{ (e: 'empty'): void }>()
+
 const { useMusicBrainz, useLastfm, useSpotify } = useThirdPartyServices()
 
 const loading = ref(false)
@@ -50,6 +52,10 @@ watch(
       loading.value = true
       info.value = await encyclopediaService.fetchForAlbum(album.value)
       loading.value = false
+
+      if (!info.value?.wiki?.full) {
+        emit('empty')
+      }
     }
   },
   { immediate: true, deep: true },

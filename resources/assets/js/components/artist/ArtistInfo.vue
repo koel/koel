@@ -28,6 +28,8 @@ import ParagraphSkeleton from '@/components/ui/ParagraphSkeleton.vue'
 const props = withDefaults(defineProps<{ artist: Artist; mode?: EncyclopediaDisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)
 
+const emit = defineEmits<{ (e: 'empty'): void }>()
+
 const { useMusicBrainz, useLastfm, useSpotify } = useThirdPartyServices()
 
 const loading = ref(false)
@@ -42,6 +44,10 @@ watch(
       loading.value = true
       info.value = await encyclopediaService.fetchForArtist(artist.value)
       loading.value = false
+
+      if (!info.value?.bio?.full) {
+        emit('empty')
+      }
     }
   },
   { immediate: true },

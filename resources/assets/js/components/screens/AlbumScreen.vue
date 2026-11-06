@@ -64,10 +64,10 @@
             </Carousel>
           </ShelfSection>
 
-          <ShelfSection v-if="showsInformation" data-testid="album-about">
+          <ShelfSection v-if="showsInformation && !infoEmpty" data-testid="album-about">
             <template #header>About</template>
             <ExpandableContentBlock>
-              <AlbumInfo :album mode="full" />
+              <AlbumInfo :album mode="full" @empty="infoEmpty = true" />
             </ExpandableContentBlock>
           </ShelfSection>
         </div>
@@ -121,6 +121,7 @@ const { openContextMenu } = useContextMenu()
 const album = ref<Album | undefined>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
+const infoEmpty = ref(false)
 const otherAlbums = ref<Album[] | undefined>()
 const info = ref<ArtistInfo | undefined>()
 
@@ -171,6 +172,7 @@ const fetchScreenData = async () => {
   album.value = undefined
   info.value = undefined
   otherAlbums.value = undefined
+  infoEmpty.value = false
 
   loading.value = true
 

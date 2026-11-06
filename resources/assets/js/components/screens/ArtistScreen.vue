@@ -85,10 +85,10 @@
             </Carousel>
           </ShelfSection>
 
-          <ShelfSection v-if="showsInformation" data-testid="artist-about">
+          <ShelfSection v-if="showsInformation && !infoEmpty" data-testid="artist-about">
             <template #header>About</template>
             <ExpandableContentBlock :key="artist.id">
-              <ArtistInfo :artist mode="full" />
+              <ArtistInfo :artist mode="full" @empty="infoEmpty = true" />
             </ExpandableContentBlock>
           </ShelfSection>
 
@@ -156,6 +156,7 @@ const view = ref<'overview' | 'songs'>('overview')
 const artist = ref<Artist>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
+const infoEmpty = ref(false)
 const albums = ref<Album[] | undefined>()
 
 usePageTitle().useScreenTitle('Artist', () => artist.value?.name)
@@ -204,6 +205,7 @@ const fetchScreenData = async () => {
   const id = getRouteParam('id')
   view.value = getRouteParam('tab') === 'songs' ? 'songs' : 'overview'
   albums.value = undefined
+  infoEmpty.value = false
 
   loading.value = true
 

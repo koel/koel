@@ -53,4 +53,16 @@ describe('albumInfo.vue', () => {
 
     expect(screen.getByTestId('album-info').classList.contains(mode)).toBe(true)
   })
+
+  it('reports that there is no information to show', async () => {
+    const { emitted } = await renderComponent('full', h.factory('album-info').make({ wiki: { summary: '', full: '' } }))
+
+    expect(emitted().empty).toHaveLength(1)
+  })
+
+  it('does not report information that has text', async () => {
+    const { emitted } = await renderComponent('full')
+
+    expect(emitted().empty).toBeUndefined()
+  })
 })
