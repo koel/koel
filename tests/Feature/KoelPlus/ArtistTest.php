@@ -182,6 +182,22 @@ class ArtistTest extends PlusTestCase
     }
 
     #[Test]
+    public function mergingFailsIfAnAlbumToMoveIsOwnedBySomeoneElse(): void
+    {
+        $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
+        $artist = Artist::factory()->for($existingArtist->user)->createOne();
+        Album::factory()->for($artist)->createOne(['name' => 'Live']);
+
+        $this->putAs(
+            "api/artists/{$artist->id}",
+            ['name' => 'Maydup Nem', 'merge' => true],
+            $artist->user,
+        )->assertJsonValidationErrors(['name' => 'An artist with the same name already exists.']);
+
+        self::assertModelExists($artist);
+    }
+
+    #[Test]
     public function mergeOwnArtists(): void
     {
         $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);

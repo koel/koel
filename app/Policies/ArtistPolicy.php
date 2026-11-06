@@ -61,7 +61,7 @@ class ArtistPolicy
         return $source->albums->every(function (Album $album) use ($user, $target): bool {
             $namesakeAlbum = $this->albumRepository->findOneByArtistAndNameIgnoringCase($target->id, $album->name);
 
-            return !$namesakeAlbum || $album->belongsToUser($user) && $namesakeAlbum->belongsToUser($user);
+            return $album->belongsToUser($user) && (!$namesakeAlbum || $namesakeAlbum->belongsToUser($user));
         });
     }
 }
