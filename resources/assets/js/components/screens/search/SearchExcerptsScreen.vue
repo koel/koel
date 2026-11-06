@@ -90,9 +90,18 @@ if (searchStore.state.keywords) {
   searchKeywords(searchStore.state.keywords)
 }
 
-eventBus.on('SEARCH_KEYWORDS_CHANGED', searchKeywords).on('SONGS_DELETED', async songs => {
-  if (intersectionBy(songs, excerpt.value.playables, 'id').length !== 0) {
-    await doSearch()
-  }
-})
+eventBus
+  .on('SEARCH_KEYWORDS_CHANGED', searchKeywords)
+  .on('SONGS_DELETED', async songs => {
+    if (intersectionBy(songs, excerpt.value.playables, 'id').length !== 0) {
+      await doSearch()
+    }
+  })
+  .on('SONGS_UPDATED', async result => {
+    if (result.removed.album_ids.length || result.removed.artist_ids.length) {
+      await doSearch()
+    }
+  })
+  .on('ALBUM_MERGED', doSearch)
+  .on('ARTIST_MERGED', doSearch)
 </script>
