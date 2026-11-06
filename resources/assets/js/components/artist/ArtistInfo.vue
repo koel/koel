@@ -20,6 +20,7 @@
 import { ref, toRefs, watch } from 'vue'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+import { hasVisibleText } from '@/utils/helpers'
 
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
@@ -27,6 +28,8 @@ import ParagraphSkeleton from '@/components/ui/ParagraphSkeleton.vue'
 
 const props = withDefaults(defineProps<{ artist: Artist; mode?: EncyclopediaDisplayMode }>(), { mode: 'aside' })
 const { artist, mode } = toRefs(props)
+
+const emit = defineEmits<{ (e: 'empty'): void }>()
 
 const { useMusicBrainz, useLastfm, useSpotify } = useThirdPartyServices()
 
@@ -42,6 +45,10 @@ watch(
       loading.value = true
       info.value = await encyclopediaService.fetchForArtist(artist.value)
       loading.value = false
+
+      if (!hasVisibleText(info.value?.bio?.full)) {
+        emit('empty')
+      }
     }
   },
   { immediate: true },

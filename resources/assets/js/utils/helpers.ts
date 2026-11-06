@@ -160,3 +160,10 @@ export const flattenParams = <T extends object>(params: T): Record<string, strin
 
   return result
 }
+
+export const hasVisibleText = (html?: string | null) => {
+  const container = document.createElement('div')
+  container.innerHTML = html ?? ''
+
+  return Boolean(container.textContent?.trim())
+}

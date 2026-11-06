@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
 import { defineComponent, h } from 'vue'
 import { render, screen } from '@testing-library/vue'
-import { arrayify, defineAsyncComponent, flattenParams, gravatar, limitBy, use } from './helpers'
+import { arrayify, defineAsyncComponent, flattenParams, gravatar, hasVisibleText, limitBy, use } from './helpers'
 
 describe('helpers utils', () => {
   describe('gravatar()', () => {
@@ -109,5 +109,17 @@ describe('helpers utils', () => {
 
       expect(screen.queryByRole('status', { name: 'Loading' })).toBeNull()
     })
+  })
+
+  it.each<[string | undefined, boolean]>([
+    ['<p>Some text</p>', true],
+    [undefined, false],
+    ['', false],
+    ['  \n ', false],
+    ['<p></p><br>', false],
+    ['&nbsp;&nbsp;', false],
+    ['<p>&nbsp;</p>', false],
+  ])('hasVisibleText() for %j returns %s', (html, expected) => {
+    expect(hasVisibleText(html)).toBe(expected)
   })
 })

@@ -47,4 +47,16 @@ describe('artistInfo.vue', () => {
 
     expect(screen.getByTestId('artist-info').classList.contains(mode)).toBe(true)
   })
+
+  it('reports that there is no information to show', async () => {
+    const { emitted } = await renderComponent('full', h.factory('artist-info').make({ bio: { summary: '', full: '' } }))
+
+    expect(emitted().empty).toHaveLength(1)
+  })
+
+  it('does not report information that has text', async () => {
+    const { emitted } = await renderComponent('full')
+
+    expect(emitted().empty).toBeUndefined()
+  })
 })

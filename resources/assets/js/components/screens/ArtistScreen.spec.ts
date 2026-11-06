@@ -1,7 +1,8 @@
 import { screen, waitFor } from '@testing-library/vue'
 import type { Mock } from 'vite-plus/test'
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { defineComponent } from 'vue'
+import type { Component as VueComponent } from 'vue'
+import { defineComponent, reactive } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
@@ -33,10 +34,22 @@ describe('artistScreen.vue', () => {
     template: '<li data-testid="playable-card" :data-id="playable.id" />',
   })
 
+  const EmptyInfoStub = defineComponent({
+    props: ['artist'],
+    emits: ['empty'],
+    mounted() {
+      if (!this.artist.description) {
+        this.$emit('empty')
+      }
+    },
+    template: '<br />',
+  })
+
   const renderComponent = async (
     tab: '' | 'songs' | 'albums' | 'information' | 'events' = 'songs',
     artist?: Artist,
     songs = h.factory('song').make(13),
+    infoStub: VueComponent = h.stub('artist-info'),
   ) => {
     commonStore.state.uses_last_fm = true
 
@@ -53,7 +66,7 @@ describe('artistScreen.vue', () => {
     const rendered = h.visit(`artists/${artist.id}/${tab}`).render(Component, {
       global: {
         stubs: {
-          ArtistInfo: h.stub('artist-info'),
+          ArtistInfo: infoStub,
           SongList: h.stub('song-list'),
           AlbumCard: h.stub('album-card'),
           PlayableCard: PlayableCardStub,
@@ -174,6 +187,26 @@ describe('artistScreen.vue', () => {
   it('shows the playable list on the songs page', async () => {
     await renderComponent()
     await waitFor(() => screen.getByTestId('song-list'))
+  })
+
+  it('hides the About section if the information turns out to be empty', async () => {
+    h.mock(albumStore, 'fetchForArtist').mockResolvedValue([])
+    commonStore.state.uses_last_fm = true
+    await renderComponent('', undefined, undefined, EmptyInfoStub)
+
+    await waitFor(() => screen.getByTestId('artist-albums'))
+    expect(screen.queryByTestId('artist-about')).toBeNull()
+  })
+
+  it('shows the About section again once the description is edited', async () => {
+    h.mock(albumStore, 'fetchForArtist').mockResolvedValue([])
+    const artist = reactive(h.factory('artist').make())
+    await renderComponent('', artist, undefined, EmptyInfoStub)
+    await waitFor(() => screen.getByTestId('artist-albums'))
+
+    artist.description = 'A new description'
+
+    await waitFor(() => screen.getByTestId('artist-about'))
   })
 
   it('has an Events section if using Ticketmaster', async () => {

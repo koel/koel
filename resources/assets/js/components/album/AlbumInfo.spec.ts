@@ -8,7 +8,7 @@ import Component from './AlbumInfo.vue'
 describe('albumInfo.vue', () => {
   const h = createHarness()
 
-  const renderComponent = async (mode: EncyclopediaDisplayMode = 'aside', info?: AlbumInfo) => {
+  const renderComponent = async (mode: EncyclopediaDisplayMode = 'aside', info?: AlbumInfo | null) => {
     commonStore.state.uses_last_fm = true
 
     if (info === undefined) {
@@ -52,5 +52,31 @@ describe('albumInfo.vue', () => {
     }
 
     expect(screen.getByTestId('album-info').classList.contains(mode)).toBe(true)
+  })
+
+  it('reports that there is no information to show', async () => {
+    const info = { ...h.factory('album-info').make({ wiki: { summary: '', full: '<p>&nbsp;</p>' } }), tracks: [] }
+
+    const { emitted } = await renderComponent('full', info)
+
+    expect(emitted().empty).toHaveLength(1)
+  })
+
+  it('reports that there is no information when none is found', async () => {
+    const { emitted } = await renderComponent('full', null)
+
+    expect(emitted().empty).toHaveLength(1)
+  })
+
+  it('does not report information that only has tracks', async () => {
+    const { emitted } = await renderComponent('full', h.factory('album-info').make({ wiki: { summary: '', full: '' } }))
+
+    expect(emitted().empty).toBeUndefined()
+  })
+
+  it('does not report information that has text', async () => {
+    const { emitted } = await renderComponent('full')
+
+    expect(emitted().empty).toBeUndefined()
   })
 })
