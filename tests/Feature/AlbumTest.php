@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Helpers\Ulid;
 use App\Http\Resources\AlbumResource;
 use App\Models\Album;
+use App\Models\Favorite;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -244,11 +245,14 @@ class AlbumTest extends TestCase
     {
         $existingAlbum = Album::factory()->createOne(['name' => 'Black Album']);
         $album = Album::factory()->for($existingAlbum->artist)->createOne();
+        $admin = create_admin();
+        Favorite::factory()->for($admin)->for($album, 'favoriteable')->createOne();
 
         $this
-            ->putAs("api/albums/{$album->id}", ['name' => 'Black Album', 'merge' => true], create_admin())
+            ->putAs("api/albums/{$album->id}", ['name' => 'Black Album', 'merge' => true], $admin)
             ->assertOk()
-            ->assertJsonPath('id', $existingAlbum->id);
+            ->assertJsonPath('id', $existingAlbum->id)
+            ->assertJsonPath('favorite', true);
 
         self::assertModelMissing($album);
     }

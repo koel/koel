@@ -153,12 +153,24 @@ class ArtistTest extends PlusTestCase
     }
 
     #[Test]
+    public function updateToTheNameOfAnotherUsersArtist(): void
+    {
+        Artist::factory()->createOne(['name' => 'Maydup Nem']);
+        $artist = Artist::factory()->createOne();
+
+        $this
+            ->putAs("api/artists/{$artist->id}", ['name' => 'Maydup Nem'], $artist->user)
+            ->assertOk()
+            ->assertJsonPath('id', $artist->id);
+    }
+
+    #[Test]
     public function mergingFailsIfANamesakeAlbumIsOwnedBySomeoneElse(): void
     {
         $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
         $artist = Artist::factory()->for($existingArtist->user)->createOne();
         Album::factory()->for($existingArtist)->createOne(['name' => 'Greatest Hits']);
-        Album::factory()->for($artist)->for($artist->user)->createOne(['name' => 'Greatest Hits']);
+        Album::factory()->for($artist)->for($artist->user)->createOne(['name' => 'greatest hits']);
 
         $this->putAs(
             "api/artists/{$artist->id}",

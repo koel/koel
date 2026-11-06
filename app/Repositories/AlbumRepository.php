@@ -77,10 +77,7 @@ class AlbumRepository extends Repository implements ScoutableRepository
 
     public function findOneByArtistAndNameIgnoringCase(string $artistId, string $name): ?Album
     {
-        return Album::query()
-            ->where('artist_id', $artistId)
-            ->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])
-            ->first();
+        return Album::query()->where('artist_id', $artistId)->whereRaw('LOWER(name) = LOWER(?)', [$name])->first();
     }
 
     /**

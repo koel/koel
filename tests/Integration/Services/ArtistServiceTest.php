@@ -89,6 +89,28 @@ class ArtistServiceTest extends TestCase
     }
 
     #[Test]
+    public function rejectUpdatingIfAnotherUserOwnsAnArtistWithTheSameName(): void
+    {
+        Artist::factory()->createOne(['name' => 'Existing Artist Name']);
+        $artist = Artist::factory()->createOne(['name' => 'Old Artist Name']);
+
+        $this->expectException(ArtistNameConflictException::class);
+
+        $this->service->updateArtist($artist, ArtistUpdateData::make(name: 'Existing Artist Name'));
+    }
+
+    #[Test]
+    public function rejectUpdatingToTheExactNameOfAnArtistWithNonAsciiCharacters(): void
+    {
+        $existingArtist = Artist::factory()->createOne(['name' => 'Ünder Nem']);
+        $artist = Artist::factory()->for($existingArtist->user)->createOne(['name' => 'Old Artist Name']);
+
+        $this->expectException(ArtistNameConflictException::class);
+
+        $this->service->updateArtist($artist, ArtistUpdateData::make(name: 'Ünder Nem'));
+    }
+
+    #[Test]
     public function mergeArtists(): void
     {
         $target = Artist::factory()->createOne(['name' => 'Maydup Nem']);

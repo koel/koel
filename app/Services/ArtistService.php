@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\ArtistNameConflictException;
+use App\Facades\License;
 use App\Models\Artist;
 use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
@@ -28,10 +29,10 @@ class ArtistService
     {
         Assert::false($artist->is_various, '"Various" artists cannot be updated.');
 
-        // Ensure that the artist name is unique (per user)
-        $existingArtistWithTheSameName = $this->artistRepository->findOneByUserAndNameIgnoringCase(
-            $artist->user_id,
+        // Ensure that the artist name is unique (per user in Plus)
+        $existingArtistWithTheSameName = $this->artistRepository->findOneByNameIgnoringCase(
             $dto->name,
+            License::isPlus() ? $artist->user_id : null,
         );
 
         throw_if(

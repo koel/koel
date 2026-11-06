@@ -158,6 +158,17 @@ class AlbumServiceTest extends TestCase
     }
 
     #[Test]
+    public function rejectUpdatingToTheExactNameOfAnAlbumWithNonAsciiCharacters(): void
+    {
+        $existingAlbum = Album::factory()->createOne(['name' => 'Über Album']);
+        $album = Album::factory()->for($existingAlbum->artist)->createOne(['name' => 'Old Album Name']);
+
+        $this->expectException(AlbumNameConflictException::class);
+
+        $this->service->updateAlbum($album, AlbumUpdateData::make(name: 'Über Album', year: 2023));
+    }
+
+    #[Test]
     public function updateAlbumChangingOnlyTheCaseOfItsName(): void
     {
         $album = Album::factory()->createOne(['name' => 'black album']);

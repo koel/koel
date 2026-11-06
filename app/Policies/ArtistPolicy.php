@@ -59,10 +59,7 @@ class ArtistPolicy
     private function ownsEveryAlbumToMerge(User $user, Artist $source, Artist $target): bool
     {
         return $source->albums->every(function (Album $album) use ($user, $target): bool {
-            $namesakeAlbum = $this->albumRepository->findOneBy([
-                'artist_id' => $target->id,
-                'name' => $album->name,
-            ]);
+            $namesakeAlbum = $this->albumRepository->findOneByArtistAndNameIgnoringCase($target->id, $album->name);
 
             return !$namesakeAlbum || $album->belongsToUser($user) && $namesakeAlbum->belongsToUser($user);
         });

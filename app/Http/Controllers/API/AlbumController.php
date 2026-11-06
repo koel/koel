@@ -57,7 +57,9 @@ class AlbumController extends Controller
                 return response()->json(['message' => $e->getMessage()], Response::HTTP_CONFLICT);
             }
 
-            return AlbumResource::make($this->service->mergeAlbums($album, $e->existingAlbum));
+            $keptAlbum = $this->service->mergeAlbums($album, $e->existingAlbum);
+
+            return AlbumResource::make($this->repository->getOne($keptAlbum->id));
         }
     }
 }
