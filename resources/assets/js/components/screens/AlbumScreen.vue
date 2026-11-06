@@ -44,44 +44,33 @@
           </SongListControls>
         </template>
       </ScreenHeader>
-      <ArtistAlbumScreenTabNav v-if="album">
-        <li :class="activeTab === 'songs' && 'active'">
-          <a :href="url('albums.show', { id: album.id, tab: 'songs' })">Songs</a>
-        </li>
-        <li :class="activeTab === 'other-albums' && 'active'">
-          <a :href="url('albums.show', { id: album.id, tab: 'other-albums' })">Other Albums</a>
-        </li>
-        <li v-if="showsInformation" :class="activeTab === 'information' && 'active'">
-          <a :href="url('albums.show', { id: album.id, tab: 'information' })">Information</a>
-        </li>
-      </ArtistAlbumScreenTabNav>
     </template>
 
     <ScreenTabs v-if="album" class="-m-6" :class="loading && 'pointer-events-none'">
-      <div v-show="activeTab === 'songs'" class="songs-pane">
-        <ScreenHeaderSpace v-if="loading" />
-        <SongListSkeleton v-if="loading" role="status" aria-busy="true" aria-label="Loading" />
-        <SongList v-if="!loading && album" ref="songList" @sort="saveSort" @press:enter="onPressEnter" />
-      </div>
+      <ScreenHeaderScrollBox class="overview-pane flex-1 px-6 pb-6">
+        <div class="space-y-12">
+          <SongListSkeleton v-if="loading" class="-mx-6" role="status" aria-busy="true" aria-label="Loading" />
+          <SongList v-else ref="songList" class="-mx-6" unvirtualized @sort="saveSort" @press:enter="onPressEnter" />
 
-      <ScreenHeaderScrollBox v-show="activeTab === 'other-albums'" class="albums-pane" data-testid="albums-pane">
-        <template v-if="otherAlbums">
-          <GridListView v-if="otherAlbums.length" class="scroll-mask-y">
-            <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" />
-          </GridListView>
-          <p v-else class="p-6 text-k-fg-50">No other albums by {{ album.artist_name }} found in the library.</p>
-        </template>
-        <GridListView v-else>
-          <AlbumCardSkeleton v-for="i in 6" :key="i" />
-        </GridListView>
-      </ScreenHeaderScrollBox>
+          <ShelfSection v-if="!otherAlbums || otherAlbums.length" data-testid="album-other-albums">
+            <template #header>More by {{ album.artist_name }}</template>
+            <Carousel>
+              <template v-if="otherAlbums">
+                <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" />
+              </template>
+              <template v-else>
+                <AlbumCardSkeleton v-for="i in 6" :key="i" />
+              </template>
+            </Carousel>
+          </ShelfSection>
 
-      <ScreenHeaderScrollBox
-        v-if="showsInformation && album"
-        v-show="activeTab === 'information'"
-        class="info-pane flex-1"
-      >
-        <AlbumInfo :album mode="full" />
+          <ShelfSection v-if="showsInformation" data-testid="album-about">
+            <template #header>About</template>
+            <ExpandableContentBlock>
+              <AlbumInfo :album mode="full" />
+            </ExpandableContentBlock>
+          </ShelfSection>
+        </div>
       </ScreenHeaderScrollBox>
     </ScreenTabs>
   </ScreenBase>
@@ -89,7 +78,7 @@
 
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
@@ -109,20 +98,17 @@ import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.
 import ScreenHeaderSkeleton from '@/components/ui/ScreenHeaderSkeleton.vue'
 import SongListSkeleton from '@/components/playable/playable-list/PlayableListSkeleton.vue'
 import ScreenTabs from '@/components/ui/ArtistAlbumScreenTabs.vue'
-import ArtistAlbumScreenTabNav from '@/components/ui/ArtistAlbumScreenTabNav.vue'
 import ScreenHeaderScrollBox from '@/components/ui/ScreenHeaderScrollBox.vue'
-import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
 import ScreenBase from '@/components/screens/ScreenBase.vue'
-import GridListView from '@/components/ui/GridListView.vue'
+import ShelfSection from '@/components/ui/ShelfSection.vue'
+import Carousel from '@/components/ui/Carousel.vue'
+import AlbumCard from '@/components/album/AlbumCard.vue'
+import AlbumCardSkeleton from '@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'
+import ExpandableContentBlock from '@/components/ui/album-artist/ExpandableContentBlock.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 
-const validTabs = ['songs', 'other-albums', 'information'] as const
-type Tab = (typeof validTabs)[number]
-
 const AlbumInfo = defineAsyncComponent(() => import('@/components/album/AlbumInfo.vue'))
-const AlbumCard = defineAsyncComponent(() => import('@/components/album/AlbumCard.vue'))
 const ContextMenu = defineAsyncComponent(() => import('@/components/album/AlbumContextMenu.vue'))
-const AlbumCardSkeleton = defineAsyncComponent(() => import('@/components/ui/album-artist/ArtistAlbumCardSkeleton.vue'))
 const FavoriteButton = defineAsyncComponent(() => import('@/components/ui/FavoriteButton.vue'))
 const StarRating = defineAsyncComponent(() => import('@/components/ui/StarRating.vue'))
 
@@ -132,7 +118,6 @@ const { getSavedSort, saveSort } = usePersistedSort('album', 'track')
 const { useLastfm, useMusicBrainz } = useThirdPartyServices()
 const { openContextMenu } = useContextMenu()
 
-const activeTab = ref<Tab>('songs')
 const album = ref<Album | undefined>()
 const songs = ref<Song[]>([])
 const loading = ref(false)
@@ -156,12 +141,6 @@ const {
 const useEncyclopedia = computed(() => useMusicBrainz.value || useLastfm.value)
 const showsInformation = computed(() => useEncyclopedia.value || Boolean(album.value?.description))
 
-watch(showsInformation, shown => {
-  if (!shown && activeTab.value === 'information' && album.value) {
-    go(url('albums.show', { id: album.value.id, tab: 'songs' }))
-  }
-})
-
 const isStandardArtist = computed(() => {
   if (!album.value) {
     return true
@@ -172,14 +151,22 @@ const isStandardArtist = computed(() => {
 
 const toggleFavorite = () => albumStore.toggleFavorite(album.value!)
 
+const fetchOtherAlbums = async (ofAlbum: Album) => {
+  try {
+    const albums = await albumStore.fetchForArtist(ofAlbum.artist_id)
+    otherAlbums.value = albums.filter(({ id }) => id !== ofAlbum.id)
+  } catch (error: unknown) {
+    otherAlbums.value = []
+    useErrorHandler().handleHttpError(error)
+  }
+}
+
 const fetchScreenData = async () => {
   if (loading.value) {
     return
   }
 
   const id = getRouteParam('id')
-  const tabParam = getRouteParam<Tab>('tab') || 'songs'
-  activeTab.value = validTabs.includes(tabParam) ? tabParam : 'songs'
 
   album.value = undefined
   info.value = undefined
@@ -196,15 +183,12 @@ const fetchScreenData = async () => {
       return
     }
 
-    if (activeTab.value === 'other-albums') {
-      const albums = await albumStore.fetchForArtist(album.value.artist_id)
-      otherAlbums.value = albums.filter(({ id }) => id !== album.value!.id)
-    }
-
     context.entity = album.value
 
     const { sortField, sortOrder } = getSavedSort()
     sort(sortField, sortOrder)
+
+    void fetchOtherAlbums(album.value)
   } catch (error: unknown) {
     if ((error as any)?.status === 404) {
       triggerNotFound()
