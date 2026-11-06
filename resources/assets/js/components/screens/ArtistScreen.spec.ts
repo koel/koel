@@ -7,6 +7,7 @@ import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
 import { commonStore } from '@/stores/commonStore'
 import { playableStore } from '@/stores/playableStore'
+import { playbackService } from '@/services/QueuePlaybackService'
 import { eventBus } from '@/utils/eventBus'
 import Router from '@/router'
 import { useContextMenu } from '@/composables/useContextMenu'
@@ -131,6 +132,17 @@ describe('artistScreen.vue', () => {
 
     await waitFor(() => expect(screen.getAllByTestId('playable-card')).toHaveLength(10))
     expect(screen.queryByRole('link', { name: 'Show All' })).toBeNull()
+  })
+
+  it('shuffles all songs from the overview', async () => {
+    h.createAudioPlayer()
+    h.mock(albumStore, 'fetchForArtist').mockResolvedValue([])
+    const playMock = h.mock(playbackService, 'queueAndPlay')
+    const { songs } = await renderComponent('')
+
+    await h.user.click(await screen.findByRole('button', { name: 'Shuffle All' }))
+
+    expect(playMock).toHaveBeenCalledWith(expect.arrayContaining(songs), true)
   })
 
   it('shows the albums on the overview', async () => {

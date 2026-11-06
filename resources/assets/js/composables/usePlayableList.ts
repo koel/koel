@@ -127,7 +127,7 @@ export const usePlayableList = (
     return Array.from(new Set(sampleCovers)).slice(0, 4)
   })
 
-  const getPlayablesToPlay = () => playableList.value!.getAllPlayablesWithSort()
+  const getPlayablesToPlay = () => playableList.value?.getAllPlayablesWithSort() ?? filteredPlayables.value
 
   const playAll = (shuffle: boolean) => {
     playback().queueAndPlay(getPlayablesToPlay(), shuffle)
