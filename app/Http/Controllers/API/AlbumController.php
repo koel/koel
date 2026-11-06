@@ -48,10 +48,8 @@ class AlbumController extends Controller
         try {
             return AlbumResource::make($this->service->updateAlbum($album, $request->toDto()));
         } catch (AlbumNameConflictException $e) {
-            $existingAlbum = $e->existingAlbum;
-
             throw_if(
-                $this->user->cannot('merge', [$album, $existingAlbum]),
+                $this->user->cannot('merge', [$album, $e->existingAlbum]),
                 ValidationException::withMessages(['name' => $e->getMessage()]),
             );
 
@@ -59,7 +57,7 @@ class AlbumController extends Controller
                 return response()->json(['message' => $e->getMessage()], Response::HTTP_CONFLICT);
             }
 
-            return AlbumResource::make($this->service->mergeAlbums($album, $existingAlbum));
+            return AlbumResource::make($this->service->mergeAlbums($album, $e->existingAlbum));
         }
     }
 }

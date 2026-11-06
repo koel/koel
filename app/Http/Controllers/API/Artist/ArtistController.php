@@ -48,10 +48,8 @@ class ArtistController extends Controller
         try {
             return ArtistResource::make($this->service->updateArtist($artist, $request->toDto()));
         } catch (ArtistNameConflictException $e) {
-            $existingArtist = $e->existingArtist;
-
             throw_if(
-                $this->user->cannot('merge', [$artist, $existingArtist]),
+                $this->user->cannot('merge', [$artist, $e->existingArtist]),
                 ValidationException::withMessages(['name' => $e->getMessage()]),
             );
 
@@ -59,7 +57,7 @@ class ArtistController extends Controller
                 return response()->json(['message' => $e->getMessage()], Response::HTTP_CONFLICT);
             }
 
-            return ArtistResource::make($this->service->mergeArtists($artist, $existingArtist));
+            return ArtistResource::make($this->service->mergeArtists($artist, $e->existingArtist));
         }
     }
 }
