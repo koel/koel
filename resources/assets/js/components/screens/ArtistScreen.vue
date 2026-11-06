@@ -47,48 +47,56 @@
         <SongList v-if="!loading && artist" ref="songList" @sort="saveSort" @press:enter="onPressEnter" />
       </div>
 
-      <ScreenHeaderScrollBox v-else class="overview-pane flex-1 px-6 pb-6 space-y-12">
-        <ShelfSection v-if="loading || songs.length" data-testid="artist-top-songs">
-          <template #header>Songs</template>
-          <template #actions>
-            <Btn
-              v-if="songs.length > topSongs.length"
-              :href="url('artists.show', { id: artist.id, tab: 'songs' })"
-              rounded
-              size="small"
-              tag="a"
-              variant="highlight"
-            >
-              Show All
-            </Btn>
-          </template>
-          <PlayableCardGridSkeleton v-if="loading" class="-mx-6" role="status" aria-busy="true" aria-label="Loading" />
-          <PlayableCardGrid v-else class="-mx-6" :playables="topSongs" />
-        </ShelfSection>
-
-        <ShelfSection v-if="!albums || albums.length" data-testid="artist-albums">
-          <template #header>Albums</template>
-          <Carousel>
-            <template v-if="albums">
-              <AlbumCard v-for="album in albums" :key="album.id" :album :show-release-year="true" />
+      <ScreenHeaderScrollBox v-else class="overview-pane flex-1 px-6 pb-6">
+        <div class="space-y-12">
+          <ShelfSection v-if="loading || songs.length" data-testid="artist-top-songs">
+            <template #header>Songs</template>
+            <template #actions>
+              <Btn
+                v-if="songs.length > topSongs.length"
+                :href="url('artists.show', { id: artist.id, tab: 'songs' })"
+                rounded
+                size="small"
+                tag="a"
+                variant="highlight"
+              >
+                Show All
+              </Btn>
             </template>
-            <template v-else>
-              <AlbumCardSkeleton v-for="i in 6" :key="i" />
-            </template>
-          </Carousel>
-        </ShelfSection>
+            <PlayableCardGridSkeleton
+              v-if="loading"
+              class="-mx-6"
+              role="status"
+              aria-busy="true"
+              aria-label="Loading"
+            />
+            <PlayableCardGrid v-else class="-mx-6" :playables="topSongs" />
+          </ShelfSection>
 
-        <ShelfSection v-if="showsInformation" data-testid="artist-about">
-          <template #header>About</template>
-          <ExpandableContentBlock>
-            <ArtistInfo :artist mode="full" />
-          </ExpandableContentBlock>
-        </ShelfSection>
+          <ShelfSection v-if="!albums || albums.length" data-testid="artist-albums">
+            <template #header>Albums</template>
+            <Carousel>
+              <template v-if="albums">
+                <AlbumCard v-for="album in albums" :key="album.id" :album :show-release-year="true" />
+              </template>
+              <template v-else>
+                <AlbumCardSkeleton v-for="i in 6" :key="i" />
+              </template>
+            </Carousel>
+          </ShelfSection>
 
-        <ShelfSection v-if="useTicketmaster" data-testid="artist-events">
-          <template #header>Events</template>
-          <ArtistEventList :artist />
-        </ShelfSection>
+          <ShelfSection v-if="showsInformation" data-testid="artist-about">
+            <template #header>About</template>
+            <ExpandableContentBlock>
+              <ArtistInfo :artist mode="full" />
+            </ExpandableContentBlock>
+          </ShelfSection>
+
+          <ShelfSection v-if="useTicketmaster" data-testid="artist-events">
+            <template #header>Events</template>
+            <ArtistEventList :artist />
+          </ShelfSection>
+        </div>
       </ScreenHeaderScrollBox>
     </ScreenTabs>
   </ScreenBase>
