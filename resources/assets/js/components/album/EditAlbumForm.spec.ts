@@ -9,6 +9,18 @@ import Component from './EditAlbumForm.vue'
 
 const mockShowConfirmDialog = vi.fn()
 
+const mockToastError = vi.fn()
+
+vi.mock('@/composables/useMessageToaster', () => ({
+  useMessageToaster: () => ({
+    toastLoading: vi.fn(() => 'toast-id'),
+    toastError: mockToastError,
+    toastSuccess: vi.fn(),
+    updateToast: vi.fn(),
+    dismissToast: vi.fn(),
+  }),
+}))
+
 vi.mock('@/composables/useDialogBox', () => ({
   useDialogBox: () => ({ showConfirmDialog: mockShowConfirmDialog, showErrorDialog: vi.fn() }),
 }))
@@ -144,7 +156,7 @@ describe('editAlbumForm.vue', () => {
     expect(emitMock).toHaveBeenCalledWith('ALBUM_MERGED', album, existingAlbum)
   })
 
-  it('does not merge if not confirmed', async () => {
+  it('cancels quietly if the merge is not confirmed', async () => {
     const updateMock = h.mock(albumStore, 'update').mockRejectedValue(createConflictError())
     mockShowConfirmDialog.mockResolvedValue(false)
     renderComponent()
@@ -153,5 +165,6 @@ describe('editAlbumForm.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(updateMock).toHaveBeenCalledOnce()
+    expect(mockToastError).not.toHaveBeenCalled()
   })
 })

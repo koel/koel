@@ -2,6 +2,7 @@ import { isEqual, omit } from 'lodash-es'
 import { onMounted, ref, toRaw } from 'vue'
 import { isHttpError } from '@/services/http'
 import { useDialogBox } from '@/composables/useDialogBox'
+import { useErrorHandler } from '@/composables/useErrorHandler'
 import { useForm } from '@/composables/useForm'
 
 interface AlbumOrArtistEditFormConfig<T extends Record<string, any> & { description?: string }> {
@@ -15,6 +16,8 @@ interface AlbumOrArtistEditFormConfig<T extends Record<string, any> & { descript
   onSuccess: () => void
   onClose: () => void
 }
+
+class MergeDeclinedError extends Error {}
 
 export const useAlbumOrArtistEditForm = <T extends Record<string, any> & { description?: string }>(
   config: AlbumOrArtistEditFormConfig<T>,
@@ -49,14 +52,19 @@ export const useAlbumOrArtistEditForm = <T extends Record<string, any> & { descr
       try {
         await config.onSubmit(formData)
       } catch (error: unknown) {
-        if (!isNameConflict(error) || !(await showConfirmDialog(config.mergeConfirmation))) {
+        if (!isNameConflict(error)) {
           throw error
+        }
+
+        if (!(await showConfirmDialog(config.mergeConfirmation))) {
+          throw new MergeDeclinedError()
         }
 
         await config.onMerge(formData)
       }
     },
     onSuccess: config.onSuccess,
+    onError: error => error instanceof MergeDeclinedError || useErrorHandler().handleHttpError(error),
     onClose: config.onClose,
   })
 
