@@ -33,10 +33,11 @@ class ArtistService
         $existingArtistWithTheSameName = $this->artistRepository->findOneByNameIgnoringCase(
             $dto->name,
             License::isPlus() ? $artist->user_id : null,
+            $artist,
         );
 
         throw_if(
-            $existingArtistWithTheSameName?->isNot($artist),
+            $existingArtistWithTheSameName !== null,
             ArtistNameConflictException::class,
             $existingArtistWithTheSameName,
         );

@@ -111,6 +111,17 @@ class ArtistServiceTest extends TestCase
     }
 
     #[Test]
+    public function rejectUpdatingToTheNameOfAnArtistThatDiffersOnlyInCase(): void
+    {
+        $artist = Artist::factory()->createOne(['name' => 'maydup nem']);
+        Artist::factory()->for($artist->user)->createOne(['name' => 'Maydup Nem']);
+
+        $this->expectException(ArtistNameConflictException::class);
+
+        $this->service->updateArtist($artist, ArtistUpdateData::make(name: 'Maydup Nem'));
+    }
+
+    #[Test]
     public function mergeArtists(): void
     {
         $target = Artist::factory()->createOne(['name' => 'Maydup Nem']);

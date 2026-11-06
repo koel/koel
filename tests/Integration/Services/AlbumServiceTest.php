@@ -169,6 +169,17 @@ class AlbumServiceTest extends TestCase
     }
 
     #[Test]
+    public function rejectUpdatingToTheNameOfAnAlbumThatDiffersOnlyInCase(): void
+    {
+        $album = Album::factory()->createOne(['name' => 'black album']);
+        Album::factory()->for($album->artist)->createOne(['name' => 'Black Album']);
+
+        $this->expectException(AlbumNameConflictException::class);
+
+        $this->service->updateAlbum($album, AlbumUpdateData::make(name: 'Black Album', year: 2023));
+    }
+
+    #[Test]
     public function updateAlbumChangingOnlyTheCaseOfItsName(): void
     {
         $album = Album::factory()->createOne(['name' => 'black album']);

@@ -31,10 +31,11 @@ class AlbumService
         $existingAlbumWithTheSameName = $this->albumRepository->findOneByArtistAndNameIgnoringCase(
             $album->artist_id,
             $dto->name,
+            $album,
         );
 
         throw_if(
-            $existingAlbumWithTheSameName?->isNot($album),
+            $existingAlbumWithTheSameName !== null,
             AlbumNameConflictException::class,
             $existingAlbumWithTheSameName,
         );

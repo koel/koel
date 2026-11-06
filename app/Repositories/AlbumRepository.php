@@ -75,9 +75,16 @@ class AlbumRepository extends Repository implements ScoutableRepository
             )->orWhereHas('songs', static fn (Builder $songs) => $songs->whereNull('songs.mbid')));
     }
 
-    public function findOneByArtistAndNameIgnoringCase(string $artistId, string $name): ?Album
-    {
-        return Album::query()->where('artist_id', $artistId)->whereRaw('LOWER(name) = LOWER(?)', [$name])->first();
+    public function findOneByArtistAndNameIgnoringCase(
+        string $artistId,
+        string $name,
+        ?Album $excludedAlbum = null,
+    ): ?Album {
+        return Album::query()
+            ->where('artist_id', $artistId)
+            ->whereRaw('LOWER(name) = LOWER(?)', [$name])
+            ->when($excludedAlbum, static fn (Builder $query) => $query->whereKeyNot($excludedAlbum->id))
+            ->first();
     }
 
     /**
