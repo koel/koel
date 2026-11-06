@@ -57,9 +57,7 @@ const { data, loading, handleSubmit, maybeClose } = useAlbumOrArtistEditForm<Alb
   initialValues: { ...pick(album, 'name', 'year', 'cover'), description: album.description ?? '' },
   artworkField: 'cover',
   fetchOnlineDescription: async () => (await encyclopediaService.fetchForAlbum(album))?.wiki?.full ?? '',
-  onSubmit: async data => {
-    await albumStore.update(album, data)
-  },
+  onSubmit: async data => await albumStore.update(album, data),
   mergeConfirmation: 'An album with the same name already exists. Merge them?',
   onMerge: async data => {
     eventBus.emit('ALBUM_MERGED', album, await albumStore.update(album, { ...data, merge: true }))

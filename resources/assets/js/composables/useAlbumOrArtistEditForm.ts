@@ -8,9 +8,9 @@ interface AlbumOrArtistEditFormConfig<T extends Record<string, any> & { descript
   initialValues: T
   artworkField: keyof T
   fetchOnlineDescription: () => Promise<string>
-  onSubmit: (data: T) => Promise<void>
+  onSubmit: (data: T) => Promise<unknown>
   mergeConfirmation: string
-  onMerge: (data: T) => Promise<void>
+  onMerge: (data: T) => Promise<unknown>
   successMessage: string
   onSuccess: () => void
   onClose: () => void
