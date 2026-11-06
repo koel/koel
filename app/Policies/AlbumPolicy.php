@@ -47,4 +47,9 @@ class AlbumPolicy
     {
         return $this->update($user, $album);
     }
+
+    public function merge(User $user, Album $source, Album $target): bool
+    {
+        return $this->update($user, $source) && $this->update($user, $target);
+    }
 }

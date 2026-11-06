@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { screen, waitFor } from '@testing-library/vue'
+import { HTTPError } from 'ky'
 import { artistStore } from '@/stores/artistStore'
 import { encyclopediaService } from '@/services/encyclopediaService'
+import { eventBus } from '@/utils/eventBus'
 import Component from './EditArtistForm.vue'
 
 const mockShowConfirmDialog = vi.fn()
@@ -10,6 +12,9 @@ const mockShowConfirmDialog = vi.fn()
 vi.mock('@/composables/useDialogBox', () => ({
   useDialogBox: () => ({ showConfirmDialog: mockShowConfirmDialog }),
 }))
+
+const createConflictError = () =>
+  new HTTPError(new Response(null, { status: 409 }), new Request('http://test/api/test'), {} as any)
 
 vi.mock('@/components/ui/form/RichTextEditor.vue', async () => {
   const { defineComponent } = await import('vue')
@@ -151,5 +156,23 @@ describe('editArtistForm.vue', () => {
     await h.user.keyboard('{Escape}')
 
     expect(mockShowConfirmDialog).toHaveBeenCalledWith('Discard all changes?')
+  })
+
+  it('merges into the existing artist once confirmed', async () => {
+    const existingArtist = h.factory('artist').make()
+    const updateMock = h
+      .mock(artistStore, 'update')
+      .mockRejectedValueOnce(createConflictError())
+      .mockResolvedValueOnce(existingArtist)
+    const emitMock = h.mock(eventBus, 'emit')
+    mockShowConfirmDialog.mockResolvedValue(true)
+    const { artist } = renderComponent()
+
+    await h.type(screen.getByPlaceholderText('Artist name'), existingArtist.name)
+    await h.user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(mockShowConfirmDialog).toHaveBeenCalledWith('An artist with the same name already exists. Merge them?')
+    expect(updateMock).toHaveBeenLastCalledWith(artist, expect.objectContaining({ merge: true }))
+    expect(emitMock).toHaveBeenCalledWith('ARTIST_MERGED', artist, existingArtist)
   })
 })

@@ -84,6 +84,17 @@ describe('albumScreen.vue', () => {
     await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/albums'))
   })
 
+  it('goes to the kept album if the shown album is merged into it', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { album } = await renderComponent()
+    await h.tick()
+    const keptAlbum = h.factory('album').make()
+
+    eventBus.emit('ALBUM_MERGED', album, keptAlbum)
+
+    await waitFor(() => expect(goMock).toHaveBeenCalledWith(`/#/albums/${keptAlbum.id}`))
+  })
+
   it('stops watching for album removal once closed', async () => {
     const goMock = h.mock(Router, 'go')
     const { album, unmount } = await renderComponent()

@@ -6,6 +6,8 @@ use App\Enums\ImageChangeType;
 use App\Exceptions\AlbumNameConflictException;
 use App\Helpers\Ulid;
 use App\Models\Album;
+use App\Models\Favorite;
+use App\Models\Rating;
 use App\Models\Song;
 use App\Services\AlbumService;
 use App\Services\Image\ImageStorage;
@@ -153,6 +155,31 @@ class AlbumServiceTest extends TestCase
         $this->expectException(AlbumNameConflictException::class);
 
         $this->service->updateAlbum($album, $data);
+    }
+
+    #[Test]
+    public function mergeAlbums(): void
+    {
+        $target = Album::factory()->createOne(['name' => 'Black Album', 'cover' => 'target-cover.webp']);
+        $source = Album::factory()->for($target->artist)->createOne(['name' => 'black album']);
+        $songs = Song::factory()->for($source)->createMany(2);
+        $favorite = Favorite::factory()->for($source, 'favoriteable')->createOne();
+        $rating = Rating::factory()->for($source, 'rateable')->createOne();
+
+        $mergedAlbum = $this->service->mergeAlbums($source, $target);
+
+        self::assertTrue($mergedAlbum->is($target));
+        self::assertModelMissing($source);
+        self::assertSame('target-cover.webp', $mergedAlbum->getRawOriginal('cover'));
+
+        $songs->each(static function (Song $song) use ($target): void {
+            $song->refresh();
+            self::assertTrue($song->album->is($target));
+            self::assertSame('Black Album', $song->album_name);
+        });
+
+        self::assertTrue($target->favorites()->whereKey($favorite->id)->exists());
+        self::assertTrue($target->ratings()->whereKey($rating->id)->exists());
     }
 
     #[Test]

@@ -39,4 +39,19 @@ class RatingService
             ['rating', 'updated_at'],
         );
     }
+
+    /**
+     * Move every user's rating from one entity to another, dropping the ones a user already has on the target.
+     */
+    public function transferRatings(Rateable&Model $source, Rateable&Model $target): void
+    {
+        $userIdsAlreadyRatingTarget = $target->ratings()->pluck('user_id');
+
+        $source
+            ->ratings()
+            ->whereNotIn('user_id', $userIdsAlreadyRatingTarget)
+            ->update(['rateable_id' => $target->getKey()]);
+
+        $source->ratings()->delete();
+    }
 }

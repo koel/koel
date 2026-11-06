@@ -16,6 +16,7 @@ export interface ArtistUpdateData {
   name: Artist['name']
   image?: Artist['image'] | null
   description?: string
+  merge?: boolean
 }
 
 interface ArtistListPaginateParams extends CursorPaginateParams<ArtistListSortField> {
@@ -52,11 +53,43 @@ export const artistStore = {
   },
 
   async update(artist: Artist, data: ArtistUpdateData) {
-    const updated = await http.put<Artist>(`artists/${artist.id}`, data)
+    const [updated] = this.syncWithVault(await http.put<Artist>(`artists/${artist.id}`, data))
     cache.remove(['artist.info', artist.id])
-    this.state.artists = unionBy(this.state.artists, this.syncWithVault(updated), 'id')
+    this.state.artists = unionBy(this.state.artists, [updated], 'id')
+
+    if (updated.id !== artist.id) {
+      await this.syncMergedArtist(artist, updated)
+    }
+
     songStore.syncArtistProperties(updated)
     albumStore.syncArtistProperties(updated)
+
+    return updated
+  },
+
+  async syncMergedArtist(source: Artist, target: Artist) {
+    songStore.byArtist(source).forEach(song => (song.artist_id = target.id))
+    songStore.byAlbumArtist(source).forEach(song => (song.album_artist_id = target.id))
+
+    cache.remove(['artist.songs', source.id])
+    cache.remove(['artist.songs', target.id])
+    cache.remove(['artist-albums', source.id])
+    cache.remove(['artist-albums', target.id])
+
+    const targetAlbums = await albumStore.fetchForArtist(target)
+    const mergedAlbums = Array.from(albumStore.vault.values()).filter(album => album.artist_id === source.id)
+
+    mergedAlbums.forEach(mergedAlbum => {
+      const keptAlbum = targetAlbums.find(album => album.name.toLowerCase() === mergedAlbum.name.toLowerCase())
+
+      if (keptAlbum) {
+        albumStore.syncMergedAlbum(mergedAlbum, keptAlbum)
+      } else {
+        albumStore.removeByIds([mergedAlbum.id])
+      }
+    })
+
+    this.removeByIds([source.id])
   },
 
   async resolve(id: Artist['id']) {

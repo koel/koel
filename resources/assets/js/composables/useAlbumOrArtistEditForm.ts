@@ -1,5 +1,7 @@
 import { isEqual, omit } from 'lodash-es'
 import { onMounted, ref, toRaw } from 'vue'
+import { isHttpError } from '@/services/http'
+import { useDialogBox } from '@/composables/useDialogBox'
 import { useForm } from '@/composables/useForm'
 
 interface AlbumOrArtistEditFormConfig<T extends Record<string, any> & { description?: string }> {
@@ -7,6 +9,8 @@ interface AlbumOrArtistEditFormConfig<T extends Record<string, any> & { descript
   artworkField: keyof T
   fetchOnlineDescription: () => Promise<string>
   onSubmit: (data: T) => Promise<void>
+  mergeConfirmation: string
+  onMerge: (data: T) => Promise<void>
   successMessage: string
   onSuccess: () => void
   onClose: () => void
@@ -17,6 +21,9 @@ export const useAlbumOrArtistEditForm = <T extends Record<string, any> & { descr
 ) => {
   const originalArtwork = config.initialValues[config.artworkField]
   const onlineDescription = ref('')
+  const { showConfirmDialog } = useDialogBox()
+
+  const isNameConflict = (error: unknown) => isHttpError(error) && error.response?.status === 409
 
   const form = useForm<T>({
     initialValues: config.initialValues,
@@ -39,7 +46,15 @@ export const useAlbumOrArtistEditForm = <T extends Record<string, any> & { descr
         delete formData[config.artworkField]
       }
 
-      await config.onSubmit(formData)
+      try {
+        await config.onSubmit(formData)
+      } catch (error: unknown) {
+        if (!isNameConflict(error) || !(await showConfirmDialog(config.mergeConfirmation))) {
+          throw error
+        }
+
+        await config.onMerge(formData)
+      }
     },
     onSuccess: config.onSuccess,
     onClose: config.onClose,

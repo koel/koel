@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
  * @property-read string $name
  * @property-read ?string $image
  * @property-read ?string $description
+ * @property-read ?bool $merge
  */
 class ArtistUpdateRequest extends Request
 {
@@ -23,6 +24,7 @@ class ArtistUpdateRequest extends Request
             'name' => [Rule::string(), Rule::required()],
             'image' => self::optionalImageRules(),
             'description' => [Rule::string()->max(16_000), Rule::sometimes(), Rule::nullable()],
+            'merge' => [Rule::sometimes(), Rule::boolean()],
         ];
     }
 

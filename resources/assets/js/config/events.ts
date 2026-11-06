@@ -25,6 +25,9 @@ export interface Events {
   SONGS_DELETED: (songs: Song[]) => void
   SONG_UPLOADED: (song: Song) => void
 
+  ALBUM_MERGED: (source: Album, target: Album) => void
+  ARTIST_MERGED: (source: Artist, target: Artist) => void
+
   EPISODE_PROGRESS_UPDATED: (episode: Episode, progress: number) => void
 
   SOCKET_TOGGLE_PLAYBACK: () => void

@@ -11,6 +11,8 @@ use App\Models\Album;
 use App\Repositories\AlbumRepository;
 use App\Repositories\Pagination\PaginationStrategyResolver;
 use App\Services\AlbumService;
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 class AlbumController extends Controller
@@ -18,6 +20,7 @@ class AlbumController extends Controller
     public function __construct(
         private readonly AlbumRepository $repository,
         private readonly AlbumService $service,
+        private readonly Gate $gate,
     ) {}
 
     public function index(CursorPaginatedListRequest $request)
@@ -43,7 +46,21 @@ class AlbumController extends Controller
         try {
             return AlbumResource::make($this->service->updateAlbum($album, $request->toDto()));
         } catch (AlbumNameConflictException $e) {
-            throw ValidationException::withMessages(['name' => $e->getMessage()]);
+            $existingAlbum = $e->existingAlbum;
+
+            throw_if(
+                $this->gate->denies('merge', [$album, $existingAlbum]),
+                ValidationException::withMessages(['name' => $e->getMessage()]),
+            );
+
+            if (!$request->merge) {
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'existing_id' => $existingAlbum->id,
+                ], Response::HTTP_CONFLICT);
+            }
+
+            return AlbumResource::make($this->service->mergeAlbums($album, $existingAlbum));
         }
     }
 }

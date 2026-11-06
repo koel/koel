@@ -215,8 +215,18 @@ const leaveIfAlbumRemoved = (result: SongUpdateResult) => {
   }
 }
 
-eventBus.on('SONGS_UPDATED', leaveIfAlbumRemoved)
-onBeforeUnmount(() => eventBus.off('SONGS_UPDATED', leaveIfAlbumRemoved))
+const onAlbumMerged = (source: Album, target: Album) => {
+  if (album.value?.id === source.id) {
+    go(url('albums.show', { id: target.id }))
+    return
+  }
+
+  void fetchScreenData()
+}
+
+eventBus.on('SONGS_UPDATED', leaveIfAlbumRemoved).on('ALBUM_MERGED', onAlbumMerged)
+
+onBeforeUnmount(() => eventBus.off('SONGS_UPDATED', leaveIfAlbumRemoved).off('ALBUM_MERGED', onAlbumMerged))
 </script>
 
 <style lang="postcss" scoped>

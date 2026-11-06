@@ -115,6 +115,20 @@ describe('albumStore', () => {
     expect(syncPropsMock).toHaveBeenCalledWith(album)
   })
 
+  it('moves the songs of a merged album to the kept album', async () => {
+    const album = h.factory('album').make()
+    const keptAlbum = h.factory('album').make()
+    albumStore.syncWithVault(album)
+    const [song] = playableStore.syncWithVault(h.factory('song').make({ album_id: album.id })) as Song[]
+    h.mock(http, 'put').mockResolvedValueOnce(keptAlbum)
+
+    const result = await albumStore.update(album, { name: keptAlbum.name, year: keptAlbum.year, merge: true })
+
+    expect(result.id).toBe(keptAlbum.id)
+    expect(albumStore.byId(album.id)).toBeUndefined()
+    expect(song.album_id).toBe(keptAlbum.id)
+  })
+
   it('toggles favorite', async () => {
     const album = h.factory('album').make({ favorite: false })
     albumStore.syncWithVault(album)

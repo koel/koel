@@ -139,6 +139,29 @@ describe('artistStore', () => {
     expect(syncAlbumPropsMock).toHaveBeenCalledWith(updatedArtist)
   })
 
+  it('moves the songs and albums of a merged artist to the kept artist', async () => {
+    const artist = h.factory('artist').make()
+    const keptArtist = h.factory('artist').make()
+    artistStore.syncWithVault(artist)
+    const [mergedAlbum] = albumStore.syncWithVault(
+      h.factory('album').make({ artist_id: artist.id, name: 'Greatest Hits' }),
+    )
+    const keptAlbum = h.factory('album').make({ artist_id: keptArtist.id, name: 'Greatest Hits' })
+    const [song] = playableStore.syncWithVault(
+      h.factory('song').make({ artist_id: artist.id, album_id: mergedAlbum.id }),
+    ) as Song[]
+    h.mock(http, 'put').mockResolvedValueOnce(keptArtist)
+    h.mock(http, 'get').mockResolvedValueOnce([keptAlbum])
+
+    const result = await artistStore.update(artist, { name: keptArtist.name, merge: true })
+
+    expect(result.id).toBe(keptArtist.id)
+    expect(artistStore.byId(artist.id)).toBeUndefined()
+    expect(albumStore.byId(mergedAlbum.id)).toBeUndefined()
+    expect(song.artist_id).toBe(keptArtist.id)
+    expect(song.album_id).toBe(keptAlbum.id)
+  })
+
   it('favorites several at once', async () => {
     const artists = h.factory('artist').make({ favorite: false }, 2)
     const postMock = h.mock(http, 'post')

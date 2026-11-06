@@ -12,6 +12,7 @@ use Illuminate\Validation\Rule;
  * @property-read ?int $year
  * @property-read ?string $cover
  * @property-read ?string $description
+ * @property-read ?bool $merge
  */
 class AlbumUpdateRequest extends Request
 {
@@ -25,6 +26,7 @@ class AlbumUpdateRequest extends Request
             'year' => [Rule::numeric()->integer(), Rule::nullable()],
             'cover' => self::optionalImageRules(),
             'description' => [Rule::string()->max(16_000), Rule::sometimes(), Rule::nullable()],
+            'merge' => [Rule::sometimes(), Rule::boolean()],
         ];
     }
 

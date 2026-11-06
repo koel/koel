@@ -225,21 +225,31 @@ class AlbumTest extends TestCase
     }
 
     #[Test]
-    public function updatingToExistingNameFails(): void
+    public function updatingToExistingNameRespondsWithConflict(): void
     {
         $existingAlbum = Album::factory()->createOne(['name' => 'Black Album']);
         $album = Album::factory()->for($existingAlbum->artist)->createOne();
 
-        $this->putAs(
-            "api/albums/{$album->id}",
-            [
-                'name' => 'Black Album',
-                'year' => 2023,
-            ],
-            create_admin(),
-        )->assertJsonValidationErrors([
-            'name' => 'An album with the same name already exists for this artist.',
-        ]);
+        $this
+            ->putAs("api/albums/{$album->id}", ['name' => 'Black Album', 'year' => 2023], create_admin())
+            ->assertConflict()
+            ->assertJsonPath('existing_id', $existingAlbum->id);
+
+        self::assertModelExists($album);
+    }
+
+    #[Test]
+    public function updatingToExistingNameWithMergeMergesIntoTheExistingAlbum(): void
+    {
+        $existingAlbum = Album::factory()->createOne(['name' => 'Black Album']);
+        $album = Album::factory()->for($existingAlbum->artist)->createOne();
+
+        $this
+            ->putAs("api/albums/{$album->id}", ['name' => 'Black Album', 'merge' => true], create_admin())
+            ->assertOk()
+            ->assertJsonPath('id', $existingAlbum->id);
+
+        self::assertModelMissing($album);
     }
 
     #[Test]

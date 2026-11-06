@@ -302,20 +302,31 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
-    public function updatingToExistingNameFails(): void
+    public function updatingToExistingNameRespondsWithConflict(): void
     {
         $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
         $artist = Artist::factory()->for($existingArtist->user)->createOne();
 
-        $this->putAs(
-            "api/artists/{$artist->id}",
-            [
-                'name' => 'Maydup Nem',
-            ],
-            create_admin(),
-        )->assertJsonValidationErrors([
-            'name' => 'An artist with the same name already exists.',
-        ]);
+        $this
+            ->putAs("api/artists/{$artist->id}", ['name' => 'Maydup Nem'], create_admin())
+            ->assertConflict()
+            ->assertJsonPath('existing_id', $existingArtist->id);
+
+        self::assertModelExists($artist);
+    }
+
+    #[Test]
+    public function updatingToExistingNameWithMergeMergesIntoTheExistingArtist(): void
+    {
+        $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
+        $artist = Artist::factory()->for($existingArtist->user)->createOne();
+
+        $this
+            ->putAs("api/artists/{$artist->id}", ['name' => 'Maydup Nem', 'merge' => true], create_admin())
+            ->assertOk()
+            ->assertJsonPath('id', $existingArtist->id);
+
+        self::assertModelMissing($artist);
     }
 
     #[Test]
