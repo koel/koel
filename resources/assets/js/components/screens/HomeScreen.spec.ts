@@ -90,7 +90,7 @@ describe('homeScreen.vue', () => {
     expect(screen.queryByTestId('screen-empty-state')).toBeNull()
   })
 
-  it.each<[keyof Events]>([['SONGS_UPDATED'], ['SONGS_DELETED']])(
+  it.each<[keyof Events]>([['SONGS_UPDATED'], ['SONGS_DELETED'], ['ALBUM_MERGED'], ['ARTIST_MERGED']])(
     'refreshes the overviews on %s event',
     async eventName => {
       const fetchOverviewMock = h.mock(overviewStore, 'fetch')

@@ -207,6 +207,8 @@ const openReorderModal = () =>
 eventBus
   .on('SONGS_DELETED', () => overviewStore.fetch())
   .on('SONGS_UPDATED', () => overviewStore.fetch())
+  .on('ALBUM_MERGED', () => overviewStore.fetch())
+  .on('ARTIST_MERGED', () => overviewStore.fetch())
   .on('SONG_UPLOADED', () => {
     overviewOutdated = true
   })
