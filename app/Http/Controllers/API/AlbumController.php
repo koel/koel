@@ -8,17 +8,21 @@ use App\Http\Requests\API\Album\AlbumUpdateRequest;
 use App\Http\Requests\API\CursorPaginatedListRequest;
 use App\Http\Resources\AlbumResource;
 use App\Models\Album;
+use App\Models\User;
 use App\Repositories\AlbumRepository;
 use App\Repositories\Pagination\PaginationStrategyResolver;
 use App\Services\AlbumService;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 class AlbumController extends Controller
 {
+    /** @param User $user */
     public function __construct(
         private readonly AlbumRepository $repository,
         private readonly AlbumService $service,
+        private readonly Authenticatable $user,
     ) {}
 
     public function index(CursorPaginatedListRequest $request)
@@ -47,7 +51,7 @@ class AlbumController extends Controller
             $existingAlbum = $e->existingAlbum;
 
             throw_if(
-                $request->user()->cannot('merge', [$album, $existingAlbum]),
+                $this->user->cannot('merge', [$album, $existingAlbum]),
                 ValidationException::withMessages(['name' => $e->getMessage()]),
             );
 

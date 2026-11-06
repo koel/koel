@@ -8,17 +8,21 @@ use App\Http\Requests\API\Artist\ArtistUpdateRequest;
 use App\Http\Requests\API\CursorPaginatedListRequest;
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
+use App\Models\User;
 use App\Repositories\ArtistRepository;
 use App\Repositories\Pagination\PaginationStrategyResolver;
 use App\Services\ArtistService;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 class ArtistController extends Controller
 {
+    /** @param User $user */
     public function __construct(
         private readonly ArtistService $service,
         private readonly ArtistRepository $repository,
+        private readonly Authenticatable $user,
     ) {}
 
     public function index(CursorPaginatedListRequest $request)
@@ -47,7 +51,7 @@ class ArtistController extends Controller
             $existingArtist = $e->existingArtist;
 
             throw_if(
-                $request->user()->cannot('merge', [$artist, $existingArtist]),
+                $this->user->cannot('merge', [$artist, $existingArtist]),
                 ValidationException::withMessages(['name' => $e->getMessage()]),
             );
 
