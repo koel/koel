@@ -87,7 +87,7 @@
 
           <ShelfSection v-if="showsInformation" data-testid="artist-about">
             <template #header>About</template>
-            <ExpandableContentBlock>
+            <ExpandableContentBlock :key="artist.id">
               <ArtistInfo :artist mode="full" />
             </ExpandableContentBlock>
           </ShelfSection>
@@ -191,6 +191,7 @@ const fetchAlbums = async (forArtist: Artist) => {
   try {
     albums.value = await albumStore.fetchForArtist(forArtist)
   } catch (error: unknown) {
+    albums.value = []
     useErrorHandler().handleHttpError(error)
   }
 }

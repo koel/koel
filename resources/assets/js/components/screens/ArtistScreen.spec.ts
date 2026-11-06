@@ -17,6 +17,12 @@ import Component from './ArtistScreen.vue'
 
 vi.mock('@/composables/useContextMenu')
 
+vi.mock('@/composables/useErrorHandler', () => ({
+  useErrorHandler: () => ({
+    handleHttpError: vi.fn(),
+  }),
+}))
+
 describe('artistScreen.vue', () => {
   const h = createHarness()
 
@@ -150,6 +156,16 @@ describe('artistScreen.vue', () => {
     await renderComponent('')
 
     await waitFor(() => expect(screen.getAllByTestId('album-card')).toHaveLength(3))
+  })
+
+  it('hides the albums section if the albums fail to load', async () => {
+    const fetchAlbumsMock = h.mock(albumStore, 'fetchForArtist').mockRejectedValue(new Error('Failed'))
+    await renderComponent('')
+
+    await waitFor(() => expect(fetchAlbumsMock).toHaveBeenCalled())
+    await h.tick()
+
+    expect(screen.queryByTestId('artist-albums')).toBeNull()
   })
 
   it('shows the playable list on the songs page', async () => {
