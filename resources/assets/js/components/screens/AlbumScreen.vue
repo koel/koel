@@ -47,28 +47,30 @@
     </template>
 
     <ScreenTabs v-if="album" class="-m-6" :class="loading && 'pointer-events-none'">
-      <ScreenHeaderScrollBox class="overview-pane flex-1 px-6 pb-6 space-y-12">
-        <SongListSkeleton v-if="loading" class="-mx-6" role="status" aria-busy="true" aria-label="Loading" />
-        <SongList v-else ref="songList" class="-mx-6" unvirtualized @sort="saveSort" @press:enter="onPressEnter" />
+      <ScreenHeaderScrollBox class="overview-pane flex-1 px-6 pb-6">
+        <div class="space-y-12">
+          <SongListSkeleton v-if="loading" class="-mx-6" role="status" aria-busy="true" aria-label="Loading" />
+          <SongList v-else ref="songList" class="-mx-6" unvirtualized @sort="saveSort" @press:enter="onPressEnter" />
 
-        <ShelfSection v-if="!otherAlbums || otherAlbums.length" data-testid="album-other-albums">
-          <template #header>More by {{ album.artist_name }}</template>
-          <Carousel>
-            <template v-if="otherAlbums">
-              <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" />
-            </template>
-            <template v-else>
-              <AlbumCardSkeleton v-for="i in 6" :key="i" />
-            </template>
-          </Carousel>
-        </ShelfSection>
+          <ShelfSection v-if="!otherAlbums || otherAlbums.length" data-testid="album-other-albums">
+            <template #header>More by {{ album.artist_name }}</template>
+            <Carousel>
+              <template v-if="otherAlbums">
+                <AlbumCard v-for="otherAlbum in otherAlbums" :key="otherAlbum.id" :album="otherAlbum" />
+              </template>
+              <template v-else>
+                <AlbumCardSkeleton v-for="i in 6" :key="i" />
+              </template>
+            </Carousel>
+          </ShelfSection>
 
-        <ShelfSection v-if="showsInformation" data-testid="album-about">
-          <template #header>About</template>
-          <ExpandableContentBlock>
-            <AlbumInfo :album mode="full" />
-          </ExpandableContentBlock>
-        </ShelfSection>
+          <ShelfSection v-if="showsInformation" data-testid="album-about">
+            <template #header>About</template>
+            <ExpandableContentBlock>
+              <AlbumInfo :album mode="full" />
+            </ExpandableContentBlock>
+          </ShelfSection>
+        </div>
       </ScreenHeaderScrollBox>
     </ScreenTabs>
   </ScreenBase>
