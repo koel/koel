@@ -15,11 +15,13 @@ import { assertOpenContextMenu } from '@/__tests__/assertions'
 import ArtistContextMenu from '@/components/artist/ArtistContextMenu.vue'
 import Component from './ArtistScreen.vue'
 
+const mockHandleHttpError = vi.fn()
+
 vi.mock('@/composables/useContextMenu')
 
 vi.mock('@/composables/useErrorHandler', () => ({
   useErrorHandler: () => ({
-    handleHttpError: vi.fn(),
+    handleHttpError: mockHandleHttpError,
   }),
 }))
 
@@ -159,10 +161,11 @@ describe('artistScreen.vue', () => {
   })
 
   it('hides the albums section if the albums fail to load', async () => {
-    const fetchAlbumsMock = h.mock(albumStore, 'fetchForArtist').mockRejectedValue(new Error('Failed'))
+    const error = new Error('Failed')
+    h.mock(albumStore, 'fetchForArtist').mockRejectedValue(error)
     await renderComponent('')
 
-    await waitFor(() => expect(fetchAlbumsMock).toHaveBeenCalled())
+    await waitFor(() => expect(mockHandleHttpError).toHaveBeenCalledWith(error))
     await h.tick()
 
     expect(screen.queryByTestId('artist-albums')).toBeNull()
