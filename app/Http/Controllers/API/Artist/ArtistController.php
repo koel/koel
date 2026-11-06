@@ -54,10 +54,7 @@ class ArtistController extends Controller
             );
 
             if (!$request->merge) {
-                return response()->json([
-                    'message' => $e->getMessage(),
-                    'existing_id' => $existingArtist->id,
-                ], Response::HTTP_CONFLICT);
+                return response()->json(['message' => $e->getMessage()], Response::HTTP_CONFLICT);
             }
 
             return ArtistResource::make($this->service->mergeArtists($artist, $existingArtist));

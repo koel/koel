@@ -307,10 +307,7 @@ class ArtistTest extends TestCase
         $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
         $artist = Artist::factory()->for($existingArtist->user)->createOne();
 
-        $this
-            ->putAs("api/artists/{$artist->id}", ['name' => 'Maydup Nem'], create_admin())
-            ->assertConflict()
-            ->assertJsonPath('existing_id', $existingArtist->id);
+        $this->putAs("api/artists/{$artist->id}", ['name' => 'Maydup Nem'], create_admin())->assertConflict();
 
         self::assertModelExists($artist);
     }

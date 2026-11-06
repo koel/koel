@@ -54,10 +54,7 @@ class AlbumController extends Controller
             );
 
             if (!$request->merge) {
-                return response()->json([
-                    'message' => $e->getMessage(),
-                    'existing_id' => $existingAlbum->id,
-                ], Response::HTTP_CONFLICT);
+                return response()->json(['message' => $e->getMessage()], Response::HTTP_CONFLICT);
             }
 
             return AlbumResource::make($this->service->mergeAlbums($album, $existingAlbum));

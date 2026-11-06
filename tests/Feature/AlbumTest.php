@@ -230,10 +230,11 @@ class AlbumTest extends TestCase
         $existingAlbum = Album::factory()->createOne(['name' => 'Black Album']);
         $album = Album::factory()->for($existingAlbum->artist)->createOne();
 
-        $this
-            ->putAs("api/albums/{$album->id}", ['name' => 'Black Album', 'year' => 2023], create_admin())
-            ->assertConflict()
-            ->assertJsonPath('existing_id', $existingAlbum->id);
+        $this->putAs(
+            "api/albums/{$album->id}",
+            ['name' => 'Black Album', 'year' => 2023],
+            create_admin(),
+        )->assertConflict();
 
         self::assertModelExists($album);
     }
