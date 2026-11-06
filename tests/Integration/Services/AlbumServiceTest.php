@@ -150,11 +150,26 @@ class AlbumServiceTest extends TestCase
     {
         $existingAlbum = Album::factory()->createOne(['name' => 'Existing Album Name']);
         $album = Album::factory()->for($existingAlbum->artist)->createOne(['name' => 'Old Album Name']);
-        $data = AlbumUpdateData::make(name: 'Existing Album Name', year: 2023);
+        $data = AlbumUpdateData::make(name: 'existing album name', year: 2023);
 
         $this->expectException(AlbumNameConflictException::class);
 
         $this->service->updateAlbum($album, $data);
+    }
+
+    #[Test]
+    public function updateAlbumChangingOnlyTheCaseOfItsName(): void
+    {
+        $album = Album::factory()->createOne(['name' => 'black album']);
+
+        $this->imageStorage
+            ->expects('storeOptionalImage')
+            ->with(null)
+            ->andReturn(ImageChange::make(ImageChangeType::KEEP));
+
+        $updatedAlbum = $this->service->updateAlbum($album, AlbumUpdateData::make(name: 'Black Album', year: 2023));
+
+        self::assertSame('Black Album', $updatedAlbum->name);
     }
 
     #[Test]

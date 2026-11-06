@@ -28,10 +28,10 @@ class AlbumService
     public function updateAlbum(Album $album, AlbumUpdateData $dto): Album
     {
         // Ensure that the album name is unique within the artist
-        $existingAlbumWithTheSameName = $this->albumRepository->findOneBy([
-            'name' => $dto->name,
-            'artist_id' => $album->artist_id,
-        ]);
+        $existingAlbumWithTheSameName = $this->albumRepository->findOneByArtistAndNameIgnoringCase(
+            $album->artist_id,
+            $dto->name,
+        );
 
         throw_if(
             $existingAlbumWithTheSameName?->isNot($album),

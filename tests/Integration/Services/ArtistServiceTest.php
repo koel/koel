@@ -81,7 +81,7 @@ class ArtistServiceTest extends TestCase
     {
         $existingArtist = Artist::factory()->createOne(['name' => 'Existing Artist Name']);
         $artist = Artist::factory()->for($existingArtist->user)->createOne(['name' => 'Old Artist Name']);
-        $data = ArtistUpdateData::make(name: 'Existing Artist Name');
+        $data = ArtistUpdateData::make(name: 'existing artist name');
 
         $this->expectException(ArtistNameConflictException::class);
 
@@ -94,7 +94,7 @@ class ArtistServiceTest extends TestCase
         $target = Artist::factory()->createOne(['name' => 'Maydup Nem']);
         $source = Artist::factory()->for($target->user)->createOne(['name' => 'maydup nem']);
         $targetAlbum = Album::factory()->for($target)->createOne(['name' => 'Greatest Hits']);
-        $namesakeAlbum = Album::factory()->for($source)->createOne(['name' => 'Greatest Hits']);
+        $namesakeAlbum = Album::factory()->for($source)->createOne(['name' => 'greatest hits']);
         $movingAlbum = Album::factory()->for($source)->createOne(['name' => 'Live']);
         $namesakeAlbumSong = Song::factory()->for($namesakeAlbum)->for($source)->createOne();
         $featuredSong = Song::factory()->for($source)->createOne();

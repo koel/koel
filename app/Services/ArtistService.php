@@ -29,10 +29,10 @@ class ArtistService
         Assert::false($artist->is_various, '"Various" artists cannot be updated.');
 
         // Ensure that the artist name is unique (per user)
-        $existingArtistWithTheSameName = $this->artistRepository->findOneBy([
-            'name' => $dto->name,
-            'user_id' => $artist->user_id,
-        ]);
+        $existingArtistWithTheSameName = $this->artistRepository->findOneByUserAndNameIgnoringCase(
+            $artist->user_id,
+            $dto->name,
+        );
 
         throw_if(
             $existingArtistWithTheSameName?->isNot($artist),
@@ -57,10 +57,7 @@ class ArtistService
     {
         DB::transaction(function () use ($source, $target): void {
             foreach ($source->albums as $album) {
-                $namesakeAlbum = $this->albumRepository->findOneBy([
-                    'artist_id' => $target->id,
-                    'name' => $album->name,
-                ]);
+                $namesakeAlbum = $this->albumRepository->findOneByArtistAndNameIgnoringCase($target->id, $album->name);
 
                 if ($namesakeAlbum) {
                     $this->albumService->mergeAlbums($album, $namesakeAlbum);
