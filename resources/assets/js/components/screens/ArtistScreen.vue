@@ -240,6 +240,11 @@ const fetchScreenData = async () => {
 onScreenActivated('Artist', () => fetchScreenData())
 onRouteChanged(route => route.name === 'artists.show' && fetchScreenData())
 
+watch(
+  () => artist.value?.description,
+  () => (infoEmpty.value = false),
+)
+
 const requestContextMenu = (event: MouseEvent) =>
   openContextMenu<'ARTIST'>(ArtistContextMenu, event, {
     artist: artist.value!,

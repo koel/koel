@@ -24,7 +24,7 @@
 import { ref, toRefs, watch } from 'vue'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
-import { defineAsyncComponent } from '@/utils/helpers'
+import { defineAsyncComponent, hasVisibleText } from '@/utils/helpers'
 
 import AlbumThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
@@ -53,7 +53,7 @@ watch(
       info.value = await encyclopediaService.fetchForAlbum(album.value)
       loading.value = false
 
-      if (!info.value?.wiki?.full) {
+      if (!info.value?.wiki || (!hasVisibleText(info.value.wiki.full) && !info.value.tracks?.length)) {
         emit('empty')
       }
     }

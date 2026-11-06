@@ -2,7 +2,7 @@ import { screen, waitFor } from '@testing-library/vue'
 import type { Mock } from 'vite-plus/test'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import type { Component as VueComponent } from 'vue'
-import { defineComponent } from 'vue'
+import { defineComponent, reactive } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { albumStore } from '@/stores/albumStore'
 import { artistStore } from '@/stores/artistStore'
@@ -35,9 +35,12 @@ describe('artistScreen.vue', () => {
   })
 
   const EmptyInfoStub = defineComponent({
+    props: ['artist'],
     emits: ['empty'],
     mounted() {
-      this.$emit('empty')
+      if (!this.artist.description) {
+        this.$emit('empty')
+      }
     },
     template: '<br />',
   })
@@ -193,6 +196,17 @@ describe('artistScreen.vue', () => {
 
     await waitFor(() => screen.getByTestId('artist-albums'))
     expect(screen.queryByTestId('artist-about')).toBeNull()
+  })
+
+  it('shows the About section again once the description is edited', async () => {
+    h.mock(albumStore, 'fetchForArtist').mockResolvedValue([])
+    const artist = reactive(h.factory('artist').make())
+    await renderComponent('', artist, undefined, EmptyInfoStub)
+    await waitFor(() => screen.getByTestId('artist-albums'))
+
+    artist.description = 'A new description'
+
+    await waitFor(() => screen.getByTestId('artist-about'))
   })
 
   it('has an Events section if using Ticketmaster', async () => {

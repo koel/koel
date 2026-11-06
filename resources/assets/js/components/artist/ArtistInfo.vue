@@ -20,6 +20,7 @@
 import { ref, toRefs, watch } from 'vue'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+import { hasVisibleText } from '@/utils/helpers'
 
 import ArtistThumbnail from '@/components/ui/album-artist/AlbumOrArtistThumbnail.vue'
 import AlbumArtistInfo from '@/components/ui/album-artist/AlbumOrArtistInfo.vue'
@@ -45,7 +46,7 @@ watch(
       info.value = await encyclopediaService.fetchForArtist(artist.value)
       loading.value = false
 
-      if (!info.value?.bio?.full) {
+      if (!hasVisibleText(info.value?.bio?.full)) {
         emit('empty')
       }
     }

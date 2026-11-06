@@ -78,7 +78,7 @@
 
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { computed, defineAsyncComponent, onBeforeUnmount, ref } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from 'vue'
 import { eventBus } from '@/utils/eventBus'
 import { pluralize } from '@/utils/formatters'
 import { albumStore } from '@/stores/albumStore'
@@ -205,6 +205,11 @@ const fetchScreenData = async () => {
 
 onScreenActivated('Album', () => fetchScreenData())
 onRouteChanged(route => route.name === 'albums.show' && fetchScreenData())
+
+watch(
+  () => album.value?.description,
+  () => (infoEmpty.value = false),
+)
 
 const requestContextMenu = (event: MouseEvent) =>
   openContextMenu<'ALBUM'>(ContextMenu, event, {
