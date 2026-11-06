@@ -6,12 +6,12 @@ import Component from './ExpandableContentBlock.vue'
 describe('expandableContentBlock.vue', () => {
   const h = createHarness()
 
-  it('hides Read More button after clicking it', async () => {
+  it('hides the More button after clicking it', async () => {
     h.render(Component, {
       slots: { default: 'Long content here' },
     })
 
-    await h.user.click(screen.getByText('Read More'))
-    expect(screen.queryByText('Read More')).toBeNull()
+    await h.user.click(screen.getByRole('button', { name: 'More' }))
+    expect(screen.queryByRole('button', { name: 'More' })).toBeNull()
   })
 })

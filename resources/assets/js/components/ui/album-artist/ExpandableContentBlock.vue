@@ -1,17 +1,19 @@
 <template>
   <article>
-    <div :class="showingFull ? 'line-clamp-none' : 'line-clamp-10'">
+    <div :class="showingFull ? '' : 'max-h-[3lh] overflow-hidden'">
       <slot />
     </div>
 
-    <Btn size="small" v-if="!showingFull" class="mt-4" @click.prevent="showingFull = true"> Read More </Btn>
+    <LinkButton v-if="!showingFull" class="mt-2" variant="highlight" @click.prevent="showingFull = true"
+      >More</LinkButton
+    >
   </article>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-import Btn from '@/components/ui/form/Btn.vue'
+import LinkButton from '@/components/ui/form/LinkButton.vue'
 
 const showingFull = ref(false)
 </script>
