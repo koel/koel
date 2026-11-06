@@ -151,4 +151,66 @@ class ArtistTest extends PlusTestCase
             image_storage_url('shared.webp'),
         );
     }
+
+    #[Test]
+    public function updateToTheNameOfAnotherUsersArtist(): void
+    {
+        Artist::factory()->createOne(['name' => 'Maydup Nem']);
+        $artist = Artist::factory()->createOne();
+
+        $this
+            ->putAs("api/artists/{$artist->id}", ['name' => 'Maydup Nem'], $artist->user)
+            ->assertOk()
+            ->assertJsonPath('id', $artist->id);
+    }
+
+    #[Test]
+    public function mergingFailsIfANamesakeAlbumIsOwnedBySomeoneElse(): void
+    {
+        $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
+        $artist = Artist::factory()->for($existingArtist->user)->createOne();
+        Album::factory()->for($existingArtist)->createOne(['name' => 'Greatest Hits']);
+        Album::factory()->for($artist)->for($artist->user)->createOne(['name' => 'greatest hits']);
+
+        $this->putAs(
+            "api/artists/{$artist->id}",
+            ['name' => 'Maydup Nem', 'merge' => true],
+            $artist->user,
+        )->assertJsonValidationErrors(['name' => 'An artist with the same name already exists.']);
+
+        self::assertModelExists($artist);
+    }
+
+    #[Test]
+    public function mergingFailsIfAnAlbumToMoveIsOwnedBySomeoneElse(): void
+    {
+        $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
+        $artist = Artist::factory()->for($existingArtist->user)->createOne();
+        Album::factory()->for($artist)->createOne(['name' => 'Live']);
+
+        $this->putAs(
+            "api/artists/{$artist->id}",
+            ['name' => 'Maydup Nem', 'merge' => true],
+            $artist->user,
+        )->assertJsonValidationErrors(['name' => 'An artist with the same name already exists.']);
+
+        self::assertModelExists($artist);
+    }
+
+    #[Test]
+    public function mergeOwnArtists(): void
+    {
+        $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
+        $artist = Artist::factory()->for($existingArtist->user)->createOne();
+        Album::factory()->for($existingArtist)->for($existingArtist->user)->createOne(['name' => 'Greatest Hits']);
+        Album::factory()->for($artist)->for($artist->user)->createOne(['name' => 'Greatest Hits']);
+
+        $this->putAs(
+            "api/artists/{$artist->id}",
+            ['name' => 'Maydup Nem', 'merge' => true],
+            $artist->user,
+        )->assertJsonPath('id', $existingArtist->id);
+
+        self::assertModelMissing($artist);
+    }
 }

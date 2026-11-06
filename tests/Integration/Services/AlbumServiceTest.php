@@ -6,6 +6,8 @@ use App\Enums\ImageChangeType;
 use App\Exceptions\AlbumNameConflictException;
 use App\Helpers\Ulid;
 use App\Models\Album;
+use App\Models\Favorite;
+use App\Models\Rating;
 use App\Models\Song;
 use App\Services\AlbumService;
 use App\Services\Image\ImageStorage;
@@ -148,11 +150,73 @@ class AlbumServiceTest extends TestCase
     {
         $existingAlbum = Album::factory()->createOne(['name' => 'Existing Album Name']);
         $album = Album::factory()->for($existingAlbum->artist)->createOne(['name' => 'Old Album Name']);
-        $data = AlbumUpdateData::make(name: 'Existing Album Name', year: 2023);
+        $data = AlbumUpdateData::make(name: 'existing album name', year: 2023);
 
         $this->expectException(AlbumNameConflictException::class);
 
         $this->service->updateAlbum($album, $data);
+    }
+
+    #[Test]
+    public function rejectUpdatingToTheExactNameOfAnAlbumWithNonAsciiCharacters(): void
+    {
+        $existingAlbum = Album::factory()->createOne(['name' => 'Über Album']);
+        $album = Album::factory()->for($existingAlbum->artist)->createOne(['name' => 'Old Album Name']);
+
+        $this->expectException(AlbumNameConflictException::class);
+
+        $this->service->updateAlbum($album, AlbumUpdateData::make(name: 'Über Album', year: 2023));
+    }
+
+    #[Test]
+    public function rejectUpdatingToTheNameOfAnAlbumThatDiffersOnlyInCase(): void
+    {
+        $album = Album::factory()->createOne(['name' => 'black album']);
+        Album::factory()->for($album->artist)->createOne(['name' => 'Black Album']);
+
+        $this->expectException(AlbumNameConflictException::class);
+
+        $this->service->updateAlbum($album, AlbumUpdateData::make(name: 'Black Album', year: 2023));
+    }
+
+    #[Test]
+    public function updateAlbumChangingOnlyTheCaseOfItsName(): void
+    {
+        $album = Album::factory()->createOne(['name' => 'black album']);
+
+        $this->imageStorage
+            ->expects('storeOptionalImage')
+            ->with(null)
+            ->andReturn(ImageChange::make(ImageChangeType::KEEP));
+
+        $updatedAlbum = $this->service->updateAlbum($album, AlbumUpdateData::make(name: 'Black Album', year: 2023));
+
+        self::assertSame('Black Album', $updatedAlbum->name);
+    }
+
+    #[Test]
+    public function mergeAlbums(): void
+    {
+        $target = Album::factory()->createOne(['name' => 'Black Album', 'cover' => 'target-cover.webp']);
+        $source = Album::factory()->for($target->artist)->createOne(['name' => 'black album']);
+        $songs = Song::factory()->for($source)->createMany(2);
+        $favorite = Favorite::factory()->for($source, 'favoriteable')->createOne();
+        $rating = Rating::factory()->for($source, 'rateable')->createOne();
+
+        $mergedAlbum = $this->service->mergeAlbums($source, $target);
+
+        self::assertTrue($mergedAlbum->is($target));
+        self::assertModelMissing($source);
+        self::assertSame('target-cover.webp', $mergedAlbum->getRawOriginal('cover'));
+
+        $songs->each(static function (Song $song) use ($target): void {
+            $song->refresh();
+            self::assertTrue($song->album->is($target));
+            self::assertSame('Black Album', $song->album_name);
+        });
+
+        self::assertTrue($target->favorites()->whereKey($favorite->id)->exists());
+        self::assertTrue($target->ratings()->whereKey($rating->id)->exists());
     }
 
     #[Test]

@@ -107,6 +107,17 @@ describe('artistScreen.vue', () => {
     await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/artists'))
   })
 
+  it('goes to the kept artist if the shown artist is merged into it', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { artist } = await renderComponent()
+    await h.tick()
+    const keptArtist = h.factory('artist').make()
+
+    eventBus.emit('ARTIST_MERGED', artist, keptArtist)
+
+    await waitFor(() => expect(goMock).toHaveBeenCalledWith(`/#/artists/${keptArtist.id}`))
+  })
+
   it('stops watching for artist removal once closed', async () => {
     const goMock = h.mock(Router, 'go')
     const { artist, unmount } = await renderComponent()

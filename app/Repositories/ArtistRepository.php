@@ -24,6 +24,15 @@ class ArtistRepository extends Repository implements ScoutableRepository
         return Artist::query()->whereAccessibleByUser($user)->whereKey($artist->id)->exists();
     }
 
+    public function findOneByNameIgnoringCase(string $name, ?int $ownerId, Artist $excludedArtist): ?Artist
+    {
+        return Artist::query()
+            ->when($ownerId, static fn (Builder $query) => $query->where('user_id', $ownerId))
+            ->whereRaw('LOWER(name) = LOWER(?)', [$name])
+            ->whereKeyNot($excludedArtist->id)
+            ->first();
+    }
+
     /**
      * @param string $id
      */

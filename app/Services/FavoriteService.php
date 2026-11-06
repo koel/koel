@@ -132,6 +132,21 @@ class FavoriteService
         });
     }
 
+    /**
+     * Move every user's favorite from one entity to another, dropping the ones a user already has on the target.
+     */
+    public function transferFavorites(Favoriteable&Model $source, Favoriteable&Model $target): void
+    {
+        $userIdsAlreadyFavoritingTarget = $target->favorites()->pluck('user_id');
+
+        $source
+            ->favorites()
+            ->whereNotIn('user_id', $userIdsAlreadyFavoritingTarget)
+            ->update(['favoriteable_id' => $target->getKey()]);
+
+        $source->favorites()->delete();
+    }
+
     private static function getNextPosition(User $user): int
     {
         $max = Favorite::query()->where('user_id', $user->id)->max('position');

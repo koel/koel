@@ -7,6 +7,7 @@ use App\Http\Resources\ArtistResource;
 use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Embed;
+use App\Models\Favorite;
 use App\Models\Interaction;
 use App\Models\Song;
 use App\Values\EmbedOptions;
@@ -302,20 +303,31 @@ class ArtistTest extends TestCase
     }
 
     #[Test]
-    public function updatingToExistingNameFails(): void
+    public function updatingToExistingNameRespondsWithConflict(): void
     {
         $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
         $artist = Artist::factory()->for($existingArtist->user)->createOne();
 
-        $this->putAs(
-            "api/artists/{$artist->id}",
-            [
-                'name' => 'Maydup Nem',
-            ],
-            create_admin(),
-        )->assertJsonValidationErrors([
-            'name' => 'An artist with the same name already exists.',
-        ]);
+        $this->putAs("api/artists/{$artist->id}", ['name' => 'Maydup Nem'], create_admin())->assertConflict();
+
+        self::assertModelExists($artist);
+    }
+
+    #[Test]
+    public function updatingToExistingNameWithMergeMergesIntoTheExistingArtist(): void
+    {
+        $existingArtist = Artist::factory()->createOne(['name' => 'Maydup Nem']);
+        $artist = Artist::factory()->for($existingArtist->user)->createOne();
+        $admin = create_admin();
+        Favorite::factory()->for($admin)->for($artist, 'favoriteable')->createOne();
+
+        $this
+            ->putAs("api/artists/{$artist->id}", ['name' => 'Maydup Nem', 'merge' => true], $admin)
+            ->assertOk()
+            ->assertJsonPath('id', $existingArtist->id)
+            ->assertJsonPath('favorite', true);
+
+        self::assertModelMissing($artist);
     }
 
     #[Test]

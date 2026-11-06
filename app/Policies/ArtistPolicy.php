@@ -4,14 +4,17 @@ namespace App\Policies;
 
 use App\Enums\Acl\Permission;
 use App\Facades\License;
+use App\Models\Album;
 use App\Models\Artist;
 use App\Models\User;
+use App\Repositories\AlbumRepository;
 use App\Repositories\ArtistRepository;
 
 class ArtistPolicy
 {
     public function __construct(
         private readonly ArtistRepository $artistRepository,
+        private readonly AlbumRepository $albumRepository,
     ) {}
 
     public function access(User $user, Artist $artist): bool
@@ -42,5 +45,23 @@ class ArtistPolicy
     public function edit(User $user, Artist $artist): bool
     {
         return $this->update($user, $artist);
+    }
+
+    public function merge(User $user, Artist $source, Artist $target): bool
+    {
+        if (!$this->update($user, $source) || !$this->update($user, $target)) {
+            return false;
+        }
+
+        return License::isCommunity() || $this->ownsEveryAlbumToMerge($user, $source, $target);
+    }
+
+    private function ownsEveryAlbumToMerge(User $user, Artist $source, Artist $target): bool
+    {
+        return $source->albums->every(function (Album $album) use ($user, $target): bool {
+            $namesakeAlbum = $this->albumRepository->findOneByArtistAndNameIgnoringCase($target->id, $album->name);
+
+            return $album->belongsToUser($user) && (!$namesakeAlbum || $namesakeAlbum->belongsToUser($user));
+        });
     }
 }

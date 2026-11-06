@@ -28,6 +28,7 @@ import type { ArtistUpdateData } from '@/stores/artistStore'
 import { artistStore } from '@/stores/artistStore'
 import { useAlbumOrArtistEditForm } from '@/composables/useAlbumOrArtistEditForm'
 import { encyclopediaService } from '@/services/encyclopediaService'
+import { eventBus } from '@/utils/eventBus'
 
 import FormRow from '@/components/ui/form/FormRow.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -47,6 +48,10 @@ const { data, loading, handleSubmit, maybeClose } = useAlbumOrArtistEditForm<Art
   artworkField: 'image',
   fetchOnlineDescription: async () => (await encyclopediaService.fetchForArtist(artist))?.bio?.full ?? '',
   onSubmit: async data => await artistStore.update(artist, data),
+  mergeConfirmation: 'An artist with the same name already exists. Merge them?',
+  onMerge: async data => {
+    eventBus.emit('ARTIST_MERGED', artist, await artistStore.update(artist, { ...data, merge: true }))
+  },
   successMessage: 'Artist updated.',
   onSuccess: close,
   onClose: close,

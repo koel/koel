@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Helpers\Ulid;
 use App\Http\Resources\AlbumResource;
 use App\Models\Album;
+use App\Models\Favorite;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -225,21 +226,35 @@ class AlbumTest extends TestCase
     }
 
     #[Test]
-    public function updatingToExistingNameFails(): void
+    public function updatingToExistingNameRespondsWithConflict(): void
     {
         $existingAlbum = Album::factory()->createOne(['name' => 'Black Album']);
         $album = Album::factory()->for($existingAlbum->artist)->createOne();
 
         $this->putAs(
             "api/albums/{$album->id}",
-            [
-                'name' => 'Black Album',
-                'year' => 2023,
-            ],
+            ['name' => 'Black Album', 'year' => 2023],
             create_admin(),
-        )->assertJsonValidationErrors([
-            'name' => 'An album with the same name already exists for this artist.',
-        ]);
+        )->assertConflict();
+
+        self::assertModelExists($album);
+    }
+
+    #[Test]
+    public function updatingToExistingNameWithMergeMergesIntoTheExistingAlbum(): void
+    {
+        $existingAlbum = Album::factory()->createOne(['name' => 'Black Album']);
+        $album = Album::factory()->for($existingAlbum->artist)->createOne();
+        $admin = create_admin();
+        Favorite::factory()->for($admin)->for($album, 'favoriteable')->createOne();
+
+        $this
+            ->putAs("api/albums/{$album->id}", ['name' => 'Black Album', 'merge' => true], $admin)
+            ->assertOk()
+            ->assertJsonPath('id', $existingAlbum->id)
+            ->assertJsonPath('favorite', true);
+
+        self::assertModelMissing($album);
     }
 
     #[Test]

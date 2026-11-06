@@ -171,4 +171,23 @@ class FavoriteServiceTest extends TestCase
             return $event->songs->count() === 2 && $event->user->is($user);
         });
     }
+
+    #[Test]
+    public function transferFavoritesSkipsUsersWhoAlreadyFavoriteTheTarget(): void
+    {
+        $source = Album::factory()->createOne();
+        $target = Album::factory()->createOne();
+        $movingFavorite = Favorite::factory()->for($source, 'favoriteable')->createOne();
+        $duplicateUser = create_user();
+        Favorite::factory()->for($duplicateUser)->for($source, 'favoriteable')->createOne();
+        $keptFavorite = Favorite::factory()->for($duplicateUser)->for($target, 'favoriteable')->createOne();
+
+        $this->service->transferFavorites($source, $target);
+
+        self::assertSame(0, $source->favorites()->count());
+        self::assertEqualsCanonicalizing(
+            [$movingFavorite->id, $keptFavorite->id],
+            $target->favorites()->pluck('id')->all(),
+        );
+    }
 }

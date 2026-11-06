@@ -15,6 +15,7 @@ export interface AlbumUpdateData {
   year: Album['year']
   cover?: Album['cover'] | null
   description?: string
+  merge?: boolean
 }
 
 interface AlbumListPaginateParams extends CursorPaginateParams<AlbumListSortField> {
@@ -57,11 +58,28 @@ export const albumStore = {
   },
 
   async update(album: Album, data: AlbumUpdateData) {
-    const updated = await http.put<Album>(`albums/${album.id}`, data)
+    const [updated] = this.syncWithVault(await http.put<Album>(`albums/${album.id}`, data))
     cache.remove(['album.info', album.id, album.name])
-    this.state.albums = unionBy(this.state.albums, this.syncWithVault(updated), 'id')
+    this.state.albums = unionBy(this.state.albums, [updated], 'id')
 
-    songStore.syncAlbumProperties(album)
+    if (updated.id === album.id) {
+      songStore.syncAlbumProperties(album)
+    } else {
+      this.syncMergedAlbum(album, updated)
+    }
+
+    return updated
+  },
+
+  syncMergedAlbum(source: Album, target: Album) {
+    songStore.byAlbum(source).forEach(song => (song.album_id = target.id))
+    songStore.syncAlbumProperties(target)
+
+    cache.remove(['album.songs', source.id])
+    cache.remove(['album.songs', target.id])
+    cache.remove(['artist-albums', target.artist_id])
+
+    this.removeByIds([source.id])
   },
 
   /**

@@ -38,6 +38,7 @@ import type { AlbumUpdateData } from '@/stores/albumStore'
 import { albumStore } from '@/stores/albumStore'
 import { useAlbumOrArtistEditForm } from '@/composables/useAlbumOrArtistEditForm'
 import { encyclopediaService } from '@/services/encyclopediaService'
+import { eventBus } from '@/utils/eventBus'
 
 import FormRow from '@/components/ui/form/FormRow.vue'
 import Btn from '@/components/ui/form/Btn.vue'
@@ -57,6 +58,10 @@ const { data, loading, handleSubmit, maybeClose } = useAlbumOrArtistEditForm<Alb
   artworkField: 'cover',
   fetchOnlineDescription: async () => (await encyclopediaService.fetchForAlbum(album))?.wiki?.full ?? '',
   onSubmit: async data => await albumStore.update(album, data),
+  mergeConfirmation: 'An album with the same name already exists. Merge them?',
+  onMerge: async data => {
+    eventBus.emit('ALBUM_MERGED', album, await albumStore.update(album, { ...data, merge: true }))
+  },
   successMessage: 'Album updated.',
   onSuccess: close,
   onClose: close,

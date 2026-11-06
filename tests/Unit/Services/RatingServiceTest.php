@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Services;
 
+use App\Models\Album;
+use App\Models\Rating;
 use App\Models\Song;
 use App\Services\RatingService;
 use PHPUnit\Framework\Attributes\Test;
@@ -68,5 +70,23 @@ class RatingServiceTest extends TestCase
 
         self::assertSame(5, $song->getRatingFor($alice));
         self::assertSame(2, $song->getRatingFor($bob));
+    }
+
+    #[Test]
+    public function transferRatingsSkipsUsersWhoAlreadyRateTheTarget(): void
+    {
+        $source = Album::factory()->createOne();
+        $target = Album::factory()->createOne();
+        $alice = create_user();
+        $bob = create_user();
+        Rating::factory()->for($alice)->for($source, 'rateable')->createOne(['rating' => 4]);
+        Rating::factory()->for($bob)->for($source, 'rateable')->createOne(['rating' => 1]);
+        Rating::factory()->for($bob)->for($target, 'rateable')->createOne(['rating' => 5]);
+
+        $this->service->transferRatings($source, $target);
+
+        self::assertSame(0, $source->ratings()->count());
+        self::assertSame(4, $target->getRatingFor($alice));
+        self::assertSame(5, $target->getRatingFor($bob));
     }
 }

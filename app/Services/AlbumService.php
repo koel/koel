@@ -9,6 +9,7 @@ use App\Services\Image\ImageStorage;
 use App\Values\Album\AlbumUpdateData;
 use App\Values\ImageWritingConfig;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 
@@ -19,17 +20,25 @@ class AlbumService
         private readonly AlbumRepository $albumRepository,
         private readonly ImageStorage $imageStorage,
         private readonly Finder $finder,
+        private readonly FavoriteService $favoriteService,
+        private readonly RatingService $ratingService,
+        private readonly LibrarySummaryService $librarySummaryService,
     ) {}
 
     public function updateAlbum(Album $album, AlbumUpdateData $dto): Album
     {
         // Ensure that the album name is unique within the artist
-        $existingAlbumWithTheSameName = $this->albumRepository->findOneBy([
-            'name' => $dto->name,
-            'artist_id' => $album->artist_id,
-        ]);
+        $existingAlbumWithTheSameName = $this->albumRepository->findOneByArtistAndNameIgnoringCase(
+            $album->artist_id,
+            $dto->name,
+            $album,
+        );
 
-        throw_if($existingAlbumWithTheSameName?->isNot($album), AlbumNameConflictException::class);
+        throw_if(
+            $existingAlbumWithTheSameName !== null,
+            AlbumNameConflictException::class,
+            $existingAlbumWithTheSameName,
+        );
 
         $data = $this->imageStorage->storeOptionalImage($dto->cover)->applyToAttributes($dto->toArray(), 'cover');
 
@@ -38,6 +47,24 @@ class AlbumService
         $album->update($data);
 
         return $album->refresh();
+    }
+
+    /**
+     * Move the source album's songs, favorites, and ratings to the target album, then delete the source.
+     * The target keeps its own details, including the cover.
+     */
+    public function mergeAlbums(Album $source, Album $target): Album
+    {
+        DB::transaction(function () use ($source, $target): void {
+            $source->songs()->update(['album_id' => $target->id, 'album_name' => $target->name]);
+            $this->favoriteService->transferFavorites($source, $target);
+            $this->ratingService->transferRatings($source, $target);
+            $source->delete();
+        });
+
+        $this->librarySummaryService->markLibraryChanged();
+
+        return $target->refresh();
     }
 
     public function storeAlbumCover(Album $album, mixed $source): ?string

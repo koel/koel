@@ -75,4 +75,19 @@ class AlbumTest extends PlusTestCase
 
         $this->getAs("api/albums/{$album->id}", $album->user)->assertJsonPath('permissions.edit', true);
     }
+
+    #[Test]
+    public function updatingToNameOfAlbumOwnedBySomeoneElseFails(): void
+    {
+        $existingAlbum = Album::factory()->createOne(['name' => 'Black Album']);
+        $album = Album::factory()->for($existingAlbum->artist)->createOne();
+
+        $this->putAs(
+            "api/albums/{$album->id}",
+            ['name' => 'Black Album', 'merge' => true],
+            $album->user,
+        )->assertJsonValidationErrors(['name' => 'An album with the same name already exists for this artist.']);
+
+        self::assertModelExists($album);
+    }
 }
