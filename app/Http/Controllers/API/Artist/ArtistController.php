@@ -11,7 +11,6 @@ use App\Models\Artist;
 use App\Repositories\ArtistRepository;
 use App\Repositories\Pagination\PaginationStrategyResolver;
 use App\Services\ArtistService;
-use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
@@ -20,7 +19,6 @@ class ArtistController extends Controller
     public function __construct(
         private readonly ArtistService $service,
         private readonly ArtistRepository $repository,
-        private readonly Gate $gate,
     ) {}
 
     public function index(CursorPaginatedListRequest $request)
@@ -49,7 +47,7 @@ class ArtistController extends Controller
             $existingArtist = $e->existingArtist;
 
             throw_if(
-                $this->gate->denies('merge', [$artist, $existingArtist]),
+                $request->user()->cannot('merge', [$artist, $existingArtist]),
                 ValidationException::withMessages(['name' => $e->getMessage()]),
             );
 
