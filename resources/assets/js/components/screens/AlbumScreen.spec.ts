@@ -14,6 +14,12 @@ import Component from './AlbumScreen.vue'
 
 vi.mock('@/composables/useContextMenu')
 
+vi.mock('@/composables/useErrorHandler', () => ({
+  useErrorHandler: () => ({
+    handleHttpError: vi.fn(),
+  }),
+}))
+
 describe('albumScreen.vue', () => {
   const h = createHarness()
 
@@ -111,6 +117,16 @@ describe('albumScreen.vue', () => {
   })
 
   it('hides the other albums section if the artist has no other albums', async () => {
+    const { fetchOtherAlbumsMock } = await renderComponent()
+
+    await waitFor(() => expect(fetchOtherAlbumsMock).toHaveBeenCalled())
+    await h.tick()
+
+    expect(screen.queryByTestId('album-other-albums')).toBeNull()
+  })
+
+  it('hides the other albums section if the albums fail to load', async () => {
+    h.mock(albumStore, 'fetchForArtist').mockRejectedValueOnce(new Error('Failed'))
     const { fetchOtherAlbumsMock } = await renderComponent()
 
     await waitFor(() => expect(fetchOtherAlbumsMock).toHaveBeenCalled())

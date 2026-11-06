@@ -156,6 +156,7 @@ const fetchOtherAlbums = async (ofAlbum: Album) => {
     const albums = await albumStore.fetchForArtist(ofAlbum.artist_id)
     otherAlbums.value = albums.filter(({ id }) => id !== ofAlbum.id)
   } catch (error: unknown) {
+    otherAlbums.value = []
     useErrorHandler().handleHttpError(error)
   }
 }
