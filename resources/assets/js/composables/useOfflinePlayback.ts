@@ -9,6 +9,8 @@ import { eventBus } from '@/utils/eventBus'
 import { logger } from '@/utils/logger'
 import { isSong } from '@/utils/typeGuards'
 
+import ProgressRing from '@/components/ui/ProgressRing.vue'
+
 type CacheProgress = {
   songId: Song['id']
   progress: number
@@ -401,7 +403,8 @@ export const useOfflinePlayback = () => {
     toastPromise(caching, {
       loading: {
         content: 'Making songs available offline…',
-        progress: () => progress.value,
+        icon: ProgressRing,
+        iconProps: { value: progress, class: 'size-4' },
       },
       success: `Made ${pluralize(songIds, 'song')} available offline.`,
       warning: failedCount =>

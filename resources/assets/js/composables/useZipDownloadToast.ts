@@ -4,6 +4,8 @@ import { useMessageToaster } from '@/composables/useMessageToaster'
 import { zipDownloadService } from '@/services/zipDownloadService'
 import { formatBytes } from '@/utils/formatters'
 
+import ProgressRing from '@/components/ui/ProgressRing.vue'
+
 export const useZipDownloadToast = () => {
   const { toastPromise, dismissToast } = useMessageToaster()
   const { showConfirmDialog } = useDialogBox()
@@ -19,13 +21,13 @@ export const useZipDownloadToast = () => {
     return total ? Math.min(100, (done / total) * 100) : 0
   })
 
-  const progressDetails = () => {
+  const progressDetails = computed(() => {
     const items = `${state.itemsDone.toLocaleString()} of ${state.itemsTotal.toLocaleString()} songs`
 
     return state.allSizesKnown
       ? `${items} · ${formatBytes(state.bytesDone)} of ${formatBytes(state.bytesTotal)}`
       : items
-  }
+  })
 
   const confirmCancel = async () => {
     if (await showConfirmDialog('Cancel the download?')) {
@@ -56,8 +58,8 @@ export const useZipDownloadToast = () => {
     const toastId = toastPromise(waitForArchive(), {
       loading: {
         content: 'Preparing download…',
-        progress: () => progress.value,
-        progressDetails,
+        icon: ProgressRing,
+        iconProps: { value: progress, title: progressDetails, class: 'size-4' },
         actions: [
           {
             label: 'Cancel',
