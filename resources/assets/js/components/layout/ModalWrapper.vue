@@ -92,8 +92,12 @@ dialog {
     }
   }
 
+  &.resizable[open] {
+    @apply flex flex-col;
+  }
+
   &.resizable :deep(> form) {
-    @apply flex flex-col w-full max-w-none h-full;
+    @apply flex-1 min-h-0 flex flex-col w-full max-w-none;
 
     > main {
       @apply flex-1 overflow-auto;

@@ -76,7 +76,7 @@ describe('modalWrapper.vue', () => {
       vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
         return {
           width: Number.parseFloat(this.style.width) || 500,
-          height: Number.parseFloat(this.style.height) || 400,
+          height: Number.parseFloat(this.style.minHeight) || 400,
         } as DOMRect
       })
 
@@ -111,10 +111,10 @@ describe('modalWrapper.vue', () => {
 
     await fireEvent(grip, new MouseEvent('pointerdown', { clientX: 0, clientY: 0 }))
     await fireEvent(grip, new MouseEvent('pointermove', { clientX: -300, clientY: -300 }))
-    expect([dialog.style.width, dialog.style.height]).toEqual(['500px', '400px'])
+    expect([dialog.style.width, dialog.style.minHeight]).toEqual(['500px', '400px'])
 
     await fireEvent(grip, new MouseEvent('pointermove', { clientX: 50, clientY: 30 }))
-    expect([dialog.style.width, dialog.style.height]).toEqual(['600px', '460px'])
+    expect([dialog.style.width, dialog.style.minHeight]).toEqual(['600px', '460px'])
 
     await fireEvent(grip, new Event('lostpointercapture'))
     expect(useLocalStorage().get('modal-size.test')).toEqual({ width: 600, height: 460 })
@@ -127,7 +127,7 @@ describe('modalWrapper.vue', () => {
     await fireEvent(grip, new MouseEvent('pointerdown', { clientX: 0, clientY: 0 }))
     await fireEvent(grip, new MouseEvent('pointermove', { clientX: 5000, clientY: 5000 }))
 
-    expect([dialog.style.width, dialog.style.height]).toEqual([`${innerWidth - 32}px`, `${innerHeight - 32}px`])
+    expect([dialog.style.width, dialog.style.minHeight]).toEqual([`${innerWidth - 32}px`, `${innerHeight - 32}px`])
   })
 
   it('stops and resumes resizing as the window crosses the desktop width', async () => {
@@ -148,7 +148,7 @@ describe('modalWrapper.vue', () => {
 
     const dialog = await renderNamedForm()
 
-    await waitFor(() => expect([dialog.style.width, dialog.style.height]).toEqual(['640px', '480px']))
+    await waitFor(() => expect([dialog.style.width, dialog.style.minHeight]).toEqual(['640px', '480px']))
   })
 
   it('keeps an unnamed form at its own size', async () => {

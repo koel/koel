@@ -23,13 +23,13 @@ export const useResizableModal = (dialog: Ref<HTMLDialogElement | undefined>) =>
 
   const applySize = ({ width, height }: ModalSize) => {
     dialog.value!.style.width = `${clamp(width, minSize.width, Math.max(minSize.width, innerWidth - VIEWPORT_MARGIN))}px`
-    dialog.value!.style.height = `${clamp(height, minSize.height, Math.max(minSize.height, innerHeight - VIEWPORT_MARGIN))}px`
+    dialog.value!.style.minHeight = `${clamp(height, minSize.height, Math.max(minSize.height, innerHeight - VIEWPORT_MARGIN))}px`
   }
 
   const disable = () => {
     resizable.value = false
     dialog.value?.style.removeProperty('width')
-    dialog.value?.style.removeProperty('height')
+    dialog.value?.style.removeProperty('min-height')
   }
 
   const enableForForm = () => {
