@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
 import { clamp } from 'lodash-es'
 import { useLocalStorage } from '@/composables/useLocalStorage'
@@ -82,6 +82,11 @@ export const useResizableModal = (dialog: Ref<HTMLDialogElement | undefined>) =>
   onMounted(() => contentObserver.observe(dialog.value!, { childList: true }))
 
   onBeforeUnmount(() => contentObserver.disconnect())
+
+  watch(isDesktop, () => {
+    content = null
+    enableForForm()
+  })
 
   return {
     resizable,

@@ -21,14 +21,15 @@ vi.mock('@/utils/helpers', async importOriginal => {
   }
 })
 
-const screenSize = vi.hoisted(() => ({ isDesktop: true }))
+const screenSize = vi.hoisted(() => ({ isDesktop: { value: true } }))
 
 vi.mock('@vueuse/core', async importOriginal => {
   const { ref } = await import('vue')
+  screenSize.isDesktop = ref(true)
 
   return {
     ...(await importOriginal<typeof import('@vueuse/core')>()),
-    useMediaQuery: () => ref(screenSize.isDesktop),
+    useMediaQuery: () => screenSize.isDesktop,
   }
 })
 
@@ -69,7 +70,8 @@ describe('modalWrapper.vue', () => {
     beforeEach: () => {
       modalOptions.value = { component: null }
       mockShowConfirmDialog.mockReset()
-      screenSize.isDesktop = true
+      screenSize.isDesktop.value = true
+      localStorage.clear()
 
       vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
         return {
@@ -118,6 +120,29 @@ describe('modalWrapper.vue', () => {
     expect(useLocalStorage().get('modal-size.test')).toEqual({ width: 600, height: 460 })
   })
 
+  it('keeps a resized form inside the viewport', async () => {
+    const dialog = await renderNamedForm()
+    const grip = await screen.findByTestId('modal-resize-grip')
+
+    await fireEvent(grip, new MouseEvent('pointerdown', { clientX: 0, clientY: 0 }))
+    await fireEvent(grip, new MouseEvent('pointermove', { clientX: 5000, clientY: 5000 }))
+
+    expect([dialog.style.width, dialog.style.height]).toEqual([`${innerWidth - 32}px`, `${innerHeight - 32}px`])
+  })
+
+  it('stops and resumes resizing as the window crosses the desktop width', async () => {
+    const dialog = await renderNamedForm()
+    await screen.findByTestId('modal-resize-grip')
+
+    screenSize.isDesktop.value = false
+    await waitFor(() => expect(screen.queryByTestId('modal-resize-grip')).toBeNull())
+    expect(dialog.style.width).toBe('')
+
+    screenSize.isDesktop.value = true
+    await screen.findByTestId('modal-resize-grip')
+    expect(dialog.style.width).toBe('500px')
+  })
+
   it('opens a named form at its saved size', async () => {
     useLocalStorage().set('modal-size.test', { width: 640, height: 480 })
 
@@ -133,7 +158,7 @@ describe('modalWrapper.vue', () => {
   })
 
   it('keeps forms at their own size on small screens', async () => {
-    screenSize.isDesktop = false
+    screenSize.isDesktop.value = false
 
     await renderNamedForm()
 
