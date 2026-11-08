@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useMediaQuery } from '@vueuse/core'
+import { useEventListener, useMediaQuery } from '@vueuse/core'
 import { clamp } from 'lodash-es'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 
@@ -87,6 +87,8 @@ export const useResizableModal = (dialog: Ref<HTMLDialogElement | undefined>) =>
     content = null
     enableForForm()
   })
+
+  useEventListener(window, 'resize', () => resizable.value && applySize(get<ModalSize>(storageKey) ?? minSize))
 
   return {
     resizable,

@@ -151,6 +151,20 @@ describe('modalWrapper.vue', () => {
     await waitFor(() => expect([dialog.style.width, dialog.style.minHeight]).toEqual(['640px', '480px']))
   })
 
+  it('fits a saved size into a shorter window and restores it when the window grows back', async () => {
+    useLocalStorage().set('modal-size.test', { width: 640, height: 700 })
+    const dialog = await renderNamedForm()
+    await waitFor(() => expect(dialog.style.minHeight).toBe('700px'))
+
+    vi.stubGlobal('innerHeight', 500)
+    window.dispatchEvent(new Event('resize'))
+    expect(dialog.style.minHeight).toBe('468px')
+
+    vi.unstubAllGlobals()
+    window.dispatchEvent(new Event('resize'))
+    expect(dialog.style.minHeight).toBe('700px')
+  })
+
   it('keeps an unnamed form at its own size', async () => {
     await renderFormModal()
 
