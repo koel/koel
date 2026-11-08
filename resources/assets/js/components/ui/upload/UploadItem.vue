@@ -82,7 +82,7 @@ const progressDetails = computed(() => {
   const progress = file.value.status === 'Ready' ? 0 : file.value.progress
   const size = file.value.file.size
 
-  return `${Math.round(progress)}% · ${formatBytes((size * progress) / 100)} of ${formatBytes(size)}`
+  return `${Math.round(progress)}% · ${formatBytes(Math.floor((size * progress) / 100))} of ${formatBytes(size)}`
 })
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canStop = computed(() => file.value.status === 'Uploading')
