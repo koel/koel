@@ -848,6 +848,7 @@ interface ToastMessage {
   props?: Record<string, unknown>
   actions?: ToastAction[]
   progress?: () => number
+  progressDetails?: () => string
   persistent?: boolean
   timeout: number // seconds
   onDismiss?: Closure

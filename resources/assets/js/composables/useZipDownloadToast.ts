@@ -2,6 +2,7 @@ import { computed, watch } from 'vue'
 import { useDialogBox } from '@/composables/useDialogBox'
 import { useMessageToaster } from '@/composables/useMessageToaster'
 import { zipDownloadService } from '@/services/zipDownloadService'
+import { formatBytes } from '@/utils/formatters'
 
 export const useZipDownloadToast = () => {
   const { toastPromise, dismissToast } = useMessageToaster()
@@ -17,6 +18,14 @@ export const useZipDownloadToast = () => {
 
     return total ? Math.min(100, (done / total) * 100) : 0
   })
+
+  const progressDetails = () => {
+    const items = `${state.itemsDone.toLocaleString()} of ${state.itemsTotal.toLocaleString()} songs`
+
+    return state.allSizesKnown
+      ? `${items} · ${formatBytes(state.bytesDone)} of ${formatBytes(state.bytesTotal)}`
+      : items
+  }
 
   const confirmCancel = async () => {
     if (await showConfirmDialog('Cancel the download?')) {
@@ -48,6 +57,7 @@ export const useZipDownloadToast = () => {
       loading: {
         content: 'Preparing download…',
         progress: () => progress.value,
+        progressDetails,
         actions: [
           {
             label: 'Cancel',

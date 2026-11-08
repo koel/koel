@@ -10,7 +10,12 @@
     @mouseleave="onMouseLeave"
   >
     <span v-if="pending" class="icon-slot" data-testid="toast-pending">
-      <ProgressRing v-if="message.progress" :value="message.progress()" class="size-4" />
+      <ProgressRing
+        v-if="message.progress"
+        :title="message.progressDetails?.() ?? `${Math.round(message.progress())}%`"
+        :value="message.progress()"
+        class="size-4"
+      />
       <Icon v-else :icon="faCircleNotch" spin />
     </span>
     <button

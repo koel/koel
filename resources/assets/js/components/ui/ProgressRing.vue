@@ -7,6 +7,7 @@
     role="progressbar"
     viewBox="0 0 24 24"
   >
+    <title v-if="title">{{ title }}</title>
     <circle :stroke-width="thickness" class="stroke-k-fg-20" cx="12" cy="12" fill="none" :r="radius" />
     <circle
       :r="radius"
@@ -27,7 +28,7 @@ import { computed } from 'vue'
 
 const HALF_SIZE = 12
 
-const props = withDefaults(defineProps<{ value: number; thickness?: number }>(), { thickness: 3 })
+const props = withDefaults(defineProps<{ value: number; thickness?: number; title?: string }>(), { thickness: 3 })
 
 const radius = computed(() => HALF_SIZE - props.thickness / 2)
 const circumference = computed(() => 2 * Math.PI * radius.value)
