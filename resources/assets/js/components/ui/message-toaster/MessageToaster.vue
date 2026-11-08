@@ -25,7 +25,7 @@ const SETTLED_DEFAULTS = {
   component: undefined,
   props: undefined,
   actions: undefined,
-  progress: undefined,
+  iconProps: undefined,
   persistent: undefined,
   onDismiss: undefined,
   timeout: DEFAULT_TIMEOUT,

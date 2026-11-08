@@ -10,7 +10,7 @@
     @mouseleave="onMouseLeave"
   >
     <span v-if="pending" class="icon-slot" data-testid="toast-pending">
-      <ProgressRing v-if="message.progress" :value="message.progress()" class="size-4" />
+      <component :is="message.icon" v-if="message.icon" v-bind="message.iconProps" />
       <Icon v-else :icon="faCircleNotch" spin />
     </span>
     <button
@@ -22,7 +22,7 @@
       @mouseleave="hoveringIcon = false"
     >
       <Icon v-if="hoveringIcon" :icon="faXmark" class="text-[14px]" />
-      <component :is="message.icon" v-else-if="message.icon" :size="18" />
+      <component :is="message.icon" v-else-if="message.icon" :size="18" v-bind="message.iconProps" />
       <Icon v-else :icon="typeIcon" />
       <span class="sr-only">Dismiss</span>
     </button>
@@ -53,7 +53,6 @@ import {
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
 
-import ProgressRing from '@/components/ui/ProgressRing.vue'
 import ToastActions from '@/components/ui/message-toaster/ToastActions.vue'
 
 const SWIPE_DISMISS_DISTANCE = 80

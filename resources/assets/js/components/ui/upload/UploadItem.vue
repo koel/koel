@@ -4,6 +4,7 @@
       <div class="absolute z-1 h-full w-full flex items-center">
         <ProgressRing
           v-if="showsProgressRing"
+          :title="progressDetails"
           :aria-label="`Upload progress for ${file.name}`"
           :value="file.status === 'Ready' ? 0 : file.progress"
           class="size-4 shrink-0 ml-4 text-k-highlight"
@@ -64,6 +65,7 @@ import { useDialogBox } from '@/composables/useDialogBox'
 import type { UploadFile } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import { useRouter } from '@/composables/useRouter'
+import { formatBytes } from '@/utils/formatters'
 
 import ProgressRing from '@/components/ui/ProgressRing.vue'
 
@@ -76,6 +78,12 @@ const { url } = useRouter()
 
 const isProcessing = computed(() => file.value.status === 'Processing')
 const showsProgressRing = computed(() => ['Ready', 'Uploading', 'Retrying'].includes(file.value.status))
+const progressDetails = computed(() => {
+  const progress = file.value.status === 'Ready' ? 0 : file.value.progress
+  const size = file.value.file.size
+
+  return `${Math.round(progress)}% · ${formatBytes(Math.floor((size * progress) / 100))} of ${formatBytes(size)}`
+})
 const canRetry = computed(() => file.value.status === 'Canceled' || file.value.status === 'Errored')
 const canStop = computed(() => file.value.status === 'Uploading')
 

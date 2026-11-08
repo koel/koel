@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { fireEvent, screen } from '@testing-library/vue'
 import { nextTick } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
+import ProgressRing from '@/components/ui/ProgressRing.vue'
 import Component from './MessageToast.vue'
 
 describe('messageToast.vue', () => {
@@ -73,15 +74,22 @@ describe('messageToast.vue', () => {
     vi.useRealTimers()
   })
 
-  it('shows the progress in place of the pending indicator', () => {
+  it('shows the given icon in place of the pending indicator', () => {
     renderComponent(
       makeMessage({
         type: 'loading',
-        progress: () => 40,
+        icon: ProgressRing,
+        iconProps: { value: 40 },
       }),
     )
 
     expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('40')
+  })
+
+  it('passes the icon props to the icon of a settled toast', () => {
+    renderComponent(makeMessage({ icon: ProgressRing, iconProps: { value: 100 } }))
+
+    expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('100')
   })
 
   it('stays open while it offers actions', () => {
