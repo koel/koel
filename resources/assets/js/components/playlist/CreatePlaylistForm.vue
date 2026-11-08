@@ -7,8 +7,9 @@
       </h1>
     </header>
 
-    <main>
+    <main class="flex flex-col">
       <PlaylistDetailsFields
+        class="flex-1"
         v-model:name="data.name"
         v-model:folder-id="data.folder_id"
         v-model:folder-name="data.folder_name"

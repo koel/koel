@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 gap-4">
+  <div class="grid grid-cols-2 grid-rows-[auto_1fr_auto] gap-4">
     <FormRow>
       <template #label>Name *</template>
       <TextInput v-model="name" v-koel-focus name="name" placeholder="Playlist name" required />
@@ -8,9 +8,14 @@
       <template #label>Folder</template>
       <FolderSelect v-model:folder-id="folderId" v-model:folder-name="folderName" />
     </FormRow>
-    <FormRow class="col-span-2">
+    <FormRow class="description col-span-2">
       <template #label>Description</template>
-      <TextArea v-model="description" class="h-28" name="description" placeholder="Some optional description" />
+      <TextArea
+        v-model="description"
+        class="grow shrink-0 h-28!"
+        name="description"
+        placeholder="Some optional description"
+      />
     </FormRow>
     <ArtworkField v-model="cover">Pick or paste a cover (optional)</ArtworkField>
   </div>
@@ -29,3 +34,10 @@ const folderName = defineModel<string | null | undefined>('folderName', { requir
 const description = defineModel<Playlist['description']>('description', { required: true })
 const cover = defineModel<string | null | undefined>('cover', { required: true })
 </script>
+
+<style lang="postcss" scoped>
+@reference '@css/app.pcss';
+.description :deep(label) {
+  @apply flex-1 flex flex-col;
+}
+</style>

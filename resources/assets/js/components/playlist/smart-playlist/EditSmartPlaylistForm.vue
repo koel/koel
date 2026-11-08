@@ -4,9 +4,10 @@
       <h1>Edit Smart Playlist</h1>
     </header>
 
-    <main class="space-y-5">
+    <main class="flex flex-col">
       <SmartPlaylistFormTabs v-model:rule-groups="ruleGroups">
         <PlaylistDetailsFields
+          class="flex-1"
           v-model:name="data.name"
           v-model:folder-id="data.folder_id"
           v-model:folder-name="data.folder_name"
