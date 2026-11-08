@@ -13,7 +13,7 @@
       </div>
     </header>
 
-    <Tabs class="mt-4">
+    <Tabs class="flex-1 mt-4">
       <TabList v-if="editingOnlyOneSong">
         <TabButton
           id="editSongTabDetails"
@@ -34,7 +34,7 @@
         </TabButton>
       </TabList>
 
-      <TabPanelContainer>
+      <TabPanelContainer class="flex-1 flex flex-col">
         <TabPanel
           v-show="currentTab === 'details'"
           id="editSongPanelDetails"
@@ -132,10 +132,15 @@
           v-show="currentTab === 'lyrics'"
           id="editSongPanelLyrics"
           aria-labelledby="editSongTabLyrics"
+          class="flex-1 flex flex-col"
         >
-          <FormRow>
-            <TextArea v-model="data.lyrics" v-koel-focus data-testid="lyrics-input" name="lyrics" />
-          </FormRow>
+          <TextArea
+            v-model="data.lyrics"
+            v-koel-focus
+            class="grow shrink-0 min-h-48"
+            data-testid="lyrics-input"
+            name="lyrics"
+          />
         </TabPanel>
       </TabPanelContainer>
     </Tabs>
