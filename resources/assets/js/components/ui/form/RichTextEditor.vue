@@ -1,6 +1,6 @@
 <template>
   <div
-    class="rich-text-editor rounded-sm text-k-fg-input bg-k-bg-input border border-k-fg-10 focus-within:border-k-fg-30"
+    class="rich-text-editor flex flex-col rounded-sm text-k-fg-input bg-k-bg-input border border-k-fg-10 focus-within:border-k-fg-30"
   >
     <div v-if="editor" class="flex flex-wrap items-center gap-0.5 border-b border-k-fg-10 px-1.5 py-1" role="toolbar">
       <button
@@ -19,7 +19,7 @@
       </button>
     </div>
 
-    <EditorContent :editor class="content px-4 py-2.5 h-48 overflow-y-auto" />
+    <EditorContent :editor class="content grow shrink-0 px-4 py-2.5 h-48 min-h-48 overflow-y-auto resize-y" />
 
     <div
       ref="linkPanel"

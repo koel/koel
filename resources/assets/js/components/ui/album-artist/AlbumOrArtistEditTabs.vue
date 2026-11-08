@@ -1,5 +1,5 @@
 <template>
-  <Tabs class="mt-1 -m-6">
+  <Tabs class="flex-1 mt-1 -m-6">
     <TabList>
       <TabButton
         :id="detailsTabId"
@@ -19,7 +19,7 @@
       </TabButton>
     </TabList>
 
-    <TabPanelContainer>
+    <TabPanelContainer class="flex-1 flex flex-col">
       <TabPanel
         v-show="currentTab === 'details'"
         :id="detailsPanelId"
@@ -33,9 +33,9 @@
         v-show="currentTab === 'description'"
         :id="descriptionPanelId"
         :aria-labelledby="descriptionTabId"
-        class="space-y-2"
+        class="flex-1 flex flex-col gap-2"
       >
-        <RichTextEditor v-model="description" label="Description" />
+        <RichTextEditor v-model="description" class="flex-1" label="Description" />
         <p class="text-k-fg-50">Leave empty to use the online-fetched text when applicable.</p>
       </TabPanel>
     </TabPanelContainer>

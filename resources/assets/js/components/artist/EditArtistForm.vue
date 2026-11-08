@@ -4,7 +4,7 @@
       <h1>Edit Artist</h1>
     </header>
 
-    <main class="space-y-5">
+    <main class="flex flex-col">
       <AlbumOrArtistEditTabs v-model:description="data.description">
         <FormRow>
           <template #label>Name</template>
