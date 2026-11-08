@@ -12,7 +12,7 @@
       <template #label>Description</template>
       <TextArea
         v-model="description"
-        class="grow shrink-0 h-28!"
+        class="grow shrink-0 h-28"
         name="description"
         placeholder="Some optional description"
       />

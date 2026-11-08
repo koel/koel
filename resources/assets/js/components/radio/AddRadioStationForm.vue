@@ -27,7 +27,7 @@
         <TextArea
           v-model="data.description"
           name="description"
-          class="grow shrink-0 h-28!"
+          class="grow shrink-0 h-28"
           placeholder="A short description of the station"
         />
       </FormRow>
