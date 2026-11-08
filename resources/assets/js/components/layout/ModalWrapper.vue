@@ -102,6 +102,10 @@ dialog {
     > main {
       @apply flex-1 overflow-auto;
     }
+
+    > footer {
+      @apply mt-auto;
+    }
   }
 }
 
