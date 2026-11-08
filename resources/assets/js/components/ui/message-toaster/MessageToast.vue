@@ -22,7 +22,7 @@
       @mouseleave="hoveringIcon = false"
     >
       <Icon v-if="hoveringIcon" :icon="faXmark" class="text-[14px]" />
-      <component :is="message.icon" v-else-if="message.icon" :size="18" />
+      <component :is="message.icon" v-else-if="message.icon" :size="18" v-bind="message.iconProps" />
       <Icon v-else :icon="typeIcon" />
       <span class="sr-only">Dismiss</span>
     </button>

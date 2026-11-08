@@ -86,6 +86,12 @@ describe('messageToast.vue', () => {
     expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('40')
   })
 
+  it('passes the icon props to the icon of a settled toast', () => {
+    renderComponent(makeMessage({ icon: ProgressRing, iconProps: { value: 100 } }))
+
+    expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).toBe('100')
+  })
+
   it('stays open while it offers actions', () => {
     vi.useFakeTimers()
 

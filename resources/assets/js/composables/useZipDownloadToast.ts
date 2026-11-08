@@ -22,7 +22,7 @@ export const useZipDownloadToast = () => {
   })
 
   const progressDetails = computed(() => {
-    const items = `${state.itemsDone.toLocaleString()} of ${state.itemsTotal.toLocaleString()} songs`
+    const items = `${state.itemsDone.toLocaleString()} of ${state.itemsTotal.toLocaleString()} items`
 
     return state.allSizesKnown
       ? `${items} · ${formatBytes(state.bytesDone)} of ${formatBytes(state.bytesTotal)}`
