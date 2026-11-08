@@ -1,5 +1,6 @@
 import { screen, waitFor } from '@testing-library/vue'
 import { describe, expect, it, vi } from 'vite-plus/test'
+import { reactive } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { waveformService } from '@/services/waveformService'
@@ -186,9 +187,67 @@ describe('songWaveform.vue', () => {
     await h.withPlusEdition(async () => {
       h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
 
+      vi.mocked(getCoverColor).mockResolvedValue('rgb(200, 50, 100)')
+
       renderComponent(h.factory('song').make({ loudness: -9, true_peak: 1, album_cover: 'cover.webp' }))
 
-      await waitFor(() => expect(getCoverColor).toHaveBeenCalledWith('cover.webp'))
+      await waitFor(() => drawnWith({ colors: { accent: [200, 50, 100], line: [200, 50, 100] } }))
+      expect(getCoverColor).toHaveBeenCalledWith('cover.webp')
+    })
+  })
+
+  it('goes back to the theme colors when a paused song loses its cover', async () => {
+    preferenceStore.state.theme = KAMELEON_THEME_ID
+    motion.preference = 'reduce'
+
+    await h.withPlusEdition(async () => {
+      h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
+      vi.mocked(getCoverColor).mockResolvedValue('rgb(200, 50, 100)')
+
+      const song = reactive(
+        h.factory('song').make({ loudness: -9, true_peak: 1, playback_state: 'Paused', album_cover: 'cover.webp' }),
+      )
+
+      renderComponent(song)
+      await waitFor(() => drawnWith({ colors: { accent: [200, 50, 100], line: [200, 50, 100] } }))
+      vi.mocked(drawWaveform).mockClear()
+
+      song.album_cover = ''
+
+      await waitFor(() =>
+        expect(drawWaveform).toHaveBeenCalledWith(
+          expect.any(HTMLCanvasElement),
+          expect.objectContaining({
+            colors: expect.not.objectContaining({ accent: [200, 50, 100] }),
+          }),
+        ),
+      )
+    })
+  })
+
+  it('drops a cover color that arrives after leaving the Kameleon theme', async () => {
+    preferenceStore.state.theme = KAMELEON_THEME_ID
+
+    await h.withPlusEdition(async () => {
+      h.mock(waveformService, 'fetchWaveform').mockResolvedValue([0.2, 0.8])
+
+      let resolveCoverColor: (color: string) => void = () => {}
+      vi.mocked(getCoverColor).mockReturnValue(new Promise(resolve => (resolveCoverColor = resolve)))
+
+      renderComponent(h.factory('song').make({ loudness: -9, true_peak: 1, album_cover: 'cover.webp' }))
+      await waitFor(() => expect(getCoverColor).toHaveBeenCalled())
+
+      preferenceStore.state.theme = 'classic'
+      await h.tick()
+      resolveCoverColor('rgb(200, 50, 100)')
+      await h.tick()
+      vi.mocked(drawWaveform).mockClear()
+      await waitFor(() => expect(drawWaveform).toHaveBeenCalled())
+
+      expect(drawWaveform).not.toHaveBeenCalledWith(
+        expect.any(HTMLCanvasElement),
+        expect.objectContaining({ colors: { accent: [200, 50, 100], line: [200, 50, 100] } }),
+      )
     })
   })
 

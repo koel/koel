@@ -151,6 +151,7 @@ const looksLikeLastDrawnFrame = (frame: DrawnFrame) =>
 
 const render = (now: number, seconds: number) => {
   if (!canvas.value) {
+    pause()
     return
   }
 
@@ -259,6 +260,7 @@ watch(
   async ([cover, onKameleonTheme]) => {
     coverColor = null
     forgetColors()
+    resume()
 
     if (!cover || !onKameleonTheme) {
       return
