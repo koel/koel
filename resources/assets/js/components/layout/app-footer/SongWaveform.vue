@@ -11,6 +11,7 @@ import { ref, watch } from 'vue'
 import { preferenceStore } from '@/stores/preferenceStore'
 import { waveformService } from '@/services/waveformService'
 import { useKoelPlus } from '@/composables/useKoelPlus'
+import { KAMELEON_THEME_ID } from '@/config/themes'
 import { cssColorToRgb } from '@/utils/color'
 import type { Rgb } from '@/utils/color'
 import { getCoverColor } from '@/utils/coverColor'
@@ -150,6 +151,7 @@ const looksLikeLastDrawnFrame = (frame: DrawnFrame) =>
 
 const render = (now: number, seconds: number) => {
   if (!canvas.value) {
+    pause()
     return
   }
 
@@ -251,19 +253,22 @@ watch(
   { immediate: true },
 )
 
+const usesKameleonTheme = () => preferenceStore.theme === KAMELEON_THEME_ID
+
 watch(
-  () => props.song.album_cover,
-  async cover => {
+  [() => props.song.album_cover, usesKameleonTheme],
+  async ([cover, onKameleonTheme]) => {
     coverColor = null
     forgetColors()
+    resume()
 
-    if (!cover) {
+    if (!cover || !onKameleonTheme) {
       return
     }
 
     const color = await getCoverColor(cover)
 
-    if (props.song.album_cover === cover) {
+    if (props.song.album_cover === cover && usesKameleonTheme()) {
       coverColor = color
       forgetColors()
       resume()
