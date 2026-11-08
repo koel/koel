@@ -1,5 +1,5 @@
 <template>
-  <form class="max-w-[540px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form name="edit-song" class="max-w-[540px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header class="gap-4">
       <img :src="coverUrl" alt="" class="w-[84px] aspect-square object-cover object-center rounded-md" />
       <div class="flex-1 flex flex-col justify-center overflow-hidden">

@@ -1,5 +1,5 @@
 <template>
-  <form class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form name="edit-album" class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>Edit Album</h1>
     </header>

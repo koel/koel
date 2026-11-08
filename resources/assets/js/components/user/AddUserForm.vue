@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form name="add-user" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>Add New User</h1>
     </header>

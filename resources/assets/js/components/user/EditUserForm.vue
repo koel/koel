@@ -1,5 +1,5 @@
 <template>
-  <form data-testid="edit-user-form" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form name="edit-user" data-testid="edit-user-form" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>Edit User</h1>
     </header>

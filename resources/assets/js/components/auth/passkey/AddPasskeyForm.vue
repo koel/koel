@@ -1,5 +1,5 @@
 <template>
-  <form class="md:w-[480px] min-w-full" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form name="add-passkey" class="md:w-[480px] min-w-full" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>Add a Passkey</h1>
     </header>
