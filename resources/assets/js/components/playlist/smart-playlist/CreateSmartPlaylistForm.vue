@@ -1,12 +1,13 @@
 <template>
-  <form class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form name="create-smart-playlist" class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>New Smart Playlist</h1>
     </header>
 
-    <main class="space-y-5">
+    <main class="flex flex-col">
       <SmartPlaylistFormTabs v-model:rule-groups="ruleGroups">
         <PlaylistDetailsFields
+          class="flex-1"
           v-model:name="data.name"
           v-model:folder-id="data.folder_id"
           v-model:folder-name="data.folder_name"

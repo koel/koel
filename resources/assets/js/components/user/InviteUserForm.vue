@@ -1,5 +1,5 @@
 <template>
-  <form novalidate @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form name="invite-user" novalidate @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>Invite Users</h1>
     </header>
@@ -7,7 +7,7 @@
     <main class="space-y-5">
       <FormRow>
         <template #label>Emails</template>
-        <TextArea ref="emailsEl" v-model="data.raw_emails" v-koel-focus class="min-h-32!" name="emails" required />
+        <TextArea ref="emailsEl" v-model="data.raw_emails" v-koel-focus class="h-48 min-h-32" name="emails" required />
         <template #help>To invite multiple users, input one email per line.</template>
       </FormRow>
       <RolePicker v-model="data.role" />

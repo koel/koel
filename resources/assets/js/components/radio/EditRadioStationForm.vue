@@ -1,10 +1,15 @@
 <template>
-  <form class="md:w-[420px] min-w-full" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form
+    name="edit-radio-station"
+    class="md:w-[420px] min-w-full"
+    @submit.prevent="handleSubmit"
+    @keydown.esc="maybeClose"
+  >
     <header>
       <h1>Edit Radio Station</h1>
     </header>
 
-    <main class="space-y-5">
+    <main class="flex flex-col gap-5">
       <FormRow>
         <template #label>Name</template>
         <TextInput v-model="data.name" v-koel-focus name="name" placeholder="My Favorite Radio Station" required />
@@ -17,12 +22,12 @@
         <template #label>Homepage URL</template>
         <TextInput v-model="data.homepage_url" type="url" name="homepage_url" placeholder="https://radio.example.com" />
       </FormRow>
-      <FormRow>
+      <FormRow class="description flex-1">
         <template #label>Description</template>
         <TextArea
           v-model="data.description"
           name="description"
-          class="max-h-24"
+          class="grow shrink-0 h-28"
           placeholder="A short description of the station"
         />
       </FormRow>
@@ -91,3 +96,10 @@ const { data, loading, handleSubmit, maybeClose } = useForm<RadioStationData>({
   onClose: close,
 })
 </script>
+
+<style lang="postcss" scoped>
+@reference '@css/app.pcss';
+.description :deep(label) {
+  @apply flex-1 flex flex-col;
+}
+</style>

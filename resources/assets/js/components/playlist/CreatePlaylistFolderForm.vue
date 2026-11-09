@@ -1,5 +1,10 @@
 <template>
-  <form class="md:w-[420px] min-w-full" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form
+    name="create-playlist-folder"
+    class="md:w-[420px] min-w-full"
+    @submit.prevent="handleSubmit"
+    @keydown.esc="maybeClose"
+  >
     <header>
       <h1>New Playlist Folder</h1>
     </header>

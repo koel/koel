@@ -1,5 +1,5 @@
 <template>
-  <form class="md:w-[480px] w-full" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form name="create-playlist" class="md:w-[480px] w-full" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>
         New Playlist
@@ -7,8 +7,9 @@
       </h1>
     </header>
 
-    <main>
+    <main class="flex flex-col">
       <PlaylistDetailsFields
+        class="flex-1"
         v-model:name="data.name"
         v-model:folder-id="data.folder_id"
         v-model:folder-name="data.folder_name"

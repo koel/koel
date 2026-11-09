@@ -1,10 +1,10 @@
 <template>
-  <form class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
+  <form name="edit-artist" class="md:w-[560px]" @submit.prevent="handleSubmit" @keydown.esc="maybeClose">
     <header>
       <h1>Edit Artist</h1>
     </header>
 
-    <main class="space-y-5">
+    <main class="flex flex-col">
       <AlbumOrArtistEditTabs v-model:description="data.description">
         <FormRow>
           <template #label>Name</template>

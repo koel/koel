@@ -1,5 +1,5 @@
 <template>
-  <Tabs class="mt-1 -m-6" @invalid.capture="showTabOfInvalidField">
+  <Tabs class="flex-1 mt-1 -m-6" @invalid.capture="showTabOfInvalidField">
     <TabList>
       <TabButton
         :id="detailsTabId"
@@ -19,13 +19,13 @@
       </TabButton>
     </TabList>
 
-    <TabPanelContainer>
+    <TabPanelContainer class="flex-1 flex flex-col">
       <TabPanel
         v-show="isTabActive('details')"
         :id="detailsPanelId"
         data-tab="details"
         :aria-labelledby="detailsTabId"
-        class="space-y-5"
+        class="flex-1 flex flex-col"
       >
         <slot />
       </TabPanel>
@@ -35,9 +35,9 @@
         :id="rulesPanelId"
         data-tab="rules"
         :aria-labelledby="rulesTabId"
-        class="space-y-5"
+        class="flex-1 flex flex-col"
       >
-        <div class="scroll-mask-y group-container space-y-5 overflow-auto max-h-[480px]">
+        <div class="scroll-mask-y group-container space-y-5 overflow-auto max-h-[480px] md:max-h-none md:flex-1">
           <RuleGroup
             v-for="(group, index) in ruleGroups"
             :key="group.id"
