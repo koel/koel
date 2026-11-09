@@ -21,8 +21,11 @@
 <script lang="ts" setup>
 import { faCircleCheck, faCircleExclamation, faCircleInfo, faWarning } from '@fortawesome/free-solid-svg-icons'
 import { defineAsyncComponent, reactive, ref } from 'vue'
+import { useModalDialogs } from '@/composables/useModalDialogs'
 
 const SoundBars = defineAsyncComponent(() => import('@/components/ui/SoundBars.vue'))
+
+const { showModalDialog } = useModalDialogs()
 
 const el = ref<HTMLDialogElement>()
 
@@ -34,7 +37,10 @@ const state = reactive<OverlayState>({
 
 const show = (options: Partial<OverlayState> = {}) => {
   Object.assign(state, options)
-  el.value?.open || el.value?.showModal()
+
+  if (el.value && !el.value.open) {
+    showModalDialog(el.value)
+  }
 }
 
 const hide = () => el.value?.close()

@@ -234,6 +234,15 @@ describe('modalWrapper.vue', () => {
     await waitFor(() => expect(screen.queryByTestId('test-form')).toBeNull())
   })
 
+  it('closes a pristine form on Escape from a toast inside the dialog', async () => {
+    const dialog = await renderFormModal()
+    const toastButton = dialog.appendChild(document.createElement('button'))
+
+    await fireEvent.keyDown(toastButton, { key: 'Escape' })
+
+    await waitFor(() => expect(screen.queryByTestId('test-form')).toBeNull())
+  })
+
   it('asks only once before discarding a dirty form on Escape from inside the form', async () => {
     mockShowConfirmDialog.mockResolvedValueOnce(false)
     await renderFormModal()
@@ -252,5 +261,18 @@ describe('modalWrapper.vue', () => {
     await fireEvent(dialog, new Event('close'))
 
     await waitFor(() => expect(screen.queryByTestId('test-form')).toBeNull())
+  })
+
+  it('closes an open dialog when unmounted', async () => {
+    const { container, unmount } = h.render(Component)
+    const dialog = container.querySelector('dialog')!
+    const close = vi.spyOn(dialog, 'close')
+
+    modalOptions.value = { component: markRaw(TestForm), props: {} }
+    await waitFor(() => screen.getByTestId('test-form'))
+
+    unmount()
+
+    expect(close).toHaveBeenCalled()
   })
 })

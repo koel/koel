@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vite-plus/test'
 import { screen } from '@testing-library/vue'
 import { createHarness } from '@/__tests__/TestHarness'
 import { defineComponent, ref } from 'vue'
+import { useModalDialogs } from '@/composables/useModalDialogs'
 import MessageToaster from './MessageToaster.vue'
 
 describe('messageToaster', () => {
@@ -232,5 +233,32 @@ describe('messageToaster', () => {
     resolve(undefined)
     await h.tick(2)
     expect(leavingIsBlocked()).toBe(false)
+  })
+
+  it('moves into the topmost open modal dialog so its toasts stay usable, and back out when it closes', async () => {
+    const toaster = renderToaster()
+    const { showModalDialog } = useModalDialogs()
+    const firstDialog = document.body.appendChild(document.createElement('dialog'))
+    const secondDialog = document.body.appendChild(document.createElement('dialog'))
+
+    const closeDialog = (dialog: HTMLDialogElement) => {
+      dialog.close()
+      dialog.dispatchEvent(new Event('close'))
+    }
+
+    toaster.info('Saved')
+    showModalDialog(firstDialog)
+    showModalDialog(secondDialog)
+    await h.tick(2)
+    expect(secondDialog.contains(getToast())).toBe(true)
+
+    closeDialog(secondDialog)
+    await h.tick(2)
+    expect(firstDialog.contains(getToast())).toBe(true)
+
+    closeDialog(firstDialog)
+    await h.tick(2)
+    expect(firstDialog.contains(getToast())).toBe(false)
+    expect(document.body.contains(getToast())).toBe(true)
   })
 })
