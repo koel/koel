@@ -23,6 +23,9 @@ import { computed, ref, watch } from 'vue'
 import { requireInjection } from '@/utils/helpers'
 import { ModalKey } from '@/config/symbols'
 import { useResizableModal } from '@/composables/useResizableModal'
+import { useModalDialogs } from '@/composables/useModalDialogs'
+
+const { showModalDialog } = useModalDialogs()
 
 const dialog = ref<HTMLDialogElement>()
 const options = requireInjection(ModalKey)
@@ -63,7 +66,7 @@ const closeIfDismissedNatively = () => {
 
 watch(
   () => options.value.component,
-  component => (component ? dialog.value?.showModal() : dialog.value?.close()),
+  component => (component ? dialog.value && showModalDialog(dialog.value) : dialog.value?.close()),
 )
 </script>
 

@@ -1,24 +1,29 @@
 <template>
-  <div ref="root" class="popover">
-    <TransitionGroup class="flex flex-col items-end gap-2" name="toast" tag="ul" @after-leave="hideWhenEmpty">
-      <li v-for="message in messages" :key="message.id">
-        <MessageToast :message="message" @dismiss="dismiss(message.id)" />
-      </li>
-    </TransitionGroup>
-  </div>
-  <div aria-live="polite" class="sr-only" data-testid="toast-announcements">
-    <p v-for="message in messages" :key="message.id">{{ message.content }}</p>
-  </div>
+  <Teleport :to="topDialog ?? 'body'">
+    <div ref="root" class="popover">
+      <TransitionGroup class="flex flex-col items-end gap-2" name="toast" tag="ul" @after-leave="hideWhenEmpty">
+        <li v-for="message in messages" :key="message.id">
+          <MessageToast :message="message" @dismiss="dismiss(message.id)" />
+        </li>
+      </TransitionGroup>
+    </div>
+    <div aria-live="polite" class="sr-only" data-testid="toast-announcements">
+      <p v-for="message in messages" :key="message.id">{{ message.content }}</p>
+    </div>
+  </Teleport>
 </template>
 
 <script lang="ts" setup>
 import type { Component } from 'vue'
-import { computed, markRaw, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { uuid } from '@/utils/crypto'
+import { useModalDialogs } from '@/composables/useModalDialogs'
 
 import MessageToast from '@/components/ui/message-toaster/MessageToast.vue'
 
 const DEFAULT_TIMEOUT = 5
+
+const { topDialog } = useModalDialogs()
 
 const SETTLED_DEFAULTS = {
   icon: undefined,
@@ -35,6 +40,7 @@ const root = ref<
   HTMLDivElement & {
     popover?: 'manual' | 'auto'
     showPopover?: () => void
+    togglePopover?: (force?: boolean) => boolean
   }
 >()
 
@@ -144,6 +150,11 @@ watch(hasLoadingToast, pending =>
     ? window.addEventListener('beforeunload', warnBeforeLeaving)
     : window.removeEventListener('beforeunload', warnBeforeLeaving),
 )
+
+watch(topDialog, async () => {
+  await nextTick()
+  toasterShown && root.value?.togglePopover?.(true)
+})
 
 onBeforeUnmount(() => window.removeEventListener('beforeunload', warnBeforeLeaving))
 

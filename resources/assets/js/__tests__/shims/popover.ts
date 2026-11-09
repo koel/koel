@@ -97,8 +97,13 @@ if (popoverApiMissing) {
     this.dispatchEvent(new ToggleEvent('toggle', { oldState: 'open', newState: 'closed' }))
   }
 
-  HTMLElement.prototype.togglePopover = function (this: HTMLElement, _options?: boolean): boolean {
-    popoverOpen.get(this) ? this.hidePopover() : this.showPopover()
+  HTMLElement.prototype.togglePopover = function (this: HTMLElement, force?: boolean): boolean {
+    const shouldShow = force ?? !popoverOpen.get(this)
+
+    if (shouldShow !== Boolean(popoverOpen.get(this))) {
+      shouldShow ? this.showPopover() : this.hidePopover()
+    }
+
     return popoverOpen.get(this) ?? false
   }
 }
