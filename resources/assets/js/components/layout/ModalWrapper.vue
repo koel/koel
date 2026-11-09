@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { requireInjection } from '@/utils/helpers'
 import { ModalKey } from '@/config/symbols'
 import { useResizableModal } from '@/composables/useResizableModal'
@@ -53,7 +53,7 @@ const forwardEscapeToModalContent = () =>
 const handleDialogEscape = (event: KeyboardEvent) => {
   event.preventDefault()
 
-  if (event.target === dialog.value) {
+  if (!dialog.value?.firstElementChild?.contains(event.target as Node)) {
     forwardEscapeToModalContent()
   }
 }
@@ -68,6 +68,8 @@ watch(
   () => options.value.component,
   component => (component ? dialog.value && showModalDialog(dialog.value) : dialog.value?.close()),
 )
+
+onBeforeUnmount(() => dialog.value?.close())
 </script>
 
 <style lang="postcss" scoped>
