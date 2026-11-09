@@ -237,17 +237,28 @@ describe('messageToaster', () => {
 
   it('moves into the topmost open modal dialog so its toasts stay usable, and back out when it closes', async () => {
     const toaster = renderToaster()
-    const dialog = document.body.appendChild(document.createElement('dialog'))
+    const { showModalDialog } = useModalDialogs()
+    const firstDialog = document.body.appendChild(document.createElement('dialog'))
+    const secondDialog = document.body.appendChild(document.createElement('dialog'))
+
+    const closeDialog = (dialog: HTMLDialogElement) => {
+      dialog.close()
+      dialog.dispatchEvent(new Event('close'))
+    }
 
     toaster.info('Saved')
-    useModalDialogs().showModalDialog(dialog)
+    showModalDialog(firstDialog)
+    showModalDialog(secondDialog)
     await h.tick(2)
-    expect(dialog.contains(getToast())).toBe(true)
+    expect(secondDialog.contains(getToast())).toBe(true)
 
-    dialog.close()
-    dialog.dispatchEvent(new Event('close'))
+    closeDialog(secondDialog)
     await h.tick(2)
-    expect(dialog.contains(getToast())).toBe(false)
+    expect(firstDialog.contains(getToast())).toBe(true)
+
+    closeDialog(firstDialog)
+    await h.tick(2)
+    expect(firstDialog.contains(getToast())).toBe(false)
     expect(document.body.contains(getToast())).toBe(true)
   })
 })
