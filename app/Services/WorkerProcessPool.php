@@ -54,6 +54,9 @@ class WorkerProcessPool
                         continue;
                     }
 
+                    $this->emitCompleteLines($process->getIncrementalOutput(), $outputBuffers[$i], $onOutputLine);
+                    $this->emitCompleteLines($process->getIncrementalErrorOutput(), $errorBuffers[$i], $onErrorLine);
+
                     $this->emitLine(trim($outputBuffers[$i]), $onOutputLine);
                     $this->emitLine(trim($errorBuffers[$i]), $onErrorLine);
 
