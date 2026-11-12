@@ -155,6 +155,6 @@ class WriteSyncLogTest extends TestCase
             $recorder->record($result);
         }
 
-        return new MediaScanCompleted($recorder->finish(count($results)));
+        return new MediaScanCompleted($recorder->finish());
     }
 }

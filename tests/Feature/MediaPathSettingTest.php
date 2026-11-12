@@ -25,7 +25,7 @@ class MediaPathSettingTest extends TestCase
     #[Test]
     public function saveSettings(): void
     {
-        $this->mediaScanner->expects('scan')->andReturn(ScanSummary::make('scan-id', 0, 0, 0, 0));
+        $this->mediaScanner->expects('scan')->andReturn(ScanSummary::make('scan-id', 0, 0, 0));
 
         $this->putAs('/api/settings/media-path', ['path' => __DIR__], create_admin())->assertSuccessful();
 

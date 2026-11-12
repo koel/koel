@@ -33,7 +33,7 @@ class ScanRecorder
         }
     }
 
-    public function finish(int $pathCount): ScanSummary
+    public function finish(): ScanSummary
     {
         $this->flush();
 
@@ -42,7 +42,6 @@ class ScanRecorder
             successCount: $this->countsByType[ScanResultType::SUCCESS->value],
             skippedCount: $this->countsByType[ScanResultType::SKIPPED->value],
             errorCount: $this->countsByType[ScanResultType::ERROR->value],
-            pathCount: $pathCount,
         );
     }
 

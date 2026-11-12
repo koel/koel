@@ -15,7 +15,7 @@ class MediaScanCompletedTest extends TestCase
     {
         Queue::fake();
 
-        event(new MediaScanCompleted(ScanSummary::make('scan-id', 1, 0, 0, 1)));
+        event(new MediaScanCompleted(ScanSummary::make('scan-id', 1, 0, 0)));
 
         Queue::assertNothingPushed();
     }
