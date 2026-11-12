@@ -136,6 +136,24 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
     }
 
     #[Test]
+    public function deletesNothingWhenTheScanReportedResultsForFewerFilesThanItFound(): void
+    {
+        Log::spy();
+
+        $songs = Song::factory()->createMany(2);
+        $recorder = app(ScannedFileService::class)->startScan();
+        $recorder->record(ScanResult::success($songs[0]->path));
+
+        $this->listener->handle(new MediaScanCompleted($recorder->finish(2)));
+
+        $songs->each($this->assertModelExists(...));
+
+        Log::shouldHaveReceived('warning') // @phpstan-ignore-line
+            ->once()
+            ->withArgs(static fn (string $message) => str_contains($message, 'Refusing to delete'));
+    }
+
+    #[Test]
     public function logsHowManySongsWereRemoved(): void
     {
         Log::spy();
@@ -199,6 +217,6 @@ class DeleteNonExistingRecordsPostSyncTest extends TestCase
             $recorder->record($result);
         }
 
-        return new MediaScanCompleted($recorder->finish());
+        return new MediaScanCompleted($recorder->finish(count($results)));
     }
 }

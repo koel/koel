@@ -201,7 +201,7 @@ class ScanIndexerTest extends TestCase
             $recorder->record($result);
         }
 
-        return $recorder->finish()->scanId;
+        return $recorder->finish(count($results))->scanId;
     }
 
     private function countQueries(callable $callback): int

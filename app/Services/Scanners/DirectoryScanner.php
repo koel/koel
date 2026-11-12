@@ -56,7 +56,7 @@ class DirectoryScanner extends Scanner
                 ? $this->parallelStrategy->scan($pathList, $pathCount, $config, $jobs, $onResult)
                 : $this->sequentialStrategy->scan(File::lines($pathList)->filter(), $config, $onResult));
 
-            $summary = $recorder->finish();
+            $summary = $recorder->finish($pathCount);
 
             $this->indexer->reindex($summary->scanId);
 

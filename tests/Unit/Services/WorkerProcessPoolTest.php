@@ -39,6 +39,29 @@ class WorkerProcessPoolTest extends TestCase
     }
 
     #[Test]
+    public function emitsEveryLineAWorkerWritesRightBeforeExitingWhileTheCallerIsSlow(): void
+    {
+        $outputLines = [];
+
+        $this->pool->run(
+            commands: [
+                self::php('echo "first\n"; flush(); usleep(200000); echo "last\n";'),
+            ],
+            timeout: 10,
+            onOutputLine: static function (string $line) use (&$outputLines): void {
+                if (!$outputLines) {
+                    usleep(500_000);
+                }
+
+                $outputLines[] = $line;
+            },
+            onWorkerFailure: static fn () => self::fail('No worker should fail.'),
+        );
+
+        self::assertSame(['first', 'last'], $outputLines);
+    }
+
+    #[Test]
     public function emitsErrorLinesSeparatelyFromOutputLines(): void
     {
         $outputLines = [];

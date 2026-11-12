@@ -18,6 +18,16 @@ readonly class DeleteNonExistingRecordsPostScan
 
     public function handle(MediaScanCompleted $event): void
     {
+        if ($event->summary->isMissingResults()) {
+            Log::warning(sprintf(
+                'Scan found %d file(s) but reported results for fewer. Refusing to delete songs '
+                . 'missing from it, because they may only be missing from the results.',
+                $event->summary->pathCount,
+            ));
+
+            return;
+        }
+
         if ($this->wouldDeleteEverythingOnAnEmptyScan($event)) {
             Log::warning(
                 'Scan reported no valid files while the library still holds songs. Refusing to '

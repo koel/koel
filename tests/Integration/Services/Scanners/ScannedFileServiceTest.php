@@ -44,7 +44,7 @@ class ScannedFileServiceTest extends TestCase
 
         $this->assertDatabaseCount(ScannedFile::class, 500);
 
-        $summary = $recorder->finish();
+        $summary = $recorder->finish(501);
 
         $this->assertDatabaseCount(ScannedFile::class, 501);
         self::assertSame(501, $summary->successCount);
@@ -55,6 +55,6 @@ class ScannedFileServiceTest extends TestCase
         $recorder = $this->service->startScan();
         $recorder->record(ScanResult::success('/media/foo.mp3'));
 
-        return $recorder->finish()->scanId;
+        return $recorder->finish(1)->scanId;
     }
 }

@@ -24,7 +24,7 @@ class ScanCommandTest extends TestCase
 
         $scanner = Mockery::mock(DirectoryScanner::class);
         $scanner->allows('on');
-        $scanner->expects('scan')->andReturn(ScanSummary::make('scan-id', 0, 0, 0));
+        $scanner->expects('scan')->andReturn(ScanSummary::make('scan-id', 0, 0, 0, 0));
         $this->instance(DirectoryScanner::class, $scanner);
 
         $this
@@ -59,7 +59,7 @@ class ScanCommandTest extends TestCase
                 ),
                 Mockery::any(),
             )
-            ->andReturn(ScanSummary::make('scan-id', 0, 0, 0));
+            ->andReturn(ScanSummary::make('scan-id', 0, 0, 0, 0));
         $this->instance(DirectoryScanner::class, $scanner);
 
         $this->artisan('koel:scan', ['--ignore' => ['title, album', 'genre']])->assertSuccessful();
@@ -105,7 +105,7 @@ class ScanCommandTest extends TestCase
                 ),
                 Mockery::any(),
             )
-            ->andReturn(ScanSummary::make('scan-id', 0, 0, 0));
+            ->andReturn(ScanSummary::make('scan-id', 0, 0, 0, 0));
         $this->instance(DirectoryScanner::class, $scanner);
 
         $this->artisan('koel:scan', ['--only' => ['track, year']])->assertSuccessful();
