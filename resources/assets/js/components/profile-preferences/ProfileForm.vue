@@ -1,16 +1,5 @@
 <template>
   <form data-testid="update-profile-form" @submit.prevent="handleSubmit">
-    <AlertBox v-if="currentUser.sso_provider">
-      <template v-if="currentUser.sso_provider === 'Reverse Proxy'">
-        You’re authenticated by a reverse proxy.
-      </template>
-      <template v-else>
-        You’re logged in via single sign-on provided by <strong>{{ currentUser.sso_provider }}</strong
-        >.
-      </template>
-      You can still update your name and avatar here.
-    </AlertBox>
-
     <div class="flex flex-col gap-6 max-w-md">
       <EditableProfileAvatar v-model:avatar="data.avatar" :name="data.name" />
 
@@ -31,6 +20,12 @@
             required
             type="email"
           />
+          <template v-if="currentUser.sso_provider" #help>
+            <span data-testid="sso-email-help">
+              Managed by
+              {{ currentUser.sso_provider === 'Reverse Proxy' ? 'your reverse proxy' : currentUser.sso_provider }}.
+            </span>
+          </template>
         </FormRow>
       </div>
     </div>
@@ -51,7 +46,6 @@ import { useForm } from '@/composables/useForm'
 
 import Btn from '@/components/ui/form/Btn.vue'
 import EditableProfileAvatar from '@/components/profile-preferences/EditableProfileAvatar.vue'
-import AlertBox from '@/components/ui/AlertBox.vue'
 import TextInput from '@/components/ui/form/TextInput.vue'
 import FormRow from '@/components/ui/form/FormRow.vue'
 
