@@ -62,4 +62,14 @@ describe('profileForm.vue', () => {
 
     await waitFor(() => expect(screen.getByTestId<HTMLInputElement>('email').value).toBe('old@example.com'))
   })
+
+  it('explains the read-only email address only to single sign-on users', () => {
+    renderComponent(h.factory('user').make({ sso_provider: 'Google' }) as CurrentUser)
+    screen.getByTestId('sso-email-help')
+  })
+
+  it('shows no email help to users who log in with a password', () => {
+    renderComponent(h.factory('user').make({ sso_provider: null }) as CurrentUser)
+    expect(screen.queryByTestId('sso-email-help')).toBeNull()
+  })
 })
