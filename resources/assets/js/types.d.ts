@@ -580,9 +580,14 @@ interface AiSettings {
   has_api_key: boolean
 }
 
+interface YouTubeSettings {
+  has_api_key: boolean
+}
+
 interface Settings {
   media_path?: string
   ai?: AiSettings
+  youtube?: YouTubeSettings
 }
 
 interface Interaction {

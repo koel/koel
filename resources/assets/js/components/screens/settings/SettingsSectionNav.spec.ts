@@ -2,7 +2,7 @@ import { screen } from '@testing-library/vue'
 import { describe, expect, it } from 'vite-plus/test'
 import { defineComponent } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import type { SettingsSection } from '@/components/screens/SettingsScreen.vue'
+import type { SettingsSection, SettingsSectionGroup } from '@/components/screens/SettingsScreen.vue'
 import Component from './SettingsSectionNav.vue'
 
 describe('settingsSectionNav.vue', () => {
@@ -11,17 +11,22 @@ describe('settingsSectionNav.vue', () => {
   const Pane = defineComponent({ template: '<div />' })
 
   const accountOnly: SettingsSection[] = [
-    { id: 'profile', label: 'Profile', component: Pane, group: 'Account' },
-    { id: 'themes', label: 'Themes', component: Pane, group: 'Account' },
+    { id: 'profile', label: 'Profile', component: Pane, group: 'account' },
+    { id: 'themes', label: 'Themes', component: Pane, group: 'account' },
   ]
 
   const withServer: SettingsSection[] = [
     ...accountOnly,
-    { id: 'services', label: 'Services', component: Pane, group: 'Server' },
+    { id: 'services', label: 'Services', component: Pane, group: 'server' },
+  ]
+
+  const sectionGroups: SettingsSectionGroup[] = [
+    { id: 'account', label: 'Account' },
+    { id: 'server', label: 'Server' },
   ]
 
   const renderComponent = (sections: SettingsSection[], modelValue = 'profile') =>
-    h.render(Component, { props: { sections, modelValue, panelId: 'panel' } })
+    h.render(Component, { props: { sections, sectionGroups, modelValue, panelId: 'panel' } })
 
   it('names the groups when there is more than one', () => {
     renderComponent(withServer)

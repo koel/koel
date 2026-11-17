@@ -3,7 +3,7 @@
     <div class="md:hidden px-6 py-4 border-b border-k-fg-5">
       <SelectBox v-model="selectedId" aria-label="Settings section" data-testid="settings-section-picker">
         <template v-if="showsGroupNames">
-          <optgroup v-for="group in groups" :key="group.name" :label="group.name">
+          <optgroup v-for="group in groups" :key="group.id" :label="group.label">
             <option v-for="section in group.sections" :key="section.id" :value="section.id">{{ section.label }}</option>
           </optgroup>
         </template>
@@ -20,8 +20,8 @@
       role="tablist"
       @keydown="moveSelectionWithKeys"
     >
-      <template v-for="group in groups" :key="group.name">
-        <h3 v-if="showsGroupNames" class="rail-cell group-name">{{ group.name }}</h3>
+      <template v-for="group in groups" :key="group.id">
+        <h3 v-if="showsGroupNames" class="rail-cell group-name">{{ group.label }}</h3>
         <button
           v-for="section in group.sections"
           :id="tabIdOf(section.id)"
@@ -46,20 +46,21 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, useTemplateRef } from 'vue'
-import type { SettingsSection } from '@/components/screens/SettingsScreen.vue'
+import type { SettingsSection, SettingsSectionGroup } from '@/components/screens/SettingsScreen.vue'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const props = defineProps<{
   sections: SettingsSection[]
+  sectionGroups: SettingsSectionGroup[]
   panelId: string
 }>()
 
 const selectedId = defineModel<string>({ required: true })
 
 const groups = computed(() =>
-  (['Account', 'Server'] as const)
-    .map(name => ({ name, sections: props.sections.filter(section => section.group === name) }))
+  props.sectionGroups
+    .map(group => ({ ...group, sections: props.sections.filter(section => section.group === group.id) }))
     .filter(group => group.sections.length > 0),
 )
 
@@ -67,7 +68,6 @@ const showsGroupNames = computed(() => groups.value.length > 1)
 
 const tabIdOf = (sectionId: string) => `settingsSection-${sectionId}`
 
-const orderedSections = computed(() => groups.value.flatMap(group => group.sections))
 const tablist = useTemplateRef<HTMLElement>('tablist')
 
 const selectAndFocus = async (section: SettingsSection) => {
@@ -77,7 +77,7 @@ const selectAndFocus = async (section: SettingsSection) => {
 }
 
 const moveSelectionWithKeys = (event: KeyboardEvent) => {
-  const sections = orderedSections.value
+  const sections = props.sections
   const currentIndex = sections.findIndex(section => section.id === selectedId.value)
 
   const targetIndexByKey: Record<string, number> = {

@@ -12,6 +12,8 @@ export const Filter = {
   PROFILE_INTEGRATIONS: 'profile-integrations',
   ACCOUNT_SETTINGS_TABS: 'account-settings-tabs',
   SERVER_SETTINGS_TABS: 'server-settings-tabs',
+  SETTINGS_SERVICES: 'settings-services',
+  SETTINGS_SECTION_GROUPS: 'settings-section-groups',
   POLICIES: 'policies',
   SELECTED_UPLOADS: 'selected-uploads',
   PLAYABLE_CONTEXT_MENU_SECTIONS: 'playable-context-menu-sections',

@@ -45,11 +45,13 @@ class FetchInitialDataController extends Controller
         ThemeRepository $themeRepository,
         LicenseServiceInterface $licenseService,
         SettingService $settingService,
+        YouTubeService $youTubeService,
         Authenticatable $user,
     ) {
         $licenseStatus = $licenseService->getStatus();
         $aiSettings = $settingService->getAiSettings($user->organization);
         $managesSettings = $user->hasPermissionTo(Permission::MANAGE_SETTINGS);
+        $youTubeSettings = ['has_api_key' => $youTubeService->hasStoredApiKey($user->organization)];
         $theme = $licenseStatus->isValid()
             ? $themeRepository->findUserThemeById($user->preferences->theme, $user)
             : null;
@@ -60,8 +62,12 @@ class FetchInitialDataController extends Controller
                 License::isPlus() => [
                     ...$settingRepository->getInstallWideAsKeyValueArray(),
                     'ai' => $aiSettings->toArrayWithoutApiKey(),
+                    'youtube' => $youTubeSettings,
                 ],
-                default => $settingRepository->getInstallWideAsKeyValueArray(),
+                default => [
+                    ...$settingRepository->getInstallWideAsKeyValueArray(),
+                    'youtube' => $youTubeSettings,
+                ],
             },
             'playlists' => PlaylistResource::collection($playlistRepository->getAllAccessibleByUser($user)),
             'playlist_folders' => PlaylistFolderResource::collection($user->playlistFolders),
@@ -70,7 +76,7 @@ class FetchInitialDataController extends Controller
             'uses_musicbrainz' => MusicBrainzService::enabled(),
             'uses_last_fm' => LastfmService::used(),
             'uses_spotify' => SpotifyService::enabled(),
-            'uses_you_tube' => YouTubeService::enabled(),
+            'uses_you_tube' => $youTubeService->enabled($user->organization),
             'uses_i_tunes' => ITunesService::used(),
             'uses_ticketmaster' => TicketmasterService::used(),
             'allows_download' => config('koel.download.allow'),

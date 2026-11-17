@@ -5,10 +5,16 @@ namespace App\Http\Integrations\YouTube;
 use Saloon\Http\Auth\QueryAuthenticator;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
+use SensitiveParameter;
 
 class YouTubeConnector extends Connector
 {
     use AcceptsJson;
+
+    public function __construct(
+        #[SensitiveParameter]
+        private readonly string $apiKey,
+    ) {}
 
     public function resolveBaseUrl(): string
     {
@@ -17,6 +23,6 @@ class YouTubeConnector extends Connector
 
     protected function defaultAuth(): QueryAuthenticator
     {
-        return new QueryAuthenticator('key', config('koel.services.youtube.key'));
+        return new QueryAuthenticator('key', $this->apiKey);
     }
 }

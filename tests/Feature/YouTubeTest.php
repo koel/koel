@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Organization;
 use App\Models\Song;
 use App\Services\Integrations\YouTubeService;
 use Mockery;
@@ -25,7 +26,11 @@ class YouTubeTest extends TestCase
     {
         $song = Song::factory()->createOne();
 
-        $this->youTubeService->expects('searchVideosRelatedToSong')->with(Mockery::on($song->is(...)), 'foo');
+        $this->youTubeService->expects('searchVideosRelatedToSong')->with(
+            Mockery::on($song->is(...)),
+            Mockery::on(Organization::default()->is(...)),
+            'foo',
+        );
 
         $this->getAs("/api/youtube/search/song/{$song->id}?pageToken=foo")->assertOk();
     }
