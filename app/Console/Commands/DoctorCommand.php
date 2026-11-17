@@ -190,14 +190,13 @@ class DoctorCommand extends Command
             }
         }
 
-        $youTubeApiKey = $this->youTubeService->getApiKey($this->organizationRepository->getDefault());
+        try {
+            $youTubeApiKey = $this->youTubeService->getApiKey($this->organizationRepository->getDefault());
 
-        if (!$youTubeApiKey) {
-            $this->reportWarning('YouTube integration', 'Not available');
-        } else {
-            $connector = new YouTubeConnector($youTubeApiKey);
-
-            try {
+            if (!$youTubeApiKey) {
+                $this->reportWarning('YouTube integration', 'Not available');
+            } else {
+                $connector = new YouTubeConnector($youTubeApiKey);
                 $object = $connector->send(new SearchVideosRequest('Pink Floyd Comfortably Numb'))->object();
 
                 if (object_get($object, 'error')) {
@@ -205,10 +204,10 @@ class DoctorCommand extends Command
                 }
 
                 $this->reportSuccess('YouTube integration');
-            } catch (Throwable $e) {
-                $this->collectError($e);
-                $this->reportError('YouTube integration');
             }
+        } catch (Throwable $e) {
+            $this->collectError($e);
+            $this->reportError('YouTube integration');
         }
 
         if (!SpotifyService::enabled()) {

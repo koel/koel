@@ -7,7 +7,7 @@ import { Filter } from '@/config/hooks'
 import { addFilter, type HookHandle, removeFilter } from '@/hooks'
 import Router from '@/router'
 import { commonStore } from '@/stores/commonStore'
-import Component, { type ProfileTab, type SettingsTab } from './SettingsScreen.vue'
+import Component, { type ProfileTab, type SettingsSectionGroup, type SettingsTab } from './SettingsScreen.vue'
 
 describe('settingsScreen.vue', () => {
   const h = createHarness({
@@ -155,6 +155,17 @@ describe('settingsScreen.vue', () => {
     renderComponent()
 
     expect(sectionIds()).toEqual([...accountSectionIds, 'users', 'media-path', 'services', 'billing'])
+  })
+
+  it('opens the first remaining section when the section groups filter drops the account group', () => {
+    handle = addFilter<SettingsSectionGroup[]>(Filter.SETTINGS_SECTION_GROUPS, groups =>
+      groups.filter(group => group.id !== 'account'),
+    )
+    h.actingAsAdmin()
+    renderComponent()
+
+    expect(sectionIds()).toEqual(['users', 'media-path', 'services'])
+    expect(screen.getByTestId('settings-section-users').getAttribute('aria-selected')).toBe('true')
   })
 
   it('puts the section name in the screen header and the page title', async () => {

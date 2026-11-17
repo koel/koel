@@ -13,6 +13,7 @@
       <SettingsSectionNav
         :model-value="currentSectionId"
         :panel-id="panelId"
+        :section-groups
         :sections
         class="flex-none"
         @update:model-value="openSection"
@@ -154,10 +155,17 @@ const getServerSections = (): SettingsTab[] =>
     ...getInstallSettingSections(),
   ])
 
-const sections: SettingsSection[] = [
+const sectionsInAllGroups: SettingsSection[] = [
   ...accountSections.map(section => ({ ...section, group: 'account' as const })),
   ...getServerSections().map(section => ({ ...section, group: 'server' as const })),
 ]
+
+const sectionGroups = applyFilters<SettingsSectionGroup[]>(Filter.SETTINGS_SECTION_GROUPS, [
+  { id: 'account', label: 'Account' },
+  { id: 'server', label: 'Server' },
+])
+
+const sections = sectionGroups.flatMap(group => sectionsInAllGroups.filter(section => section.group === group.id))
 
 const { getRouteParam, go, onScreenActivated, url } = useRouter()
 

@@ -47,25 +47,19 @@
 <script lang="ts" setup>
 import { computed, nextTick, useTemplateRef } from 'vue'
 import type { SettingsSection, SettingsSectionGroup } from '@/components/screens/SettingsScreen.vue'
-import { Filter } from '@/config/hooks'
-import { applyFilters } from '@/hooks'
 
 import SelectBox from '@/components/ui/form/SelectBox.vue'
 
 const props = defineProps<{
   sections: SettingsSection[]
+  sectionGroups: SettingsSectionGroup[]
   panelId: string
 }>()
 
 const selectedId = defineModel<string>({ required: true })
 
-const sectionGroups = applyFilters<SettingsSectionGroup[]>(Filter.SETTINGS_SECTION_GROUPS, [
-  { id: 'account', label: 'Account' },
-  { id: 'server', label: 'Server' },
-])
-
 const groups = computed(() =>
-  sectionGroups
+  props.sectionGroups
     .map(group => ({ ...group, sections: props.sections.filter(section => section.group === group.id) }))
     .filter(group => group.sections.length > 0),
 )
@@ -74,7 +68,6 @@ const showsGroupNames = computed(() => groups.value.length > 1)
 
 const tabIdOf = (sectionId: string) => `settingsSection-${sectionId}`
 
-const orderedSections = computed(() => groups.value.flatMap(group => group.sections))
 const tablist = useTemplateRef<HTMLElement>('tablist')
 
 const selectAndFocus = async (section: SettingsSection) => {
@@ -84,7 +77,7 @@ const selectAndFocus = async (section: SettingsSection) => {
 }
 
 const moveSelectionWithKeys = (event: KeyboardEvent) => {
-  const sections = orderedSections.value
+  const sections = props.sections
   const currentIndex = sections.findIndex(section => section.id === selectedId.value)
 
   const targetIndexByKey: Record<string, number> = {
