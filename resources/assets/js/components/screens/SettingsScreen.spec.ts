@@ -168,6 +168,16 @@ describe('settingsScreen.vue', () => {
     expect(screen.getByTestId('settings-section-users').getAttribute('aria-selected')).toBe('true')
   })
 
+  it('shows no sections when the section groups filter leaves none for the user', () => {
+    handle = addFilter<SettingsSectionGroup[]>(Filter.SETTINGS_SECTION_GROUPS, groups =>
+      groups.filter(group => group.id !== 'account'),
+    )
+    h.actingAsUser()
+    renderComponent()
+
+    expect(screen.queryByRole('tab', { hidden: true })).toBeNull()
+  })
+
   it('puts the section name in the screen header and the page title', async () => {
     const DocumentTitle = defineComponent({ setup: () => usePageTitle().syncDocumentTitle(), template: '<div />' })
     h.actingAsUser()

@@ -3,15 +3,17 @@
     <template #header>
       <ScreenHeader>
         <span class="font-thin">Settings</span>
-        <span class="separator" aria-hidden="true" />
-        <span class="sr-only">/</span>
-        <span>{{ currentSection.label }}</span>
+        <template v-if="currentSection">
+          <span class="separator" aria-hidden="true" />
+          <span class="sr-only">/</span>
+          <span>{{ currentSection.label }}</span>
+        </template>
       </ScreenHeader>
     </template>
 
-    <div class="flex flex-col md:flex-row flex-1 min-h-0">
+    <div v-if="currentSection" class="flex flex-col md:flex-row flex-1 min-h-0">
       <SettingsSectionNav
-        :model-value="currentSectionId"
+        :model-value="currentSection.id"
         :panel-id="panelId"
         :section-groups
         :sections
@@ -171,17 +173,19 @@ const { getRouteParam, go, onScreenActivated, url } = useRouter()
 
 const isAvailableSection = (id: string | undefined): id is string => sections.some(section => section.id === id)
 
-const currentSectionId = ref(sections[0].id)
+const currentSectionId = ref(sections[0]?.id)
 
 const currentSection = computed(() => sections.find(section => section.id === currentSectionId.value) ?? sections[0])
 
-usePageTitle().useScreenTitle('Settings', () => `Settings / ${currentSection.value.label}`)
+usePageTitle().useScreenTitle('Settings', () =>
+  currentSection.value ? `Settings / ${currentSection.value.label}` : 'Settings',
+)
 
 const openSection = (id: string) => go(url('settings', { section: id }))
 
 onScreenActivated('Settings', () => {
   const requestedSectionId = getRouteParam('section')
-  currentSectionId.value = isAvailableSection(requestedSectionId) ? requestedSectionId : sections[0].id
+  currentSectionId.value = isAvailableSection(requestedSectionId) ? requestedSectionId : sections[0]?.id
 })
 </script>
 
