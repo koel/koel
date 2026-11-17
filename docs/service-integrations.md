@@ -78,12 +78,14 @@ Integration with Spotify allows Koel to fetch more metadata like album arts and 
 ## YouTube
 
 With YouTube integration, whenever a song is played, Koel will search YouTube for related videos and display them in
-the sidebar for you to watch without leaving Koel. The only thing you need to do is fill in `.env` with your
-`YOUTUBE_API_KEY`, which can be obtained via the following:
+the sidebar for you to watch without leaving Koel. All you need is a YouTube API key:
 
 1. [Create a new Google Project](https://console.developers.google.com/)
 2. From the project's Dashboard, click “ENABLE API” and make sure “YouTube Data API v3” is enabled
 3. From the project's Credentials, click Create credentials → API Key → Server key
+
+Then enter the key under Settings → Services → YouTube, or set it as `YOUTUBE_API_KEY` in `.env`. A key entered in
+Settings takes precedence.
 
 :::tip Limitations
 YouTube integration is always disabled on mobile due to OS restrictions. Also, you interact with the videos via YouTube

@@ -79,8 +79,13 @@ export interface SettingsTab {
 
 export type ProfileTab = Omit<SettingsTab, 'props'>
 
+export interface SettingsSectionGroup {
+  id: 'account' | 'server'
+  label: string
+}
+
 export interface SettingsSection extends SettingsTab {
-  group: 'Account' | 'Server'
+  group: SettingsSectionGroup['id']
 }
 
 const ProfileSection = defineAsyncComponent(() => import('@/components/profile-preferences/ProfileSection.vue'))
@@ -150,8 +155,8 @@ const getServerSections = (): SettingsTab[] =>
   ])
 
 const sections: SettingsSection[] = [
-  ...accountSections.map(section => ({ ...section, group: 'Account' as const })),
-  ...getServerSections().map(section => ({ ...section, group: 'Server' as const })),
+  ...accountSections.map(section => ({ ...section, group: 'account' as const })),
+  ...getServerSections().map(section => ({ ...section, group: 'server' as const })),
 ]
 
 const { getRouteParam, go, onScreenActivated, url } = useRouter()

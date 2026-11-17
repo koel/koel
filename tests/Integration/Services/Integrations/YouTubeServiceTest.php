@@ -4,12 +4,14 @@ namespace Tests\Integration\Services\Integrations;
 
 use App\Http\Integrations\YouTube\Requests\SearchVideosRequest;
 use App\Models\Artist;
+use App\Models\Organization;
 use App\Models\Song;
 use App\Services\Integrations\YouTubeService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Framework\Attributes\Test;
 use Saloon\Http\Faking\MockResponse;
+use Saloon\Http\Response;
 use Saloon\Laravel\Saloon;
 use Tests\TestCase;
 
@@ -39,7 +41,7 @@ class YouTubeServiceTest extends TestCase
             ))),
         ]);
 
-        $response = $this->service->searchVideosRelatedToSong($song, 'my-token');
+        $response = $this->service->searchVideosRelatedToSong($song, Organization::default(), 'my-token');
 
         self::assertSame('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
         self::assertNotNull(Cache::get('43d0e04621642165c5a3052b884945b9'));
@@ -71,7 +73,7 @@ class YouTubeServiceTest extends TestCase
             SearchVideosRequest::class => MockResponse::make(body: ['error' => 'quotaExceeded'], status: 403),
         ]);
 
-        $failedResponse = $this->service->searchVideosRelatedToSong($song);
+        $failedResponse = $this->service->searchVideosRelatedToSong($song, Organization::default());
 
         self::assertNull($failedResponse);
 
@@ -81,8 +83,52 @@ class YouTubeServiceTest extends TestCase
             ))),
         ]);
 
-        $response = $this->service->searchVideosRelatedToSong($song);
+        $response = $this->service->searchVideosRelatedToSong($song, Organization::default());
 
         self::assertSame('Slipknot - Snuff [OFFICIAL VIDEO]', $response->items[0]->snippet->title);
+    }
+
+    #[Test]
+    public function searchWithTheStoredApiKey(): void
+    {
+        $this->service->updateApiKey(Organization::default(), 'stored-key');
+
+        Saloon::fake([
+            SearchVideosRequest::class => MockResponse::make(body: File::get(test_path(
+                'fixtures/youtube/search.json',
+            ))),
+        ]);
+
+        $this->service->searchVideosRelatedToSong(Song::factory()->createOne(), Organization::default());
+
+        Saloon::assertSent(
+            static fn (SearchVideosRequest $request, Response $response): bool => (
+                $response->getPendingRequest()->query()->get('key') === 'stored-key'
+            ),
+        );
+    }
+
+    #[Test]
+    public function fallBackToTheInstallWideApiKey(): void
+    {
+        $this->service->updateApiKey(Organization::default(), 'stored-key');
+        $this->service->updateApiKey(Organization::default(), null);
+
+        self::assertFalse($this->service->hasStoredApiKey(Organization::default()));
+        self::assertSame('foo', $this->service->getApiKey(Organization::default()));
+    }
+
+    #[Test]
+    public function skipTheSearchWithoutAnApiKey(): void
+    {
+        config(['koel.services.youtube.key' => null]);
+        Saloon::fake([]);
+
+        self::assertNull(app(YouTubeService::class)->searchVideosRelatedToSong(
+            Song::factory()->createOne(),
+            Organization::default(),
+        ));
+
+        Saloon::assertNothingSent();
     }
 }

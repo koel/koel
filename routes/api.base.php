@@ -1,6 +1,5 @@
 <?php
 
-use App\Facades\YouTube;
 use App\Helpers\Uuid;
 use App\Http\Controllers\API\ActivateLicenseController;
 use App\Http\Controllers\API\AiController;
@@ -96,6 +95,7 @@ use App\Http\Controllers\API\SetLastfmSessionKeyController;
 use App\Http\Controllers\API\Settings\UpdateAiSettingsController;
 use App\Http\Controllers\API\Settings\UpdateBrandingController;
 use App\Http\Controllers\API\Settings\UpdateMediaPathController;
+use App\Http\Controllers\API\Settings\UpdateYouTubeSettingsController;
 use App\Http\Controllers\API\SongController;
 use App\Http\Controllers\API\SongSearchController;
 use App\Http\Controllers\API\ThemeController;
@@ -171,6 +171,7 @@ Route::prefix('api')
             Route::put('settings/media-path', UpdateMediaPathController::class);
             Route::put('settings/branding', UpdateBrandingController::class);
             Route::put('settings/ai', UpdateAiSettingsController::class);
+            Route::put('settings/youtube', UpdateYouTubeSettingsController::class);
 
             Route::get('albums/random', FetchRandomAlbumsController::class);
             Route::apiResource('albums', AlbumController::class);
@@ -299,10 +300,7 @@ Route::prefix('api')
             Route::post('listenbrainz/token', [ListenBrainzTokenController::class, 'store']);
             Route::delete('listenbrainz/token', [ListenBrainzTokenController::class, 'destroy']);
 
-            // YouTube-related routes
-            if (YouTube::enabled()) {
-                Route::get('youtube/search/song/{song}', SearchYouTubeController::class);
-            }
+            Route::get('youtube/search/song/{song}', SearchYouTubeController::class);
 
             // Media information routes
             Route::get('albums/{album}/information', FetchAlbumInformationController::class);

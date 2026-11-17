@@ -27,6 +27,8 @@
           {{ service.description }}
           <a :href="service.docsUrl" class="text-k-highlight hover:text-k-fg" target="_blank">Documentation</a>
         </p>
+
+        <YouTubeApiKeyForm v-if="service.id === 'youtube'" class="mt-4" />
       </section>
     </WithGradientBorder>
   </div>
@@ -34,14 +36,29 @@
 
 <script lang="ts" setup>
 import { faLastfm, faSpotify, faYoutube } from '@fortawesome/free-brands-svg-icons'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { computed } from 'vue'
 import musicbrainzLogo from '@/../img/logos/musicbrainz.svg'
 import ticketmasterLogo from '@/../img/logos/ticketmaster.png'
 import { useBranding } from '@/composables/useBranding'
 import { useKoelPlus } from '@/composables/useKoelPlus'
 import { useThirdPartyServices } from '@/composables/useThirdPartyServices'
+import { Filter } from '@/config/hooks'
+import { applyFilters } from '@/hooks'
 
 import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
+import YouTubeApiKeyForm from '@/components/screens/settings/YouTubeApiKeyForm.vue'
+
+export interface SettingsService {
+  id: string
+  name: string
+  logo?: string
+  icon?: IconDefinition
+  color: string
+  enabled: boolean
+  description: string
+  docsUrl: string
+}
 
 const { name: appName } = useBranding()
 const { isPlus } = useKoelPlus()
@@ -49,57 +66,59 @@ const { useMusicBrainz, useLastfm, useSpotify, useYouTube, useTicketmaster } = u
 
 const DOCS_URL = 'https://docs.koel.dev'
 
-const allServices = computed(() => [
-  {
-    id: 'musicbrainz',
-    name: 'MusicBrainz',
-    logo: musicbrainzLogo,
-    color: '#ba478f',
-    enabled: useMusicBrainz.value,
-    description: `Fills in album and artist information, artist images and album covers from MusicBrainz, Wikipedia and the Cover Art Archive.`,
-    docsUrl: `${DOCS_URL}/service-integrations#musicbrainz-wikipedia`,
-  },
-  {
-    id: 'lastfm',
-    name: 'Last.fm',
-    icon: faLastfm,
-    color: '#d31f27',
-    enabled: useLastfm.value,
-    description: `Fills in album and artist details from Last.fm, and lets each user connect their Last.fm account to scrobble what they play in ${appName}.`,
-    docsUrl: `${DOCS_URL}/service-integrations#last-fm`,
-  },
-  {
-    id: 'spotify',
-    name: 'Spotify',
-    icon: faSpotify,
-    color: '#1db954',
-    enabled: useSpotify.value,
-    description: `Fetches album covers and artist images from Spotify.`,
-    docsUrl: `${DOCS_URL}/service-integrations#spotify`,
-  },
-  {
-    id: 'youtube',
-    name: 'YouTube',
-    icon: faYoutube,
-    color: '#ff0033',
-    enabled: useYouTube.value,
-    description: `Shows YouTube videos related to the song being played, to watch without leaving ${appName}.`,
-    docsUrl: `${DOCS_URL}/service-integrations#youtube`,
-  },
-  ...(isPlus.value
-    ? [
-        {
-          id: 'ticketmaster',
-          name: 'Ticketmaster',
-          logo: ticketmasterLogo,
-          color: '#026cdf',
-          enabled: useTicketmaster.value,
-          description: `Lists an artist's upcoming concerts from Ticketmaster on the artist's page, with links to buy tickets.`,
-          docsUrl: `${DOCS_URL}/plus/ticketmaster`,
-        },
-      ]
-    : []),
-])
+const allServices = computed(() =>
+  applyFilters<SettingsService[]>(Filter.SETTINGS_SERVICES, [
+    {
+      id: 'musicbrainz',
+      name: 'MusicBrainz',
+      logo: musicbrainzLogo,
+      color: '#ba478f',
+      enabled: useMusicBrainz.value,
+      description: `Fills in album and artist information, artist images and album covers from MusicBrainz, Wikipedia and the Cover Art Archive.`,
+      docsUrl: `${DOCS_URL}/service-integrations#musicbrainz-wikipedia`,
+    },
+    {
+      id: 'lastfm',
+      name: 'Last.fm',
+      icon: faLastfm,
+      color: '#d31f27',
+      enabled: useLastfm.value,
+      description: `Fills in album and artist details from Last.fm, and lets each user connect their Last.fm account to scrobble what they play in ${appName}.`,
+      docsUrl: `${DOCS_URL}/service-integrations#last-fm`,
+    },
+    {
+      id: 'spotify',
+      name: 'Spotify',
+      icon: faSpotify,
+      color: '#1db954',
+      enabled: useSpotify.value,
+      description: `Fetches album covers and artist images from Spotify.`,
+      docsUrl: `${DOCS_URL}/service-integrations#spotify`,
+    },
+    {
+      id: 'youtube',
+      name: 'YouTube',
+      icon: faYoutube,
+      color: '#ff0033',
+      enabled: useYouTube.value,
+      description: `Shows YouTube videos related to the song being played, to watch without leaving ${appName}.`,
+      docsUrl: `${DOCS_URL}/service-integrations#youtube`,
+    },
+    ...(isPlus.value
+      ? [
+          {
+            id: 'ticketmaster',
+            name: 'Ticketmaster',
+            logo: ticketmasterLogo,
+            color: '#026cdf',
+            enabled: useTicketmaster.value,
+            description: `Lists an artist's upcoming concerts from Ticketmaster on the artist's page, with links to buy tickets.`,
+            docsUrl: `${DOCS_URL}/plus/ticketmaster`,
+          },
+        ]
+      : []),
+  ]),
+)
 
 const services = computed(() =>
   [...allServices.value].sort((first, second) => Number(second.enabled) - Number(first.enabled)),

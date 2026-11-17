@@ -1,3 +1,4 @@
+import isMobile from 'ismobilejs'
 import { reactive } from 'vue'
 import { merge } from 'lodash-es'
 import { http } from '@/services/http'
@@ -28,5 +29,14 @@ export const settingStore = {
     const ai = await http.put<AiSettings>('settings/ai', data)
     this.state.ai = ai
     commonStore.state.uses_ai = ai.enabled && Boolean(ai.provider) && ai.has_api_key
+  },
+
+  async updateYouTubeApiKey(apiKey: string | null) {
+    const { enabled, ...youtube } = await http.put<YouTubeSettings & { enabled: boolean }>('settings/youtube', {
+      api_key: apiKey,
+    })
+
+    this.state.youtube = youtube
+    commonStore.state.uses_you_tube = enabled && !isMobile.any
   },
 }

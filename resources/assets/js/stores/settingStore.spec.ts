@@ -41,4 +41,15 @@ describe('settingStore', () => {
 
     expect(commonStore.state.uses_ai).toBe(usesAi)
   })
+
+  it('shows or hides YouTube after saving its API key', async () => {
+    commonStore.state.uses_you_tube = true
+    const putMock = h.mock(http, 'put').mockResolvedValue({ has_api_key: false, enabled: false })
+
+    await settingStore.updateYouTubeApiKey(null)
+
+    expect(putMock).toHaveBeenCalledWith('settings/youtube', { api_key: null })
+    expect(settingStore.state.youtube).toEqual({ has_api_key: false })
+    expect(commonStore.state.uses_you_tube).toBe(false)
+  })
 })

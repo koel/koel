@@ -11,13 +11,13 @@ describe('settingsSectionNav.vue', () => {
   const Pane = defineComponent({ template: '<div />' })
 
   const accountOnly: SettingsSection[] = [
-    { id: 'profile', label: 'Profile', component: Pane, group: 'Account' },
-    { id: 'themes', label: 'Themes', component: Pane, group: 'Account' },
+    { id: 'profile', label: 'Profile', component: Pane, group: 'account' },
+    { id: 'themes', label: 'Themes', component: Pane, group: 'account' },
   ]
 
   const withServer: SettingsSection[] = [
     ...accountOnly,
-    { id: 'services', label: 'Services', component: Pane, group: 'Server' },
+    { id: 'services', label: 'Services', component: Pane, group: 'server' },
   ]
 
   const renderComponent = (sections: SettingsSection[], modelValue = 'profile') =>

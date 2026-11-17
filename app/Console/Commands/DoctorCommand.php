@@ -14,6 +14,7 @@ use App\Http\Integrations\YouTube\YouTubeConnector;
 use App\Models\Setting;
 use App\Models\Song;
 use App\Models\User;
+use App\Repositories\OrganizationRepository;
 use App\Services\Image\ImageWriter;
 use App\Services\Integrations\LastfmService;
 use App\Services\Integrations\SpotifyService;
@@ -40,6 +41,13 @@ class DoctorCommand extends Command
     protected $description = 'Check Koel setup';
 
     private array $errors = [];
+
+    public function __construct(
+        private readonly YouTubeService $youTubeService,
+        private readonly OrganizationRepository $organizationRepository,
+    ) {
+        parent::__construct();
+    }
 
     public function handle(): int
     {
@@ -182,11 +190,12 @@ class DoctorCommand extends Command
             }
         }
 
-        if (!YouTubeService::enabled()) {
+        $youTubeApiKey = $this->youTubeService->getApiKey($this->organizationRepository->getDefault());
+
+        if (!$youTubeApiKey) {
             $this->reportWarning('YouTube integration', 'Not available');
         } else {
-            /** @var YouTubeConnector $connector */
-            $connector = app(YouTubeConnector::class);
+            $connector = new YouTubeConnector($youTubeApiKey);
 
             try {
                 $object = $connector->send(new SearchVideosRequest('Pink Floyd Comfortably Numb'))->object();
