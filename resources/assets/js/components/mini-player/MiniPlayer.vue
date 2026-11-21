@@ -24,6 +24,8 @@
         @click="seek"
         @keydown.home.prevent="seekToStart"
         @keydown.end.prevent="seekToEnd"
+        @keydown.left.prevent="rewind"
+        @keydown.right.prevent="forward"
       >
         <div class="track h-0.5 bg-k-fg-10 transition-transform duration-200">
           <div
@@ -173,6 +175,9 @@ const seekToEnd = () => {
     playback('current')?.seekTo(media.duration)
   }
 }
+
+const rewind = () => playback('current')?.rewind(10)
+const forward = () => playback('current')?.forward(10)
 
 const updateProgress = () => {
   const media = getActiveMedia()

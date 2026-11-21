@@ -101,6 +101,24 @@ describe('miniPlayer.vue', () => {
     expect(seekTo).toHaveBeenNthCalledWith(2, 296)
   })
 
+  it('seeks backward and forward with the arrow keys', async () => {
+    const rewind = vi.fn()
+    const forward = vi.fn()
+    playbackManager.currentService = {
+      media: { currentTime: 100, duration: 296 },
+      rewind,
+      forward,
+    } as unknown as BasePlaybackService
+    renderComponent()
+
+    const slider = screen.getByRole('slider', { name: 'Seek' })
+    await fireEvent.keyDown(slider, { key: 'ArrowLeft' })
+    await fireEvent.keyDown(slider, { key: 'ArrowRight' })
+
+    expect(rewind).toHaveBeenCalledWith(10)
+    expect(forward).toHaveBeenCalledWith(10)
+  })
+
   it('cannot change the repeat mode of a radio station', () => {
     renderComponent(h.factory('radio-station').make())
 
