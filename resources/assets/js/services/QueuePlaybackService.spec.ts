@@ -542,6 +542,19 @@ describe('playbackService', () => {
     endCrossfadeTest(outgoingMedia)
   })
 
+  it('forwards within the song shown as playing when forwarding during a crossfade', () => {
+    const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
+    const startTime = incomingMedia.currentTime
+
+    playbackService.forward(10)
+
+    expect(crossfadeService.active).toBe(false)
+    expect(playbackService.media).toBe(incomingMedia)
+    expect(incomingMedia.currentTime).toBe(startTime + 10)
+
+    endCrossfadeTest(outgoingMedia)
+  })
+
   it('pauses the song shown as playing when pausing during a crossfade', async () => {
     const { outgoingMedia, incomingMedia } = startCrossfadeAtFiveSeconds()
     const incomingSong = crossfadeService.state!.playable

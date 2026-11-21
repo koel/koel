@@ -449,6 +449,7 @@ export class QueuePlaybackService extends BasePlaybackService {
   }
 
   public forward(seconds: number): void {
+    this.settleCrossfade()
     this.media.currentTime += seconds
   }
 
