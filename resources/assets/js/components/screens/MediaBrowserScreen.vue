@@ -32,7 +32,10 @@
         @open-parent-folder="openParentFolder"
       />
 
-      <MediaListViewSkeleton v-if="shouldShowSkeleton" role="status" aria-busy="true" aria-label="Loading" />
+      <template v-if="shouldShowSkeleton">
+        <ScreenHeaderSpace />
+        <MediaListViewSkeleton role="status" aria-busy="true" aria-label="Loading" />
+      </template>
 
       <ScreenEmptyState v-if="noContent">
         <template #icon>
@@ -60,6 +63,7 @@ import ScreenBase from '@/components/screens/ScreenBase.vue'
 import Breadcrumbs from '@/components/playable/media-browser/Breadcrumbs.vue'
 import MediaListView from '@/components/playable/media-browser/MediaListView.vue'
 import MediaListViewSkeleton from '@/components/playable/media-browser/MediaListViewSkeleton.vue'
+import ScreenHeaderSpace from '@/components/ui/ScreenHeaderSpace.vue'
 import Btn from '@/components/ui/form/Btn.vue'
 import EmptyLibraryHint from '@/components/ui/EmptyLibraryHint.vue'
 
