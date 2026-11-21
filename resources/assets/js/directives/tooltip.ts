@@ -15,19 +15,19 @@ const getOrCreateTooltip = (el: ElementWithTooltip): HTMLElement => {
     return el.$tooltip
   }
 
-  el.$tooltip = document.createElement('div')
+  el.$tooltip = el.ownerDocument.createElement('div')
   el.$tooltip.classList.add('tooltip')
 
-  const arrow = document.createElement('div')
+  const arrow = el.ownerDocument.createElement('div')
   arrow.classList.add('tooltip-arrow')
 
-  const content = document.createElement('div')
+  const content = el.ownerDocument.createElement('div')
   content.classList.add('tooltip-content')
 
   el.$tooltip.appendChild(content)
   el.$tooltip.appendChild(arrow)
 
-  document.body.appendChild(el.$tooltip)
+  el.ownerDocument.body.appendChild(el.$tooltip)
 
   return el.$tooltip
 }
