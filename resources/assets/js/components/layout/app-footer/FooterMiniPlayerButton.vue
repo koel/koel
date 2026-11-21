@@ -14,7 +14,7 @@ import { PictureInPicture2Icon } from 'lucide-vue-next'
 import { onBeforeUnmount, shallowRef } from 'vue'
 
 import FooterBtn from '@/components/layout/app-footer/FooterButton.vue'
-import MiniPlayer from '@/components/layout/app-footer/MiniPlayer.vue'
+import MiniPlayer from '@/components/mini-player/MiniPlayer.vue'
 
 const miniPlayerWindow = shallowRef<Window | null>(null)
 
