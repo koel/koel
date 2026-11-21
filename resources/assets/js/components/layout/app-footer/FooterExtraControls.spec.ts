@@ -34,4 +34,10 @@ describe('footerExtraControls.vue', () => {
 
     expect(emitMock).toHaveBeenCalledWith('FULLSCREEN_TOGGLE')
   })
+
+  it('hides the mini player button when the browser cannot open one', () => {
+    renderComponent()
+
+    expect(screen.queryByRole('button', { name: 'Open mini player' })).toBeNull()
+  })
 })

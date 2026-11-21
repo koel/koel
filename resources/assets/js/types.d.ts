@@ -145,6 +145,10 @@ interface Window {
   readonly MediaMetadata: Constructable<Record<string, any>>
   createLemonSqueezy?: () => Closure
 
+  documentPictureInPicture?: {
+    requestWindow: (options?: { width?: number; height?: number }) => Promise<Window>
+  }
+
   LemonSqueezy?: {
     Url: {
       Open: (url: string) => void

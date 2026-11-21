@@ -64,4 +64,21 @@ describe('tooltip directive', () => {
 
     expect(tooltipElement()).toBeNull()
   })
+
+  it('creates the tooltip in the document of its element', async () => {
+    const otherDocument = document.implementation.createHTMLDocument()
+
+    h.render(
+      defineComponent({
+        directives: { koelTooltip: tooltip },
+        setup: () => ({ target: otherDocument.body }),
+        template: '<Teleport :to="target"><button v-koel-tooltip="\'More actions\'">Click</button></Teleport>',
+      }),
+    )
+
+    otherDocument.querySelector('button')!.dispatchEvent(new MouseEvent('mouseenter'))
+
+    expect(otherDocument.querySelector('.tooltip')).not.toBeNull()
+    expect(tooltipElement()).toBeNull()
+  })
 })
