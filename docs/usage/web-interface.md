@@ -79,8 +79,7 @@ From the same area, you can also:
 * <InterfaceIcon :src="boltIcon" alt="Bolt" /> show the [visualizer](./visualizers)
 * <InterfaceIcon :src="audioLinesIcon" alt="Equalizer" /> show the equalizer
 * <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
-* <InterfaceIcon :src="pictureInPictureIcon" alt="Mini player" /> open the mini player, a small window that stays on top of
-  other windows (Chrome and Edge only)
+* <InterfaceIcon :src="pictureInPictureIcon" alt="Mini player" /> open the mini player (Chrome and Edge only)
 * <InterfaceIcon :src="expandIcon" alt="Expand" /> toggle full-screen mode
 
 Right-clicking the footer area brings up the context menu for the currently playing song.
