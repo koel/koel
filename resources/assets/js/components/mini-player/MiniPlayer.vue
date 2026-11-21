@@ -22,6 +22,8 @@
         role="slider"
         tabindex="0"
         @click="seek"
+        @keydown.home.prevent="seekToStart"
+        @keydown.end.prevent="seekToEnd"
       >
         <div class="track h-0.5 bg-k-fg-10 transition-transform duration-200">
           <div
@@ -56,7 +58,7 @@
           <span class="sr-only">Play next in queue</span>
         </button>
 
-        <RepeatModeSwitch :class="isRadio && 'pointer-events-none opacity-30'" class="text-base" />
+        <RepeatModeSwitch :disabled="isRadio" class="text-base disabled:opacity-30" />
       </div>
     </footer>
   </div>
@@ -69,7 +71,7 @@ import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isRadioStation } from '@/utils/typeGuards'
 import { getCoverBackgroundColor } from '@/utils/coverColor'
 import { CurrentStreamableKey } from '@/config/symbols'
-import { playback } from '@/services/playbackManager'
+import { getActiveMedia, playback } from '@/services/playbackManager'
 import { useBranding } from '@/composables/useBranding'
 import { usePlaybackToggle } from '@/composables/usePlaybackToggle'
 import { playableStore } from '@/stores/playableStore'
@@ -150,7 +152,7 @@ const playPrev = async () => await playback().playPrev()
 const playNext = async () => await playback().playNext()
 
 const seek = (event: MouseEvent) => {
-  const media = playback('current')?.media
+  const media = getActiveMedia()
   const slider = event.currentTarget as HTMLElement
 
   if (!media?.duration) {
@@ -162,8 +164,18 @@ const seek = (event: MouseEvent) => {
   updateProgress()
 }
 
+const seekToStart = () => playback('current')?.seekTo(0)
+
+const seekToEnd = () => {
+  const media = getActiveMedia()
+
+  if (media?.duration) {
+    playback('current')?.seekTo(media.duration)
+  }
+}
+
 const updateProgress = () => {
-  const media = playback('current')?.media
+  const media = getActiveMedia()
   const hasKnownDuration = Boolean(media && Number.isFinite(media.duration) && media.duration > 0)
 
   position.value = hasKnownDuration ? media!.currentTime : 0
