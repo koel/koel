@@ -3,6 +3,7 @@ import { playbackService as queuePlayback } from '@/services/QueuePlaybackServic
 import type { RadioPlaybackService } from '@/services/RadioPlaybackService'
 import { playbackService as radioPlayback } from '@/services/RadioPlaybackService'
 import type { BasePlaybackService } from '@/services/BasePlaybackService'
+import { crossfadeService } from '@/services/crossfadeService'
 
 const playbackServiceMap: Record<string, BasePlaybackService> = {
   queue: queuePlayback,
@@ -54,4 +55,12 @@ export function playback<T extends keyof PlaybackTypeMap = 'queue'>(
   }
 
   throw new Error(`Unknown playback type: ${type}`)
+}
+
+export const getActiveMedia = (): HTMLMediaElement | null => {
+  if (crossfadeService.active && crossfadeService.state) {
+    return crossfadeService.state.incomingAudio
+  }
+
+  return playback('current')?.media ?? null
 }

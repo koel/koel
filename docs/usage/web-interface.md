@@ -79,6 +79,7 @@ From the same area, you can also:
 * <InterfaceIcon :src="boltIcon" alt="Bolt" /> show the [visualizer](./visualizers)
 * <InterfaceIcon :src="audioLinesIcon" alt="Equalizer" /> show the equalizer
 * <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
+* <InterfaceIcon :src="pictureInPictureIcon" alt="Mini player" /> open the mini player (Chrome and Edge only)
 * <InterfaceIcon :src="expandIcon" alt="Expand" /> toggle full-screen mode
 
 Right-clicking the footer area brings up the context menu for the currently playing song.
@@ -166,6 +167,7 @@ import boltIcon from '../assets/icons/bolt.svg'
 import expandIcon from '../assets/icons/expand.svg'
 import filterIcon from '../assets/icons/filter.svg'
 import heartIcon from '../assets/icons/heart.svg'
+import pictureInPictureIcon from '../assets/icons/picture-in-picture.svg'
 import plusIcon from '../assets/icons/plus-circle.svg'
 import queueIcon from '../assets/icons/queue.svg'
 import repeatIcon from '../assets/icons/repeat.svg'

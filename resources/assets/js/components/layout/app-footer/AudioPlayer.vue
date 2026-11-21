@@ -56,8 +56,7 @@
 
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, ref } from 'vue'
-import { playback } from '@/services/playbackManager'
-import { crossfadeService } from '@/services/crossfadeService'
+import { getActiveMedia, playback } from '@/services/playbackManager'
 import { secondsToHis } from '@/utils/formatters'
 
 import ProgressTimeTip from '@/components/layout/app-footer/ProgressTimeTip.vue'
@@ -79,14 +78,6 @@ const nearsTotalTip = (percent: number) =>
   (hoveredTrackRect.value!.width * (100 - percent)) / 100 < TOTAL_TIP_CLEARANCE_PX
 
 const positionText = computed(() => `${secondsToHis(positionSeconds.value)} of ${secondsToHis(durationSeconds.value)}`)
-
-const getActiveMedia = (): HTMLMediaElement | null => {
-  if (crossfadeService.active && crossfadeService.state) {
-    return crossfadeService.state.incomingAudio
-  }
-
-  return playback('current')?.media ?? null
-}
 
 const updateProgress = () => {
   const media = getActiveMedia()

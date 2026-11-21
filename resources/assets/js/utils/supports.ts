@@ -35,3 +35,5 @@ export const getNativelyPlayableLosslessFormats = () => {
     .filter(([, mimeType]) => probe.canPlayType(mimeType) !== '')
     .map(([format]) => format)
 }
+
+export const isMiniPlayerSupported = () => 'documentPictureInPicture' in window
