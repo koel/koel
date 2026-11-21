@@ -65,6 +65,26 @@ describe('carousel.vue', () => {
     screen.getByRole('button', { name: 'Scroll left' })
   })
 
+  it('moves focus to the other scroll button when the focused one hides at the end', async () => {
+    const { container } = h.render(Component, {
+      slots: { default: '<div>Card</div>' },
+    })
+
+    const scroller = container.querySelector<HTMLDivElement>('.home-carousel')!
+    Object.defineProperty(scroller, 'scrollLeft', { value: 1600, configurable: true, writable: true })
+    await setOverflow(scroller, 800, 3200)
+
+    screen.getByRole('button', { name: 'Scroll right' }).focus()
+
+    scroller.scrollLeft = 2400
+    scroller.dispatchEvent(new Event('scroll'))
+    await nextTick()
+    await nextTick()
+
+    expect(screen.queryByRole('button', { name: 'Scroll right' })).toBeNull()
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Scroll left' }))
+  })
+
   it('slides right by the scroller width when the right chevron is clicked', async () => {
     const { container } = h.render(Component, {
       slots: { default: '<div>Card</div>' },

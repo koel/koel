@@ -10,12 +10,12 @@
       </div>
     </div>
 
-    <button v-if="canScrollLeft" class="scroll-button left-2" type="button" @click="slide(-1)">
+    <button v-if="canScrollLeft" ref="leftButton" class="scroll-button left-2" type="button" @click="slide(-1)">
       <Icon :icon="faChevronLeft" />
       <span class="sr-only">Scroll left</span>
     </button>
 
-    <button v-if="canScrollRight" class="scroll-button right-2" type="button" @click="slide(1)">
+    <button v-if="canScrollRight" ref="rightButton" class="scroll-button right-2" type="button" @click="slide(1)">
       <Icon :icon="faChevronRight" />
       <span class="sr-only">Scroll right</span>
     </button>
@@ -24,15 +24,19 @@
 
 <script setup lang="ts">
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import { onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
 
 const scroller = ref<HTMLDivElement>()
+const leftButton = ref<HTMLButtonElement>()
+const rightButton = ref<HTMLButtonElement>()
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 
 let resizeObserver: ResizeObserver | undefined
 
-const updateScrollState = () => {
+const isFocused = (button: HTMLButtonElement | undefined) => document.activeElement === button
+
+const updateScrollState = async () => {
   const el = scroller.value
 
   if (!el) {
@@ -41,8 +45,23 @@ const updateScrollState = () => {
     return
   }
 
-  canScrollLeft.value = el.scrollLeft > 1
-  canScrollRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 1
+  const nextCanScrollLeft = el.scrollLeft > 1
+  const nextCanScrollRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 1
+
+  const focusedButtonWillHide =
+    (!nextCanScrollLeft && isFocused(leftButton.value)) || (!nextCanScrollRight && isFocused(rightButton.value))
+
+  canScrollLeft.value = nextCanScrollLeft
+  canScrollRight.value = nextCanScrollRight
+
+  if (!focusedButtonWillHide) {
+    return
+  }
+
+  await nextTick()
+
+  const remainingButton = leftButton.value ?? rightButton.value
+  remainingButton?.focus()
 }
 
 const observeScrollState = (el: HTMLDivElement | undefined) => {
