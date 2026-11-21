@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from 'vite-plus/test'
-import { screen, within } from '@testing-library/vue'
-import { defineComponent, h as createElement, nextTick, provide, ref } from 'vue'
+import { screen } from '@testing-library/vue'
+import { nextTick } from 'vue'
 import { createHarness } from '@/__tests__/TestHarness'
-import { BlockActionsHostKey } from '@/config/symbols'
 import Component from './Carousel.vue'
 
 const setOverflow = async (scroller: HTMLDivElement, clientWidth: number, scrollWidth: number) => {
@@ -24,23 +23,46 @@ describe('carousel.vue', () => {
     expect(screen.queryByRole('button', { name: 'Scroll right' })).toBeNull()
   })
 
-  it('renders scroll buttons inside the inline <nav> when no actions host is provided', async () => {
-    // Regression: confirms Vue's top-level ref auto-unwrap in <script setup>
-    // resolves `v-if="actionsHost && hasOverflow"` correctly when the inject
-    // default ref(null) is in play (i.e. no provider). If auto-unwrap didn't
-    // apply, the Teleport branch would always win and the <nav> fallback would
-    // never render.
+  it('only offers scrolling right at the start', async () => {
     const { container } = h.render(Component, {
       slots: { default: '<div>Card</div>' },
     })
 
-    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
+    const scroller = container.querySelector<HTMLDivElement>('.home-carousel')!
+    Object.defineProperty(scroller, 'scrollLeft', { value: 0, configurable: true, writable: true })
     await setOverflow(scroller, 800, 3200)
 
-    const nav = container.querySelector<HTMLElement>('nav')
-    expect(nav).not.toBeNull()
-    within(nav!).getByRole('button', { name: 'Scroll left' })
-    within(nav!).getByRole('button', { name: 'Scroll right' })
+    expect(screen.queryByRole('button', { name: 'Scroll left' })).toBeNull()
+    screen.getByRole('button', { name: 'Scroll right' })
+  })
+
+  it('only offers scrolling left at the end', async () => {
+    const { container } = h.render(Component, {
+      slots: { default: '<div>Card</div>' },
+    })
+
+    const scroller = container.querySelector<HTMLDivElement>('.home-carousel')!
+    Object.defineProperty(scroller, 'scrollLeft', { value: 2400, configurable: true, writable: true })
+    await setOverflow(scroller, 800, 3200)
+
+    screen.getByRole('button', { name: 'Scroll left' })
+    expect(screen.queryByRole('button', { name: 'Scroll right' })).toBeNull()
+  })
+
+  it('offers scrolling left once scrolled away from the start', async () => {
+    const { container } = h.render(Component, {
+      slots: { default: '<div>Card</div>' },
+    })
+
+    const scroller = container.querySelector<HTMLDivElement>('.home-carousel')!
+    Object.defineProperty(scroller, 'scrollLeft', { value: 0, configurable: true, writable: true })
+    await setOverflow(scroller, 800, 3200)
+
+    scroller.scrollLeft = 800
+    scroller.dispatchEvent(new Event('scroll'))
+    await nextTick()
+
+    screen.getByRole('button', { name: 'Scroll left' })
   })
 
   it('slides right by the scroller width when the right chevron is clicked', async () => {
@@ -48,7 +70,7 @@ describe('carousel.vue', () => {
       slots: { default: '<div>Card</div>' },
     })
 
-    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
+    const scroller = container.querySelector<HTMLDivElement>('.home-carousel')!
     const spy = vi.fn()
     scroller.scrollTo = spy as unknown as typeof scroller.scrollTo
     Object.defineProperty(scroller, 'scrollLeft', { value: 0, configurable: true, writable: true })
@@ -64,7 +86,7 @@ describe('carousel.vue', () => {
       slots: { default: '<div>Card</div>' },
     })
 
-    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
+    const scroller = container.querySelector<HTMLDivElement>('.home-carousel')!
     const spy = vi.fn()
     scroller.scrollTo = spy as unknown as typeof scroller.scrollTo
     Object.defineProperty(scroller, 'scrollLeft', { value: 1600, configurable: true, writable: true })
@@ -73,29 +95,5 @@ describe('carousel.vue', () => {
     await h.user.click(screen.getByRole('button', { name: 'Scroll left' }))
 
     expect(spy).toHaveBeenCalledWith({ left: 800, behavior: 'smooth' })
-  })
-
-  it('teleports the scroll buttons into a provided actions host', async () => {
-    const Wrapper = defineComponent({
-      setup() {
-        const host = ref<HTMLElement | null>(null)
-        provide(BlockActionsHostKey, host)
-        return () =>
-          createElement('div', [
-            createElement('div', { ref: el => (host.value = el as HTMLElement), 'data-testid': 'host' }),
-            createElement(Component, null, { default: () => createElement('div', 'Card') }),
-          ])
-      },
-    })
-
-    const { container } = h.render(Wrapper)
-    const scroller = container.querySelector('.home-carousel') as HTMLDivElement
-    await setOverflow(scroller, 800, 3200)
-
-    const host = screen.getByTestId('host')
-    within(host).getByRole('button', { name: 'Scroll left' })
-    within(host).getByRole('button', { name: 'Scroll right' })
-    // The inline <nav> must not coexist with the teleported buttons.
-    expect(container.querySelector('nav')).toBeNull()
   })
 })
