@@ -1,71 +1,70 @@
 <template>
-  <div class="w-full min-w-0">
-    <Teleport v-if="actionsHost && hasOverflow" :to="actionsHost">
-      <button
-        v-for="ctrl in controls"
-        :key="ctrl.title"
-        type="button"
-        class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        @click="slide(ctrl.direction)"
-      >
-        <Icon :icon="ctrl.icon" />
-        <span class="sr-only">{{ ctrl.title }}</span>
-      </button>
-    </Teleport>
-
-    <nav v-else-if="hasOverflow" class="flex justify-end gap-2 mb-2">
-      <button
-        v-for="ctrl in controls"
-        :key="ctrl.title"
-        type="button"
-        class="w-9 h-9 rounded-full flex items-center justify-center text-k-fg-70 hover:text-k-fg hover:bg-k-fg-5 transition"
-        @click="slide(ctrl.direction)"
-      >
-        <Icon :icon="ctrl.icon" />
-        <span class="sr-only">{{ ctrl.title }}</span>
-      </button>
-    </nav>
-
+  <div class="carousel relative w-full min-w-0">
     <div
       ref="scroller"
       class="home-carousel scroll-mask-x-from-[calc(100%-2rem)] md:scroll-mask-x overflow-x-auto overflow-y-hidden w-full"
+      @scroll.passive="updateScrollState"
     >
       <div class="home-carousel-track flex gap-6">
         <slot />
       </div>
     </div>
+
+    <button v-if="canScrollLeft" ref="leftButton" class="scroll-button left-2" type="button" @click="slide(-1)">
+      <Icon :icon="faChevronLeft" />
+      <span class="sr-only">Scroll left</span>
+    </button>
+
+    <button v-if="canScrollRight" ref="rightButton" class="scroll-button right-2" type="button" @click="slide(1)">
+      <Icon :icon="faChevronRight" />
+      <span class="sr-only">Scroll right</span>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
-import { inject, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
-import { BlockActionsHostKey } from '@/config/symbols'
-
-const actionsHost = inject(BlockActionsHostKey, ref(null))
+import { nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue'
 
 const scroller = ref<HTMLDivElement>()
-const hasOverflow = ref(false)
-
-const controls = [
-  { title: 'Scroll left', icon: faChevronLeft, direction: -1 as const },
-  { title: 'Scroll right', icon: faChevronRight, direction: 1 as const },
-]
+const leftButton = ref<HTMLButtonElement>()
+const rightButton = ref<HTMLButtonElement>()
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
 
 let resizeObserver: ResizeObserver | undefined
 
-const updateOverflow = () => {
+const isFocused = (button: HTMLButtonElement | undefined) => document.activeElement === button
+
+const updateScrollState = async () => {
   const el = scroller.value
 
   if (!el) {
-    hasOverflow.value = false
+    canScrollLeft.value = false
+    canScrollRight.value = false
     return
   }
 
-  hasOverflow.value = el.scrollWidth > el.clientWidth + 1
+  const nextCanScrollLeft = el.scrollLeft > 1
+  const nextCanScrollRight = el.scrollLeft + el.clientWidth < el.scrollWidth - 1
+
+  const focusedButtonWillHide =
+    (!nextCanScrollLeft && isFocused(leftButton.value)) || (!nextCanScrollRight && isFocused(rightButton.value))
+
+  canScrollLeft.value = nextCanScrollLeft
+  canScrollRight.value = nextCanScrollRight
+
+  if (!focusedButtonWillHide) {
+    return
+  }
+
+  await nextTick()
+
+  const remainingButton = leftButton.value ?? rightButton.value
+  remainingButton?.focus()
 }
 
-const observeOverflow = (el: HTMLDivElement | undefined) => {
+const observeScrollState = (el: HTMLDivElement | undefined) => {
   resizeObserver?.disconnect()
   resizeObserver = undefined
 
@@ -73,25 +72,25 @@ const observeOverflow = (el: HTMLDivElement | undefined) => {
     return
   }
 
-  resizeObserver = new ResizeObserver(updateOverflow)
+  resizeObserver = new ResizeObserver(updateScrollState)
   resizeObserver.observe(el)
   resizeObserver.observe(el.firstElementChild ?? el)
-  updateOverflow()
+  updateScrollState()
 }
 
 onMounted(() => {
-  observeOverflow(scroller.value)
-  window.addEventListener('resize', updateOverflow)
+  observeScrollState(scroller.value)
+  window.addEventListener('resize', updateScrollState)
 })
 
-onUpdated(updateOverflow)
+onUpdated(updateScrollState)
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
-  window.removeEventListener('resize', updateOverflow)
+  window.removeEventListener('resize', updateScrollState)
 })
 
-watch(scroller, observeOverflow)
+watch(scroller, observeScrollState)
 
 const slide = (direction: 1 | -1) => {
   const el = scroller.value
@@ -103,6 +102,19 @@ const slide = (direction: 1 | -1) => {
   el.scrollTo({ left: target, behavior: 'smooth' })
 }
 </script>
+
+<style lang="postcss" scoped>
+@reference '@css/app.pcss';
+.scroll-button {
+  @apply absolute top-1/2 -translate-y-1/2 z-10 w-14 h-14 text-xl rounded-full flex items-center justify-center
+    bg-k-fg-10 border border-k-fg-10 text-k-fg-80 backdrop-blur-xl backdrop-saturate-150 shadow-lg opacity-0 transition hover:text-k-fg hover:bg-k-fg-20 active:scale-90
+    focus-visible:opacity-100 no-hover:opacity-100;
+
+  .carousel:hover & {
+    @apply opacity-100;
+  }
+}
+</style>
 
 <style lang="postcss">
 .home-carousel {

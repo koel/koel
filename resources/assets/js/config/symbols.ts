@@ -40,8 +40,6 @@ export const PlayableListSortFieldKey: ReadonlyInjectionKey<Ref<PlayableListSort
 export const PlayableListSortOrderKey: ReadonlyInjectionKey<Ref<SortOrder>> = Symbol('PlayableListSortOrder')
 export const PlayableListContextKey: InjectionKey<Ref<PlayableListContext>> = Symbol('PlayableListContext')
 
-export const BlockActionsHostKey: InjectionKey<Ref<HTMLElement | null>> = Symbol('BlockActionsHost')
-
 export const PlaylistFolderDropTargetKey: InjectionKey<Ref<string | null>> = Symbol('PlaylistFolderDropTarget')
 export const DraggedPlaylistKey: InjectionKey<Ref<Playlist | null>> = Symbol('DraggedPlaylist')
 export const DraggedPlaylistFolderKey: InjectionKey<Ref<PlaylistFolder | null>> = Symbol('DraggedPlaylistFolder')
