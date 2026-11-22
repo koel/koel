@@ -39,11 +39,19 @@
         {{ fmtLength }}
       </span>
     </span>
+    <button
+      type="button"
+      class="-mr-2 w-9 h-9 grid place-items-center rounded-full text-k-fg-50 hover:text-k-fg hover:bg-k-fg-10 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 no-hover:opacity-100 transition-[opacity,background-color,color]"
+      @click.stop="onContextMenu"
+    >
+      <Icon :icon="faEllipsis" />
+      <span class="sr-only">More actions</span>
+    </button>
   </li>
 </template>
 
 <script lang="ts" setup>
-import { faExclamationTriangle, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsis, faExclamationTriangle, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { computed, toRefs } from 'vue'
 import { defineAsyncComponent, getPlayableProp } from '@/utils/helpers'
 import { secondsToHis } from '@/utils/formatters'

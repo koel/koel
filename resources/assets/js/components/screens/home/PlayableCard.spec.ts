@@ -1,13 +1,19 @@
 import { screen } from '@testing-library/vue'
+import type { Mock } from 'vite-plus/test'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
 import { playableStore } from '@/stores/playableStore'
+import { assertOpenContextMenu } from '@/__tests__/assertions'
+import { useContextMenu } from '@/composables/useContextMenu'
+import PlayableContextMenu from '@/components/playable/PlayableContextMenu.vue'
 
 const isCachedMock = vi.fn().mockReturnValue(false)
 const isCachingMock = vi.fn().mockReturnValue(false)
 const hasCachingErrorMock = vi.fn().mockReturnValue(false)
 const getCachingErrorMock = vi.fn().mockReturnValue(undefined)
 const playMock = vi.fn()
+
+vi.mock('@/composables/useContextMenu')
 
 vi.mock('@/services/playbackManager', () => ({
   playback: () => ({ play: playMock, pause: vi.fn(), resume: vi.fn() }),
@@ -59,6 +65,15 @@ describe('playableCard.vue', () => {
     screen.getByText('Test Song')
     screen.getByText('Test Artist')
     screen.getByText('03:15')
+  })
+
+  it('opens the context menu from the more actions button', async () => {
+    const { openContextMenu } = useContextMenu()
+    const { props } = renderCard()
+
+    await h.user.click(screen.getByRole('button', { name: 'More actions' }))
+
+    await assertOpenContextMenu(openContextMenu as Mock, PlayableContextMenu, { playables: [props.playable] })
   })
 
   it('highlights the playing song', () => {
