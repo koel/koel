@@ -41,7 +41,7 @@
         class="play-icon flex items-center justify-center w-[32px] aspect-square rounded-full bg-k-highlight text-k-highlight-fg"
         aria-hidden="true"
       >
-        <Icon :icon="faPlay" size="lg" class="ml-0.5" />
+        <Icon :icon="faPlay" size="lg" class="play-icon-centered" />
       </span>
       <span class="sr-only">{{ playLabel }}</span>
     </button>

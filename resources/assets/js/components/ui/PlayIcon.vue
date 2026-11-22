@@ -5,7 +5,13 @@
     aria-hidden="true"
   >
     <Icon v-if="playing" :icon="faPause" data-testid="icon-pause" class="text-k-highlight-fg" :size="iconSize" />
-    <Icon v-else :icon="faPlay" data-testid="icon-play" class="ml-0.5 text-k-highlight-fg" :size="iconSize" />
+    <Icon
+      v-else
+      :icon="faPlay"
+      data-testid="icon-play"
+      class="play-icon-centered text-k-highlight-fg"
+      :size="iconSize"
+    />
   </span>
 </template>
 

@@ -10,7 +10,7 @@
       @click.prevent="emit('clicked')"
     >
       <Icon v-if="playing" :icon="faPause" data-testid="icon-pause" size="lg" />
-      <Icon v-else :icon="faPlay" class="ml-0.5" data-testid="icon-play" size="lg" />
+      <Icon v-else :icon="faPlay" class="play-icon-centered" data-testid="icon-play" size="lg" />
       <span class="sr-only">{{ playing ? 'Pause' : 'Play/Resume' }}</span>
     </button>
   </div>

@@ -25,7 +25,7 @@
         class="absolute flex opacity-0 items-center justify-center w-[48px] aspect-square rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-k-highlight group-hover:opacity-100 duration-500 transition z-20"
       >
         <Icon v-if="isPlaying" :icon="faPause" class="text-white" size="2xl" />
-        <Icon v-else :icon="faPlay" class="ml-1 text-white" size="2xl" />
+        <Icon v-else :icon="faPlay" class="play-icon-centered text-white" size="2xl" />
       </span>
       <span class="sr-only">Play/Pause</span>
     </button>
