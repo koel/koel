@@ -525,6 +525,8 @@ interface UserPreferences extends Record<string, any> {
   detect_duplicate_uploads: boolean
   include_public_media: boolean
   crossfade_duration: number
+  music_playback_speed: number
+  podcast_playback_speed: number
   normalize_volume: boolean
   show_waveform: boolean
   lastfm_session_key?: string

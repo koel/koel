@@ -80,6 +80,7 @@ From the same area, you can also:
 * <InterfaceIcon :src="audioLinesIcon" alt="Equalizer" /> show the equalizer
 * <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
 * <InterfaceIcon :src="airplayIcon" alt="AirPlay" /> play on an AirPlay device (Safari only). The equalizer and crossfade don't apply there. On a Mac, pick the device as your sound output in Control Center to keep them.
+* change the playback speed with the speed button (e.g. 1.0×). Music and podcasts each keep their own speed.
 * <InterfaceIcon :src="pictureInPictureIcon" alt="Mini player" /> open the mini player (Chrome and Edge only)
 * <InterfaceIcon :src="expandIcon" alt="Expand" /> toggle full-screen mode
 

@@ -440,6 +440,54 @@ describe('playbackService', () => {
     h.setReadOnlyProperty(mediaElement, 'webkitCurrentPlaybackTargetIsWireless', false)
   })
 
+  it('plays an episode at the podcast speed', async () => {
+    const episode = h.factory('episode').make()
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue('http://test/play/episode')
+    h.mock(playbackService, 'restart')
+    preferences.temporary.podcast_playback_speed = 1.5
+
+    await playbackService.play(episode)
+
+    expect(playbackService.media.playbackRate).toBe(1.5)
+    expect(playbackService.media.preservesPitch).toBe(true)
+
+    preferences.temporary.podcast_playback_speed = 1
+    playbackService.media.removeAttribute('src')
+  })
+
+  it('times a crossfade in real seconds at a faster speed', () => {
+    const [current, next] = playableStore.syncWithVault(h.factory('song').make(2))
+    current.playback_state = 'Playing'
+    queueStore.state.playables = reactive([current, next])
+    h.setReadOnlyProperty(queueStore, 'next', next)
+
+    h.mock(playbackService, 'registerPlay')
+    h.mock(playbackService, 'showNotification')
+    h.mock(http, 'put')
+    h.mock(window.HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined)
+    h.mock(playableStore, 'getResolvedSourceUrl').mockReturnValue('http://test/play/next')
+    h.mock(playbackService, 'preload')
+    preferences.temporary.crossfade_duration = 5
+    preferences.temporary.music_playback_speed = 2
+    volumeManager.volume.value = 8
+
+    const outgoingMedia = playbackService.media
+    outgoingMedia.playbackRate = 2
+    h.setReadOnlyProperty(outgoingMedia, 'currentTime', 292)
+    h.setReadOnlyProperty(outgoingMedia, 'duration', 300)
+    outgoingMedia.dispatchEvent(new Event('timeupdate'))
+
+    const incomingMedia = crossfadeService.state!.incomingAudio
+
+    expect(incomingMedia.playbackRate).toBe(2)
+    expect(outgoingMedia.volume).toBeCloseTo(0.64)
+    expect(incomingMedia.volume).toBeCloseTo(0.16)
+
+    outgoingMedia.playbackRate = 1
+    preferences.temporary.music_playback_speed = 1
+    endCrossfadeTest(outgoingMedia)
+  })
+
   const startCrossfadeAtFiveSeconds = () => {
     const [current, next] = playableStore.syncWithVault(h.factory('song').make(2))
     current.playback_state = 'Playing'

@@ -13,6 +13,7 @@ use App\Values\User\Preferences\CrossfadeDurationPreference;
 use App\Values\User\Preferences\CurrentEqualizerPresetPreference;
 use App\Values\User\Preferences\EqualizerPresetsPreference;
 use App\Values\User\Preferences\HomeBlocksOrderPreference;
+use App\Values\User\Preferences\MusicPlaybackSpeedPreference;
 use App\Values\User\Preferences\Preference;
 use App\Values\User\Preferences\RadioStationsSortFieldPreference;
 use App\Values\User\Preferences\RadioStationsViewModePreference;
@@ -119,6 +120,13 @@ class PreferenceBehaviorTest extends TestCase
     {
         $this->expectException(AssertException::class);
         CrossfadeDurationPreference::make(20);
+    }
+
+    #[Test]
+    public function playbackSpeedRejectsUnlistedSpeed(): void
+    {
+        $this->expectException(AssertException::class);
+        MusicPlaybackSpeedPreference::make(3);
     }
 
     #[Test]

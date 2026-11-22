@@ -3,6 +3,7 @@ import { radioStationStore } from '@/stores/radioStationStore'
 import { use } from '@/utils/helpers'
 import { socketService } from '@/services/socketService'
 import { audioService } from '@/services/audioService'
+import { playbackSpeedService } from '@/services/playbackSpeedService'
 
 export class RadioPlaybackService extends BasePlaybackService {
   private latestPlayRequest = 0
@@ -26,6 +27,7 @@ export class RadioPlaybackService extends BasePlaybackService {
     }
 
     this.media.src = sourceUrl
+    playbackSpeedService.applyToMedia(this.media, 1)
 
     audioService.routeElement(this.media)
     await this.media.play()

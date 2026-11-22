@@ -21,6 +21,7 @@ import { crossfadeService } from '@/services/crossfadeService'
 import { volumeNormalizer } from '@/services/volumeNormalizer'
 import { encyclopediaService } from '@/services/encyclopediaService'
 import { volumeManager } from '@/services/volumeManager'
+import { playbackSpeedService } from '@/services/playbackSpeedService'
 import { useBranding } from '@/composables/useBranding'
 import { usePageTitle } from '@/composables/usePageTitle'
 import { Action } from '@/config/hooks'
@@ -162,6 +163,7 @@ export class QueuePlaybackService extends BasePlaybackService {
       }
 
       this.media.src = sourceUrl
+      playbackSpeedService.applyForPlayable(this.media, playable)
       audioService.routeElement(this.media)
 
       if (playable.playback_state !== 'Playing') {
@@ -568,11 +570,13 @@ export class QueuePlaybackService extends BasePlaybackService {
       !media.webkitCurrentPlaybackTargetIsWireless &&
       preferences.repeat_mode !== 'REPEAT_ONE' &&
       media.duration > crossfadeDuration * 2 && // skip for short tracks
-      media.currentTime + crossfadeDuration >= media.duration
+      media.currentTime + crossfadeDuration * media.playbackRate >= media.duration
     ) {
       if (!playableStore.getResolvedSourceUrl(nextPlayable)) {
         playableStore.resolveSourceUrl(nextPlayable).catch(logger.warn)
-      } else if (crossfadeService.start(nextPlayable, media.duration - media.currentTime, volumeManager.get())) {
+      } else if (crossfadeService.start(nextPlayable, this.remainingRealTime(), volumeManager.get())) {
+        playbackSpeedService.applyForPlayable(crossfadeService.state!.incomingAudio, nextPlayable)
+
         // Show the incoming track as "now playing" immediately
         queueStore.current!.playback_state = 'Stopped'
         nextPlayable.playback_state = 'Playing'
@@ -594,9 +598,13 @@ export class QueuePlaybackService extends BasePlaybackService {
     eventBus.emit('UP_NEXT', playable)
   }
 
+  /** Seconds left in the current track at its playback speed, as a listener hears them. */
+  private remainingRealTime() {
+    return (this.media.duration - this.media.currentTime) / this.media.playbackRate
+  }
+
   private fadeCrossfadingTracks() {
-    const remaining = this.media.duration - this.media.currentTime
-    const progress = Math.max(0, 1 - remaining / preferences.crossfade_duration)
+    const progress = Math.max(0, 1 - this.remainingRealTime() / preferences.crossfade_duration)
 
     this.setVolume(volumeManager.get() * (1 - progress))
     crossfadeService.fadeInIncomingTrack(progress, volumeManager.get())
