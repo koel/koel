@@ -18,11 +18,11 @@
     </button>
 
     <button
-      class="text-[7vmin] w-[16vmin] aspect-square border border-solid border-k-fg rounded-full flex items-center justify-center has-[.paused]:pl-[4px]"
+      class="text-[7vmin] w-[16vmin] aspect-square border border-solid border-k-fg rounded-full flex items-center justify-center"
       data-testid="btn-toggle-playback"
       @click.prevent="togglePlayback"
     >
-      <Icon :class="playing || 'paused'" :icon="playing ? faPause : faPlay" />
+      <Icon :class="playing || 'play-icon-centered'" :icon="playing ? faPause : faPlay" />
     </button>
 
     <button

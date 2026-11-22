@@ -1,10 +1,10 @@
 <template>
   <FooterButton
-    class="w-12! rounded-full border-2 border-solid border-k-fg-70 aspect-square transition-transform! hover:scale-125 text-2xl! has-[.icon-play]:indent-[0.23rem]"
+    class="w-12! rounded-full border-2 border-solid border-k-fg-70 aspect-square transition-transform! hover:scale-125 text-2xl!"
     @click.prevent="togglePlayback"
   >
     <Icon v-if="playing" :icon="faPause" />
-    <Icon v-else :icon="faPlay" class="icon-play" />
+    <Icon v-else :icon="faPlay" class="play-icon-centered" />
     <span class="sr-only">{{ label }}</span>
   </FooterButton>
 </template>

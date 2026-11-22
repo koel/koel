@@ -10,7 +10,7 @@
       class="absolute flex opacity-0 no-hover:opacity-100 items-center justify-center w-[24px] aspect-square rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-k-highlight group-hover:opacity-100 duration-500 transition z-20"
     >
       <Icon v-if="playable.playback_state === 'Playing'" :icon="faPause" class="text-k-highlight-fg" />
-      <Icon v-else :icon="faPlay" class="text-k-highlight-fg ml-0.5" />
+      <Icon v-else :icon="faPlay" class="text-k-highlight-fg play-icon-centered" />
     </span>
     <span class="sr-only">{{ actionLabel }}</span>
   </button>
