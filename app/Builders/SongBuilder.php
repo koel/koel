@@ -141,6 +141,30 @@ class SongBuilder extends FavoriteableBuilder
         });
     }
 
+    public function whereNotHidden(): self
+    {
+        if (License::isCommunity()) {
+            return $this;
+        }
+
+        throw_unless($this->user, new LogicException('User must be set to leave out hidden songs.'));
+
+        return $this->whereNotExists(fn (QueryBuilder $query): QueryBuilder => $query
+            ->from('hidden_songs')
+            ->whereColumn('hidden_songs.song_id', 'songs.id')
+            ->where('hidden_songs.user_id', $this->user->id));
+    }
+
+    private function withHiddenStatus(): self
+    {
+        return $this->addSelect([
+            'hidden' => DB::table('hidden_songs')
+                ->selectRaw('COUNT(*)')
+                ->whereColumn('hidden_songs.song_id', 'songs.id')
+                ->where('hidden_songs.user_id', $this->user->id),
+        ]);
+    }
+
     public function withUserContext(
         bool $includeFavoriteStatus = true,
         bool $favoritesOnly = false,
@@ -151,6 +175,7 @@ class SongBuilder extends FavoriteableBuilder
             ->when($includeFavoriteStatus, static fn (self $query) => $query->withFavoriteStatus($favoritesOnly))
             ->when($includePlayCount, static fn (self $query) => $query->withPlayCount())
             ->when(License::isPlus(), static fn (self $query) => $query->with('analysis:song_id,loudness,true_peak'))
+            ->when(License::isPlus(), static fn (self $query) => $query->withHiddenStatus())
             ->withRatingSubquery();
     }
 

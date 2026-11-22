@@ -38,6 +38,7 @@ use App\Http\Controllers\API\FetchAlbumInformationController;
 use App\Http\Controllers\API\FetchAlbumThumbnailController;
 use App\Http\Controllers\API\FetchDemoCreditsController;
 use App\Http\Controllers\API\FetchFavoriteSongsController;
+use App\Http\Controllers\API\FetchHiddenSongsController;
 use App\Http\Controllers\API\FetchInitialDataController;
 use App\Http\Controllers\API\FetchLibraryStatisticsController;
 use App\Http\Controllers\API\FetchListeningStatisticsController;
@@ -56,6 +57,7 @@ use App\Http\Controllers\API\ForgotPasswordController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\GetLastfmAuthorizationUrlController;
 use App\Http\Controllers\API\GetOneTimeTokenController;
+use App\Http\Controllers\API\HideSongsController;
 use App\Http\Controllers\API\LambdaSongController as S3SongController;
 use App\Http\Controllers\API\LikeMultipleSongsController;
 use App\Http\Controllers\API\ListenBrainzTokenController;
@@ -100,6 +102,7 @@ use App\Http\Controllers\API\SongController;
 use App\Http\Controllers\API\SongSearchController;
 use App\Http\Controllers\API\ThemeController;
 use App\Http\Controllers\API\ToggleLikeSongController;
+use App\Http\Controllers\API\UnhideSongsController;
 use App\Http\Controllers\API\UnlikeMultipleSongsController;
 use App\Http\Controllers\API\UpdatePlaybackStatusController;
 use App\Http\Controllers\API\UpdateUserPreferenceController;
@@ -236,6 +239,9 @@ Route::prefix('api')
             Route::get('songs/recently-played', FetchRecentlyPlayedSongController::class);
             Route::get('songs/favorite', FetchFavoriteSongsController::class); // @deprecated
             Route::get('songs/favorites', FetchFavoriteSongsController::class);
+            Route::get('songs/hidden', FetchHiddenSongsController::class);
+            Route::post('songs/hide', HideSongsController::class);
+            Route::post('songs/unhide', UnhideSongsController::class);
 
             Route::put('songs/{song}/rating', RateSongController::class)->where(['song' => Uuid::REGEX]);
             Route::put('albums/{album}/rating', RateAlbumController::class);

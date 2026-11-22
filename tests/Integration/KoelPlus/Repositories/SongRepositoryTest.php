@@ -6,8 +6,11 @@ use App\Enums\PlayableType;
 use App\Models\Artist;
 use App\Models\Genre;
 use App\Models\Interaction;
+use App\Models\Playlist;
 use App\Models\Song;
+use App\Models\User;
 use App\Repositories\SongRepository;
+use Illuminate\Database\Eloquent\Collection;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tests\PlusTestCase;
@@ -143,5 +146,129 @@ class SongRepositoryTest extends PlusTestCase
         $songs = app(SongRepository::class)->getSimilar($playedSong, 3, $user);
 
         self::assertEqualsCanonicalizing($ownSimilarSongs->pluck('id')->all(), $songs->pluck('id')->all());
+    }
+
+    #[Test]
+    public function getRandomLeavesOutHiddenSongs(): void
+    {
+        $user = create_user();
+        $visibleSongs = Song::factory()->for($user, 'owner')->createMany(2);
+        self::hideSongs($user, Song::factory()->for($user, 'owner')->createMany(2));
+
+        $songs = app(SongRepository::class)->getRandom(4, $user);
+
+        self::assertEqualsCanonicalizing($visibleSongs->modelKeys(), $songs->modelKeys());
+    }
+
+    #[Test]
+    public function getRandomInGenreAndYearsLeavesOutHiddenSongs(): void
+    {
+        $user = create_user();
+        $visibleSongs = Song::factory()->for($user, 'owner')->createMany(2);
+        self::hideSongs($user, Song::factory()->for($user, 'owner')->createMany(2));
+
+        $songs = app(SongRepository::class)->getRandomInGenreAndYears(4, null, null, null, $user);
+
+        self::assertEqualsCanonicalizing($visibleSongs->modelKeys(), $songs->modelKeys());
+    }
+
+    #[Test]
+    public function getByGenreRandomlyLeavesOutHiddenSongs(): void
+    {
+        $user = create_user();
+        $rock = Genre::factory()->createOne();
+        $visibleSongs = Song::factory()->for($user, 'owner')->hasAttached($rock)->createMany(2);
+        self::hideSongs($user, Song::factory()->for($user, 'owner')->hasAttached($rock)->createMany(2));
+
+        $songs = app(SongRepository::class)->getByGenre($rock, 4, random: true, scopedUser: $user);
+
+        self::assertEqualsCanonicalizing($visibleSongs->modelKeys(), $songs->modelKeys());
+    }
+
+    #[Test]
+    #[TestWith([2])]
+    #[TestWith([10])]
+    public function getByGenreRandomlyLeavesOutHiddenSongsWithoutGenre(int $limit): void
+    {
+        $user = create_user();
+        $visibleSongs = Song::factory()->for($user, 'owner')->createMany(2);
+        self::hideSongs($user, Song::factory()->for($user, 'owner')->createMany(2));
+
+        $songs = app(SongRepository::class)->getByGenre(null, $limit, random: true, scopedUser: $user);
+
+        self::assertEqualsCanonicalizing($visibleSongs->modelKeys(), $songs->modelKeys());
+    }
+
+    #[Test]
+    public function getSimilarLeavesOutHiddenSongs(): void
+    {
+        $user = create_user();
+        $artist = Artist::factory()->createOne();
+        $playedSong = Song::factory()->for($user, 'owner')->for($artist)->createOne();
+        $visibleSongs = Song::factory()->for($user, 'owner')->for($artist)->createMany(2);
+        self::hideSongs($user, Song::factory()->for($user, 'owner')->for($artist)->createMany(2));
+
+        $songs = app(SongRepository::class)->getSimilar($playedSong, 4, $user);
+
+        self::assertEqualsCanonicalizing($visibleSongs->modelKeys(), $songs->modelKeys());
+    }
+
+    #[Test]
+    public function getByPlaylistLeavesOutHiddenSongsFromSmartPlaylist(): void
+    {
+        $user = create_user();
+        $playlist = Playlist::factory()->smart()->createOne();
+        $visibleSongs = Song::factory()->for($user, 'owner')->state(['artist_name' => 'foo'])->createMany(2);
+        self::hideSongs($user, Song::factory()->for($user, 'owner')->state(['artist_name' => 'foo'])->createMany(2));
+
+        $songs = app(SongRepository::class)->getByPlaylist($playlist, $user);
+
+        self::assertEqualsCanonicalizing($visibleSongs->modelKeys(), $songs->modelKeys());
+    }
+
+    #[Test]
+    public function getSmartPlaylistStatsLeavesOutHiddenSongs(): void
+    {
+        $user = create_user();
+        $playlist = Playlist::factory()->smart()->createOne();
+        Song::factory()->for($user, 'owner')->createOne(['artist_name' => 'foo', 'length' => 100]);
+        self::hideSongs($user, Song::factory()->for($user, 'owner')->state(['artist_name' => 'foo'])->createMany(2));
+
+        self::assertSame(
+            ['count' => 1, 'length' => 100.0],
+            app(SongRepository::class)->getSmartPlaylistStats($playlist, $user),
+        );
+    }
+
+    #[Test]
+    public function getForQueueLeavesOutHiddenSongs(): void
+    {
+        $user = create_user();
+        $visibleSongs = Song::factory()->for($user, 'owner')->createMany(2);
+        self::hideSongs($user, Song::factory()->for($user, 'owner')->createMany(2));
+
+        $songs = app(SongRepository::class)->getForQueue(['title'], 'asc', 4, $user);
+
+        self::assertEqualsCanonicalizing($visibleSongs->modelKeys(), $songs->modelKeys());
+    }
+
+    #[Test]
+    public function getByAlbumKeepsHiddenSongsAndMarksThem(): void
+    {
+        $user = create_user();
+        $visibleSong = Song::factory()->for($user, 'owner')->createOne();
+        $hiddenSong = Song::factory()->for($user, 'owner')->for($visibleSong->album)->createOne();
+        self::hideSongs($user, $hiddenSong->newCollection([$hiddenSong]));
+
+        $songs = app(SongRepository::class)->getByAlbum($visibleSong->album, $user)->keyBy('id');
+
+        self::assertFalse($songs[$visibleSong->id]->hidden);
+        self::assertTrue($songs[$hiddenSong->id]->hidden);
+    }
+
+    /** @param Collection<int, Song> $songs */
+    private static function hideSongs(User $user, Collection $songs): void
+    {
+        $user->hiddenSongs()->attach($songs->modelKeys());
     }
 }

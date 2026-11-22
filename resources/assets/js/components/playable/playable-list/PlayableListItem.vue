@@ -5,7 +5,7 @@
     </h4>
 
     <article
-      :class="{ playing, selected: item.selected }"
+      :class="{ playing, selected: item.selected, muted: hiddenByUser }"
       class="song-item group pl-2 playable-list-item"
       data-testid="song-item"
       tabindex="0"
@@ -24,6 +24,7 @@
       <span class="title-artist flex flex-col gap-1 overflow-hidden">
         <span class="title text-k-fg flex! gap-2 items-center">
           <ExternalMark v-if="external" />
+          <EyeOffIcon v-if="hiddenByUser" v-koel-tooltip="'Hidden'" :size="14" class="shrink-0" />
           <Icon
             v-if="cachingOffline"
             :icon="faSpinner"
@@ -78,6 +79,7 @@
 
 <script lang="ts" setup>
 import { faEllipsis, faExclamationTriangle, faPodcast, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { EyeOffIcon } from 'lucide-vue-next'
 import { computed, toRefs } from 'vue'
 import { getPlayableProp, requireInjection } from '@/utils/helpers'
 import { isSong } from '@/utils/typeGuards'
@@ -114,6 +116,7 @@ const { item } = toRefs(props)
 const playable = computed<Playable>(() => item.value.playable)
 const playing = computed(() => ['Playing', 'Paused'].includes(playable.value.playback_state!))
 const external = computed(() => isSong(playable.value) && playable.value.is_external)
+const hiddenByUser = computed(() => isSong(playable.value) && Boolean(playable.value.hidden))
 const { isCached, isCaching, hasCachingError, getCachingError } = useOfflinePlayback()
 const cachedOffline = computed(() => isSong(playable.value) && isCached(playable.value))
 const cachingOffline = computed(() => isSong(playable.value) && isCaching(playable.value))
@@ -140,6 +143,10 @@ article {
     &.dragover-bottom {
       @apply after:top-auto after:bottom-0;
     }
+  }
+
+  &.muted:not(.selected) {
+    @apply opacity-50;
   }
 
   &.playing:not(.selected) {

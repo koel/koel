@@ -263,6 +263,7 @@ class SongRepository extends Repository implements ScoutableRepository
     ): Collection {
         return Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->withUserContext()
+            ->whereNotHidden()
             ->sort($sortColumns, $sortDirection)
             ->limit($limit)
             ->get();
@@ -291,6 +292,17 @@ class SongRepository extends Repository implements ScoutableRepository
         return Song::query(type: $type, user: $scopedUser ?? $this->auth->user())
             ->withUserContext(favoritesOnly: true)
             ->orderBy('favorites.position')
+            ->get();
+    }
+
+    /** @return Collection<int, Song> */
+    public function getHidden(User $user): Collection
+    {
+        return Song::query(type: PlayableType::SONG, user: $user)
+            ->withUserContext()
+            ->join('hidden_songs', 'hidden_songs.song_id', 'songs.id')
+            ->where('hidden_songs.user_id', $user->id)
+            ->orderByDesc('hidden_songs.created_at')
             ->get();
     }
 
@@ -387,7 +399,9 @@ class SongRepository extends Repository implements ScoutableRepository
     {
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
-        $query = Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())->withUserContext();
+        $query = Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
+            ->withUserContext()
+            ->whereNotHidden();
 
         return self::limitToSmartPlaylistRules($query, $playlist)
             ->orderBy('songs.title')
@@ -406,7 +420,9 @@ class SongRepository extends Repository implements ScoutableRepository
         throw_unless($playlist->is_smart, NonSmartPlaylistException::create($playlist));
 
         $matchingSongs = self::limitToSmartPlaylistRules(
-            Song::query(type: PlayableType::SONG, user: $user)->withUserContext(includeFavoriteStatus: false),
+            Song::query(type: PlayableType::SONG, user: $user)
+                ->withUserContext(includeFavoriteStatus: false)
+                ->whereNotHidden(),
             $playlist,
         )
             ->select('songs.length')
@@ -449,6 +465,7 @@ class SongRepository extends Repository implements ScoutableRepository
         $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
             ->select('songs.id')
             ->accessible()
+            ->whereNotHidden()
             ->when($genre, static fn (SongBuilder $query) => $query->whereIn(
                 'songs.id',
                 $genre->songs()->newPivotQuery()->select('song_id'),
@@ -468,7 +485,10 @@ class SongRepository extends Repository implements ScoutableRepository
         $scopedUser ??= $this->auth->user();
 
         $ids = self::pluckFromRandomHash(
-            Song::query(type: PlayableType::SONG, user: $scopedUser)->select('songs.id')->accessible(),
+            Song::query(type: PlayableType::SONG, user: $scopedUser)
+                ->select('songs.id')
+                ->accessible()
+                ->whereNotHidden(),
             hashColumn: 'songs.path_hash',
             idColumn: 'songs.id',
             limit: $limit,
@@ -616,6 +636,7 @@ class SongRepository extends Repository implements ScoutableRepository
         $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
             ->select('songs.id')
             ->accessible()
+            ->whereNotHidden()
             ->whereIn('songs.id', $genre->songs()->newPivotQuery()->select('song_id'))
             ->inRandomOrder()
             ->limit($limit)
@@ -633,6 +654,7 @@ class SongRepository extends Repository implements ScoutableRepository
             $ids = Song::query(type: PlayableType::SONG, user: $scopedUser)
                 ->select('songs.id')
                 ->accessible()
+                ->whereNotHidden()
                 ->genreless()
                 ->inRandomOrder()
                 ->limit($limit)
@@ -646,7 +668,10 @@ class SongRepository extends Repository implements ScoutableRepository
     private function pickGenrelessIdsFromRandomWindow(int $limit, User $scopedUser): SupportCollection
     {
         $candidateIds = self::pluckFromRandomHash(
-            Song::query(type: PlayableType::SONG, user: $scopedUser)->select('songs.id')->accessible(),
+            Song::query(type: PlayableType::SONG, user: $scopedUser)
+                ->select('songs.id')
+                ->accessible()
+                ->whereNotHidden(),
             hashColumn: 'songs.path_hash',
             idColumn: 'songs.id',
             limit: $limit * 20,
@@ -829,6 +854,7 @@ class SongRepository extends Repository implements ScoutableRepository
         $similarSongsQuery = Song::query(type: PlayableType::SONG, user: $user)
             ->select('songs.id')
             ->accessible()
+            ->whereNotHidden()
             ->whereNotIn('songs.id', $songIds)
             ->where(static function (SongBuilder $query) use ($artistIds, $genreIds): void {
                 $query->whereIn(

@@ -22,6 +22,7 @@ import FormRow from '@/components/ui/form/FormRow.vue'
 import PreferenceToggleRow from '@/components/profile-preferences/PreferenceToggleRow.vue'
 import TranscodingPreferenceRow from '@/components/profile-preferences/TranscodingPreferenceRow.vue'
 import CrossfadePreferenceRow from '@/components/profile-preferences/CrossfadePreferenceRow.vue'
+import HiddenSongsPreferenceRow from '@/components/profile-preferences/HiddenSongsPreferenceRow.vue'
 
 export interface PreferenceRow {
   id: string
@@ -94,6 +95,7 @@ const rows = computed(() =>
         ]
       : []),
     { id: 'crossfade', component: CrossfadePreferenceRow },
+    ...(isPlus.value ? [{ id: 'hidden-songs', component: HiddenSongsPreferenceRow }] : []),
   ]),
 )
 </script>

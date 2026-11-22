@@ -42,6 +42,12 @@ const savePlaybackStatus = lastWriteWins((status: { song: Playable['id']; positi
   http.silently.withRetries.put('queue/playback-status', status),
 )
 
+const withoutHiddenSongs = (playables: Playable[]) => {
+  const unhiddenPlayables = playables.filter(playable => !isSong(playable) || !playable.hidden)
+
+  return unhiddenPlayables.length ? unhiddenPlayables : playables
+}
+
 export class QueuePlaybackService extends BasePlaybackService {
   private repeatModes: RepeatMode[] = ['NO_REPEAT', 'REPEAT_ALL', 'REPEAT_ONE']
   private upNext: Playable | null = null
@@ -395,6 +401,10 @@ export class QueuePlaybackService extends BasePlaybackService {
    */
   public async queueAndPlay(playables: MaybeArray<Playable>, shuffled = false) {
     playables = arrayify(playables)
+
+    if (playables.length > 1) {
+      playables = withoutHiddenSongs(playables)
+    }
 
     if (shuffled) {
       playables = shuffle(playables)
