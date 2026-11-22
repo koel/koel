@@ -24,7 +24,7 @@
       <span class="title-artist flex flex-col gap-1 overflow-hidden">
         <span class="title text-k-fg flex! gap-2 items-center">
           <ExternalMark v-if="external" />
-          <EyeOffIcon v-if="hiddenByUser" v-koel-tooltip="'Hidden'" :size="14" class="shrink-0" />
+          <EyeOffIcon v-if="hiddenByUser" v-koel-tooltip="'Hidden'" :size="14" class="shrink-0" aria-label="Hidden" />
           <Icon
             v-if="cachingOffline"
             :icon="faSpinner"

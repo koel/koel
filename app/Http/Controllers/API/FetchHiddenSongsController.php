@@ -13,8 +13,13 @@ use Illuminate\Contracts\Auth\Authenticatable;
 class FetchHiddenSongsController extends Controller
 {
     /** @param User $user */
-    public function __invoke(SongRepository $repository, Authenticatable $user)
+    public function __construct(
+        private readonly SongRepository $repository,
+        private readonly Authenticatable $user,
+    ) {}
+
+    public function __invoke()
     {
-        return SongResource::collection($repository->getHidden($user));
+        return SongResource::collection($this->repository->getHidden($this->user));
     }
 }

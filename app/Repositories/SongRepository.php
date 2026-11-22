@@ -91,6 +91,16 @@ class SongRepository extends Repository implements ScoutableRepository
     }
 
     /**
+     * @param array<string> $ids
+     *
+     * @return Collection<int, Song>
+     */
+    public function getManyRegardlessOfAccess(array $ids): Collection
+    {
+        return Song::query()->findMany($ids);
+    }
+
+    /**
      * @param array<string> $paths
      *
      * @return Collection<int, Song>
