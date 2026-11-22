@@ -16,26 +16,27 @@ const isTargetAvailable = ref(false)
 const isPlayingWirelessly = ref(false)
 
 let audioElement: HTMLMediaElement | null = null
-let pickerMedia: HTMLMediaElement | null = null
+let watchedMedia: HTMLMediaElement | null = null
 
 const updateTargetAvailability = (event: Event) => {
   isTargetAvailable.value = (event as Event & { availability: string }).availability === 'available'
 }
 
 const updateWirelessState = () => {
-  isPlayingWirelessly.value = Boolean(pickerMedia?.webkitCurrentPlaybackTargetIsWireless)
+  isPlayingWirelessly.value = Boolean(watchedMedia?.webkitCurrentPlaybackTargetIsWireless)
 }
 
 const watchWirelessState = (media: HTMLMediaElement | null) => {
-  pickerMedia?.removeEventListener('webkitcurrentplaybacktargetiswirelesschanged', updateWirelessState)
-  pickerMedia = media
-  pickerMedia?.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', updateWirelessState)
+  watchedMedia?.removeEventListener('webkitcurrentplaybacktargetiswirelesschanged', updateWirelessState)
+  watchedMedia = media
+  watchedMedia?.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', updateWirelessState)
+  updateWirelessState()
 }
 
 const showTargetPicker = () => {
   const media = getActiveMedia()
 
-  if (media !== pickerMedia) {
+  if (media !== watchedMedia) {
     watchWirelessState(media)
   }
 
@@ -45,6 +46,7 @@ const showTargetPicker = () => {
 onMounted(() => {
   audioElement = document.querySelector<HTMLMediaElement>('#audio-player')
   audioElement?.addEventListener('webkitplaybacktargetavailabilitychanged', updateTargetAvailability)
+  watchWirelessState(audioElement)
 })
 
 onBeforeUnmount(() => {

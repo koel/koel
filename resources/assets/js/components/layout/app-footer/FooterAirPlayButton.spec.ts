@@ -39,16 +39,26 @@ describe('footerAirPlayButton.vue', () => {
   })
 
   it('highlights while playing over AirPlay', async () => {
-    const media = playback().media
-    media.webkitShowPlaybackTargetPicker = vi.fn()
+    const media = document.querySelector<HTMLMediaElement>('#audio-player')!
 
     h.render(Component)
     await announceTargetAvailability('available')
-    await h.user.click(screen.getByRole('button', { name: 'AirPlay' }))
 
     h.setReadOnlyProperty(media, 'webkitCurrentPlaybackTargetIsWireless', true)
     media.dispatchEvent(new Event('webkitcurrentplaybacktargetiswirelesschanged'))
     await h.tick()
+
+    expect(screen.getByRole('button', { name: 'Playing on AirPlay' }).classList.contains('wireless')).toBe(true)
+
+    h.setReadOnlyProperty(media, 'webkitCurrentPlaybackTargetIsWireless', false)
+  })
+
+  it('highlights when already playing over AirPlay on mount', async () => {
+    const media = document.querySelector<HTMLMediaElement>('#audio-player')!
+    h.setReadOnlyProperty(media, 'webkitCurrentPlaybackTargetIsWireless', true)
+
+    h.render(Component)
+    await announceTargetAvailability('available')
 
     expect(screen.getByRole('button', { name: 'Playing on AirPlay' }).classList.contains('wireless')).toBe(true)
 
