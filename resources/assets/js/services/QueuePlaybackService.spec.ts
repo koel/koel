@@ -876,6 +876,24 @@ describe('playbackService', () => {
     expect(playMock).toHaveBeenCalled()
   })
 
+  it('resumes a restored queue at the saved speed', async () => {
+    const song = setCurrentSong(h.factory('song').make({ playback_state: 'Paused' }))
+    playbackService.media.removeAttribute('src')
+    preferences.temporary.music_playback_speed = 1.5
+
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue(`http://test/play/${song.id}?signature=s`)
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+
+    await playbackService.resume()
+
+    expect(playbackService.media.playbackRate).toBe(1.5)
+
+    preferences.temporary.music_playback_speed = 1
+    playbackService.media.playbackRate = 1
+    playbackService.media.defaultPlaybackRate = 1
+    playbackService.media.removeAttribute('src')
+  })
+
   it('gets a new source URL before resuming after a long pause', async () => {
     const song = setCurrentSong(h.factory('song').make({ playback_state: 'Paused' }))
 

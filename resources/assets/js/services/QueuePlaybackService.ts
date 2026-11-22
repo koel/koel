@@ -355,6 +355,7 @@ export class QueuePlaybackService extends BasePlaybackService {
         return
       }
 
+      playbackSpeedService.applyForPlayable(this.media, playable)
       this.seekTo(commonStore.state.queue_state.playback_position)
 
       await this.setNowPlayingMeta(queueStore.current!)

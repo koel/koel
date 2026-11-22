@@ -11,8 +11,11 @@
           v-for="speed in playbackSpeeds"
           :key="speed"
           :class="speed === currentSpeed && 'active'"
-          class="cursor-pointer hover:bg-k-highlight hover:text-k-highlight-fg"
+          class="cursor-pointer hover:bg-k-highlight hover:text-k-highlight-fg focus:bg-k-highlight focus:text-k-highlight-fg focus:outline-hidden"
+          tabindex="0"
           @click="changeSpeed(speed)"
+          @keydown.enter.prevent="changeSpeed(speed)"
+          @keydown.space.prevent="changeSpeed(speed)"
         >
           {{ formatSpeed(speed) }}
         </li>
@@ -42,14 +45,10 @@ const currentSpeed = computed(() => playbackSpeedService.getSpeed(props.playable
 const changeSpeed = (speed: number) => {
   playbackSpeedService.saveSpeed(props.playable, speed)
 
-  const media = playback('current')?.media
+  const media = crossfadeService.state?.incomingAudio ?? playback('current')?.media
 
   if (media) {
     playbackSpeedService.applyToMedia(media, speed)
-  }
-
-  if (crossfadeService.state) {
-    playbackSpeedService.applyToMedia(crossfadeService.state.incomingAudio, speed)
   }
 
   popover.value?.hide()
