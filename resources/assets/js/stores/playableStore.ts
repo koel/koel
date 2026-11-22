@@ -424,6 +424,20 @@ export const playableStore = {
     return privatizedIds
   },
 
+  async hideSongs(songs: Song[]) {
+    await http.post('songs/hide', { songs: songs.map(({ id }) => id) })
+    songs.forEach(song => (song.hidden = true))
+  },
+
+  async unhideSongs(songs: Song[]) {
+    await http.post('songs/unhide', { songs: songs.map(({ id }) => id) })
+    songs.forEach(song => (song.hidden = false))
+  },
+
+  async fetchHiddenSongs() {
+    return this.syncWithVault(await http.get<Song[]>('songs/hidden')) as Song[]
+  },
+
   async resolveSongsFromMediaReferences(data: MediaReference[], shuffle = false) {
     const songReferences = data.filter(item => item.type === 'songs') as Array<Pick<Song, 'type' | 'id'>>
     const songs = this.byIds(songReferences.map(item => item.id)) as Song[]

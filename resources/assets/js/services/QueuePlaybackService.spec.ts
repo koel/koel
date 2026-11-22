@@ -1105,6 +1105,29 @@ describe('playbackService', () => {
     expect(playMock).toHaveBeenCalledWith(firstSongInQueue)
   })
 
+  it('skips hidden songs when queueing several songs', async () => {
+    const [visibleSong, hiddenSong] = h.factory('song').make(2)
+    hiddenSong.hidden = true
+    const replaceQueueMock = h.mock(queueStore, 'replaceQueueWith')
+    h.mock(playbackService, 'play')
+
+    playbackService.queueAndPlay([visibleSong, hiddenSong])
+    await nextTick()
+
+    expect(replaceQueueMock).toHaveBeenCalledWith([visibleSong])
+  })
+
+  it('plays a hidden song started on its own', async () => {
+    const hiddenSong = h.factory('song').make({ hidden: true })
+    const replaceQueueMock = h.mock(queueStore, 'replaceQueueWith')
+    h.mock(playbackService, 'play')
+
+    playbackService.queueAndPlay(hiddenSong)
+    await nextTick()
+
+    expect(replaceQueueMock).toHaveBeenCalledWith([hiddenSong])
+  })
+
   it('plays first playable in queue', async () => {
     const songs = h.factory('song').make(5)
     queueStore.state.playables = songs

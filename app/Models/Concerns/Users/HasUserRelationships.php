@@ -9,6 +9,7 @@ use App\Models\PlaylistFolder;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
 use App\Models\RadioStation;
+use App\Models\Song;
 use App\Models\Theme;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,6 +41,11 @@ trait HasUserRelationships
     public function collaboratedPlaylists(): BelongsToMany
     {
         return $this->playlists()->wherePivot('role', 'collaborator');
+    }
+
+    public function hiddenSongs(): BelongsToMany
+    {
+        return $this->belongsToMany(Song::class, 'hidden_songs')->withTimestamps();
     }
 
     public function playlistFolders(): HasMany

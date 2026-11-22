@@ -97,6 +97,16 @@ class SongResource extends JsonResource
         return $this;
     }
 
+    /** @return array<string, mixed> */
+    private function resolvePlusAttributes(bool $embedding): array
+    {
+        return [
+            'loudness' => $this->song->analysis?->loudness,
+            'true_peak' => $this->song->analysis?->true_peak,
+            'hidden' => $this->unless($embedding, (bool) $this->song->hidden),
+        ];
+    }
+
     /** @inheritDoc */
     public function toArray(Request $request): array
     {
@@ -132,8 +142,7 @@ class SongResource extends JsonResource
             'is_public' => $this->unless($embedding, $this->song->is_public),
             'created_at' => $this->unless($embedding, $this->song->created_at),
             'mbid' => $this->when($musicBrainzEnabled && !$embedding, $this->song->mbid),
-            'loudness' => $this->when($isPlus, fn () => $this->song->analysis?->loudness),
-            'true_peak' => $this->when($isPlus, fn () => $this->song->analysis?->true_peak),
+            $this->mergeWhen($isPlus, fn (): array => $this->resolvePlusAttributes($embedding)),
             $this->mergeWhen($embedding, fn (): array => $this->resolveEmbedPlaybackAttributes($request)),
         ];
 

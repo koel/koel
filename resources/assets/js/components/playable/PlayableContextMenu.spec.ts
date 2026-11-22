@@ -362,6 +362,30 @@ describe('playableContextMenu.vue', () => {
     })
   })
 
+  it('hides songs in Plus edition', async () => {
+    await h.withPlusEdition(async () => {
+      const songs = h.factory('song').make(2)
+      const hideMock = h.mock(playableStore, 'hideSongs').mockResolvedValue(undefined)
+      await renderComponent(songs)
+
+      await h.user.click(screen.getByText('Hide'))
+
+      expect(hideMock).toHaveBeenCalledWith(songs)
+    })
+  })
+
+  it('unhides songs that are all hidden in Plus edition', async () => {
+    await h.withPlusEdition(async () => {
+      const songs = h.factory('song').make({ hidden: true }, 2)
+      const unhideMock = h.mock(playableStore, 'unhideSongs').mockResolvedValue(undefined)
+      await renderComponent(songs)
+
+      await h.user.click(screen.getByText('Unhide'))
+
+      expect(unhideMock).toHaveBeenCalledWith(songs)
+    })
+  })
+
   it('deletes song', async () => {
     const confirmMock = h.mock(DialogBoxStub.value, 'confirm', true)
     const toastMock = h.mock(MessageToasterStub.value, 'promise')

@@ -288,6 +288,7 @@ interface Song extends BasePlayable {
   mbid?: string | null
   loudness?: number | null
   true_peak?: number | null
+  hidden?: boolean
   file_size?: number | null
   basename?: string
   deleted?: boolean

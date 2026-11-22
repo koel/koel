@@ -42,6 +42,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property ?Folder $folder
  * @property ?bool $favorite Whether the song is liked by the current user (dynamically calculated)
  * @property ?Carbon $favorited_at When the current user favorited the song, if at all
+ * @property ?bool $hidden Whether the current user has hidden the song (dynamically calculated, Koel Plus only)
  * @property ?int $play_count The number of times the song has been played by the current user (dynamically calculated)
  * @property ?Carbon $last_played_at When the current user last played the song, if at all (dynamically calculated)
  * @property ?string $mbid The MusicBrainz recording ID
@@ -126,6 +127,7 @@ class Song extends Model implements AuditableContract, Favoriteable, Rateable
             'episode_metadata' => EpisodeMetadataCast::class,
             'favorite' => 'boolean',
             'favorited_at' => 'datetime',
+            'hidden' => 'boolean',
             'last_played_at' => 'datetime',
         ];
     }

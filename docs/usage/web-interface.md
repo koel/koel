@@ -104,6 +104,14 @@ on it and choosing "Download."
 You can also download several songs, all songs from an album, all songs by an artist, or a whole playlist as a zip file
 via the "Download" buttons found on according screens or context menus.
 
+## Hiding Songs <PlusBadge />
+
+To keep a song from playing on its own, right-click it and choose "Hide." You can hide several songs at once.
+A hidden song stays in your library, dimmed in album, artist, and playlist lists, and still plays when you start it yourself.
+It is left out of shuffles, "Play All," similar song suggestions, and smart playlists.
+
+To bring a song back, right-click it and choose "Unhide," or unhide it from the Hidden Songs list in Settings → Preferences.
+
 ## Deleting Songs
 
 As a user with `manage songs` permission (Community edition) or the song owner (Koel Plus), you can delete a song by

@@ -12,6 +12,7 @@ import { applyFilters } from '@/hooks'
 
 import AddToItems from '@/components/playable/context-menu/AddToItems.vue'
 import FavoriteItem from '@/components/playable/context-menu/FavoriteItem.vue'
+import HideItem from '@/components/playable/context-menu/HideItem.vue'
 import ManageItems from '@/components/playable/context-menu/ManageItems.vue'
 import MusicBrainzItem from '@/components/playable/context-menu/MusicBrainzItem.vue'
 import PlaybackItems from '@/components/playable/context-menu/PlaybackItems.vue'
@@ -32,6 +33,7 @@ const sections = computed(() =>
     { id: 'playback', component: PlaybackItems },
     { id: 'add-to', component: AddToItems },
     { id: 'favorite', component: FavoriteItem },
+    { id: 'hide', component: HideItem },
     { id: 'rating', component: RatingItem },
     { id: 'remove', component: RemoveItems },
     { id: 'visibility', component: VisibilityItems },

@@ -58,6 +58,7 @@ Koel allows you to set a couple of preferences:
 * Whether to stream lossless files as-is if supported
 * <PlusBadge /> Whether to set your uploaded music as public by default
 * <PlusBadge /> Whether to include public media (songs, albums, and artists) from other users in your library and search results
+* <PlusBadge /> The songs you've [hidden](./web-interface#hiding-songs), each with an Unhide button
 
 These preferences are saved immediately upon change and synced across all of your devices.
 
