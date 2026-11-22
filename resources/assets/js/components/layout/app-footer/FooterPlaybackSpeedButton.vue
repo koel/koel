@@ -12,6 +12,7 @@
           :key="speed"
           :class="speed === currentSpeed && 'active'"
           class="cursor-pointer hover:bg-k-highlight hover:text-k-highlight-fg focus:bg-k-highlight focus:text-k-highlight-fg focus:outline-hidden"
+          role="button"
           tabindex="0"
           @click="changeSpeed(speed)"
           @keydown.enter.prevent="changeSpeed(speed)"

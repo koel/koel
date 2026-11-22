@@ -417,6 +417,34 @@ describe('playbackService', () => {
     preferences.temporary.crossfade_duration = 0
   })
 
+  it.each([
+    ['the current song lasts too few real seconds at its speed', 11, 2, 300],
+    ['the next song ends before the fade does at its speed', 300, 2, 6],
+  ])('does not crossfade when %s', (_, currentDuration, speed, nextLength) => {
+    setCurrentSong()
+    h.mock(playbackService, 'registerPlay')
+    h.setReadOnlyProperty(queueStore, 'next', h.factory('song').make({ preloaded: true, length: nextLength }))
+    preferences.temporary.crossfade_duration = 5
+    preferences.temporary.music_playback_speed = speed
+
+    const mediaElement = playbackService.media
+    mediaElement.playbackRate = speed
+    h.setReadOnlyProperty(mediaElement, 'currentTime', currentDuration - 9)
+    h.setReadOnlyProperty(mediaElement, 'duration', currentDuration)
+
+    h.mock(playableStore, 'getResolvedSourceUrl').mockReturnValue('http://test/play/next')
+    const startMock = h.mock(crossfadeService, 'start')
+    h.mock(http, 'put')
+
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+
+    expect(startMock).not.toHaveBeenCalled()
+
+    mediaElement.playbackRate = 1
+    preferences.temporary.music_playback_speed = 1
+    preferences.temporary.crossfade_duration = 0
+  })
+
   it('does not crossfade while playing over AirPlay', () => {
     setCurrentSong()
     h.mock(playbackService, 'registerPlay')

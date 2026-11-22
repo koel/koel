@@ -21,7 +21,7 @@ describe('footerPlaybackSpeedButton.vue', () => {
     })
 
     await h.user.click(screen.getByRole('button', { name: /Playback speed/ }))
-    await h.user.click(screen.getAllByRole('listitem')[3])
+    await h.user.click(screen.getAllByRole('button')[4])
 
     expect(preferences.podcast_playback_speed).toBe(1.5)
     expect(preferences.music_playback_speed).toBe(1)
@@ -38,7 +38,7 @@ describe('footerPlaybackSpeedButton.vue', () => {
     })
 
     await h.user.click(screen.getByRole('button', { name: /Playback speed/ }))
-    screen.getAllByRole('listitem')[2].focus()
+    screen.getAllByRole('button')[3].focus()
     await h.user.keyboard('{Enter}')
 
     expect(preferences.music_playback_speed).toBe(1.25)
@@ -66,7 +66,7 @@ describe('footerPlaybackSpeedButton.vue', () => {
     })
 
     await h.user.click(screen.getByRole('button', { name: /Playback speed/ }))
-    await h.user.click(screen.getAllByRole('listitem')[5])
+    await h.user.click(screen.getAllByRole('button')[6])
 
     expect(incomingAudio.playbackRate).toBe(2)
     expect(outgoingMedia.playbackRate).toBe(1)
