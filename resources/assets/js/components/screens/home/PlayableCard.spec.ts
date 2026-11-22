@@ -76,6 +76,14 @@ describe('playableCard.vue', () => {
     await assertOpenContextMenu(openContextMenu as Mock, PlayableContextMenu, { playables: [props.playable] })
   })
 
+  it('does not play the song when the more actions button is double-clicked', async () => {
+    renderCard()
+
+    await h.user.dblClick(screen.getByRole('button', { name: 'More actions' }))
+
+    expect(playMock).not.toHaveBeenCalled()
+  })
+
   it('highlights the playing song', () => {
     renderCard({ playback_state: 'Playing' })
     expect(screen.getByTestId('song-card').classList).toContain('playing')

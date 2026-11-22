@@ -43,6 +43,7 @@
       type="button"
       class="-mr-2 w-9 h-9 grid place-items-center rounded-full text-k-fg-50 hover:text-k-fg hover:bg-k-fg-10 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 no-hover:opacity-100 transition-[opacity,background-color,color]"
       @click.stop="onContextMenu"
+      @dblclick.stop
     >
       <Icon :icon="faEllipsis" />
       <span class="sr-only">More actions</span>
