@@ -100,4 +100,20 @@ describe('playbackService', () => {
 
     expect(station.playback_state).toBe('Stopped')
   })
+
+  it('plays a radio station at normal speed', async () => {
+    const station = h.factory('radio-station').make()
+    radioStationStore.state.stations = [station]
+
+    h.mock(playbackService.media, 'play')
+    h.mock(socketService, 'broadcast')
+    h.mock(radioStationStore, 'resolveSourceUrl').mockResolvedValue('https://station.com/stream.mp3')
+    h.mock(radioStationStore, 'startPolling')
+    h.mock(audioService, 'routeElement')
+    playbackService.media.playbackRate = 2
+
+    await playbackService.play(station)
+
+    expect(playbackService.media.playbackRate).toBe(1)
+  })
 })

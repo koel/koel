@@ -26,6 +26,8 @@
 
       <FooterAirPlayButton v-if="isAirPlaySupported()" />
 
+      <FooterPlaybackSpeedButton v-if="playable" :playable class="hidden md:block!" />
+
       <FooterMiniPlayerButton v-if="isMiniPlayerSupported()" class="hidden md:block!" />
 
       <FooterBtn v-if="isFullscreenSupported()" class="hidden md:block!" @click.prevent="toggleFullscreen">
@@ -47,7 +49,9 @@ import {
   isMiniPlayerSupported,
   isAudioContextSupported as useEqualizer,
 } from '@/utils/supports'
-import { defineAsyncComponent } from '@/utils/helpers'
+import { isRadioStation } from '@/utils/typeGuards'
+import { CurrentStreamableKey } from '@/config/symbols'
+import { defineAsyncComponent, requireInjection } from '@/utils/helpers'
 import { useRouter } from '@/composables/useRouter'
 import { useModal } from '@/composables/useModal'
 
@@ -55,10 +59,14 @@ import VolumeSlider from '@/components/ui/VolumeSlider.vue'
 import FooterBtn from '@/components/layout/app-footer/FooterButton.vue'
 import FooterQueueIcon from '@/components/layout/app-footer/FooterQueueButton.vue'
 import FooterAirPlayButton from '@/components/layout/app-footer/FooterAirPlayButton.vue'
+import FooterPlaybackSpeedButton from '@/components/layout/app-footer/FooterPlaybackSpeedButton.vue'
 import FooterMiniPlayerButton from '@/components/layout/app-footer/FooterMiniPlayerButton.vue'
 
 const Equalizer = defineAsyncComponent(() => import('@/components/ui/equalizer/Equalizer.vue'))
 const { openModal } = useModal()
+
+const streamable = requireInjection(CurrentStreamableKey, ref())
+const playable = computed(() => (streamable.value && !isRadioStation(streamable.value) ? streamable.value : null))
 
 const isFullscreen = ref(false)
 const fullscreenButtonLabel = computed(() => (isFullscreen.value ? 'Exit fullscreen mode' : 'Enter fullscreen mode'))

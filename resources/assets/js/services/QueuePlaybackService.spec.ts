@@ -417,6 +417,34 @@ describe('playbackService', () => {
     preferences.temporary.crossfade_duration = 0
   })
 
+  it.each([
+    ['the current song lasts too few real seconds at its speed', 11, 2, 300],
+    ['the next song ends before the fade does at its speed', 300, 2, 6],
+  ])('does not crossfade when %s', (_, currentDuration, speed, nextLength) => {
+    setCurrentSong()
+    h.mock(playbackService, 'registerPlay')
+    h.setReadOnlyProperty(queueStore, 'next', h.factory('song').make({ preloaded: true, length: nextLength }))
+    preferences.temporary.crossfade_duration = 5
+    preferences.temporary.music_playback_speed = speed
+
+    const mediaElement = playbackService.media
+    mediaElement.playbackRate = speed
+    h.setReadOnlyProperty(mediaElement, 'currentTime', currentDuration - 9)
+    h.setReadOnlyProperty(mediaElement, 'duration', currentDuration)
+
+    h.mock(playableStore, 'getResolvedSourceUrl').mockReturnValue('http://test/play/next')
+    const startMock = h.mock(crossfadeService, 'start')
+    h.mock(http, 'put')
+
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+
+    expect(startMock).not.toHaveBeenCalled()
+
+    mediaElement.playbackRate = 1
+    preferences.temporary.music_playback_speed = 1
+    preferences.temporary.crossfade_duration = 0
+  })
+
   it('does not crossfade while playing over AirPlay', () => {
     setCurrentSong()
     h.mock(playbackService, 'registerPlay')
@@ -438,6 +466,54 @@ describe('playbackService', () => {
 
     preferences.temporary.crossfade_duration = 0
     h.setReadOnlyProperty(mediaElement, 'webkitCurrentPlaybackTargetIsWireless', false)
+  })
+
+  it('plays an episode at the podcast speed', async () => {
+    const episode = h.factory('episode').make()
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue('http://test/play/episode')
+    h.mock(playbackService, 'restart')
+    preferences.temporary.podcast_playback_speed = 1.5
+
+    await playbackService.play(episode)
+
+    expect(playbackService.media.playbackRate).toBe(1.5)
+    expect(playbackService.media.preservesPitch).toBe(true)
+
+    preferences.temporary.podcast_playback_speed = 1
+    playbackService.media.removeAttribute('src')
+  })
+
+  it('times a crossfade in real seconds at a faster speed', () => {
+    const [current, next] = playableStore.syncWithVault(h.factory('song').make(2))
+    current.playback_state = 'Playing'
+    queueStore.state.playables = reactive([current, next])
+    h.setReadOnlyProperty(queueStore, 'next', next)
+
+    h.mock(playbackService, 'registerPlay')
+    h.mock(playbackService, 'showNotification')
+    h.mock(http, 'put')
+    h.mock(window.HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined)
+    h.mock(playableStore, 'getResolvedSourceUrl').mockReturnValue('http://test/play/next')
+    h.mock(playbackService, 'preload')
+    preferences.temporary.crossfade_duration = 5
+    preferences.temporary.music_playback_speed = 2
+    volumeManager.volume.value = 8
+
+    const outgoingMedia = playbackService.media
+    outgoingMedia.playbackRate = 2
+    h.setReadOnlyProperty(outgoingMedia, 'currentTime', 292)
+    h.setReadOnlyProperty(outgoingMedia, 'duration', 300)
+    outgoingMedia.dispatchEvent(new Event('timeupdate'))
+
+    const incomingMedia = crossfadeService.state!.incomingAudio
+
+    expect(incomingMedia.playbackRate).toBe(2)
+    expect(outgoingMedia.volume).toBeCloseTo(0.64)
+    expect(incomingMedia.volume).toBeCloseTo(0.16)
+
+    outgoingMedia.playbackRate = 1
+    preferences.temporary.music_playback_speed = 1
+    endCrossfadeTest(outgoingMedia)
   })
 
   const startCrossfadeAtFiveSeconds = () => {
@@ -826,6 +902,24 @@ describe('playbackService', () => {
     expect(queueStore.current?.playback_state).toEqual('Playing')
     expect(broadcastMock).toHaveBeenCalledWith('SOCKET_STREAMABLE', song)
     expect(playMock).toHaveBeenCalled()
+  })
+
+  it('resumes a restored queue at the saved speed', async () => {
+    const song = setCurrentSong(h.factory('song').make({ playback_state: 'Paused' }))
+    playbackService.media.removeAttribute('src')
+    preferences.temporary.music_playback_speed = 1.5
+
+    h.mock(playableStore, 'resolveSourceUrl').mockResolvedValue(`http://test/play/${song.id}?signature=s`)
+    h.mock(window.HTMLMediaElement.prototype, 'play')
+
+    await playbackService.resume()
+
+    expect(playbackService.media.playbackRate).toBe(1.5)
+
+    preferences.temporary.music_playback_speed = 1
+    playbackService.media.playbackRate = 1
+    playbackService.media.defaultPlaybackRate = 1
+    playbackService.media.removeAttribute('src')
   })
 
   it('gets a new source URL before resuming after a long pause', async () => {

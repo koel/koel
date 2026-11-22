@@ -1,12 +1,14 @@
 <template>
-  <FooterBtn :class="{ active: miniPlayerWindow }" @click.prevent="toggleMiniPlayer">
-    <PictureInPicture2Icon :size="16" />
-    <span class="sr-only">{{ miniPlayerWindow ? 'Close mini player' : 'Open mini player' }}</span>
-  </FooterBtn>
+  <div>
+    <FooterBtn :class="{ active: miniPlayerWindow }" @click.prevent="toggleMiniPlayer">
+      <PictureInPicture2Icon :size="16" />
+      <span class="sr-only">{{ miniPlayerWindow ? 'Close mini player' : 'Open mini player' }}</span>
+    </FooterBtn>
 
-  <Teleport v-if="miniPlayerWindow" :to="miniPlayerWindow.document.body">
-    <MiniPlayer />
-  </Teleport>
+    <Teleport v-if="miniPlayerWindow" :to="miniPlayerWindow.document.body">
+      <MiniPlayer />
+    </Teleport>
+  </div>
 </template>
 
 <script lang="ts" setup>
