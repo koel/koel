@@ -79,6 +79,7 @@ From the same area, you can also:
 * <InterfaceIcon :src="boltIcon" alt="Bolt" /> show the [visualizer](./visualizers)
 * <InterfaceIcon :src="audioLinesIcon" alt="Equalizer" /> show the equalizer
 * <InterfaceIcon :src="volumeIcon" alt="Volume" /> control the volume
+* <InterfaceIcon :src="airplayIcon" alt="AirPlay" /> play on an AirPlay device (Safari only). The equalizer and crossfade don't apply there. On a Mac, pick the device as your sound output in Control Center to keep them.
 * <InterfaceIcon :src="pictureInPictureIcon" alt="Mini player" /> open the mini player (Chrome and Edge only)
 * <InterfaceIcon :src="expandIcon" alt="Expand" /> toggle full-screen mode
 
@@ -162,6 +163,7 @@ With a browser that supports [MediaSession](https://developer.mozilla.org/en-US/
 all modern browsers — you can control Koel using hardware media keys without even having Koel _or the browser_ focused.
 
 <script lang="ts" setup>
+import airplayIcon from '../assets/icons/airplay.svg'
 import audioLinesIcon from '../assets/icons/audio-lines.svg'
 import boltIcon from '../assets/icons/bolt.svg'
 import expandIcon from '../assets/icons/expand.svg'

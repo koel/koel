@@ -137,6 +137,11 @@ interface KoelGlobals {
   two_factor_login_token?: string
 }
 
+interface HTMLMediaElement {
+  webkitShowPlaybackTargetPicker?: () => void
+  readonly webkitCurrentPlaybackTargetIsWireless?: boolean
+}
+
 interface Window {
   KOEL: KoelGlobals
 

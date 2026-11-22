@@ -565,6 +565,7 @@ export class QueuePlaybackService extends BasePlaybackService {
     if (
       crossfadeDuration > 0 &&
       !crossfadeService.active &&
+      !media.webkitCurrentPlaybackTargetIsWireless &&
       preferences.repeat_mode !== 'REPEAT_ONE' &&
       media.duration > crossfadeDuration * 2 && // skip for short tracks
       media.currentTime + crossfadeDuration >= media.duration

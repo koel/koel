@@ -37,3 +37,5 @@ export const getNativelyPlayableLosslessFormats = () => {
 }
 
 export const isMiniPlayerSupported = () => 'documentPictureInPicture' in window
+
+export const isAirPlaySupported = () => 'WebKitPlaybackTargetAvailabilityEvent' in window
