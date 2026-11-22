@@ -417,6 +417,29 @@ describe('playbackService', () => {
     preferences.temporary.crossfade_duration = 0
   })
 
+  it('does not crossfade while playing over AirPlay', () => {
+    setCurrentSong()
+    h.mock(playbackService, 'registerPlay')
+    h.setReadOnlyProperty(queueStore, 'next', h.factory('song').make({ preloaded: true }))
+    preferences.temporary.crossfade_duration = 5
+
+    const mediaElement = playbackService.media
+    h.setReadOnlyProperty(mediaElement, 'currentTime', 296)
+    h.setReadOnlyProperty(mediaElement, 'duration', 300)
+    h.setReadOnlyProperty(mediaElement, 'webkitCurrentPlaybackTargetIsWireless', true)
+
+    h.mock(playableStore, 'getResolvedSourceUrl').mockReturnValue('http://test/play/next')
+    const startMock = h.mock(crossfadeService, 'start')
+    h.mock(http, 'put')
+
+    mediaElement.dispatchEvent(new Event('timeupdate'))
+
+    expect(startMock).not.toHaveBeenCalled()
+
+    preferences.temporary.crossfade_duration = 0
+    h.setReadOnlyProperty(mediaElement, 'webkitCurrentPlaybackTargetIsWireless', false)
+  })
+
   const startCrossfadeAtFiveSeconds = () => {
     const [current, next] = playableStore.syncWithVault(h.factory('song').make(2))
     current.playback_state = 'Playing'

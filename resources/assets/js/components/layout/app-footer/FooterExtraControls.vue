@@ -24,6 +24,8 @@
 
       <VolumeSlider />
 
+      <FooterAirPlayButton v-if="isAirPlaySupported()" />
+
       <FooterMiniPlayerButton v-if="isMiniPlayerSupported()" class="hidden md:block!" />
 
       <FooterBtn v-if="isFullscreenSupported()" class="hidden md:block!" @click.prevent="toggleFullscreen">
@@ -39,7 +41,12 @@ import { faBolt, faCompress, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { AudioLinesIcon } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { eventBus } from '@/utils/eventBus'
-import { isFullscreenSupported, isMiniPlayerSupported, isAudioContextSupported as useEqualizer } from '@/utils/supports'
+import {
+  isAirPlaySupported,
+  isFullscreenSupported,
+  isMiniPlayerSupported,
+  isAudioContextSupported as useEqualizer,
+} from '@/utils/supports'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { useRouter } from '@/composables/useRouter'
 import { useModal } from '@/composables/useModal'
@@ -47,6 +54,7 @@ import { useModal } from '@/composables/useModal'
 import VolumeSlider from '@/components/ui/VolumeSlider.vue'
 import FooterBtn from '@/components/layout/app-footer/FooterButton.vue'
 import FooterQueueIcon from '@/components/layout/app-footer/FooterQueueButton.vue'
+import FooterAirPlayButton from '@/components/layout/app-footer/FooterAirPlayButton.vue'
 import FooterMiniPlayerButton from '@/components/layout/app-footer/FooterMiniPlayerButton.vue'
 
 const Equalizer = defineAsyncComponent(() => import('@/components/ui/equalizer/Equalizer.vue'))
