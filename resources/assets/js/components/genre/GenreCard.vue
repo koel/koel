@@ -2,7 +2,7 @@
   <li
     :data-plain="isPlain || undefined"
     :data-size="size"
-    class="genre-card"
+    class="genre-card max-w-full"
     draggable="true"
     tabindex="0"
     @dragstart="onDragStart"
@@ -11,16 +11,16 @@
     <WithGradientBorder
       :color="genreColor"
       border-color="color-mix(in srgb, var(--color-fg), transparent 92%)"
-      class="rounded-full transition-transform active:scale-95 active:transition-none"
+      class="max-w-full rounded-full transition-transform active:scale-95 active:transition-none"
     >
       <a
         :href="url('genres.show', { id: genre.id })"
         :style="{ '--genre-color': genreColor }"
         :title="genre.name || 'No Genre'"
-        class="inline-flex items-baseline gap-2 rounded-full whitespace-nowrap text-k-fg-90 hover:text-k-fg transition-colors"
+        class="inline-flex max-w-full items-baseline gap-2 rounded-full whitespace-nowrap text-k-fg-90 hover:text-k-fg transition-colors"
       >
-        <span :class="genre.name || 'italic'">{{ genre.name || 'No Genre' }}</span>
-        <span class="count text-k-fg-50 tabular-nums">{{ genre.song_count.toLocaleString() }}</span>
+        <span :class="genre.name || 'italic'" class="truncate">{{ genre.name || 'No Genre' }}</span>
+        <span class="count shrink-0 text-k-fg-50 tabular-nums">{{ genre.song_count.toLocaleString() }}</span>
       </a>
     </WithGradientBorder>
   </li>
