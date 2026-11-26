@@ -8,15 +8,21 @@
     @dragstart="onDragStart"
     @contextmenu.prevent="onContextMenu"
   >
-    <a
-      :href="url('genres.show', { id: genre.id })"
-      :style="{ '--genre-color': genreColor }"
-      :title="genre.name || 'No Genre'"
-      class="inline-flex items-baseline gap-2 rounded-full whitespace-nowrap text-k-fg-90 hover:text-k-fg transition active:scale-95 active:transition-none"
+    <WithGradientBorder
+      :color="genreColor"
+      border-color="color-mix(in srgb, var(--color-fg), transparent 92%)"
+      class="rounded-full transition-transform active:scale-95 active:transition-none"
     >
-      <span :class="genre.name || 'italic'">{{ genre.name || 'No Genre' }}</span>
-      <span class="count text-k-fg-50 tabular-nums">{{ genre.song_count.toLocaleString() }}</span>
-    </a>
+      <a
+        :href="url('genres.show', { id: genre.id })"
+        :style="{ '--genre-color': genreColor }"
+        :title="genre.name || 'No Genre'"
+        class="inline-flex items-baseline gap-2 rounded-full whitespace-nowrap text-k-fg-90 hover:text-k-fg transition-colors"
+      >
+        <span :class="genre.name || 'italic'">{{ genre.name || 'No Genre' }}</span>
+        <span class="count text-k-fg-50 tabular-nums">{{ genre.song_count.toLocaleString() }}</span>
+      </a>
+    </WithGradientBorder>
   </li>
 </template>
 
@@ -28,6 +34,8 @@ import { useRouter } from '@/composables/useRouter'
 import { useDraggable } from '@/composables/useDragAndDrop'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { defineAsyncComponent } from '@/utils/helpers'
+
+import WithGradientBorder from '@/components/ui/WithGradientBorder.vue'
 
 const props = defineProps<{ genre: Genre; size: GenreSize }>()
 
