@@ -23,6 +23,7 @@ class SongBuilder extends FavoriteableBuilder
 
     public const array SORT_COLUMNS_NORMALIZE_MAP = [
         'title' => 'songs.title_sort',
+        'songs.title' => 'songs.title_sort',
         'track' => 'songs.track',
         'length' => 'songs.length',
         'created_at' => 'songs.created_at',

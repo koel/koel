@@ -76,14 +76,14 @@ describe('usePlayableList', () => {
 
   it('sorts by the sort title when sorting by title', () => {
     const zebra = h.factory('song').make({ title: 'The Zebra', title_sort: 'Zebra, The' })
-    const apple = h.factory('song').make({ title: 'Apple', title_sort: 'Apple' })
+    const yak = h.factory('song').make({ title: 'Yak', title_sort: 'Yak' })
 
     let playableList!: ReturnType<typeof usePlayableList>
 
     h.render(
       defineComponent({
         setup: () => {
-          playableList = usePlayableList(ref([zebra, apple]))
+          playableList = usePlayableList(ref([zebra, yak]))
 
           return () => null
         },
@@ -92,7 +92,7 @@ describe('usePlayableList', () => {
 
     playableList.sortField.value = 'title'
 
-    expect(playableList.filteredPlayables.value.map(playable => playable.id)).toEqual([apple.id, zebra.id])
+    expect(playableList.filteredPlayables.value.map(playable => playable.id)).toEqual([yak.id, zebra.id])
   })
 
   it('keeps the server order of a list sorted on the server', () => {

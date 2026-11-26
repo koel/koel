@@ -84,6 +84,16 @@ class ScanInformationTest extends TestCase
     }
 
     #[Test]
+    public function leaveTheTitleSortEmptyWithABlankTag(): void
+    {
+        $info = ScanInformation::fromGetId3Info([
+            'comments' => ['title' => ['The Song'], 'titlesort' => ['   ']],
+        ], test_path('songs/full-vorbis-comments.flac'));
+
+        self::assertNull($info->titleSort);
+    }
+
+    #[Test]
     public function readTheDiscNumberOfAnM4aFile(): void
     {
         $info = ScanInformation::fromGetId3Info([
