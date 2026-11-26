@@ -168,7 +168,7 @@ class ScanInformation implements Arrayable
     /** @param array<mixed> $tags */
     private static function getTitleSortTag(array $tags): ?string
     {
-        $titleSort = SortTitle::truncate(html_entity_decode(TagFixer::fix(self::getTag($tags, [
+        $titleSort = SortTitle::clean(html_entity_decode(TagFixer::fix(self::getTag($tags, [
             'title_sort_order',
             'titlesort',
             'sort_title',

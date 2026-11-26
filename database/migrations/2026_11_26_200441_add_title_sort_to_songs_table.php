@@ -9,6 +9,17 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 return new class extends Migration {
+    private const array LEADING_INVISIBLE_CHARACTERS = [
+        "\u{00AD}",
+        "\u{200B}",
+        "\u{200C}",
+        "\u{200D}",
+        "\u{200E}",
+        "\u{200F}",
+        "\u{2060}",
+        "\u{FEFF}",
+    ];
+
     public function up(): void
     {
         Schema::table('songs', static function (Blueprint $table): void {
@@ -22,6 +33,10 @@ return new class extends Migration {
             ->where(static function (Builder $query): void {
                 foreach (SortTitle::ARTICLES as $article) {
                     $query->orWhereRaw('LOWER(title) LIKE ?', [Str::lower($article) . ' %']);
+                }
+
+                foreach (self::LEADING_INVISIBLE_CHARACTERS as $character) {
+                    $query->orWhere('title', 'like', $character . '%');
                 }
             })
             ->lazyById()

@@ -23,6 +23,7 @@ class SortTitleTest extends TestCase
             'article without a space after it' => ['A-ha', 'A-ha'],
             'article alone' => ['The', 'The'],
             'surrounding spaces' => ['  The Song  ', 'Song, The'],
+            'invisible characters' => ["\u{2060}The Puppet\u{200B} King", 'Puppet King, The'],
         ];
     }
 
