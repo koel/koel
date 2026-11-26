@@ -52,6 +52,47 @@ class ScanInformationTest extends TestCase
         self::assertSame('', $info->albumArtistName);
     }
 
+    /** @return array<string, array{string}> */
+    public static function provideTitleSortKeys(): array
+    {
+        return [
+            'ID3 TSOT' => ['title_sort_order'],
+            'Vorbis TITLESORT' => ['titlesort'],
+            'MP4 sonm' => ['sort_title'],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideTitleSortKeys')]
+    public function readTheTitleSortTag(string $titleSortKey): void
+    {
+        $info = ScanInformation::fromGetId3Info([
+            'comments' => ['title' => ['The Song'], $titleSortKey => ['Song (Sorted)']],
+        ], test_path('songs/full-vorbis-comments.flac'));
+
+        self::assertSame('Song (Sorted)', $info->titleSort);
+    }
+
+    #[Test]
+    public function leaveTheTitleSortEmptyWithoutATag(): void
+    {
+        $info = ScanInformation::fromGetId3Info([
+            'comments' => ['title' => ['The Song']],
+        ], test_path('songs/full-vorbis-comments.flac'));
+
+        self::assertNull($info->titleSort);
+    }
+
+    #[Test]
+    public function leaveTheTitleSortEmptyWithABlankTag(): void
+    {
+        $info = ScanInformation::fromGetId3Info([
+            'comments' => ['title' => ['The Song'], 'titlesort' => ['   ']],
+        ], test_path('songs/full-vorbis-comments.flac'));
+
+        self::assertNull($info->titleSort);
+    }
+
     #[Test]
     public function readTheDiscNumberOfAnM4aFile(): void
     {

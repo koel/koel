@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Events\LibraryChanged;
 use App\Facades\Dispatcher;
 use App\Facades\License;
+use App\Helpers\SortTitle;
 use App\Jobs\DeleteSongFilesJob;
 use App\Jobs\DeleteTranscodeFilesJob;
 use App\Jobs\ExtractSongFolderStructureJob;
@@ -314,16 +315,8 @@ class SongService
         $albumArtist->setMbidIfMissing(Arr::get($data, 'albumartist_mbid'));
         $album->setMbidIfMissing(Arr::get($data, 'album_mbid'));
 
-        $hasCover = $this->imageStorage->exists($album->cover);
-
-        if (!$hasCover && !in_array('cover', $config->ignores, true)) {
-            $coverData = Arr::get($data, 'cover.data');
-
-            if ($coverData) {
-                rescue(fn () => $this->albumService->storeAlbumCover($album, $coverData), report: true);
-            } else {
-                $this->albumService->trySetAlbumCoverFromDirectory($album, dirname($data['path']));
-            }
+        if (!in_array('cover', $config->ignores, true)) {
+            $this->setMissingAlbumCoverFromScan($album, $data);
         }
 
         Arr::forget($data, [
@@ -335,6 +328,8 @@ class SongService
             'artist_mbid',
             'albumartist_mbid',
         ]);
+
+        $data = self::fillUntaggedSortTitle($data, $song);
 
         $data['album_id'] = $album->id;
         $data['artist_id'] = $artist->id;
@@ -371,6 +366,36 @@ class SongService
         }
 
         return $song;
+    }
+
+    /** @param array<string, mixed> $data */
+    private function setMissingAlbumCoverFromScan(Album $album, array $data): void
+    {
+        if ($this->imageStorage->exists($album->cover)) {
+            return;
+        }
+
+        $coverData = Arr::get($data, 'cover.data');
+
+        if ($coverData) {
+            rescue(fn () => $this->albumService->storeAlbumCover($album, $coverData), report: true);
+        } else {
+            $this->albumService->trySetAlbumCoverFromDirectory($album, dirname($data['path']));
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    private static function fillUntaggedSortTitle(array $data, ?Song $song): array
+    {
+        if (array_key_exists('title_sort', $data)) {
+            $data['title_sort'] ??= SortTitle::fromTitle(Arr::get($data, 'title', $song?->title));
+        }
+
+        return $data;
     }
 
     /**

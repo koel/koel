@@ -14,6 +14,7 @@ use App\Models\Song;
 use App\Models\SongAnalysis;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -72,6 +73,28 @@ class SongTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', $song->id);
+    }
+
+    /** @return array<string, array{string}> */
+    public static function provideTitleSortKeys(): array
+    {
+        return [
+            'short key' => ['title'],
+            'column name' => ['songs.title'],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideTitleSortKeys')]
+    public function sortingByTitleIgnoresTheLeadingArticle(string $sortKey): void
+    {
+        $user = create_user();
+        $zebra = Song::factory()->for($user, 'owner')->createOne(['title' => 'The Zebra']);
+        $xylophone = Song::factory()->for($user, 'owner')->createOne(['title' => 'Xylophone']);
+
+        $ids = $this->getAs("api/songs?sort=$sortKey&order=asc", $user)->json('data.*.id');
+
+        self::assertSame([$xylophone->id, $zebra->id], $ids);
     }
 
     #[Test]

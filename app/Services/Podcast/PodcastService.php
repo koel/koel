@@ -6,6 +6,7 @@ use App\Events\UserUnsubscribedFromPodcast;
 use App\Exceptions\ApplePodcastsFeedNotFoundException;
 use App\Exceptions\FailedToParsePodcastFeedException;
 use App\Exceptions\UserAlreadySubscribedToPodcastException;
+use App\Helpers\SortTitle;
 use App\Helpers\Uuid;
 use App\Models\Podcast;
 use App\Models\PodcastUserPivot;
@@ -196,6 +197,7 @@ class PodcastService
                 'id' => Uuid::generate(),
                 'podcast_id' => $podcast->id,
                 'title' => $episodeValue->title,
+                'title_sort' => SortTitle::fromTitle($episodeValue->title),
                 'lyrics' => '',
                 'path' => $enclosureUrl,
                 'created_at' => $publishedAt,

@@ -4,6 +4,7 @@ namespace App\Values\Scanning;
 
 use App\Helpers\Encoding\TagFixer;
 use App\Helpers\MbidReader;
+use App\Helpers\SortTitle;
 use App\Helpers\SyncedLyricsConverter;
 use App\Models\Album;
 use App\Models\Artist;
@@ -18,6 +19,7 @@ class ScanInformation implements Arrayable
 
     private function __construct(
         public ?string $title,
+        public ?string $titleSort,
         public ?string $albumName,
         public ?string $artistName,
         public ?string $albumArtistName,
@@ -89,6 +91,7 @@ class ScanInformation implements Arrayable
                 'title',
                 pathinfo($originalFileName ?? $path, PATHINFO_FILENAME),
             ))),
+            titleSort: self::getTitleSortTag($tags),
             albumName: html_entity_decode(TagFixer::fix(self::getTag($tags, 'album', Album::UNKNOWN_NAME))),
             artistName: html_entity_decode(TagFixer::fix(self::getTag($tags, 'artist', Artist::UNKNOWN_NAME))),
             albumArtistName: html_entity_decode($albumArtistName),
@@ -114,6 +117,7 @@ class ScanInformation implements Arrayable
 
     public static function make(
         ?string $title = null,
+        ?string $titleSort = null,
         ?string $albumName = null,
         ?string $artistName = null,
         ?string $albumArtistName = null,
@@ -137,6 +141,7 @@ class ScanInformation implements Arrayable
     ): self {
         return new self(
             title: $title,
+            titleSort: $titleSort,
             albumName: $albumName,
             artistName: $artistName,
             albumArtistName: $albumArtistName,
@@ -158,6 +163,18 @@ class ScanInformation implements Arrayable
             mimeType: $mimeType,
             fileSize: $fileSize,
         );
+    }
+
+    /** @param array<mixed> $tags */
+    private static function getTitleSortTag(array $tags): ?string
+    {
+        $titleSort = SortTitle::truncate(html_entity_decode(TagFixer::fix(self::getTag($tags, [
+            'title_sort_order',
+            'titlesort',
+            'sort_title',
+        ]))));
+
+        return $titleSort !== '' ? $titleSort : null;
     }
 
     private static function getVinylTrackLabel(string $trackTag): ?string
@@ -183,6 +200,7 @@ class ScanInformation implements Arrayable
     {
         return [
             'title' => $this->title,
+            'title_sort' => $this->titleSort,
             'album' => $this->albumName,
             'artist' => $this->artistName,
             'albumartist' => $this->albumArtistName,

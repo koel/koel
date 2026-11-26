@@ -1,10 +1,13 @@
 import { faker } from '@faker-js/faker'
 
 export default (): Episode => {
+  const title = faker.lorem.sentence()
+
   return {
     type: 'episodes',
     id: faker.string.uuid(),
-    title: faker.lorem.sentence(),
+    title,
+    title_sort: title,
     length: faker.number.int(),
     created_at: faker.date.past().toISOString(),
     playback_state: 'Stopped',

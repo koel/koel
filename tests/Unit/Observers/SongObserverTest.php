@@ -25,4 +25,32 @@ class SongObserverTest extends TestCase
 
         self::assertSame(simple_hash('/music/bar.mp3'), $song->refresh()->path_hash);
     }
+
+    #[Test]
+    public function setSortTitleOnCreate(): void
+    {
+        $song = Song::factory()->createOne(['title' => 'The Song']);
+
+        self::assertSame('Song, The', $song->refresh()->title_sort);
+    }
+
+    #[Test]
+    public function updateSortTitleWhenTitleChanges(): void
+    {
+        $song = Song::factory()->createOne(['title' => 'The Song']);
+
+        $song->update(['title' => 'A Better Song']);
+
+        self::assertSame('Better Song, A', $song->refresh()->title_sort);
+    }
+
+    #[Test]
+    public function keepTaggedSortTitleWhenTitleChanges(): void
+    {
+        $song = Song::factory()->createOne(['title' => 'The Song', 'title_sort' => 'Tagged Sort Title']);
+
+        $song->update(['title' => 'A Better Song']);
+
+        self::assertSame('Tagged Sort Title', $song->refresh()->title_sort);
+    }
 }

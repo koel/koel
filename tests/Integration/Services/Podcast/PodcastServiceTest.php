@@ -94,6 +94,14 @@ class PodcastServiceTest extends TestCase
     }
 
     #[Test]
+    public function storeEpisodeSortTitles(): void
+    {
+        $podcast = $this->service->addPodcast('https://example.com/feed.xml', create_user());
+
+        $podcast->episodes->each(static fn (Song $episode) => self::assertSame($episode->title, $episode->title_sort));
+    }
+
+    #[Test]
     public function addPodcastFromAnApplePodcastsLink(): void
     {
         Saloon::fake([

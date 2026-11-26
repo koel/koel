@@ -254,6 +254,7 @@ interface IStreamable {
 interface BasePlayable extends IStreamable {
   type: Song['type'] | Episode['type']
   title: string
+  title_sort: string
   readonly length: number
   play_count_registered?: boolean
   scrobble_registered?: boolean
