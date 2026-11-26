@@ -32,7 +32,7 @@ class SongController extends Controller
     public function index(CursorPaginatedListRequest $request)
     {
         return SongResource::collection($this->songRepository->paginate(
-            sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
+            sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title_sort'],
             sortDirection: $request->order ?: 'asc',
             strategy: PaginationStrategyResolver::resolve($request),
             scopedUser: $this->user,

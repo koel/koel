@@ -74,6 +74,7 @@ use PhanAn\Poddle\Values\EpisodeMetadata;
  * @property string $path
  * @property ?string $path_hash
  * @property string $title
+ * @property string $title_sort The title songs are sorted by: the file's title sort tag, or the title with a leading article moved to the end
  * @property-read SongStorageMetadata $storage_metadata
  * @property-read ?string $genre The string representation of the genres associated with the song. Readonly.
  *                               To set the genres, use the `syncGenres` method.

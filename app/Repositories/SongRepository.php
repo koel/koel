@@ -326,7 +326,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->whereBelongsTo($album)
             ->orderBy('songs.disc')
             ->orderBy('songs.track')
-            ->orderBy('songs.title')
+            ->orderBy('songs.title_sort')
             ->get();
     }
 
@@ -362,7 +362,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->orderBy('songs.album_name')
             ->orderBy('songs.disc')
             ->orderBy('songs.track')
-            ->orderBy('songs.title')
+            ->orderBy('songs.title_sort')
             ->get();
     }
 
@@ -414,7 +414,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->whereNotHidden();
 
         return self::limitToSmartPlaylistRules($query, $playlist)
-            ->orderBy('songs.title')
+            ->orderBy('songs.title_sort')
             ->orderBy('songs.id')
             ->limit(self::LIST_SIZE_LIMIT)
             ->get();
@@ -436,7 +436,7 @@ class SongRepository extends Repository implements ScoutableRepository
             $playlist,
         )
             ->select('songs.length')
-            ->orderBy('songs.title')
+            ->orderBy('songs.title_sort')
             ->orderBy('songs.id')
             ->limit(self::LIST_SIZE_LIMIT);
 
@@ -633,7 +633,7 @@ class SongRepository extends Repository implements ScoutableRepository
             ->withUserContext()
             ->when($genre, static fn (Builder $builder) => $builder->whereRelation('genres', 'genres.id', $genre->id))
             ->when(!$genre, static fn (SongBuilder $builder) => $builder->genreless())
-            ->orderBy('songs.title')
+            ->orderBy('songs.title_sort')
             ->orderBy('songs.id')
             ->when($offset > 0, static fn (Builder $builder) => $builder->offset($offset))
             ->limit($limit)

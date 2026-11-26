@@ -100,6 +100,7 @@ class ScanCommandTest extends TestCase
                             'genre',
                             'lyrics',
                             'title',
+                            'title_sort',
                         ]
                     ),
                 ),

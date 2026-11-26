@@ -164,7 +164,7 @@ export const usePlayableList = (
       return fields
     }
 
-    const sortFields = collectSortFields()
+    const sortFields = collectSortFields()?.map(field => (field === 'title' ? 'title_sort' : field))
 
     return sortFields ? orderBy(filtered, sortFields, sortOrder.value) : filtered
   })

@@ -4,6 +4,7 @@ import { genres } from '@/config/genres'
 const generate = (partOfCompilation = false): Song => {
   const artistId = faker.string.ulid()
   const artistName = faker.person.fullName()
+  const title = faker.lorem.sentence()
 
   return {
     type: 'songs',
@@ -17,7 +18,8 @@ const generate = (partOfCompilation = false): Song => {
     album_cover: faker.image.url(),
     album_small_cover: faker.image.url(),
     id: faker.string.uuid(),
-    title: faker.lorem.sentence(),
+    title,
+    title_sort: title,
     length: faker.number.int(),
     track: faker.number.int({ min: 1, max: 20 }),
     track_label: null,

@@ -21,7 +21,7 @@ class PaginateSongsByGenreController extends Controller
 
         return SongResource::collection($repository->paginateByGenre(
             genre: $genre,
-            sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title'],
+            sortColumns: $request->sort ? explode(',', $request->sort) : ['songs.title_sort'],
             sortDirection: $request->order ?: 'asc',
             strategy: PaginationStrategyResolver::resolve($request),
             scopedUser: $user,

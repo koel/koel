@@ -75,6 +75,18 @@ class SongTest extends TestCase
     }
 
     #[Test]
+    public function sortingByTitleIgnoresTheLeadingArticle(): void
+    {
+        $user = create_user();
+        $zebra = Song::factory()->for($user, 'owner')->createOne(['title' => 'The Zebra']);
+        $apple = Song::factory()->for($user, 'owner')->createOne(['title' => 'Apple']);
+
+        $ids = $this->getAs('api/songs?sort=title&order=asc', $user)->json('data.*.id');
+
+        self::assertSame([$apple->id, $zebra->id], $ids);
+    }
+
+    #[Test]
     public function indexWithCursorTraversesAllSupportedSortsWithoutDuplicates(): void
     {
         $user = create_user();

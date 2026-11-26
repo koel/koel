@@ -9,6 +9,7 @@ final class ScanConfiguration
 {
     public const array TAGS = [
         'title',
+        'title_sort',
         'album',
         'artist',
         'albumartist',

@@ -476,6 +476,55 @@ class SongServiceTest extends TestCase
     }
 
     #[Test]
+    public function createFromScanUsesTheTitleSortTag(): void
+    {
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $info->title = 'The Song';
+        $info->titleSort = 'Tagged Sort Title';
+
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertSame('Tagged Sort Title', $song->title_sort);
+    }
+
+    #[Test]
+    public function createFromScanMovesTheLeadingArticleWithoutATitleSortTag(): void
+    {
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $info->title = 'The Song';
+        $info->titleSort = null;
+
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: create_admin()));
+
+        self::assertSame('Song, The', $song->title_sort);
+    }
+
+    #[Test]
+    public function rescanOnlyTheTitleSortUsesTheEditedTitle(): void
+    {
+        $owner = create_admin();
+        $info = app(FileScanner::class)->scan(test_path('songs/full.mp3'));
+        $info->title = 'The Song';
+        $info->titleSort = 'Tagged Sort Title';
+
+        $song = $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(owner: $owner));
+        $song->update(['title' => 'An Edited Song']);
+
+        $info->titleSort = null;
+
+        $this->service->createOrUpdateSongFromScan($info, ScanConfiguration::make(
+            owner: $owner,
+            ignores: ScanConfiguration::resolveIgnoredTags([], ['title_sort']),
+            force: true,
+        ));
+
+        $song->refresh();
+
+        self::assertSame('An Edited Song', $song->title);
+        self::assertSame('Edited Song, An', $song->title_sort);
+    }
+
+    #[Test]
     public function rescanIgnoringTrackKeepsTheCurrentTrackNumberOfAVinylTrack(): void
     {
         $owner = create_admin();

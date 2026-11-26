@@ -22,7 +22,7 @@ class SongBuilder extends FavoriteableBuilder
     use CanScopeByUser;
 
     public const array SORT_COLUMNS_NORMALIZE_MAP = [
-        'title' => 'songs.title',
+        'title' => 'songs.title_sort',
         'track' => 'songs.track',
         'length' => 'songs.length',
         'created_at' => 'songs.created_at',
@@ -37,7 +37,7 @@ class SongBuilder extends FavoriteableBuilder
     ];
 
     private const array VALID_SORT_COLUMNS = [
-        'songs.title',
+        'songs.title_sort',
         'songs.track',
         'songs.length',
         'songs.year',
@@ -190,7 +190,7 @@ class SongBuilder extends FavoriteableBuilder
             return $this
                 ->addSelect(DB::raw('(COALESCE(user_ratings.rating, 0)) as user_rating_score'))
                 ->orderBy('user_rating_score', $direction)
-                ->orderBy('songs.title');
+                ->orderBy('songs.title_sort');
         }
 
         if ($column === 'genres.name') {
@@ -199,11 +199,14 @@ class SongBuilder extends FavoriteableBuilder
                     "(COALESCE((SELECT MIN(genres.name) FROM genres INNER JOIN genre_song ON genre_song.genre_id = genres.id WHERE genre_song.song_id = songs.id), '')) as genre_sort_name",
                 ))
                 ->orderBy('genre_sort_name', $direction)
-                ->orderBy('songs.title');
+                ->orderBy('songs.title_sort');
         }
 
         if ($column === 'songs.track') {
-            return $this->orderBy('songs.disc', $direction)->orderBy('songs.track', $direction)->orderBy('songs.title');
+            return $this
+                ->orderBy('songs.disc', $direction)
+                ->orderBy('songs.track', $direction)
+                ->orderBy('songs.title_sort');
         }
 
         return $this
@@ -213,12 +216,12 @@ class SongBuilder extends FavoriteableBuilder
                 ->orderBy('songs.album_name')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
-                ->orderBy('songs.title'))
+                ->orderBy('songs.title_sort'))
             ->when($column === 'songs.album_name', static fn (self $query) => $query
                 ->orderBy('songs.album_id')
                 ->orderBy('songs.disc')
                 ->orderBy('songs.track')
-                ->orderBy('songs.title'));
+                ->orderBy('songs.title_sort'));
     }
 
     public function sort(array $columns, string $direction): self
