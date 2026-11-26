@@ -15,7 +15,7 @@ class SortTitle
 
     public static function fromTitle(string $title): string
     {
-        $title = Str::trim($title);
+        $title = self::removeInvisibleCharacters($title);
 
         $pattern = sprintf('/^(%s)\s+(.+)$/iu', implode('|', self::ARTICLES));
 
@@ -23,11 +23,16 @@ class SortTitle
             ? sprintf('%s, %s', Str::ucfirst($matches[2]), $matches[1])
             : $title;
 
-        return self::truncate($sortTitle);
+        return self::clean($sortTitle);
     }
 
-    public static function truncate(string $sortTitle): string
+    public static function clean(string $sortTitle): string
     {
-        return Str::substr(Str::trim($sortTitle), 0, self::MAX_LENGTH);
+        return Str::substr(self::removeInvisibleCharacters($sortTitle), 0, self::MAX_LENGTH);
+    }
+
+    private static function removeInvisibleCharacters(string $text): string
+    {
+        return Str::trim(preg_replace('/\p{Cf}/u', '', $text));
     }
 }
