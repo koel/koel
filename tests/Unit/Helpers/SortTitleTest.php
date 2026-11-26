@@ -16,6 +16,8 @@ class SortTitleTest extends TestCase
             'The' => ['The Song', 'Song, The'],
             'A' => ['A Song', 'Song, A'],
             'An' => ['An Ocean', 'Ocean, An'],
+            'Spanish' => ['Los Lobos', 'Lobos, Los'],
+            'French' => ['Les Misérables', 'Misérables, Les'],
             'lowercase article' => ['the clock ticks on', 'Clock ticks on, the'],
             'no article' => ['Theory of Everything', 'Theory of Everything'],
             'article without a space after it' => ['A-ha', 'A-ha'],

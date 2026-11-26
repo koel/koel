@@ -11,13 +11,15 @@ class SortTitle
 {
     public const int MAX_LENGTH = 191;
 
-    private const string LEADING_ARTICLE_PATTERN = '/^(the|an?)\s+(.+)$/iu';
+    public const array ARTICLES = ['The', 'A', 'An', 'El', 'La', 'Los', 'Las', 'Le', 'Les'];
 
     public static function fromTitle(string $title): string
     {
         $title = Str::trim($title);
 
-        $sortTitle = preg_match(self::LEADING_ARTICLE_PATTERN, $title, $matches)
+        $pattern = sprintf('/^(%s)\s+(.+)$/iu', implode('|', self::ARTICLES));
+
+        $sortTitle = preg_match($pattern, $title, $matches)
             ? sprintf('%s, %s', Str::ucfirst($matches[2]), $matches[1])
             : $title;
 

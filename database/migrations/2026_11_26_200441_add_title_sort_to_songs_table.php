@@ -6,6 +6,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 return new class extends Migration {
     public function up(): void
@@ -19,10 +20,9 @@ return new class extends Migration {
         DB::table('songs')
             ->select('id', 'title')
             ->where(static function (Builder $query): void {
-                $query
-                    ->whereRaw("LOWER(title) LIKE 'the %'")
-                    ->orWhereRaw("LOWER(title) LIKE 'a %'")
-                    ->orWhereRaw("LOWER(title) LIKE 'an %'");
+                foreach (SortTitle::ARTICLES as $article) {
+                    $query->orWhereRaw('LOWER(title) LIKE ?', [Str::lower($article) . ' %']);
+                }
             })
             ->lazyById()
             ->each(static function (object $song): void {

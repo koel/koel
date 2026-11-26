@@ -54,7 +54,8 @@ php artisan koel:scan --force --only=track
 
 ## Sorting by Title
 
-When sorting by title, Koel ignores a leading "The", "A", or "An", so "The Song" is sorted as "Song, The".
+When sorting by title, Koel ignores a leading "The", "A", "An", "El", "La", "Los", "Las", "Le", or "Les", so "The Song"
+is sorted as "Song, The".
 
 If a song has a title sort tag (set by most tag editors), Koel uses that instead. This is handy for titles in languages
 where these words aren't articles.
