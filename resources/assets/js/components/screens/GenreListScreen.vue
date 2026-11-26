@@ -38,18 +38,22 @@
     </ScreenEmptyState>
 
     <template v-else>
-      <ul v-if="!loading" class="genre-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-3">
-        <GenreCard v-for="genre in displayedGenres" :key="genre.id" :genre />
-      </ul>
-
-      <ul
-        v-else
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-3"
-        role="status"
-        aria-busy="true"
-        aria-label="Loading"
+      <TransitionGroup
+        v-if="!loading"
+        class="genre-list relative flex flex-wrap items-center gap-2.5"
+        name="genre"
+        tag="ul"
       >
-        <GenreCardSkeleton v-for="key in 11" :key />
+        <GenreCard
+          v-for="genre in displayedGenres"
+          :key="genre.id"
+          :genre
+          :size="getGenreSize(genre, largestSongCount)"
+        />
+      </TransitionGroup>
+
+      <ul v-else class="flex flex-wrap items-center gap-2.5" role="status" aria-busy="true" aria-label="Loading">
+        <GenreCardSkeleton v-for="(width, index) in skeletonWidths" :key="index" :width />
       </ul>
     </template>
   </ScreenBase>
@@ -66,6 +70,7 @@ import { preferenceStore as preferences } from '@/stores/preferenceStore'
 import { useFuzzySearch } from '@/composables/useFuzzySearch'
 import { FilterKeywordsKey } from '@/config/symbols'
 import { orderBy } from 'lodash-es'
+import { getGenreSize, getLargestGenreSongCount } from '@/utils/genreSize'
 
 import ScreenHeader from '@/components/ui/ScreenHeader.vue'
 import GenreCardSkeleton from '@/components/genre/GenreCardSkeleton.vue'
@@ -96,6 +101,10 @@ const displayedGenres = computed(() => {
 
   return orderBy(all, preferences.genres_sort_field, preferences.genres_sort_order)
 })
+
+const largestSongCount = computed(() => getLargestGenreSongCount(genres.value))
+
+const skeletonWidths = [140, 96, 180, 120, 88, 220, 104, 150, 92, 170, 116, 132]
 
 const libraryEmpty = computed(() => commonStore.state.song_length === 0)
 
@@ -131,5 +140,31 @@ onMounted(async () => {
 <style lang="postcss">
 .genre-list {
   content-visibility: auto;
+}
+
+.genre-move,
+.genre-enter-active,
+.genre-leave-active {
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.genre-enter-from,
+.genre-leave-to {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.genre-leave-active {
+  position: absolute;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .genre-move,
+  .genre-enter-active,
+  .genre-leave-active {
+    transition: none;
+  }
 }
 </style>
