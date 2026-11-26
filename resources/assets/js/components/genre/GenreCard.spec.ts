@@ -27,6 +27,7 @@ describe('genreCard.vue', () => {
     const render = h.render(Component, {
       props: {
         genre: genre || createGenre(),
+        size: 2,
       },
     })
 
