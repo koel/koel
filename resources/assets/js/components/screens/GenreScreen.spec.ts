@@ -89,6 +89,25 @@ describe('genreScreen', () => {
     await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/genres'))
   })
 
+  it('stays on the current screen if the genre is removed after leaving its page', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { genre } = await renderComponent()
+
+    h.visit('home')
+    await h.tick(2)
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: { album_ids: [], artist_ids: [], genre_ids: [genre.id] },
+    })
+
+    await h.tick(2)
+
+    expect(goMock).not.toHaveBeenCalled()
+  })
+
   it('refreshes the genre if it is kept', async () => {
     const goMock = h.mock(Router, 'go')
     const { genre } = await renderComponent()

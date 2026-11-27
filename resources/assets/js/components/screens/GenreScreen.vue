@@ -215,7 +215,10 @@ watch(id, async () => id.value && (await refresh()))
 
 const onSongsUpdated = async (result: SongUpdateResult) => {
   if (id.value && result.removed.genre_ids.includes(id.value)) {
-    go(url('genres.index'))
+    if (isCurrentScreen('Genre')) {
+      go(url('genres.index'))
+    }
+
     return
   }
 
