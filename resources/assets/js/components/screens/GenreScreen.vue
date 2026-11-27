@@ -214,12 +214,12 @@ onMounted(() => {
 watch(id, async () => id.value && (await refresh()))
 
 const onSongsUpdated = async (result: SongUpdateResult) => {
-  if (!genre.value) {
+  if (id.value && result.removed.genre_ids.includes(id.value)) {
+    go(url('genres.index'))
     return
   }
 
-  if (result.removed.genre_ids.includes(genre.value.id)) {
-    go(url('genres.index'))
+  if (!genre.value) {
     return
   }
 

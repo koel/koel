@@ -65,6 +65,30 @@ describe('genreScreen', () => {
     await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/genres'))
   })
 
+  it('goes back to the list if the genre is removed while it is still loading', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { genre } = await renderComponent()
+    h.mock(genreStore, 'fetchOne').mockReturnValue(new Promise<Genre>(() => {}))
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: { album_ids: [], artist_ids: [], genre_ids: [] },
+    })
+
+    await h.tick(2)
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: { album_ids: [], artist_ids: [], genre_ids: [genre.id] },
+    })
+
+    await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/genres'))
+  })
+
   it('refreshes the genre if it is kept', async () => {
     const goMock = h.mock(Router, 'go')
     const { genre } = await renderComponent()
