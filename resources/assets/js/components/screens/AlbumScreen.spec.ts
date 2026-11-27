@@ -95,6 +95,7 @@ describe('albumScreen.vue', () => {
       removed: {
         album_ids: [album.id, 'foo'],
         artist_ids: [],
+        genre_ids: [],
       },
     })
 
@@ -126,6 +127,7 @@ describe('albumScreen.vue', () => {
       removed: {
         album_ids: [album.id],
         artist_ids: [],
+        genre_ids: [],
       },
     })
 

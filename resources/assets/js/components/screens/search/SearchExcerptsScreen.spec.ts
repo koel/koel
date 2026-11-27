@@ -40,8 +40,8 @@ describe('searchExcerptsScreen.vue', () => {
   })
 
   it.each([
-    ['searches again', { album_ids: ['album-id'], artist_ids: [] }, 2],
-    ['does not search again', { album_ids: [], artist_ids: [] }, 1],
+    ['searches again', { album_ids: ['album-id'], artist_ids: [], genre_ids: [] }, 2],
+    ['does not search again', { album_ids: [], artist_ids: [], genre_ids: [] }, 1],
   ])('%s after a song update depending on whether albums or artists were removed', async (_, removed, calls) => {
     const mock = h.mock(searchStore, 'excerptSearch')
     h.render(Component)

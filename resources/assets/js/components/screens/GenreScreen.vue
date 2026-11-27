@@ -51,13 +51,13 @@
 
 <script lang="ts" setup>
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { GuitarIcon } from 'lucide-vue-next'
 import { pluralize, secondsToHumanReadable } from '@/utils/formatters'
 import { eventBus } from '@/utils/eventBus'
 import { defineAsyncComponent } from '@/utils/helpers'
 import { genreStore } from '@/stores/genreStore'
-import { playableStore } from '@/stores/playableStore'
+import { playableStore, type SongUpdateResult } from '@/stores/playableStore'
 import { useRouter } from '@/composables/useRouter'
 import { usePageTitle } from '@/composables/usePageTitle'
 import { useErrorHandler } from '@/composables/useErrorHandler'
@@ -89,7 +89,7 @@ const {
 } = usePlayableList(songs, { type: 'Genre' }, { sortable: true, filterable: false, sortedOnServer: true })
 
 const { PlayableListControls: SongListControls, config } = usePlayableListControls('Genre')
-const { getRouteParam, isCurrentScreen, onRouteChanged } = useRouter()
+const { getRouteParam, isCurrentScreen, onRouteChanged, go, url } = useRouter()
 const { openContextMenu } = useContextMenu()
 const { playCollection } = usePlayCollection()
 const { getSavedSort, saveSort } = usePersistedSort('genre', 'title')
@@ -213,6 +213,20 @@ onMounted(() => {
 
 watch(id, async () => id.value && (await refresh()))
 
-// We can't really tell how/if the genres have been updated, so we just refresh the list
-eventBus.on('SONGS_UPDATED', async () => genre.value && (await refresh()))
+const onSongsUpdated = async (result: SongUpdateResult) => {
+  if (!genre.value) {
+    return
+  }
+
+  if (result.removed.genre_ids.includes(genre.value.id)) {
+    go(url('genres.index'))
+    return
+  }
+
+  await refresh()
+}
+
+eventBus.on('SONGS_UPDATED', onSongsUpdated)
+
+onBeforeUnmount(() => eventBus.off('SONGS_UPDATED', onSongsUpdated))
 </script>

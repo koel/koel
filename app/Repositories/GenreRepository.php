@@ -86,22 +86,15 @@ class GenreRepository extends Repository
         $result = Song::query(type: PlayableType::SONG, user: $scopedUser ?? $this->auth->user())
             ->accessible()
             ->join('genre_song', 'songs.id', '=', 'genre_song.song_id')
-            ->join('genres', 'genre_song.genre_id', '=', 'genres.id')
-            ->where('genres.id', $genre->id)
-            ->groupBy('genres.public_id', 'genres.name')
-            ->select(
-                'genres.public_id',
-                'genres.name',
-                DB::raw('COUNT(songs.id) AS song_count'),
-                DB::raw('SUM(songs.length) AS length'),
-            )
+            ->where('genre_song.genre_id', $genre->id)
+            ->select(DB::raw('COUNT(songs.id) AS song_count'), DB::raw('SUM(songs.length) AS length'))
             ->firstOrFail();
 
         return GenreSummary::make(
-            publicId: $result->public_id,
-            name: $result->name,
-            songCount: $result->song_count,
-            length: $result->length,
+            publicId: $genre->public_id,
+            name: $genre->name,
+            songCount: (int) $result->song_count,
+            length: (float) $result->length,
         );
     }
 

@@ -126,6 +126,31 @@ class SongServiceTest extends TestCase
     }
 
     #[Test]
+    public function updateSongRemovesItsEmptiedGenre(): void
+    {
+        $genre = Genre::factory()->createOne(['name' => 'Rock']);
+        $song = Song::factory()->hasAttached($genre)->createOne();
+
+        $result = $this->service->updateSongs([$song->id], SongUpdateData::make(genre: ''));
+
+        $this->assertModelMissing($genre);
+        self::assertSame([$genre->public_id], $result->removedGenreIds->all());
+    }
+
+    #[Test]
+    public function updateSongKeepsAGenreOtherSongsStillUse(): void
+    {
+        $genre = Genre::factory()->createOne(['name' => 'Rock']);
+        $song = Song::factory()->hasAttached($genre)->createOne();
+        Song::factory()->hasAttached($genre)->createOne();
+
+        $result = $this->service->updateSongs([$song->id], SongUpdateData::make(genre: ''));
+
+        $this->assertModelExists($genre);
+        self::assertCount(0, $result->removedGenreIds);
+    }
+
+    #[Test]
     public function updateMultipleSongsTrackProvided(): void
     {
         $song1 = Song::factory()->createOne(['track' => 1]);
@@ -255,6 +280,20 @@ class SongServiceTest extends TestCase
         $this->assertModelMissing($emptiedAlbum->artist);
         $this->assertModelExists($keptAlbum);
         $this->assertModelExists($keptAlbum->artist);
+    }
+
+    #[Test]
+    public function deleteSongsRemovesTheirEmptyGenres(): void
+    {
+        Event::fake(LibraryChanged::class);
+        Dispatcher::shouldReceive('dispatch');
+
+        $genre = Genre::factory()->createOne();
+        $song = Song::factory()->hasAttached($genre)->createOne();
+
+        $this->service->deleteSongs([$song->id]);
+
+        $this->assertModelMissing($genre);
     }
 
     #[Test]

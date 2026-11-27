@@ -4,6 +4,7 @@ namespace Tests\Integration\Services;
 
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Genre;
 use App\Models\Song;
 use App\Services\LibraryManager;
 use Laravel\Scout\EngineManager;
@@ -63,6 +64,32 @@ class LibraryManagerTest extends TestCase
         self::assertModelMissing($emptyAlbum);
         self::assertModelMissing($emptyArtist);
         self::assertModelExists($albumWithSongs);
+    }
+
+    #[Test]
+    public function prunesEmptyGenres(): void
+    {
+        $emptyGenre = Genre::factory()->createOne();
+        $genreWithSongs = Genre::factory()->has(Song::factory())->createOne();
+
+        $this->libraryManager->prune();
+
+        self::assertModelMissing($emptyGenre);
+        self::assertModelExists($genreWithSongs);
+    }
+
+    #[Test]
+    public function pruneEmptyGenresReturnsTheRemovedGenres(): void
+    {
+        $emptyGenre = Genre::factory()->createOne();
+        $genreWithSongs = Genre::factory()->has(Song::factory())->createOne();
+
+        $removedGenres = $this->libraryManager->pruneEmptyGenres();
+
+        self::assertCount(1, $removedGenres);
+        self::assertTrue($removedGenres->first()->is($emptyGenre));
+        self::assertModelMissing($emptyGenre);
+        self::assertModelExists($genreWithSongs);
     }
 
     #[Test]

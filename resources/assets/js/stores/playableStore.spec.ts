@@ -122,6 +122,7 @@ describe('playableStore', () => {
       removed: {
         album_ids: ['iv'],
         artist_ids: ['led-zeppelin'],
+        genre_ids: [],
       },
     }
 
@@ -161,7 +162,7 @@ describe('playableStore', () => {
       songs: [updated],
       albums: [],
       artists: [],
-      removed: { album_ids: [], artist_ids: [] },
+      removed: { album_ids: [], artist_ids: [], genre_ids: [] },
     } satisfies SongUpdateResult)
 
     await playableStore.updateSongs([song], { album_name: 'New Album' })
