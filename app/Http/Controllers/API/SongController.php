@@ -68,6 +68,7 @@ class SongController extends Controller
             'removed' => [
                 'artist_ids' => $result->removedArtistIds->toArray(),
                 'album_ids' => $result->removedAlbumIds->toArray(),
+                'genre_ids' => $result->removedGenreIds->toArray(),
             ],
         ]);
     }

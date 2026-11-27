@@ -44,6 +44,7 @@ describe('editSongForm.vue', () => {
       removed: {
         album_ids: [],
         artist_ids: [],
+        genre_ids: [],
       },
     }
 
@@ -96,6 +97,7 @@ describe('editSongForm.vue', () => {
       removed: {
         album_ids: [],
         artist_ids: [],
+        genre_ids: [],
       },
     }
 
@@ -135,7 +137,7 @@ describe('editSongForm.vue', () => {
       songs: [],
       albums: [],
       artists: [],
-      removed: { album_ids: [], artist_ids: [] },
+      removed: { album_ids: [], artist_ids: [], genre_ids: [] },
     })
 
     await renderComponent(h.factory('song').state('partOfCompilation').make())
@@ -151,7 +153,7 @@ describe('editSongForm.vue', () => {
       songs: [],
       albums: [],
       artists: [],
-      removed: { album_ids: [], artist_ids: [] },
+      removed: { album_ids: [], artist_ids: [], genre_ids: [] },
     })
 
     await renderComponent(h.factory('song').state('partOfCompilation').make())

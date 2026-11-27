@@ -112,6 +112,8 @@ class SongService
                 }
             });
 
+            $this->libraryManager->pruneEmptyGenres()->each($result->addRemovedGenre(...));
+
             return $result;
         });
     }
@@ -270,6 +272,7 @@ class SongService
 
         (new Song())->queueRemoveFromSearch($songs);
         $this->libraryManager->pruneAlbumsAndArtistsOfSongs($songs);
+        $this->libraryManager->pruneEmptyGenres();
 
         Dispatcher::dispatch(new DeleteSongFilesJob($songs->map(SongFileInfo::fromSong(...))));
 

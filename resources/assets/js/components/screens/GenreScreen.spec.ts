@@ -5,6 +5,8 @@ import { createHarness } from '@/__tests__/TestHarness'
 import { genreStore } from '@/stores/genreStore'
 import { playableStore } from '@/stores/playableStore'
 import { usePageTitle } from '@/composables/usePageTitle'
+import { eventBus } from '@/utils/eventBus'
+import Router from '@/router'
 import Component from './GenreScreen.vue'
 
 describe('genreScreen', () => {
@@ -47,6 +49,79 @@ describe('genreScreen', () => {
   it('renders the song list', async () => {
     await renderComponent()
     screen.getByTestId('song-list')
+  })
+
+  it('goes back to the list if the genre is removed', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { genre } = await renderComponent()
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: { album_ids: [], artist_ids: [], genre_ids: [genre.id] },
+    })
+
+    await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/genres'))
+  })
+
+  it('goes back to the list if the genre is removed while it is still loading', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { genre } = await renderComponent()
+    h.mock(genreStore, 'fetchOne').mockReturnValue(new Promise<Genre>(() => {}))
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: { album_ids: [], artist_ids: [], genre_ids: [] },
+    })
+
+    await h.tick(2)
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: { album_ids: [], artist_ids: [], genre_ids: [genre.id] },
+    })
+
+    await waitFor(() => expect(goMock).toHaveBeenCalledWith('/#/genres'))
+  })
+
+  it('stays on the current screen if the genre is removed after leaving its page', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { genre } = await renderComponent()
+
+    h.visit('home')
+    await h.tick(2)
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: { album_ids: [], artist_ids: [], genre_ids: [genre.id] },
+    })
+
+    await h.tick(2)
+
+    expect(goMock).not.toHaveBeenCalled()
+  })
+
+  it('refreshes the genre if it is kept', async () => {
+    const goMock = h.mock(Router, 'go')
+    const { genre } = await renderComponent()
+    const fetchGenreMock = h.mock(genreStore, 'fetchOne').mockResolvedValue(genre)
+
+    eventBus.emit('SONGS_UPDATED', {
+      songs: [],
+      artists: [],
+      albums: [],
+      removed: { album_ids: [], artist_ids: [], genre_ids: [] },
+    })
+
+    await waitFor(() => expect(fetchGenreMock).toHaveBeenCalledWith(genre.id))
+    expect(goMock).not.toHaveBeenCalled()
   })
 
   it('names a genre without a name "No Genre" in the page title', async () => {

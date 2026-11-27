@@ -51,6 +51,7 @@ export interface SongUpdateResult {
   removed: {
     album_ids: Album['id'][]
     artist_ids: Artist['id'][]
+    genre_ids: Genre['id'][]
   }
 }
 

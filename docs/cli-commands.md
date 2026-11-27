@@ -27,7 +27,7 @@ php artisan list | grep koel
   koel:license:deactivate     Deactivate the currently active Koel Plus license
   koel:license:status         Check the current Koel Plus license status
   koel:podcasts:sync          Synchronize podcasts.
-  koel:prune                  Remove empty artists and albums
+  koel:prune                  Remove empty artists, albums, and genres
   ...
 ```
 
@@ -269,7 +269,7 @@ php artisan koel:podcasts:sync
 
 ### `koel:prune`
 
-Remove empty artists and albums.
+Remove empty artists, albums, and genres.
 
 #### Usage
 

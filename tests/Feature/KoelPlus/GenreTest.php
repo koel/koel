@@ -42,4 +42,18 @@ class GenreTest extends PlusTestCase
 
         $this->getAs('api/genres', $viewer)->assertJsonFragment(['name' => 'Rock', 'song_count' => 1, 'length' => 10]);
     }
+
+    #[Test]
+    public function showGenreWhoseSongsTheUserCannotSee(): void
+    {
+        $genre = Genre::factory()->createOne(['name' => 'Rock']);
+
+        Song::factory()->for(create_user(), 'owner')->private()->hasAttached($genre)->createOne();
+
+        $this->getAs('api/genres/' . $genre->public_id, create_user())->assertJsonFragment([
+            'name' => 'Rock',
+            'song_count' => 0,
+            'length' => 0,
+        ]);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Facades\License;
 use App\Models\Album;
 use App\Models\Artist;
+use App\Models\Genre;
 use App\Models\Song;
 use App\Models\User;
 use App\Repositories\AlbumRepository;
@@ -101,7 +102,7 @@ class LibraryManager
     }
 
     /**
-     * Delete albums and artists that have no songs.
+     * Delete albums, artists, and genres that have no songs.
      *
      * @return array<mixed>
      */
@@ -110,17 +111,21 @@ class LibraryManager
         return DB::transaction(static function () use ($dryRun): array {
             $albumQuery = self::queryEmptyAlbums();
             $artistQuery = self::queryEmptyArtists();
+            $genreQuery = self::queryEmptyGenres();
 
             $results = [
                 'albums' => $albumQuery->get('albums.*'),
                 'artists' => $artistQuery->get('artists.*'),
+                'genres' => $genreQuery->get('genres.*'),
             ];
 
             if (!$dryRun) {
                 $results['albums']->unsearchable(); // @phpstan-ignore-line
                 $results['artists']->unsearchable(); // @phpstan-ignore-line
+                $results['genres']->unsearchable(); // @phpstan-ignore-line
                 $albumQuery->delete();
                 $artistQuery->delete();
+                $genreQuery->delete();
             }
 
             return $results;
@@ -147,6 +152,20 @@ class LibraryManager
         });
     }
 
+    /** @return Collection<int, Genre> */
+    public function pruneEmptyGenres(): Collection
+    {
+        return DB::transaction(static function (): Collection {
+            $genreQuery = self::queryEmptyGenres();
+            $emptyGenres = $genreQuery->get('genres.*');
+
+            (new Genre())->queueRemoveFromSearch($emptyGenres);
+            $genreQuery->delete();
+
+            return $emptyGenres;
+        });
+    }
+
     /** @return Builder<Album> */
     private static function queryEmptyAlbums(): Builder
     {
@@ -161,5 +180,13 @@ class LibraryManager
             ->leftJoin('albums', 'albums.artist_id', '=', 'artists.id')
             ->whereNull('songs.artist_id')
             ->whereNull('albums.artist_id');
+    }
+
+    /** @return Builder<Genre> */
+    private static function queryEmptyGenres(): Builder
+    {
+        return Genre::query()
+            ->leftJoin('genre_song', 'genre_song.genre_id', '=', 'genres.id')
+            ->whereNull('genre_song.genre_id');
     }
 }
