@@ -56,7 +56,7 @@ class PodcastService
 
         if ($podcast) {
             if ($this->isPodcastObsolete($podcast)) {
-                $this->refreshPodcast($podcast);
+                rescue(fn () => $this->refreshPodcast($podcast));
             }
 
             $this->subscribeUserToPodcast($user, $podcast);

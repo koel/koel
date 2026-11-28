@@ -209,6 +209,31 @@ class PodcastServiceTest extends TestCase
     }
 
     #[Test]
+    public function subscribeUserToObsoletePodcastWhoseFeedIsUnavailable(): void
+    {
+        $this->instance(ClientInterface::class, new Client([
+            'handler' => HandlerStack::create(new MockHandler([new Response(503)])),
+        ]));
+
+        Http::fake([
+            'https://example.com/feed.xml' => Http::response(headers: ['Last-Modified' => now()->toRfc1123String()]),
+        ]);
+
+        $podcast = Podcast::factory()->createOne([
+            'url' => 'https://example.com/feed.xml',
+            'title' => 'My Cool Podcast',
+            'last_synced_at' => now()->subDays(3),
+        ]);
+
+        $user = create_user();
+
+        app(PodcastService::class)->addPodcast('https://example.com/feed.xml', $user);
+
+        self::assertTrue($user->subscribedToPodcast($podcast));
+        self::assertSame('My Cool Podcast', $podcast->fresh()->title);
+    }
+
+    #[Test]
     public function unsubscribeUserFromPodcast(): void
     {
         Event::fake(UserUnsubscribedFromPodcast::class);
