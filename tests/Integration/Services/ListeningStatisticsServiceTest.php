@@ -32,11 +32,13 @@ class ListeningStatisticsServiceTest extends TestCase
 
         Play::factory()->for($user)->for($song)->createOne();
 
-        self::assertSame(1, $this->service->getStatistics($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
+        $first = $this->service->getStatistics($user, ListeningPeriod::ALL_TIME, 'UTC');
+        self::assertSame(1, $first->summary->plays);
 
         Play::factory()->for($user)->for($song)->createOne();
 
-        self::assertSame(1, $this->service->getStatistics($user, ListeningPeriod::ALL_TIME, 'UTC')->summary->plays);
+        $cached = $this->service->getStatistics($user, ListeningPeriod::ALL_TIME, 'UTC');
+        self::assertSame(1, $cached->summary->plays);
 
         app(InteractionService::class)->increasePlayCount($song, $user);
 

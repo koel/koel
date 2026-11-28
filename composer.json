@@ -69,7 +69,8 @@
     "laravel/boost": "^2.0",
     "opcodesio/log-viewer": "^3.19",
     "carthage-software/mago": "^1.8.0",
-    "brianium/paratest": "^7.0"
+    "brianium/paratest": "^7.0",
+    "baer-software/larabeacon": "^3.6"
   },
   "autoload": {
     "classmap": [
