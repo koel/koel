@@ -2,6 +2,7 @@ import type { Broadcaster } from 'laravel-echo'
 import Echo from 'laravel-echo'
 import { describe, expect, it, vi } from 'vite-plus/test'
 import { createHarness } from '@/__tests__/TestHarness'
+import { http } from '@/services/http'
 import { uploadService } from '@/services/uploadService'
 import { broadcastSubscriber } from '@/services/broadcastSubscriber'
 import { eventBus } from '@/utils/eventBus'
@@ -107,5 +108,25 @@ describe('broadcastSubscriber', () => {
     const instance = await broadcastSubscriber.newEchoInstance()
 
     expect(instance.options.broadcaster).toBe('null')
+  })
+
+  it('checks the build when the connection comes back, but not on the first connect', () => {
+    let onStateChange: Closure = () => {}
+    const pusherEcho = {
+      connector: {
+        pusher: { connection: { bind: (_event: string, callback: Closure) => (onStateChange = callback) } },
+      },
+    } as unknown as Echo<'pusher'>
+    const getMock = h.mock(http, 'get').mockResolvedValue(null)
+
+    broadcastSubscriber.checkBuildOnReconnect(pusherEcho)
+
+    onStateChange({ previous: 'connecting', current: 'connected' })
+    expect(getMock).not.toHaveBeenCalled()
+
+    onStateChange({ previous: 'connected', current: 'connecting' })
+    onStateChange({ previous: 'connecting', current: 'connected' })
+    expect(getMock).toHaveBeenCalledOnce()
+    expect(getMock).toHaveBeenCalledWith('ping')
   })
 })
