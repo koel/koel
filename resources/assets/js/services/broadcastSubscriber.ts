@@ -1,5 +1,6 @@
 import type Echo from 'laravel-echo'
 import { authService } from '@/services/authService'
+import { http } from '@/services/http'
 import type { UploadDuplication, UploadFailure, UploadResult } from '@/services/uploadService'
 import { uploadService } from '@/services/uploadService'
 import { makeReverbConnectionOptions } from '@/utils/reverbServer'
@@ -46,7 +47,34 @@ export const broadcastSubscriber = {
   },
 
   async init(userId: User['id'], echo?: Echo<Broadcaster>) {
-    this.subscribeToEvents(echo || (await this.newEchoInstance()), userId)
+    echo ||= await this.newEchoInstance()
+
+    this.checkBuildOnReconnect(echo)
+    this.subscribeToEvents(echo, userId)
+  },
+
+  /**
+   * An app.updated broadcast sent while the tab was reconnecting is lost, so ask the server
+   * for its build (in the X-Koel-Build header) whenever the connection comes back.
+   */
+  checkBuildOnReconnect: (echo: Echo<Broadcaster>) => {
+    if (!('pusher' in echo.connector)) {
+      return
+    }
+
+    let hasConnectedBefore = false
+
+    echo.connector.pusher.connection.bind('state_change', ({ current }: { current: string }) => {
+      if (current !== 'connected') {
+        return
+      }
+
+      if (hasConnectedBefore) {
+        http.silently.get('ping').catch(() => {})
+      }
+
+      hasConnectedBefore = true
+    })
   },
 
   subscribeToEvents: (echo: Echo<Broadcaster>, userId: User['id']) => {
