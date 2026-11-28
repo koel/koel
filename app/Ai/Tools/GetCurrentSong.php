@@ -6,6 +6,7 @@ use App\Ai\AiRequestContext;
 use App\Repositories\RadioStationRepository;
 use App\Repositories\SongRepository;
 use App\Services\Integrations\EncyclopediaService;
+use Illuminate\Container\Attributes\Config;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -18,6 +19,8 @@ class GetCurrentSong implements Tool
         private readonly SongRepository $songRepository,
         private readonly RadioStationRepository $radioStationRepository,
         private readonly EncyclopediaService $encyclopediaService,
+        #[Config('koel.radio.enabled')]
+        private readonly bool $radioEnabled = true,
     ) {}
 
     public function description(): Stringable|string
@@ -35,8 +38,10 @@ class GetCurrentSong implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        if ($this->context->currentRadioStationId) {
-            $station = $this->radioStationRepository->findOne($this->context->currentRadioStationId);
+        if ($this->radioEnabled && $this->context->currentRadioStationId) {
+            $station = $this->radioStationRepository
+                ->getMany([$this->context->currentRadioStationId], user: $this->context->user)
+                ->first();
 
             if ($station) {
                 return (

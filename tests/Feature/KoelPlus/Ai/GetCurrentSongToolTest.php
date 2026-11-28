@@ -50,7 +50,7 @@ class GetCurrentSongToolTest extends PlusTestCase
     #[Test]
     public function returnsCurrentRadioStationInfo(): void
     {
-        $station = RadioStation::factory()->createOne(['name' => 'Jazz FM']);
+        $station = RadioStation::factory()->for($this->user)->createOne(['name' => 'Jazz FM']);
 
         app()->instance(
             AiRequestContext::class,
@@ -68,7 +68,7 @@ class GetCurrentSongToolTest extends PlusTestCase
     public function radioStationTakesPrecedenceOverSong(): void
     {
         $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Some Song']);
-        $station = RadioStation::factory()->createOne(['name' => 'Rock Radio']);
+        $station = RadioStation::factory()->for($this->user)->createOne(['name' => 'Rock Radio']);
 
         app()->instance(
             AiRequestContext::class,
@@ -80,6 +80,42 @@ class GetCurrentSongToolTest extends PlusTestCase
 
         self::assertStringContainsString('Rock Radio', $response);
         self::assertStringNotContainsString('Some Song', $response);
+    }
+
+    #[Test]
+    public function ignoresRadioStationTheUserCannotAccess(): void
+    {
+        $station = RadioStation::factory()->createOne(['name' => 'Secret FM', 'is_public' => false]);
+
+        app()->instance(
+            AiRequestContext::class,
+            new AiRequestContext($this->user, currentRadioStationId: $station->id),
+        );
+        $this->tool = app()->make(GetCurrentSong::class);
+
+        $response = (string) $this->tool->handle(new Request([]));
+
+        self::assertStringNotContainsString('Secret FM', $response);
+    }
+
+    #[Test]
+    public function ignoresRadioStationWhenRadioIsDisabled(): void
+    {
+        config(['koel.radio.enabled' => false]);
+
+        $song = Song::factory()->for($this->user, 'owner')->createOne(['title' => 'Some Song']);
+        $station = RadioStation::factory()->for($this->user)->createOne(['name' => 'Rock Radio']);
+
+        app()->instance(
+            AiRequestContext::class,
+            new AiRequestContext($this->user, currentSongId: $song->id, currentRadioStationId: $station->id),
+        );
+        $this->tool = app()->make(GetCurrentSong::class);
+
+        $response = (string) $this->tool->handle(new Request([]));
+
+        self::assertStringContainsString('Some Song', $response);
+        self::assertStringNotContainsString('Rock Radio', $response);
     }
 
     #[Test]
